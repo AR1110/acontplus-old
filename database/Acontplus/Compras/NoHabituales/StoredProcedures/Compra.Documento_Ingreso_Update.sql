@@ -222,7 +222,7 @@ BEGIN
 
         IF (@CustomerId = 0)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Debe validar el proveedor',DEFAULT)
+                SELECT '0'code,'Debe validar el proveedor'[message]
 				RETURN 
             END
         
@@ -232,32 +232,32 @@ BEGIN
 		--> Validacion de la informacion
         IF (SELECT COUNT(*) FROM @document) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info Factura', DEFAULT)
+                SELECT '0'code,'Error en la info Factura'[message]
                 RETURN
             END 
 
         IF (SELECT COUNT(*) FROM @tblDetails) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en los detalles', DEFAULT)
+                SELECT '0'code,'Error en los detalles'[message]
                 RETURN
             END
            
         IF (SELECT COUNT(*) FROM @tbTaxes) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en los impuestos',DEFAULT)
+                SELECT '0'code,'Error en los impuestos'[message]
                 RETURN
             END
 
         IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en las cuotas',DEFAULT)
+                SELECT '0'code,'Error en las cuotas'[message]
                 RETURN
             END
 
 
 		IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = 'DH' AND codEstado != 'PE' AND idDocumento = @id)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','El Documento tiene movimientos financieros o esta Anulado',DEFAULT)
+                SELECT '0'code,'El Documento tiene movimientos financieros o esta Anulado'[message]
                 RETURN 
             END 
 
@@ -371,7 +371,7 @@ BEGIN
             INNER JOIN @tbCuotas            tc ON tc.idCuotaPorPagar = cp.idCuotaPorPagar
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1','Actualizado Correctamente',DEFAULT)
+        SELECT '1'code,'Actualizado Correctamente'[message]
 	END TRY 
 
 	BEGIN CATCH 
@@ -383,7 +383,7 @@ BEGIN
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'CompraHabitual/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento',DEFAULT)
+        SELECT '0'code,'Error en el procedimiento'[message]
     END CATCH 
 END
 GO

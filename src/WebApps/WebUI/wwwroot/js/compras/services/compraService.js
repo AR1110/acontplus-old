@@ -234,7 +234,7 @@
         }
 
         function getDataForm() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -271,7 +271,7 @@
         }
 
         function getDataFilter() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -295,7 +295,7 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
                 if (typeof response === 'object') {
                     const { liquidaciones } = JSON.parse(response.payload);
 
@@ -322,7 +322,7 @@
         }
 
         function generateSerieComprobante(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -415,7 +415,7 @@
 
 
         function post(data) {
-            return mS.getData('post', `${url}Insert`, { data }, true)
+            return mS.getData('post', `${url}`, { data }, true)
         }
         function getId(id) {
             return mS.getData('get', `${url}GetId/${id}`, null, true).then(
@@ -525,7 +525,7 @@
         }
 
         function getIdForInfo(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
+            return mS.getData('get', `${url}?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
                 response => {
                     let mainData = JSON.parse(response.payload);
                     let { liquidacion, contabilidad, proveedor, detalles, infoAdicional, impuestos } = mainData;
@@ -627,7 +627,7 @@
         }
 
         function getDataForm() {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(
                 response => {
                     if (response.code == "1") {
                         const mainData = JSON.parse(response.payload);
@@ -654,7 +654,7 @@
             )
         }
         function getDataFilter() {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -684,7 +684,7 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 1 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, tipo: 1 }), null, true).then(response => {
                 if (typeof response === 'object') {
                     let { facturas } = JSON.parse(response.payload);
 
@@ -720,7 +720,7 @@
          * @returns facturas
          */
         function searchInvoiceBySupplier(obj) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 6 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 6 }), null, true).then(response => {
                 if (!response) return {}
                 if (response.code === "0") {
                     console.log(response)
@@ -748,7 +748,7 @@
             })
         }
         function getDataFormRetencionAts(obj) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 7 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 7 }), null, true).then(response => {
                 if (!response) return {}
                 if (response.code === "0") {
                     console.log(response)
@@ -772,7 +772,7 @@
         }
 
         function post(data) {
-            return mS.getData('post', `${url}Insert`, { data }, true)
+            return mS.getData('post', `${url}`, { data }, true)
         }
         function put(id, data) {
             return mS.getData('put', `${url}${id}`, { data }, true)
@@ -1032,7 +1032,7 @@
 
 
         function getIdForInfo(id) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ id, tipo: 5 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ id, tipo: 5 }), null, true).then(
                 response => {
                     const mainData = JSON.parse(response.payload);
                     let { infoFactura, proveedor, tiempoCredito, detalles, impuestos } = mainData;
@@ -1125,7 +1125,7 @@
         }
 
         function getDataForm() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 2 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ typeList: 2 })}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -1156,7 +1156,7 @@
         }
 
         function getDataFilter() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 5 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ typeList: 5 })}`, null, true).then(response => {
 
                 if (response.code === '0') {
                     throw response;
@@ -1181,7 +1181,7 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, typeList: 1 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ ...query, typeList: 1 })}`, null, true).then(response => {
 
                 if (typeof response === 'object') {
                     const { documentos } = JSON.parse(response.payload);
@@ -1209,7 +1209,7 @@
         }
 
         function generateSerieComprobante(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, typeList: 3 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, typeList: 3 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1299,10 +1299,10 @@
 
 
         function post(data) {
-            return mS.getData('post', `${url}Insert`, { data }, true)
+            return mS.getData('post', `${url}`, { data }, true)
         }
         function getId(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 4, id })}`, null, true).then(
+            return mS.getData('get', `${url}?json=${JSON.stringify({ typeList: 4, id })}`, null, true).then(
                 response => {
                     if (response.code == "0") {
                         throw response
@@ -1432,7 +1432,7 @@
         }
 
         function getIdForInfo(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, typeList: 6 })}`, null, true).then(
+            return mS.getData('get', `${url}?json=${JSON.stringify({ id, typeList: 6 })}`, null, true).then(
                 response => {
                     let mainData = JSON.parse(response.payload);
 

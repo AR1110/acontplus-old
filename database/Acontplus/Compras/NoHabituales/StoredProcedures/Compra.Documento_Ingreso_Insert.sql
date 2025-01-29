@@ -225,7 +225,7 @@ BEGIN
 
         IF (@CustomerId = 0)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Debe validar el proveedor',DEFAULT)
+                SELECT '0'code,'Debe validar el proveedor'[message]
 				RETURN 
             END
         
@@ -243,37 +243,37 @@ BEGIN
 		--> Validacacion de informacion
         IF (SELECT COUNT(*) FROM @document) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info Factura', DEFAULT)
+                SELECT '0'code,'Error en la info Factura'[message]
                 RETURN
             END
 
         IF (SELECT COUNT(*) FROM @tblDetails) = 0
 			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en el detalle del documento',DEFAULT)
+				SELECT '0'code,'Se encontro un error en el detalle del documento'[message]
 				RETURN 
 			END 
 
 		IF (SELECT COUNT(*) FROM @tbTaxes) = 0
 			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en los impuestos del documento',DEFAULT)
+				SELECT '0'code,'Se encontro un error en los impuestos del documento'[message]
 				RETURN 
 			END 
 
         IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en las cuotas',DEFAULT)
+                SELECT '0'code,'Error en las cuotas'[message]
                 RETURN
             END
 
 		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE uniqueId = @uniqueId)
 			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Este Id ya se encuentra registrado',DEFAULT)
+				SELECT '0'code,'Este Id ya se encuentra registrado'[message]
 				RETURN 
 			END
 
 		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision AND secuencial = @secuencial)
 			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Este secuencial ya se encuentra registrado',DEFAULT)
+				SELECT '0'code,'Este secuencial ya se encuentra registrado'[message]
 				RETURN 
 			END 
 
@@ -375,7 +375,7 @@ BEGIN
 			SELECT @idCuentaPorPagar,@idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada FROM @tbCuotas 
 			
 		COMMIT TRAN 
-		SELECT [Common].[ufnSpResponse]('1','Registrado Correctamente',DEFAULT)
+		SELECT '1'code,'Registrado Correctamente'[message]
 	END TRY 
 
 	BEGIN CATCH 
@@ -388,7 +388,7 @@ BEGIN
 		      (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/CompraHabitual/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento',DEFAULT)
+        SELECT '0'code,'Error en el procedimiento'[message]
 	END CATCH
 END
 GO

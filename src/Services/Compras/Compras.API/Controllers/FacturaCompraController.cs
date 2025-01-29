@@ -2,25 +2,15 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class FacturaCompraController : ControllerBase
-{
-    private IConfiguration _configuration;
-    private readonly IFacturaCompraService _facturaCompraSvc;
+public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBase
+{  
 
-    public FacturaCompraController(IConfiguration configuration, IFacturaCompraService facturaCompraSvc
-        )
-    {
-        _configuration = configuration;
-        _facturaCompraSvc = facturaCompraSvc;
-
-    }
-
-    [HttpGet("Get")]
+    [HttpGet()]
     public async Task<IActionResult> Get(string json)
     {
         try
         {
-            var response = await _facturaCompraSvc.GetAsync(new Dictionary<string, object>
+            var response = await _svc.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
             });
@@ -35,19 +25,12 @@ public class FacturaCompraController : ControllerBase
         }
     }
 
-    [HttpPost("Insert")]
+    [HttpPost()]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _facturaCompraSvc.AddAsync(request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        request.UserRoleId = User.GetUserRoleId(); 
+        return Ok(await _svc.AddAsync(request)); 
+        
     }
 
     [HttpGet("GetId/{id}")]
@@ -56,7 +39,7 @@ public class FacturaCompraController : ControllerBase
         try
         {
             var response =
-                await _facturaCompraSvc.GetByIdAsync(new Dictionary<string, object>
+                await _svc.GetByIdAsync(new Dictionary<string, object>
                 {
                     { "userRoleId", User.GetUserRoleId() }, { "id", id }
                 });
@@ -75,30 +58,15 @@ public class FacturaCompraController : ControllerBase
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
         request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _facturaCompraSvc.UpdateAsync(id, request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(await _svc.UpdateAsync(id, request)); 
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _facturaCompraSvc.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+    { 
+            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } }; 
+            return Ok(await _svc.DeleteAsync(parameters));
+        
     }
 }

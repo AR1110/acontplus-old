@@ -1,4 +1,4 @@
-import {Component, ElementRef, inject, Input, ViewChild} from '@angular/core';
+import {Component, ElementRef, inject,  ViewChild} from '@angular/core';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use-case';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 
 @Component({
     selector: 'app-vehicle-add-edit-modal',
@@ -25,6 +26,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
         MatButtonModule,
       ReactiveFormsModule,
       MatAutocompleteModule,
+      ToUpperCaseDirective,
         MatCustomDialogComponent,
         MatDynamicCardComponent,
         CompanyCustomerSearchMatComponent
