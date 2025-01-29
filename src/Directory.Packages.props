@@ -5,7 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Acontplus.Common.ApiDocumentation" Version="0.0.3" />
-    <PackageVersion Include="Acontplus.Common.Core" Version="1.2.0" />
+    <PackageVersion Include="Acontplus.Common.Barcode" Version="0.1.0" />
+    <PackageVersion Include="Acontplus.Common.Core" Version="1.2.1" />
     <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.1.14" />
     <PackageVersion Include="Acontplus.Common.Notifications" Version="0.1.2" />
     <PackageVersion Include="Acontplus.Common.S3Application" Version="1.1.4" />
@@ -39,7 +40,7 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Ocelot" Version="23.4.3" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
-    <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.25" />
+    <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.26" />
     <PackageVersion Include="Scrutor" Version="6.0.1" />
   </ItemGroup>
 </Project>
