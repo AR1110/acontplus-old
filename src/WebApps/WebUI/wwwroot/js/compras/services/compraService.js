@@ -627,7 +627,7 @@
         }
 
         function getDataForm() {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(
                 response => {
                     if (response.code == "1") {
                         const mainData = JSON.parse(response.payload);
@@ -654,7 +654,7 @@
             )
         }
         function getDataFilter() {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -684,7 +684,7 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 1 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, tipo: 1 }), null, true).then(response => {
                 if (typeof response === 'object') {
                     let { facturas } = JSON.parse(response.payload);
 
@@ -720,7 +720,7 @@
          * @returns facturas
          */
         function searchInvoiceBySupplier(obj) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 6 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 6 }), null, true).then(response => {
                 if (!response) return {}
                 if (response.code === "0") {
                     console.log(response)
@@ -748,7 +748,7 @@
             })
         }
         function getDataFormRetencionAts(obj) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 7 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 7 }), null, true).then(response => {
                 if (!response) return {}
                 if (response.code === "0") {
                     console.log(response)
@@ -772,7 +772,7 @@
         }
 
         function post(data) {
-            return mS.getData('post', `${url}Insert`, { data }, true)
+            return mS.getData('post', `${url}`, { data }, true)
         }
         function put(id, data) {
             return mS.getData('put', `${url}${id}`, { data }, true)
@@ -1032,7 +1032,7 @@
 
 
         function getIdForInfo(id) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ id, tipo: 5 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ id, tipo: 5 }), null, true).then(
                 response => {
                     const mainData = JSON.parse(response.payload);
                     let { infoFactura, proveedor, tiempoCredito, detalles, impuestos } = mainData;
