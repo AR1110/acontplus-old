@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/enums/config.enums';
 import { map, Observable } from 'rxjs';
@@ -60,18 +60,19 @@ export class PrinterWebRepository implements PrinterRepository {
   }
 
   getLocalPrinters(): Observable<any> {
-    return this._http
-      .get<ApiResponse>(this._urlPrinter, {
-        context: customUrl(),
-      })
-      .pipe(
-        map((response) => {
-          let mainData = JSON.parse(response.payload as string);
-          return {
-            localPrinters: mainData,
-          };
-        }),
-      );
+    // Configure the request
+    const requestOptions = {
+      withCredentials: true, // This is equivalent to privateCredentials: 'include'
+      context: customUrl(),
+    };
+    return this._http.get<ApiResponse>(this._urlPrinter, requestOptions).pipe(
+      map((response) => {
+        let mainData = response.payload;
+        return {
+          localPrinters: mainData,
+        };
+      }),
+    );
   }
 
   getById(id: number): Observable<any> {
