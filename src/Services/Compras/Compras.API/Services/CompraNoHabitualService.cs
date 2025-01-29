@@ -1,29 +1,23 @@
 ﻿namespace Compras.API.Services;
 
-public class CompraNoHabitualService : ICompraNoHabitualService
+public class CompraNoHabitualService(IAdoRepository _repository) : ICompraNoHabitualService
 {
-    private readonly IAdoRepository _repository;
-
-    public CompraNoHabitualService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
-
+    private const string moduleName = "Compra.Documento_Ingreso_";
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Compra.Documento_Ingreso_Get", parameters);
+        var ds = await _repository.GetDataSetAsync($"{moduleName}Get", parameters);
         if (ds.Tables[0].Rows.Count == 0) { return null; }
 
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<string> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Documento_Ingreso_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Insert", parameters);
     }
 
     //public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
@@ -33,7 +27,7 @@ public class CompraNoHabitualService : ICompraNoHabitualService
     //    return DataConverters.DataSetToJSON(ds, true);
     //}
 
-    public async Task<string> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -41,11 +35,11 @@ public class CompraNoHabitualService : ICompraNoHabitualService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Documento_Ingreso_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Documento_Ingreso_Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Delete", parameters);
     }
 }
