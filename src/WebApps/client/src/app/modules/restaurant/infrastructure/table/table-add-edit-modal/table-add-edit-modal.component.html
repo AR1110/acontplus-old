@@ -1,54 +1,57 @@
-<form (ngSubmit)="onSave()" [formGroup]="tableForm" autocomplete="off">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
-      {{ modalTitle }}
-    </h5>
-    <button (click)="onModalClose()" aria-label="Close" class="btn-close" type="button"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="roomId">Sala: </label>
-          <select class="form-select" formControlName="roomId" id="roomId" required>
-            <option value="">Seleccione una sala</option>
-            @for (item of rooms; track $index) {
-              <option [value]="item.id">{{ item.floor?.description }} - {{ item.description }}</option>
-            }
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="description">Descripción: </label>
-          <input [maxlength]="50" [minlength]="1" class="form-control" formControlName="description" id="description"
-                 placeholder="Mesa I"
-                 required
-                 type="text">
-        </div>
-      </div>
-    </div>
+<app-mat-custom-dialog
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
-      <div class="col">
-        <div class="form-group">
-          <label for="numberTable">N°. de mesa:</label>
-          <input [min]="1" class="form-control" formControlName="numberTable" id="numberTable" required type="number">
-        </div>
-      </div>
-      <div class="col">
-        <div class="form-group">
-          <label for="capacity">Capacidad:</label>
-          <input [min]="1" class="form-control" formControlName="capacity" id="capacity" required type="number">
-        </div>
-      </div>
-    </div>
+  [containerTemplate]="containerTemplate"
+[actionsTemplate]="actionsTemplate"
+  [title]="modalTitle"
+(close)="close()"
+></app-mat-custom-dialog>
 
-  </div>
-  <div class="modal-footer">
-    <button [disabled]="tableForm.invalid" class="btn btn-outline-success" type="submit">
-      <fa-icon [icon]="'save'"></fa-icon>
-      Guardar
-    </button>
-    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button"> &times; Cancelar</button>
-  </div>
-</form>
+<ng-template #containerTemplate>
+  <form id="formTableId" (ngSubmit)="onSave()" [formGroup]="tableForm" autocomplete="off">
+    <div class="d-grid gap-2">
+      <mat-form-field >
+        <mat-label  >Sala: </mat-label>
+        <mat-select formControlName="roomId"   required>
+          @for (item of rooms; track $index) {
+            <mat-option [value]="item.id">{{ item.floor?.description }} - {{ item.description }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-label>Descripción</mat-label>
+        <input type="text" matInput [maxlength]="50" [minlength]="1"   formControlName="description"
+               placeholder="Mesa I"
+               required  >
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-label>N°. de mesa:</mat-label>
+        <input type="number" matInput [min]="1"   formControlName="numberTable"   required  >
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Capacidad:</mat-label>
+        <input type="number" matInput [min]="1"   formControlName="capacity" id="capacity" required >
+      </mat-form-field>
+
+
+      @if (data.id >0 && !data.enabled){
+        <mat-slide-toggle formControlName="enabled">
+          {{tableForm.value.enabled?'Activo': 'Inactivo'}}
+        </mat-slide-toggle>
+      }
+
+    </div>
+  </form>
+
+</ng-template>
+<ng-template #actionsTemplate>
+  <button type="submit" form="formTableId" [disabled]="tableForm.invalid" mat-flat-button>
+    {{ btnText }}
+  </button>
+
+</ng-template>
+

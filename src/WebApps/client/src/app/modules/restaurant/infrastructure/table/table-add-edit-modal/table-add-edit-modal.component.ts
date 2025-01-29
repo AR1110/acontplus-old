@@ -6,22 +6,39 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { RoomService } from '@restaurant/data/services/room.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
 import { Room } from '@restaurant/domain/models/room.model';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TableService } from '@restaurant/data/services/table.service';
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatButtonModule} from "@angular/material/button";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
     selector: 'app-table-add-edit-modal',
-    imports: [FormsModule, ReactiveFormsModule, FaIconComponent],
+    imports: [
+      FormsModule,
+      ReactiveFormsModule,
+      MatButtonModule,
+      MatSelectModule,
+      MatInputModule,
+      MatFormFieldModule,
+      MatSlideToggleModule,
+      MatCustomDialogComponent
+    ],
     templateUrl: './table-add-edit-modal.component.html',
     styles: ``
 })
 export class TableAddEditModalComponent {
+
+  readonly dialogRef = inject(MatDialogRef<TableAddEditModalComponent>);
+  readonly params = inject<any>(MAT_DIALOG_DATA);
+
   establecimientoId: number = 0;
   data: any = {};
   rooms: Room[] = [];
@@ -37,23 +54,33 @@ export class TableAddEditModalComponent {
     capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
     enabled: new FormControl(true),
   });
-  modalIcon: IconProp = 'plus';
+
   modalTitle: string = 'Registrar Mesa';
-  #modalRef = inject(NgbActiveModal);
+  btnText = 'Guardar';
   #roomService = inject(RoomService);
   #tableService = inject(TableService);
   #tS = inject(ToasterService);
+
 
   getRooms() {
     this.#roomService
       .getByEstab(this.establecimientoId)
       .subscribe((response) => {
         this.rooms = (response.payload as Room[]) || [];
+
+
       });
   }
 
   ngOnInit() {
-    this.establecimientoId = this.data.establecimientoId;
+    const {establecimientoId,  ...rest} = this.params;
+    this.data = structuredClone(this.params)
+    if(this.data.id>0){
+      this.modalTitle = 'Editar Mesa';
+      this.btnText ='Actualizar'
+    this.tableForm.setValue(rest)
+    }
+    this.establecimientoId = establecimientoId;
     this.getRooms();
   }
 
@@ -80,8 +107,8 @@ export class TableAddEditModalComponent {
     }
   }
 
-  onModalClose() {
-    this.#modalRef.close();
+  close() {
+    this.dialogRef.close();
   }
 
   successResponse(response: ApiResponse) {
@@ -90,7 +117,9 @@ export class TableAddEditModalComponent {
       message: response.message,
     });
     if (response.code == '1') {
-      this.#modalRef.close(response);
+      this.dialogRef.close(response);
     }
   }
+
+
 }
