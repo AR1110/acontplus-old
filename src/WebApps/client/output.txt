@@ -65,7 +65,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── tipo-doc.model.ts
 |  |  |  |  └── user.model.ts
 |  |  |  ├── services
-|  |  |  |  ├── dialog.service.ts
+|  |  |  |  ├── dialog-custom.service.ts
 |  |  |  |  ├── modal.service.ts
 |  |  |  |  ├── shared.service.ts
 |  |  |  |  ├── toaster.service.ts

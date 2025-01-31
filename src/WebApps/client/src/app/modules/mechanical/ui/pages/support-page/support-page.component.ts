@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
@@ -23,7 +22,6 @@ import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
-import { ConvertDocModalComponent } from './components/convert-doc-modal/convert-doc-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
@@ -35,11 +33,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { CompanyCustomerSearchMatComponent } from "../../../../customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
+import {
+  CompanyCustomerSearchMatComponent
+} from "@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
+import {
+  ConvertDocDialogComponent
+} from "@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component";
 
 @Component({
     selector: 'app-support-page',
@@ -335,14 +338,26 @@ export class SupportPageComponent {
   askToConvertToDoc(id: number) {
     this.supportUseCase.getConvertToAprobDoc(id).subscribe({
       next: (response) => {
-        let modalRef = this.modalSvc.open(ConvertDocModalComponent);
-        modalRef.componentInstance.params = response;
 
-        modalRef.result.then((result) => {
-          if (result  && typeof result === 'object') {
-            this.getSupports();
+        let dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
+          size: 'lg',
+          data: response
+        })
+
+        dialogRef.subscribe(result=>{
+          if(result && typeof  result==='object'){
+            this.getSupports()
           }
-        });
+        })
+
+        // let modalRef = this.modalSvc.open(ConvertDocModalComponent);
+        // modalRef.componentInstance.params = response;
+        //
+        // modalRef.result.then((result) => {
+        //   if (result  && typeof result === 'object') {
+        //     this.getSupports();
+        //   }
+        // });
       },
     });
   }

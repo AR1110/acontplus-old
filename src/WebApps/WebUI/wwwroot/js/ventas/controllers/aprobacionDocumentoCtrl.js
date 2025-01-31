@@ -1780,9 +1780,10 @@
 
     app.controller('ModalAprobDocEditarCtrl', ModalAprobDocEditarCtrl);
 
-    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params']
+    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout','$injector', 'articuloService', 'params']
 
-    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
+    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout,$injector, articuloSvc, params) {
+        let pricingUtils = $injector.get('pricingUtils');
 
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
@@ -1985,7 +1986,10 @@
 
         function calculateTotalItems(items) {
             return items.map(item => {
-                let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
+
+                let totalAntesDescuento = pricingUtils.calcularTotalAntesDescuento(item.precioUnitario, item.cantidad);
+                let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(totalAntesDescuento, item.valorDescuento);
+ 
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
@@ -1999,8 +2003,7 @@
 
         initiload();
         function initiload() {
-            try {
-                showLoader();
+            try { 
                 let {
                     estabs,
                     tarifasImpuesto,
