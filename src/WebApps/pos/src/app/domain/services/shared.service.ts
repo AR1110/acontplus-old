@@ -1,127 +1,128 @@
-import {DOC_TYPE, PATHS, PATHS_API, STRING_SPLIT_REGEX} from '@domain/enums/main.enum';
-import {ApiResponse} from '@domain/models/api-response';
-import {HttpClient} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
+import { DOC_TYPE, PATHS, PATHS_API } from '@domain/enums/main.enum';
+import { ApiResponse } from '@domain/models/api-response';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import FileSaver from 'file-saver';
-import {map, Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import {ToasterService} from './toaster.service';
-import {getCustomUrlContext} from "@core/interceptors/inject-session.interceptor";
+import { ToasterService } from './toaster.service';
+import { getCustomUrlContext } from '@core/interceptors/inject-session.interceptor';
 
-type ParamsPrint = { id: number, documentoId: number, tipo: 1 | 2 | 3 | 4 }
+type ParamsPrint = {
+  id: number;
+  documentoId: number;
+  tipo: 1 | 2 | 3 | 4;
+  codDoc: string;
+  codEstab?: string;
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SharedService {
-  private http = inject(HttpClient)
-  private tS = inject(ToasterService)
+  private http = inject(HttpClient);
+  private tS = inject(ToasterService);
 
-  constructor() {
-  }
-
+  constructor() {}
 
   askToPrint(obj: ParamsPrint) {
     Swal.fire({
       icon: 'warning',
       html: `<small>Desea Imprimir este comprobante?</small>`,
-      confirmButtonText: '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
+      confirmButtonText:
+        '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
       showDenyButton: true,
       denyButtonText: 'No, cancelar',
-      allowOutsideClick: false
-    }).then(result => {
-
+      allowOutsideClick: false,
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.getPrinter(obj)
+        this.getPrintConfig(obj);
       }
-    })
+    });
   }
 
-  getPrinter(obj: ParamsPrint) {
-
-    let json = JSON.stringify(obj);
-    this.http.get<ApiResponse>(`${PATHS_API.RESTAURANT}${PATHS.ORDER}Print/${json}`).subscribe({
-      next: response => {
-        if (response.code === "0") {
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code === "1") {
-          let mainData = JSON.parse(response.payload as string);
-          this.print(mainData);
-
-        }
-      },
-      error: err => {
-        console.log(err)
-      }
-    })
-  }
-
-  print<T extends { urlPrinter: string }>(params: T[]) {
-    for (const param of params) {
-      this.http.post<ApiResponse>(`${param.urlPrinter}`, param, {context: getCustomUrlContext()}).subscribe({
-        next: response => {
-          if (response.code === "0") {
+  getPrintConfig(obj: ParamsPrint) {
+    let json = JSON.stringify({
+      codDoc: obj.codDoc,
+      tipo: 2,
+      id: obj.id,
+      codEstab: obj.codEstab,
+    });
+    this.http
+      .get<ApiResponse>(`${PATHS_API.CONFIG}Print/?json=${json}`)
+      .subscribe({
+        next: (response) => {
+          if (response.code === '0') {
             this.tS.toastr({
               type: 'warning',
-              message: response.message
-            })
+              message: response.message,
+            });
           }
-          if (response.code === "1") {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message
-            })
+          if (response.code === '1') {
+            this.print(response.payload as string, obj);
           }
         },
-        error: err => {
-          console.log(err)
-        }
-      })
-
-    }
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
-  getPrinterOrder(id: number) {
-    this.getPrinter({
+  print(urlPrinter: string, paramsToPrint: ParamsPrint) {
+    this.http
+      .post<ApiResponse>(`${urlPrinter}`, paramsToPrint, {
+        context: getCustomUrlContext(),
+      })
+      .subscribe({
+        next: (response) => {
+          this.tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+  }
+  createOrderPrint(id: number) {
+    this.getPrintConfig({
       id,
       documentoId: 0,
-      tipo: 2
-    })
+      tipo: 2,
+      codDoc: DOC_TYPE.OR,
+    });
   }
 
-  getPrinterFactura(id: number, documentoId: number) {
-    this.getPrinter({
+  createInvoicePrint(id: number, documentoId: number) {
+    this.getPrintConfig({
       id,
       documentoId,
-      tipo: 3
-    })
+      tipo: 3,
+      codDoc: DOC_TYPE.FV,
+    });
   }
 
-  getPrinterNotaEntrega(id: number, documentoId: number) {
-    this.getPrinter({
+  createNotaEntregaPrint(id: number, documentoId: number) {
+    this.getPrintConfig({
       id,
       documentoId,
-      tipo: 4
-    })
+      tipo: 4,
+      codDoc: DOC_TYPE.NE,
+    });
   }
-
 
   printerDoc(data: any, codDoc: string) {
     if (data.printerAutomatic) {
       if (codDoc === DOC_TYPE.FV) {
-        this.getPrinterFactura(data.orderId, data.idDocumento)
+        this.createInvoicePrint(data.orderId, data.idDocumento);
       }
       if (codDoc === DOC_TYPE.NE) {
-        this.getPrinterNotaEntrega(data.orderId, data.idDocumento)
+        this.createNotaEntregaPrint(data.orderId, data.idDocumento);
       }
     }
   }
-
 
   getFileName(response: any) {
     let contentDisposition = response.headers.get('content-disposition');
@@ -135,7 +136,7 @@ export class SharedService {
   }
 
   saveFile(response: any, format?: string, downloadOnly: boolean = false) {
-    let fileName = this.getFileName(response)
+    let fileName = this.getFileName(response);
 
     if (format === 'pdf') {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
@@ -171,18 +172,19 @@ export class SharedService {
    * @returns Observable si `isReturnData` es verdadero, de lo contrario void.
    */
   getReport<T>({
-                 data,
-                 format = 'pdf',
-                 isOldVersion = false,
-                 downloadOnly = false,
-                 isReturnData = false
-               }: {
+    data,
+    format = 'pdf',
+    isOldVersion = false,
+    downloadOnly = false,
+    isReturnData = false,
+  }: {
     data: T;
     format?: 'pdf' | 'excel';
     isOldVersion?: boolean;
     downloadOnly?: boolean;
     isReturnData?: boolean;
-  }): Observable<any> | void {  // <- Retorna Observable si isReturnData es true, de lo contrario void
+  }): Observable<any> | void {
+    // <- Retorna Observable si isReturnData es true, de lo contrario void
     const reportVersionPath = isOldVersion ? PATHS.REPORT_V1 : PATHS.REPORT_V2;
     const fullPath = `${PATHS_API.REPORT}${reportVersionPath}Download`;
 
@@ -194,7 +196,7 @@ export class SharedService {
 
     // Si se debe retornar el blob en lugar de descargar
     if (isReturnData) {
-      return this.http.post(fullPath, data, requestOptions);  // Retorna Observable
+      return this.http.post(fullPath, data, requestOptions); // Retorna Observable
     }
 
     // Si solo se descarga el archivo
@@ -203,11 +205,9 @@ export class SharedService {
       error: (err) => {
         console.error('Error al descargar el reporte:', err);
         // Aquí podrías mostrar un mensaje de error al usuario
-      }
+      },
     });
 
-    return;  // <- Devuelve void en caso de que no se use isReturnData
+    return; // <- Devuelve void en caso de que no se use isReturnData
   }
-
-
 }

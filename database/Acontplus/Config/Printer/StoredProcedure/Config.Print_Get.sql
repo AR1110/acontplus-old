@@ -9,7 +9,6 @@ GO
 -- Create date: 2023-03-16
 -- Description:	sp for get data to print
 -- =============================================
- -- Config.Print_Get 369, '{"isPrint":1,"idDocument":158946,"codEstab":"ESTAB-000000249","codDoc":"NE","codigo":"RNEPT"}'
 
 CREATE OR ALTER PROCEDURE Config.Print_Get @userRoleId INT
 	,@json VARCHAR(MAX)
@@ -22,10 +21,12 @@ BEGIN
 
 	------DATA JSON PARAMETER-------------
 	DECLARE @idDocument INT
+            ,@documentoId INT
 	       ,@codEstab VARCHAR(50)
            ,@establecimientoId INT
 	       ,@codDoc VARCHAR(5)
            ,@tipo INT
+           ,@orderId INT;
 	------------END---------------------
 
 	--------PARAMETER MANAGEMENT----------
@@ -45,31 +46,57 @@ BEGIN
 
 	SELECT @codEstab = codEstab
         ,@idDocument = idDocument
+        ,@documentoId = documentoId
         ,@codDoc= codDoc 
         ,@tipo = tipo
-    FROM OPENJSON(@json) WITH (idDocument INT  '$.idDocument',codEstab VARCHAR(50) '$.codEstab',codDoc VARCHAR(5) '$.codDoc', tipo INT)
+        ,@orderId = id
+    FROM OPENJSON(@json) WITH (
+                                idDocument INT  '$.idDocument',
+                                documentoId INT '$.documentoId',
+                                codEstab VARCHAR(50) '$.codEstab',
+                                codDoc VARCHAR(5) '$.codDoc',
+                                tipo INT,
+                                id INT
+                              )
 
-	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
-    
-	IF NOT EXISTS (SELECT 1 FROM Config.Printer WITH (NOLOCK) WHERE EstablecimientoId = @establecimientoId AND [Enabled] = 1)
+	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WITH(NOLOCK) WHERE codEstab = @codEstab)
+
+    --DE RESTAURANTE SOLO LLEGA TIPO 2
+    IF (@codDoc IN ('OR', 'ORC'))
+        BEGIN
+            SET @establecimientoId = (SELECT EstablecimientoId FROM Restaurant.[Order] WITH(NOLOCK) WHERE id = @orderId)
+        END
+    ELSE
+        BEGIN
+            --TEMPORAL --> VARIABLES HECHO LEÑA EN FRONT
+            IF (@idDocument = 0 OR @idDocument IS NULL)
+                BEGIN
+                    SET @idDocument = @documentoId
+                END
+        END
+
+	IF NOT EXISTS (SELECT 1 FROM Config.Printer p WITH (NOLOCK)
+        INNER JOIN Config.PrinterDocument pd ON p.Id = pd.PrinterId 
+    WHERE p.EstablecimientoId = @establecimientoId AND pd.codDoc = @codDoc AND p.[Enabled] = 1)
 		BEGIN
-			SELECT '0','No tienes ninguna impresora configurada' as 'message'
+			SELECT '0','No tienes ninguna impresora configurada para este tipo de documento' as 'message'
 			RETURN 
 		END
 
-    IF EXISTS (SELECT TOP 1 1 FROM Config.EstablecimientoLogo WHERE EstablecimientoId = @establecimientoId)
-        BEGIN
-            SELECT @logoName = @codEstab + '-' + CONVERT(VARCHAR, LatestVersion), @logoMimeType = ContentType FROM Config.EstablecimientoLogo WHERE EstablecimientoId = @establecimientoId
-        END
-
 	SELECT TOP 1 @urlPrinter = IIF(@isMobileUserAgent = 1, IpAddress, p.Domain)
 	FROM Config.PrinterDocument     cd WITH (NOLOCK)
-	INNER JOIN Config.Printer      p WITH (NOLOCK) ON p.Id      = cd.PrinterId AND p.[Enabled] = 1
+	INNER JOIN Config.Printer      p WITH (NOLOCK) ON p.Id      = cd.PrinterId
+    AND p.[Enabled] = 1
 	INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = p.PrinterTypeId
 	WHERE cd.codDoc  = @codDoc
 	  AND p.EstablecimientoId = @establecimientoId 
 	  AND cd.[Enabled]  = 1
-	  AND (p.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(p.Machine))) > 0)
+    
+    IF (@urlPrinter IS NULL OR LEN(LTRIM(RTRIM(@urlPrinter))) = 0)
+        BEGIN
+			SELECT '0','No se pudo obtener la ' as 'message'
+			RETURN 
+		END
 
     IF @tipo = 2
         BEGIN
@@ -77,11 +104,18 @@ BEGIN
             RETURN
         END
 
+    IF EXISTS (SELECT TOP 1 1 FROM Config.EstablecimientoLogo WHERE EstablecimientoId = @establecimientoId)
+        BEGIN
+            SELECT @logoName = @codEstab + '-' + CONVERT(VARCHAR, LatestVersion), @logoMimeType = ContentType 
+            FROM Config.EstablecimientoLogo 
+            WHERE EstablecimientoId = @establecimientoId
+        END
+
 	SELECT @totalThermalPrinters   = (SELECT COUNT(*) FROM Config.v_Printer ii WITH (NOLOCK) WHERE  ii.Id = i.Id AND ii.printerTypeCode = 'TE')  
 	      ,@totalInyectionPrinters = (SELECT COUNT(*) FROM Config.v_Printer ii WITH (NOLOCK) WHERE  ii.Id = i.Id AND ii.printerTypeCode = 'AT')  
 	FROM Config.PrinterDocument cd WITH (NOLOCK)
 	INNER JOIN Config.v_Printer i WITH (NOLOCK) ON i.Id = cd.PrinterId
-	 WHERE cd.codDoc  = @codDoc
+	WHERE cd.codDoc  = @codDoc
 	   AND i.EstablecimientoId = @establecimientoId 
 	   AND cd.[Enabled]  = 1 
 
@@ -106,7 +140,8 @@ BEGIN
 			IF EXISTS (SELECT 1 FROM Config.EstablecimientoLogo el INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab)		
 				BEGIN
 					SET @hasParams = 1
-					SET @rdlcParams = (SELECT logo = [filename], ContentType mimeType FROM Config.EstablecimientoLogo el INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab FOR JSON PATH)
+					SET @rdlcParams = (SELECT logo = [filename], ContentType mimeType FROM Config.EstablecimientoLogo el 
+                    INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab FOR JSON PATH)
 				END
 			ELSE
 				BEGIN
@@ -129,6 +164,7 @@ BEGIN
 													   WHEN 'IC' THEN 'IngresoEgreso' + ti.[Name] + '.rdl'
 													   WHEN 'EC' THEN 'IngresoEgreso' + ti.[Name] + '.rdl'
 													   WHEN 'A'  THEN 'Anticipo'      + ti.[Name] + '.rdl'
+                                                       ELSE ''
 									      END
 						     ,hasParams = @hasParams
 						     ,codDoc = CASE @codDoc WHEN 'IC' THEN 'MC'

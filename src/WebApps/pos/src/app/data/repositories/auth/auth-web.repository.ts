@@ -32,9 +32,7 @@ export class AuthWebRepository implements AuthRepository {
   }
 
   createToken<T>(data: T) {
-    return this.http.post<ApiResponse>(`${this._url}createToken`, data, {
-      context: getCustomUrlContext()
-    })
+    return this.http.post<ApiResponse>(`${this._url}createToken`, data)
   }
 
 

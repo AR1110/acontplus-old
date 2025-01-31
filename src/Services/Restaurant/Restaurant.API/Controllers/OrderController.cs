@@ -39,7 +39,7 @@ public class OrderController(IOrderService orderService) : BaseApiController
         return Ok(await orderService.DeleteAsync(User.GetUserId(), id));
     }
 
-    [HttpGet("Print/{json}")]
+    [HttpGet("Print")]
     public async Task<IActionResult> Print(string json)
     {
         var parameters =

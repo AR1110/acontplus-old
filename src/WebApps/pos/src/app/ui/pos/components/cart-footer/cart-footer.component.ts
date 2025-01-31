@@ -386,7 +386,7 @@ export class CartFooterComponent {
               // Se ha guardado como orden
               if (codDoc === DOC_TYPE.OR) {
                 const orderId = response.payload as number;
-                this.sharedSvc.getPrinterOrder(orderId);
+                this.sharedSvc.createOrderPrint(orderId);
                 this.clean();
                 return;
               }
