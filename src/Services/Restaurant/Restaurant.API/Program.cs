@@ -1,17 +1,19 @@
 ﻿using System.Runtime.InteropServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
+using Services.Common.Configuration;
 using Services.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
+
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);

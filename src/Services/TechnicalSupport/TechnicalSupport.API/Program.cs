@@ -1,10 +1,11 @@
 ﻿using System.Runtime.InteropServices;
-using Common.AppSettings;
+using Services.Common.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 

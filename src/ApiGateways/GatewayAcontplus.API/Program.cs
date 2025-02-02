@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
 using GatewayAcontplus.API.Delegates;
 //using GatewayAcontplus.API.Middleware;
 //using GatewayAcontplus.API.Services;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Services.Common.Configuration;
 using Services.Common.Extensions;
 using Services.Common.Middleware;
 
@@ -24,8 +24,10 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
 // Secure Environment Variable Retrieval (consider secret management for sensitive data)
 var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")

@@ -1,6 +1,6 @@
 ﻿namespace Compras.API.Services;
 
-public class FacturaCompraService (IAdoRepository _repository) : IFacturaCompraService
+public class FacturaCompraService(IAdoRepository _repository) : IFacturaCompraService
 {
     private const string moduleName = "Compra.Factura_";
     public async Task<object> GetAsync(Dictionary<string, object> parameters)

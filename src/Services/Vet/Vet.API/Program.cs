@@ -1,13 +1,14 @@
 ﻿using System.Runtime.InteropServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
+using Services.Common.Configuration;
 using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 

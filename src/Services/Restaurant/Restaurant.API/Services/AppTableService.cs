@@ -88,7 +88,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         //    return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
         //}
         appTable.Enabled = false;
-        context.Update(appTable); 
+        context.Update(appTable);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Inactivado existosamente" };
     }

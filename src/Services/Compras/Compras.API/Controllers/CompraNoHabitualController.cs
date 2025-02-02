@@ -1,7 +1,7 @@
 ﻿namespace Compras.API.Controllers;
 
 public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApiController
-{ 
+{
 
     [HttpGet()]
     public async Task<IActionResult> Get(string json)
@@ -26,15 +26,15 @@ public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApi
     [HttpPost()]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId(); 
-        return Ok(await _svc.AddAsync(request)); 
+        request.UserRoleId = User.GetUserRoleId();
+        return Ok(await _svc.AddAsync(request));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId(); 
-        return Ok(await _svc.UpdateAsync(id, request));  
+        request.UserRoleId = User.GetUserRoleId();
+        return Ok(await _svc.UpdateAsync(id, request));
     }
 
 
@@ -42,7 +42,7 @@ public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApi
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-    
-        return Ok(await _svc.DeleteAsync(parameters));   
+
+        return Ok(await _svc.DeleteAsync(parameters));
     }
 }

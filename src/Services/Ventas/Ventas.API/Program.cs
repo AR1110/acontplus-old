@@ -1,12 +1,13 @@
 ﻿using System.Runtime.InteropServices;
-using Common.AppSettings;
+using Services.Common.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
+// Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityService(builder.Configuration);

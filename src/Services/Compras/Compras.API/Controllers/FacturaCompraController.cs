@@ -3,7 +3,7 @@
 [Route("api/[controller]")]
 [ApiController]
 public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBase
-{  
+{
 
     [HttpGet()]
     public async Task<IActionResult> Get(string json)
@@ -28,9 +28,9 @@ public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBas
     [HttpPost()]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId(); 
-        return Ok(await _svc.AddAsync(request)); 
-        
+        request.UserRoleId = User.GetUserRoleId();
+        return Ok(await _svc.AddAsync(request));
+
     }
 
     [HttpGet("GetId/{id}")]
@@ -58,15 +58,15 @@ public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBas
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
         request.UserRoleId = User.GetUserRoleId();
-        return Ok(await _svc.UpdateAsync(id, request)); 
+        return Ok(await _svc.UpdateAsync(id, request));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
-    { 
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } }; 
-            return Ok(await _svc.DeleteAsync(parameters));
-        
+    {
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        return Ok(await _svc.DeleteAsync(parameters));
+
     }
 }

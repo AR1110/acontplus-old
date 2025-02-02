@@ -1,4 +1,4 @@
-﻿namespace Compras.API.Services; 
+﻿namespace Compras.API.Services;
 public class ProveedorService(IAdoRepository _repo) : IProveedorService
 {
     private const string ModuleName = "Compra.Proveedor_";
