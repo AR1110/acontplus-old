@@ -90,15 +90,9 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 7,
       id
     })
+
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response:any)=>{
-        let result = {} as any;
-        if(response!==null && typeof response==='object'){
-          let mainData = response.comprobante[0];
-          result = mainData;
-        }
-        return result;
-      })
+      map((response:any)=>SupportMapper.fromApiDocView(response))
     )
   }
 

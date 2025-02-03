@@ -349,15 +349,6 @@ export class SupportPageComponent {
             this.getSupports()
           }
         })
-
-        // let modalRef = this.modalSvc.open(ConvertDocModalComponent);
-        // modalRef.componentInstance.params = response;
-        //
-        // modalRef.result.then((result) => {
-        //   if (result  && typeof result === 'object') {
-        //     this.getSupports();
-        //   }
-        // });
       },
     });
   }
@@ -431,6 +422,7 @@ export class SupportPageComponent {
       console.log(error);
     }
   }
+
 
   getDocView(id: number) {
     try {
