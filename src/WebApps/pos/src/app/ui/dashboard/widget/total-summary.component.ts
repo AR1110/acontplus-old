@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 export class TotalSummaryComponent {
   @Input() input= 0;
 
-  constructor(@Inject('input') public injectedInput: number) {
-    this.input = injectedInput
-  }
+  // constructor(@Inject('input') public injectedInput: number) {
+  //   this.input = injectedInput
+  // }
 }
