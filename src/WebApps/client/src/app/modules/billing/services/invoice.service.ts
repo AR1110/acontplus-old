@@ -96,7 +96,7 @@ export class InvoiceService {
 
   post<T>(data: T) {
 
-    return this.#http.post<ApiResponse>(`${this.#url}Insert`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
   }
 
   put<T>(id: number, data: T) {

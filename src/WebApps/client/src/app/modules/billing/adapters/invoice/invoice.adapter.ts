@@ -5,6 +5,7 @@ import { InvoiceComprobanteApi, InvoiceDetailApi } from "./invoice-api.model";
 import { fechaString, formatDate, formatDateToString } from "@core/utils/date.util";
 import { DECIMALS } from "@core/constants/global.constants";
 import { roundNumber } from "@core/utils/round-number.utils";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
 type MainAdapt = {
   comprobante: any
   details: InvoiceDetail[],
@@ -160,6 +161,7 @@ export class InvoiceAdapter {
     let results = input.map((item, index) => {
       let cantidadTransaccion = item.quantity * (item.conversion || 1)
       let obj = {
+        uuid: generateUuidv4(),
         orderIndex: index + 1,
         idArticulo: item.productId,
         idTarifa: item.feeId,

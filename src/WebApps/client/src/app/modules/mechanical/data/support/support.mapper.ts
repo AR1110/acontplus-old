@@ -246,8 +246,8 @@ export class SupportMapper {
       tiemposCredito: tiempoCredito,
       config: config[0],
       taxPercents: impuestos,
-      inspection : inspection,
-      vehicle : vehicle
+      inspection : inspection || [],
+      vehicle : vehicle || []
     }
 
 
