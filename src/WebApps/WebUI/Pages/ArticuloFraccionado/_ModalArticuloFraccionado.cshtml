@@ -55,13 +55,7 @@
         </div>
         <md-divider></md-divider>
         <div class="row mt-2">
-            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                    <label class="form-control-label">Conversión: <span class="text-danger">*</span></label>
-                    <input type="text" id="conversion" class="form-control border-select" ng-model="data.conversion"
-                        valid-number placeholder="0.00">
-                </div>
-            </div>
+
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <label for="">Medida</label>
                 <div class="input-group">
@@ -74,15 +68,24 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label class="form-control-label">Conversión: <span class="text-danger">*</span></label>
+                    <input type="text" id="conversion" class="form-control border-select" ng-model="data.conversion"
+                        valid-number ng-keyup="onChangeConversion()" placeholder="0.00">
+                </div>
+            </div>
+
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group" ng-if="tipoRegistro==1">
-                    <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
+                    <label>Precio Costo/Fraccionable <span class="text-danger">*</span></label>
                     <input type="text" class="form-control border-select" ng-model="data.precioCostoFraccionado"
                         ng-keyup="recalculateTarifaAdd()" decimal placeholder="0.00">
                 </div>
 
                 <div class="form-group" ng-if="tipoRegistro==2">
-                    <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
+                    <label>Precio Costo/Fraccionable <span class="text-danger">*</span></label>
                     <input type="text" class="form-control border-select" ng-model="data.precioCostoFraccionado"
                         ng-keyup="recalculateTarifaAdd()" decimal placeholder="0.00">
                 </div>

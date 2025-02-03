@@ -1360,6 +1360,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
     $scope.articulo = {};
 
+    let articuloPrincipalTarifa = []
+
     function checkPrecioCosto() {
         return !([null, undefined, "", 0].includes($scope.data.precioCostoFraccionado));
     }
@@ -1559,6 +1561,14 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             minWidth: 100,
         },
         {
+            headerCellTemplate: `<div class="d-flex m-1 justify-content-center align-items-center">
+            <span>% Utilidad</span>
+            
+            <button type="button" ng-click="grid.appScope.recalculatePercentage()"   class="btn btn-secondary btn-xs ml-2"> 
+            <i class="fa fa-redo"></i>
+        </button>
+            
+            </div>`,
             name: "porcentajeUtilidad",
             field: "porcentajeUtilidad",
             type: "number",
@@ -1660,6 +1670,50 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         })
     }
 
+
+    $scope.recalculatePercentage = function(){
+        if(!($scope.data.precioCostoFraccionado>0)){
+            tS.toastr({
+                type: 'warning',
+                message: 'Ingrese precio costo fraccionado'
+            })
+            return 
+        }
+        let precioCosto = Number($scope.data.precioCostoFraccionado);
+
+        console.log(articuloPrincipalTarifa)
+        articuloPrincipalTarifa.forEach((item, index)=>{
+            let precioVenta = pricingUtils.calcularPorcentajeUtilidad(
+                precioCosto,
+                item.porcentajeUtilidad
+            );
+            let precioConIva = pricingUtils.calcularPrecioConIva(
+                precioVenta,
+                item.porcentajeIva
+            );
+
+            $scope.gridOptions.data[index].precioVenta = fS.roundNumber(
+                precioVenta,
+                $scope.decimal.nroPrecio
+            );
+            $scope.gridOptions.data[index].precioConIva = fS.roundNumber(
+                precioConIva,
+                $scope.decimal.nroPrecio
+            );
+            $scope.gridOptions.data[index].porcentajeUtilidad =  item.porcentajeUtilidad;
+
+
+           
+            let ganancia =  $scope.gridOptions.data[index].precioVenta - precioCosto;
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
+                console.log( $scope.gridOptions.data)
+                console.log(item.porcentajeUtilidad)
+
+        })
+
+         
+    }
+
     $scope.searchArticuloFraccionadoFilter = function (textSearch) {
         let query = {
             checkBoxFraccionado: true,
@@ -1683,10 +1737,13 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         try { 
             articuloSvc.findById(item.idArticulo).then((response) => { 
                 let { data, articuloTarifas } = response;
+             
                 $scope.data = data;
                 $scope.data.selectedArticulo = data.descripcion;
 
-                $scope.gridOptions.data = articuloTarifas.map((item) => {
+                articuloPrincipalTarifa = structuredClone(articuloTarifas); 
+
+                $scope.gridOptions.data = structuredClone(articuloTarifas).map((item) => {
                     item.precioVenta = 0;
                     item.precioConIva = 0;
                     item.porcentajeUtilidad = 0;
@@ -1700,6 +1757,15 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         } catch (error) { 
             console.log(error);
         }
+    }
+
+    $scope.onChangeConversion = function(){
+        console.log($scope.data.conversion)
+        if($scope.data.conversion>0){
+            let precioCostoFraccionado = Number($scope.data.conversion) + $scope.data.precioCosto; 
+            $scope.data.precioCostoFraccionado = fS.roundNumber(precioCostoFraccionado, 3)
+        }
+
     }
 
     $scope.recalculateTarifaAdd = function () {
@@ -1769,8 +1835,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.resultModalMedida = async function (result) {
-        try {
-            console.log(result)
+        try { 
             if (typeof result !== "object") return;
             const { medidas } = await articuloSvc.getDataForForm();
             $scope.medidas = medidas;
