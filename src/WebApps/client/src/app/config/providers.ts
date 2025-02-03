@@ -15,6 +15,7 @@ import { commonProviders } from '@modules/common/providers';
 import { mechanicalProvider } from '@mechanical/providers';
 import { restaurantProvider } from '@restaurant/providers';
 import { configProvider } from '@modules/config/providers';
+import {saleProvider} from "@sale/providers";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -50,4 +51,5 @@ export const featureProviders = [
   ...mechanicalProvider,
   ...restaurantProvider,
   ...configProvider,
+  ...saleProvider
 ];

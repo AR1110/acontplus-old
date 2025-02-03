@@ -7,7 +7,6 @@ import {MatButtonToggle} from "@angular/material/button-toggle";
 import {FormaPagoSri} from "@shared/models/forma-pago-sri";
 import {TiempoCredito} from "@accounting/core/domain/tiempo-credito.interface";
 import {TarifaImpuesto} from "@shared/models/tarifa-impuesto.model";
-import {NotaEntregaService} from "@sale/services/nota-entrega.service";
 import {InvoiceService} from "@billing/services/invoice.service";
 import {ToasterService} from "@core/services/toaster.service";
 import {SalesDetailCalculationService} from "@shared/services/sales-detail-calculation.service";
@@ -19,8 +18,9 @@ import {addDayToDate, ajustarFechaEmisionModificada, dateIsAfterCurrentDate, isD
 import {FORMA_PAGO_SRI_CODE} from "@core/constants/global.constants";
 import {isValidField} from "@core/utils/utils";
 import {isValidGeneratorQuota} from "@accounting/utils/calculate-quota.util";
-import {InvoiceAdapter} from "@billing/adapters/invoice/invoice.adapter";
-import {notaEntregaAdapter} from "@sale/adapters/nota-entrega/nota-entrega.adapter";
+import {InvoiceAdapter} from "@billing/adapters/invoice/invoice.adapter"; 
+import {NotaEntregaUseCase} from "@sale/domain/use-cases/nota-entrega.use-case";
+import {NotaEntregaMapper} from "@sale/data/nota-entrega/nota-entrega.mapper";
 
 @Component({
   selector: 'app-convert-doc-dialog',
@@ -51,7 +51,7 @@ export class ConvertDocDialogComponent {
   } = inject<any>(MAT_DIALOG_DATA);
 
 
-  private notaEntregaSvc = inject(NotaEntregaService);
+  private _notaEntregaUseCase = inject(NotaEntregaUseCase);
   private invoiceSvc = inject(InvoiceService);
   private tS = inject(ToasterService);
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
@@ -566,10 +566,10 @@ export class ConvertDocDialogComponent {
         infoAdicionalDoc: selectedData
       }
 
-      let senData = notaEntregaAdapter.mainAdapt(params)
+      let senData = NotaEntregaMapper.toApiSave(params)
 
 
-      this.notaEntregaSvc.post(senData).subscribe(this.successResponse)
+      this._notaEntregaUseCase.post(senData).subscribe(this.successResponse)
 
     } catch (error) {
       console.log(error)

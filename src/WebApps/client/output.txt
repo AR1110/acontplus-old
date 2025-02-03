@@ -741,7 +741,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  └── restaurant-config.resolver.ts
 |  |  |  |  ├── restaurant.routes.ts
 |  |  |  |  ├── services
-|  |  |  |  |  ├── floor-web.service.ts
 |  |  |  |  |  ├── ingredient.service.ts
 |  |  |  |  |  ├── item.service.ts
 |  |  |  |  |  ├── menu-item.service.ts
