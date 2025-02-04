@@ -37,10 +37,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
             { "userRoleId", User.GetUserRoleId() },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await service.AddAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-        ;
+        var response = await service.AddAsync(parameters); 
         return Ok(response);
     }
 
@@ -54,10 +51,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await service.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-        ;
+        var response = await service.UpdateAsync(parameters); 
         return Ok(response);
     }
 
