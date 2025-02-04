@@ -1539,12 +1539,12 @@
         }
 
         function getDataForm() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
                 if (response.code === '1') {
-                    let results = JSON.parse(response.payload) || [];
+                    let results = JSON.parse(response.payload) || {}; 
 
                     const { configDecimales, bodegas, impuestos, ptoEmi, tiempoCredito } = results;
 
@@ -1569,7 +1569,7 @@
         }
 
         function getDataFilter() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
 
                 if (response.code === '0') {
                     throw response;
@@ -1593,7 +1593,7 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
 
                 if (typeof response === 'object') {
                     const { comprobante } = JSON.parse(response.payload);
@@ -1615,7 +1615,7 @@
         }
 
         function generateSerieComprobante(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, typeList: 3 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, typeList: 3 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1700,7 +1700,7 @@
 
 
         function post(data) {
-            return mS.getData('post', `${url}Insert`, { data }, true)
+            return mS.getData('post', `${url}`, { data }, true)
         }
         function getId(id) {
             return mS.getData('get', `${url}GetId/${id}`, null, true).then(
@@ -1788,7 +1788,7 @@
         }
 
         function getIdForInfo(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
+            return mS.getData('get', `${url}?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
                 response => {
                     let mainData = JSON.parse(response.payload);
 

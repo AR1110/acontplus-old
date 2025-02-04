@@ -1,40 +1,37 @@
 ﻿namespace Compras.API.Services;
 
-public class OrdenCompraService : IOrdenCompraService
+public class OrdenCompraService(IAdoRepository _repository) : IOrdenCompraService
 {
-    private readonly IAdoRepository _repository;
+    private const string nameSp = "Compra.Orden_";
 
-    public OrdenCompraService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters); 
+
+        return DataValidation.DataSetIsNull(ds)
+          ? new ApiResponse { Code = "0", Message = "Can't get data" }
+          : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync("Compra.Orden_Get", parameters);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
-
-        return DataConverters.DataSetToJson(ds);
-    }
-
-    public async Task<string> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Orden_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
     }
 
-    public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Compra.Orden_Get_Id", parameters);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get_Id", parameters); 
 
-        return DataConverters.DataSetToJson(ds);
+        return DataValidation.DataSetIsNull(ds)
+        ? new ApiResponse { Code = "0", Message = "Can't get data" }
+        : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }; 
     }
 
-    public async Task<string> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -42,11 +39,11 @@ public class OrdenCompraService : IOrdenCompraService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Orden_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Orden_Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
     }
 }
