@@ -92,13 +92,13 @@ BEGIN
         --> Validacion de informacion 
         IF NOT EXISTS(SELECT 1 FROM @tblCliente)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info del cliente', DEFAULT)
+                SELECT  '0'code,'Error en la info del cliente'[message]
                 RETURN
             END
 
 	    IF EXISTS (SELECT 1 FROM Cliente WITH (NOLOCK) WHERE  CustomerId = @customerId AND idEntidad = @idEntidad)
 		    BEGIN
-			    SELECT [Common].[ufnSpResponse]('0','El cliente ya se encuentra registrado', DEFAULT)
+			    SELECT  '0'code,'El cliente ya se encuentra registrado'[message]
 			    RETURN 
 		    END 
 
@@ -132,7 +132,7 @@ BEGIN
             SET @payload =  (SELECT @idCliente as idCliente, nombreFiscal, numeroIdentificacion FROM @tblCliente FOR JSON PATH)
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1','Registrado Correctamente', @payload)
+        SELECT  '1'code,'Registrado Correctamente'[message], @payload as payload
 	END TRY 
 
 	BEGIN CATCH 
@@ -144,6 +144,6 @@ BEGIN
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/Cliente/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento', DEFAULT)
+        SELECT  '0'code,'Error en el procedimiento'[message]
 	END CATCH 
 END
