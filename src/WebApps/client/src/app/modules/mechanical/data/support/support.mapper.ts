@@ -259,7 +259,7 @@ export class SupportMapper {
     let result = {} as any;
     if(response.code==="1"){
       let {comprobante} = JSON.parse(response.payload as string);
-      let mainData =  comprobante[0] ; 
+      let mainData =  comprobante[0] ;
       result = mainData;
     }
     return result;
