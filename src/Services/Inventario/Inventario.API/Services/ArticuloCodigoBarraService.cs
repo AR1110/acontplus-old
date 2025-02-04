@@ -1,14 +1,8 @@
 ﻿namespace Inventario.API.Services;
 
-public class ArticuloCodigoBarraService : IArticuloCodigoBarraService
+public class ArticuloCodigoBarraService(IAdoRepository _repository) : IArticuloCodigoBarraService
 {
-    private readonly IAdoRepository _repository;
-
-    public ArticuloCodigoBarraService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
-
+    private const string nameSp = "Inventario.ArticuloCodigoBarra_";
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("", parameters);
@@ -21,18 +15,18 @@ public class ArticuloCodigoBarraService : IArticuloCodigoBarraService
     }
 
 
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.ArticuloCodigoBarra_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.ArticuloCodigoBarra_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.ArticuloCodigoBarra_Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
     }
 }

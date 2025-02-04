@@ -66,7 +66,7 @@ BEGIN
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @tbImpuesto) = 0
             BEGIN
-                SELECT [Common].[ufnSpResponse]('1','Error en la informacion de json', DEFAULT)
+                SELECT  '0'code,'Error en la informacion de json'[message]
                 RETURN
             END 
 
@@ -107,7 +107,7 @@ BEGIN
             SELECT @userRoleId,Quantity,Module,[Action],Obs,CreateAt FROM @tbImpuesto
 
 		COMMIT TRAN
-        SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
+        SELECT  '1'code,'Actualización exitosa'[message]
 	END TRY
 
 	BEGIN CATCH
@@ -119,7 +119,7 @@ BEGIN
         INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'ImpuestoMasivo/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento', DEFAULT)
+        SELECT  '0'code,'Error en el procedimiento'[message]
     END CATCH
 END
 GO

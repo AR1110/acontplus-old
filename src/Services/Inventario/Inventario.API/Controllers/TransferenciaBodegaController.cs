@@ -36,10 +36,7 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
                 { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
-        var response = await transferenciaBodegaService.AddAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-            ;
+        var response = await transferenciaBodegaService.AddAsync(parameters); 
         return Ok(response);
     }
 
@@ -52,10 +49,7 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await transferenciaBodegaService.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-            ;
+        var response = await transferenciaBodegaService.UpdateAsync(parameters); 
         return Ok(response);
     }
 
@@ -64,10 +58,7 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
     {
 
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await transferenciaBodegaService.DeleteAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-            ;
+        var response = await transferenciaBodegaService.DeleteAsync(parameters); 
         return Ok(response);
     }
 }

@@ -1,14 +1,9 @@
 ﻿namespace Inventario.API.Services;
 
-public class LotPriceService : ILotPriceService
-{
-    private readonly IAdoRepository _repository;
+public class LotPriceService(IAdoRepository _repository) : ILotPriceService
+{ 
     private readonly string nameSchema = "Inventario.PrecioMasivo";
-
-    public LotPriceService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
+ 
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
@@ -22,8 +17,8 @@ public class LotPriceService : ILotPriceService
     }
 
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters, false);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters, false);
     }
 }

@@ -3,7 +3,7 @@
 public interface IArticuloFraccionadoService
 {
     Task<object> GetAsync(Dictionary<string, object> parameters);
-    Task<string> AddAsync(ApiRequest data);
-    Task<string> UpdateAsync(int id, ApiRequest data);
-    Task<string> DeleteAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> AddAsync(ApiRequest data);
+    Task<ApiResponse> UpdateAsync(int id, ApiRequest data);
+    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
 }

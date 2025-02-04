@@ -2,16 +2,8 @@
 
 namespace Inventario.API.Services;
 
-public class StockFisicoService : IStockFisicoService
-{
-    private readonly IAdoRepository _repository;
-    private readonly LegacyApiResponse _response;
-
-    public StockFisicoService(IAdoRepository repository)
-    {
-        _repository = repository;
-        _response = new LegacyApiResponse();
-    }
+public class StockFisicoService(IAdoRepository _repository, LegacyApiResponse _response) : IStockFisicoService
+{ 
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
@@ -30,16 +22,16 @@ public class StockFisicoService : IStockFisicoService
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<string> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.StockFisico_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
     {
         // _context.StockFisicos.Add(stockFisico);
         // await _context.SaveChangesAsync(); 
@@ -49,7 +41,7 @@ public class StockFisicoService : IStockFisicoService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.StockFisico_Update", request.Data);
+        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Update", request.Data);
     }
 
     public async Task<LegacyApiResponse> DeleteAsync(int id)
