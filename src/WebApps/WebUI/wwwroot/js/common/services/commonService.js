@@ -408,7 +408,7 @@ class CommonService {
 
     getPrinter(parameters) {
         try { 
-            let newParams = Object.assign(JSON.parse(parameters), { tipo: 2 });
+            let newParams = Object.assign(JSON.parse(parameters), { getUrlPrintServer: true });
             let url = `Config/Print/?json=${JSON.stringify(newParams)}`
             this.mS.getData('get', url, null, true).then(
                 response => {

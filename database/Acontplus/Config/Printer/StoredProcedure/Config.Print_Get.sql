@@ -25,7 +25,7 @@ BEGIN
 	       ,@codEstab VARCHAR(50)
            ,@establecimientoId INT
 	       ,@codDoc VARCHAR(5)
-           ,@tipo INT
+           ,@getUrlPrintServer BIT = 0
            ,@orderId INT;
 	------------END---------------------
 
@@ -48,14 +48,14 @@ BEGIN
         ,@idDocument = idDocument
         ,@documentoId = documentoId
         ,@codDoc= codDoc 
-        ,@tipo = tipo
+        ,@getUrlPrintServer = getUrlPrintServer
         ,@orderId = id
     FROM OPENJSON(@json) WITH (
                                 idDocument INT  '$.idDocument',
                                 documentoId INT '$.documentoId',
                                 codEstab VARCHAR(50) '$.codEstab',
                                 codDoc VARCHAR(5) '$.codDoc',
-                                tipo INT,
+                                getUrlPrintServer BIT,
                                 id INT
                               )
 
@@ -98,7 +98,7 @@ BEGIN
 			RETURN 
 		END
 
-    IF @tipo = 2
+    IF @getUrlPrintServer = 1
         BEGIN
             SELECT '1' code, payload = IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://' + @urlPrinter)
             RETURN

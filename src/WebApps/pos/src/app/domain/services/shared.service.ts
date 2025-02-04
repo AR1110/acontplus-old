@@ -21,8 +21,8 @@ type ParamsPrint = {
   providedIn: 'root',
 })
 export class SharedService {
-  private http = inject(HttpClient);
-  private tS = inject(ToasterService);
+  private readonly http = inject(HttpClient);
+  private readonly tS = inject(ToasterService);
 
   constructor() {}
 
@@ -45,7 +45,7 @@ export class SharedService {
   getPrintConfig(obj: ParamsPrint) {
     let json = JSON.stringify({
       codDoc: obj.codDoc,
-      tipo: 2,
+      getUrlPrintServer: true,
       id: obj.id,
       codEstab: obj.codEstab,
     });
@@ -71,7 +71,7 @@ export class SharedService {
 
   print(urlPrinter: string, paramsToPrint: ParamsPrint) {
     this.http
-      .post<ApiResponse>(`${urlPrinter}`, paramsToPrint, {
+      .post<ApiResponse>(`${urlPrinter}/Print`, paramsToPrint, {
         context: getCustomUrlContext(),
       })
       .subscribe({
