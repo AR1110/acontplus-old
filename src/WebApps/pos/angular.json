@@ -19,7 +19,7 @@
           "options": {
             "allowedCommonJsDependencies": ["sweetalert2", "file-saver"],
             "outputPath": {
-              "base": "../../Services/Restaurant/Restaurant.API/wwwroot",
+              "base": "dist/pos",
               "browser": ""
             },
             "index": "src/index.html",

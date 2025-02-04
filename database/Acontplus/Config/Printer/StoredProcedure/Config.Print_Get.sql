@@ -185,11 +185,25 @@ BEGIN
                             FOR JSON PATH
 					 )
 	
-	SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
+   SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
+   
+   DECLARE @tblResponse AS TABLE (
+        rdlcProps NVARCHAR(MAX),
+        dataSources NVARCHAR(MAX),
+        rdlcParams NVARCHAR(MAX), 
+        docType VARCHAR(3));
 
-    SELECT '1' code, payload = (SELECT @rdlcProps rdlcProps
-        ,@dataSources dataSources
-        ,@rdlcParams rdlcParams FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
+
+    INSERT INTO @tblResponse (rdlcProps, dataSources, rdlcParams, docType)
+	VALUES(@rdlcProps, @dataSources, @rdlcParams, @codDoc)
+
+    IF NOT EXISTS (SELECT 1 FROM @tblResponse)
+        BEGIN
+            SELECT '0' code, 'No se pudo recuparar información del documento!'
+            RETURN
+        END
+
+    SELECT '1' code, payload = (SELECT * FROM @tblResponse FOR JSON PATH)
 
 END
 GO
