@@ -44,20 +44,19 @@ public class StockFisicoService(IAdoRepository _repository, LegacyApiResponse _r
         return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Update", request.Data);
     }
 
-    public async Task<LegacyApiResponse> DeleteAsync(int id)
-    {
-        // _context.StockFisicos.Add(stockFisico);
-        // await _context.SaveChangesAsync(); 
-        var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
-        if (!DataValidation.DataTableIsNull(dt))
-        {
-            _response.Create("1", payload: DataTableMapper.MapDataRowToModel<LegacyApiResponse>(dt.Rows[0]));
-        }
-        else
-        {
-            _response.Create("0", "La transacción no devolvio respuesta");
-        }
+    //public async Task<LegacyApiResponse> DeleteAsync(int id)
+    //{
+         
+    //    var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
+    //    if (!DataValidation.DataTableIsNull(dt))
+    //    {
+    //        _response.Create("1", payload: DataTableMapper.MapDataRowToModel<LegacyApiResponse>(dt.Rows[0]));
+    //    }
+    //    else
+    //    {
+    //        _response.Create("0", "La transacción no devolvio respuesta");
+    //    }
 
-        return _response;
-    }
+    //    return _response;
+    //}
 }

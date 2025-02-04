@@ -10,7 +10,7 @@ public class StockController(IStockService stockService) : BaseApiController
             {
                     { "userRoleId", User.GetUserRoleId() }, { "id", id }
             });
-        if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Error on put"); }
+        if (response == null  ) { return BadRequest("Error on put"); }
 
             ;
         return Ok(response);
