@@ -1008,11 +1008,41 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                             cuotasPorPagarEstado
                         }
 
+                        if(pagosDetalle.length===0){
+                            tS.toastr({
+                                type: 'warning',
+                                message: 'Pago detalle no se ha generado'
+                            })
+                            return 
+                        }
+
+                        if(historialCuentas.length===0){
+                            tS.toastr({
+                                type: 'warning',
+                                message: 'Historial cuentas no se ha generado'
+                            })
+                            return 
+                        }
+
+                        if(cuentasPorPagarEstado.length===0){
+                            tS.toastr({
+                                type: 'warning',
+                                message: 'cuentasPorPagarEstado no se ha generado'
+                            })
+                            return 
+                        }
+                        if(cuotasPorPagarEstado.length===0){
+                            tS.toastr({
+                                type: 'warning',
+                                message: 'cuotasPorPagarEstado no se ha generado'
+                            })
+                            return 
+                        }
 
 
-                        let params = comprobanteEgresoSvc.mapperTo(data);
-                  
-                        showLoader();
+
+                        let params = comprobanteEgresoSvc.mapperTo(data); 
+                        
                         comprobanteEgresoSvc.post(params).then(response => {
                             if (response.code === "0") {
                                 fS.sweetAlert('warning', response.message)
@@ -1020,19 +1050,20 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                             if (response.code === "1") {
                                 fS.sweetAlert('success', response.message, '', 1000);
-                                $uibModalInstance.close(response)
+                                setTimeout(()=>{
+                                    $uibModalInstance.close(response)
+
+                                }, 1000)
                             }
                         }).catch(error => {
                             console.log(error)
-                        }).finally(() => hideLoader());
-                    } catch (error) {
-                        hideLoader();
+                        }) 
+                    } catch (error) { 
                         console.log(error)
                     }
                 }
             })
-        } catch (error) {
-            hideLoader();
+        } catch (error) { 
             console.log(error)
         }
     }
