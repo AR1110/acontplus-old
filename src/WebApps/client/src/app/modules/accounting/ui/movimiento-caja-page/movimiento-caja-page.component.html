@@ -1,23 +1,18 @@
 <app-breadcrumb />
-<div class="card">
-  <div class="card-body">
-    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-      <li [ngbNavItem]="1">
-        <button ngbNavLink>EGRESOS/INGRESOS CAJA</button>
-        <ng-template ngbNavContent>
-          <app-egreso-ingreso-caja />
-        </ng-template>
-      </li>
-      <li [ngbNavItem]="2">
-        <button ngbNavLink>ANTICIPO</button>
-        <ng-template ngbNavContent>
-          @defer {
-          <app-anticipo />
-          } @loading { Loading... } @error { Something went wrong : }
-        </ng-template>
-      </li>
-    </ul>
 
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
-  </div>
-</div>
+<app-mat-dynamic-card>
+<mat-tab-group animationDuration="0ms">
+  <mat-tab label="EGRESOS/INGRESOS CAJA">
+    <div class="d-grid gap-2 m-2 p-1">
+      <app-egreso-ingreso-caja />
+    </div>
+  </mat-tab>
+  <mat-tab label="ANTICIPO">
+    <div class="d-grid gap-2 m-2 p-1">
+    <app-anticipo />
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+</app-mat-dynamic-card>
+

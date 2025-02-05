@@ -1,20 +1,21 @@
-import { Component } from '@angular/core';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import {ChangeDetectionStrategy, Component } from '@angular/core';
 import { EgresoIngresoCajaComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-caja.component';
 import { AnticipoComponent } from '@accounting/ui/movimiento-caja-page/anticipo/anticipo.component';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
     selector: 'app-movimiento-caja-page',
     imports: [
+      MatTabsModule,
         BreadcrumbComponent,
-        NgbNavModule,
         EgresoIngresoCajaComponent,
-        AnticipoComponent
+        AnticipoComponent,
+      MatDynamicCardComponent
     ],
     templateUrl: './movimiento-caja-page.component.html',
-    styleUrl: './movimiento-caja-page.component.scss'
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MovimientoCajaPageComponent {
-  active = 1;
 }
