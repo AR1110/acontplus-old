@@ -1681,7 +1681,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
         let precioCosto = Number($scope.data.precioCostoFraccionado);
 
-        console.log(articuloPrincipalTarifa)
+        
         articuloPrincipalTarifa.forEach((item, index)=>{
             let precioVenta = pricingUtils.calcularPorcentajeUtilidad(
                 precioCosto,
@@ -1706,8 +1706,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
            
             let ganancia =  $scope.gridOptions.data[index].precioVenta - precioCosto;
                 $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
-                console.log( $scope.gridOptions.data)
-                console.log(item.porcentajeUtilidad)
+                 
 
         })
 
@@ -1759,10 +1758,9 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
     }
 
-    $scope.onChangeConversion = function(){
-        console.log($scope.data.conversion)
+    $scope.onChangeConversion = function(){ 
         if($scope.data.conversion>0){
-            let precioCostoFraccionado = Number($scope.data.conversion) + $scope.data.precioCosto; 
+            let precioCostoFraccionado = Number($scope.data.conversion) * $scope.data.precioCosto; 
             $scope.data.precioCostoFraccionado = fS.roundNumber(precioCostoFraccionado, 3)
         }
 
