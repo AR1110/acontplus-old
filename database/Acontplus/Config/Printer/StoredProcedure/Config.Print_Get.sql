@@ -62,18 +62,17 @@ BEGIN
 	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WITH(NOLOCK) WHERE codEstab = @codEstab)
 
     --DE RESTAURANTE SOLO LLEGA TIPO 2
-    IF (@codDoc IN ('OR', 'ORC'))
+    IF (@codDoc IN ('OR', 'ORC') OR @orderId > 0)
         BEGIN
             SET @establecimientoId = (SELECT EstablecimientoId FROM Restaurant.[Order] WITH(NOLOCK) WHERE id = @orderId)
         END
-    ELSE
-        BEGIN
-            --TEMPORAL --> VARIABLES HECHO LEÑA EN FRONT
-            IF (@idDocument = 0 OR @idDocument IS NULL)
+
+      --TEMPORAL --> VARIABLES HECHO LEÑA EN FRONT
+     IF (@idDocument = 0 OR @idDocument IS NULL)
                 BEGIN
                     SET @idDocument = @documentoId
                 END
-        END
+
 
 	IF NOT EXISTS (SELECT 1 FROM Config.Printer p WITH (NOLOCK)
         INNER JOIN Config.PrinterDocument pd ON p.Id = pd.PrinterId 
