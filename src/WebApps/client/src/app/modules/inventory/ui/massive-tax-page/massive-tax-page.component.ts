@@ -1,228 +1,93 @@
 
-import { Component, inject } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import {Component, inject, signal} from "@angular/core";
 
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import { isApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
-import { isValidField } from "@core/utils/utils";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MassiveTaxService } from "@inventory/services/massive-tax.service";
-import { TarifaImpuesto } from "@shared/models/tarifa-impuesto.model";
-import Swal from "sweetalert2";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatPagination} from "@shared/models/pagination.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {DialogService} from "@core/services/dialog.service";
+import {
+  MassiveTaxDialogComponent
+} from "@inventory/ui/massive-tax-page/massive-tax-dialog/massive-tax-dialog.component";
+import {finalize} from "rxjs/operators";
+import {MassiveTaxUseCase} from "@inventory/domain/usecases/massive-tax.use-case";
 
 
 @Component({
     selector: 'app-massive-tax-page',
     imports: [
-        FormsModule,
-        FontAwesomeModule,
-        BreadcrumbComponent
+      MatIconModule,
+      MatButtonModule,
+        BreadcrumbComponent,
+      MatDynamicCardComponent,
+      MatDynamicTableComponent
     ],
     templateUrl: './massive-tax-page.component.html'
 })
 export class MassiveTaxPageComponent {
-  private readonly massiveTaxSvc = inject(MassiveTaxService);
-  private readonly tS = inject(ToasterService);
+  private readonly _massiveTaxUseCase = inject(MassiveTaxUseCase);
+  private _dialogSvc = inject(DialogService);
+
+  dataSource = []
 
 
-  taxRatesFrom: Array<TarifaImpuesto> = [];
-  taxRatesTo: Array<TarifaImpuesto> = [];
+  isLoadingResults = false;
 
-  histories: any[] = []
+  columnsDefs: ColumnDefinition[] = [
 
-  private taxFromDesc = ''
-  private taxToDesc = ''
-  joinTaxDesc = ''
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'index', label: '#', type: 'string' },
+    { key: 'quantity', label: 'Cantidad', type: 'string' },
+    { key: 'obs', label: 'Observación', type: 'string' },
+    { key: 'createAt', label: 'Fecha Registro', type: 'string' },
+    { key: 'user', label: 'Usuario', type: 'string' },
+  ];
 
-  dataForm = {
-    title: '0 Productos encontrados.',
-    taxIdFrom: 0,
-    taxIdTo: 0,
-    quantityProducts: 0,
-    obs: ''
+
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  pagination = signal(new MatPagination());
+
+  refresh(){
+    this.getAll()
   }
-  private cloneDataForm = structuredClone(this.dataForm)
+
+
+  openDialog(){
+    const dialogRef = this._dialogSvc.open(MassiveTaxDialogComponent, {
+    })
+    dialogRef.subscribe(result=>{
+      if(result && typeof result==='object'){
+        this.refresh()
+      }
+    })
+  }
 
   getAll() {
     try {
-      showLoader()
-      this.massiveTaxSvc.getAll({}).subscribe({
-        next: (response) => {
-          hideLoader();
-          this.histories = response;
-        },
-        error(err) {
-          console.log(err)
-          hideLoader();
-        },
+
+      if(this.isLoadingResults) return
+
+      this.isLoadingResults=true;
+      this._massiveTaxUseCase.getAll({})
+        .pipe(
+          finalize(()=>this.isLoadingResults=false)
+        )
+        .subscribe( (response) => {
+          this.dataSource = response;
       })
     } catch (error) {
       console.log(error)
     }
-  }
-
-  getDataForm() {
-    showLoader();
-    this.massiveTaxSvc.getDataForm().subscribe({
-      next: (response) => {
-        hideLoader();
-        this.taxRatesFrom = response.taxRates;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
-    })
   }
 
 
   ngOnInit() {
-    this.getDataForm();
     this.getAll();
-
   }
 
-  onChangeTaxFrom() {
-    try {
-      this.taxRatesTo = this.taxRatesFrom.filter(t => t.idTarifaImpuesto !== this.dataForm.taxIdFrom);
-      this.taxFromDesc = this.taxRatesFrom.find(t => t.idTarifaImpuesto === this.dataForm.taxIdFrom)?.descripcion || ''
-      showLoader()
-      this.massiveTaxSvc.getQuantityProductByTaxId(this.dataForm.taxIdFrom).subscribe({
-        next: (response) => {
-          hideLoader();
-          this.dataForm.quantityProducts = response;
-          this.dataForm.title = `${this.dataForm.quantityProducts} Productos encontrados.`;
-          this.setTaxDesc()
 
-          if (!(this.dataForm.quantityProducts > 0)) {
-            this.tS.toastr({
-              type: 'info',
-              message: 'No se encontraron productos con impuesto inicial.'
-            })
-            return
-          }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
-      })
-    } catch (error) {
-      hideLoader()
-      console.log(error)
-    }
-  }
-
-  onChangeTaxTo() {
-    this.taxToDesc = this.taxRatesTo.find(t => t.idTarifaImpuesto === this.dataForm.taxIdTo)?.descripcion || ''
-    this.setTaxDesc();
-  }
-  private setTaxDesc() {
-
-    this.joinTaxDesc = `Impuesto Inicial ${this.taxFromDesc} - Impuesto Destino ${this.taxToDesc}: `
-
-    //this.dataForm.obs = joinTaxDesc;
-  }
-
-  private resetForm() {
-    this.taxFromDesc = '';
-    this.taxToDesc = '';
-    this.joinTaxDesc = '';
-    this.dataForm = structuredClone(this.cloneDataForm)
-  }
-  async askToSave() {
-    try {
-
-      if (!(this.dataForm.taxIdFrom > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el Impuesto Inicial'
-        })
-        return
-      }
-
-      if (!(this.dataForm.quantityProducts > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'No se encontraron productos con impuesto inicial.'
-        })
-        return
-      }
-
-      if (!(this.dataForm.taxIdTo > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el Impuesto Destino'
-        })
-        return
-      }
-
-      if (!isValidField(this.dataForm.obs.trim())) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'La observacion es obligatorio.'
-        })
-        return
-      }
-      if (this.dataForm.obs == null || this.dataForm.obs == undefined || this.dataForm.obs.trim() === '') {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'La observacion es obligatorio.'
-        })
-        return
-      }
-
-      let obs = `${this.joinTaxDesc}${this.dataForm.obs}`;
-
-      let { isConfirmed } = await Swal.fire({
-        title: "Actualizar el Impuesto",
-        html: `¿Esta seguro de actualizar el impuesto de los ${this.dataForm.quantityProducts} articulos  masivamente? </br>
-              <span>
-               <strong>Observación: </strong> <h4 class="card-title text-info">${obs}</h4>
-              </span>
-            `,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si",
-        cancelButtonText: 'No'
-      })
-
-      if (!isConfirmed) return
-
-
-      let params = {
-        taxIdFrom: this.dataForm.taxIdFrom,
-        taxIdTo: this.dataForm.taxIdTo,
-        quantity: this.dataForm.quantityProducts,
-        obs: obs
-      }
-      this.massiveTaxSvc.put(params).subscribe({
-        next: (response) => {
-          if (isApiResponse(response)) {
-            if (response.code === "0") {
-              this.tS.toastr({
-                type: 'warning',
-                message: response.message
-              })
-            }
-            if (response.code === "1") {
-              this.tS.toastr({
-                type: 'success',
-                message: response.message
-              })
-              this.getAll();
-              this.resetForm();
-            }
-          }
-        },
-      })
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
 }

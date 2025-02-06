@@ -66,13 +66,16 @@ BEGIN
         BEGIN
             SET @tableNames = 'quantity'
 
-            SELECT @TaxId = taxId FROM OPENJSON(@json) WITH (taxId INT)
+           	DECLARE @subCategoryId INT;
+
+            SELECT @TaxId = taxId, @subCategoryId = subCategoryId FROM OPENJSON(@json) WITH (taxId INT, subCategoryId INT)
 
             SELECT COUNT(*) as quantity
             FROM dbo.Articulo WITH (NOLOCK) 
             WHERE idEntidad = @idEntidad
               AND estado = 1 
               AND idTipoIva = @TaxId
+			  AND (@subCategoryId IS NULL OR idSubFamilia = @subCategoryId)
 
             RETURN 
         END 
@@ -81,9 +84,22 @@ BEGIN
     IF @tipo = 3
         BEGIN
             
-            SET @tableNames = 'taxes'
+             SET @tableNames = 'taxes,subCategories'
                 
             SELECT idTipoIva,descripcion,codigoPorcentaje FROM dbo.TipoIva WITH (NOLOCK) WHERE estado = 1 ORDER BY codigoPorcentaje ASC
+
+
+			SELECT idFamilia    = f.idFamilia
+				  ,idSubFamilia = sf.idSubFamilia
+				  ,familia      = ISNULL(f.descripcion,'Ninguna')
+				  ,subFamilia   = sf.descripcion
+				  ,sf.siglas
+				  ,sf.ultimoSecuencial
+                  ,sf.siglas + CAST(sf.ultimoSecuencial as varchar) as codigo
+			FROM dbo.SubFamilia sf  WITH (NOLOCK)
+			 LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
+			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
+            ORDER BY sf.descripcion ASC
 
             RETURN 
         END 
