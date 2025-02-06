@@ -1041,6 +1041,7 @@
         let codDoc = infoTributaria.codDoc;
         $scope.infoTributaria = infoTributaria;
         $scope.infoAdicional = infoAdicional;
+        $scope.refreshMeasureByProductId = refreshMeasureByProductId;
 
         $scope.categoriasCompra = [];
         $scope.sustentosTributario = [];
@@ -1343,6 +1344,17 @@
             });
         }
 
+
+        function refreshMeasureByProductId(item){
+            docRecibidoSvc
+            .getTempDetails($scope.selected[0].idDocumento).then(response=>{
+                let dataFind = response.find(r=>r.idArticulo===item.idArticulo);
+                if(dataFind){
+                    item.medidas = dataFind.medidas;
+                } 
+            })
+        }
+
         $scope.addBodega = async () => {
             try {
                 if (!($scope.comprobanteForm.idBodega > 0)) {
@@ -1443,7 +1455,7 @@
                 tS.toastr("warning", "Primero debe guardar el proveedor!");
                 return;
             }
-            if (!(item.idArticulo > 0 > 0)) {
+            if (!(item.idArticulo > 0 )) {
                 tS.toastr("warning", "Primero debe guardar el Artículo!");
                 return;
             }
