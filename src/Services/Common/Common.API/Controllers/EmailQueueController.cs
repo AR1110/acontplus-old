@@ -1,7 +1,7 @@
 ﻿namespace Common.API.Controllers;
 public class EmailQueueController(IEmailQueueService emailQueueService) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost] 
     public async Task<IActionResult> Post([FromBody] ApiRequest apiRequest)
     {
         apiRequest.UserRoleId = User.GetUserRoleId();

@@ -1,93 +1,79 @@
+import { Component, inject, signal } from '@angular/core';
 
-import {Component, inject, signal} from "@angular/core";
-
-import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatPagination} from "@shared/models/pagination.model";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {DialogService} from "@core/services/dialog.service";
-import {
-  MassiveTaxDialogComponent
-} from "@inventory/ui/massive-tax-page/massive-tax-dialog/massive-tax-dialog.component";
-import {finalize} from "rxjs/operators";
-import {MassiveTaxUseCase} from "@inventory/domain/usecases/massive-tax.use-case";
-
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatPagination } from '@shared/models/pagination.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { DialogService } from '@core/services/dialog.service';
+import { MassiveTaxDialogComponent } from '@inventory/ui/massive-tax-page/massive-tax-dialog/massive-tax-dialog.component';
+import { finalize } from 'rxjs/operators';
+import { MassiveTaxUseCase } from '@inventory/domain/usecases/massive-tax.use-case';
 
 @Component({
-    selector: 'app-massive-tax-page',
-    imports: [
-      MatIconModule,
-      MatButtonModule,
-        BreadcrumbComponent,
-      MatDynamicCardComponent,
-      MatDynamicTableComponent
-    ],
-    templateUrl: './massive-tax-page.component.html'
+  selector: 'app-massive-tax-page',
+  imports: [
+    MatIconModule,
+    MatButtonModule,
+    BreadcrumbComponent,
+    MatDynamicCardComponent,
+    MatDynamicTableComponent,
+  ],
+  templateUrl: './massive-tax-page.component.html',
 })
 export class MassiveTaxPageComponent {
   private readonly _massiveTaxUseCase = inject(MassiveTaxUseCase);
   private _dialogSvc = inject(DialogService);
 
-  dataSource = []
-
+  dataSource = [];
 
   isLoadingResults = false;
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'index', label: '#', type: 'string' },
-    { key: 'quantity', label: 'Cantidad', type: 'string' },
+    { key: 'quantity', label: 'Cantidad Artículo', type: 'string' },
     { key: 'obs', label: 'Observación', type: 'string' },
     { key: 'createAt', label: 'Fecha Registro', type: 'string' },
     { key: 'user', label: 'Usuario', type: 'string' },
   ];
 
-
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
-  refresh(){
-    this.getAll()
+  refresh() {
+    this.getAll();
   }
 
-
-  openDialog(){
-    const dialogRef = this._dialogSvc.open(MassiveTaxDialogComponent, {
-    })
-    dialogRef.subscribe(result=>{
-      if(result && typeof result==='object'){
-        this.refresh()
+  openDialog() {
+    const dialogRef = this._dialogSvc.open(MassiveTaxDialogComponent, {});
+    dialogRef.subscribe((result) => {
+      if (result && typeof result === 'object') {
+        this.refresh();
       }
-    })
+    });
   }
 
   getAll() {
     try {
+      if (this.isLoadingResults) return;
 
-      if(this.isLoadingResults) return
-
-      this.isLoadingResults=true;
-      this._massiveTaxUseCase.getAll({})
-        .pipe(
-          finalize(()=>this.isLoadingResults=false)
-        )
-        .subscribe( (response) => {
+      this.isLoadingResults = true;
+      this._massiveTaxUseCase
+        .getAll({})
+        .pipe(finalize(() => (this.isLoadingResults = false)))
+        .subscribe((response) => {
           this.dataSource = response;
-      })
+        });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
 
   ngOnInit() {
     this.getAll();
   }
-
-
 }
