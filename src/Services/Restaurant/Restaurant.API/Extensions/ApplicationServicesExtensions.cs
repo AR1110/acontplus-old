@@ -1,5 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Scrutor;

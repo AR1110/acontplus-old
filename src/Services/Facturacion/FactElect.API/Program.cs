@@ -18,8 +18,6 @@ builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<ICustomLogger, CustomLogger>();
-
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 

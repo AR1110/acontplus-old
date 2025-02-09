@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Mechanical.API.Interfaces
+﻿namespace Mechanical.API.Interfaces
 {
     public interface ISupportService
     {

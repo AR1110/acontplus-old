@@ -1,6 +1,7 @@
 ﻿global using Autofac.Extensions.DependencyInjection;
+global using Common.Core.Data;
 global using Common.Core.Models;
-global using Common.Core.Utils;
+global using Common.Core.Validation;
 global using Common.Infrastructure.Repository.Interfaces;
 global using Microsoft.AspNetCore.Mvc;
 global using Newtonsoft.Json;

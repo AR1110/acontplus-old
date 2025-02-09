@@ -1,9 +1,10 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using Common.AppSettings.Extensions;
+global using Common.Core.Data;
 global using Common.Core.Entities;
 global using Common.Core.Models;
-global using Common.Core.Utils;
+global using Common.Core.Validation;
 global using Common.Infrastructure.Data.Configurations;
 global using Common.Infrastructure.Repository.Interfaces;
 global using Microsoft.AspNetCore.Mvc;

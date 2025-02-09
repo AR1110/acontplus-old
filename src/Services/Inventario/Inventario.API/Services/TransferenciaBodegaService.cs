@@ -1,8 +1,8 @@
 ﻿namespace Inventario.API.Services;
 
 public class TransferenciaBodegaService(IAdoRepository _repository) : ITransferenciaBodegaService
-{ 
-    private readonly string nameSchema = "Inventario.TransferenciaBodega"; 
+{
+    private readonly string nameSchema = "Inventario.TransferenciaBodega";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {

@@ -26,7 +26,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IChequeService, ChequeService>();
         services.AddScoped<IComprobanteEgresoService, ComprobanteEgresoService>();
         services.AddScoped<IControlCajaService, ControlCajaService>();
-        services.AddScoped<ICustomLogger, CustomLogger>();
         services.AddScoped<ICuentaPorCobrarService, CuentaPorCobrarService>();
         services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
         services.AddScoped<ISubcategoryService, SubcategoryService>();

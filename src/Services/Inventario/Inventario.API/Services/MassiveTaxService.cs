@@ -1,8 +1,8 @@
 ﻿namespace Inventario.API.Services;
 
 public class MassiveTaxService(IAdoRepository _repository) : IMassiveTaxService
-{ 
-    private readonly string nameSchema = "Inventario.ImpuestoMasivo"; 
+{
+    private readonly string nameSchema = "Inventario.ImpuestoMasivo";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {

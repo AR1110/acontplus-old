@@ -33,7 +33,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         });
-        if (response == null  ) { return BadRequest("Cant Save"); }
+        if (response == null) { return BadRequest("Cant Save"); }
 
         return Ok(response);
     }

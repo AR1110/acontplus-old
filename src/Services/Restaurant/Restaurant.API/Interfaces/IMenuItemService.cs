@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Restaurant.API.Interfaces;
+﻿namespace Restaurant.API.Interfaces;
 
 public interface IMenuItemService
 {

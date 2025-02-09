@@ -1,9 +1,9 @@
 ﻿namespace Inventario.API.Services;
 
 public class ConsolidacionService(IAdoRepository _repository) : IConsolidacionService
-{ 
+{
     private readonly string nameSchema = "Inventario.Consolidacion";
-     
+
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {

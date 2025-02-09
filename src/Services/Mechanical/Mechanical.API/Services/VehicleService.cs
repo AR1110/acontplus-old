@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository.Interfaces;
+﻿using Common.Infrastructure.Repository.Interfaces;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 

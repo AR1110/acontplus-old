@@ -24,7 +24,7 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await articuloCodigoBarraService.AddAsync(parameters); 
+        var response = await articuloCodigoBarraService.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -38,7 +38,7 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await articuloCodigoBarraService.UpdateAsync(parameters); 
+        var response = await articuloCodigoBarraService.UpdateAsync(parameters);
         return Ok(response);
     }
 

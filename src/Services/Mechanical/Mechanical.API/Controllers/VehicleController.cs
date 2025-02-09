@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Mechanical.API.Interfaces;
+﻿using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 

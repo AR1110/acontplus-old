@@ -1,7 +1,7 @@
 ﻿namespace Inventario.API.Services;
 
 public class StockService(IAdoRepository _repository) : IStockService
-{ 
+{
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {

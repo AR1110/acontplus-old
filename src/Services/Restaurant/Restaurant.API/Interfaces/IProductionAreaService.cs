@@ -1,5 +1,4 @@
-﻿using Common.Core.Models;
-using Restaurant.API.Entities;
+﻿using Restaurant.API.Entities;
 
 namespace Restaurant.API.Interfaces
 {

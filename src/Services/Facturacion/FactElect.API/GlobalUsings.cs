@@ -1,9 +1,10 @@
 ﻿global using System.Data;
 global using System.Text;
 global using Autofac;
+global using Common.Core.Data;
 global using Common.Core.Enums;
 global using Common.Core.Models;
-global using Common.Core.Utils;
+global using Common.Core.Validation;
 global using Common.Infrastructure.Data.Configurations;
 global using Common.Infrastructure.Repository.Interfaces;
 global using FactElect.API.Data;

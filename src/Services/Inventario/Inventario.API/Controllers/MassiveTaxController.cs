@@ -23,7 +23,7 @@ public class MassiveTaxController(IMassiveTaxService massiveTaxService) : BaseAp
                 { "userRoleId", User.GetUserRoleId() },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await massiveTaxService.UpdateAsync(parameters); 
+        var response = await massiveTaxService.UpdateAsync(parameters);
         return Ok(response);
     }
 }

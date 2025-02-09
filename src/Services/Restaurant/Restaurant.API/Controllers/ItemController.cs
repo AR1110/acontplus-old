@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
 using Services.Common.Extensions;
 

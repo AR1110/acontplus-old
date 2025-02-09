@@ -4,7 +4,7 @@ namespace FactElect.API.Services;
 
 public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustomerService
 {
-    private const string nameSp= "Ventas.Cliente_";
+    private const string nameSp = "Ventas.Cliente_";
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> data)
     {
         return await repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", data);
