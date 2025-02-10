@@ -54,13 +54,13 @@ BEGIN
 		  ,cu.BusinessName         as nombreFiscal
 		  ,cu.TradeName            as nombreComercial
 		  ,cu.IDCard               as numeroIdentificacion
+          ,cu.IdTypeId             as idTipoIdentificacion
 		  ,ISNULL(cl.direccion,'') as direccion
 	      ,ti.codigoSri            as tipoIdentificacion
-          ,cl.idTipoIdentificacion
 	FROM Ventas.Aprob_Document    ad
 	INNER JOIN Cliente            cl WITH (NOLOCK) ON cl.idCliente            = ad.idCliente
 	INNER JOIN Customer.Customer  cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
-    INNER JOIN TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+    INNER JOIN TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId
 	WHERE ad.idAprob_Document = @id
 
 	SELECT dt.idAprob_Document_Detailt

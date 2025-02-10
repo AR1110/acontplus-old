@@ -17,7 +17,7 @@ namespace FactElect.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -62,17 +62,20 @@ namespace FactElect.API.Data.Migrations
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
 
-                    b.Property<string>("IDCard")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
-
                     b.Property<string>("IDType")
                         .IsRequired()
                         .HasMaxLength(2)
                         .IsUnicode(false)
                         .HasColumnType("varchar(2)");
+
+                    b.Property<string>("IdCard")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(15)");
+
+                    b.Property<int>("IdTypeId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("SriValidation")
                         .HasColumnType("bit");
@@ -95,7 +98,7 @@ namespace FactElect.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IDCard")
+                    b.HasIndex("IdCard")
                         .IsUnique()
                         .HasDatabaseName("UXC_Customer_IDCard");
 

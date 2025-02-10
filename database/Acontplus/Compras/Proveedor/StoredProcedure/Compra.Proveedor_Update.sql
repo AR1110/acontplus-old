@@ -22,7 +22,7 @@ BEGIN
     DECLARE @idUsuario INT
 
     --> Data Cliente
-    DECLARE @IDType VARCHAR(10) ,@idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT ,@nombreFiscal VARCHAR(300) ,@nombreComercial VARCHAR(300)
+    DECLARE @IDType VARCHAR(10) ,@customerId INT ,@nombreFiscal VARCHAR(300) ,@nombreComercial VARCHAR(300)
 
     DECLARE @tbProveedor AS TABLE
     (
@@ -70,9 +70,7 @@ BEGIN
         --> Recuperando Informacion
         SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion 
-                    ,@numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) 
-                    ,@nombreComercial      = LTRIM(RTRIM(nombreComercial)) 
+        SELECT TOP 1 @nombreComercial      = LTRIM(RTRIM(nombreComercial)) 
                     ,@nombreFiscal         = LTRIM(RTRIM(nombreFiscal)) 
         FROM @tbProveedor 
 
@@ -106,7 +104,6 @@ BEGIN
                   ,pr.UpdatedByUserId        = @idUsuario
             FROM dbo.Proveedor      pr WITH (ROWLOCK)
             INNER JOIN @tbProveedor tp ON tp.id = pr.idProveedor 
-			WHERE idProveedor = @id 
 
 		COMMIT TRAN 
 		SELECT  '1'code,'Actualizado Exitosamente' as [message]
