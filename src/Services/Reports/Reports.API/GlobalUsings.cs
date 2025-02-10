@@ -1,9 +1,14 @@
 ﻿global using System.Data;
 global using Asp.Versioning;
 global using Common.ApiDocumentation;
+global using Common.Barcode.Models;
+global using Common.Barcode.Utils;
 global using Common.Core.Data;
+global using Common.Core.Extensions;
+global using Common.Core.Format;
 global using Common.Infrastructure.Repository.Interfaces;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Reporting.NETCore;
 global using Reports.API.Dtos;
-global using Reports.Application.Services;
+global using Reports.API.Interfaces;
 global using Services.Common.Extensions;

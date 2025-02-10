@@ -1,18 +1,11 @@
 ﻿using System.Collections.Concurrent;
-using System.Data;
 using System.Text;
 using System.Web;
-using Common.Barcode.Models;
-using Common.Barcode.Utils;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Reporting.NETCore;
-using Reports.Application.Enums;
-using Reports.Application.Interfaces;
-using Reports.Application.Models;
+using Reports.API.Enums;
+using Reports.API.Models;
 using static System.Enum;
 
-namespace Reports.Application.Services
+namespace Reports.API.Services
 {
     public class RdlcReportService : IRdlcReportService, IDisposable
     {
@@ -33,7 +26,7 @@ namespace Reports.Application.Services
             var reportProps = DataTableMapper.MapDataRowToModel<ReportProps>(parameters.Tables["ReportProps"].Rows[0]);
 
             using var lr = new LocalReport();
-            string reportPath = GetReportPath(parameters, reportProps, offline);
+            var reportPath = GetReportPath(parameters, reportProps, offline);
 
             using var reportDefinitionStream = GetOrAddReportDefinition(reportPath).Value;
             reportDefinitionStream.Seek(0, SeekOrigin.Begin); // Ensure the stream position is reset before reading
@@ -146,7 +139,7 @@ namespace Reports.Application.Services
             {
                 foreach (DataRow item in parameters.Tables["ReportParams"].Rows)
                 {
-                    string paramValue = "";
+                    var paramValue = "";
                     if (Convert.ToBoolean(item["isPicture"]))
                     {
                         byte[] imageBytes = item.Field<bool>("isCompressed")
