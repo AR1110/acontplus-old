@@ -12,7 +12,7 @@
     <PackageVersion Include="Acontplus.Common.Notifications" Version="0.1.5" />
     <PackageVersion Include="Acontplus.Common.S3Application" Version="1.1.6" />
     <PackageVersion Include="Acontplus.FactElect.Application" Version="1.0.10" />
-    <PackageVersion Include="Acontplus.Reports.Application" Version="1.0.3" />
+    <PackageVersion Include="Acontplus.Reports.Application" Version="1.1.12" />
     <PackageVersion Include="Acontplus.Reports.Core" Version="1.0.0" />
     <PackageVersion Include="Acontplus.Services.Common" Version="1.1.7" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
