@@ -30,11 +30,15 @@ go
     
     --alter table cliente drop column numeroIdentificacion
 
-    
-    exec Ventas.Factura_Report '{"id":169451}'
-    select top 1 * from dbo.Cliente where configValorBruto = 1 
-    
-
-    -- 11/01/204 --ALEXIS RAMIREZ
+--> 11/01/204 --ALEXIS RAMIREZ
     --ALTER TABLE dbo.Cliente ADD configValorBruto BIT
 
+
+--> 02/06/2025 Alexis Ramirez
+    
+    --ALTER TABLE dbo.Cliente DROP CONSTRAINT FK__Cliente__idTipoI__67C95AEA
+
+    --ALTER TABLE dbo.Cliente DROP COLUMN idTipoIdentificacion
+
+
+    SELECT top 10 * FROM Cliente

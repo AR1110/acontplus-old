@@ -18,11 +18,15 @@ go
 
 --alter table proveedor add UpdatedAt DATETIME2 
 
-SELECT top 10 * FROM dbo.Proveedor
-
 --update pr set
 --       pr.CustomerId = (select top 1 cu.Id from Customer.Customer cu where cu.IDCard = pr.numeroIdentificacion)
 --from dbo.Proveedor pr
 --where pr.CustomerId is null
 
 --select top 1 * from Customer.Customer
+
+--alter table dbo.Proveedor drop constraint FK__Proveedor__idTip__064DE20A
+
+--ALTER TABLE dbo.Proveedor DROP COLUMN idTipoIdentificacion
+
+SELECT top 10 * FROM dbo.Proveedor
