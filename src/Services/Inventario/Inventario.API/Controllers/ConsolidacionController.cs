@@ -36,7 +36,7 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
                 { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
-        var response = await consolidacionService.AddAsync(parameters); 
+        var response = await consolidacionService.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -49,7 +49,7 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
-        var response = await consolidacionService.UpdateAsync(parameters); 
+        var response = await consolidacionService.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -57,7 +57,7 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-        var response = await consolidacionService.DeleteAsync(parameters); 
+        var response = await consolidacionService.DeleteAsync(parameters);
         return Ok(response);
     }
 

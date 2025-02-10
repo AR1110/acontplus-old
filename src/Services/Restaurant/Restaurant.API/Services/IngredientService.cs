@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository.Interfaces;
+﻿using Common.Infrastructure.Repository.Interfaces;
 using Restaurant.API.Data;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;

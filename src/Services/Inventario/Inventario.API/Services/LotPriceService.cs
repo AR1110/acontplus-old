@@ -1,9 +1,9 @@
 ﻿namespace Inventario.API.Services;
 
 public class LotPriceService(IAdoRepository _repository) : ILotPriceService
-{ 
+{
     private readonly string nameSchema = "Inventario.PrecioMasivo";
- 
+
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {

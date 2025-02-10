@@ -1,5 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;

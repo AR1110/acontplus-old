@@ -26,26 +26,26 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId(); 
+        request.UserRoleId = User.GetUserRoleId();
         var response = await articuloFraccionadoService.AddAsync(request);
-        return Ok(response); 
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-         
+
         request.UserRoleId = User.GetUserRoleId();
         var response = await articuloFraccionadoService.UpdateAsync(id, request);
-        return Ok(response); 
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
-    { 
+    {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
         var response = await articuloFraccionadoService.DeleteAsync(parameters);
         return Ok(response);
-         
+
     }
 }

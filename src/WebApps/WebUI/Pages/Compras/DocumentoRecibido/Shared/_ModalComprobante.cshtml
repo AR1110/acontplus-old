@@ -31,8 +31,8 @@
                 class="btn btn-success btn-sm">
                 <icon class="ti-save"></icon> Guardar Proveedor
             </button> *@
-            <button type="button" id="btnProv" ng-disabled="btnProvIsEnable" btn-proveedor-add-update params="provCliente" result-modal="resultModalProveedor(result)"
-                class="btn btn-success btn-sm">
+            <button type="button" id="btnProv" ng-disabled="btnProvIsEnable" btn-proveedor-add-update
+                params="provCliente" result-modal="resultModalProveedor(result)" class="btn btn-success btn-sm">
                 <icon class="ti-save"></icon> Guardar Proveedor
             </button>
         </div>
@@ -297,17 +297,10 @@
             </div>
         </div>
     </ng-form>
-    <div class="row">
-        @*<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-        <div class="form-group">
-        <label for="estabFilter">Estab.:</label>
-        <select class="form-control border-select" id="estabFilter" ng-model="selectedEstab.codEstab"
-        ng-change="filterBodega()">
-        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
-        </select>
-        </div>
-        </div>*@
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+
+
+    <div class="row align-items-center">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="row justify-content-start">
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="form-group">
@@ -325,17 +318,34 @@
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="form-group">
                         <label for="sizeAll">Aplicar Medida para todos</label>
-                        <select class="form-control" ng-model="comprobanteForm.idMedida" ng-change="updateSizeArticles()">
-                            <option ng-value="size.idMedida" ng-repeat="size in medidas" >
+                        <select class="form-control" ng-model="comprobanteForm.idMedida"
+                            ng-change="updateSizeArticles()">
+                            <option ng-value="size.idMedida" ng-repeat="size in medidas">
                                 {{size.descripcion}}
                             </option>
                         </select>
                     </div>
                 </div>
             </div>
+
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-            <div class="row justify-content-end">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="d-flex flex-row justify-content-end align-items-center">
+                <div class="p-2 ">
+                    <button type="button" ng-if="selected[0].complete" class="btn btn-info  "
+                        ng-click="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> Exportar Articulos
+                    </button>
+
+                </div>
+                <div class="p-2 ">
+                    <button type="submit" class="btn btn-success" ng-if="!selected[0].complete" ng-click="askToSave()"
+                        title="Guardar Detalle">
+                        <i class="fas fa-save"></i> Guardar Detalle
+                    </button>
+                </div>
+            </div>
+            @* <div class="row justify-content-end">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <button type="button" ng-if="selected[0].complete" class="btn btn-success btn-lg mt-4"
@@ -344,10 +354,10 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> *@
         </div>
-
     </div>
+
     <div class="table-responsive">
         <table class="table table-bordered">
             <caption></caption>
@@ -379,14 +389,9 @@
                             title="Historial de ingresos de facturas">
                             <md-icon md-font-set="md" class="text-danger">shopping_cart</md-icon>
                         </md-button>
-                        <md-button 
-                            ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" 
-                            class="md-icon-button" 
-                            btn-articulo-historial-compra
-                            result-modal="getArticleHC(result)"
-                            params = "item"
-                            aria-label="Historial" 
-                            title="Historial de vinculación">
+                        <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
+                            btn-articulo-historial-compra result-modal="getArticleHC(result)" params="item"
+                            aria-label="Historial" title="Historial de vinculación">
                             <md-icon md-font-set="md" class="text-info">history</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idDocumentoDetalle == 0 && item.idArticulo > 0 && selected[0].complete)"
@@ -399,33 +404,56 @@
                             <md-icon md-font-set="md" class="text-danger">delete_forever</md-icon>
                         </md-button>
 
-                        <md-button ng-if="item.idArticulo > 0" class="md-icon-button md-primary" btn-article-add-update params="item" result-modal="resultModalArticleEdit(result)" aria-label="Editar Artículo" title="Editar Artículo">
+                        <md-button ng-if="item.idArticulo > 0" class="md-icon-button md-primary" btn-article-add-update
+                            params="item" result-modal="resultModalArticleEdit(result)" aria-label="Editar Artículo"
+                            title="Editar Artículo">
                             <md-icon md-font-set="md">edit_forever</md-icon>
                         </md-button>
 
                         <md-button ng-if="item.idArticulo > 0 && item.datosAdicionales && selected[0].codDoc=='01'"
-                            class="md-icon-button md-primary" btn-data-adicional-articulo entity="item" get-data-etiqueta="resultModalDatoAdicional(item)" datos-adicionales="datosAdicionalesArticulo" cod-doc="selected[0].codDoc"
+                            class="md-icon-button md-primary" btn-data-adicional-articulo entity="item"
+                            get-data-etiqueta="resultModalDatoAdicional(item)"
+                            datos-adicionales="datosAdicionalesArticulo" cod-doc="selected[0].codDoc"
                             aria-label="Datos Adicionales" title="Datos Adicionales">
                             @* <md-icon md-font-set="md">pen-plus_forever</md-icon> *@
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Añadir/Editar datos adicionales</title><path d="M20.7,7C20.4,7.4 20,7.7 20,8C20,8.3 20.3,8.6 20.6,9C21.1,9.5 21.6,9.9 21.5,10.4C21.5,10.9 21,11.4 20.5,11.9L16.4,16L15,14.7L19.2,10.5L18.2,9.5L16.8,10.9L13,7.1L17,3.3C17.4,2.9 18,2.9 18.4,3.3L20.7,5.6C21.1,6 21.1,6.7 20.7,7M3,17.2L12.6,7.6L16.3,11.4L6.8,21H3V17.2M7,2V5H10V7H7V10H5V7H2V5H5V2H7Z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <title>Añadir/Editar datos adicionales</title>
+                                <path
+                                    d="M20.7,7C20.4,7.4 20,7.7 20,8C20,8.3 20.3,8.6 20.6,9C21.1,9.5 21.6,9.9 21.5,10.4C21.5,10.9 21,11.4 20.5,11.9L16.4,16L15,14.7L19.2,10.5L18.2,9.5L16.8,10.9L13,7.1L17,3.3C17.4,2.9 18,2.9 18.4,3.3L20.7,5.6C21.1,6 21.1,6.7 20.7,7M3,17.2L12.6,7.6L16.3,11.4L6.8,21H3V17.2M7,2V5H10V7H7V10H5V7H2V5H5V2H7Z" />
+                            </svg>
                         </md-button>
                     </td>
                     <td class="text-center">{{item.cantidad}}</td>
-                    <td class="text-center">{{item.codigoPrincipal}} <span ng-if="item.existentCode" ng-bind-html="item.existentCode"></span></td>
+                    <td class="text-center">{{item.codigoPrincipal}} <span ng-if="item.existentCode"
+                            ng-bind-html="item.existentCode"></span></td>
                     <td class="text-center">{{item.codigoAuxiliar}}</td>
-                    <td>{{item.descripcion}} <span ng-if="item.existentProduct" ng-bind-html="item.existentProduct"></span></td>
-                    <td> 
-                        <div style="position:relative; min-width:100px;">
+                    <td>{{item.descripcion}} <span ng-if="item.existentProduct"
+                            ng-bind-html="item.existentProduct"></span></td>
+                    <td>
+                        <div style="position:relative; min-width:130px;">
                             <div ng-if="item.medidas.length > 0">
-                                <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
-                                    <option ng-value="size.idMedida" ng-repeat="size in item.medidas">
-                                        {{size.descripcion}}
-                                    </option>
-                                </select>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <select class="form-control form-control-sm" ng-model="item.idMedida"
+                                            ng-change="updateArticleTemp(item)">
+                                            <option ng-value="size.idMedida" ng-repeat="size in item.medidas">
+                                                {{size.descripcion}}
+                                            </option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                ng-click="refreshMeasureByProductId(item)">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div ng-if="item.medidas.length === 0">
-                                <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
+                                <select class="form-control form-control-sm" ng-model="item.idMedida"
+                                    ng-change="updateArticleTemp(item)">
                                     <option ng-value="size.idMedida" ng-repeat="size in medidas">
                                         {{size.descripcion}}
                                     </option>
@@ -435,7 +463,8 @@
                         </div>
                     </td>
                     <td class="text-right">{{item.precioUnitario | currency}}</td>
-                    <td class="text-right">{{item.costoNeto | currency}} <span ng-if="item.existentCost" ng-bind-html="item.existentCost"></span> </td>
+                    <td class="text-right">{{item.costoNeto | currency}} <span ng-if="item.existentCost"
+                            ng-bind-html="item.existentCost"></span> </td>
                     <td class="text-right">{{item.descuento | currency}}</td>
                     <td class="text-right">{{item.impuesto}}</td>
                     <td class="text-right">{{item.valorImpuesto | currency}}</td>

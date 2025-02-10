@@ -1,7 +1,7 @@
 ﻿global using System.Data;
 global using Asp.Versioning;
 global using Common.ApiDocumentation;
-global using Common.Core.Utils;
+global using Common.Core.Data;
 global using Common.Infrastructure.Repository.Interfaces;
 global using Microsoft.AspNetCore.Mvc;
 global using Reports.API.Dtos;

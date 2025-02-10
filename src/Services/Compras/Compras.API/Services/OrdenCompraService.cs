@@ -6,7 +6,7 @@ public class OrdenCompraService(IAdoRepository _repository) : IOrdenCompraServic
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters); 
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters);
 
         return DataValidation.DataSetIsNull(ds)
           ? new ApiResponse { Code = "0", Message = "Can't get data" }
@@ -24,11 +24,11 @@ public class OrdenCompraService(IAdoRepository _repository) : IOrdenCompraServic
 
     public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync($"{nameSp}Get_Id", parameters); 
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get_Id", parameters);
 
         return DataValidation.DataSetIsNull(ds)
         ? new ApiResponse { Code = "0", Message = "Can't get data" }
-        : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }; 
+        : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)

@@ -3,7 +3,7 @@
 namespace Inventario.API.Services;
 
 public class StockFisicoService(IAdoRepository _repository, LegacyApiResponse _response) : IStockFisicoService
-{ 
+{
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
@@ -46,7 +46,7 @@ public class StockFisicoService(IAdoRepository _repository, LegacyApiResponse _r
 
     //public async Task<LegacyApiResponse> DeleteAsync(int id)
     //{
-         
+
     //    var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
     //    if (!DataValidation.DataTableIsNull(dt))
     //    {
