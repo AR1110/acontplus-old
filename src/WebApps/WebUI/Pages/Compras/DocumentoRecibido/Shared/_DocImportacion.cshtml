@@ -1,0 +1,107 @@
+<style>
+    .button {
+        -moz-appearance: button;
+        /* Firefox */
+        -webkit-appearance: button;
+        /* Safari and Chrome */
+        padding: 10px;
+        margin: 10px;
+        width: 70px;
+    }
+
+    .drop-box {
+        background: #F8F8F8;
+        border: 5px dashed #DDD;
+        width: 100% !important;
+        height: 65px;
+        text-align: center;
+        padding-top: 25px;
+        margin: 10px;
+    }
+
+    .dragover {
+        border: 5px dashed blue;
+    }
+</style>
+<div class="modal-header">
+    <h5 class="modal-title">
+        Asistente de Compras Electrónicas
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form ng-submit="post()">
+        <div class="row">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+                <div class="form-group">
+                    <span>Establecimiento:</span>
+                    ....
+                </div>
+            </div>
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+                <div class="form-group">
+                    <label for="subCategory">SubCategoría: <span class="text-danger">*</span></label>
+                    <select name="subCategory" id="subCategory" class="form-control border-select">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+                <div class="form-group d-flex flex-column">
+                    <label>Seleccione una opción para importar:</label>
+                    <md-radio-group ng-model="mainform.option">
+                        <md-radio-button ng-value="true" ng-style="{'display':'inline'}">
+                            Clave
+                            Acceso
+                        </md-radio-button>
+                        <md-radio-button ng-value="false" ng-style="{'display':'inline'}">Xml</md-radio-button>
+                    </md-radio-group>
+                </div>
+            </div>
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
+                <div class="form-group">
+                    <label for="claveAcceso">Clave Acceso:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control border-select" valid-number onclick="this.select()"
+                            min="49" maxlength="49" ng-model="mainform.claveAcceso">
+
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span class="text-warning small" ng-if="mainform.claveAcceso.length > 0">
+                        <b>
+                            {{49 -
+                            mainform.claveAcceso.length}}
+                        </b> digitos faltantes
+                    </span>
+                </div>
+
+                @* XML *@
+                <div class="form-group mr-3">
+                    <div ngf-drop ngf-select ng-model="files" class="drop-box" ngf-drag-over-class="'dragover'"
+                        ngf-multiple="true" ngf-allow-dir="true" accept="text/xml" ngf-pattern="'text/xml'">
+                        Arrastre aqui los XML de los comprobantes electronicós descargados
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="close()">
+        &times; Cerrar
+    </button>
+</div>

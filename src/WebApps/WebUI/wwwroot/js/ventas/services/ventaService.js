@@ -2107,14 +2107,25 @@
         }
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback, id) {
-            mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            let params = {
+                tipo: 3,
+                textSearch: query.textSearch,
+                codigoIdentificacion
+            }
+            mS.getData('get', url + '?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
                     // return response;
                 }
                 if (response.code === "1") {
+                    let [mainData] = JSON.parse(response.payload);
+                    let clienteRepository = mainData[0];
 
-                    let clienteRepository = JSON.parse(response.payload)[0][0];
+                    if(!clienteRepository){
+                    callback(codigoIdentificacion)
+                    return 
+                    }
+
 
                     let showConfirmButton = id > 0 && ['C', 'R'].includes(codigoIdentificacion);
                     // return {
