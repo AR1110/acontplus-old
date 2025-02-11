@@ -85,7 +85,8 @@ BEGIN
               AND (@subCategoryId IS NULL OR idSubFamilia = @subCategoryId)
 
             UPDATE pv SET
-                   pv.precioConIva = ROUND(pv.precioVenta + ((pv.precioVenta * ti.porcentaje) / 100),@decimal)
+                 --  pv.precioConIva = ROUND(pv.precioVenta + ((pv.precioVenta * ti.porcentaje) / 100),@decimal)
+                  pv.precioVenta =    ROUND(pv.precioConIva / (1 + (ti.porcentaje / 100)), @decimal) 
             FROM dbo.ArticuloPvP    pv WITH (ROWLOCK)
             INNER JOIN dbo.Articulo ar WITH (ROWLOCK) ON ar.idArticulo = pv.idArticulo
             INNER JOIN dbo.TipoIva  ti WITH (ROWLOCK) ON ti.idTipoIva  = ar.idTipoIva
@@ -96,7 +97,8 @@ BEGIN
                AND (@subCategoryId IS NULL OR ar.idSubFamilia = @subCategoryId)
 
             UPDATE fp SET
-                   fp.precioConIva = ROUND(fp.precioVenta + ((fp.precioVenta * ti.porcentaje) / 100),@decimal)
+             --      fp.precioConIva = ROUND(fp.precioVenta + ((fp.precioVenta * ti.porcentaje) / 100),@decimal)
+                     fp.precioVenta =    ROUND(fp.precioConIva / (1 + (ti.porcentaje / 100)), @decimal) 
             FROM dbo.ArticuloFraccionadoPvP    fp WITH (ROWLOCK)
             INNER JOIN dbo.ArticuloFraccionado af WITH (ROWLOCK) ON af.idArticuloFraccionado = fp.idArticuloFraccionado
             INNER JOIN dbo.Articulo            ar WITH (ROWLOCK) ON ar.idArticulo            = af.idArticulo
