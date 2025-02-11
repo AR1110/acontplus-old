@@ -5,5 +5,7 @@ global using Common.Core.Data;
 global using Common.Infrastructure.Repository.Interfaces;
 global using Microsoft.AspNetCore.Mvc;
 global using Reports.API.Dtos;
+global using Reports.API.Interfaces;
+global using Reports.Application.Interfaces;
 global using Reports.Application.Services;
 global using Services.Common.Extensions;

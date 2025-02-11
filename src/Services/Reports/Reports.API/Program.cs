@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using Autofac.Extensions.DependencyInjection;
+using Common.Logging;
 using Reports.API.Extensions;
 using Services.Common.Configuration;
 using Services.Common.Middleware;
@@ -10,8 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = AppConfiguration.Load();
 builder.Configuration.AddConfiguration(configuration);
 
-
 // Add services to the container.
+
+builder.Services.AddAdvancedLogging(builder.Configuration);
+
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddControllers();
@@ -23,8 +25,6 @@ builder.Services.AddSwaggerDocumentation();
 builder.Services.AddVersioningAndSwagger();
 
 builder.Services.AddOpenApi();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
 var app = builder.Build();
 

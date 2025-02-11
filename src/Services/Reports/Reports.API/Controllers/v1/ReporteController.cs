@@ -1,7 +1,4 @@
-﻿using Reports.API.Services;
-using Reports.Application.Interfaces;
-
-namespace Reports.API.Controllers.v1
+﻿namespace Reports.API.Controllers.v1
 {
     [Route("api/reporte/[action]")]
     [ApiController]
