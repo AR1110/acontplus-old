@@ -57,7 +57,11 @@
         $scope.claveAccesoLongitud = null;
 
         $scope.isSelectedDocRetencion = false;
-        $scope.clienteSearch = {}
+        $scope.clienteSearch = {};
+
+
+        //functions binding html 
+        $scope.openModalDocImportacion = openModalDocImportacion;
 
         $scope.onKeyupSearchFilter = () => {
             let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes));
@@ -237,6 +241,22 @@
             });
             return isConfirmed;
         }
+
+
+        function openModalDocImportacion(){
+
+            let modalRef = modalSvc.openWithComponent({
+                component: 'docImportacion',
+                size: 'xl',
+                
+
+            })
+
+            console.log(modalRef)
+
+
+        }
+
 
         $scope.openModalImportacionAutomatica = async function () {
             try {
