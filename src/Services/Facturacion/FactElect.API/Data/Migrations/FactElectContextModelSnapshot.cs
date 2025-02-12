@@ -62,12 +62,6 @@ namespace FactElect.API.Data.Migrations
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
 
-                    b.Property<string>("IDType")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(2)");
-
                     b.Property<string>("IdCard")
                         .IsRequired()
                         .HasMaxLength(15)

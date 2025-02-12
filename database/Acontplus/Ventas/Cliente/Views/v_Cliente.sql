@@ -36,7 +36,6 @@ SELECT cl.[idCliente]
       ,ti.codigoSri                                                 as codIdentSri
       ,cs.IdTypeId                                                  as idTipoIdentificacion
       ,cs.SriValidation                                             as validationSri
-      ,cs.IDType
       ,cs.IDCard                                                    
       ,cs.BusinessName                                              
       ,cs.TradeName                                                 
