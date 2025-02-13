@@ -1,4 +1,17 @@
-<section id="wrapper" class="login-register login-sidebar animate-background" style="background-image:url(/img/fondo.webp);">
+<!-- <div
+  class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 m-0 p-0"
+>
+  <div
+    class="col min-vh-100 bg-success-subtle bg-gradient d-flex justify-content-center align-items-center"
+  >
+    <h1>AcontPlus POS</h1>
+  </div>
+  <div class="col vh-100 d-flex justify-content-center align-items-center">
+    <router-outlet />
+  </div>
+</div> -->
+
+<!-- <section id="wrapper" class="login-register login-sidebar animate-background" style="background-image:url(/img/fondo.webp);">
   <div class="login-box card">
     <div class="card-body">
       <router-outlet />
@@ -24,4 +37,51 @@
       </div>
     </div>
   </div>
-</section>
+</section> -->
+
+<div class="container right-panel-active">
+  <div class="form-container sign-up-container">
+    <form action="#">
+      <h1>Create Account</h1>
+      <div class="social-container">
+        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <span>or use your email for registration</span>
+      <input type="text" placeholder="Name" />
+      <input type="email" placeholder="Email" />
+      <input type="password" placeholder="Password" />
+      <button>Sign Up</button>
+    </form>
+  </div>
+  <div class="form-container sign-in-container">
+    <form action="#">
+      <h1>Sign in</h1>
+      <div class="social-container">
+        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <span>or use your account</span>
+      <input type="email" placeholder="Email" />
+      <input type="password" placeholder="Password" />
+      <a href="#">Forgot your password?</a>
+      <button>Sign In</button>
+    </form>
+  </div>
+  <div class="overlay-container">
+    <div class="overlay">
+      <div class="overlay-panel overlay-left">
+        <h1>Welcome Back!</h1>
+        <p>To keep connected with us please login with your personal info</p>
+        <button class="ghost" id="signIn">Sign In</button>
+      </div>
+      <div class="overlay-panel overlay-right">
+        <h1>Hello, Friend!</h1>
+        <p>Enter your personal details and start journey with us</p>
+        <button class="ghost" id="signUp">Sign Up</button>
+      </div>
+    </div>
+  </div>
+</div>
