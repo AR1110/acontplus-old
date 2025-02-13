@@ -19,7 +19,7 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,ve.[Model]
           ,ve.Color
           ,ve.Engine
-          ,ct.idCard
+          ,ct.IdCard
           ,ct.TradeName
           ,ct.BusinessName
           ,ct.[Address]

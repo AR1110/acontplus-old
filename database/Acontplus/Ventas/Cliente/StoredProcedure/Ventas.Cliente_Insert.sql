@@ -89,6 +89,8 @@ BEGIN
         --> Recuperando Informacion
         SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(IdCard)) FROM @tblCliente 
 
+        SELECT TOP 1 @customerId = ID FROM Customer.Customer WHERE IdCard = @numeroIdentificacion
+
         --> Validacion de informacion 
         IF NOT EXISTS(SELECT 1 FROM @tblCliente)
             BEGIN

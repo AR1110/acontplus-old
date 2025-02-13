@@ -73,6 +73,8 @@ BEGIN
 
         SELECT TOP 1 @numeroIdentificacion = IdCard FROM @tbProveedor
 
+        SELECT TOP 1 @customerId = ID FROM Customer.Customer WHERE IdCard = @numeroIdentificacion
+
         --> Validaciones
         IF EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE CustomerId = @customerId AND idEntidad = @idEntidad)
 		    BEGIN
