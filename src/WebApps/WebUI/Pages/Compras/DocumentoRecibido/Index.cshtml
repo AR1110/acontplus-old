@@ -24,10 +24,10 @@
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                     <div class="form-group">
                         <label for="establecimiento">
-                            Estab:  
+                            Estab:
                         </label>
                         <select class="form-control border-select" ng-model="dataSearch.codEstab"
-                                ng-change="onChangeEstab()">
+                            ng-change="onChangeEstab()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -41,15 +41,15 @@
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                           class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
+                                        class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
                         </div>
 
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                                           end-date="dataSearch.fechaFin"
-                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
 
                 </div>
@@ -59,7 +59,7 @@
                         <label for="tipoComprobante"> Tipo Comprobante</label>
                         <div class="input-group">
                             <select class="form-control border-select" ng-model="dataSearch.codDoc"
-                                    ng-change="onChangeTipoDoc()">
+                                ng-change="onChangeTipoDoc()">
                                 <option ng-value="">Todos</option>
                                 <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
                                     {{item.descripcion}}
@@ -70,13 +70,13 @@
                                     <i class="{{extraOptionsIcon}}" uib-tooltip="{{extraOptionsTooltip}}"></i>
                                 </button>
                                 <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                        ng-click="refresh()">
+                                    ng-click="refresh()">
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
-                        </div> 
+                        </div>
                     </div>
-                </div> 
+                </div>
             </div>
 
             <div class="row" ng-if="moreOptionsFilter">
@@ -84,9 +84,9 @@
                     <div class="form-group" ng-if="!isSelectedDocRetencion">
                         <label for="proveedorFiltro">Proveedor:</label>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
-                               ng-model="proveedor.nombreProveedor" provider-search-drtv
-                               on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
-                               placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+                            ng-model="proveedor.nombreProveedor" provider-search-drtv
+                            on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteProviderTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -114,8 +114,8 @@
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="claveAcceso">Clave Acceso:</label>
-                        <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()" id="claveAcceso"
-                               valid-number ng-model="dataSearch.claveAcceso" />
+                        <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()"
+                            id="claveAcceso" valid-number ng-model="dataSearch.claveAcceso" />
                         <span class="text-info" ng-if="claveAccesoLongitud">{{claveAccesoLongitud}} dígitos</span>
                     </div>
                 </div>
@@ -123,15 +123,15 @@
                     <div class="form-group">
                         <label for="serieComprobante">Nro. Documento:</label>
                         <input type="text" class="form-control border-select" id="serieComprobante"
-                               ng-change="onChangeSerieComprobante()" valid-number
-                               ng-model="dataSearch.serieComprobante" />
+                            ng-change="onChangeSerieComprobante()" valid-number
+                            ng-model="dataSearch.serieComprobante" />
                     </div>
-                </div> 
+                </div>
                 <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
                     <div class="form-group">
                         <label for="subcategoryId">Subcategoría:</label>
                         <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
-                                ng-change="getComprobantes()">
+                            ng-change="getComprobantes()">
                             <option ng-value="">Todos</option>
                             <option ng-value="item.id" ng-repeat="item in subcategories">
                                 {{item.name}}
@@ -145,6 +145,10 @@
                     <button hidden type="button" class="btn btn-info" ng-click="openModalImportacionAutomatica()">
                         <i class="ti-cloud"></i> Importación Automatica
                     </button>
+                    <button class="btn btn-info" ng-click="openModalDocImportacion()">
+                        <i class="fa fa-keyboard"></i> Asistente compras Electrónicas
+                    </button>
+
                     <button class="btn btn-danger" ng-click="openModalImportacionManual()">
                         <i class="fa fa-keyboard"></i> Importación Manual
                     </button>
@@ -165,7 +169,7 @@
                 <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
@@ -173,7 +177,7 @@
                 <div class="col-6 d-flex justify-content-end">
                     <form class="form-material">
                         <input type="text" class="form-control" onclick="select();" ng-keyup="onKeyupSearchFilter()"
-                               ng-model="dataSearch.textSearch" placeholder="Buscar en el listado actual">
+                            ng-model="dataSearch.textSearch" placeholder="Buscar en el listado actual">
                     </form>
                 </div>
             </div>
@@ -196,35 +200,38 @@
                         </tr>
                     </thead>
                     <tbody md-body>
-                        <tr md-row md-select="item" md-select-id="index"
-                            md-auto-select="false"
+                        <tr md-row md-select="item" md-select-id="index" md-auto-select="false"
                             ng-repeat="item in comprobantes | orderBy: query.sortBy track by $index"
                             style="{{item.colorRow}}" title="{{item.hoverText}}">
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open Options" class="md-icon-button"
-                                               ng-click="$mdMenu.open($event)">
+                                        ng-click="$mdMenu.open($event)">
                                         <icon class="fa fa-bars"></icon>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item>
                                             <md-button ng-click="getById(item)">
-                                                <span md-menu-align-target><i class="fa fa-upload"></i> Visualizar Comprobante</span>
+                                                <span md-menu-align-target><i class="fa fa-upload"></i> Visualizar
+                                                    Comprobante</span>
                                             </md-button>
                                         </md-menu-item>
                                         <md-menu-item>
                                             <md-button ng-click="getMergedDocs(item)">
-                                                <span md-menu-align-target><i class="fa fa-link"></i> Docs. Relacionados</span>
+                                                <span md-menu-align-target><i class="fa fa-link"></i> Docs.
+                                                    Relacionados</span>
                                             </md-button>
                                         </md-menu-item>
                                         <md-menu-item ng-if="!item.complete">
                                             <md-button ng-click="putXml(item)">
-                                                <span md-menu-align-target><i class="fa fa-sync"></i>Actualizar Xml</span>
+                                                <span md-menu-align-target><i class="fa fa-sync"></i>Actualizar
+                                                    Xml</span>
                                             </md-button>
                                         </md-menu-item>
                                         <md-menu-item>
                                             <md-button ng-click="downloadXml(item)">
-                                                <span md-menu-align-target><i class="fa fa-download"></i> Descargar Xml</span>
+                                                <span md-menu-align-target><i class="fa fa-download"></i> Descargar
+                                                    Xml</span>
                                             </md-button>
                                         </md-menu-item>
                                         <md-menu-item ng-if="!item.complete">
@@ -246,7 +253,7 @@
                             <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
                             <td md-cell class="text-right" style="{{item.colorCol}}">
                                 {{item.importeTotal |
-     currency }}
+                                currency }}
                             </td>
                             <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
                             <td class="text-left" style="{{item.colorCol}}" md-cell>
@@ -279,6 +286,7 @@
         <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>
         <script src="~/js/contabilidad/services/subcategoryService.js" asp-append-version="true"></script>
         <script src="~/js/compras/controllers/documentoRecibidoCtrl.js" asp-append-version="true"></script>
+        <script src="~/js/compras/components/docImportacionComponent.js" asp-append-version="true"></script>
     </environment>
     <environment include="Staging,Production">
         <script src="~/js/compras/services/docRecibidoService.min.js" asp-append-version="true"></script>
