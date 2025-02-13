@@ -1,6 +1,4 @@
-﻿global using Autofac;
-global using Autofac.Extensions.DependencyInjection;
-global using AutoMapper;
+﻿global using AutoMapper;
 global using Common.AppSettings.Extensions;
 global using Common.Core.Data;
 global using Common.Core.Entities;

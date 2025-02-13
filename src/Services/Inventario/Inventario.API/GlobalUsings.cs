@@ -1,7 +1,6 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Data;
-global using Autofac;
 global using Common.AppSettings.Extensions;
 global using Common.Core.Data;
 global using Common.Core.Entities;

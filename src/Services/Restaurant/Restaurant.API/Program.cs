@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+
+
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Data;
@@ -38,10 +38,6 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 {
     options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
 });
-
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

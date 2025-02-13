@@ -1,8 +1,6 @@
-﻿using Common.AppSettings;
+﻿namespace Inventario.API.Services;
 
-namespace Inventario.API.Services;
-
-public class StockFisicoService(IAdoRepository _repository, LegacyApiResponse _response) : IStockFisicoService
+public class StockFisicoService(IAdoRepository _repository) : IStockFisicoService
 {
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)

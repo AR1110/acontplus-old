@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+
+
 using Services.Common.Configuration;
 using Services.Common.Middleware;
 
@@ -15,9 +15,6 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

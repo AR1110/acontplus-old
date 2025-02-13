@@ -23,7 +23,7 @@ namespace FactElect.API.Data.Migrations
         {
             migrationBuilder.DropIndex(
                 name: "UXC_Customer_IdCard",
-                schema: "Customer", 
+                schema: "Customer",
                 table: "Customer");
         }
     }

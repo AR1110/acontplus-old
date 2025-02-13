@@ -9,7 +9,7 @@
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Services.Common" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

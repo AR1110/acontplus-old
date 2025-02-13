@@ -4,8 +4,6 @@ global using System.IdentityModel.Tokens.Jwt;
 global using System.Security.Claims;
 global using System.Text;
 global using Asp.Versioning;
-global using Autofac;
-global using Autofac.Extensions.DependencyInjection;
 global using Common.ApiDocumentation;
 global using Common.Core.Data;
 global using Common.Core.Entities;
