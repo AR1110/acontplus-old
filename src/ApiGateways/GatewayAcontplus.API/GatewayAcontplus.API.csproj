@@ -20,7 +20,7 @@
     </PackageReference>
     <PackageReference Include="Ocelot" />
     <PackageReference Include="RabbitMQ.Client" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" VersionOverride="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Common\Common.AppSettings\Common.AppSettings.csproj" />
