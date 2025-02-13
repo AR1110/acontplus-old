@@ -46,7 +46,8 @@
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 1000,
-            checkBoxFecha: true
+            checkBoxFecha: true,
+            idEstadoDocumento: 0
         }
 
         $scope.cliente = {
@@ -136,7 +137,7 @@
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    idEstadoDocumento: $scope.dataSearch.idEstadoDocumento,
+                    idEstadoDocumento: fS.getValidId($scope.dataSearch.idEstadoDocumento),
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -159,7 +160,7 @@
 
         $scope.initiload = () => {
 
-            notaCreditoSvc.get({ tipo: 3 }).then(response => {
+            notaCreditoSvc.getDataFilter().then(response => {
                 $scope.establecimientos = response.estabs;
                 $scope.estadoDocumentos = response.estadosDoc;
 
