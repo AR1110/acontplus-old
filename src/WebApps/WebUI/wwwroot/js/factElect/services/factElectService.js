@@ -1178,6 +1178,37 @@
                 });
         };
 
+
+        service.getDataFilter = function(){
+            let params = JSON.stringify({
+                tipo: 3
+            })
+            return mS
+            .getData("get", URL + "?json=" + params , null, true)
+            .then((response) => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload); 
+                    
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        let dataToGroup = {
+                            estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                            bodegas: [], // Establecimientos con bodegas
+                        };
+                        let estabs = fS.groupingEstab(dataToGroup);
+                        return {
+                            estabs,
+                            estadosDoc,
+                        }; 
+                }
+            });
+        }
+
         service.get = (params) => {
             return mS
                 .getData("get", URL + "?json=" + JSON.stringify(params), null, true)
