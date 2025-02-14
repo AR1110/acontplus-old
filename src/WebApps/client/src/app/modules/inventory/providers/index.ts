@@ -4,6 +4,7 @@ import {inventarioModeloProvider} from "@inventory/providers/inventario-modelo.p
 import {brandProvider} from "@inventory/providers/brand.provider";
 import {measureProvider} from "@inventory/providers/measure.provider";
 import {massiveTaxProvider} from "@inventory/providers/massive-tax.provider";
+import {transferenciaBodegaProvider} from "@inventory/providers/transferencia-bodega.provider";
 
 
 export const inventoryProviders = [
@@ -12,5 +13,6 @@ export const inventoryProviders = [
   inventarioModeloProvider,
   brandProvider,
   measureProvider,
-  massiveTaxProvider
+  massiveTaxProvider,
+  transferenciaBodegaProvider
 ]

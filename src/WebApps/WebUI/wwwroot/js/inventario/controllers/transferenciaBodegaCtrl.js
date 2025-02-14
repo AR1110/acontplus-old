@@ -185,13 +185,13 @@
                 let template = nombreModalInventario.TRANSFERENCIA_BODEGA.templates['D'];
                 let controller = (await import(fileCtrl))[ctrl];
 
-                let modalRef = modalSvc.openModalCustom({
+                let modalRef = modalSvc.open({
                     controller,
                     template,
                     isRenderRazorPartial: true,
                     size: 'xl',
                     params: {
-                        data: response,
+                        id: item.idTransferenciaBodega 
                     }
                 })
                 modalRef.result.then(result => {
@@ -279,9 +279,19 @@
 
     app.controller('ModalTransferenciaBodegaCtrl', ModalTransferenciaBodegaCtrl);
 
-    ModalTransferenciaBodegaCtrl.$inject = ["$scope", "$timeout", "$uibModalInstance",'articuloService', "params"];
+    ModalTransferenciaBodegaCtrl.$inject = [
+        "$scope", 
+        "$timeout", 
+        "$uibModalInstance",
+        '$injector',
+        "params"
+    ];
 
-    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, articuloSvc, params) {
+    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, $injector,   params) {
+
+        const articuloSvc = $injector.get('articuloService');
+        const modalSvc = $injector.get('modalService');
+
         let { data } = params;
 
         $scope.tipoDoc = {
@@ -303,6 +313,9 @@
             enableColumnReordering: true,
             showGridFooter: false,
         }
+
+        $scope.openModalAdvancedSearch = openModalAdvancedSearch;
+
 
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
@@ -775,6 +788,19 @@
             } catch (error) {
                 console.log(error)
             }
+        }
+
+        function openModalAdvancedSearch(){ 
+
+            let modalRef = modalSvc.openWithComponent({
+                 component: 'transferenciaBodegaAdvancedSearch',
+                 size: 'xl',
+                 params: {
+                    bodegasOrigen: structuredClone($scope.bodegasOrigen),
+                    bodegaOrigenId: $scope.data.idBodegaOrigen
+                 }
+            })
+            console.log(modalRef)
         }
 
         function addRow() {

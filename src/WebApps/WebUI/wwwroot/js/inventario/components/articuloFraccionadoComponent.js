@@ -1,4 +1,5 @@
-
+(function(){
+    
 let mainPath = `/Home/Index?name=~/Pages/ArticuloFraccionado/`;
 app.component('articuloFraccionadoLista', {
     templateUrl: `${mainPath}_ArticuloFraccionadoLista.cshtml`,
@@ -144,3 +145,5 @@ app.component('articuloFraccionadoLista', {
     }]
 
 })
+
+})()

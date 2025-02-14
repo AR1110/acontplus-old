@@ -1,0 +1,198 @@
+<style>
+    details {
+        border: 1px solid #767676;
+        border-radius: 3px;
+        display: inline-flex;
+        flex-direction: column;
+        padding: 3px 6px;
+    }
+
+    details summary::marker {
+        display: none;
+        font-size: 0;
+    }
+
+    details summary::-webkit-details-marker {
+        display: none;
+        font-size: 0;
+    }
+
+    details summary::after {
+        content: "\25BC" / "";
+        display: inline-block;
+        font-size: 0.6rem;
+        height: 1rem;
+        line-height: 1rem;
+        margin-left: 0.5rem;
+        position: relative;
+        transition: transform 0.25s;
+    }
+
+    details[open] summary {
+        margin-bottom: 1rem;
+    }
+
+    details[open] summary::after {
+        top: -0.15rem;
+        transform: rotate(180deg);
+    }
+
+    form {
+        display: flex;
+    }
+
+    fieldset {
+        border: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    fieldset legend {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    ul li {
+        border-radius: 3px;
+        margin: 0;
+        padding: 4px 2px;
+    }
+
+    ul li:hover {
+        background: #eee;
+    }
+
+    ul li label {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-between;
+    }
+</style>
+<form autocomplete="off" ng-submit="setArticlesSelected()">
+    <div class="modal-header">
+
+        <h5 class="modal-title">
+            <i class="ti-search"></i> Búsqueda Avanzada
+        </h5>
+        <button type="button" class="close" aria-label="Close" ng-click="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    <label for="bodegas">Bodega: <span class="text-danger">*</span></label>
+                    <select name="bodegas" id="bodegas" class="form-control" ng-model="dataSearch.bodegaOrigenId">
+                        <option ng-repeat="item in bodegasOrigen" ng-value="item.idBodega">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    <label for="bodegas">Subfamilia: <span class="text-danger">*</span></label>
+                    @* <select name="bodegas" id="bodegas" class="form-control" ng-model="dataSearch.bodegaOrigenId">
+                        <option ng-repeat="item in bodegasOrigen" ng-value="item.idBodega">
+                            {{item.descripcion}}
+                        </option>
+                    </select> *@
+                    <details>
+                        <summary>Your favourite cars list</summary>
+                        <form>
+                            <fieldset>
+                                <legend>Cars</legend>
+                                <ul>
+                                    <li>
+                                        <label for="bmw">BMW<input type="checkbox" id="bmw" name="bmw"
+                                                value="bmw"></label>
+                                    </li>
+                                    <li>
+                                        <label for="citroen">Citroen
+                                            <input type="checkbox" id="citroen" name="citroen" value="citroen"></label>
+                                    </li>
+                                    <li>
+                                        <label for="skoda">Skoda
+                                            <input type="checkbox" id="skoda" name="skoda" value="skoda"></label>
+                                    </li>
+                                    <li>
+                                        <label for="volvo">Volvo
+                                            <input type="checkbox" id="volvo" name="volvo" value="volvo"></label>
+                                    </li>
+                                </ul>
+                            </fieldset>
+                        </form>
+
+                    </details>
+                </div>
+            </div>
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12"></div>
+        </div>
+
+
+        <div class="row" ng-show="articlesFounded.length > 0">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <input type="text" class="search form-control border-select" onclick="this.select()"
+                        ng-model="search" placeholder="Buscar artículo">
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex justify-content-end align-items-center">
+                Articulos Selecionados: <span class="text-info"> {{articlesSelected.length}}</span>
+            </div>
+        </div>
+        <md-table-container style="max-height: 400px;" ng-show="articlesFounded.length > 0">
+            <table md-table md-row-select multiple ng-model="articlesSelected" md-progress="promise">
+                <thead md-head>
+                    <tr md-row>
+                        <th md-column>Código</th>
+                        <th md-column>Descripcion</th>
+                        <th md-column>Cant.</th>
+                        <th md-column>Medida</th>
+                        <th md-column>Iva</th>
+                        <th md-column>Stock</th>
+                        <th md-column>Precio Costo</th>
+                        <th md-column>Precio Actual</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row md-select="item" md-select-id="index" md-auto-select
+                        ng-repeat="item in articlesFounded  ">
+                        <td md-cell>{{item.codigo}}</td>
+                        <td md-cell>{{item.descripcion}}</td>
+                        <td md-cell>{{item.cantidad}}</td>
+                        <td class="text-lSoeft" md-cell> {{item.medida}}</td>
+                        <td md-cell>{{item.nombreTipoIva}}</td>
+                        <td md-cell>{{item.stock}}</td>
+                        <td md-cell class="text-right">
+                            {{item.precioCosto | currency }}
+                        </td>
+                        <td class="text-left" md-cell>
+                            {{item.precioActual}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success"><i class="ti-settings"></i> Aplicar</button>
+        <button type="button" class="btn btn-dark" ng-click="close()">&times; Cancelar</button>
+    </div>
+</form>
