@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using Autofac;
+
 using Common.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Configuration;
@@ -15,9 +15,6 @@ builder.Configuration.AddConfiguration(configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityService(builder.Configuration);
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 
