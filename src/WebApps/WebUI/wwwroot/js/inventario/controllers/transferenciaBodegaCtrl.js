@@ -300,9 +300,13 @@
         $scope.data = {
             fechaEmision: new Date()
         };
+
         $scope.puntosEmision = [];
         $scope.tiposTransaccion = [];
         $scope.tipoDocumento = [];
+
+        let subFamilias = [];
+
         let itemsDeleted = [];
 
         $scope.gridOptions = {
@@ -594,6 +598,8 @@
                 $scope.tiposTransaccion = mainDataForm.tiposTransaccion;
                 $scope.tipoDocumento = mainDataForm.tipoDocumento;
 
+                subFamilias = mainDataForm.subFamilias;
+
                 if ($scope.establecimientosOrigen.length === 0) {
                     tS.toastr('info', 'No tienes asignado ningún Establecimiento');
                     return
@@ -627,8 +633,7 @@
 
                     //Bodega Destino 
                     $scope.bodegasDestino = dataEstabDestino.bodegas;
-                    $scope.gridOptions.data = detalles;
-                    console.log(detalles)
+                    $scope.gridOptions.data = detalles; 
                     enumGridOptions();
                     $scope.tituloModal = 'Editar';
                     $scope.btnText = 'Actualizar';
@@ -797,10 +802,26 @@
                  size: 'xl',
                  params: {
                     bodegasOrigen: structuredClone($scope.bodegasOrigen),
-                    bodegaOrigenId: $scope.data.idBodegaOrigen
+                    bodegaOrigenId: $scope.data.idBodegaOrigen,
+                    subFamilias: structuredClone(subFamilias)
                  }
             })
-            console.log(modalRef)
+
+            modalRef.result.then(response=>{ 
+                if(response && response.articlesSelected         ){
+                    const merge = [...$scope.gridOptions.data, ...response.articlesSelected ].reduce((acc, item) => {
+                        acc[item.idArticulo] = item;
+                        return acc;
+                      }, {});
+                      
+                      // Convertir el objeto de vuelta a un array
+                      const listaUnida = Object.values(merge);
+                      $scope.gridOptions.data = structuredClone(listaUnida)
+
+                } 
+
+
+            }) 
         }
 
         function addRow() {
@@ -948,6 +969,11 @@
 
                 if ($scope.gridOptions.data.length === 0) {
                     tS.toastr('warning', 'Ingrese al menos un articulo en el Detalle');
+                    return
+                }
+
+                if ($scope.gridOptions.data.length > 100) {
+                    tS.toastr('warning', 'Límite máximo de items es 100');
                     return
                 }
 
