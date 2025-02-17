@@ -45,6 +45,7 @@ export enum GlobalRoutes {
   InventarioTarifa = 'inventory/tarifa',
   Etiqueta = 'inventory/tags',
   ArticuloFraccionado = 'inventory/fracc-product',
+  TransferenciaBodega = 'inventory/transferencia-bodega',
 
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',

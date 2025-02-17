@@ -608,7 +608,7 @@ BEGIN
 
                       ),'[]') as warehouses
 	            FROM Sri.Establecimiento es WITH (NOLOCK) 
-	            WHERE es.idEntidad = @idEntidad
+	            WHERE es.idEntidad = @idEntidad AND es.estado = 1
 
                 RETURN 
             END 

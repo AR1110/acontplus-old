@@ -3,10 +3,10 @@
 
 @{
     ViewData["title"] = "Nota Credito";
-    
+
 }
 
-<div ng-controller="notaCreditoClienteCtrl"> 
+<div ng-controller="notaCreditoClienteCtrl">
     <div class="row page-titles">
         <div class="col-lg-5 align-self-center">
             <h5 class="text-themecolor">Nota de Crédito Cliente</h5>
@@ -29,7 +29,7 @@
                     <div class="form-gorup">
                         <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                class="form-control  border-select" ng-change="estabFilter()">
+                            class="form-control  border-select" ng-change="estabFilter()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -40,17 +40,17 @@
                     <div class="form-group">
                         <span for="">Rango de Fechas</span>
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                                           end-date="dataSearch.fechaFin"
-                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="clienteFiltro">Cliente</span>
                         <input type="text" id="customerInputSearch" class="form-control border-select"
-                               ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
-                               on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                               onclick="select();">
+                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
+                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                            onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -65,7 +65,7 @@
                             <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
                         </button>
                         <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                ng-click="getNotaCreditos()">
+                            ng-click="getNotaCreditos()">
                             <i class="fas fa-redo"></i>
                         </button>
                     </div>
@@ -77,7 +77,7 @@
                     <div class="form-gorup">
                         <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
                         <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                                class="form-control  border-select" ng-change="getNotaCreditos()">
+                            class="form-control  border-select" ng-change="getNotaCreditos()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -88,12 +88,12 @@
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
                         <input type="text" class="form-control border-select" ng-model="nombreCompleto"
-                               ng-keyup="onKeyupUsuarioSearch()"
-                               uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
-                               typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
-                               typeahead-template-url="usuarioSearchTemplate.html"
-                               typeahead-no-results="usuarioSearch.noResults"
-                               typeahead-on-select="selectedUsuarioSearch($item)">
+                            ng-keyup="onKeyupUsuarioSearch()"
+                            uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+                            typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+                            typeahead-template-url="usuarioSearchTemplate.html"
+                            typeahead-no-results="usuarioSearch.noResults"
+                            typeahead-on-select="selectedUsuarioSearch($item)">
 
                         <script type="text/ng-template" id="usuarioSearchTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -108,16 +108,16 @@
                     <div class="form-group">
                         <span>Buscar por Nro. Doc.:</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                               placeholder="Ej: 123 o 1-30" />
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
                         <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.idEstadoDocumento"
-                                ng-change="getNotaCreditos()">
-                            <option value="">Todos</option>
-                            <option ng-value="item.idEstadocumento" ng-repeat="item in estadoDocumentos">
+                            ng-change="getNotaCreditos()">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.idEstadoDocumento" ng-repeat="item in estadoDocumentos">
                                 {{item.descripcion}}
                             </option>
                         </select>
@@ -127,7 +127,7 @@
                     <div class="form-group">
                         <span>Buscar</span>
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                               ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                            ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
-                                               ng-click="$mdMenu.open($event)">
+                                        ng-click="$mdMenu.open($event)">
                                         <icon class="mdi mdi-menu"></icon>
                                     </md-button>
                                     <md-menu-content class="md-dense">
@@ -216,6 +216,6 @@
 </div>
 
 
-@section Scripts{      
+@section Scripts {
     <script src="~/js/factElect/controllers/notaCreditoCtrl.min.js" asp-append-version="true"></script>
 }

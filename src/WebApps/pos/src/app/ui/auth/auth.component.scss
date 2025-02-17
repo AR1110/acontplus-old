@@ -1,6 +1,6 @@
-.m3-input-full-width {
-  width: 100%;
-}
+// .m3-input-full-width {
+//   width: 100%;
+// }
 
 .button-login {
   height: 50px;
@@ -22,4 +22,22 @@
 .button-login:hover {
   background-color: #d61672;
   border: 2px solid #d61672;
+}
+
+.my-8 {
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+@media (min-width: 992px) {
+  .my-lg-14 {
+    margin-top: 5rem !important;
+    margin-bottom: 5rem !important;
+  }
+}
+
+.down-section {
+  position: absolute;
+  bottom: 40px;
+  left: 4%;
 }

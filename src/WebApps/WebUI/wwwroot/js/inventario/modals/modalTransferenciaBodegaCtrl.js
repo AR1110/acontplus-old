@@ -5,14 +5,13 @@ export {
 ModalTransferenciaBodegaDetalleCtrl.$inject = [
     '$scope', 
     '$uibModalInstance',  
-    'transferenciaBodegaService', 
+    '$inject', 
     'params'
 ]
-function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, transferenciaBodegaSvc,  params){
-     
-   
-   
- 
+function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $inject,   params){
+    const transferenciaBodegaSvc = $inject('transferenciaBodegaService');
+
+
         
     $scope.gridOptions = {
         enableColumnMenus: false,

@@ -1,5 +1,4 @@
-@use "../../../../node_modules/@angular/material/index" as mat;
-
+@use "@angular/material" as mat;
 @mixin theme($theme) {
   .sidenav-scroll-wrapper {
     background-color: rgba(
