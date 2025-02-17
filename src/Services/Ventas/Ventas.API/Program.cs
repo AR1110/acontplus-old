@@ -14,8 +14,6 @@ builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

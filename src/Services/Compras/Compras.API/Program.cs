@@ -14,9 +14,6 @@ builder.Services.AddIdentityService(builder.Configuration);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

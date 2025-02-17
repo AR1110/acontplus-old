@@ -23,25 +23,38 @@ public static class ApplicationServicesExtensions
 
         services.AddAutoMapper(typeof(MappingProfiles));
 
-        string[] nameSpaces =
+        // Services that should be scoped (have dependencies on ConfigContext)
+        string[] scopedNamespaces =
         [
-            "Common.Application.Services",
-            "Common.Infrastructure.Repository.Implementations",
+            "Configuracion.API.Services.Printing",
             "Configuracion.API.Endpoints.Implementations",
             "Configuracion.API.Services",
-            "Configuracion.API.Services.Printing",
             "Configuracion.API.Services.Sri",
-            "Configuracion.API.Services.WizardConfig",
-            "Services.Common.Extensions",
+            "Configuracion.API.Services.WizardConfig"
         ];
 
+        // Register scoped services
         services.Scan(scan => scan
             .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .AddClasses(classes => classes.InNamespaces(scopedNamespaces))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
+            .WithScopedLifetime());
+
+        // Other services that can be transient
+        string[] transientNamespaces =
+        [
+            "Common.Infrastructure.Repository.Implementations",
+            "Services.Common.Extensions"
+        ];
+
+        // Register transient services
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(transientNamespaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
 
         return services;
     }

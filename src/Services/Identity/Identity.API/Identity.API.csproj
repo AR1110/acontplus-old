@@ -12,8 +12,6 @@
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.ApiDocumentation" />
     <PackageReference Include="Acontplus.Services.Common" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
