@@ -151,15 +151,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url, { data }, true);
+            return mS.getData('post', url  , {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + id, { data }, true);
+            return mS.getData('put', url   + id, {data}, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + id, null, true);
+            return mS.getData('delete', url  + id, null, true);
         }
 
         service.listForSelect = function (query) {
@@ -213,15 +213,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url, { data }, true);
+            return mS.getData('post', url  , {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + id, { data }, true);
+            return mS.getData('put', url   + id, {data}, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + id, null, true);
+            return mS.getData('delete', url   + id, null, true);
         }
 
 
@@ -260,15 +260,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url, { data }, true);
+            return mS.getData('post', url  , {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + id, { data }, true);
+            return mS.getData('put', url  + id, {data}, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + id, null, true);
+            return mS.getData('delete', url   + id, null, true);
         }
 
 
@@ -311,7 +311,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + id + '?json=' + JSON.stringify(data), null, true);
+            return mS.getData('put', url   + id + '?json=' + JSON.stringify(data), null, true);
         }
 
         service.delete = function (id) {
@@ -417,11 +417,11 @@
                     estabs: [],
                     subFamilias: [],
                     config: {},
-                    tipoDocumento: [],
-                    tiposTransaccion: []
+                    tipoDocumento : [],
+                    tiposTransaccion : []
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { ptoEmision, bodegas, subFamilia, decimales, tiposTransaccion, tipoDocumento } = response;
+                    const { ptoEmision,bodegas, subFamilia,decimales,tiposTransaccion,tipoDocumento } = response;
                     const dataToGroup = {
                         estabs: ptoEmision,
                         bodegas: bodegas,
@@ -586,8 +586,8 @@
         function headerTo(data) {
             return {
                 idPuntoEmision: data.idPuntoEmision,
-                idTipoDocumento: data.idTipoDocumento,
-                idTipoTransaccion: data.idTipoTransaccion,
+                idTipoDocumento : data.idTipoDocumento,
+                idTipoTransaccion : data.idTipoTransaccion,
                 fechaEmision: fS.formatDateMoment(data.fechaEmision),
                 total: fS.roundNumber(data.total, 5),
                 observacion: fS.isValidField(data.observacion),
@@ -691,8 +691,8 @@
                     fechaEmision: fS.formatDate(tempComprobante.fechaEmision),
                     observacion: tempComprobante.observacion,
                     total: tempComprobante.total,
-                    tipoDocumento: tempComprobante.tipoDocumento,
-                    movimiento: tempComprobante.movimiento
+                    tipoDocumento : tempComprobante.tipoDocumento,
+                    movimiento : tempComprobante.movimiento 
                 }
                 detalles = detalles.map((item, index) => {
                     return {
@@ -765,17 +765,13 @@
         function getDataFilter() {
             return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
                 const data = {
-                    estabs: [],
-
+                    estabs: []
                 }
                 if (response !== null && typeof response === 'object') {
                     let dataToGroup = {
                         estabs: response.establecimientos
                     }
                     data.estabs = fS.groupingEstab(dataToGroup);
-
-
-
                 }
                 return data;
             })
@@ -828,6 +824,50 @@
                 return data;
             })
         }
+       
+
+        function getProductsTransferenciaMasiva(obj) {
+            let json = JSON.stringify({
+                tipo: 6,
+                subFamilias: obj.subFamilias,
+                bodegaId: obj.bodegaId
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+                let result = {
+                    articulos: []
+                };
+                if (response && typeof response === 'object') {
+                    const { articulos = [] } = response;
+                    result.articulos = articulos.map(item => {
+                        const { principal, fraccionado, ...restItem } = item;
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+
+ 
+                        return {
+                            idArticulo: restItem.idArticulo,
+                            codigo: restItem.codigo, 
+                            descripcion: restItem.descripcion,
+                            cantidad: restItem.cantidad,
+                            precioCosto: restItem.precioCosto, 
+                            precioUnitario: dataMedida.precioUnitario, 
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado, 
+                            idMedida: restItem.idMedida,
+                            nomMedida: restItem.nomMedida, 
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            total: fS.roundNumber(restItem.cantidad * restItem.precioCosto, 4),
+                            totalRecords: item.totalRecords
+
+                        }
+                    })
+                }
+
+               return result;
+            })
+        }
+
         function generateSerieComprobante(query) {
             return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
                 let value = null;
@@ -866,47 +906,6 @@
                 }
 
                 return transferenciasBodega;
-            })
-        }
-
-        function getProductsTransferenciaMasiva(obj) {
-            let json = JSON.stringify({
-                tipo: 6,
-                subFamilias: obj.subFamilias,
-                bodegaId: obj.bodegaId
-            })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
-                let result = {
-                    articulos: []
-                };
-                if (response && typeof response === 'object') {
-                    const { articulos = [] } = response;
-                    result.articulos = articulos.map(item => {
-                        const { principal, fraccionado, ...restItem } = item;
-                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
-
-                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
-
- 
-                        return {
-                            idArticulo: restItem.idArticulo,
-                            codigo: restItem.codigo, 
-                            descripcion: restItem.descripcion,
-                            cantidad: restItem.cantidad,
-                            precioCosto: restItem.precioCosto, 
-                            precioUnitario: dataMedida.precioUnitario, 
-                            precioCostoFraccionado: dataMedida.precioCostoFraccionado, 
-                            idMedida: restItem.idMedida,
-                            nomMedida: restItem.nomMedida, 
-                            medidas,
-                            conversion: dataMedida.conversion,
-                            total: fS.roundNumber(restItem.cantidad * restItem.precioCosto, 4)
-
-                        }
-                    })
-                }
-
-               return result;
             })
         }
 

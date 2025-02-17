@@ -972,8 +972,8 @@
                     return
                 }
 
-                if ($scope.gridOptions.data.length > 100) {
-                    tS.toastr('warning', 'Límite máximo de items es 100');
+                if ($scope.gridOptions.data.length > 200) {
+                    tS.toastr('warning', 'Límite máximo de items es 200');
                     return
                 }
 
