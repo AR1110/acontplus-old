@@ -328,7 +328,6 @@ BEGIN
 							INNER JOIN Sri.Establecimiento    s   ON s.idEstablecimiento              = pe.idEstablecimiento
 							INNER JOIN dbo.TipoDocumento      td  ON td.idTipoDocumento      = pr.idTipoDocumento
 							INNER JOIN dbo.Cliente            cl  ON cl.idCliente            = pr.idCliente
-							INNER JOIN dbo.TipoIdentificacion ti  ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
 							 LEFT JOIN dbo.Ciudad             c   ON c.idCiudad              = cl.idCiudad
 							INNER JOIN dbo.Entidad            e   ON e.idEntidad             = pr.idEntidad
                             INNER JOIN Customer.Customer     cu WITH (NOLOCK) ON cu.Id             = cl.CustomerId
@@ -421,7 +420,8 @@ BEGIN
 								,fechaEmision = CONVERT(NVARCHAR, FORMAT(a.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 								,valorTotal = CAST(a.valor AS numeric(18,2))
 								,observacion = a.observaciones
-								,identificacionComprador = a.numeroIdentificacion
+								,a.nombreFiscal as cliente
+                                ,identificacionComprador = a.numeroIdentificacion
 								,a.direccionCliente
 								,a.telefonoCliente
 								,a.entidadFinanciera 
