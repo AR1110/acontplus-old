@@ -133,20 +133,23 @@
 
 
         <div class="row" ng-show="articlesFounded.length > 0">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex justify-content-start align-items-center">
                 @* <div class="form-group">
                     <input type="text" class="search form-control border-select" onclick="this.select()"
                         ng-model="search" placeholder="Buscar artículo">
                 </div> *@
+                <h4> Total Artículos: <span class="text-info"> {{totalRecords}}</span></h4>
+
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex justify-content-end align-items-center">
-                Articulos Selecionados: <span class="text-info"> {{articlesSelected.length}}</span>
+                <h4> Articulos Selecionados: <span class="text-info"> {{articlesSelected.length}}</span></h4>
             </div>
         </div>
         <md-table-container style="max-height: 400px;" ng-show="articlesFounded.length > 0">
             <table md-table md-row-select multiple ng-model="articlesSelected" md-progress="promise">
                 <thead md-head>
                     <tr md-row>
+                        <th md-column>#</th>
                         <th md-column>Código</th>
                         <th md-column>Descripcion</th>
                         <th md-column>Cant.</th>
@@ -158,6 +161,7 @@
                 <tbody md-body>
                     <tr md-row md-select="item" md-select-id="index" md-auto-select
                         ng-repeat="item in articlesFounded  ">
+                        <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.codigo}}</td>
                         <td md-cell>{{item.descripcion}}</td>
                         <td md-cell>{{item.cantidad}}</td>

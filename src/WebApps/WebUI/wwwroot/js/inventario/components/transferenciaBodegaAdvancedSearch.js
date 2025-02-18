@@ -11,12 +11,12 @@
             close: '&',
 
         },
-        controller: ['$scope','toastService','transferenciaBodegaService','formulario','$document', function ($scope, tS, transBodegaSvc, fS, $document) {
-            const $ctrl = this; 
+        controller: ['$scope', 'toastService', 'transferenciaBodegaService', 'formulario', '$document', function ($scope, tS, transBodegaSvc, fS, $document) {
+            const $ctrl = this;
 
             $scope.articlesSelected = [];
             $scope.articlesFounded = [];
- 
+
             $scope.subFamilias = [];
 
             $scope.dataSearch = {
@@ -27,28 +27,36 @@
             $scope.selectAll = false;
             $scope.bodegaText = null;
 
+            $scope.totalRecords = 0;
 
 
-            $document.on('click', function(event) {
-               $scope.$apply(()=>{
-                $scope.dropdownOpen = false;
-               })
+
+            $document.on('click', function (event) {
+                let selectBox = document.getElementById('selectBox');
+                let dropdown = document.getElementById('selectDropdown');
+
+                // Verifica si el clic fue fuera del contenedor del select
+                if (selectBox && !selectBox.contains(event.target) && dropdown && !dropdown.contains(event.target)) {
+                    $scope.$apply(function () {
+                        $scope.dropdownOpen = false;
+                    });
+                }
             });
 
             $ctrl.$onInit = function () {
                 const { bodegasOrigen, bodegaOrigenId, subFamilias } = $ctrl.resolve.params;
 
-                let dataBodega = bodegasOrigen.find(i=>i.idBodega===bodegaOrigenId)  ;
-                if(dataBodega){
+                let dataBodega = bodegasOrigen.find(i => i.idBodega === bodegaOrigenId);
+                if (dataBodega) {
                     $scope.bodegaText = dataBodega.descripcion;
                 }
                 $scope.dataSearch.bodegaOrigenId = bodegaOrigenId;
-                $scope.subFamilias = subFamilias; 
+                $scope.subFamilias = subFamilias;
 
             }
 
 
-           
+
 
             // Alternar la visibilidad del dropdown
             $scope.toggleDropdown = function ($event) {
@@ -82,7 +90,7 @@
 
             // Actualizar la selección de familias en función de los hijos
             $scope.updateSelection = function (family) {
-                if(family){
+                if (family) {
                     family.selected = family.subFamilias.every(sub => sub.selected);
                 }
                 $scope.selectAll = $scope.subFamilias.every(fam => fam.selected);
@@ -102,11 +110,11 @@
             // Obtener solo las subfamilias seleccionadas
             $scope.selectedSubfamilias = function () {
                 return $scope.subFamilias.flatMap(family => family.subFamilias.filter(sub => sub.selected));
-            }; 
+            };
 
 
-            $scope.searchProducts = function(){
-                if(!($scope.dataSearch.bodegaOrigenId>0)){
+            $scope.searchProducts = function () {
+                if (!($scope.dataSearch.bodegaOrigenId > 0)) {
                     tS.toastr({
                         type: 'warning',
                         message: 'Seleccione Bodega Origen'
@@ -114,27 +122,32 @@
                     return
                 }
 
-                let selectedSubfamilias = $scope.selectedSubfamilias().map(sub => sub.idSubFamilia).join(","); 
+                let selectedSubfamilias = $scope.selectedSubfamilias().map(sub => sub.idSubFamilia).join(",");
 
 
                 let params = {
                     bodegaId: $scope.dataSearch.bodegaOrigenId,
                     subFamilias: fS.isValidField(selectedSubfamilias)
                 }
-                transBodegaSvc.getProductsTransferenciaMasiva(params).then(response=>{ 
+                transBodegaSvc.getProductsTransferenciaMasiva(params).then(response => {
                     $scope.articlesFounded = response.articulos;
+                    if($scope.articlesFounded.length>0){
+                        $scope.totalRecords = $scope.articlesFounded[0].totalRecords;
+                    }else{
+                        $scope.totalRecords = 0;
+                    }
                 })
 
             }
 
 
-            $scope.setArticlesSelected = function(){
-                if(!($scope.articlesSelected.length>0)){
+            $scope.setArticlesSelected = function () {
+                if (!($scope.articlesSelected.length > 0)) {
                     tS.toastr({
                         type: 'warning',
                         message: 'Seleccione al menos un artículo'
                     })
-                    return 
+                    return
                 }
                 $ctrl.close({
                     $value: {
