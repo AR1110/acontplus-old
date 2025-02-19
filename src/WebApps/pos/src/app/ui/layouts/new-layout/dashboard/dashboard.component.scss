@@ -123,3 +123,8 @@ h2 {
     }
   }
 }
+
+.chart-container {
+  height: calc(100% - 100px);
+  width: 100%;
+}

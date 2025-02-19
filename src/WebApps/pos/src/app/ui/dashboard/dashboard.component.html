@@ -1,23 +1,7 @@
-<div class="header-widget">
-  <h2>Dashboard</h2>
-  <button mat-raised-button [mat-menu-trigger-for]="widgetMenu">
-    <mat-icon>add_circle</mat-icon>
-    Añadir widget
-  </button>
-  <mat-menu #widgetMenu="matMenu">
-    @for (item of dashboardStore.widgetsToAdd(); track $index) {
-    <button mat-menu-item (click)="dashboardStore.addWidget(item)">
-      {{ item.label }}
-    </button>
-    }@empty {
-    <button mat-menu-item>No hay widget para agregar</button>
-    }
-  </mat-menu>
-</div>
 <div class="d-flex flex-column gap-4">
   <div class="dashboard-widgets">
     @for (item of dashboardStore.documentCounts(); track $index) {
-    <app-widget [data]="item"></app-widget>
+    <app-metric-card [metric]="item"></app-metric-card>
     }
   </div>
   <div class="dashboard-widgets">

@@ -7,9 +7,9 @@ import { MatMenuModule } from '@angular/material/menu';
 @Component({
   selector: 'app-metric-card',
   template: `
-    <mat-card class="metric-card">
+    <mat-card class="metric-card" appearance="outlined">
       <div class="metric-header">
-        <mat-icon>{{ metric.icon }}</mat-icon>
+        <mat-icon>pending_actions</mat-icon>
         <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -44,7 +44,7 @@ import { MatMenuModule } from '@angular/material/menu';
         margin-bottom: 16px;
 
         mat-icon {
-          color: var(--text-primary);
+          color: var(--color-pink);
         }
       }
 

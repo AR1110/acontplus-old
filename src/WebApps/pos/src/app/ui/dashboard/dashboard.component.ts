@@ -6,7 +6,7 @@ import { WidgetComponent } from '@ui/dashboard/widget/widget.component';
 import { MatButtonModule } from '@angular/material/button';
 import { DashboardStore } from '@ui/store/dashboard.store';
 import { MatMenuModule } from '@angular/material/menu';
-
+import { MetricCardComponent } from '../layouts/new-layout/metric-card/metric-card.component';
 
 function getAnios() {
   const startYear = 2023;
@@ -19,53 +19,52 @@ function getAnios() {
   return years;
 }
 @Component({
-    selector: 'app-dashboard',
-    imports: [
-        MatButtonModule,
-        MatMenuModule,
-        MatIconModule,
-        WidgetComponent
-    ],
-    templateUrl: './dashboard.component.html',
-    styleUrl: './dashboard.component.scss'
+  selector: 'app-dashboard',
+  imports: [
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    WidgetComponent,
+    MetricCardComponent,
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  private router = inject(Router)
-  private mainStoreSvc = inject(MainStoreService)
-    dashboardStore = inject(DashboardStore)
+  private router = inject(Router);
+  private mainStoreSvc = inject(MainStoreService);
+  dashboardStore = inject(DashboardStore);
 
+  anios = signal(getAnios());
 
-  anios = signal(getAnios())
-
-  sales = signal<any[]>([])
-  bestSellingProduct = signal<any[]>([])
+  sales = signal<any[]>([]);
+  bestSellingProduct = signal<any[]>([]);
 
   dataSearch = model({
-    anio: new Date().getFullYear()
-  })
+    anio: new Date().getFullYear(),
+  });
 
-  onLoad(){
+  onLoad() {
     let estabId = this.mainStoreSvc.state().establecimientoId;
-    if (!(estabId)){
-      console.error("estab id", estabId)
-      return
+    if (!estabId) {
+      console.error('estab id', estabId);
+      return;
     }
-    this.dashboardStore.getStats(estabId)
+    this.dashboardStore.getStats(estabId);
   }
   ngOnInit(): void {
     let estabId = this.mainStoreSvc.state().establecimientoId;
-    if (!(estabId)){
-      console.error("estab id", estabId)
-      return
+    if (!estabId) {
+      console.error('estab id', estabId);
+      return;
     }
-    this.dashboardStore.getStats(estabId)
+    this.dashboardStore.getStats(estabId);
   }
 
-  refresh(){
-    this.onLoad()
+  refresh() {
+    this.onLoad();
   }
   navigateToPos() {
-    this.router.navigate(['pos'])
+    this.router.navigate(['pos']);
   }
-
 }

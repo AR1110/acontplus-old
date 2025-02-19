@@ -5,7 +5,9 @@ import { PosLayoutComponent } from '@/ui/layouts/pos-layout/pos-layout.component
 import { NewLayoutComponent } from './new-layout/new-layout.component';
 import { OrdersComponent } from '@ui/orders/orders.component';
 import { CompanyCustomerPageComponent } from '../company-customer/company-customer-page.component';
-import { DashboardComponent } from './new-layout/dashboard/dashboard.component';
+import { DashboardComponent } from '../dashboard/dashboard.component';
+import { PosSaleComponent } from '../pos-sale/pos-sale.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -26,24 +28,24 @@ export const routes: Routes = [
         title: 'Clientes',
         component: CompanyCustomerPageComponent,
       },
+      {
+        path: 'pos',
+        title: 'POS',
+        component: PosSaleComponent,
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
-  {
-    path: 'pos',
-    component: PosLayoutComponent,
-    children: [
-      {
-        path: '',
-        title: 'Pos',
-        loadComponent: () =>
-          import('@ui/pos/pos.component').then((m) => m.PosComponent),
-      },
-      // {
-      //   path: 'scheme-table',
-      //   title: 'Mesa de Esquemas',
-      //   loadComponent: () => import('@/pages/scheme-table-page/scheme-table-page.component').then(m => m.SchemeTablePageComponent),
-      // },
-    ],
-  },
+  // {
+  //   path: 'pos',
+  //   component: PosLayoutComponent,
+  //   children: [
+  //     {
+  //       path: '',
+  //       title: 'Pos',
+  //       loadComponent: () =>
+  //         import('@ui/pos/pos.component').then((m) => m.PosComponent),
+  //     },
+  //   ],
+  // },
 ];
