@@ -10,7 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
     <mat-card class="metric-card">
       <div class="metric-header">
         <mat-icon>{{ metric.icon }}</mat-icon>
-        <button mat-icon-button [matMenuTriggerFor]="menu">
+        <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
@@ -22,7 +22,7 @@ import { MatMenuModule } from '@angular/material/menu';
             <mat-icon>settings</mat-icon>
             <span>Settings</span>
           </button>
-        </mat-menu>
+        </mat-menu> -->
       </div>
       <div class="metric-value">{{ metric.value }}</div>
       <div class="metric-title">{{ metric.title }}</div>
@@ -52,7 +52,7 @@ import { MatMenuModule } from '@angular/material/menu';
         font-size: 28px;
         font-weight: 600;
         margin-bottom: 8px;
-        color: var(--text-primary);
+        color: var(--color-pink);
       }
 
       .metric-title {

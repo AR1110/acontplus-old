@@ -68,13 +68,14 @@
   }
 
   mat-sidenav-content {
-    background-color: var(--background-color);
+    z-index: inherit;
+    // background-color: var(--background-color);
 
     mat-toolbar {
       // background-color: transparent;
       position: sticky;
       top: 0;
-      z-index: 1;
+      // z-index: 1;
       // height: 40px;
 
       .greeting {

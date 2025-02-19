@@ -22,30 +22,11 @@ export class DashboardComponent {
       title: 'Uncategorized transactions',
       value: '12',
     },
-    { icon: 'group', title: 'Employees working today', value: '7' },
+
     {
       icon: 'credit_card',
       title: "This week's card spending",
       value: '$3,287.49',
-    },
-  ];
-
-  todos = [
-    { title: 'Run payroll', time: 'Mar 4 at 6:00 pm', icon: 'description' },
-    {
-      title: 'Review time off request',
-      time: 'Mar 7 at 6:00 pm',
-      icon: 'schedule',
-    },
-    {
-      title: 'Sign board resolution',
-      time: 'Mar 12 at 6:00 pm',
-      icon: 'assignment',
-    },
-    {
-      title: 'Finish onboarding Tony',
-      time: 'Mar 12 at 6:00 pm',
-      icon: 'person_add',
     },
   ];
 }

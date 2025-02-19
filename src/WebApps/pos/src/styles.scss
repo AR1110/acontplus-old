@@ -6,6 +6,22 @@
 @import "ngx-toastr/toastr";
 @import "overlayscrollbars/overlayscrollbars.css";
 
+$light-bg: #f0f4f7;
+$light-card-bg: #ffffff;
+$light-text: #333333;
+$light-secondary-text: #747474;
+$light-border: #e0e0e0;
+$light-primary: #2a3f54;
+$light-accent: #4dc0b5;
+
+// Dark theme variables
+$dark-bg: #1a1f35;
+$dark-card-bg: #2a2f45;
+$dark-text: #f0f0f0;
+$dark-secondary-text: #a0a0a0;
+$dark-border: #3a3f55;
+$dark-primary: #4dc0b5;
+$dark-accent: #64b5f6;
 // Import all of Bootstrap's CSS
 
 //ui-improve
@@ -18,11 +34,12 @@
   --text-primary: #000000;
   --text-secondary: rgba(0, 0, 0, 0.6);
   --border-color: rgba(0, 0, 0, 0.12);
-  --sidebar-bg: #000000;
-  --sidebar-text: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #000000;
   --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   --status-card-bg: #000000;
   --chart-grid: #f0f0f0;
+  --color-pink: #d61672;
 }
 
 // Variables tema oscuro
@@ -38,6 +55,7 @@
   --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   --status-card-bg: #000000;
   --chart-grid: #2d2d2d;
+  --color-pink: #ffffff;
 }
 
 // Estilos globales
@@ -53,4 +71,72 @@ body {
   border-radius: 16px !important;
   box-shadow: var(--card-shadow) !important;
   background-color: var(--card-bg) !important;
+}
+
+$angular-material-3-light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+$angular-material-3-dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$magenta-palette,
+      tertiary: mat.$violet-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+// Light theme
+// Un comment below to use theme created by ng add @angular-material
+// $theme: $angular-material-3-light-theme;
+
+// Light Theme created by ng generate @angular-material:m3-theme
+$theme: m3-theme.$light-theme;
+
+// Dark theme
+// Un-comment below to use dark theme using @angular/material
+// $dark-theme: $angular-material-3-dark-theme;
+
+// Dark Theme created by ng generate @angular-material:m3-theme
+$dark-theme: m3-theme.$dark-theme;
+
+:root {
+  @include mat.all-component-themes($theme);
+
+  // Components themes
+  @include layout-component.theme($theme);
+
+  // Add backwards compatibility styles for color variants
+  @include mat.color-variants-backwards-compatibility($theme);
+
+  @media (prefers-color-scheme: light) {
+    @include mat.all-component-colors($dark-theme);
+
+    // Components themes
+    @include layout-component.theme($dark-theme);
+
+    @include mat.color-variants-backwards-compatibility($dark-theme);
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

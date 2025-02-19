@@ -1,3 +1,4 @@
+// services/theme.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -5,20 +6,33 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class ThemeService {
-  private isDarkTheme = new BehaviorSubject<boolean>(false);
-  isDarkTheme$ = this.isDarkTheme.asObservable();
+  private darkMode = new BehaviorSubject<boolean>(false);
+  isDarkMode$ = this.darkMode.asObservable();
 
-  toggleTheme() {
-    this.isDarkTheme.next(!this.isDarkTheme.value);
-    if (this.isDarkTheme.value) {
-      document.body.classList.add('dark-theme');
+  constructor() {
+    // Check if user has a preference saved
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      this.darkMode.next(savedTheme === 'dark');
+      this.applyTheme(savedTheme === 'dark');
     } else {
-      document.body.classList.remove('dark-theme');
+      // Check system preference
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches;
+      this.darkMode.next(prefersDark);
+      this.applyTheme(prefersDark);
     }
   }
 
-  setTheme(isDark: boolean) {
-    this.isDarkTheme.next(isDark);
+  toggleDarkMode(): void {
+    const newValue = !this.darkMode.value;
+    this.darkMode.next(newValue);
+    this.applyTheme(newValue);
+    localStorage.setItem('theme', newValue ? 'dark' : 'light');
+  }
+
+  private applyTheme(isDark: boolean): void {
     if (isDark) {
       document.body.classList.add('dark-theme');
     } else {
