@@ -3,6 +3,7 @@
 public class CategoryController : BaseApiController
 {
     private readonly ICategoryService _categoryService;
+    private const string CompanyId = "companyId";
 
     public CategoryController(ICategoryService categoryService)
     {
@@ -26,7 +27,7 @@ public class CategoryController : BaseApiController
     public async Task<IActionResult> Post([FromBody] Category category)
     {
         category.UserId = User.GetUserId();
-        category.CompanyId = User.GetCompanyId();
+        category.CompanyId = User.GetClaimValue<int>(CompanyId);
         var response = await _categoryService.AddAsync(category);
         return Ok(response);
     }
@@ -35,7 +36,7 @@ public class CategoryController : BaseApiController
     public async Task<IActionResult> Put(int id, [FromBody] Category category)
     {
         category.UserId = User.GetUserId();
-        category.CompanyId = User.GetCompanyId();
+        category.CompanyId = User.GetClaimValue<int>(CompanyId);
         var response = await _categoryService.UpdateAsync(id, category);
         return Ok(response);
     }

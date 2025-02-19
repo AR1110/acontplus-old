@@ -6,6 +6,8 @@ public class ProductPhotoController(
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController
 {
+    private const string IdCardCompany = "idCardCompany";
+
     [HttpGet("{productId}")]
     public async Task<IActionResult> Get(int productId)
     {
@@ -22,7 +24,7 @@ public class ProductPhotoController(
         data.UserId = User.GetUserId();
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+            await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
         }
 
         data.ProductId = productId;
@@ -46,7 +48,7 @@ public class ProductPhotoController(
         data.UserId = User.GetUserId();
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+            await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
         }
         data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
         data.S3ObjectUrl = s3ObjectCustom.S3ObjectUrl;

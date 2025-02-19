@@ -22,7 +22,7 @@ public class SubFamiliaController(
     {
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/subfamilias/", file);
+            await s3ObjectCustom.Add($"{User.GetClaimValue<string>("idCardCompany")}/subfamilias/", file);
         }
 
         var parameters = new Dictionary<string, object>

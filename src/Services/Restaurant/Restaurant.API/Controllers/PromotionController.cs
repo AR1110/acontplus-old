@@ -11,6 +11,8 @@ public class PromotionController(
     IS3StorageService storage)
     : BaseApiController
 {
+    private const string IdCardCompany = "idCardCompany";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -26,7 +28,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
             }
 
             var parameters = new Dictionary<string, object>
@@ -66,7 +68,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
             }
 
             var parameters = new Dictionary<string, object>

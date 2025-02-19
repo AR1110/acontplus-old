@@ -6,6 +6,10 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
+        var companyId = User.GetClaimValue<int>("companyId");
+        var idCardCompanyId = User.GetClaimValue<string>("idCardCompany");
+        var userRoleId = User.GetClaimValue<int>("userRoleId");
+
         var parameters = new Dictionary<string, object>
         {
             { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }

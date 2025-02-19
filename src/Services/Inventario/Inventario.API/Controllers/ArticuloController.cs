@@ -35,7 +35,7 @@ public class ArticuloController(
 
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+            await s3ObjectCustom.Add($"{User.GetClaimValue<string>("idCardCompany")}/articulos/", file);
         }
 
         var parameters = new Dictionary<string, object>

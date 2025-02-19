@@ -16,7 +16,7 @@ public class SubcategoryController(ISubcategoryService subcategoryService) : Bas
     public async Task<IActionResult> Post([FromBody] Subcategory subcategory)
     {
         subcategory.UserId = User.GetUserId();
-        subcategory.CompanyId = User.GetCompanyId();
+        subcategory.CompanyId = User.GetClaimValue<int>("companyId");
         return Ok(await subcategoryService.AddAsync(subcategory));
     }
 

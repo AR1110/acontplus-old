@@ -6,6 +6,8 @@ public class SubcategoryPhotoController(
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController
 {
+    private const string IdCardCompany = "idCardCompany";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -28,7 +30,7 @@ public class SubcategoryPhotoController(
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
             }
 
             data.SubcategoryId = subcategoryId;
@@ -63,7 +65,7 @@ public class SubcategoryPhotoController(
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey,
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file, data.S3ObjectKey,
                     data.S3ObjectUrl);
             }
 
