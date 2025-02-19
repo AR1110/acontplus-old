@@ -16,7 +16,7 @@ public class OrderController : BaseApiController
     {
         var response = await _orderService.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return BadRequest("Cant get Data"); }
 
@@ -29,7 +29,7 @@ public class OrderController : BaseApiController
         //var order = _mapper.Map<Order>(orderDto);
         var response = await _orderService.AddAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             {
                 "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
                     new JsonSerializerSettings
@@ -51,7 +51,7 @@ public class OrderController : BaseApiController
     {
         var response = await _orderService.UpdateAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             {
                 "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(order,
@@ -84,7 +84,7 @@ public class OrderController : BaseApiController
         var response =
             await _orderService.DeleteAsync(new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "id", id }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
         return Ok(response);
     }

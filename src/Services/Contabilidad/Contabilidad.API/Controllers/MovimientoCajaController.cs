@@ -7,7 +7,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     {
         var response = await movimientoCajaService.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return NoContent(); }
 
@@ -20,7 +20,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
         var response = await movimientoCajaService.AddAsync(parameters);
@@ -31,7 +31,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await movimientoCajaService.DeleteAsync(parameters);
         return Ok(response);
     }

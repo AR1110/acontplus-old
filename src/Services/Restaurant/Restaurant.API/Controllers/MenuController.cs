@@ -10,14 +10,14 @@ public class MenuController(IMenuService menuService) : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await menuService.GetAsync(parameters));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await menuService.PutAsync(id, data));
     }
 }

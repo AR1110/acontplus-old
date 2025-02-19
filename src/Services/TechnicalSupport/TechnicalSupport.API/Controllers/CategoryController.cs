@@ -15,7 +15,7 @@ public class CategoryController : BaseApiController
     {
         var response = await _categoryService.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return BadRequest("Can't Get brand"); }
 

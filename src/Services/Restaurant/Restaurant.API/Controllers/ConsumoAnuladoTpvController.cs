@@ -13,7 +13,7 @@ namespace Restaurant.API.Controllers
         {
             var response = await cancelledService.GetAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
             return Ok(response);
         }
@@ -23,7 +23,7 @@ namespace Restaurant.API.Controllers
         {
             var response = await cancelledService.AddAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
             return Ok(response);
         }
@@ -33,7 +33,7 @@ namespace Restaurant.API.Controllers
         {
             var response = await cancelledService.UpdateAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
 
             return Ok(response);
@@ -44,7 +44,7 @@ namespace Restaurant.API.Controllers
         {
             var response =
                 await cancelledService.DeleteAsync(
-                    new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
+                    new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
 
             return Ok(response);
         }

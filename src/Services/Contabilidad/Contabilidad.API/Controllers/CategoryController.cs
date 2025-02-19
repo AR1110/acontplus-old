@@ -7,7 +7,7 @@ public class CategoryController(ICategoryService categoryService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await categoryService.GetAsync(parameters));
     }

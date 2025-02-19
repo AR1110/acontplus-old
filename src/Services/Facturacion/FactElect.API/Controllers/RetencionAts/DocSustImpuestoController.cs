@@ -9,7 +9,7 @@ public class DocSustImpuestoController(IDocSustImpuestoService docSustImpuestoSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "idDocSust", idDocSust },
             { "json", SqlStringParam.Sanitize(json) }
         };
@@ -21,7 +21,7 @@ public class DocSustImpuestoController(IDocSustImpuestoService docSustImpuestoSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await docSustImpuestoService.UpdateAsync(parameters));
     }
@@ -29,7 +29,7 @@ public class DocSustImpuestoController(IDocSustImpuestoService docSustImpuestoSe
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await docSustImpuestoService.DeleteAsync(parameters));
     }
 }

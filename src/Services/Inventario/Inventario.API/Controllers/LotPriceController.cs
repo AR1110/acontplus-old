@@ -9,7 +9,7 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await lotPriceService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -22,7 +22,7 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         var response = await lotPriceService.UpdateAsync(parameters);

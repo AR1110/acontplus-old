@@ -14,7 +14,7 @@ public class DeviceSpecController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await _service.GetAsync(parameters);

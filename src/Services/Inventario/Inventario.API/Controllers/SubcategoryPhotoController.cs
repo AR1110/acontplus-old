@@ -14,7 +14,7 @@ public class SubcategoryPhotoController(
 
         var response = await subcategoryPhoto.GetAsync(new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
         if (response == null) { return BadRequest($"Cant get data: {json}"); }
 

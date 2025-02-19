@@ -7,7 +7,7 @@ public class WhatsappMessageController(IWhatsappMessageService whatsappMessageSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", DataConverters.SerializeDictionary(data.Data) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };

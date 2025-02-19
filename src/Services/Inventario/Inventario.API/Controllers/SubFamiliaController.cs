@@ -11,7 +11,7 @@ public class SubFamiliaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.GetAsync(parameters);
         return Ok(response);
@@ -27,7 +27,7 @@ public class SubFamiliaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) },
             { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
             { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
@@ -54,7 +54,7 @@ public class SubFamiliaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) },
             { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
             { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
@@ -69,7 +69,7 @@ public class SubFamiliaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await service.UpdateAsync(parameters);
@@ -79,7 +79,7 @@ public class SubFamiliaController(
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         var response = await service.DeleteAsync(parameters);
         return Ok(response);
@@ -94,7 +94,7 @@ public class SubFamiliaController(
     //    try
     //    {
     //        await _db.SPExecute("Almacen.SubFamilia_For_Select");
-    //        _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
+    //        _db.AddDynamicParam("idUsuarioRol", User.GetClaimValue<int>("userRoleId"));
     //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
     //        _response = await _db.GetDataTableAsync();
     //    }

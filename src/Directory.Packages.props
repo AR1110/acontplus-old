@@ -14,7 +14,7 @@
     <PackageVersion Include="Acontplus.FactElect.Application" Version="1.0.12" />
     <PackageVersion Include="Acontplus.Reports.Application" Version="1.1.14" />
     <PackageVersion Include="Acontplus.Reports.Core" Version="1.0.0" />
-    <PackageVersion Include="Acontplus.Services.Common" Version="1.1.10" />
+    <PackageVersion Include="Acontplus.Services.Common" Version="1.1.11" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="AutoMapper" Version="14.0.0" />
     <PackageVersion Include="BarcodeLib" Version="3.1.4" />

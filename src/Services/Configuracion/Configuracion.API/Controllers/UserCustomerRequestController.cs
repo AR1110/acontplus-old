@@ -7,7 +7,7 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await userCustomerRequestService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -21,7 +21,7 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await userCustomerRequestService.AddAsync(parameters);
@@ -33,7 +33,7 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await userCustomerRequestService.UpdateAsync(parameters);

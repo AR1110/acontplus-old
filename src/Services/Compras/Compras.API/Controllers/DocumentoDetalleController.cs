@@ -7,7 +7,7 @@ public class DocumentoDetalleController(IDocumentoDetalleService documentoDetall
     {
         var parameters = new Dictionary<string, object>
         {
-            {"idUsuarioRol",  User.GetUserRoleId()},
+            {"idUsuarioRol",  User.GetClaimValue<int>("userRoleId")},
             {"idDocumento", idDocumento },
             {"idArticulo", idArticulo }
         };
@@ -19,7 +19,7 @@ public class DocumentoDetalleController(IDocumentoDetalleService documentoDetall
     {
         var parameters = new Dictionary<string, object>
         {
-            {"idUsuarioRol",  User.GetUserRoleId()},
+            {"idUsuarioRol",  User.GetClaimValue<int>("userRoleId")},
             {"id", id }
         };
         return Ok(await documentoDetalleService.DeleteAsync(parameters));

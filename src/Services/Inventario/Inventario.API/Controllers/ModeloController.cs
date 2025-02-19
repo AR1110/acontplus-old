@@ -7,7 +7,7 @@ public class ModeloController(IModeloService modeloService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await modeloService.GetAsync(parameters);
@@ -19,7 +19,7 @@ public class ModeloController(IModeloService modeloService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -34,7 +34,7 @@ public class ModeloController(IModeloService modeloService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
@@ -47,7 +47,7 @@ public class ModeloController(IModeloService modeloService) : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id }, };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, };
 
         var response = await modeloService.DeleteAsync(parameters);
         return Ok(response);

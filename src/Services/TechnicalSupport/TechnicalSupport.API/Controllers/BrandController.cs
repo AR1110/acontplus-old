@@ -14,7 +14,7 @@ public class BrandController : BaseApiController
     {
         var response = await _brandService.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }

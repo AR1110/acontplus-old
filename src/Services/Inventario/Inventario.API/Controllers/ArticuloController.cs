@@ -16,7 +16,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloService.GetAsync(parameters));
     }
@@ -40,7 +40,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
             { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
@@ -71,7 +71,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "s3ObjectKey", "" },
             { "s3ObjectUrl", "" }
@@ -86,7 +86,7 @@ public class ArticuloController(
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -96,7 +96,7 @@ public class ArticuloController(
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await articuloService.DeleteAsync(parameters));
     }
 
@@ -110,7 +110,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         return Ok(await articuloService.SearchAsync(parameters));

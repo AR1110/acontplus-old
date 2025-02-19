@@ -7,7 +7,7 @@ public class CreditoGaranteController(ICreditoGaranteService creditoGaranteServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         return Ok(await creditoGaranteService.GetAsync(parameters));
@@ -18,7 +18,7 @@ public class CreditoGaranteController(ICreditoGaranteService creditoGaranteServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 
@@ -30,7 +30,7 @@ public class CreditoGaranteController(ICreditoGaranteService creditoGaranteServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };

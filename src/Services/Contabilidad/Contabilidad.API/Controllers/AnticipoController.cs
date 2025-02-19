@@ -14,7 +14,7 @@ public class AnticipoController : BaseApiController
     {
         var response = await _anticipoSvc.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return NoContent(); }
 
@@ -27,7 +27,7 @@ public class AnticipoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
         var response = await _anticipoSvc.AddAsync(parameters);
@@ -40,7 +40,7 @@ public class AnticipoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
@@ -53,7 +53,7 @@ public class AnticipoController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await _anticipoSvc.DeleteAsync(parameters);
         return Ok(response);
     }

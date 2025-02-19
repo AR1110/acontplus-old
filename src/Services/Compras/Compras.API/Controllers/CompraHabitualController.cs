@@ -8,7 +8,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.GetAsync(parameters));
     }
@@ -18,7 +18,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         return Ok(await compraHabitualService.AddAsync(parameters));
@@ -29,7 +29,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.UpdateAsync(parameters));
     }
@@ -38,7 +38,7 @@ public class CompraHabitualController(
     public async Task<IActionResult> Delete(string json)
     {
         var parameters = new Dictionary<string, object> {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.DeleteAsync(parameters));

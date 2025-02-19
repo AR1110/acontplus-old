@@ -10,7 +10,7 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await ingredientService.GetAsync(parameters));
     }
 
@@ -23,7 +23,7 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await ingredientService.AddAsync(data));
     }
 

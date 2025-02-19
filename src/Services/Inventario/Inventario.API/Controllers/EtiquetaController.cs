@@ -7,7 +7,7 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };
 
@@ -20,7 +20,7 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -35,7 +35,7 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
              { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
               { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
@@ -50,7 +50,7 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
         };
 

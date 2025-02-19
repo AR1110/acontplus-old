@@ -14,7 +14,7 @@ public class NotaEntregaController : BaseApiController
     {
         var response = await _svc.GetAsync(new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return NoContent(); }
 
@@ -25,7 +25,7 @@ public class NotaEntregaController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var response =
-            await _svc.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
+            await _svc.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
         if (response == null) { return NoContent(); }
 
         return Ok(new { code = "1", payload = response });
@@ -36,7 +36,7 @@ public class NotaEntregaController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await _svc.AddAsync(parameters);
@@ -48,7 +48,7 @@ public class NotaEntregaController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
@@ -62,7 +62,7 @@ public class NotaEntregaController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
@@ -75,7 +75,7 @@ public class NotaEntregaController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         var response = await _svc.ConvertToDocAsync(parameters);

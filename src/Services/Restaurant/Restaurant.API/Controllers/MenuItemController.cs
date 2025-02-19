@@ -12,7 +12,7 @@ public class MenuItemController(IMenuItemService menuItemService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         return Ok(await menuItemService.GetAsync(parameters));
@@ -23,7 +23,7 @@ public class MenuItemController(IMenuItemService menuItemService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", json }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", json }
         };
 
         return Ok(await menuItemService.GetIdAsync(parameters));

@@ -8,7 +8,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await cuentaPorCobrarService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -22,7 +22,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
         return Ok(await cuentaPorCobrarService.AddAsync(parameters));
     }
@@ -33,7 +33,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
         return Ok(await cuentaPorCobrarService.UpdateAsync(parameters));

@@ -15,7 +15,7 @@ public class HorarioController : BaseApiController
     [HttpGet("GetByTurno/{idTurno}")]
     public async Task<IActionResult> Get(int idTurno)
     {
-        return Ok(await _h.ReadHorarioAsync(User.GetUserRoleId(), idTurno));
+        return Ok(await _h.ReadHorarioAsync(User.GetClaimValue<int>("userRoleId"), idTurno));
     }
 
     [HttpGet("GetDays")]

@@ -9,7 +9,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await clienteService.GetAsync(parameters));
     }
@@ -20,7 +20,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await clienteService.GetDataFormAsync(parameters));
     }
@@ -35,7 +35,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
 
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await clienteService.SearchAsync(parameters));
     }
@@ -46,7 +46,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", JsonConvert.SerializeObject(data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", JsonConvert.SerializeObject(data) }
         };
         return Ok(await clienteService.AddAsync(parameters));
     }
@@ -56,7 +56,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", JsonConvert.SerializeObject(data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", JsonConvert.SerializeObject(data) }
         };
         return Ok(await clienteService.UpdateAsync(parameters));
     }
@@ -64,7 +64,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, };
         return Ok(await clienteService.DeleteAsync(parameters));
     }
 

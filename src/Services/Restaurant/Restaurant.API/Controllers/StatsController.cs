@@ -11,7 +11,7 @@ public class StatsController(IStatsService statsService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            {"userRoleId", User.GetUserRoleId() },
+            {"userRoleId", User.GetClaimValue<int>("userRoleId") },
             {"json", SqlStringParam.Sanitize(json)}
         };
         return Ok(await statsService.GetAsync(parameters));

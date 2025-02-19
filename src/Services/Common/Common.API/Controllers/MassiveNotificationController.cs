@@ -9,7 +9,7 @@ public class MassiveNotificationController(IMassiveNotificationService massiveNo
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "notification", DataConverters.SerializeObjectCustom<Notification>(notification) }
         };
         return Ok(await massiveNotificationService.AddAsync(parameters));

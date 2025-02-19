@@ -7,7 +7,7 @@ public class TarifaController(ITarifaService tarifaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await tarifaService.GetAsync(parameters);
@@ -20,7 +20,7 @@ public class TarifaController(ITarifaService tarifaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }

@@ -7,7 +7,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await svc.GetAsync(parameters));
     }
@@ -17,7 +17,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 
@@ -29,7 +29,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
@@ -41,7 +41,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         return Ok(await svc.DeleteAsync(parameters));
     }
@@ -49,7 +49,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await svc.GetByIdAsync(parameters));
     }
 
@@ -58,7 +58,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
 

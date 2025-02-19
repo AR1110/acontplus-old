@@ -23,7 +23,7 @@ public class RecipeController(IRecipeService recipeService) : BaseApiController
     public async Task<IActionResult> GetByItem(int id)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         return Ok(await recipeService.GetByItem(parameters));
     }

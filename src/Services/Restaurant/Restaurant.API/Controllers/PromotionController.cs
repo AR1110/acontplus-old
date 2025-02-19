@@ -17,7 +17,7 @@ public class PromotionController(
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await promotionService.GetAsync(parameters));
     }
 
@@ -33,13 +33,13 @@ public class PromotionController(
 
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) },
                 { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" },
                 { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" }
             };
 
-            int userRoleId = User.GetUserRoleId();
+            int userRoleId = User.GetClaimValue<int>("userRoleId");
             var response = await promotionService.AddAsync(parameters);
 
             if (response.Code == "1" && file != null)
@@ -73,7 +73,7 @@ public class PromotionController(
 
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(json) },
                 { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" },
