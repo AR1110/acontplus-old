@@ -9,11 +9,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   imports: [AsyncPipe, MatSlideToggleModule, MatIconModule],
   template: `
     <mat-slide-toggle
-      [checked]="themeService.isDarkTheme$ | async"
-      (change)="themeService.toggleTheme()"
+      [checked]="themeService.isDarkMode$ | async"
+      (change)="themeService.toggleDarkMode()"
     >
       <mat-icon>{{
-        (themeService.isDarkTheme$ | async) ? 'dark_mode' : 'light_mode'
+        (themeService.isDarkMode$ | async) ? 'dark_mode' : 'light_mode'
       }}</mat-icon>
     </mat-slide-toggle>
   `,
