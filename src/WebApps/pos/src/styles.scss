@@ -6,40 +6,6 @@
 @import "ngx-toastr/toastr";
 @import "overlayscrollbars/overlayscrollbars.css";
 
-// Import all of Bootstrap's CSS
-
-//ui-improve
-// Actualizar variables de tema
-// Variables tema claro
-:root {
-  --background-color: #f0f4f8;
-  --card-bg: #ffffff;
-  --metric-card-bg: #f5f9fc;
-  --text-primary: #000000;
-  --text-secondary: rgba(0, 0, 0, 0.6);
-  --border-color: rgba(0, 0, 0, 0.12);
-  --sidebar-bg: #ffffff;
-  --sidebar-text: #000000;
-  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --status-card-bg: #000000;
-  --chart-grid: #f0f0f0;
-}
-
-// Variables tema oscuro
-.dark-theme {
-  --background-color: #121212;
-  --card-bg: #1e1e1e;
-  --metric-card-bg: #262626;
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.12);
-  --sidebar-bg: #000000;
-  --sidebar-text: #ffffff;
-  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  --status-card-bg: #000000;
-  --chart-grid: #2d2d2d;
-}
-
 $angular-material-3-light-theme: mat.define-theme(
   (
     color: (
@@ -106,13 +72,47 @@ $compact-theme: mat.define-theme(
   // Add backwards compatibility styles for color variants
   @include mat.color-variants-backwards-compatibility($theme);
 
-  @media (prefers-color-scheme: light) {
-    @include mat.all-component-colors($dark-theme);
+  --background-color: #f0f4f8;
+  --card-bg: #ffffff;
+  --metric-card-bg: #f5f9fc;
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --border-color: rgba(0, 0, 0, 0.12);
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #000000;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --status-card-bg: #000000;
+  --chart-grid: #f0f0f0;
+  --bg-date: #fff;
+  --bg-range-date: #eee;
+}
 
-    @include layout-component.theme($dark-theme);
+// Variables tema oscuro
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
 
-    @include mat.color-variants-backwards-compatibility($dark-theme);
-  }
+  // Components themes
+  @include layout-component.theme($dark-theme);
+
+  @include mat.color-variants-backwards-compatibility($dark-theme);
+
+  @include mat.elevation-classes();
+  @include mat.app-background();
+  @include mat.button-color($dark-theme);
+
+  --background-color: #121212;
+  --card-bg: #1e1e1e;
+  --metric-card-bg: #262626;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --sidebar-bg: #000000;
+  --sidebar-text: #ffffff;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --status-card-bg: #000000;
+  --chart-grid: #2d2d2d;
+  --bg-date: #121212;
+  --bg-range-date: rgba(255, 255, 255, 0.12);
 }
 
 // Estilos globales
@@ -127,5 +127,5 @@ body {
 .mat-mdc-card {
   border-radius: 16px !important;
   box-shadow: var(--card-shadow) !important;
-  background-color: var(--card-bg) !important;
+  // background-color: var(--card-bg) !important;
 }

@@ -1,14 +1,21 @@
 @use "@angular/material" as mat;
 @mixin theme($theme) {
   .sidenav-scroll-wrapper {
-    // background-color: rgba(
-    //   mat.get-theme-color($theme, primary-container),
-    //   0.55
-    // );
-    //background-color: rgba(233, 221, 255, 0.75)
-    //background-color: #edf1f5;
+    background-color: rgba(
+      mat.get-theme-color($theme, primary-container),
+      0.55
+    );
+    background-color: rgba(233, 221, 255, 0.75);
+    background-color: #edf1f5;
   }
-  // .sidenav-content {
+  .sidenav-content {
+    @media (pointer: fine) {
+      &::-webkit-scrollbar-thumb {
+        background-color: mat.get-theme-color($theme, primary);
+      }
+    }
+  }
+  // .main-content {
   //   @media (pointer: fine) {
   //     &::-webkit-scrollbar-thumb {
   //       background-color: mat.get-theme-color($theme, primary);
@@ -18,6 +25,6 @@
 }
 
 .sidenav-scroll-wrapper {
-  //  background-color: rgba(233, 221, 255, 0.75)
-  //background-color: rgb(245, 245, 245);
+  background-color: rgba(233, 221, 255, 0.75);
+  background-color: rgb(245, 245, 245);
 }

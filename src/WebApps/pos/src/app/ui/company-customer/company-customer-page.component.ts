@@ -1,34 +1,43 @@
-import {Component, inject, ViewChild} from '@angular/core';
-import {MatPaginator, PageEvent} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
-import {Pagination} from "@domain/models/pagination.model";
-import {MatIconModule} from "@angular/material/icon";
-import {MatCardModule} from "@angular/material/card";
-import {CustomTableContainerComponent} from "@ui/components/custom-table-container/custom-table-container.component";
-import {MatTableModule} from "@angular/material/table";
-import {CompanyCustomerService} from "@data/repositories/company-customer/company-customer.service";
-import {MatButtonModule} from "@angular/material/button";
-import {CompanyCustomerRead} from "@domain/models/company-customer.model";
-import {PrimaryStatusPipe} from "@core/pipes/primary-status.pipe";
-import {ActionCompanyCustomerAddEditModalDirective} from "@ui/directives/action-company-customer-add-edit.directive";
-
+import { Component, inject, ViewChild } from '@angular/core';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Pagination } from '@domain/models/pagination.model';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { CustomTableContainerComponent } from '@ui/components/custom-table-container/custom-table-container.component';
+import { MatTableModule } from '@angular/material/table';
+import { CompanyCustomerService } from '@data/repositories/company-customer/company-customer.service';
+import { MatButtonModule } from '@angular/material/button';
+import { CompanyCustomerRead } from '@domain/models/company-customer.model';
+import { PrimaryStatusPipe } from '@core/pipes/primary-status.pipe';
+import { ActionCompanyCustomerAddEditModalDirective } from '@ui/directives/action-company-customer-add-edit.directive';
 
 @Component({
-    selector: 'app-company-customer',
-    imports: [
-        MatIconModule,
-        MatCardModule,
-        MatTableModule,
-        MatButtonModule,
-        CustomTableContainerComponent,
-        PrimaryStatusPipe,
-        ActionCompanyCustomerAddEditModalDirective
-    ],
-    templateUrl: './company-customer-page.component.html'
+  selector: 'app-company-customer',
+  imports: [
+    MatIconModule,
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    CustomTableContainerComponent,
+    PrimaryStatusPipe,
+    ActionCompanyCustomerAddEditModalDirective,
+  ],
+  templateUrl: './company-customer-page.component.html',
 })
 export class CompanyCustomerPageComponent {
-  private companyCustomerSvc = inject(CompanyCustomerService)
-  displayedColumns: string[] = ['index','op', 'ruc', 'razonSocial', 'nombreComercial','direccion','correo','telefono','estado'];
+  private companyCustomerSvc = inject(CompanyCustomerService);
+  displayedColumns: string[] = [
+    'index',
+    'op',
+    'ruc',
+    'razonSocial',
+    'nombreComercial',
+    'direccion',
+    'correo',
+    'telefono',
+    'estado',
+  ];
 
   data: CompanyCustomerRead[] = [];
 
@@ -37,38 +46,37 @@ export class CompanyCustomerPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  pagination = new Pagination()
+  pagination = new Pagination();
 
-
-
-  getCompanyCustomers(){
+  getCompanyCustomers() {
     let params = {
       pageIndex: this.pagination.pageIndex + 1,
-      pageSize: this.pagination.pageSize
-    }
-    this.isLoadingResults=true;
+      pageSize: this.pagination.pageSize,
+    };
+    this.isLoadingResults = true;
     this.companyCustomerSvc.getAll(params).subscribe({
-      next: response=>{
+      next: (response) => {
         this.isLoadingResults = false;
         this.data = response;
-        this.pagination.totalRecords = this.data.length>0?this.data[0].totalRecords: 0
+        this.pagination.totalRecords =
+          this.data.length > 0 ? this.data[0].totalRecords : 0;
       },
-      error:()=>this.isLoadingResults=false
-    })
+      error: () => (this.isLoadingResults = false),
+    });
   }
 
-  ngOnInit(){
-     this.getCompanyCustomers()
+  ngOnInit() {
+    this.getCompanyCustomers();
   }
 
-  refresh(){
-    this.getCompanyCustomers()
+  refresh() {
+    this.getCompanyCustomers();
   }
 
   handlePageEvent(e: PageEvent) {
     this.pagination.totalRecords = e.length;
     this.pagination.pageSize = e.pageSize;
     this.pagination.pageIndex = e.pageIndex;
-    this.getCompanyCustomers()
+    this.getCompanyCustomers();
   }
 }
