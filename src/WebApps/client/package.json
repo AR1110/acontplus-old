@@ -31,7 +31,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@ng-bootstrap/ng-bootstrap": "^17.0.1",
-    "@ngrx/signals": "^18.1.1",
+    "@ngrx/signals": "^19.0.1",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",
