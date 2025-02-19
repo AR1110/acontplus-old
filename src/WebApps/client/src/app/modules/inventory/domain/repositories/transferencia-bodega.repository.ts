@@ -1,0 +1,11 @@
+import { Observable } from 'rxjs';
+import { ApiResponse } from '@core/models/api-response';
+import { GroupedEstab } from '@core/models/estab.model';
+
+export abstract class TransferenciaBodegaRepository {
+  abstract getAll<T>(obj: T): Observable<{ data: any[]; totalRecords: number }>;
+  abstract getDataFilter(): Observable<{ estabs: GroupedEstab[] }>;
+  abstract post<T>(obj: T): Observable<ApiResponse>;
+  abstract put<T>(id: number, obj: T): Observable<ApiResponse>;
+  abstract updateStatus(id: number): Observable<ApiResponse>;
+}

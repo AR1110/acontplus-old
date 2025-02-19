@@ -1,6 +1,5 @@
 ﻿global using System.Data;
 global using System.Text;
-global using Autofac;
 global using Common.Core.Data;
 global using Common.Core.Enums;
 global using Common.Core.Models;

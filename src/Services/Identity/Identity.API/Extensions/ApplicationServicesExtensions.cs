@@ -1,4 +1,6 @@
-﻿namespace Identity.API.Extensions;
+﻿using Common.Infrastructure.Repository.Implementations;
+
+namespace Identity.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -18,6 +20,7 @@ public static class ApplicationServicesExtensions
 
         services.AddHostedService<TokenCleanupService>();
         services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IAdoRepository, AdoRepository>();
         services.AddScoped<ILoginFailedService, LoginFailedService>();
         services.AddScoped<ILoginHistoryService, LoginHistoryService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();

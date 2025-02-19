@@ -750,6 +750,7 @@
         return {
             getDataFilter,
             getDataForm,
+            getProductsTransferenciaMasiva,
             generateSerieComprobante,
             getAll,
             mapTo,
@@ -783,6 +784,7 @@
                     estabs: [],
                     tiposTransaccion: [],
                     tipoDocumento: [],
+                    subFamilias: []
                 }
                 if (response !== null && typeof response === 'object') {
                     const { ptoEmision, bodega, tipoTransaccion, tipoDocumento } = response;
@@ -794,11 +796,78 @@
                     data.estabs = fS.groupingEstab(dataToGroup);
                     data.tiposTransaccion = tipoTransaccion;
                     data.tipoDocumento = tipoDocumento;
+                    data.subFamilias = response.subFamilias.reduce(function (acc, obj) {
+                        let key = obj.nomFamilia;
+                        let existingGroup = acc.find(function (group) {
+                            return group.nomFamilia === key;
+                        });
+
+                        if (existingGroup) {
+                            existingGroup.subFamilias.push({
+                                idSubFamilia: obj.idSubFamilia,
+                                nomSubFamilia: obj.nomSubFamilia
+                            });
+                        } else {
+                            acc.push({
+                                nomFamilia: key,
+                                subFamilias: [{
+                                    idSubFamilia: obj.idSubFamilia,
+                                    nomSubFamilia: obj.nomSubFamilia
+                                }]
+                            });
+                        }
+
+                        return acc;
+                    }, []);
                 }
 
                 return data;
             })
         }
+       
+
+        function getProductsTransferenciaMasiva(obj) {
+            let json = JSON.stringify({
+                tipo: 6,
+                subFamilias: obj.subFamilias,
+                bodegaId: obj.bodegaId
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+                let result = {
+                    articulos: []
+                };
+                if (response && typeof response === 'object') {
+                    const { articulos = [] } = response;
+                    result.articulos = articulos.map(item => {
+                        const { principal, fraccionado, ...restItem } = item;
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+
+ 
+                        return {
+                            idArticulo: restItem.idArticulo,
+                            codigo: restItem.codigo, 
+                            descripcion: restItem.descripcion,
+                            cantidad: restItem.cantidad,
+                            precioCosto: restItem.precioCosto, 
+                            precioUnitario: dataMedida.precioUnitario, 
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado, 
+                            idMedida: restItem.idMedida,
+                            nomMedida: restItem.nomMedida, 
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            total: fS.roundNumber(restItem.cantidad * restItem.precioCosto, 4),
+                            totalRecords: item.totalRecords
+
+                        }
+                    })
+                }
+
+               return result;
+            })
+        }
+
         function generateSerieComprobante(query) {
             return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
                 let value = null;

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Common.Infrastructure.Repository.Implementations;
+using Newtonsoft.Json;
 
 namespace Vet.API.Extensions;
 
@@ -19,6 +20,7 @@ public static class ApplicationServicesExtensions
                 }
             );
 
+        services.AddScoped<IAdoRepository, AdoRepository>();
         services.AddScoped<IBehaviorTestService, BehaviorTestService>();
         services.AddScoped<IBreedService, BreedService>();
         services.AddScoped<IHealthCheckService, HealthCheckService>();

@@ -7,6 +7,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Stock WITH SCHEMABINDING AS (
 		  ,st.cantidad
 		  ,ar.idEntidad
 		  ,ar.idSubFamilia
+          ,ar.idMedida
           ,ar.idMarca
 		  ,ar.descripcion
 		  ,ar.codigo

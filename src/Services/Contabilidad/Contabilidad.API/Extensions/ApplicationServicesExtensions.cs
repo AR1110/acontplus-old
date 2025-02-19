@@ -1,4 +1,6 @@
-﻿using Contabilidad.API.Services;
+﻿using Common.Infrastructure.Repository.Implementations;
+using Common.Logging;
+using Contabilidad.API.Services;
 using Newtonsoft.Json;
 
 namespace Contabilidad.API.Extensions;
@@ -8,6 +10,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -19,6 +23,7 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<ContabilidadContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddScoped<IAdoRepository, AdoRepository>();
         services.AddScoped<IAnticipoService, AnticipoService>();
         services.AddScoped<IBancoService, BancoService>();
         services.AddScoped<ICajaService, CajaService>();

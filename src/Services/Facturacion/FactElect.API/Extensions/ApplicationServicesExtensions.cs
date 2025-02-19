@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Common.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Scrutor;
 
@@ -9,6 +10,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {

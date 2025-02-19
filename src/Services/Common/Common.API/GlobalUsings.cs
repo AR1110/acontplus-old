@@ -1,4 +1,4 @@
-﻿global using Autofac.Extensions.DependencyInjection;
+﻿
 global using Common.API.Extensions;
 global using Common.API.Interfaces;
 global using Common.Core.Data;

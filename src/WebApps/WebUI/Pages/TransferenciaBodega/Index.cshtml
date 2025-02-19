@@ -3,13 +3,13 @@
 
 @{
     ViewData["title"] = "Transferencia";
-    
+
 }
 
 <div ng-controller="transferenciaBodegaCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
-            <h4 class="text-themecolor">Gestión de Transferencia de Productos </h4>
+            <h4 class="text-themecolor">Transferencia de Mercaderia</h4>
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
@@ -28,18 +28,18 @@
                     <div class="form-gorup">
                         <span for="establecimiento">Establecimiento</span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
                         </select>
                     </div>
                 </div>
-                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
                         <span for="puntosEmision">Punto Emisión</span>
                         <select name="puntosEmision" id="puntosEmision" ng-model="dataSearch.idPuntoEmision"
-                                class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -51,14 +51,14 @@
                         <span for="">Rango de Fechas</span>
                         @* <div class="input-group"> *@
                         <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
-                                           end-date="dataSearch.endDate"
-                                           result-range-date="resultDateRange(result)"></date-range-filter>
+                            end-date="dataSearch.endDate"
+                            result-range-date="resultDateRange(result)"></date-range-filter>
 
                     </div>
-                </div> 
+                </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                            ng-click="getTransferenciasBodega()">
+                        ng-click="getTransferenciasBodega()">
                         <i class="fas fa-redo"></i>
                     </button>
                 </div>
@@ -79,7 +79,7 @@
                     </div> -->
                 </div>
             </div>
- 
+
             <md-table-container style="max-height: 400px;">
                 <table md-table>
                     <thead md-head fix-head>
@@ -98,14 +98,20 @@
                         <tr md-row ng-repeat="item in transferenciasBodegas" ng-class="item.rowColor">
                             <td md-cell>
                                 <div class="dropdown h-2">
-                                    <button class="btn btn-default " type="button" id="dropdownMenu" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn btn-default " type="button" id="dropdownMenu"
+                                        data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true"
+                                        aria-expanded="false">
                                         <i class="fa fa-bars"></i>
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu">
-                                        <button class="dropdown-item" type="button" ng-click="openModalDetalle(item)"><i class="ti-menu"></i> Detalle</button>
-                                        <button class="dropdown-item" type="button" ng-click="openModalEditar(item)"><i class="ti-pencil"></i> Editar</button>
-                                        <button class="dropdown-item" type="button" ng-click="askToDelete(item)"><i class="ti-na"></i> Anular</button>
-                                        <button class="dropdown-item" type="button" ng-click="getReport(item)"><i class="fas fa-file-pdf"></i> Reporte</button>
+                                        <button class="dropdown-item" type="button" ng-click="openModalDetalle(item)"><i
+                                                class="ti-menu"></i> Detalle</button>
+                                        <button class="dropdown-item" type="button" ng-click="openModalEditar(item)"><i
+                                                class="ti-pencil"></i> Editar</button>
+                                        <button class="dropdown-item" type="button" ng-click="askToDelete(item)"><i
+                                                class="ti-na"></i> Anular</button>
+                                        <button class="dropdown-item" type="button" ng-click="getReport(item)"><i
+                                                class="fas fa-file-pdf"></i> Reporte</button>
                                     </div>
                                 </div>
 
@@ -139,7 +145,8 @@
 
 </div>
 
-@section Scripts { 
+@section Scripts {
     <script src="~/js/inventario/controllers/transferenciaBodegaCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/components/transferenciaBodegaAdvancedSearch.min.js" asp-append-version="true"></script>
 
 }

@@ -1,7 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using GatewayAcontplus.API.Delegates;
 //using GatewayAcontplus.API.Middleware;
 //using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
@@ -42,15 +39,17 @@ var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
-{
-    // Register the ReportHeaderDelegatingHandler
-    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
-        .InstancePerLifetimeScope();
+//builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
+//{
+//    // Register the ReportHeaderDelegatingHandler
+//    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
+//        .InstancePerLifetimeScope();
 
-    // Register any other dependencies here
-});
-builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
+//    // Register any other dependencies here
+//});
+//builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
+
+builder.Services.AddOcelot();
 
 // Identity Services (adapt to your specific authentication mechanism)
 builder.Services.AddIdentityService(builder.Configuration);

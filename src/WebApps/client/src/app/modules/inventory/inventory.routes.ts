@@ -1,35 +1,34 @@
-import { Route } from "@angular/router";
+import { Route } from '@angular/router';
 
-import { CategoryPageComponent } from "@inventory/ui/category-page/category-page.component";
-import { LotPricePageComponent } from "@inventory/ui/lot-price-page/lot-price-page.component";
-import { MassiveTaxPageComponent } from "@inventory/ui/massive-tax-page/massive-tax-page.component";
-import { MeasurePageComponent } from "@inventory/ui/measure-page/measure-page.component";
-import { SubCategoryComponent } from "@inventory/ui/sub-category/sub-category.component";
-import {InventoryReportComponent} from "@inventory/ui/inventory-report/inventory-report.component";
-import { BrandPageComponent } from "@inventory/ui/brand-page/brand-page.component";
-import { InvModelPageComponent } from "@inventory/ui/inv-model-page/inv-model-page.component";
-import { TarifaPageComponent } from "@inventory/ui/tarifa-page/tarifa-page.component";
-import { TagsComponent } from "@inventory/ui/tags/tags.component";
-import { FraccProductPageComponent } from "@inventory/ui/fracc-product-page/fracc-product-page.component";
-import {ProductComponent} from "@inventory/ui/product/product.component";
+import { CategoryPageComponent } from '@inventory/ui/category-page/category-page.component';
+import { LotPricePageComponent } from '@inventory/ui/lot-price-page/lot-price-page.component';
+import { MassiveTaxPageComponent } from '@inventory/ui/massive-tax-page/massive-tax-page.component';
+import { MeasurePageComponent } from '@inventory/ui/measure-page/measure-page.component';
+import { SubCategoryComponent } from '@inventory/ui/sub-category/sub-category.component';
+import { InventoryReportComponent } from '@inventory/ui/inventory-report/inventory-report.component';
+import { BrandPageComponent } from '@inventory/ui/brand-page/brand-page.component';
+import { InvModelPageComponent } from '@inventory/ui/inv-model-page/inv-model-page.component';
+import { TarifaPageComponent } from '@inventory/ui/tarifa-page/tarifa-page.component';
+import { TagsComponent } from '@inventory/ui/tags/tags.component';
+import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
+import { ProductComponent } from '@inventory/ui/product/product.component';
 
 export const routes: Route[] = [
-
   {
     path: 'category',
     title: 'Categoria',
     component: CategoryPageComponent,
     data: {
-      breadcrumb: 'Reporte Compras'
-    }
+      breadcrumb: 'Reporte Compras',
+    },
   },
   {
     path: 'subcategory',
     title: 'SubCategoria',
     component: SubCategoryComponent,
     data: {
-      breadcrumb: 'Sub Categorias'
-    }
+      breadcrumb: 'Sub Categorias',
+    },
   },
 
   {
@@ -37,7 +36,7 @@ export const routes: Route[] = [
     title: 'Productos',
     component: ProductComponent,
     data: {
-      breadcrumb: 'Productos'
+      breadcrumb: 'Productos',
     },
   },
   {
@@ -45,7 +44,7 @@ export const routes: Route[] = [
     title: 'Productos Fraccionados',
     component: FraccProductPageComponent,
     data: {
-      breadcrumb: 'Productos Fraccionados'
+      breadcrumb: 'Productos Fraccionados',
     },
   },
   {
@@ -53,7 +52,7 @@ export const routes: Route[] = [
     title: 'Cambio Masivo de IVA',
     component: MassiveTaxPageComponent,
     data: {
-      breadcrumb: 'Cambio Masivo de IVA'
+      breadcrumb: 'Cambio Masivo de IVA',
     },
   },
   {
@@ -61,7 +60,7 @@ export const routes: Route[] = [
     title: 'Precio por Lote',
     component: LotPricePageComponent,
     data: {
-      breadcrumb: 'Precio por Lote'
+      breadcrumb: 'Precio por Lote',
     },
   },
 
@@ -70,7 +69,7 @@ export const routes: Route[] = [
     title: 'Medida',
     component: MeasurePageComponent,
     data: {
-      breadcrumb: 'Medida'
+      breadcrumb: 'Medida',
     },
   },
   {
@@ -78,7 +77,7 @@ export const routes: Route[] = [
     title: 'Marca',
     component: BrandPageComponent,
     data: {
-      breadcrumb: 'Marca'
+      breadcrumb: 'Marca',
     },
   },
   {
@@ -86,7 +85,7 @@ export const routes: Route[] = [
     title: 'Modelo',
     component: InvModelPageComponent,
     data: {
-      breadcrumb: 'Modelo'
+      breadcrumb: 'Modelo',
     },
   },
   {
@@ -94,7 +93,7 @@ export const routes: Route[] = [
     title: 'Tarifa',
     component: TarifaPageComponent,
     data: {
-      breadcrumb: 'Tarifa'
+      breadcrumb: 'Tarifa',
     },
   },
   {
@@ -102,7 +101,7 @@ export const routes: Route[] = [
     title: 'Etiquetas',
     component: TagsComponent,
     data: {
-      breadcrumb: 'Etiquetas'
+      breadcrumb: 'Etiquetas',
     },
   },
   {
@@ -110,9 +109,17 @@ export const routes: Route[] = [
     title: 'Reporte Inventario',
     component: InventoryReportComponent,
     data: {
-      breadcrumb:  'Reporte Inventario'
-    }
-  }
-
-
-]
+      breadcrumb: 'Reporte Inventario',
+    },
+  },
+  {
+    path: 'transferencia-bodega',
+    loadComponent: () =>
+      import(
+        '@inventory/ui/transferencia-bodega/transferencia-bodega.component'
+      ).then((c) => c.TransferenciaBodegaComponent),
+    data: {
+      breadcrumb: 'Transferencia de Mercaderia',
+    },
+  },
+];

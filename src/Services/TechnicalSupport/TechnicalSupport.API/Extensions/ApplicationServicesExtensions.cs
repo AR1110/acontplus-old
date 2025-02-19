@@ -1,4 +1,6 @@
-﻿namespace TechnicalSupport.API.Extensions;
+﻿using Common.Infrastructure.Repository.Implementations;
+
+namespace TechnicalSupport.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -16,6 +18,7 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
+        services.AddScoped<IAdoRepository, AdoRepository>();
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IDeviceSpecService, DeviceSpecService>();

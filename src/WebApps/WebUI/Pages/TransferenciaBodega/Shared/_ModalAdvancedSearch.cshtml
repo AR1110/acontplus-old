@@ -1,0 +1,185 @@
+<style>
+    .custom-select-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .custom-select {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        white-space: nowrap;
+        /* Evita que el texto haga salto de línea */
+        overflow: hidden;
+        /* Oculta el texto que se desborda */
+        text-overflow: ellipsis;
+        /* Agrega "..." cuando el texto es largo */
+    }
+
+
+
+
+    .custom-select-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-top: none;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+    }
+
+    .custom-select-container.open .custom-select-dropdown {
+        display: block;
+    }
+
+    .category-title {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .category-group label {
+        display: block;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .custom-select-dropdown input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .selected-items ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .selected-items ul li {
+        background: #f8f9fa;
+        padding: 5px;
+        margin: 3px 0;
+        border-radius: 4px;
+    }
+</style>
+
+
+<form autocomplete="off" ng-submit="setArticlesSelected()">
+    <div class="modal-header">
+
+        <h5 class="modal-title">
+            <i class="ti-search"></i> Búsqueda Avanzada
+        </h5>
+        <button type="button" class="close" aria-label="Close" ng-click="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    <label for="bodegaText">Bodega: <span class="text-danger">*</span></label>
+                    <input type="text" name="bodegaText" id="bodegaText" ng-value="bodegaText" class="form-control"
+                        disabled>
+                </div>
+            </div>
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12">
+
+                <div class="form-group" ng-click="closeDropdown($event)">
+                    <label>Seleccione Subfamilia(s)</label>
+
+                    <div class="custom-select-container" ng-class="{'open': dropdownOpen}">
+                        <div class="custom-select form-control" id="selectBox" ng-click="toggleDropdown($event)">
+                            <span>{{ selectedToppingsText() || 'Seleccione...' }}</span>
+                        </div>
+
+                        <div class="custom-select-dropdown px-2 py-2" id="selectDropdown">
+                            <label>
+                                <input type="checkbox" ng-model="selectAll" ng-change="toggleAll()"> Seleccionar todo
+                            </label>
+                            <hr class="m-0 p0">
+
+                            <div class="category-group" ng-repeat="item in subFamilias">
+                                <label class="category-title">
+                                    <input type="checkbox" ng-model="item.selected" ng-change="toggleFamily(item)">
+                                    {{ item.nomFamilia }}
+                                </label>
+
+                                <label ng-repeat="sc in item.subFamilias" class="m-l-10">
+                                    <input type="checkbox" ng-model="sc.selected" ng-change="updateSelection(item)">
+                                    {{ sc.nomSubFamilia }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-info" ng-click="searchProducts()">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </div>
+
+
+        <div class="row" ng-show="articlesFounded.length > 0">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex justify-content-start align-items-center">
+                @* <div class="form-group">
+                    <input type="text" class="search form-control border-select" onclick="this.select()"
+                        ng-model="search" placeholder="Buscar artículo">
+                </div> *@
+                <h4> Total Artículos: <span class="text-info"> {{totalRecords}}</span></h4>
+
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex justify-content-end align-items-center">
+                <h4> Articulos Selecionados: <span class="text-info"> {{articlesSelected.length}}</span></h4>
+            </div>
+        </div>
+        <md-table-container style="max-height: 400px;" ng-show="articlesFounded.length > 0">
+            <table md-table md-row-select multiple ng-model="articlesSelected" md-progress="promise">
+                <thead md-head>
+                    <tr md-row>
+                        <th md-column>#</th>
+                        <th md-column>Código</th>
+                        <th md-column>Descripcion</th>
+                        <th md-column>Cant.</th>
+                        <th md-column>Medida</th>
+                        <th md-column>Precio Costo</th>
+                        <th md-column>Total</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row md-select="item" md-select-id="index" md-auto-select
+                        ng-repeat="item in articlesFounded  ">
+                        <td md-cell>{{$index+1}}</td>
+                        <td md-cell>{{item.codigo}}</td>
+                        <td md-cell>{{item.descripcion}}</td>
+                        <td md-cell>{{item.cantidad}}</td>
+                        <td class="text-lSoeft" md-cell> {{item.nomMedida}}</td>
+                        <td md-cell class="text-right">
+                            {{item.precioCosto | currency }}
+                        </td>
+                        <td md-cell class="text-right">
+                            {{item.total | currency }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success"><i class="ti-settings"></i> Aplicar</button>
+        <button type="button" class="btn btn-dark" ng-click="close()">&times; Cancelar</button>
+    </div>
+</form>
