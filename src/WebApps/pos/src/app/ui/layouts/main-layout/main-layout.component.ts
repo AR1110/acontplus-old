@@ -15,42 +15,42 @@ import { map, Observable, shareReplay } from 'rxjs';
 import { menusRoutes } from '../menus-routes';
 
 @Component({
-    selector: 'app-main-layout',
-    imports: [
-        MatToolbarModule,
-        MatButtonModule,
-        MatSidenavModule,
-        MatListModule,
-        MatIconModule,
-        MatMenuModule,
-        AsyncPipe,
-        RouterLink,
-        RouterLinkActive,
-        NavUserInfoToggleComponent,
-        NavUserToggleComponent,
-        RouterOutlet,
-    ],
-    templateUrl: './main-layout.component.html',
-    styleUrl: './main-layout.component.scss'
+  selector: 'app-main-layout',
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    MatMenuModule,
+    AsyncPipe,
+    RouterLink,
+    RouterLinkActive,
+    NavUserInfoToggleComponent,
+    NavUserToggleComponent,
+    RouterOutlet,
+  ],
+  templateUrl: './main-layout.component.html',
+  styleUrl: './main-layout.component.scss',
 })
 export class MainLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  mainStore = inject(MainStoreService)
+  mainStore = inject(MainStoreService);
   private document = inject(DOCUMENT);
   rootRoutes = menusRoutes;
 
-  isDark = signal(false)
+  isDark = signal(false);
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Web)
+  isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Web)
     .pipe(
-      map(result => result.matches),
+      map((result) => result.matches),
       shareReplay()
     );
 
-
-  changeTheme(){
+  changeTheme() {
     this.document.documentElement.classList.toggle('dark-theme');
 
-    this.isDark.set(!this.isDark())
+    this.isDark.set(!this.isDark());
   }
 }

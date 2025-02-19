@@ -1,0 +1,83 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #sidenav
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile"
+    class="sidenav"
+  >
+    <div class="sidenav-header">
+      <img src="assets/logo.png" alt="Logo" class="logo" />
+      <!-- <button mat-icon-button class="expand-button" (click)="sidenav.toggle()">
+        <mat-icon>chevron_right</mat-icon>
+      </button> -->
+    </div>
+
+    <mat-nav-list class="nav">
+      <a mat-list-item class="nav-item active" routerLink="">
+        <div class="d-flex align-items-center gap-2">
+          <mat-icon>home</mat-icon>
+          <span>Dashboard</span>
+        </div>
+      </a>
+      <a mat-list-item class="nav-item">
+        <mat-icon>insert_chart</mat-icon>
+      </a>
+      <a mat-list-item class="nav-item">
+        <mat-icon>account_balance</mat-icon>
+      </a>
+      <a mat-list-item class="nav-item">
+        <mat-icon>email</mat-icon>
+      </a>
+      <a mat-list-item class="nav-item">
+        <mat-icon>group</mat-icon>
+      </a>
+      <a mat-list-item class="nav-item">
+        <mat-icon>description</mat-icon>
+      </a>
+      <a mat-list-item class="nav-item">
+        <mat-icon>sync</mat-icon>
+      </a>
+    </mat-nav-list>
+
+    <div class="sidenav-footer">
+      <a mat-list-item class="nav-item">
+        <mat-icon>settings</mat-icon>
+      </a>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h1 class="greeting">Good morning, James!</h1>
+      <span class="toolbar-spacer"></span>
+      <button mat-icon-button (click)="themeService.toggleTheme()">
+        <mat-icon>{{
+          (themeService.isDarkTheme$ | async) ? "light_mode" : "dark_mode"
+        }}</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>calendar_today</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon matBadge="3" matBadgeColor="warn">notifications</mat-icon>
+      </button>
+      <button mat-icon-button [matMenuTriggerFor]="profileMenu">
+        <img src="assets/profile.jpg" alt="" class="profile-image" />
+      </button>
+      <mat-menu #profileMenu="matMenu">
+        <button mat-menu-item>Profile</button>
+        <button mat-menu-item>Settings</button>
+        <button mat-menu-item>Logout</button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <div class="main-content">
+      <div class="container-fluid-custom">
+        <app-dashboard></app-dashboard>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
