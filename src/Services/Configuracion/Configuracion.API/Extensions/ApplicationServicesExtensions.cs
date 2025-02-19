@@ -1,4 +1,5 @@
-﻿using Scrutor;
+﻿using Common.Logging;
+using Scrutor;
 
 namespace Configuracion.API.Extensions;
 
@@ -7,6 +8,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
 
         services.AddHttpContextAccessor();
 
