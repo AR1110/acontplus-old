@@ -1,6 +1,6 @@
 
 import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter";
-import { InvoiceDetail } from "@modules/billing/models/invoice.model";
+import { InvoiceDetail } from "@billing/domain/models/invoice.model";
 import { InvoiceComprobanteApi, InvoiceDetailApi } from "./invoice-api.model";
 import { fechaString, formatDate, formatDateToString } from "@core/utils/date.util";
 import { DECIMALS } from "@core/constants/global.constants";

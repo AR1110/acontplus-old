@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { BILLING_PATHS } from '../enums/billing.enum.ts';
-import { SharedService } from '@core/services/shared.service.js';
+import { SharedService } from '@core/services/shared.service';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
 import { ToasterService } from '@core/services/toaster.service';
+import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 
 @Injectable({
   providedIn: 'root',

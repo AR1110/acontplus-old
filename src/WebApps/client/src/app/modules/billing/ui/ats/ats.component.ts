@@ -3,18 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
-import { AtsService } from '@modules/billing/services/ats.service';
+import { AtsService } from '@billing/services/ats.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { addDay, monthStart } from '@formkit/tempo';
 
 @Component({
-    selector: 'app-ats-page',
+    selector: 'app-ats',
     imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent],
-    templateUrl: './ats-page.component.html',
+    templateUrl: './ats.component.html',
     styles: ``
 })
-export class AtsPageComponent {
+export class AtsComponent {
   fromDate: any =  monthStart(addDay(monthStart(new Date()),-1));
   toDate: any =  addDay(monthStart(new Date()),-1);
   dataSearch = {

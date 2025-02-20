@@ -21,10 +21,10 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { RetencionHtmlComponent } from '@billing/components/documents/retencion-html/retencion-html.component';
+import { RetencionHtmlComponent } from '@billing/ui/shared/components/retencion-html/retencion-html.component';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { InvoiceHtmlComponent } from '@billing/components/documents/invoice-html/invoice-html.component';
-import { CreditNoteHtmlComponent } from '@billing/components/documents/credit-note-html/credit-note-html.component';
+import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
+import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 
 import { DialogService } from '@core/services/dialog.service';
 import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
