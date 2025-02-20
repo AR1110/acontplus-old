@@ -1,6 +1,4 @@
 ﻿using Common.Infrastructure.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Data;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 

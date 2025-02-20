@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace Contabilidad.API.Interfaces
+﻿namespace Contabilidad.API.Interfaces
 {
     public interface IAccountService
     {

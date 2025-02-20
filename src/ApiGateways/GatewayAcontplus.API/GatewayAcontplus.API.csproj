@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <PackageReference Include="Acontplus.Services.Common" />
+    <PackageReference Include="Acontplus.Common.Services" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
     
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">

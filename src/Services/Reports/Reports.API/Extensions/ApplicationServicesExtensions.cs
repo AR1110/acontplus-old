@@ -1,7 +1,4 @@
-﻿using Common.Infrastructure.Repository.Implementations;
-using Reports.API.Services;
-
-namespace Reports.API.Extensions
+﻿namespace Reports.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {

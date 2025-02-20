@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class MeasureController(IMeasureService measureService) : BaseApiController
 {

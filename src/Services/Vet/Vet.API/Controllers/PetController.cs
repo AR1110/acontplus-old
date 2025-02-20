@@ -49,7 +49,7 @@ public class PetController(IPetService petService) : BaseApiController
     {
         var parameters = new Dictionary<string, object> {
             { "companyId", User.GetClaimValue<int>("companyId") },
-            { "json", json } 
+            { "json", json }
         };
         return await petService.SearchAsync(parameters);
     }

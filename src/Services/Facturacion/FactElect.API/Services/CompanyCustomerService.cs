@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace FactElect.API.Services;
+﻿namespace FactElect.API.Services;
 
 public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustomerService
 {

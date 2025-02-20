@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace FactElect.API.Interfaces;
+﻿namespace FactElect.API.Interfaces;
 
 public interface ICompanyCustomerService
 {

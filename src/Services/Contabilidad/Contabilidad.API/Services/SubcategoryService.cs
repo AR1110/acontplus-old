@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Services;
 
 public class SubcategoryService(ContabilidadContext context, IAdoRepository repository) : ISubcategoryService
 {

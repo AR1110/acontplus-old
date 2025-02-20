@@ -1,6 +1,5 @@
 ﻿using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
 
 namespace Mechanical.API.Controllers
 {

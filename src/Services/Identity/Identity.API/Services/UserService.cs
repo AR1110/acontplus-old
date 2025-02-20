@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace Identity.API.Services;
+﻿namespace Identity.API.Services;
 
 public class UserService : IUserService
 {

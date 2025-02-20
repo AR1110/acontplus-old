@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Services.Common.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

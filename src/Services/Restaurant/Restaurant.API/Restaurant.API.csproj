@@ -12,7 +12,7 @@
     <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.S3Application" />
-    <PackageReference Include="Acontplus.Services.Common" />
+    <PackageReference Include="Acontplus.Common.Services" />
     
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />

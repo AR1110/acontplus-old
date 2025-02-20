@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Restaurant.API.Data;
+﻿using Newtonsoft.Json.Serialization;
 using Scrutor;
 
 

@@ -47,7 +47,7 @@ public static class ApplicationServicesExtensions
         string[] transientNamespaces =
         [
             "Common.Infrastructure.Repository.Implementations",
-            "Services.Common.Extensions"
+            "Common.Services.Extensions"
         ];
 
         // Register transient services

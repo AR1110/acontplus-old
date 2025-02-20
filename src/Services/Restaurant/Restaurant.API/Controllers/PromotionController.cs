@@ -1,7 +1,6 @@
 ﻿using Common.S3Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Services;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 

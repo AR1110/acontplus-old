@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Data;
-using Restaurant.API.Entities;
+﻿using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services

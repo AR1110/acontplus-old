@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace Inventario.API.Services;
+﻿namespace Inventario.API.Services;
 
 public class ProductPhotoService : IProductPhotoService
 {
