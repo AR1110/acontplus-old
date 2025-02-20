@@ -13,11 +13,11 @@ export const routes: Routes = [
     path: '',
     component: NewLayoutComponent,
     children: [
-      // {
-      //   path: 'dashboard',
-      //   title: 'Dashboad',
-      //   component: DashboardComponent,
-      // },
+      {
+        path: 'dashboard',
+        title: 'Dashboad',
+        component: DashboardComponent,
+      },
       {
         path: 'order',
         title: 'Order',

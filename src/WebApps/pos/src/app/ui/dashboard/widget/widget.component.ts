@@ -76,7 +76,7 @@ import { WidgetOptionsComponent } from './widget-options.component';
   },
 })
 export class WidgetComponent {
-  data = input.required<Widget>();
+  data = input.required<any>();
 
   showOptions = signal(false);
 

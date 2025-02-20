@@ -1,7 +1,8 @@
 .navbar-text {
+  background-color: var(--background-color);
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  color: #21313c;
+  color: var(--text-primary);
 }
 
 .border-bottom {
