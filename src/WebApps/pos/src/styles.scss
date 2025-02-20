@@ -85,6 +85,7 @@ $compact-theme: mat.define-theme(
   --chart-grid: #f0f0f0;
   --bg-date: #fff;
   --bg-range-date: #eee;
+  --color-pink: #d61672;
 }
 
 // Variables tema oscuro
@@ -113,6 +114,7 @@ $compact-theme: mat.define-theme(
   --chart-grid: #2d2d2d;
   --bg-date: #121212;
   --bg-range-date: rgba(255, 255, 255, 0.12);
+  --color-pink: #ffffff;
 }
 
 // Estilos globales

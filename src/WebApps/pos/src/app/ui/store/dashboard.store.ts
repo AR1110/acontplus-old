@@ -136,7 +136,6 @@ export const DashboardStore = signalStore(
             id: index + 1,
             label: item.descripcion,
             title: item.descripcion,
-
             backgroundColor: '#1679AB',
             color: 'whitesmoke',
             input: item.cantidad,

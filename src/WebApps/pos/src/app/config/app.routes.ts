@@ -4,26 +4,31 @@ import { sessionGuard } from '@core/guards/session.guard';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full',
+  },
+  {
     path: 'auth',
-    title: 'AcontPlusPos-Login',
+    title: 'AcontPlusPos',
     loadChildren: () =>
       import(`@/ui/layouts/auth-layout.routes`).then((m) => m.routes),
+  },
+  {
+    path: '',
+    canActivate: [sessionGuard],
+    loadChildren: () =>
+      import('@/ui/layouts/main-layout.routes').then((m) => m.routes),
+    resolve: {
+      configData: configDataResolver,
+    },
   },
   // {
   //   path: '',
   //   canActivate: [sessionGuard],
   //   loadChildren: () =>
   //     import('@/ui/layouts/main-layout.routes').then((m) => m.routes),
-  //     resolve: {
-  //     configData: configDataResolver
-  //     }
   // },
-  {
-    path: '',
-    canActivate: [sessionGuard],
-    loadChildren: () =>
-      import('@/ui/layouts/main-layout.routes').then((m) => m.routes),
-  },
 
   {
     path: '**',
