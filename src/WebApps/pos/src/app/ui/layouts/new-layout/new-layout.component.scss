@@ -51,7 +51,7 @@
 
       &.active {
         background-color: rgba(255, 255, 255, 0.1);
-        border-left: solid 3px #d61672;
+        border-left: solid 3px var(--pink);
       }
 
       mat-icon {
@@ -135,7 +135,7 @@
 .nav {
   .active-link {
     background-color: #fafafa;
-    border-left: solid 3px #d61672;
+    border-left: solid 3px var(--pink);
   }
 
   .hover {
@@ -152,11 +152,11 @@
     &:hover {
       cursor: pointer;
       background-color: rgba(255, 255, 255, 0.1);
-      border-left: solid 3px #d61672;
+      border-left: solid 3px var(--pink);
     }
   }
   mat-icon {
-    color: #d61672;
+    color: var(--pink);
   }
 }
 
