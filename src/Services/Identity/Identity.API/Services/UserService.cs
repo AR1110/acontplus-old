@@ -11,14 +11,14 @@ public class UserService : IUserService
         _repository = repository;
     }
 
-    public async Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("Seguridad.User_Get", parameters);
         if (DataValidation.DataSetIsNull(ds))
         {
-            return new LegacyApiResponse { code = "0", message = "No se encontraron datos" };
+            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
         }
 
-        return new LegacyApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

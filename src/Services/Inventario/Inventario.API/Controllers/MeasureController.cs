@@ -5,7 +5,7 @@ namespace Inventario.API.Controllers;
 public class MeasureController(IMeasureService measureService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<LegacyApiResponse>> Get(string json)
+    public async Task<ActionResult<ApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {

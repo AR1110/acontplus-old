@@ -4,11 +4,11 @@ namespace Contabilidad.API.Interfaces
 {
     public interface IAccountService
     {
-        Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters);
-        Task<LegacyApiResponse> AddAsync(Account account);
+        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> AddAsync(Account account);
 
-        Task<LegacyApiResponse> UpdateAsync(int id, Account account);
-        Task<LegacyApiResponse> DeleteAsync(int userId, int id);
+        Task<ApiResponse> UpdateAsync(int id, Account account);
+        Task<ApiResponse> DeleteAsync(int userId, int id);
 
     }
 }

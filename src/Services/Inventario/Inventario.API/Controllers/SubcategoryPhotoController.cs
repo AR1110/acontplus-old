@@ -37,7 +37,7 @@ public class SubcategoryPhotoController(
             data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
             data.S3ObjectUrl = s3ObjectCustom.S3ObjectUrl;
             var response = await subcategoryPhoto.AddAsync(data);
-            if (response.code == "1" && file != null)
+            if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UploadAsync(s3ObjectCustom);
                 s3ObjectCustom.Dispose();
@@ -70,7 +70,7 @@ public class SubcategoryPhotoController(
             }
 
             var response = await subcategoryPhoto.UpdateAsync(id, data);
-            if (response.code == "1" && file != null)
+            if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
                 s3ObjectCustom.Dispose();

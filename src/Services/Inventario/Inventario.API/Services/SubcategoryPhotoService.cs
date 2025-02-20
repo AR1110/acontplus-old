@@ -24,7 +24,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<LegacyApiResponse> AddAsync(SubcategoryPhoto data)
+    public async Task<ApiResponse> AddAsync(SubcategoryPhoto data)
     {
         if (!_context.SubcategorytPhotos.Any(x => x.SubcategoryId == data.SubcategoryId))
         {
@@ -33,16 +33,16 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
 
         _context.Add(data);
         await _context.SaveChangesAsync();
-        return new LegacyApiResponse { code = "1", message = "Registrada exitosamente!" };
+        return new ApiResponse { Code = "1", Message = "Registrada exitosamente!" };
     }
 
-    public async Task<LegacyApiResponse> UpdateAsync(int id, SubcategoryPhoto data)
+    public async Task<ApiResponse> UpdateAsync(int id, SubcategoryPhoto data)
     {
-        if (id != data.Id) { return new LegacyApiResponse { code = "0", message = "Id no coincide" }; }
+        if (id != data.Id) { return new ApiResponse { Code = "0", Message = "Id no coincide" }; }
 
         ;
         var productFound = await _context.SubcategorytPhotos.FindAsync(id);
-        if (productFound == null) { return new LegacyApiResponse { code = "0", message = "No existe el registro!" }; }
+        if (productFound == null) { return new ApiResponse { Code = "0", Message = "No existe el registro!" }; }
 
         ;
         productFound.S3ObjectKey = data.S3ObjectKey;
@@ -51,7 +51,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
         productFound.UserId = data.UserId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();
-        return new LegacyApiResponse { code = "1", message = "Actualizada exitosamente!" };
+        return new ApiResponse { Code = "1", Message = "Actualizada exitosamente!" };
     }
 
     public async Task<object> DeleteAsync(int id, int userId)

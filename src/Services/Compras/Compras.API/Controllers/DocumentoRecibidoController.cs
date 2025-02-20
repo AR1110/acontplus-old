@@ -51,7 +51,7 @@ public class DocumentoRecibidoController(
             await documentoTemp.AddAsync(details);
         }
 
-        response.Create(code: "1", payload: ceXml);
+        response.Create(code: "1", data: ceXml);
 
         return Ok(response);
     }
@@ -79,7 +79,7 @@ public class DocumentoRecibidoController(
 
             if (DataValidation.DataTableIsNull(dt))
             {
-                response.Create("1", payload: DataConverters.DataTableToJson(dt));
+                response.Create("1", data: DataConverters.DataTableToJson(dt));
             }
             else
             {
@@ -99,7 +99,7 @@ public class DocumentoRecibidoController(
                                 where subRow2 == null
                                 select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
-                    response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
+                    response.Create("1", data: DataConverters.DataTableToJson(filteredDataTable));
                 }
             }
         }
