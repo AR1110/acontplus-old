@@ -1,1 +1,24 @@
-<p>pos-sale works!</p>
+<div class="pos-container">
+  <div class="pos-header">
+    <!-- Componente de categorías -->
+    <div class="pos-categories">
+      <div class="category-container">
+        <app-categories
+          [categories]="categoryItems"
+          [darkMode]="isDarkMode"
+          (categorySelected)="onCategorySelected($event)"
+        >
+        </app-categories>
+      </div>
+    </div>
+
+    <div class="pos-search-products">
+      <app-product-input-search />
+    </div>
+  </div>
+
+  <!-- Contenedor del contenido de la página -->
+  <div class="pos-content">
+    <!-- Aquí puedes agregar más contenido si es necesario -->
+  </div>
+</div>

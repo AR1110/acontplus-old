@@ -1,0 +1,21 @@
+<!-- pos-categories.component.html -->
+<div class="pos-categories-container" [ngClass]="{ 'dark-mode': darkMode }">
+  <div class="pos-categories">
+    @for (category of categories; track $index) {
+    <div
+      class="pos-category"
+      [ngClass]="{
+        'pos-category--active': category.isActive,
+        'pos-category--disabled': category.isDisabled
+      }"
+      (click)="selectCategory(category)"
+    >
+      <div class="pos-category__image">
+        <img [src]="category.imageUrl" [alt]="category.name + ' Icon'" />
+      </div>
+      <div class="pos-category__label">{{ category.name }}</div>
+    </div>
+
+    }
+  </div>
+</div>

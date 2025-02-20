@@ -1,0 +1,115 @@
+.pos-container {
+  .pos-header {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: center;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
+
+    .pos-categories {
+      display: grid;
+      gap: 24px;
+      .category-container {
+        display: flex;
+        gap: 15px; /* Espaciado entre tarjetas */
+        overflow-x: auto; /* Habilita el scroll horizontal */
+        white-space: nowrap; /* Evita que los elementos se apilen */
+
+        /* Opcional: Personalizar el scrollbar en navegadores modernos */
+        &::-webkit-scrollbar {
+          height: 8px; /* Altura del scrollbar */
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #bbb; /* Color del thumb */
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f0f0f0; /* Color del track */
+        }
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .kpi-card {
+        .kpi-value {
+          display: flex;
+          align-items: baseline;
+          gap: 12px;
+          margin-top: 16px;
+
+          .number {
+            font-size: 32px;
+            font-weight: 600;
+          }
+
+          .percentage {
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 14px;
+
+            &.positive {
+              background-color: rgba(76, 175, 80, 0.1);
+              color: #4caf50;
+            }
+
+            &.negative {
+              background-color: rgba(244, 67, 54, 0.1);
+              color: #f44336;
+            }
+          }
+        }
+      }
+    }
+
+    .pos-search-products {
+      display: grid;
+      gap: 24px;
+      align-content: start;
+
+      .status-card,
+      .meeting-card {
+        background-color: var(--status-card-bg) !important;
+        color: white;
+
+        h2 {
+          color: white;
+        }
+
+        .status-text {
+          margin: 16px 0;
+          font-size: 16px;
+        }
+
+        .status-estimate {
+          margin: 16px 0;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        button {
+          width: 100%;
+          margin-top: 16px;
+        }
+
+        .meeting-date {
+          color: #4caf50;
+          font-size: 14px;
+        }
+
+        .meeting-description {
+          color: rgba(255, 255, 255, 0.7);
+          margin-top: 8px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
