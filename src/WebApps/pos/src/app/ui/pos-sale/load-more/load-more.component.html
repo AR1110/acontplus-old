@@ -1,0 +1,27 @@
+<!-- load-more.component.html -->
+<div class="pos-load-more">
+  @if(!noMoreItems){
+
+  <ng-container>
+    <button
+      mat-flat-button
+      [class.loading]="loading"
+      [class.pos-load-more__button--small]="size === 'small'"
+      [class.pos-load-more__button--large]="size === 'large'"
+      [disabled]="loading"
+      (click)="onLoadMore()"
+    >
+      <span>{{ loading ? "Cargando..." : "Cargar más" }}</span>
+      @if(!loading){
+      <mat-icon class="pos-load-more__button-icon">arrow_downward</mat-icon>
+      } @if(loading){
+      <mat-spinner [diameter]="20" class="pos-load-more__spinner"></mat-spinner>
+
+      }
+    </button>
+  </ng-container>
+  }@else {
+  <div class="pos-load-more__no-more">No more products to show</div>
+
+  }
+</div>

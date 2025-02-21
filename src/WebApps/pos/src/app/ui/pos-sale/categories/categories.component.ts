@@ -1,13 +1,14 @@
+import { imgDefault } from './../../../domain/utils/utils';
 import { NgClass } from '@angular/common';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-interface CategoryItem {
-  id: string;
-  name: string;
-  imageUrl: string;
-  isActive?: boolean;
-  isDisabled?: boolean;
-}
+// interface any {
+//   id: string;
+//   name: string;
+//   imageUrl: string;
+//   isActive?: boolean;
+//   isDisabled?: boolean;
+// }
 
 @Component({
   selector: 'app-categories',
@@ -16,9 +17,9 @@ interface CategoryItem {
   imports: [NgClass],
 })
 export class CategoriesComponent implements OnInit {
-  @Input() categories: CategoryItem[] = [];
-  @Input() darkMode = false;
-  @Output() categorySelected = new EventEmitter<CategoryItem>();
+  @Input() categories: any[] = [];
+  @Output() categorySelected = new EventEmitter<any>();
+  imgDefault = imgDefault;
 
   constructor() {}
 
@@ -31,7 +32,7 @@ export class CategoriesComponent implements OnInit {
     }
   }
 
-  selectCategory(category: CategoryItem): void {
+  selectCategory(category: any, $index: number): void {
     if (category.isDisabled) {
       return;
     }
@@ -43,11 +44,6 @@ export class CategoriesComponent implements OnInit {
     category.isActive = true;
 
     // Emit the selected category
-    this.categorySelected.emit(category);
-  }
-
-  toggleDarkMode(): void {
-    this.darkMode = !this.darkMode;
-    // You could emit an event here if other components need to know about the theme change
+    this.categorySelected.emit({ index: $index, item: category });
   }
 }

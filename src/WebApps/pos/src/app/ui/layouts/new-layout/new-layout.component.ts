@@ -39,16 +39,16 @@ export class NewLayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isMobile = false;
   isExpanded = false;
-  isDarkMode = false;
   rootRoutes = menusRoutes;
 
   private breakpointObserver = inject(BreakpointObserver);
+  public themeService = inject(ThemeService);
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Web)
     .pipe(map((result) => result.matches));
 
-  constructor(public themeService: ThemeService) {
+  constructor() {
     this.breakpointObserver
       .observe(['(max-width: 800px)'])
       .subscribe((result) => {
@@ -64,9 +64,9 @@ export class NewLayoutComponent {
       });
   }
   ngOnInit() {
-    this.themeService.isDarkMode$.subscribe((isDarkMode) => {
-      this.isDarkMode = isDarkMode;
-    });
+    // this.themeService.isDarkMode$.subscribe((isDarkMode) => {
+    //   this.isDarkMode = isDarkMode;
+    // });
   }
 
   toggleSidebar() {

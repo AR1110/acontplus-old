@@ -43,7 +43,9 @@
         (click)="toggleTheme()"
         style="cursor: pointer"
       >
-        <mat-icon>{{ isDarkMode ? "light_mode" : "dark_mode" }}</mat-icon>
+        <mat-icon>{{
+          themeService.isDarkMode$ ? "light_mode" : "dark_mode"
+        }}</mat-icon>
       </a>
     </div>
   </mat-sidenav>

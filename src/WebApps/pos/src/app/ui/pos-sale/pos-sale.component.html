@@ -4,9 +4,8 @@
     <div class="pos-categories">
       <div class="category-container">
         <app-categories
-          [categories]="categoryItems"
-          [darkMode]="isDarkMode"
-          (categorySelected)="onCategorySelected($event)"
+          [categories]="subCategorias()"
+          (categorySelected)="onTabChange($event)"
         >
         </app-categories>
       </div>
@@ -19,6 +18,14 @@
 
   <!-- Contenedor del contenido de la página -->
   <div class="pos-content">
-    <!-- Aquí puedes agregar más contenido si es necesario -->
+    <div class="pos-products-container">
+      @for (item of items(); track $index) {
+      <app-product-card [product]="item"> </app-product-card>
+
+      }
+    </div>
+    <div class="pos-load-more">
+      <app-load-more [size]="'large'" />
+    </div>
   </div>
 </div>

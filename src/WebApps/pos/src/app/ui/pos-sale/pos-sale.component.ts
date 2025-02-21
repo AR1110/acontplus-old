@@ -28,8 +28,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductInputSearchComponent } from './product-input-search/product-input-search.component';
-import { CategoryCardComponent } from './category-card/category-card.component';
 import { CategoriesComponent } from './categories/categories.component';
+import { ProductCardComponent } from './product-card/product-card.component';
+import { LoadMoreComponent } from './load-more/load-more.component';
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -46,8 +47,9 @@ import { CategoriesComponent } from './categories/categories.component';
     MatProgressSpinner,
     ItemsComponent,
     ProductInputSearchComponent,
-    CategoryCardComponent,
+    ProductCardComponent,
     CategoriesComponent,
+    LoadMoreComponent,
   ],
   templateUrl: './pos-sale.component.html',
   styleUrl: './pos-sale.component.scss',
@@ -221,49 +223,50 @@ export class PosSaleComponent {
     if (this.posStoreSvc.state().isLoading) return;
 
     this.setLoading(true);
-    // this.getDataFormInit()?.subscribe({
-    //   next: (response) => {
-    //     this.setLoading(false);
-    //     const [dataForm, dataItem] = response;
+    this.getDataFormInit()?.subscribe({
+      next: (response) => {
+        this.setLoading(false);
+        const [dataForm, dataItem] = response;
 
-    //     this.posStoreSvc.state.update((e) => {
-    //       let tarifaId =
-    //         dataForm.tarifas.find((t) => t.defaultTarifa)?.idTarifa ?? 0;
-    //       let orderData: Order = {
-    //         ...e.order,
-    //         puntoEmisionId: this.mainStore.state().puntoEmisionId,
-    //         establecimientoId: this.mainStore.state().establecimientoId,
-    //         userId:
-    //           orderId > 0
-    //             ? e.order.userId
-    //             : dataForm.vendedores.find((u: any) => u.predeterminado)
-    //                 ?.idUsuario ?? 0,
-    //       };
-    //       return {
-    //         ...e,
-    //         order: orderData,
-    //         vendedores: dataForm.vendedores,
-    //         taxes: dataForm.taxes,
-    //         taxRates: dataForm.taxRates,
-    //         tarifas: dataForm.tarifas,
-    //         tarifaId,
-    //         oldTarifaId: tarifaId,
-    //       };
-    //     });
+        this.posStoreSvc.state.update((e) => {
+          let tarifaId =
+            dataForm.tarifas.find((t) => t.defaultTarifa)?.idTarifa ?? 0;
+          let orderData: Order = {
+            ...e.order,
+            puntoEmisionId: this.mainStore.state().puntoEmisionId,
+            establecimientoId: this.mainStore.state().establecimientoId,
+            userId:
+              orderId > 0
+                ? e.order.userId
+                : dataForm.vendedores.find((u: any) => u.predeterminado)
+                    ?.idUsuario ?? 0,
+          };
+          return {
+            ...e,
+            order: orderData,
+            vendedores: dataForm.vendedores,
+            taxes: dataForm.taxes,
+            taxRates: dataForm.taxRates,
+            tarifas: dataForm.tarifas,
+            tarifaId,
+            oldTarifaId: tarifaId,
+          };
+        });
 
-    //     this.subCategorias.update((sc) => [...sc, ...dataForm.subCategorias]);
-    //     this.items.set(dataItem.items);
-    //     this.setTotalRecords();
-    //   },
-    //   error: (err) => {
-    //     this.setLoading(false);
-    //   },
-    // });
+        this.subCategorias.update((sc) => [...sc, ...dataForm.subCategorias]);
+        this.items.set(dataItem.items);
+        this.setTotalRecords();
+      },
+      error: (err) => {
+        this.setLoading(false);
+      },
+    });
 
     this.selectedCategory = this.categoryItems.find((cat) => cat.isActive);
   }
 
   onTabChange(event: any) {
+    console.log(event);
     if (this.loading()) return;
 
     this.currentTabIndex = event.index;

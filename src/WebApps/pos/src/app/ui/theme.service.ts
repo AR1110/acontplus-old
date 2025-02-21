@@ -9,8 +9,7 @@ export class ThemeService {
   private darkMode = new BehaviorSubject<boolean>(false);
   isDarkMode$ = this.darkMode.asObservable();
 
-  constructor() {
-    // Check if user has a preference saved
+  loadMode() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       this.darkMode.next(savedTheme === 'dark');

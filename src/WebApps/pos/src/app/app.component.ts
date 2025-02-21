@@ -31,5 +31,7 @@ export class AppComponent {
         this.isLoading = false;
       }
     });
+
+    themeService.loadMode();
   }
 }

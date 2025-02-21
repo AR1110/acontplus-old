@@ -1,5 +1,5 @@
 <!-- pos-categories.component.html -->
-<div class="pos-categories-container" [ngClass]="{ 'dark-mode': darkMode }">
+<div class="pos-categories-container">
   <div class="pos-categories">
     @for (category of categories; track $index) {
     <div
@@ -8,12 +8,15 @@
         'pos-category--active': category.isActive,
         'pos-category--disabled': category.isDisabled
       }"
-      (click)="selectCategory(category)"
+      (click)="selectCategory(category, $index)"
     >
       <div class="pos-category__image">
-        <img [src]="category.imageUrl" [alt]="category.name + ' Icon'" />
+        <img
+          [src]="category.img || imgDefault"
+          [alt]="category.description + ' Icon'"
+        />
       </div>
-      <div class="pos-category__label">{{ category.name }}</div>
+      <div class="pos-category__label">{{ category.descripcion }}</div>
     </div>
 
     }

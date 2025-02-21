@@ -113,3 +113,28 @@
     }
   }
 }
+
+//products content
+.pos-products-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 20px;
+  padding: 20px 0 20px 0;
+  margin: 0 auto;
+}
+
+.pos-controls {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Para dispositivos móviles */
+@media (max-width: 600px) {
+  /* Ajusta el tamaño según necesidad */
+  .pos-products-container {
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+  }
+}
