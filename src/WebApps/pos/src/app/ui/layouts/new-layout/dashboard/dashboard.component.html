@@ -1,17 +1,10 @@
 <div class="dashboard-container">
   <!-- Metrics Grid -->
   <div class="metrics-grid">
-    @for (item of dashboardStore.documentCounts(); track $index) {
+    @for (item of metrics; track $index) {
     <app-metric-card [metric]="item"></app-metric-card>
-
     }
-
-    <!-- @for (item of metrics; track $index) {
-    <app-metric-card [metric]="item"></app-metric-card>
-
-    } -->
   </div>
-
   <div class="dashboard-content">
     <!-- Main Content -->
     <div class="main-section">
@@ -19,46 +12,46 @@
       <div class="kpi-grid">
         <mat-card class="kpi-card">
           <mat-card-content>
-            <div class="chart-container">
-              <canvas
-                baseChart
-                [type]="'line'"
-                [data]="lineChartData"
-                [options]="lineChartOptions"
-                [legend]="lineChartLegend"
-              >
-              </canvas>
+            <h2>New clients</h2>
+            <div class="kpi-value">
+              <span class="number">54</span>
+              <span class="percentage positive">+18.7%</span>
             </div>
           </mat-card-content>
         </mat-card>
 
         <mat-card class="kpi-card">
           <mat-card-content>
-            <!-- <app-top-products /> -->
+            <h2>Invoices overdue</h2>
+            <div class="kpi-value">
+              <span class="number">6</span>
+              <span class="percentage negative">+2.7%</span>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>
 
       <!-- Revenue Chart -->
-      <!-- <mat-card class="chart-card">
+      <mat-card class="chart-card">
         <mat-card-content>
           <div class="chart-header">
             <h2>Revenue</h2>
             <span class="chart-period">Last 7 days VS prior week</span>
           </div>
         </mat-card-content>
-      </mat-card> -->
+      </mat-card>
 
       <!-- Email List -->
-      <!-- <mat-card class="email-card">
+      <mat-card class="email-card">
         <mat-card-content>
           <h2>Recent emails</h2>
         </mat-card-content>
-      </mat-card> -->
+      </mat-card>
     </div>
 
     <!-- Right Sidebar -->
-    <!-- <div class="side-section">
+    <div class="side-section">
+      <!-- Formation Status -->
       <mat-card class="status-card">
         <mat-card-content>
           <h2>Formation status</h2>
@@ -72,14 +65,13 @@
         </mat-card-content>
       </mat-card>
 
-
+      <!-- Todo List -->
       <mat-card class="todo-card">
         <mat-card-content>
           <h2>Your to-Do list</h2>
         </mat-card-content>
       </mat-card>
-
-
+      <!-- Board Meeting -->
       <mat-card class="meeting-card">
         <mat-card-content>
           <h2>Board meeting</h2>
@@ -91,6 +83,6 @@
           </div>
         </mat-card-content>
       </mat-card>
-    </div> -->
+    </div>
   </div>
 </div>

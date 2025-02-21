@@ -5,8 +5,8 @@ import { PosLayoutComponent } from '@/ui/layouts/pos-layout/pos-layout.component
 import { NewLayoutComponent } from './new-layout/new-layout.component';
 import { OrdersComponent } from '@ui/orders/orders.component';
 import { CompanyCustomerPageComponent } from '../company-customer/company-customer-page.component';
-import { DashboardComponent } from '../dashboard/dashboard.component';
 import { PosSaleComponent } from '../pos-sale/pos-sale.component';
+import { DashboardComponent } from './new-layout/dashboard/dashboard.component';
 
 export const routes: Routes = [
   {
