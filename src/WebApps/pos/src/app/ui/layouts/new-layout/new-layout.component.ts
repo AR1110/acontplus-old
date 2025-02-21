@@ -1,6 +1,6 @@
 import { ThemeToggleComponent } from '@/ui/layouts/new-layout/theme-toggle/theme-toggle.component';
 import { ThemeService } from '@/ui/theme.service';
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -38,11 +38,11 @@ import { RouterLink, RouterModule } from '@angular/router';
 export class NewLayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isMobile = false;
-  isExpanded = false;
-  rootRoutes = menusRoutes;
+  // isExpanded = false;
+  // rootRoutes = menusRoutes;
 
   private breakpointObserver = inject(BreakpointObserver);
-  public themeService = inject(ThemeService);
+  // public themeService = inject(ThemeService);
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Web)
@@ -56,27 +56,22 @@ export class NewLayoutComponent {
 
         if (this.isMobile) {
           this.sidenav.close();
-          this.isExpanded = false;
         } else {
           this.sidenav?.open();
-          this.isExpanded = false; // Asegurar que inicie colapsado en desktop
         }
       });
   }
-  ngOnInit() {
-    // this.themeService.isDarkMode$.subscribe((isDarkMode) => {
-    //   this.isDarkMode = isDarkMode;
-    // });
-  }
 
-  toggleSidebar() {
-    this.isExpanded = !this.isExpanded;
-    if (this.isMobile) {
-    }
-    this.sidenav.toggle();
-  }
+  // toggleSidebar() {
+  //   this.isExpanded = !this.isExpanded;
+  //   if (this.isMobile) {
+  //   }
+  //   this.sidenav.toggle();
+  // }
 
-  toggleTheme(): void {
-    this.themeService.toggleDarkMode();
-  }
+  // toggleTheme(): void {
+  //   this.themeService.toggleDarkMode();
+  // }
+  collapsed = signal(false);
+  sidenavWidth = computed(() => (this.collapsed() ? '70px' : '250px'));
 }
