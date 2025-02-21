@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-with-admin": "ng serve --port 4201",
     "development": "ng build -c development",
     "prod": "ng build -c production",
     "staging": "ng build -c staging",
