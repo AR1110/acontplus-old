@@ -9,7 +9,7 @@ public class DocSustentoController(IDocSustentoService docSustentoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "idRetencionAts", idRetencionAts },
             { "json", SqlStringParam.Sanitize(json) }
         };
@@ -21,7 +21,7 @@ public class DocSustentoController(IDocSustentoService docSustentoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await docSustentoService.UpdateAsync(parameters));
     }
@@ -29,7 +29,7 @@ public class DocSustentoController(IDocSustentoService docSustentoService) : Bas
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await docSustentoService.DeleteAsync(parameters));
     }
 }

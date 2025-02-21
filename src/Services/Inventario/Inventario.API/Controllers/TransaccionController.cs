@@ -9,7 +9,7 @@ public class TransaccionController(ITransaccionService transaccionService) : Bas
         {
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             };
             var response = await transaccionService.GetAsync(parameters);
             if (response == null) { return NoContent(); }

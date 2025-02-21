@@ -1,5 +1,4 @@
 ﻿using Common.Infrastructure.Data.Configurations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Restaurant.API.Entities;
 

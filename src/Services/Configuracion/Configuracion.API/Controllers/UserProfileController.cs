@@ -5,7 +5,7 @@ public class UserProfileController(IUserProfileService userProfileService) : Bas
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") } };
         var response = await userProfileService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
 

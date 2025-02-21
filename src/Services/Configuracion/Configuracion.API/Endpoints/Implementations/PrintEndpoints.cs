@@ -7,11 +7,13 @@ public class PrintEndpoints(
     IUserContext userContext,
     IHttpContextAccessor httpContextAccessor) : IPrintEndpoints
 {
+    private const string UserRoleClaimType = "userRoleId";
+
     public async Task<IResult> Print(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetUserRoleId() },
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "json", SqlStringParam.Sanitize(json) },
             { "isMobileUserAgent", httpContextAccessor.HttpContext!.Items["IsMobileUserAgent"] ?? "false" }
         };

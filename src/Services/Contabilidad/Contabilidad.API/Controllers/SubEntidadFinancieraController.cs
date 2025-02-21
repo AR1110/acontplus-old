@@ -8,7 +8,7 @@ public class SubEntidadFinancieraController(ISubEntidadFinancieraService subEnti
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await subEntidadFinancieraService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -23,7 +23,7 @@ public class SubEntidadFinancieraController(ISubEntidadFinancieraService subEnti
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", fromMobile }
         };
@@ -39,7 +39,7 @@ public class SubEntidadFinancieraController(ISubEntidadFinancieraService subEnti
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -53,7 +53,7 @@ public class SubEntidadFinancieraController(ISubEntidadFinancieraService subEnti
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await subEntidadFinancieraService.DeleteAsync(parameters);
         return Ok(response);
     }

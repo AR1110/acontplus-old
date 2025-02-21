@@ -10,7 +10,7 @@ public class FirmaElectronicaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await firmaElectronicaService.GetAsync(parameters));
     }
@@ -33,7 +33,7 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "contrasenia", data.contrasenia },
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },
@@ -52,7 +52,7 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", data.idFirmaElectronica },
             { "contrasenia", data.contrasenia },
             { "fechaCaducidad", data.fechaCaducidad },
@@ -78,7 +78,7 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },

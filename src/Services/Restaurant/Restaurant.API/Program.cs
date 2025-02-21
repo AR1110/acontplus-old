@@ -1,14 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Data;
-using Restaurant.API.Extensions;
-using Services.Common.Configuration;
-using Services.Common.Extensions;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();

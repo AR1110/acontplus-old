@@ -4,11 +4,14 @@ namespace Configuracion.API.Endpoints.Implementations;
 
 public class PrinterEndpoints(IPrinterService printerService, IUserContext userContext) : IPrinterEndpoints
 {
+    private const string UserRoleClaimType = "userRoleId";
+
     public async Task<IResult> GetPrinters(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         var result = await printerService.GetAsync(parameters);
         return Results.Ok(result);

@@ -7,7 +7,7 @@ public class PtoEmiAsigController(IPuntoEmisionAsignacionService puntoEmisionAsi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await puntoEmisionAsignacionService.GetAsync(parameters);
         return Ok(response);
@@ -18,7 +18,7 @@ public class PtoEmiAsigController(IPuntoEmisionAsignacionService puntoEmisionAsi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -30,7 +30,7 @@ public class PtoEmiAsigController(IPuntoEmisionAsignacionService puntoEmisionAsi
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await puntoEmisionAsignacionService.UpdateAsync(parameters);
         return Ok(response);
     }

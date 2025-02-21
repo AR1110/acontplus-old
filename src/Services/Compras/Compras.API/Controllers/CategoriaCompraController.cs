@@ -7,7 +7,7 @@ public class CategoriaCompraController(ICategoriaCompraService categoriaCompraSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await categoriaCompraService.GetAsync(parameters));
     }
@@ -17,7 +17,7 @@ public class CategoriaCompraController(ICategoriaCompraService categoriaCompraSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await categoriaCompraService.AddAsync(parameters));
     }
@@ -27,8 +27,8 @@ public class CategoriaCompraController(ICategoriaCompraService categoriaCompraSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
-            { "id", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await categoriaCompraService.UpdateAsync(parameters));
@@ -39,7 +39,7 @@ public class CategoriaCompraController(ICategoriaCompraService categoriaCompraSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", User.GetUserRoleId() }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", User.GetClaimValue<int>("userRoleId") }
         };
         return Ok(await categoriaCompraService.DeleteAsync(parameters));
     }

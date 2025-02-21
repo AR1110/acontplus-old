@@ -3,6 +3,7 @@ import { ReportsComponent } from '@purchase/ui/reports/reports.component';
 import { ReceptionReportsComponent } from '@purchase/ui/reception-reports/reception-reports.component';
 import { DocumentReceivedComponent } from '@purchase/ui/documento-received/document-received.component';
 import { FacturaFisicaComponent } from '@purchase/ui/factura-fisica/factura-fisica.component';
+import { RetencionAtsComponent } from '@billing/ui/retencion-ats/retencion-ats.component';
 
 export const routes: Routes = [
   {
@@ -35,6 +36,14 @@ export const routes: Routes = [
     component: FacturaFisicaComponent,
     data: {
       breadcrumb: 'Factura Física',
+    },
+  },
+  {
+    path: 'retencion-ats',
+    title: 'Retención ATS',
+    component: RetencionAtsComponent,
+    data: {
+      breadcrumb: 'Retención ATS',
     },
   },
 ];

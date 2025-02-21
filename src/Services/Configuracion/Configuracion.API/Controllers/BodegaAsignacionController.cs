@@ -7,7 +7,7 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await bodegaAsignacionService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -20,7 +20,7 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -34,7 +34,7 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await bodegaAsignacionService.UpdateAsync(parameters);
         if (response == null) { return NoContent(); }
 

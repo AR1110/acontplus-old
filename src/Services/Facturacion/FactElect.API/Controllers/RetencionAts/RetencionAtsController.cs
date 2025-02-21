@@ -9,7 +9,7 @@ public class RetencionAtsController(IRetencionAtsService retencionAtsService) : 
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await retencionAtsService.GetAsync(parameters));
     }
@@ -19,7 +19,7 @@ public class RetencionAtsController(IRetencionAtsService retencionAtsService) : 
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() },
+            { "idRol", User.GetClaimValue<int>("userRoleId") },
             { "infoCompRet", SqlStringParam.Sanitize(data.infoCompRet) },
             { "docsSust", SqlStringParam.Sanitize(data.docsSust) },
             { "impuestos", SqlStringParam.Sanitize(data.impuestos) },
@@ -47,7 +47,7 @@ public class RetencionAtsController(IRetencionAtsService retencionAtsService) : 
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(data.infoCompRet) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(data.infoCompRet) }
         };
         return Ok(await retencionAtsService.UpdateAsync(parameters));
     }
@@ -55,14 +55,14 @@ public class RetencionAtsController(IRetencionAtsService retencionAtsService) : 
     [HttpPut("Cancel/{id}")]
     public async Task<IActionResult> Cancel(int id)
     {
-        var parameters = new Dictionary<string, object> { { "id", id }, { "idRol", User.GetUserRoleId() } };
+        var parameters = new Dictionary<string, object> { { "id", id }, { "idRol", User.GetClaimValue<int>("userRoleId") } };
         return Ok(await retencionAtsService.CancelAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "id", id }, { "idRol", User.GetUserRoleId() } };
+        var parameters = new Dictionary<string, object> { { "id", id }, { "idRol", User.GetClaimValue<int>("userRoleId") } };
         return Ok(await retencionAtsService.DeleteAsync(parameters));
     }
 }

@@ -9,7 +9,7 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
         {
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             };
             var response = await articuloFraccionadoService.GetAsync(parameters);
             if (response == null) { return NoContent(); }
@@ -26,7 +26,7 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var response = await articuloFraccionadoService.AddAsync(request);
         return Ok(response);
     }
@@ -35,7 +35,7 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
 
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var response = await articuloFraccionadoService.UpdateAsync(id, request);
         return Ok(response);
     }
@@ -43,7 +43,7 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await articuloFraccionadoService.DeleteAsync(parameters);
         return Ok(response);
 

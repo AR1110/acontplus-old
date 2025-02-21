@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -23,7 +22,7 @@ public class RecipeController(IRecipeService recipeService) : BaseApiController
     public async Task<IActionResult> GetByItem(int id)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         return Ok(await recipeService.GetByItem(parameters));
     }

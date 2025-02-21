@@ -7,7 +7,7 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await notaCreditoService.GetAsync(parameters));
     }
@@ -17,7 +17,7 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         return Ok(await notaCreditoService.AddAsync(parameters));
@@ -28,7 +28,7 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -39,7 +39,7 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, };
         return Ok(await notaCreditoService.DeleteAsync(parameters));
     }
 }

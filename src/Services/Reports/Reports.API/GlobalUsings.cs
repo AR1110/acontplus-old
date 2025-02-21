@@ -2,10 +2,14 @@
 global using Asp.Versioning;
 global using Common.ApiDocumentation;
 global using Common.Core.Data;
+global using Common.Infrastructure.Repository.Implementations;
 global using Common.Infrastructure.Repository.Interfaces;
+global using Common.Reports.Interfaces;
+global using Common.Reports.Services;
+global using Common.Services.Configuration;
+global using Common.Services.Extensions;
+global using Common.Services.Middleware;
 global using Microsoft.AspNetCore.Mvc;
 global using Reports.API.Dtos;
 global using Reports.API.Interfaces;
-global using Reports.Application.Interfaces;
-global using Reports.Application.Services;
-global using Services.Common.Extensions;
+global using Reports.API.Services;

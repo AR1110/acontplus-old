@@ -1,19 +1,17 @@
 import { Route } from '@angular/router';
+import { AtsComponent } from '@billing/ui/ats/ats.component';
+import { FactElectReportPageComponent } from '@billing/ui/reports/fact-elect-report-page/fact-elect-report-page.component';
+import { DocElectComponent } from '@billing/ui/doc-elect/doc-elect.component';
+import { InvoiceComponent } from '@billing/ui/invoice/invoice.component';
 
-import { AtsPageComponent } from './pages/ats-page/ats-page.component';
-import {FactElectReportPageComponent} from "@billing/reports/fact-elect-report-page/fact-elect-report-page.component";
-import { DocElectPageComponent } from './pages/doc-elect-page/doc-elect-page.component';
-import { InvoicePageComponent } from './pages/invoice-page/invoice-page.component';
-
-export const routes : Route[] = [
+export const routes: Route[] = [
   {
-    path: 'ats-page',
+    path: 'ats',
     title: 'Ats',
-    component: AtsPageComponent,
+    component: AtsComponent,
     data: {
-      breadcrumb: 'Ats'
-    }
-
+      breadcrumb: 'Ats',
+    },
   },
   {
     path: 'fact-elect-report',
@@ -21,26 +19,23 @@ export const routes : Route[] = [
     component: FactElectReportPageComponent,
     data: {
       breadcrumb: 'Reporte Tributario',
-    }
-
+    },
   },
 
   {
     path: 'doc-elect',
     title: 'Documento Electrónico',
-    component: DocElectPageComponent,
+    component: DocElectComponent,
     data: {
       breadcrumb: 'Documento Electrónico',
-    }
-
+    },
   },
   {
     path: 'invoice',
     title: 'Factura',
-    component: InvoicePageComponent,
+    component: InvoiceComponent,
     data: {
       breadcrumb: 'Factura',
-    }
-
-  }
-]
+    },
+  },
+];

@@ -7,7 +7,7 @@ public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepSe
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") } };
         return Ok(await companyDemoStepService.GetAsync(parameters));
     }
 
@@ -16,7 +16,7 @@ public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "demoStepId", demoStepId },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };

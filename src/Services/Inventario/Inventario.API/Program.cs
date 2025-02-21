@@ -1,8 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
 using Inventario.API.Extensions;
-using Services.Common.Configuration;
-using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

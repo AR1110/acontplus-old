@@ -30,7 +30,7 @@ public static class ApplicationServicesExtensions
             "Common.Infrastructure.Repository.Implementations",
             "Common.API.Endpoints.Implementations",
             "Common.API.Services",
-            "Services.Common.Extensions",
+            "Common.Services.Extensions",
         ];
 
         services.Scan(scan => scan

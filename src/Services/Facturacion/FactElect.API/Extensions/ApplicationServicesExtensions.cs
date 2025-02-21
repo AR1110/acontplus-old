@@ -30,7 +30,7 @@ public static class ApplicationServicesExtensions
             "FactElect.API.Services.Logistica",
             "FactElect.API.Services.RetencionAts",
             "FactElect.API.Services.Sri",
-            "FactElect.Application.Services"
+            "Common.FactElect.Services"
         ];
 
         services.Scan(scan => scan

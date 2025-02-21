@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Services.Common.Configuration;
-using Services.Common.Extensions;
-using Services.Common.Middleware;
-
+using Common.Services.Configuration;
+using Common.Services.Extensions;
+using Common.Services.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

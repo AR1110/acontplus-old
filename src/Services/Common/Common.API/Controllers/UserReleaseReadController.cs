@@ -5,7 +5,7 @@ public class UserReleaseReadController(IUserReleaseReadService userReleaseReadSe
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest apiRequest)
     {
-        apiRequest.UserRoleId = User.GetUserRoleId();
+        apiRequest.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await userReleaseReadService.AddAsync(apiRequest));
     }
 }

@@ -7,10 +7,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Acontplus.Common.Notifications" />
     <PackageReference Include="Acontplus.Common.S3Application" />
-    <PackageReference Include="Acontplus.Services.Common" />
-    
+    <PackageReference Include="Acontplus.Common.Services" />
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

@@ -7,7 +7,7 @@ public class DocConfigController(IDocConfigService docConfigService) : BaseApiCo
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await docConfigService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -20,7 +20,7 @@ public class DocConfigController(IDocConfigService docConfigService) : BaseApiCo
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };

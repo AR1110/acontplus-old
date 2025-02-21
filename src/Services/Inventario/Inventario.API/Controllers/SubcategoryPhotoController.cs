@@ -6,13 +6,15 @@ public class SubcategoryPhotoController(
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController
 {
+    private const string IdCardCompany = "idCardCompany";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
 
         var response = await subcategoryPhoto.GetAsync(new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
         if (response == null) { return BadRequest($"Cant get data: {json}"); }
 
@@ -28,14 +30,14 @@ public class SubcategoryPhotoController(
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
             }
 
             data.SubcategoryId = subcategoryId;
             data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
             data.S3ObjectUrl = s3ObjectCustom.S3ObjectUrl;
             var response = await subcategoryPhoto.AddAsync(data);
-            if (response.code == "1" && file != null)
+            if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UploadAsync(s3ObjectCustom);
                 s3ObjectCustom.Dispose();
@@ -63,12 +65,12 @@ public class SubcategoryPhotoController(
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey,
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file, data.S3ObjectKey,
                     data.S3ObjectUrl);
             }
 
             var response = await subcategoryPhoto.UpdateAsync(id, data);
-            if (response.code == "1" && file != null)
+            if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
                 s3ObjectCustom.Dispose();

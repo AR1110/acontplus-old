@@ -1,5 +1,4 @@
 ﻿using Common.Infrastructure.Repository.Interfaces;
-using Restaurant.API.Data;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 

@@ -8,7 +8,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoA
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await datoAdicionalArticuloService.GetAsync(parameters));
     }
@@ -18,7 +18,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoA
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "idDocumento", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
@@ -30,7 +30,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoA
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "idInfoAdicional", idInfoAdicional },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "idInfoAdicional", idInfoAdicional },
         };
         return Ok(await datoAdicionalArticuloService.DeleteAsync(parameters));
     }

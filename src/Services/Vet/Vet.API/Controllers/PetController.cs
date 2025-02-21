@@ -7,7 +7,7 @@ public class PetController(IPetService petService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await petService.GetAsync(parameters));
     }
@@ -47,7 +47,10 @@ public class PetController(IPetService petService) : BaseApiController
     [HttpGet("search")]
     public async Task<ActionResult<ApiResponse>> Search(string json)
     {
-        var parameters = new Dictionary<string, object> { { "companyId", User.GetCompanyId() }, { "json", json } };
+        var parameters = new Dictionary<string, object> {
+            { "companyId", User.GetClaimValue<int>("companyId") },
+            { "json", json }
+        };
         return await petService.SearchAsync(parameters);
     }
 }

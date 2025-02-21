@@ -7,7 +7,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await controlCajaService.GetAsync(parameters);
@@ -25,7 +25,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await controlCajaService.AddAsync(parameters);
@@ -40,7 +40,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };

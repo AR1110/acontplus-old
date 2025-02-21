@@ -12,7 +12,7 @@ public class OrderDetailController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var response = await _orderDetailService.AddAsync(data);
         return Ok(response);
     }
@@ -20,7 +20,7 @@ public class OrderDetailController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var response = await _orderDetailService.UpdateAsync(id, data);
         return Ok(response);
     }

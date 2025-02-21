@@ -9,7 +9,7 @@ public class ProveedorController(IProveedorService _proveedorService) : BaseApiC
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             };
 
         return Ok(await _proveedorService.GetAsync(parameters));
@@ -19,14 +19,14 @@ public class ProveedorController(IProveedorService _proveedorService) : BaseApiC
     [HttpPost]
     public async Task<IActionResult> Post(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await _proveedorService.AddAsync(request));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await _proveedorService.UpdateAsync(id, request));
 
     }
@@ -34,7 +34,7 @@ public class ProveedorController(IProveedorService _proveedorService) : BaseApiC
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await _proveedorService.DeleteAsync(parameters));
 
     }

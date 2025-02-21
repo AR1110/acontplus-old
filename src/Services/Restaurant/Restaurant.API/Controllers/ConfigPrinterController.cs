@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 
 namespace Restaurant.API.Controllers
@@ -12,7 +11,7 @@ namespace Restaurant.API.Controllers
         {
             var response =
                 await configService.GetPrinterAsync(
-                    new Dictionary<string, object> { { "idRol", User.GetUserRoleId() } });
+                    new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") } });
             return Ok(response);
         }
 
@@ -20,7 +19,7 @@ namespace Restaurant.API.Controllers
         public async Task<IActionResult> Post(bool estado)
         {
             var response = await configService.AddPrinterAsync(
-                new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "estado", estado } });
+                new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "estado", estado } });
             return Ok(response);
         }
     }

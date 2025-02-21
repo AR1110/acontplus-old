@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -10,7 +9,7 @@ public class OrderController(IOrderService orderService) : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
 
         return Ok(await orderService.GetAsync(parameters));
     }
@@ -18,14 +17,14 @@ public class OrderController(IOrderService orderService) : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await orderService.AddAsync(data));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
 
         return Ok(await orderService.PutAsync(id, data));
     }
@@ -42,7 +41,7 @@ public class OrderController(IOrderService orderService) : BaseApiController
     public async Task<IActionResult> Print(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await orderService.PrintAsync(parameters));
     }
 }

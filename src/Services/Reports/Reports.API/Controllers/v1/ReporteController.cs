@@ -33,7 +33,7 @@
             var dataParams = new Dictionary<string, object>();
 
             // Determine user role ID
-            var userRoleId = User.GetUserRoleId();
+            var userRoleId = User.GetClaimValue<int>("userRoleId");
 
             if (!data.hasService)
             {

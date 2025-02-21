@@ -2,8 +2,6 @@
 
 
 using Mechanical.API.Extensions;
-using Services.Common.Configuration;
-using Services.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

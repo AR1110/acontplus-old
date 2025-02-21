@@ -1,15 +1,13 @@
-﻿using Common.AppSettings;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<LegacyApiResponse>> Get(string json)
+    public async Task<ActionResult<ApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             };
         var response = await precioMasivoService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -26,7 +24,7 @@ public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : 
     //    try
     //    {
     //        await _db.SPExecute("Inventario.PrecioMasivo_Insert");
-    //        _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
+    //        _db.AddDynamicParam("idUsuarioRol", User.GetClaimValue<int>("userRoleId"));
     //        _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
     //        _response = await _db.GetDefaultAsync();
     //    }
@@ -47,7 +45,7 @@ public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : 
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
             };
         var response = await precioMasivoService.UpdateAsync(parameters);

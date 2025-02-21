@@ -1,18 +1,12 @@
-﻿using Common.AppSettings;
-
-namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Services;
 
 public class MovimientoCajaService : IMovimientoCajaService
 {
-    private readonly ContabilidadContext _context;
     private readonly IAdoRepository _repository;
-    private readonly LegacyApiResponse _response;
 
-    public MovimientoCajaService(IAdoRepository repository, ContabilidadContext context)
+    public MovimientoCajaService(IAdoRepository repository)
     {
         _repository = repository;
-        _context = context;
-        _response = new LegacyApiResponse();
     }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)

@@ -60,6 +60,7 @@ export enum GlobalRoutes {
   //Facturación
   FactElectDocumentoElectronico = 'billing/doc-elect',
   Factura = 'billing/invoice',
+  FactElectRetencionAts = 'purchase/retencion-ats',
 
   //Contabilidad
   ContabilidadCuentaPorPagar = 'accounting/cuenta-por-pagar',

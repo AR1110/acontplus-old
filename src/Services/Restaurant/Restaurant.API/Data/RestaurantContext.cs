@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Common.Infrastructure.Data.Configurations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;

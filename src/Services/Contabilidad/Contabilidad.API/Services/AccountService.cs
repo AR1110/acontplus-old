@@ -1,39 +1,37 @@
-﻿using Common.AppSettings;
-
-namespace Contabilidad.API.Services
+﻿namespace Contabilidad.API.Services
 {
     public class AccountService(ContabilidadContext context, IAdoRepository repository) : IAccountService
     {
 
-        public async Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             var ds = await repository.GetDataSetAsync("Contabilidad.Account_Get", parameters);
             if (DataValidation.DataSetIsNull(ds, true))
             {
-                return new LegacyApiResponse { code = "0", message = "Data not found" };
+                return new ApiResponse { Code = "0", Message = "Data not found" };
             }
 
-            return new LegacyApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
+            return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
         }
 
-        public async Task<LegacyApiResponse> AddAsync(Account account)
+        public async Task<ApiResponse> AddAsync(Account account)
         {
             if (await context.Subcategories.AnyAsync(x => (x.Code == account.Code)))
             {
-                return new LegacyApiResponse { code = "0", message = "Código ya existe" };
+                return new ApiResponse { Code = "0", Message = "Código ya existe" };
             }
 
             context.Accounts.Add(account);
             await context.SaveChangesAsync();
-            return new LegacyApiResponse { code = "1", message = "Registrada exitosamente" };
+            return new ApiResponse { Code = "1", Message = "Registrada exitosamente" };
         }
 
-        public async Task<LegacyApiResponse> UpdateAsync(int id, Account account)
+        public async Task<ApiResponse> UpdateAsync(int id, Account account)
         {
             var accountFound = await context.Accounts.FindAsync(id);
             if (accountFound == null)
             {
-                return new LegacyApiResponse { code = "0", message = "Cuenta no encontrada" };
+                return new ApiResponse { Code = "0", Message = "Cuenta no encontrada" };
             }
             accountFound.TipoId = account.TipoId;
             accountFound.Code = account.Code;
@@ -44,15 +42,15 @@ namespace Contabilidad.API.Services
             accountFound.UserId = account.UserId;
             context.Update(accountFound);
             await context.SaveChangesAsync();
-            return new LegacyApiResponse { code = "1", message = "Actualizada exitosamente" };
+            return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };
         }
 
-        public async Task<LegacyApiResponse> DeleteAsync(int userId, int id)
+        public async Task<ApiResponse> DeleteAsync(int userId, int id)
         {
             var account = await context.Accounts.FirstOrDefaultAsync(x => x.Id == id);
             if (account == null)
             {
-                return new LegacyApiResponse { code = "0", message = "Cuenta no encontrada" };
+                return new ApiResponse { Code = "0", Message = "Cuenta no encontrada" };
             }
 
             account.Enabled = false;
@@ -60,7 +58,7 @@ namespace Contabilidad.API.Services
             account.UserId = userId;
             context.Update(account);
             await context.SaveChangesAsync();
-            return new LegacyApiResponse { code = "1", message = "Eliminada exitosamente" };
+            return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
         }
     }
 }

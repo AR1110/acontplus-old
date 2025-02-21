@@ -1,6 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 using Configuracion.API.Extensions.Endpoints;
-using Services.Common.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

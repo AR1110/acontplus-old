@@ -9,7 +9,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -21,7 +21,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await service.GetByIdAsync(parameters);
         if (response == null) { return NoContent(); }
 
@@ -34,7 +34,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await service.AddAsync(parameters);
@@ -47,7 +47,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -59,7 +59,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await service.DeleteAsync(parameters);
         return Ok(response);
     }

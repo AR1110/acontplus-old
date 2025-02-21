@@ -3,12 +3,14 @@
 public class DocumentoElectronicoController(IDocumentoElectronicoService documentoElectronicoService)
     : BaseApiController
 {
+    private const string UserRoleId = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await documentoElectronicoService.GetAsync(parameters));
     }
@@ -18,7 +20,7 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await documentoElectronicoService.GetByStatusAsync(parameters));
     }
@@ -26,14 +28,20 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     [HttpGet("GetDataForm")]
     public async Task<IActionResult> GetDataForm()
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() } };
+        var parameters = new Dictionary<string, object> {
+            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId)
+            }
+        };
         return Ok(await documentoElectronicoService.GetDataFormAsync(parameters));
     }
 
     [HttpGet("GetXmlSri/{id}")]
     public async Task<IActionResult> GetXmlSri(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> {
+            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId) },
+            { "id", id }
+        };
         var response = await documentoElectronicoService.GetXmlSriAsync(parameters);
         if (response == null)
         {
@@ -46,7 +54,10 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> {
+            { "idRol", User.GetClaimValue<int>(UserRoleId) },
+            { "id", id }
+        };
         return Ok(await documentoElectronicoService.UpdateAsync(parameters));
     }
 }

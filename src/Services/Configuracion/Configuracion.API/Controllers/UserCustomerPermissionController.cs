@@ -8,7 +8,7 @@ public class UserCustomerPermissionController(IUserCustomerPermissionService use
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await userCustomerPermissionService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -21,7 +21,7 @@ public class UserCustomerPermissionController(IUserCustomerPermissionService use
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await userCustomerPermissionService.UpdateAsync(parameters);

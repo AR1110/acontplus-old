@@ -24,7 +24,7 @@ public static class ApplicationServicesExtensions
         [
             "Common.Infrastructure.Repository.Implementations",
             "Compras.API.Services",
-            "FactElect.Application.Services",
+            "Common.FactElect.Services",
         ];
 
         services.Scan(scan => scan

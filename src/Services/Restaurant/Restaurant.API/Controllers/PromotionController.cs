@@ -1,7 +1,6 @@
 ﻿using Common.S3Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Services;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -11,11 +10,13 @@ public class PromotionController(
     IS3StorageService storage)
     : BaseApiController
 {
+    private const string IdCardCompany = "idCardCompany";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await promotionService.GetAsync(parameters));
     }
 
@@ -26,18 +27,18 @@ public class PromotionController(
         {
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
             }
 
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) },
                 { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" },
                 { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" }
             };
 
-            int userRoleId = User.GetUserRoleId();
+            int userRoleId = User.GetClaimValue<int>("userRoleId");
             var response = await promotionService.AddAsync(parameters);
 
             if (response.Code == "1" && file != null)
@@ -66,12 +67,12 @@ public class PromotionController(
         {
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetIdCardCompany}/promociones/", file);
+                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
             }
 
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(json) },
                 { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" },
