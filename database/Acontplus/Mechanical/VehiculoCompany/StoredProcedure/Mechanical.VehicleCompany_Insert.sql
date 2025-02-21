@@ -37,7 +37,7 @@ BEGIN
 	DECLARE @LicensePlate VARCHAR(15),@userId INT
 
     --> Customer
-	DECLARE @CustomerId INT, @CustomerCompanyId INT ,@IDCard VARCHAR(15) ,@CardTypeId INT ,@IDType VARCHAR(5)
+	DECLARE @CustomerId INT, @CustomerCompanyId INT ,@IdTypeId INT ,@IDCard VARCHAR(50) ,@IDType VARCHAR(10)
 
 
 	DECLARE @tbVehicle AS TABLE (
@@ -121,7 +121,7 @@ BEGIN
 
         SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @CardTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = @IDType
+        SELECT TOP 1 @IdTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = @IDType
 
         --> VALIDATION OF INFORMATION 
         IF NOT EXISTS(SELECT 1 FROM @tbVehicle)   
@@ -168,8 +168,8 @@ BEGIN
             ELSE
                 BEGIN 
                     INSERT INTO Customer.Customer
-                          (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
-                    SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation 
+                           (IdTypeId,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
+                    SELECT @IdTypeId,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation 
                     FROM @tbCustomer 
 
                     SELECT @CustomerId = SCOPE_IDENTITY()
@@ -178,8 +178,8 @@ BEGIN
             IF NOT EXISTS (SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE CustomerId = @CustomerId AND idEntidad = @CompanyId)
                 BEGIN
                     INSERT INTO dbo.Cliente
-                           (idEntidad,idTipoIdentificacion,direccion,correo,telefono,customerId)
-                    SELECT @CompanyId,@CardTypeId,[Address],Email,telephone,@CustomerId
+                           (idEntidad,direccion,correo,telefono,customerId)
+                    SELECT @CompanyId,[Address],Email,telephone,@CustomerId
                     FROM @tbCustomer
 
                     SELECT @CustomerCompanyId = SCOPE_IDENTITY()

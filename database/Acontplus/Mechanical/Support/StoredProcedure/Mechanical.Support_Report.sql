@@ -35,9 +35,9 @@ BEGIN
         INNER JOIN dbo.Entidad         en WITH (NOLOCK) ON en.idEntidad            = es.idEntidad
         WHERE sp.Id = @SupportId
 
-        SELECT sp.[Date]        as [date]
-              ,ur.nombreUsuario as userRecived
-              ,ua.nombreUsuario as userAssigned
+        SELECT FORMAT(sp.[Date], 'dd/MM/yyyy HH:mm:ss') as [date]
+              ,ur.nombreUsuario                         as userRecived
+              ,ua.nombreUsuario                         as userAssigned
               ,sp.obs
         FROM Mechanical.Support sp WITH (NOLOCK)
         INNER JOIN dbo.Usuario  ur WITH (NOLOCK) ON ur.idUsuario = sp.UserId

@@ -23,7 +23,7 @@ SELECT cl.[idCliente]
       ,cl.[placa]
       ,cl.[nota]
       ,cl.[importacion]
-      --,cl.[CustomerId]
+      ,cl.[CustomerId]
       ,cl.correo                                                    as Email
       ,cl.telefono                                                  as Telephone
       ,cl.direccion                                                 as [Address]
@@ -33,6 +33,7 @@ SELECT cl.[idCliente]
       ,ce.BusinessName                                              as empresa
       ,ti.descripcion                                               as tipoIdentificacion
       ,ti.codigo                                                    as codTipoIdentificacion
+      ,ti.codigoSri                                                 as IDType
       ,ti.codigoSri                                                 as codIdentSri
       ,cs.IdTypeId                                                  as idTipoIdentificacion
       ,cs.SriValidation                                             as validationSri
