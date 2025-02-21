@@ -24,8 +24,11 @@
 
       }
     </div>
+    @if (items().length>0) {
     <div class="pos-load-more">
       <app-load-more [size]="'large'" />
     </div>
+
+    }
   </div>
 </div>

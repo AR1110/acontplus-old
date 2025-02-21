@@ -31,6 +31,7 @@ import { ProductInputSearchComponent } from './product-input-search/product-inpu
 import { CategoriesComponent } from './categories/categories.component';
 import { ProductCardComponent } from './product-card/product-card.component';
 import { LoadMoreComponent } from './load-more/load-more.component';
+import { DialogService } from '@/domain/services/dialog.service';
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -60,7 +61,7 @@ export class PosSaleComponent {
   private _configUseCase = inject(ConfigUseCase);
   private itemSvc = inject(ItemService);
 
-  public dialog = inject(Dialog);
+  public dialog = inject(DialogService);
 
   selectedSubCategoryIndex = 0;
 
@@ -215,9 +216,7 @@ export class PosSaleComponent {
     let orderId = this.posStoreSvc.state().order?.orderId || 0;
     if (!(orderId > 0)) {
       this.dialog.open(TableModalComponent, {
-        width: '100vw',
-        height: '100vh',
-        panelClass: 'full-screen-cdk-dialog',
+        size: 'xl',
       });
     }
     if (this.posStoreSvc.state().isLoading) return;

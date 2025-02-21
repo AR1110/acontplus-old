@@ -1,32 +1,63 @@
-<div class="dialog-header">
-  <h2 class="dialog-title">Mesas</h2>
-  <button class="close-button" (click)="close()">×</button>
-</div>
+<app-custom-container-dialog
+  [matDialogTitle]="'Mesas'"
+  [containerTemplate]="body"
+  [actionsTemplate]="actions"
+  (close)="close()"
+/>
 
-<div class="dialog-body" overlay-scrollbars>
-  <mat-accordion multi>
-    @for(node of roomTables();track $index){
-    <mat-expansion-panel [expanded]="node.expanded">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <div class="d-flex flex-row gap-1">
-            <span
-              class="node-label"
-              [ngStyle]="{
-                'background-color': getColorForFloor(node.floorName),
-                'border-radius': '8px',
-                padding: '2px 6px'
+<ng-template #body>
+  <div class="mb-5">
+    <mat-accordion multi>
+      @for(node of roomTables();track $index){
+      <mat-expansion-panel [expanded]="node.expanded">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="d-flex flex-row gap-1">
+              <span
+                class="node-label"
+                [ngStyle]="{
+                  'background-color': getColorForFloor(node.floorName),
+                  'border-radius': '8px',
+                  padding: '2px 6px'
+                }"
+                >{{ node.floorName }}</span
+              >
+              <span class="node-label">-</span>
+              <span class="node-label">{{ node.roomName }}</span>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <!-- pos-categories.component.html -->
+        <div class="pos-tables-container">
+          <div class="pos-tables">
+            @for (table of node.tables; track $index) {
+            <div
+              class="pos-table"
+              [ngClass]="{
+                'pos-table--active':
+                  table.assigned || selectedOption() === table.id,
+                'pos-table--disabled': table.isDisabled
               }"
-              >{{ node.floorName }}</span
+              (click)="selectOption(table, node.roomName)"
             >
-            <span class="node-label">-</span>
-            <span class="node-label">{{ node.roomName }}</span>
-          </div>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+              <div class="pos-table__text">{{ table.numberTable }}</div>
+              <div class="pos-table__label">{{ table.description }}</div>
+              <button
+                mat-icon-button
+                aria-label="Var pedidos"
+                matTooltip="Ver pedidos"
+                appActionOrderDialog
+              >
+                <mat-icon>launch</mat-icon>
+              </button>
+            </div>
 
-      <div class="tree-children">
-        <div class="button-grid">
+            }
+          </div>
+        </div>
+
+        <!-- <div class="button-grid">
           @for(table of node.tables;track table.id){
           <button
             class="button-card"
@@ -53,15 +84,15 @@
           </button>
 
           }
-        </div>
-      </div>
-    </mat-expansion-panel>
-    }@empty {
-    <p>Cargando...</p>
-    }
-  </mat-accordion>
-</div>
+        </div>  -->
+      </mat-expansion-panel>
+      }@empty {
+      <p>Cargando...</p>
+      }
+    </mat-accordion>
+  </div>
+</ng-template>
 
-<div class="dialog-footer">
-  <button mat-raised-button (click)="closeDialog()">Cerrar</button>
-</div>
+<ng-template #actions>
+  <button mat-flat-button (click)="closeDialog()">Cerrar</button>
+</ng-template>
