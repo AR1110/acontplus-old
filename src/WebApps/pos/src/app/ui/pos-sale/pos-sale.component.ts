@@ -231,6 +231,7 @@ export class PosSaleComponent {
           };
           return {
             ...e,
+            isModulePos: true,
             order: orderData,
             vendedores: dataForm.vendedores,
             taxes: dataForm.taxes,
@@ -345,5 +346,14 @@ export class PosSaleComponent {
           },
         });
     }
+  }
+
+  ngOnDestroy() {
+    this.posStoreSvc.state.update((e) => {
+      return {
+        ...posStoreStateInitial(),
+        isModulePos: false,
+      };
+    });
   }
 }
