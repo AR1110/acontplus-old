@@ -1,288 +1,245 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": ".NET Core Launch (Frontend)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/WebApps/WebUI/bin/Debug/net9.0/WebUI.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/WebApps/WebUI",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Identity)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Identity/Identity.API/bin/Debug/net9.0/Identity.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Identity/Identity.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Gateway)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.API/bin/Debug/net9.0/GatewayAcontplus.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Configuracion)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Configuracion/Configuracion.API/bin/Debug/net9.0/Configuracion.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Configuracion/Configuracion.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Inventario)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Inventario/Inventario.API/bin/Debug/net9.0/Inventario.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Inventario/Inventario.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Restaurant)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API/bin/Debug/net9.0/Restaurant.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (FactElect)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Facturacion/FactElect.API/bin/Debug/net9.0/FactElect.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Facturacion/FactElect.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Reports)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Reports/Reports.API/bin/Debug/net9.0/Reports.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Reports/Reports.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Ventas)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Ventas/Ventas.API/bin/Debug/net9.0/Ventas.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Ventas/Ventas.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Common)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Common/Common.API/bin/Debug/net9.0/Common.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Common/Common.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Launch (Contabilidad)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Services/Contabilidad/Contabilidad.API/bin/Debug/net9.0/Contabilidad.API.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Services/Contabilidad/Contabilidad.API",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-            "justMyCode": false,
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach"
-        },
-    ],
-    "compounds": [
-        {
-            "name": "AcontPlus Dev",
-            "configurations": [
-                ".NET Core Launch (Frontend)",
-                ".NET Core Launch (Gateway)",
-                ".NET Core Launch (Configuracion)",
-                ".NET Core Launch (Identity)",
-                ".NET Core Launch (Inventario)",
-                ".NET Core Launch (FactElect)",
-                ".NET Core Launch (Reports)",
-            ],
-            "stopAll": true
-        },
-        {
-            "name": "AcontPlus Restaurant",
-            "configurations": [
-                ".NET Core Launch (Gateway)",
-                ".NET Core Launch (Configuracion)",
-                ".NET Core Launch (Identity)",
-                ".NET Core Launch (Inventario)",
-                ".NET Core Launch (Restaurant)",
-                ".NET Core Launch (FactElect)",
-                ".NET Core Launch (Reports)",
-                ".NET Core Launch (Ventas)"
-            ],
-            "stopAll": true
-        },
-        {
-            "name": "AcontPlus MacOs",
-            "configurations": [
-                ".NET Core Launch (Frontend)",
-                ".NET Core Launch (Gateway)",
-                ".NET Core Launch (Configuracion)",
-                ".NET Core Launch (Identity)",
-                ".NET Core Launch (Inventario)",
-                ".NET Core Launch (FactElect)",
-                ".NET Core Launch (Ventas)",
-                ".NET Core Launch (Common)",
-                ".NET Core Launch (Contabilidad)"
-            ],
-            "stopAll": true
-        },
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "LegacyFrontEnd",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/WebApps/WebUI/bin/Debug/net9.0/WebUI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/WebApps/WebUI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "IdentityApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Identity/Identity.API/bin/Debug/net9.0/Identity.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.API",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "GatewayApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.API/bin/Debug/net9.0/GatewayAcontplus.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.API",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "ConfiguracionApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Configuracion/Configuracion.API/bin/Debug/net9.0/Configuracion.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Configuracion/Configuracion.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "InventarioApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Inventario/Inventario.API/bin/Debug/net9.0/Inventario.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Inventario/Inventario.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "RestaurantApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API/bin/Debug/net9.0/Restaurant.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "FactElectApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Facturacion/FactElect.API/bin/Debug/net9.0/FactElect.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Facturacion/FactElect.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "ReportsApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Reports/Reports.API/bin/Debug/net9.0/Reports.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Reports/Reports.API",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "VentasApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Ventas/Ventas.API/bin/Debug/net9.0/Ventas.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Ventas/Ventas.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "CommonApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Common/Common.API/bin/Debug/net9.0/Common.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Common/Common.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "ContabilidadApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Contabilidad/Contabilidad.API/bin/Debug/net9.0/Contabilidad.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Contabilidad/Contabilidad.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "FrontEnd",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "cwd": "${workspaceFolder}/src/WebApps/client"
+    },
+    {
+      "name": "FrontEndRestaurant",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start-with-admin"],
+      "cwd": "${workspaceFolder}/src/WebApps/pos"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "AcontPlus Dev",
+      "configurations": [
+        "LegacyFrontEnd",
+        "GatewayApi",
+        "ConfiguracionApi",
+        "IdentityApi",
+        "InventarioApi",
+        "FactElectApi",
+        "ReportsApi",
+        "FrontEnd"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "AcontPlus Restaurant",
+      "configurations": [
+        "GatewayApi",
+        "ConfiguracionApi",
+        "IdentityApi",
+        "InventarioApi",
+        "RestaurantApi",
+        "FactElectApi",
+        "ReportsApi",
+        "VentasApi",
+        "LegacyFrontEnd",
+        "FrontEnd",
+        "FrontEndRestaurant"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "AcontPlus MacOs",
+      "configurations": [
+        "LegacyFrontEnd",
+        "GatewayApi",
+        "ConfiguracionApi",
+        "IdentityApi",
+        "InventarioApi",
+        "FactElectApi",
+        "VentasApi",
+        "CommonApi",
+        "ContabilidadApi"
+      ],
+      "stopAll": true
+    }
+  ]
 }
