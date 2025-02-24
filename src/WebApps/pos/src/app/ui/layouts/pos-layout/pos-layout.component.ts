@@ -1,6 +1,6 @@
-import { NavUserInfoToggleComponent } from '@ui/layouts/components/nav-user-info-toggle/nav-user-info-toggle.component';
+import { NavUserInfoToggleComponent } from '@/ui/layouts/app-layout/nav-user-info-toggle/nav-user-info-toggle.component';
 import { ActionOrderDialogDirective } from '@ui/directives/action-order-dialog.directive';
-import { CartPopupComponent } from '@ui/pos/components/cart-popup/cart-popup.component';
+import { CartPopupComponent } from '@/ui/pos-sale/cart-popup/cart-popup.component';
 
 import { PosStoreService } from '@ui/store/pos-store.service';
 import {

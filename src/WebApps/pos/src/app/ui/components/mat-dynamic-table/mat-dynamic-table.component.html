@@ -48,7 +48,7 @@
           @if(col.key==='op'){
           <div class="d-flex flex-row gap-1">
             <ng-container
-              *ngTemplateOutlet="templateOp; context: { item: element }"
+              *ngTemplateOutlet="templateOp; context: { $implicit: element }"
             ></ng-container>
           </div>
           } @if (showExpand && col.key==="expand") {

@@ -1,7 +1,12 @@
-import { routes } from '@/config/app.routes';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe } from '@angular/common';
-import { Component, computed, inject, Input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  Input,
+  output,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatNavList } from '@angular/material/list';
@@ -26,6 +31,7 @@ import { ThemeService } from '@/ui/theme.service';
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
+  toggle = output();
   sideNavCollapsed = signal(false);
   @Input() set collapsed(val: boolean) {
     this.sideNavCollapsed.set(val);

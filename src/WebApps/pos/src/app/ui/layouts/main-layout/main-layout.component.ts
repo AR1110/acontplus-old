@@ -1,5 +1,5 @@
-import { NavUserInfoToggleComponent } from '@ui/layouts/components/nav-user-info-toggle/nav-user-info-toggle.component';
-import { NavUserToggleComponent } from '@ui/layouts/components/nav-user-toggle/nav-user-toggle.component';
+import { NavUserInfoToggleComponent } from '@/ui/layouts/app-layout/nav-user-info-toggle/nav-user-info-toggle.component';
+import { NavUserToggleComponent } from '@/ui/layouts/app-layout/nav-user-toggle/nav-user-toggle.component';
 import { MainStoreService } from '@domain/services/main-store.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, DOCUMENT } from '@angular/common';

@@ -12,12 +12,8 @@
       (click)="onLoadMore()"
     >
       <span>{{ loading ? "Cargando..." : "Cargar más" }}</span>
-      @if(!loading){
-      <mat-icon class="pos-load-more__button-icon">arrow_downward</mat-icon>
-      } @if(loading){
-      <mat-spinner [diameter]="20" class="pos-load-more__spinner"></mat-spinner>
 
-      }
+      <mat-icon class="pos-load-more__button-icon">arrow_downward</mat-icon>
     </button>
   </ng-container>
   }@else {

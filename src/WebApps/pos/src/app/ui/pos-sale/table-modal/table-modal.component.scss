@@ -30,11 +30,14 @@
 }
 
 .pos-tables {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: var(--button-gap);
-  padding: 0 var(--button-gap);
-  min-width: min-content;
+  // display: flex;
+  // flex-wrap: nowrap;
+  // gap: var(--button-gap);
+  // min-width: min-content;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .pos-table {
@@ -113,9 +116,9 @@
 
   // Responsive styles
   @media (max-width: 480px) {
-    width: 100px;
-    height: 100px;
-    padding: 12px 6px;
+    // width: 100px;
+    // height: 100px;
+    // padding: 12px 6px;
 
     &__image {
       width: 36px;

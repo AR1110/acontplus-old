@@ -18,15 +18,24 @@
 
   <!-- Contenedor del contenido de la página -->
   <div class="pos-content">
-    <div class="pos-products-container">
+    <!-- <div class="pos-products-container">
       @for (item of items(); track $index) {
       <app-product-card [product]="item"> </app-product-card>
 
       }
-    </div>
+    </div> -->
     @if (items().length>0) {
+
+    <app-products [products]="items()"></app-products>
+
     <div class="pos-load-more">
-      <app-load-more [size]="'large'" />
+      @if(items().length < dataPagination().totalRecords){
+      <app-load-more
+        [size]="'large'"
+        [loading]="loading()"
+        (loadMore)="onLoadMore()"
+      />
+      }
     </div>
 
     }

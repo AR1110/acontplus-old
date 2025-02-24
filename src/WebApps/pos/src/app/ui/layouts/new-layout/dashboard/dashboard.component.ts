@@ -1,16 +1,28 @@
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MetricCardComponent } from '../metric-card/metric-card.component';
+import { DashboardStore } from '@/ui/store/dashboard.store';
+import { MainStoreService } from '@/domain/services/main-store.service';
+import { SaleChartComponent } from './widgets/sale-chart.component';
+import { TopProductsComponent } from './widgets/top-products.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  imports: [MatCardModule, MatProgressBarModule, MetricCardComponent],
+  imports: [
+    MatCardModule,
+    MatProgressBarModule,
+    MetricCardComponent,
+    SaleChartComponent,
+    TopProductsComponent,
+  ],
 })
 export class DashboardComponent {
+  dashboardStore = inject(DashboardStore);
+  private mainStoreSvc = inject(MainStoreService);
   metrics = [
     {
       icon: 'account_balance_wallet',
@@ -48,4 +60,21 @@ export class DashboardComponent {
       icon: 'person_add',
     },
   ];
+
+  onLoad() {
+    let estabId = this.mainStoreSvc.state().establecimientoId;
+    if (!estabId) {
+      console.error('estab id', estabId);
+      return;
+    }
+    this.dashboardStore.getStats(estabId);
+  }
+  ngOnInit(): void {
+    let estabId = this.mainStoreSvc.state().establecimientoId;
+    if (!estabId) {
+      console.error('estab id', estabId);
+      return;
+    }
+    this.dashboardStore.getStats(estabId);
+  }
 }

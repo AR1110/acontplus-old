@@ -1,11 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { ItemService } from '@data/repositories/item/item.service';
 import { Pagination } from '@domain/models/pagination.model';
 import { ItemRead } from '@domain/models/item.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SubCategory } from '@domain/models/inventory/subcategory.model';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import {
   PosStoreService,
@@ -14,14 +13,10 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MainStoreService } from '@domain/services/main-store.service';
 import { SUB_CATEGORY_CODE } from '@domain/enums/main.enum';
-import { Dialog } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
-import { isValidField } from '@domain/utils/utils';
+import { getValidId, isValidField } from '@domain/utils/utils';
 import { Order } from '@domain/models/order.model';
-import { CategoriesTabComponent } from '@ui/pos/components/categories-tab/categories-tab.component';
-import { PromotionsComponent } from '@ui/pos/components/promotions/promotions.component';
-import { ItemsComponent } from '@ui/pos/components/items/items.component';
-import { TableModalComponent } from '@ui/pos/components/table-modal/table-modal.component';
+import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,28 +24,23 @@ import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductInputSearchComponent } from './product-input-search/product-input-search.component';
 import { CategoriesComponent } from './categories/categories.component';
-import { ProductCardComponent } from './product-card/product-card.component';
 import { LoadMoreComponent } from './load-more/load-more.component';
 import { DialogService } from '@/domain/services/dialog.service';
+import { ProductsComponent } from './products/products.component';
 @Component({
   selector: 'app-pos-sale',
   imports: [
     CommonModule,
     MatCardModule,
     MatIconModule,
-    CategoriesTabComponent,
-    MatPaginator,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    PromotionsComponent,
-    MatProgressSpinner,
-    ItemsComponent,
     ProductInputSearchComponent,
-    ProductCardComponent,
     CategoriesComponent,
     LoadMoreComponent,
+    ProductsComponent,
   ],
   templateUrl: './pos-sale.component.html',
   styleUrl: './pos-sale.component.scss',
@@ -110,14 +100,20 @@ export class PosSaleComponent {
     });
   }
 
+  isPromotion = computed(() => {
+    return this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.PROM;
+  });
+
+  isCombos = computed(() => {
+    return this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.COM;
+  });
+
   refresh() {
     if (this.loading()) return;
 
-    if (this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.PROM) {
+    if (this.isPromotion()) {
       this.getPromotions();
-    } else if (
-      this.posStoreSvc.state().codeSubCategory === SUB_CATEGORY_CODE.COM
-    ) {
+    } else if (this.isCombos()) {
       this.getCombos();
     } else {
       this.getItems();
@@ -144,40 +140,33 @@ export class PosSaleComponent {
     ]);
   }
 
-  getItems() {
-    let params = {
+  private getParams() {
+    return {
       pageIndex: this.dataPagination().pageIndex + 1,
       pageSize: this.dataPagination().pageSize,
-      idSubFamilia: this.dataItemSearch().idSubFamilia,
+      idSubFamilia: getValidId(this.dataItemSearch().idSubFamilia),
       textSearch: isValidField(this.dataItemSearch().textSearch),
     };
+  }
 
+  getItems() {
     this.items.set([]);
     this.setLoading(true);
-    this.itemSvc.getAll(params).subscribe({
-      next: (response) => {
-        this.setLoading(false);
-        this.items.set(response.items);
-        this.setTotalRecords();
-      },
-      error: (err) => {
-        console.log(err);
-        this.setLoading(false);
-      },
-    });
+    this.itemSvc
+      .getAll(this.getParams())
+      .pipe(finalize(() => this.setLoading(false)))
+      .subscribe({
+        next: (response) => {
+          this.items.set(response.items);
+          this.setTotalRecords();
+        },
+      });
   }
 
   getCombos() {
-    let params = {
-      pageIndex: this.dataPagination().pageIndex + 1,
-      pageSize: this.dataPagination().pageSize,
-      idSubFamilia: this.dataItemSearch().idSubFamilia,
-      textSearch: isValidField(this.dataItemSearch().textSearch),
-    };
-
     this.items.set([]);
     this.setLoading(true);
-    this.itemSvc.getCombos(params).subscribe({
+    this.itemSvc.getCombos(this.getParams()).subscribe({
       next: (response) => {
         this.setLoading(false);
         this.items.set(response.items);
@@ -260,12 +249,9 @@ export class PosSaleComponent {
         this.setLoading(false);
       },
     });
-
-    this.selectedCategory = this.categoryItems.find((cat) => cat.isActive);
   }
 
   onTabChange(event: any) {
-    console.log(event);
     if (this.loading()) return;
 
     this.currentTabIndex = event.index;
@@ -337,44 +323,27 @@ export class PosSaleComponent {
     });
   }
 
-  categoryItems = [
-    {
-      id: 'all',
-      name: 'All Menu',
-      imageUrl: 'assets/images/menu-icon.png',
-      isActive: true,
-    },
-    { id: 'coffee', name: 'Coffee', imageUrl: 'assets/images/coffee-icon.png' },
-    { id: 'tea', name: 'Tea', imageUrl: 'assets/images/tea-icon.png' },
-    { id: 'juice', name: 'Juice', imageUrl: 'assets/images/juice-icon.png' },
-    { id: 'rice', name: 'Rice', imageUrl: 'assets/images/rice-icon.png' },
-    { id: 'pasta', name: 'Pasta', imageUrl: 'assets/images/pasta-icon.png' },
-    {
-      id: 'dessert',
-      name: 'Dessert',
-      imageUrl: 'assets/images/dessert-icon.png',
-    },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-    { id: 'drinks', name: 'Drinks', imageUrl: 'assets/images/drinks-icon.png' },
-  ];
+  //items to cart
 
-  selectedCategory: any;
-  isDarkMode = false;
-
-  onCategorySelected(category: any): void {
-    this.selectedCategory = category;
-    // Logic to update products based on selected category
-    console.log('Category selected:', category.name);
-  }
-
-  toggleTheme(): void {
-    this.isDarkMode = !this.isDarkMode;
+  onLoadMore() {
+    console.log('load more');
+    this.dataPagination.update((dp) => {
+      return {
+        ...dp,
+        pageIndex: dp.pageIndex + 1,
+      };
+    });
+    if (!this.isCombos() || !this.isPromotion()) {
+      this.setLoading(true);
+      this.itemSvc
+        .getAll(this.getParams())
+        .pipe(finalize(() => this.setLoading(false)))
+        .subscribe({
+          next: (response) => {
+            this.items.set([...this.items(), ...response.items]);
+            this.setTotalRecords();
+          },
+        });
+    }
   }
 }

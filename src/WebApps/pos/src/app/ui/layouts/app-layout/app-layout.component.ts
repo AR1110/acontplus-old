@@ -7,16 +7,16 @@ import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
-import { SidebarComponent } from './sidebar/sidebar.component';
+import { SidebarComponent } from '../app-layout/sidebar/sidebar.component';
 import { map, Observable } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
-import { NavUserInfoToggleComponent } from '../components/nav-user-info-toggle/nav-user-info-toggle.component';
-import { NavUserToggleComponent } from '../components/nav-user-toggle/nav-user-toggle.component';
-
+import { NavUserInfoToggleComponent } from './nav-user-info-toggle/nav-user-info-toggle.component';
+import { NavUserToggleComponent } from './nav-user-toggle/nav-user-toggle.component';
+import { HeaderComponent } from './header/header.component';
 @Component({
-  selector: 'app-new-layout',
+  selector: 'app-app-layout',
   imports: [
     MatSidenavModule,
     MatListModule,
@@ -29,20 +29,15 @@ import { NavUserToggleComponent } from '../components/nav-user-toggle/nav-user-t
     SidebarComponent,
     RouterModule,
     MatBadgeModule,
-    NavUserInfoToggleComponent,
-    NavUserToggleComponent,
+    HeaderComponent,
   ],
-  templateUrl: './new-layout.component.html',
-  styleUrl: './new-layout.component.scss',
+  templateUrl: './app-layout.component.html',
+  styleUrl: './app-layout.component.scss',
 })
-export class NewLayoutComponent {
+export class AppLayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
-  isMobile = false;
-  // isExpanded = false;
-  // rootRoutes = menusRoutes;
 
   private breakpointObserver = inject(BreakpointObserver);
-  // public themeService = inject(ThemeService);
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Web)

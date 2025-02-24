@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { CartHeaderComponent } from '@ui/pos/components/cart-header/cart-header.component';
-import { CartFooterComponent } from '@ui/pos/components/cart-footer/cart-footer.component';
+import { CartHeaderComponent } from '@/ui/pos-sale/cart-header/cart-header.component';
+import { CartFooterComponent } from '@/ui/pos-sale/cart-footer/cart-footer.component';
 import { CartItemsComponent } from '../cart-items/cart-items.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,45 +11,41 @@ import { MatInputModule } from '@angular/material/input';
 import { PosStoreService } from '@ui/store/pos-store.service';
 
 @Component({
-    selector: 'app-cart-popup',
-    imports: [
-        MatIconModule,
-        OverlayscrollbarsModule,
-        MatCardModule,
-        MatSelectModule,
-        MatInputModule,
-        FormsModule,
-        CartHeaderComponent,
-        CartItemsComponent,
-        CartFooterComponent
-    ],
-    templateUrl: './cart-popup.component.html',
-    styleUrl: './cart-popup.component.scss'
+  selector: 'app-cart-popup',
+  imports: [
+    MatIconModule,
+    OverlayscrollbarsModule,
+    MatCardModule,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
+    CartHeaderComponent,
+    CartItemsComponent,
+    CartFooterComponent,
+  ],
+  templateUrl: './cart-popup.component.html',
+  styleUrl: './cart-popup.component.scss',
 })
 export class CartPopupComponent {
   private posStoreSvc = inject(PosStoreService);
 
   orderItems = computed(() => this.posStoreSvc.state().orderItems);
 
-   // Datos de vendedores
-   vendedores = [
+  // Datos de vendedores
+  vendedores = [
     { id: 1, name: 'Vendedor 1' },
     { id: 2, name: 'Vendedor 2' },
-    { id: 3, name: 'Vendedor 3' }
+    { id: 3, name: 'Vendedor 3' },
   ];
 
   // Datos de mesas
-  mesas = [
-    { number: 'Mesa 1' },
-    { number: 'Mesa 2' },
-    { number: 'Mesa 3' }
-  ];
+  mesas = [{ number: 'Mesa 1' }, { number: 'Mesa 2' }, { number: 'Mesa 3' }];
 
   // Datos de tarifas
   tarifas = [
     { name: 'Tarifa A', rate: 0.12 },
-    { name: 'Tarifa B', rate: 0.10 },
-    { name: 'Tarifa C', rate: 0.08 }
+    { name: 'Tarifa B', rate: 0.1 },
+    { name: 'Tarifa C', rate: 0.08 },
   ];
 
   selectedVendedor = this.vendedores[0]; // Selección por defecto
@@ -59,9 +55,7 @@ export class CartPopupComponent {
   searchCliente = ''; // Buscador de clientes
   filteredClientes = [];
 
-  cartItems:any[] = [
-
-  ];
+  cartItems: any[] = [];
 
   // Función para buscar clientes
   onSearchCliente() {
@@ -88,13 +82,15 @@ export class CartPopupComponent {
 
   // Calcular el total a pagar incluyendo tarifa
   getTotalPrice(): number {
-    const subtotal = this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-    return subtotal + (subtotal * this.selectedTarifa.rate); // Incluyendo tarifa
+    const subtotal = this.cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    return subtotal + subtotal * this.selectedTarifa.rate; // Incluyendo tarifa
   }
 
   // Función para finalizar la venta
   checkout() {
     console.log('Finalizando la venta...');
   }
-
 }

@@ -32,7 +32,7 @@ import { DashboardStore } from '@ui/store/dashboard.store';
   `,
   styles: `
   .chart-container {
-    height: calc(100% - 100px);
+    // height: calc(100% - 100px);
     width: 100%;
   }
   `,

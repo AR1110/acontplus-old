@@ -88,6 +88,7 @@
   </button>
 </mat-toolbar> -->
 <mat-sidenav-container class="sidenav-container">
+  @if(isHandset$ |async){
   <mat-sidenav
     #sidenav
     class="sidenav"
@@ -98,38 +99,33 @@
     [style.width]="sidenavWidth()"
     style="border-radius: 0px"
   >
-    <app-sidebar [collapsed]="collapsed()" />
+    <app-sidebar [collapsed]="collapsed()" (toggle)="sidenav.toggle()" />
   </mat-sidenav>
-
+  }@else {
+  <mat-sidenav
+    #sidenav
+    class="sidenav"
+    fixedInViewport
+    [mode]="'over'"
+    [opened]="false"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    style="border-radius: 0px"
+  >
+    <app-sidebar [collapsed]="collapsed()" (toggle)="sidenav.toggle()" />
+  </mat-sidenav>
+  } @if(isHandset$ |async){
   <mat-sidenav-content [style.margin-left]="sidenavWidth()">
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="toggleSidenav()">
-        <mat-icon>menu</mat-icon>
-      </button>
-
-      <span class="toolbar-spacer"></span>
-
-      <div class="d-flex gap-1">
-        <app-nav-user-info-toggle />
-
-        <button
-          mat-icon-button
-          aria-label="pedidos"
-          appActionOrderDialog
-          matTooltip="Pedidos Recientes"
-        >
-          <mat-icon>av_timer</mat-icon>
-        </button>
-
-        <button [matBadge]="8" mat-icon-button aria-label="total">
-          <mat-icon>add_shopping_cart</mat-icon>
-        </button>
-
-        <app-nav-user-toggle />
-      </div>
-    </mat-toolbar>
+    <app-header (toggleSidenav)="toggleSidenav()"></app-header>
     <div class="content">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
+  }@else {
+  <mat-sidenav-content>
+    <app-header (toggleSidenav)="sidenav.toggle()"></app-header>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+  }
 </mat-sidenav-container>

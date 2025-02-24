@@ -74,6 +74,14 @@
       <h2>Emilio</h2>
       <p>P</p>
     </div>
+
+    <button
+      class="d-block d-md-none hide-expanded-sidenav"
+      mat-icon-button
+      (click)="toggle.emit()"
+    >
+      <mat-icon aria-label="Close sidenav">close</mat-icon>
+    </button>
   </div>
 
   <mat-nav-list>

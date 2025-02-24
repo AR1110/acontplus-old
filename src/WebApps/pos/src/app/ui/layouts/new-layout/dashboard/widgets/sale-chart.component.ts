@@ -37,8 +37,8 @@ function generarColorAleatorio() {
   `,
   styles: `
    .chart-container {
-     height: calc(100% - 100px);
-     width: 100%;
+    //  height: calc(100% - 100px);
+      width: 100%;
    }
    `,
 })
