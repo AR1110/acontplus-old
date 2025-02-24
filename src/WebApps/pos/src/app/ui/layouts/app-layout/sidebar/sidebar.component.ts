@@ -16,6 +16,7 @@ import { RouterModule } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
 import { menusRoutes } from '../../menus-routes';
 import { ThemeService } from '@/ui/theme.service';
+import { MainStoreService } from '@/domain/services/main-store.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -31,6 +32,10 @@ import { ThemeService } from '@/ui/theme.service';
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
+  mainStore = inject(MainStoreService);
+
+  userName = computed(() => this.mainStore.state().userName);
+
   toggle = output();
   sideNavCollapsed = signal(false);
   @Input() set collapsed(val: boolean) {

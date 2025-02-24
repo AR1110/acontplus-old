@@ -35,7 +35,7 @@ export class HeaderComponent {
 
   isOverlayOpen = signal(false);
   positionStrategy!: FlexibleConnectedPositionStrategy;
-  private posStoreSvc = inject(PosStoreService);
+  posStoreSvc = inject(PosStoreService);
 
   totalOrderItems = computed(() => {
     let quantity = this.posStoreSvc.state().orderItems?.reduce((acc, curr) => {
