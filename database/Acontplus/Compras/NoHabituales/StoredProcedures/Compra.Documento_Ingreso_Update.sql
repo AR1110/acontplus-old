@@ -39,7 +39,7 @@ BEGIN
 
     --> contabilidad
 	DECLARE @idEstablecimiento INT ,@serieComprobante VARCHAR(20) ,@idProveedor INT ,@idTiempoCredito INT
-        ,@subcategoryId INT
+           ,@subcategoryId INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@secuencial INT 
 
     -----DATOS CONTABILIDAD------
 	DECLARE @fechaVencimiento DATETIME2
@@ -216,20 +216,28 @@ BEGIN
         )
 
 		--> Recuperar datos de las Tablas
+        SELECT @secuencial = di.secuencial
+              ,@estab      = es.estab
+              ,@ptoEmi     = pe.ptoEmi
+        FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
+        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = di.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+
 		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento, @subcategoryId = subcategoryId FROM @document
 
         SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
+        SELECT @serieComprobante   = @estab + '-' + @ptoEmi + '-' +  Helper.F_Auto_Sequential(@secuencial)
+
+		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
+
+		--> Validacion de la informacion
         IF (@CustomerId = 0)
             BEGIN
                 SELECT '0'code,'Debe validar el proveedor'[message]
 				RETURN 
             END
-        
 
-		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
-
-		--> Validacion de la informacion
         IF (SELECT COUNT(*) FROM @document) = 0 
             BEGIN
                 SELECT '0'code,'Error en la info Factura'[message]
@@ -331,15 +339,30 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
-                    SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
-
                     --> Transaccion
-                    UPDATE Inventario.Transaccion WITH (ROWLOCK)
-                       SET fechaEmision = @fechaEmision
-                          ,CustomerId   = @customerId
-                    WHERE idTransaccion = @idTransaccion
+                    IF EXISTS (SELECT 1 FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id)
+                        BEGIN
+                            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
 
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
+                            UPDATE Inventario.Transaccion WITH (ROWLOCK)
+                               SET fechaEmision = @fechaEmision
+                                  ,CustomerId   = @customerId
+                            WHERE idTransaccion = @idTransaccion
+
+                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
+                        END 
+                    ELSE 
+                        BEGIN
+                            IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1 AND estado = 1)
+							    BEGIN 
+                                    INSERT INTO Inventario.Transaccion
+                                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@id,@customerId,@idUsuario,@idEntidad,@serieComprobante 
+                                    FROM @document 
+
+                                    SET @idTransaccion = SCOPE_IDENTITY()
+                                END 
+                        END
 
                     IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 				        BEGIN

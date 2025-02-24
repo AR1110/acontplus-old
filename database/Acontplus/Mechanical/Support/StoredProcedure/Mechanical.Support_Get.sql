@@ -291,7 +291,7 @@ BEGIN
                     SELECT cl.idCliente
                           ,cl.idTiempoCredito
                           ,cl.FormaPagoSriId                           as idFormaPagoSri
-                          ,cl.idTipoIdentificacion
+                          ,cu.IdTypeId                                 as idTipoIdentificacion
 		                  ,cu.TradeName                                as razonSocialComprador
 		                  ,cu.IDCard                                   as identificacionComprador
 		                  ,ISNULL(cl.direccion, '')                    as direccionComprador

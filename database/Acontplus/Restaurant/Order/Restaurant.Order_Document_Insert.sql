@@ -150,7 +150,11 @@ BEGIN
 
     IF (@customerId IS NULL)
         BEGIN
-            SET @CustomerId = (SELECT TOP 1 Id FROM Customer.Customer WHERE IDTYPE = '07' AND IDCard = '9999999999999')
+            DECLARE @IdTypeId INT 
+
+            SELECT TOP 1 @IdTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '07'
+
+            SET @CustomerId = (SELECT TOP 1 Id FROM Customer.Customer WHERE IdTypeId = @IdTypeId AND IDCard = '9999999999999')
         END
 
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
