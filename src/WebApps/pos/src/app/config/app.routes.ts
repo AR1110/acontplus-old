@@ -1,26 +1,34 @@
-import { configDataResolver } from "@core/resolvers/config-resolver";
+import { configDataResolver } from '@core/resolvers/config-resolver';
 import { Routes } from '@angular/router';
-import { sessionGuard } from "@core/guards/session.guard";
+import { sessionGuard } from '@core/guards/session.guard';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full',
+  },
+  {
     path: 'auth',
-    title: 'AcontPlusPos-Login',
+    title: 'AcontPlusPos',
     loadChildren: () =>
       import(`@/ui/layouts/auth-layout.routes`).then((m) => m.routes),
   },
   {
     path: '',
     canActivate: [sessionGuard],
-    loadChildren: () => import('@/ui/layouts/main-layout.routes').then(m => m.routes),
+    loadChildren: () =>
+      import('@/ui/layouts/app-layout.routes').then((m) => m.routes),
     resolve: {
-      configData: configDataResolver
-    }
+      configData: configDataResolver,
+    },
   },
 
   {
     path: '**',
-    // redirectTo: 'page-error',
-    loadComponent: () => import('@ui/layouts/components/page-error-404/page-error-404.component').then(c => c.PageError404Component)
+    loadComponent: () =>
+      import('@/ui/components/page-error-404/page-error-404.component').then(
+        (c) => c.PageError404Component
+      ),
   },
 ];

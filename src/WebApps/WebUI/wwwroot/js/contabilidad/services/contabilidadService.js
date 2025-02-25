@@ -1609,7 +1609,7 @@
 
 
                         // Calcular interés y mora si hay días de mora
-                        if (documento.tipo && this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
+                        if ( this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
                             // Calcular días de mora 
                             diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
 

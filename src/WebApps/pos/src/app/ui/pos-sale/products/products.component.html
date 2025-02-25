@@ -1,0 +1,7 @@
+<div class="pos-products-container">
+  @for (item of products(); track $index) {
+  <app-product-card [product]="item" (addToCart)="onSelect($event)">
+  </app-product-card>
+
+  }
+</div>
