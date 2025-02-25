@@ -26,13 +26,14 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
   template: `
     @if(showHeader()){
 
-    <div
-      class="m3-dialog-header"
-      cdkDrag
-      cdkDragRootElement=".cdk-overlay-pane"
-      (mousedown)="toTop(unique)"
-    >
-      <h6 mat-dialog-title>
+    <div class="m3-dialog-header">
+      <h6
+        mat-dialog-title
+        cdkDrag
+        cdkDragRootElement=".cdk-overlay-pane"
+        cdkDragHandle
+        (mousedown)="toTop(unique)"
+      >
         {{ matDialogTitle() }}
 
         <button mat-icon-button class="close-button" (click)="close.emit()">

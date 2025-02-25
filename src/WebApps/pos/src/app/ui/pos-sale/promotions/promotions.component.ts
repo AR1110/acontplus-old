@@ -1,34 +1,29 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PromotionsItemComponent } from '@ui/pos/components/promotions/promotions-item/promotions-item.component';
 import { PromotionService } from '@data/repositories/promotion/promotion.service';
 import { MainStoreService } from '@domain/services/main-store.service';
 import { PosStoreService } from '@ui/store/pos-store.service';
+import { PromotionsItemComponent } from './promotions-item/promotions-item.component';
 
 @Component({
-    selector: 'app-promotions',
-    imports: [
-        MatButtonModule,
-        MatIconModule,
-        PromotionsItemComponent
-    ],
-    templateUrl: './promotions.component.html',
-    styleUrl: './promotions.component.scss'
+  selector: 'app-promotions',
+  imports: [MatButtonModule, MatIconModule, PromotionsItemComponent],
+  templateUrl: './promotions.component.html',
+  styleUrl: './promotions.component.scss',
 })
 export class PromotionsComponent {
+  private promotionSvc = inject(PromotionService);
+  private mainStoreSvc = inject(MainStoreService);
+  private posStoreSvc = inject(PosStoreService);
 
-  private promotionSvc = inject(PromotionService)
-  private mainStoreSvc = inject(MainStoreService)
-  private posStoreSvc = inject(PosStoreService)
-
-  promotions = computed(()=>this.posStoreSvc.state().promotionsMenu)
+  promotions = computed(() => this.posStoreSvc.state().promotionsMenu);
 
   setLoading(isLoading: boolean) {
-    this.posStoreSvc.state.update(e => ({
+    this.posStoreSvc.state.update((e) => ({
       ...e,
-      isLoading
-    }))
+      isLoading,
+    }));
   }
 
   // private getPromotions() {
@@ -48,38 +43,29 @@ export class PromotionsComponent {
   //   })
   // }
 
-
-
   ngOnInit() {
-  //  this.getPromotions()
+    //  this.getPromotions()
   }
-
 
   toggleNode(node: any) {
-   node.expanded = !node.expanded;
+    node.expanded = !node.expanded;
 
-    this.posStoreSvc.state.update(e => {
-
+    this.posStoreSvc.state.update((e) => {
       let promotionsMenu = structuredClone(e.promotionsMenu);
 
-
-      return  {
+      return {
         ...e,
-        promotionsMenu: promotionsMenu.map(item => {
+        promotionsMenu: promotionsMenu.map((item) => {
           let newObj = {
             ...item,
-            expanded: false
-          }
+            expanded: false,
+          };
           return {
             ...newObj,
-            expanded: item.id === node.id && node.expanded
-          }
-        })
-
-      }
-
-
-    })
+            expanded: item.id === node.id && node.expanded,
+          };
+        }),
+      };
+    });
   }
-
 }
