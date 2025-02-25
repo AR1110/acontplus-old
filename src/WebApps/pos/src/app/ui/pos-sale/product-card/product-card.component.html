@@ -45,8 +45,11 @@
   cdkConnectedOverlay
   [cdkConnectedOverlayOrigin]="trigger"
   [cdkConnectedOverlayOpen]="infoProductCard()"
-  hasBackdrop
   class="info-product-card"
+  hasBackdrop="true"
+  cdkConnectedOverlay
+  cdkConnectedOverlayPush="true"
+  (overlayOutsideClick)="overlayOutsideClick($event)"
 >
   <div class="info-product-card">
     <div class="row">

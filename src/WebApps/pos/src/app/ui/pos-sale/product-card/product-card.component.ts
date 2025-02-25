@@ -2,7 +2,7 @@ import {
   FlexibleConnectedPositionStrategy,
   OverlayModule,
 } from '@angular/cdk/overlay';
-import { AsyncPipe, CurrencyPipe, NgClass } from '@angular/common';
+import { CurrencyPipe, NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,5 +34,9 @@ export class ProductCardComponent {
   infoProductCardToggle($event: Event): void {
     $event.stopPropagation();
     this.infoProductCard.set(!this.infoProductCard());
+  }
+
+  overlayOutsideClick(event: Event): void {
+    this.infoProductCard.set(false);
   }
 }
