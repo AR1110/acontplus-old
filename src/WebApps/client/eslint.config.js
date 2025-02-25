@@ -30,6 +30,7 @@ module.exports = tseslint.config(
           style: "kebab-case",
         },
       ],
+      "@typescript-eslint/consistent-type-definitions": "error",
     },
   },
   {
@@ -39,5 +40,5 @@ module.exports = tseslint.config(
       ...angular.configs.templateAccessibility,
     ],
     rules: {},
-  }
+  },
 );

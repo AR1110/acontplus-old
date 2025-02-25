@@ -27,7 +27,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           return {
             retenciones: retenciones as RetencionAtsList[],
           };
-        }),
+        })
       );
   }
   getById(id: number): Observable<RetencionAts> {

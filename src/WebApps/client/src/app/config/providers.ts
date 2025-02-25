@@ -15,7 +15,8 @@ import { commonProviders } from '@modules/common/providers';
 import { mechanicalProvider } from '@mechanical/providers';
 import { restaurantProvider } from '@restaurant/providers';
 import { configProvider } from '@modules/config/providers';
-import {saleProvider} from "@sale/providers";
+import { saleProvider } from '@sale/providers';
+import { billingProviders } from '@modules/billing/providers';
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -23,7 +24,7 @@ export const infrastructureProviders = [
       injectSessionInterceptor,
       loaderInterceptor,
       errorInterceptor,
-    ]),
+    ])
   ),
   provideAnimationsAsync(),
   provideEnvironmentNgxMask(),
@@ -51,5 +52,6 @@ export const featureProviders = [
   ...mechanicalProvider,
   ...restaurantProvider,
   ...configProvider,
-  ...saleProvider
+  ...saleProvider,
+  ...billingProviders,
 ];
