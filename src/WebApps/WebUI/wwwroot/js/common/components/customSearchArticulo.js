@@ -1,13 +1,13 @@
 //@ts-check
-inputSearchArticuloCtrl.$inject = ['$scope',  '$injector', '$timeout' ]
-function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
+inputSearchArticuloCtrl.$inject = ['$scope', '$injector', '$timeout']
+function inputSearchArticuloCtrl($scope, $injector, $timeout) {
     let $ctrl = this;
-    let articuloSvc = $injector.get('articuloService')  
+    let articuloSvc = $injector.get('articuloService')
 
 
     let commonSvc = $injector.get('commonService')
-    let modalSvc = $injector.get('modalService') 
-    let nombreModalInventario = $injector.get('nombreModalInventario')  
+    let modalSvc = $injector.get('modalService')
+    let nombreModalInventario = $injector.get('nombreModalInventario')
     let productPhotoSvc = $injector.get('productPhotoService');
 
     $scope.placeholder = $ctrl.placeholder || "Buscar articulo";
@@ -29,7 +29,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
         pageSize: 15
     }
 
-    $scope.productsFound = []; 
+    $scope.productsFound = [];
 
 
     let isFetchingByBarcode = false;
@@ -43,6 +43,8 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
     $scope.openModalArticulo = openModalArticulo;
     $scope.openModalArticuloGeneral = openModalArticuloGeneral;
     $scope.previewImg = previewImg;
+
+    let dataArticulo = null;
 
     async function openModalArticulo(item) {
         try {
@@ -79,7 +81,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
 
         //buscador principal  
         let el = document.getElementById("custom-template-md-autocomplete-articulo")
-      
+
         if (el) {
             el.addEventListener('keyup', e => {
                 let keyCode = e.keyCode || e.which;
@@ -112,15 +114,15 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
         });
 
     }, 500)
- 
 
-    $scope.onKeyUpInputBarcode = function(event) { 
+
+    $scope.onKeyUpInputBarcode = function (event) {
 
         var keyCode = event.keyCode || event.which;
 
         if (keyCode === 13) { // Verifica si se presionó la tecla Enter
             enterPressCount++;
-            if(isFetchingByBarcode){
+            if (isFetchingByBarcode) {
                 enterPressCount = 0;
             }
 
@@ -136,7 +138,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
 
             // Si se presiona Enter dos veces
             if (enterPressCount === 2) {
-                focusSearchCustomer(); 
+                focusSearchCustomer();
             }
         }
 
@@ -164,7 +166,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
                 item.priceSale = item.priceSales;
                 return item;
             })
-            if (resultProducts.length > 0) { 
+            if (resultProducts.length > 0) {
                 $scope.productsFound.push.apply($scope.productsFound, resultProducts);
 
             }
@@ -176,6 +178,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
 
     //============================================funciones generales 
     function selectArticleSearch(item) {
+        console.log(item, 'selectArticleSearch')
 
         if (typeof item === 'object' && ("showHeader" in item)) {
             $scope.searchText = null
@@ -189,17 +192,17 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
     }
 
 
-    function validarGetDataArticulo(idArticulo, textSearch) {  
+    function validarGetDataArticulo(idArticulo, textSearch) {
         if ($ctrl.esVenta) {
             $ctrl.refProductoVenta.onInventario({
                 idArticulo,
                 textSearch
             })
             return
-        } 
+        }
 
     }
- 
+
 
     function searchTextChange() {
         let json = {
@@ -247,7 +250,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
         }
         return results;
     }
- 
+
 
     async function openModalArticuloGeneral() {
         try {
@@ -284,20 +287,30 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
 
 
     //BUscador por codigo 
-    function getDataArticuloByEnterCode() {
+    function getDataArticuloByEnterCode(isAutocomplete) {
         try {
+
+            if (isAutocomplete && $scope.productsFound.length > 0) {
+
+                let dataArticulo = $scope.productsFound[1];
+                if (dataArticulo) {
+                    $scope.searchText = null;
+                    validarGetDataArticulo(dataArticulo.idArticulo)
+                };
+                return
+            };
 
             // if (!$scope.searchText) {
             //     $scope.searchText = null;
             //     return
             // }
-            if(isFetchingByBarcode) return;
+            if (isFetchingByBarcode) return;
 
-            if(!$scope.searchText) return;
+            if (!$scope.searchText) return;
 
             if ($scope.searchText.length < 2) return
 
-            validarGetDataArticulo(null,$scope.searchText )
+            validarGetDataArticulo(null, $scope.searchText)
             $scope.searchText = null;
 
             /**
@@ -319,7 +332,7 @@ function inputSearchArticuloCtrl($scope,   $injector,  $timeout ) {
         }
     }
 
-    function selectArticleSearch(item) { 
+    function selectArticleSearch(item) {
         if (typeof item === 'object' && ("showHeader" in item)) {
             $scope.searchText = null
             return
@@ -342,7 +355,7 @@ app.component('customSearchArticulo', {
         placeholder: '=',
         // abrirModalArticulo: '&',
         // getDataArticulo:'&',
-        setItemArticuloEnDetalle: '&', 
+        setItemArticuloEnDetalle: '&',
         idBodega: '=',
 
         esVenta: "=",
