@@ -1,5 +1,5 @@
 <!-- src/app/components/product-card/product-card.component.html -->
-<div class="pos-product-card">
+<div class="pos-product-card" (click)="onAddToCart($event)">
   <!-- Tag condicional basado en el tipo de tag del producto -->
 
   <div
@@ -31,6 +31,39 @@
       </span>
     </div>
   </div>
-
-  <div class="pos-product-card__add-btn" (click)="onAddToCart($event)"></div>
+  <div
+    class="pos-product-card__info-btn"
+    cdkOverlayOrigin
+    #trigger="cdkOverlayOrigin"
+    (click)="infoProductCardToggle($event)"
+  >
+    <mat-icon style="color: var(--mdc-icon-button-icon-color)">info</mat-icon>
+  </div>
 </div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="infoProductCard()"
+  hasBackdrop
+  class="info-product-card"
+>
+  <div class="info-product-card">
+    <div class="row">
+      <div class="col-12 text-start">
+        <!-- Primera columna -->
+        <div class="d-flex flex-column small">
+          <div><span>Código:</span> {{ product.codigo }}</div>
+          <div><span>Nombre:</span> {{ product.descripcion }}</div>
+        </div>
+      </div>
+      <div class="col-12 text-start">
+        <!-- Segunda columna -->
+        <div class="d-flex flex-column small">
+          <div><span>Iva:</span> {{ product.tipoIva }}</div>
+          <div><span>Descripcion:</span> {{ product.summary }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

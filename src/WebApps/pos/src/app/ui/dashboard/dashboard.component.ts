@@ -1,48 +1,65 @@
-import { Component, inject, model, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MainStoreService } from '@domain/services/main-store.service';
-import { WidgetComponent } from '@ui/dashboard/widget/widget.component';
-import { MatButtonModule } from '@angular/material/button';
-import { DashboardStore } from '@ui/store/dashboard.store';
-import { MatMenuModule } from '@angular/material/menu';
-import { MetricCardComponent } from '../layouts/new-layout/metric-card/metric-card.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Component, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MetricCardComponent } from './metric-card/metric-card.component';
+import { DashboardStore } from '@/ui/store/dashboard.store';
+import { MainStoreService } from '@/domain/services/main-store.service';
+import { SaleChartComponent } from './widgets/sale-chart.component';
+import { TopProductsComponent } from './widgets/top-products.component';
 
-function getAnios() {
-  const startYear = 2023;
-  const currentYear = new Date().getFullYear();
-  const years = [];
-
-  for (let year = startYear; year <= currentYear; year++) {
-    years.push(year);
-  }
-  return years;
-}
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    MatButtonModule,
-    MatMenuModule,
-    MatIconModule,
-    WidgetComponent,
-    MetricCardComponent,
-  ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss',
+  styleUrls: ['./dashboard.component.scss'],
+  imports: [
+    MatCardModule,
+    MatProgressBarModule,
+    MetricCardComponent,
+    SaleChartComponent,
+    TopProductsComponent,
+  ],
 })
 export class DashboardComponent {
-  private router = inject(Router);
-  private mainStoreSvc = inject(MainStoreService);
   dashboardStore = inject(DashboardStore);
+  private mainStoreSvc = inject(MainStoreService);
+  metrics = [
+    {
+      icon: 'account_balance_wallet',
+      title: 'Your bank balance',
+      value: '$143,624',
+    },
+    {
+      icon: 'pending_actions',
+      title: 'Uncategorized transactions',
+      value: '12',
+    },
+    { icon: 'group', title: 'Employees working today', value: '7' },
+    {
+      icon: 'credit_card',
+      title: "This week's card spending",
+      value: '$3,287.49',
+    },
+  ];
 
-  anios = signal(getAnios());
-
-  sales = signal<any[]>([]);
-  bestSellingProduct = signal<any[]>([]);
-
-  dataSearch = model({
-    anio: new Date().getFullYear(),
-  });
+  todos = [
+    { title: 'Run payroll', time: 'Mar 4 at 6:00 pm', icon: 'description' },
+    {
+      title: 'Review time off request',
+      time: 'Mar 7 at 6:00 pm',
+      icon: 'schedule',
+    },
+    {
+      title: 'Sign board resolution',
+      time: 'Mar 12 at 6:00 pm',
+      icon: 'assignment',
+    },
+    {
+      title: 'Finish onboarding Tony',
+      time: 'Mar 12 at 6:00 pm',
+      icon: 'person_add',
+    },
+  ];
 
   onLoad() {
     let estabId = this.mainStoreSvc.state().establecimientoId;
@@ -59,12 +76,5 @@ export class DashboardComponent {
       return;
     }
     this.dashboardStore.getStats(estabId);
-  }
-
-  refresh() {
-    this.onLoad();
-  }
-  navigateToPos() {
-    this.router.navigate(['pos']);
   }
 }

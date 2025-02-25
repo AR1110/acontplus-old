@@ -61,6 +61,11 @@ $compact-theme: mat.define-theme(
 
   // Add backwards compatibility styles for color variants
   @include mat.color-variants-backwards-compatibility($theme);
+
+  --theme-primary-bg: #1a3450; /* Color de fondo principal */
+  --theme-primary-border: #3b82f6; /* Borde principal */
+  --theme-primary-text: #ffffff; /* Texto principal */
+
   --white: #fff;
   --pink: #d61672;
 
@@ -75,6 +80,10 @@ $compact-theme: mat.define-theme(
   --active-bg: var(--pink);
   --active-border: var(--pink);
   --active-text: var(--white);
+
+  //cart start
+  --theme-cart-bg: rgba(233, 221, 255, 0.75);
+  //end cart
 
   --background-color: #f0f4f8;
   --card-bg: #ffffff;
@@ -123,11 +132,16 @@ $compact-theme: mat.define-theme(
 
   --text: #e0e0e0;
 
-  --active-bg: #1a3450;
-  --active-border: #3b82f6;
+  --active-bg: var(--theme-primary-bg);
+  --active-border: var(--theme-primary-border);
   --active-text: #ffffff;
 
   --background-color: #121212;
+
+  //cart start
+  --theme-cart-bg: var(--bg);
+  //end cart
+
   --card-bg: #1e1e1e;
   --metric-card-bg: #262626;
   --text-primary: #ffffff;

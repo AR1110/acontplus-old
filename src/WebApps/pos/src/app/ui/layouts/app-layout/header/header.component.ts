@@ -43,4 +43,8 @@ export class HeaderComponent {
     }, 0);
     return quantity;
   });
+
+  toggleCart() {
+    this.isOverlayOpen.set(!this.isOverlayOpen());
+  }
 }

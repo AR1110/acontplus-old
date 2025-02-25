@@ -70,9 +70,11 @@
       </g>
     </svg>
 
-    <div class="header-text" [class.hide-header-text]="sideNavCollapsed()">
+    @if (!sideNavCollapsed()) {
+    <div class="header-text">
       <h2>{{ userName() }}</h2>
     </div>
+    }
 
     <button
       class="d-block d-md-none hide-expanded-sidenav"
@@ -101,7 +103,7 @@
         >{{ item.icon }}</mat-icon
       >
       @if(!sideNavCollapsed()){
-      <span matListItemTitle>{{ item.title }}</span>
+      <span matListItemTitle>{{ item.title }} </span>
       }
     </a>
     }

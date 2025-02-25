@@ -1,11 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { MainLayoutComponent } from './main-layout/main-layout.component';
-import { PosLayoutComponent } from '@/ui/layouts/pos-layout/pos-layout.component';
 import { OrdersComponent } from '@ui/orders/orders.component';
 import { CompanyCustomerPageComponent } from '../company-customer/company-customer-page.component';
 import { PosSaleComponent } from '../pos-sale/pos-sale.component';
-import { DashboardComponent } from './new-layout/dashboard/dashboard.component';
+import { DashboardComponent } from '../dashboard/dashboard.component';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
 
 export const routes: Routes = [
@@ -36,16 +34,4 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
-  // {
-  //   path: 'pos',
-  //   component: PosLayoutComponent,
-  //   children: [
-  //     {
-  //       path: '',
-  //       title: 'Pos',
-  //       loadComponent: () =>
-  //         import('@ui/pos/pos.component').then((m) => m.PosComponent),
-  //     },
-  //   ],
-  // },
 ];

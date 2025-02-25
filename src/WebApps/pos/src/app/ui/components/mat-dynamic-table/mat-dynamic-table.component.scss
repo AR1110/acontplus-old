@@ -1,4 +1,4 @@
-.c-mat-table-container{
+.c-mat-table-container {
   position: relative;
 }
 //$dark-grey: #4A4A4A;
@@ -79,11 +79,11 @@
 //  background-color: #e7cccc;
 //}
 .table-container {
-    position: relative;
-    min-height: 200px;
-    max-height: 400px;
-    overflow: auto;
-
+  position: relative;
+  min-height: 200px;
+  // max-height: 400px;
+  overflow: auto;
+  height: calc(100vh - 180px);
 }
 
 table {
@@ -105,6 +105,3 @@ tr.example-element-row:not(.example-expanded-row):active {
 .example-element-row td {
   border-bottom-width: 0;
 }
-
-
-

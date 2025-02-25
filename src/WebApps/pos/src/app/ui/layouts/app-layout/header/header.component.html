@@ -25,7 +25,7 @@
       aria-label="total"
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin"
-      (click)="isOverlayOpen.set(!isOverlayOpen())"
+      (click)="toggleCart()"
     >
       <mat-icon>add_shopping_cart</mat-icon>
     </button>
@@ -39,7 +39,7 @@
       cdkConnectedOverlayPush="true"
       [cdkConnectedOverlayPositionStrategy]="positionStrategy"
     >
-      <app-cart-popup />
+      <app-cart-popup (toggleCart)="toggleCart()" />
     </ng-template>
     }
 

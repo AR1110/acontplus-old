@@ -7,12 +7,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Widget } from '@domain/models/widget.model';
-import { TopProductsComponent } from '@/ui/layouts/new-layout/dashboard/widgets/top-products.component';
 import { computed, inject, input } from '@angular/core';
-import { TotalSummaryComponent } from '@ui/dashboard/widget/total-summary.component';
-import { SaleChartComponent } from '@/ui/layouts/new-layout/dashboard/widgets/sale-chart.component';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
-import { MetricCardComponent } from '../layouts/new-layout/metric-card/metric-card.component';
 
 function getAnios() {
   const startYear = 2023;
@@ -69,7 +65,6 @@ const initialDashboardState: DashboardStata = {
     {
       id: 4,
       label: 'Ventas',
-      content: SaleChartComponent,
       backgroundColor: 'var(--mdc-elevated-card-container-color)',
       columns: 2,
       rows: 3,
@@ -77,7 +72,6 @@ const initialDashboardState: DashboardStata = {
     {
       id: 5,
       label: 'Productos más vendidos',
-      content: TopProductsComponent,
       backgroundColor: 'var(--mdc-elevated-card-container-color)',
       columns: 2,
       rows: 3,

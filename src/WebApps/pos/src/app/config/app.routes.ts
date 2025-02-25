@@ -16,12 +16,12 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [sessionGuard],
+    // canActivate: [sessionGuard],
     loadChildren: () =>
       import('@/ui/layouts/app-layout.routes').then((m) => m.routes),
-    resolve: {
-      configData: configDataResolver,
-    },
+    // resolve: {
+    //   configData: configDataResolver,
+    // },
   },
   // {
   //   path: '',

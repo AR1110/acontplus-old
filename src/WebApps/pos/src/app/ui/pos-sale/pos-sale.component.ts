@@ -22,7 +22,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { MatIconModule } from '@angular/material/icon';
-import { ProductInputSearchComponent } from './product-input-search/product-input-search.component';
 import { CategoriesComponent } from './categories/categories.component';
 import { LoadMoreComponent } from './load-more/load-more.component';
 import { DialogService } from '@/domain/services/dialog.service';
@@ -37,7 +36,6 @@ import { ProductsComponent } from './products/products.component';
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    ProductInputSearchComponent,
     CategoriesComponent,
     LoadMoreComponent,
     ProductsComponent,

@@ -1,6 +1,6 @@
 export class Pagination {
   pageIndex = 0;
-  pageSize = 5;
+  pageSize = 25;
   maxSize = 5;
   totalRecords = 0;
 

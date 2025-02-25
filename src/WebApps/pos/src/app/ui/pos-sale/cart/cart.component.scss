@@ -1,22 +1,9 @@
 .container-cart {
-  //background-color: rgba(0, 0, 0, 0.1);
-  background-color: rgba(233, 221, 255, 0.75);
-  border-radius:20px;
+  background-color: var(--theme-cart-bg);
+  border-radius: 20px;
   display: block;
   padding-right: 2.125em;
   position: relative;
-
-}
-
-.cart-loader-overlay {
-  background-color: rgba(255, 255, 255, 0.8);
-  /* Color de borde con un tono morado claro, semi-transparente */
-  border-radius: 20px;
-  /* Bordes redondeados con un radio de 20px */
-  z-index: 10;
-  /* Control de la superposición en relación a otros elementos */
-  pointer-events: none;
-  /* Deshabilita la interacción del puntero para este elemento */
 }
 
 .img-cart {
@@ -46,10 +33,9 @@
   font-size: 0.9rem;
 }
 .price-small {
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
-
-
 
 //=======================INICIO BOTONES DE CANTIDAD========================
 .custom-btn-qty {
@@ -73,7 +59,6 @@
 .custom-btn-increase {
   color: #28a745;
 }
-
 
 .custom-input-quantity {
   width: 50px;
@@ -103,8 +88,6 @@
   }
 }
 //=======================INICIO BOTONES DE CANTIDAD========================
-
-
 
 //=====================BUTTON LEFT =================
 //.btn-more-details {
@@ -155,7 +138,7 @@
 
 /* Botón de eliminar */
 .btn-delete-custom {
-  border-color:rgb(213, 77, 98);
+  border-color: rgb(213, 77, 98);
   color: #fff;
   background: rgb(213 77 98);
   border-radius: 0px 20px 0 0;
