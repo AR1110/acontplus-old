@@ -8,6 +8,8 @@
   <div class="d-flex gap-1">
     <app-nav-user-info-toggle />
 
+    @if(posStoreSvc.state().isModulePos){
+
     <button
       mat-icon-button
       aria-label="pedidos"
@@ -24,6 +26,7 @@
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin"
       (click)="$cartOverlaySvc.toggleCart()"
+      id="cart-button-id"
     >
       <mat-icon>add_shopping_cart</mat-icon>
     </button>
@@ -35,10 +38,10 @@
       hasBackdrop="true"
       cdkConnectedOverlay
       cdkConnectedOverlayPush="true"
-      [cdkConnectedOverlayPositionStrategy]="positionStrategy"
     >
       <app-cart-popup (toggleCart)="$cartOverlaySvc.toggleCart()" />
     </ng-template>
+    }
 
     <app-nav-user-toggle />
   </div>

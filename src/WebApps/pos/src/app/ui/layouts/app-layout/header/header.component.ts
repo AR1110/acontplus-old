@@ -1,4 +1,11 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NavUserInfoToggleComponent } from '../nav-user-info-toggle/nav-user-info-toggle.component';
@@ -7,6 +14,7 @@ import { NavUserToggleComponent } from '../nav-user-toggle/nav-user-toggle.compo
 import { MatButtonModule } from '@angular/material/button';
 import { ActionOrderDialogDirective } from '@/ui/directives/action-order-dialog.directive';
 import {
+  CdkOverlayOrigin,
   FlexibleConnectedPositionStrategy,
   OverlayModule,
 } from '@angular/cdk/overlay';
@@ -33,9 +41,9 @@ import { CartOverlayService } from '@/ui/store/cart-overlay.service';
 })
 export class HeaderComponent {
   toggleSidenav = output();
-  positionStrategy!: FlexibleConnectedPositionStrategy;
   posStoreSvc = inject(PosStoreService);
-  public $cartOverlaySvc = inject(CartOverlayService);
+  $cartOverlaySvc = inject(CartOverlayService);
+  @ViewChild('trigger') trigger!: CdkOverlayOrigin;
 
   totalOrderItems = computed(() => {
     let quantity = this.posStoreSvc.state().orderItems?.reduce((acc, curr) => {

@@ -247,12 +247,16 @@ export class PosSaleComponent {
         this.subCategorias.update((sc) => [...sc, ...dataForm.subCategorias]);
         this.items.set(dataItem.items);
         this.setTotalRecords();
-
-        if (orderId > 0 && !this.$cartOverlaySvc.overlayState()) {
-          this.$cartOverlaySvc.openCart();
-          console.log('open cart');
-        }
       });
+  }
+
+  ngAfterViewInit() {
+    let orderId = this.posStoreSvc.state().order?.orderId || 0;
+    setTimeout(() => {
+      if (orderId > 0 && !this.$cartOverlaySvc.overlayState()) {
+        document.getElementById('cart-button-id')?.click();
+      }
+    }, 1000);
   }
 
   onTabChange(event: any) {
