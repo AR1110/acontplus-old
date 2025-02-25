@@ -26,6 +26,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { LoadMoreComponent } from './load-more/load-more.component';
 import { DialogService } from '@/domain/services/dialog.service';
 import { ProductsComponent } from './products/products.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -39,6 +40,7 @@ import { ProductsComponent } from './products/products.component';
     CategoriesComponent,
     LoadMoreComponent,
     ProductsComponent,
+    PromotionsComponent,
   ],
   templateUrl: './pos-sale.component.html',
   styleUrl: './pos-sale.component.scss',
