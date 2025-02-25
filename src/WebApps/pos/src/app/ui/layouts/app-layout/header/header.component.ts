@@ -12,6 +12,7 @@ import {
 } from '@angular/cdk/overlay';
 import { PosStoreService } from '@/ui/store/pos-store.service';
 import { CartPopupComponent } from '@/ui/pos-sale/cart-popup/cart-popup.component';
+import { CartOverlayService } from '@/ui/store/cart-overlay.service';
 
 @Component({
   selector: 'app-header',
@@ -32,10 +33,9 @@ import { CartPopupComponent } from '@/ui/pos-sale/cart-popup/cart-popup.componen
 })
 export class HeaderComponent {
   toggleSidenav = output();
-
-  isOverlayOpen = signal(false);
   positionStrategy!: FlexibleConnectedPositionStrategy;
   posStoreSvc = inject(PosStoreService);
+  public $cartOverlaySvc = inject(CartOverlayService);
 
   totalOrderItems = computed(() => {
     let quantity = this.posStoreSvc.state().orderItems?.reduce((acc, curr) => {
@@ -43,8 +43,4 @@ export class HeaderComponent {
     }, 0);
     return quantity;
   });
-
-  toggleCart() {
-    this.isOverlayOpen.set(!this.isOverlayOpen());
-  }
 }

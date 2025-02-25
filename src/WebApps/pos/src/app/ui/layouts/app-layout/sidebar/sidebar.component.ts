@@ -15,7 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
 import { menusRoutes } from '../../menus-routes';
-import { ThemeService } from '@/ui/theme.service';
+import { ThemeService } from '@/ui/store/theme.service';
 import { MainStoreService } from '@/domain/services/main-store.service';
 
 @Component({
