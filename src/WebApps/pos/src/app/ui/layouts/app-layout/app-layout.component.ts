@@ -19,8 +19,6 @@ import { map, Observable } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
-import { NavUserInfoToggleComponent } from './nav-user-info-toggle/nav-user-info-toggle.component';
-import { NavUserToggleComponent } from './nav-user-toggle/nav-user-toggle.component';
 import { HeaderComponent } from './header/header.component';
 @Component({
   selector: 'app-app-layout',
