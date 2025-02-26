@@ -1,67 +1,133 @@
-﻿
-<div class="modal-header">
-    <h5 class="modal-title">Historial Movimientos</h5>
+﻿<div class="modal-header">
+    <h5 class="modal-title">Registro de Movimientos de Pago</h5>
     <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 
 <div class="modal-body">
-
-    <div class="row justify-content-between">
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <small class="text-muted">Serie Comprobante</small><br>
-                    <span>{{data.serieComprobante}}</span>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <small class="text-muted">Proveedor</small><br>
-                    <span>{{data.razonSocialComprador}}</span>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <small class="text-muted">Nro. Identificación</small><br>
-                    <span>{{data.identificacionComprador}}</span>
-                </div>
-            </div>
-        </div>    
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <small class="text-muted">Importe Total</small><br>
-                    <span>${{data.importeTotal}}</span>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <small class="text-muted">Abono</small><br>
-                    <span>${{data.abono}}</span>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <small class="text-muted">Saldo</small><br>
-                    <span>${{data.saldo}}</span>
-                </div>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-hover   table-sm">
+            <tbody>
+                <tr>
+                    <td><b>Serie Comprobante</b></td>
+                    <td>{{cuentaPorPagar.serieComprobante}}</td>
+                </tr>
+                <tr>
+                    <td><b>Identificación Comprador</b></td>
+                    <td>{{cuentaPorPagar.identificacionComprador}}</td>
+                </tr>
+                <tr>
+                    <td><b>Nombre Comprador</b></td>
+                    <td>{{cuentaPorPagar.nombreComprador}}</td>
+                </tr>
+                <tr>
+                    <td><b>Fecha Emisión</b></td>
+                    <td>{{cuentaPorPagar.fechaEmision}}</td>
+                </tr>
+                <tr>
+                    <td><b>Total</b></td>
+                    <td>{{cuentaPorPagar.total}}</td>
+                </tr>
+                <tr>
+                    <td><b>Abono</b></td>
+                    <td>{{cuentaPorPagar.abono}}</td>
+                </tr>
+                <tr>
+                    <td><b>Saldo</b></td>
+                    <td>{{cuentaPorPagar.saldo}}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-
 
     <md-table-container>
         <table md-table>
             <thead md-head>
                 <tr md-row>
-                    <th md-column>N°</th>
-                    <th md-column>T. Doc</th>
-                    <th md-column>Total</th>
+                    <th md-column>#</th>
+                    <th md-column>Op.</th>
+                    <th md-column>Nro. Doc</th>
                     <th md-column>Fecha Registro</th>
-                    <th md-column>Usuario</th>
+                    <th md-column>Total</th>
                     <th md-column>Estado</th>
                 </tr>
             </thead>
             <tbody md-body>
-                <tr md-row ng-repeat="item in historialMovimientos">
+                <tr md-row ng-repeat-start="item  in comprobantesEgreso">
                     <td md-cell>{{$index+1}}</td>
-                    <td md-cell>{{item.tipoDocumento}}</td>
+                    <td md-cell>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-info" ng-click="showHistorial(item)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                ng-if="accion.anularComprobanteEgreso && item.estado" btn-anular-comprobante-egreso
+                                params="item" on-result="refresh()">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary" btn-comprobante-ingreso-report
+                                unique="item.idComprobanteEgreso" cod-estab="item.codEstab">
+                                <i class="fa fa-file-pdf"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td md-cell>{{item.serieComprobante}}</td>
+                    <td md-cell>{{item.fechaEmision}}</td>
                     <td md-cell>${{item.total}}</td>
-                    <td md-cell>{{item.fechaRegistro}}</td>
-                    <td md-cell>{{item.usuario}}</td>
-                    <td md-cell>{{item.estado}}</td>
+                    <td md-cell>{{item.nombreEstado}}</td>
+                </tr>
+                <tr ng-show="item.showDetalle" ng-repeat-end="">
+                    <td md-cell colspan="6">
+                        <div class="card ml-1 mt-1 mr-1">
+                            <div class="card-body shadow">
+
+                                <md-table-container>
+                                    <table md-table>
+                                        <thead md-head>
+                                            <tr md-row>
+                                                <th md-column>#</th>
+                                                <th md-column>Op.</th>
+                                                <th md-column>Fecha Emisión</th>
+                                                <th md-column>Entidad Financiera</th>
+                                                <th md-column>Info. Adicional</th>
+                                                <th md-column>Posfechado</th>
+                                                <th md-column>Total</th>
+                                                <th md-column>Abono</th>
+                                                <th md-column>Cambio</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody md-body>
+                                            <tr md-row ng-repeat="ip  in item.historialPagos">
+                                                <td md-cell>{{$index+1}}</td>
+                                                <td md-cell>
+                                                    <button type="button" class="btn btn-info btn-sm"
+                                                        ng-click="showDetalle(ip)">
+                                                        <i class="fas fa-info"></i>
+                                                    </button>
+                                                </td>
+                                                <td md-cell>{{ip.fechaEmision}}</td>
+                                                <td md-cell>{{ip.nombreFormaPago}}</td>
+                                                <td md-cell>
+                                                    <div class="d-flex flex-column justify-content-between">
+                                                        <span><b>Nro.:</b>{{ip.nro}}</span>
+                                                        <span><b>Lote:</b>{{ip.lote}}</span>
+                                                        <span><b>Referencia:</b>{{ip.referencia}}</span>
+                                                        <span><b>Aprobación:</b>{{ip.aprobacion}}</span>
+                                                    </div>
+                                                </td>
+                                                <td md-cell>{{ip.nombrePosfechado}}</td>
+                                                <td md-cell>{{ip.valor}}</td>
+                                                <td md-cell>{{ip.abono}}</td>
+                                                <td md-cell>{{ip.vuelto}}</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </md-table-container>
+
+
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>

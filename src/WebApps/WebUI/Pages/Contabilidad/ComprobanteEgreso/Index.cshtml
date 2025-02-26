@@ -3,7 +3,7 @@
 
 @{
     ViewData["title"] = "Comprobante Egresos";
-    
+
 }
 
 <div ng-controller="comprobanteEgresoCtrl">
@@ -12,10 +12,10 @@
             <h4 class="text-themecolor">Comprobante de Egresos</h4>
         </div>
         <div class="col-md-7 align-self-center text-right">
-            <div class="d-flex justify-content-end align-items-center"> 
+            <div class="d-flex justify-content-end align-items-center">
             </div>
         </div>
-    </div> 
+    </div>
 
 
 
@@ -24,7 +24,8 @@
             <div class="row">
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <span for="establecimiento">Establecimiento: </span>
-                    <select class="form-control select-border" name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab" ng-change="refresh()">
+                    <select class="form-control select-border" name="establecimiento" id="establecimiento"
+                        ng-model="dataSearch.codEstab" ng-change="refresh()">
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
@@ -36,15 +37,15 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
-                                    <input type="checkbox" ng-model="dataSearch.checkBoxFecha"  class="custom-control-input"
-                                        id="checkBoxFecha">
+                                    <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
+                                        class="custom-control-input" id="checkBoxFecha">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
                         </div>
 
-                        <date-range-filter current-date="dataSearch.fechaInicio"
-                            start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
                             result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
                 </div>
@@ -54,7 +55,7 @@
                         <select class="form-control border-select" ng-model="dataSearch.byEstado" ng-change="refresh()">
                             <option value="">Todos</option>
                             <option ng-value="1">Activos</option>
-                            <option ng-value="0">Anulados</option>                            
+                            <option ng-value="0">Anulados</option>
                         </select>
                     </div>
                 </div>
@@ -63,8 +64,7 @@
                         <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
                             <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
                         </button>
-                        <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                            ng-click="refresh()">
+                        <button type="button" class="btn btn-success" uib-tooltip="Recargar" ng-click="refresh()">
                             <i class="fas fa-redo"></i>
                         </button>
                     </div>
@@ -98,11 +98,10 @@
                     </div>
                     <div class="form-group" ng-show="dataSearch.byTipoPersona===2">
                         <span>Empleado</span>
-                        <input type="text" id="customerInputSearchEmpleado"
-                            class="form-control border-select" ng-model="searchEmpleado.nombreCompleto"
-                            empleado-search-drtv on-select="onSelectEmpleado(result)"
-                            on-keyup="onKeyupEmpleado()" placeholder="..." onclick="select();"
-                            ng-disabled="disabledTempInputPersona">
+                        <input type="text" id="customerInputSearchEmpleado" class="form-control border-select"
+                            ng-model="searchEmpleado.nombreCompleto" empleado-search-drtv
+                            on-select="onSelectEmpleado(result)" on-keyup="onKeyupEmpleado()" placeholder="..."
+                            onclick="select();" ng-disabled="disabledTempInputPersona">
 
                         <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -128,10 +127,10 @@
                 </div>
             </div>
         </div>
-    
+
     </div>
-    <div class="card">  
-        <div class="card-body"> 
+    <div class="card">
+        <div class="card-body">
             <div class="row">
                 <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
@@ -155,7 +154,7 @@
                 <table md-table>
                     <thead fix-head md-head md-order="dataSearch.order" md-on-reorder="comprobantesEgreso">
                         <tr md-row>
-                            <th md-column  >Op.
+                            <th md-column>Op.
                             </th>
                             <th md-column>N°</th>
                             <th md-column>N°. Doc. </th>
@@ -167,8 +166,9 @@
                         </tr>
                     </thead>
                     <tbody md-body>
-                        <tr md-row ng-repeat="item in comprobantesEgreso | orderBy: dataSearch.order" ng-class="item.color">
-                            <td md-cell  >
+                        <tr md-row ng-repeat="item in comprobantesEgreso | orderBy: dataSearch.order"
+                            ng-class="item.color">
+                            <td md-cell>
                                 <div class="dropdown h-2">
                                     <button class="btn btn-default " type="button" id="dropdownMenu"
                                         data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true"
@@ -182,16 +182,18 @@
                                             Detalle</button>
 
                                         <button class="dropdown-item" type="button" ng-if="accion.anular"
-                                            ng-click="askToCancel(item)">&times; Anular</button>
-                                            
+                                            btn-anular-comprobante-egreso params="item" on-result="refresh()">&times;
+                                            Anular</button>
+
                                         <button class="dropdown-item" type="button" ng-if="accion.reporte"
-                                            ng-click="getReport(item)"><i class="fa fa-file-pdf"></i> PDF</button>
+                                            btn-comprobante-ingreso-report unique="item.idComprobanteEgreso"
+                                            cod-estab="item.codEstab"><i class="fa fa-file-pdf"></i> PDF</button>
 
                                         <button class="dropdown-item" type="button" ng-if="accion.enviarCorreo"
                                             btn-send-to-email params="item" type-send="typeSend"
                                             get-param-to-send-mail="getParamToSendMail(params)"> <i
                                                 class="far fa-envelope"></i>
-                                            Enviar Correo</button>  
+                                            Enviar Correo</button>
                                     </div>
                                 </div>
                             </td>
@@ -215,7 +217,7 @@
                 </table>
             </md-table-container>
         </div>
-         <div class="card-body">
+        <div class="card-body">
             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
                 ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>

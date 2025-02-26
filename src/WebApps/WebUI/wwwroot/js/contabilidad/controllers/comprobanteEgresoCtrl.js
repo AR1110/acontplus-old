@@ -7,8 +7,7 @@
 
     comprobanteEgresoCtrl.$inject = ['$scope', '$injector'];
     function comprobanteEgresoCtrl($scope, $injector) {
-        let comprobanteEgresoSvc = $injector.get('comprobanteEgresoService');
-        let commonSvc = $injector.get('commonService');
+        let comprobanteEgresoSvc = $injector.get('comprobanteEgresoService'); 
         let fS = $injector.get('formulario');
 
         $scope.recordsQuantity = [25, 50, 100];
@@ -307,33 +306,7 @@
             }
         }
 
-
-        $scope.getReport = async (item) => {
  
-            const formatType = 'pdf';
-            let dataParams = JSON.stringify({
-                codEstab: item.codEstab,
-                id: item.idComprobanteEgreso
-            })
-
-            const parameters = {
-              
-                reportParams: JSON.stringify({
-                    hasParams: true,
-                    codEstab: item.codEstab,
-                    codigo: "RCEGR",
-                    format: formatType,
-                    aditionalParams: []
-                }),
-                dataParams
-            }
-
-            commonSvc.getReport({
-                parameters,
-                formatType,
-                v2: true
-            })
-        }
 
     }
 

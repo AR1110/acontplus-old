@@ -165,26 +165,94 @@
                 tipo: 4
             })
             return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
-                let historiales = [];
-                if (response.code === "0") {
-                    console.log(historiales)
-                }
+
+                let cuentaPorPagar = {},
+                    comprobantesEgreso = [],
+                    historialPagos = [],
+                    pagosDetalle = []
+
                 if (response.code === "1") {
-                    const [mainData] = JSON.parse(response.payload) || [];
-                    historiales = mainData.map(item => {
+                    const mainData = JSON.parse(response.payload)
+                    const [
+                        tempCuentaPorPagar,
+                        tempComprobanteEgreso,
+                        tempHistorialPagos,
+                        tempPagosDetalle,
+                    ] = mainData;
+
+                    const {
+                        serieComprobante,
+                        fechaEmision,
+                        identificacionProveedor,
+                        razonSocialProveedor,
+                        importeTotal,
+                        abono,
+                        saldo,
+                    } = tempCuentaPorPagar[0];
+
+
+                    cuentaPorPagar = {
+                        serieComprobante,
+                        fechaEmision,
+                        identificacionComprador: identificacionProveedor,
+                        nombreComprador: razonSocialProveedor,
+                        total: importeTotal,
+                        abono,
+                        saldo,
+                    };
+
+                    comprobantesEgreso = tempComprobanteEgreso.map(
+                        (item, index) => {
+                            return {
+                                index: index + 1,
+                                idComprobanteEgreso: item.idComprobanteEgreso,
+                                fechaEmision: item.fechaEmision,
+                                serieComprobante: item.serieComprobante,
+                                total: item.total,
+                                nombreEstado: item.nombreEstado,
+                                estado: item.estado,
+                                codEstab: item.codEstab,
+                            };
+                        },
+                    );
+
+                    historialPagos = tempHistorialPagos.map((item) => {
                         return {
-                            nroIdentificacion: item.nroIdentificacion,
-                            nombreFiscal: item.nombreFiscal,
-                            total: item.total,
-                            tipoDocumento: item.tipoDocumento,
-                            usuario: item.usuario,
-                            estado: item.estado,
-                            fechaRegistro: item.fechaRegistro,
-                        }
+                            idComprobanteEgreso: item.idComprobanteEgreso,
+                            idPago: item.idPago,
+                            nombrePosfechado: item.nombrePosfechado,
+                            fechaEmision: item.fechaEmision,
+                            nombreFormaPago: item.nombreFormaPago,
+                            nombreBanco: item.nombreBanco,
+                            valor: item.valor,
+                            abono: item.abono,
+                            vuelto: item.vuelto,
+                            codigoFormaPago: item.codigoFormaPago,
+                            nro: item.nro,
+                            lote: item.lote,
+                            referencia: item.referencia,
+                            aprobacion: item.aprobacion,
+                        };
+                    });
+
+                    pagosDetalle = tempPagosDetalle.map((item) => {
+                        return {
+                            idPago: item.idPago,
+                            nroCuota: item.nroCuota,
+                            fechaVencimiento: item.fechaVencimiento,
+                            cuota: item.cuota,
+                            abono: item.abono,
+                            saldo: item.saldo,
+                        };
                     })
                 }
 
-                return historiales;
+                return {
+                    cuentaPorPagar,
+                    comprobantesEgreso,
+                    historialPagos,
+                    pagosDetalle
+                };
             })
         }
 
@@ -221,7 +289,7 @@
 
     }])
 
-    app.factory('comprobanteEgresoService', ['mainService', 'formulario','modalService', 'nombreModalContabilidad', function (mS, fS, modalSvc, nombreModalContab) {
+    app.factory('comprobanteEgresoService', ['mainService', 'formulario', 'modalService', 'nombreModalContabilidad', function (mS, fS, modalSvc, nombreModalContab) {
         const url = `${PATH_API}ComprobanteEgreso/`
 
         return {
@@ -958,21 +1026,21 @@
         }
 
 
-        function getPosfechadoCobrosModal(obj){
+        function getPosfechadoCobrosModal(obj) {
             let json = JSON.stringify({
                 tipo: 8,
                 pageIndex: obj && obj.pageIndex || 1,
                 pageSize: obj && obj.pageSize || 25
             })
-            mS.getData('get', `${url}?json=${json}`, null, true).then(async response=>{
+            mS.getData('get', `${url}?json=${json}`, null, true).then(async response => {
                 let results = {
                     cheques: []
                 };
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
                     let cheques = mainData && mainData.cheques || [];
 
-                    results.cheques = cheques.map(item=>{
+                    results.cheques = cheques.map(item => {
                         return {
                             id: item.id,
                             idComprobante: item.idComprobante,
@@ -983,10 +1051,10 @@
                             nro: item.nro,
                             fechaEmision: item.fechaEmision,
                         }
-                    }) 
+                    })
                 }
-                
-                if(results.cheques.length>0){
+
+                if (results.cheques.length > 0) {
 
                     const { fileCtrl, ctrl, template } = nombreModalContab.POSFECHADO_COBROS_MODAL;
                     let controller = (await import(fileCtrl))[ctrl];
@@ -996,14 +1064,14 @@
                         template,
                         size: 'xl',
                         params: results,
-                        keyboard: true,  
+                        keyboard: true,
                     });
                 }
-                
+
             })
         }
 
-         
+
         function update(comprobanteIngresoId, data) {
             return mS.getData('put', `${url}${comprobanteIngresoId}`, { data }, true)
         }
@@ -1322,7 +1390,7 @@
                     cheques: []
                 }
                 if (response && typeof response === 'object') {
-                 
+
                     result.cheques = response.cheques.map(item => {
                         return {
                             id: item.id,
@@ -1528,7 +1596,7 @@
 
                 this._configCobro = {};
 
-                this.MAX_DECIMALS = { 
+                this.MAX_DECIMALS = {
                     GENERAL: 3,
                     CUOTA_ABONO: 5,
                     DEFAULT: 5
@@ -1609,7 +1677,7 @@
 
 
                         // Calcular interés y mora si hay días de mora
-                        if ( this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
+                        if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
                             // Calcular días de mora 
                             diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
 
@@ -1816,7 +1884,7 @@
 
                     }
                     if (cobrosDetalleFiltered.length > 0) {
-                        
+
                         if (fS.roundNumber(totalAbonoCuenta.toNumber(), this.MAX_DECIMALS.GENERAL) !== fS.roundNumber(this._dataCuentaPorCobrar.saldoActualDoc, this.MAX_DECIMALS.GENERAL)) {
 
                             let historialCuentasFiltered = this.getHistorialCuentas().filter(cd => (
@@ -1938,21 +2006,21 @@
                 } else {
                     let totalAbonoCuota = fS.plus(dataCuota.abono, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
 
-                    if(fS.roundNumber(totalAbonoCuota, 2) === fS.roundNumber(dataCuota.saldo, 2)){
+                    if (fS.roundNumber(totalAbonoCuota, 2) === fS.roundNumber(dataCuota.saldo, 2)) {
                         dataCuota.abono = dataCuota.saldo;
-                    }else{
+                    } else {
                         dataCuota.abono = totalAbonoCuota;
                     }
 
                 }
 
                 // Resta el valor del abono al saldo total actual de la cuota
-                let saldoTotalActual  =  fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
+                let saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
 
                 //se verifica antes  por temas de decimales porque al final queda milesimas 
-                if(fS.roundNumber(saldoTotalActual, 2)===0){
-                    dataCuota.saldoTotalActual= 0;
-                }else{
+                if (fS.roundNumber(saldoTotalActual, 2) === 0) {
+                    dataCuota.saldoTotalActual = 0;
+                } else {
                     dataCuota.saldoTotalActual = saldoTotalActual;
                 }
 
@@ -2011,7 +2079,7 @@
              * 
              * @param {*} dataCuota 
              */
-            handleFullAbono(dataCuota) { 
+            handleFullAbono(dataCuota) {
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? this.getValorAbono() : 0;
                 dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
@@ -2029,10 +2097,10 @@
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT) : 0;
 
                 let valorAbono = fS.minus(this.getValorAbono(), dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
-               
+
                 //verificamos si la resta de valor abono es igual al total a cobrar 
                 //tomar mucha en cuenta, se agrega por temas de decimales 
-                if (fS.roundNumber(valorAbono, 2) === fS.roundNumber(dataCuota.saldoTotalActual, 2)){
+                if (fS.roundNumber(valorAbono, 2) === fS.roundNumber(dataCuota.saldoTotalActual, 2)) {
                     valorAbono = dataCuota.saldoTotalActual;
                 }
 
@@ -2193,10 +2261,10 @@
 
                     let totalNoPosfechado = cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar && !cd.posfechado)
                         .reduce((acc, curr) => acc.plus(curr.abono), fS.instanceDecimal(0));
- 
+
 
                     valorSaldo = valorSaldo.minus(totalNoPosfechado).toNumber();
- 
+
 
                     let dataEstadoPago;
                     if (totalPosfechado.gt(0)) {
@@ -2254,7 +2322,7 @@
                     let valorSaldo = fS.instanceDecimal(valorSaldoLectura)
                         .minus(fS.roundNumber(totalNoPosfechado.toNumber(), fS.max_dos))
                         .toNumber();
-                        
+
 
                     let dataEstadoPago = this.getEstadoCuota({
                         saldo: valorSaldo,
