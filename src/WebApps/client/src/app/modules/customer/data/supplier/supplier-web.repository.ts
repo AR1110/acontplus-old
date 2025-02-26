@@ -21,7 +21,7 @@ export class SupplierWebRepository extends SupplierRepository {
   }
 
   search<T extends { textSearch: string }>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 5,
       textSearch: obj.textSearch,
     });
@@ -35,7 +35,7 @@ export class SupplierWebRepository extends SupplierRepository {
           let suppliers: SupplierSearch[] = [];
 
           if (response && response.code === '1') {
-            let { proveedores } = JSON.parse(response.payload as string);
+            const { proveedores } = JSON.parse(response.payload as string);
             suppliers = SupplierMapper.fromApiSearch(proveedores);
           }
           return suppliers;

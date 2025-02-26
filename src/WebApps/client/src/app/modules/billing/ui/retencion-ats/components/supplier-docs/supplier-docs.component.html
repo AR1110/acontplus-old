@@ -1,0 +1,9 @@
+<app-mat-custom-dialog
+  [containerTemplate]="contentTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [icon]="dialogIcon()"
+  [title]="dialogTitle()"
+  (close)="onClose()"
+/>
+<ng-template #contentTemplate></ng-template>
+<ng-template #actionsTemplate></ng-template>

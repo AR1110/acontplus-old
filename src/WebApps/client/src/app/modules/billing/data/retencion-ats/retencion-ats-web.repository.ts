@@ -10,7 +10,6 @@ import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
-import { TipoIdentificacion } from '@core/models/tipo-identificacion';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
@@ -33,72 +32,49 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       );
   }
   getDataForm() {
-    const parameters = {
-      tipo: 1,
-    };
+    const parameters = { tipo: 1 };
+    const defaultData = this.getDefaultData();
+
     return this._http
       .get(`${this._url}?json=${JSON.stringify(parameters)}`)
       .pipe(
         map((response) => {
-          if (isApiResponse(response)) {
-            const {
-              tiposIdentificacion,
-              sujetoRetenido,
-              documentoSustento,
-              sustentoTributario,
-              tiposPago,
-              tiposRegimen,
-              countries,
-              paraisosFiscales,
-              taxes,
-              tarifasImpuesto,
-              impuestosRetencion,
-              porcentajesRetIva,
-              codigosRetencion,
-              formasPago,
-              estabs,
-              infoAdicional,
-            } = JSON.parse(response.payload as string);
+          if (!isApiResponse(response)) return defaultData;
+
+          try {
+            const payload = JSON.parse(response.payload as string);
             return {
-              tiposIdentificacion: tiposIdentificacion as TipoIdentificacion[],
-              sujetoRetenido,
-              documentoSustento,
-              sustentoTributario,
-              tiposPago,
-              tiposRegimen,
-              countries,
-              paraisosFiscales,
-              taxes,
-              tarifasImpuesto,
-              impuestosRetencion,
-              porcentajesRetIva,
-              codigosRetencion,
-              formasPago,
-              infoAdicional,
-              estabs: estabs as GroupedEstab[],
+              ...defaultData,
+              ...payload,
+              estabs: payload.estabs as GroupedEstab[],
             };
-          } else {
-            return {
-              tiposIdentificacion: [],
-              sujetoRetenido: [],
-              documentoSustento: [],
-              sustentoTributario: [],
-              tiposPago: [],
-              tiposRegimen: [],
-              countries: [],
-              paraisosFiscales: [],
-              taxes: [],
-              tarifasImpuesto: [],
-              impuestosRetencion: [],
-              porcentajesRetIva: [],
-              codigosRetencion: [],
-              formasPago: [],
-              estabs: [],
-              infoAdicional: [],
-            };
+          } catch (error) {
+            console.error('Error parsing response:', error);
+            return defaultData;
           }
         }),
       );
+  }
+
+  private getDefaultData() {
+    return {
+      tiposIdentificacion: [],
+      sujetoRetenido: [],
+      documentoSustento: [],
+      sustentoTributario: [],
+      tiposPago: [],
+      tiposRegimen: [],
+      countries: [],
+      paraisosFiscales: [],
+      taxes: [],
+      tarifasImpuesto: [],
+      impuestosRetencion: [],
+      porcentajesRetIva: [],
+      codigosRetencion: [],
+      formasPago: [],
+      estabs: [],
+      infoAdicional: [],
+    };
   }
   getById(id: number): Observable<RetencionAts> {
     throw new Error('Method not implemented.');

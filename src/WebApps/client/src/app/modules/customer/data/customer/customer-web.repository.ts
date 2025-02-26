@@ -1,44 +1,38 @@
-import {inject, Injectable} from "@angular/core";
-import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
-import {HttpClient} from "@angular/common/http";
-import {ApiResponse } from "@core/models/api-response";
-import {map} from "rxjs";
-import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
-import {AnticipoMapper} from "@accounting/data/anticipo/anticipo.mapper";
-import {SupplierRepository} from "@customer/core/repositories/supplier.repository";
-import {CustomerRepository} from "@customer/core/repositories/customer.repository";
-
+import { inject, Injectable } from '@angular/core';
+import { PATHS_API } from '@core/constants/global.constants';
+import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
+import { HttpClient } from '@angular/common/http';
+import { ApiResponse } from '@core/models/api-response';
+import { map } from 'rxjs';
+import { AnticipoMapper } from '@accounting/data/anticipo/anticipo.mapper';
+import { CustomerRepository } from '@customer/core/repositories/customer.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class CustomerWebRepository extends CustomerRepository{
-
-  private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.ANTICIPO}`
+export class CustomerWebRepository extends CustomerRepository {
+  private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.ANTICIPO}`;
   private _http = inject(HttpClient);
-
 
   constructor() {
     super();
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
-      ...obj
-    })
+      ...obj,
+    });
 
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(
-        map(response => {
-            if (response.code === "1") {
-              return AnticipoMapper.fromApiGetAll(JSON.parse(response.payload as string));
-            }
-          return []
-        })
-      )
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+      map((response) => {
+        if (response.code === '1') {
+          return AnticipoMapper.fromApiGetAll(
+            JSON.parse(response.payload as string),
+          );
+        }
+        return [];
+      }),
+    );
   }
-
-
 }

@@ -1,13 +1,32 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe, NgClass, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SharedService } from '@core/services/shared.service';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { GroupedEstab } from '@core/models/estab.model';
+import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+  MatCardFooter,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelDescription,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
+import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { DialogService } from '@core/services/dialog.service';
+import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -19,6 +38,18 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
     DatePipe,
     SlicePipe,
     MatButton,
+    MatCard,
+    MatCardContent,
+    MatCardFooter,
+    MatCardHeader,
+    MatCardTitle,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelTitle,
+    MatExpansionPanelHeader,
+    MatExpansionPanelDescription,
+    SupplierSearchComponent,
+    MatCardActions,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
@@ -28,13 +59,14 @@ export class RetencionAtsAddEditComponent {
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
     idPuntoEmision: [0],
-    contribuyentEspecial: [''],
+    contribuyenteEspecial: [''],
     obligadoContabilidad: [''],
     tipoIdentificacionSujetoRetenido: [''],
     tipoSujetoRetenido: [''],
     parteRel: [''],
     razonSocialSujetoRetenido: [''],
     identificacionSujetoRetenido: [''],
+    idProveedor: [0],
     periodoFiscal: [''],
     fechaEmision: [''],
     docSustento: this._fb.group({
@@ -69,16 +101,15 @@ export class RetencionAtsAddEditComponent {
   });
 
   isVisibleInfoComprobante = true;
-  infoCompRet: any = {};
   idDocumentoElectronico = 0;
-  estabs: EstablecimientoSelectHtmlOnly[] = [];
+  estabs: GroupedEstab[] = [];
   puntosEmision: any[] = [];
   subContribuyente = '';
   tiposIdentificacion: any[] = [];
   tiposSujRetenido: any[] = [];
   isNotForeign = true;
-  genericAnswer: any[] = [];
-  docSustento: any = {};
+  genericAnswer: any[] = [{ codigo: 'SI' }, { codigo: 'NO' }];
+  docSustento: any[] = [];
   documentos: any[] = [];
   sustentosFiltered: any[] = [];
   isPagoResidente = true;
@@ -98,7 +129,7 @@ export class RetencionAtsAddEditComponent {
 
   // Info adicional
   infoAdicional: any[] = [];
-
+  panelOpenState = -1;
   // Computed properties
   get startIndex(): number {
     return (this.currentPage - 1) * this.itemsPerPage;
@@ -117,11 +148,14 @@ export class RetencionAtsAddEditComponent {
   private readonly dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
   );
-  private readonly _sharedService = inject(SharedService);
+  private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
+  private readonly _dialogService = inject(DialogService);
 
   initialLoad() {
-    this._sharedService.getEstabAsign().subscribe((response) => {
-      this.estabs = response;
+    this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
+      this.estabs = response.estabs;
+      this.tiposIdentificacion = response.tiposIdentificacion;
+      this.tiposSujRetenido = response.sujetoRetenido;
     });
   }
 
@@ -146,38 +180,59 @@ export class RetencionAtsAddEditComponent {
     // Implementation
   }
 
-  getPeriod(): void {
-    if (this.infoCompRet.fechaEmision) {
-      const date = new Date(this.infoCompRet.fechaEmision);
+  getPeriod() {
+    const fechaEmision = this.retencionAtsForm.get('fechaEmision')?.value;
+    if (fechaEmision) {
+      const date = new Date(fechaEmision);
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
-      this.infoCompRet.periodoFiscal =
-        month < 10 ? `0${month}/${year}` : `${month}/${year}`;
+      const period = month < 10 ? `0${month}/${year}` : `${month}/${year}`;
+      this.retencionAtsForm.get('periodoFiscal')?.setValue(period);
     }
   }
 
-  showTipoSujetoRetenido(tipoIdentificacion: string): void {
+  showTipoSujetoRetenido(): void {
     // Implementation based on the selected identification type
-    this.isNotForeign = tipoIdentificacion !== 'FOREIGN';
+    // this.isNotForeign = tipoIdentificacion !== 'FOREIGN';
   }
 
   getProveedor(searchType: number = 0): void {
     // Implementation
   }
 
-  searchDocs(): void {
-    // Search for documents to retain
+  onSupplierSelected(data: SupplierSearch) {
+    this.retencionAtsForm
+      .get('identificacionSujetoRetenido')
+      ?.setValue(data.identificacionComprador);
+    this.retencionAtsForm.get('idProveedor')?.setValue(data.idProveedor);
   }
 
-  selectSutento(codDocSustento: string): void {
+  supplierResultEmptyInput() {
+    this.retencionAtsForm.get('identificacionSujetoRetenido')?.setValue('');
+  }
+
+  searchDocs() {
+    const dialogRef = this._dialogService.open(SupplierDocsComponent, {
+      size: 'lg',
+      data: {
+        idProveedor: this.retencionAtsForm.get('idProveedor')?.value,
+      },
+    });
+
+    dialogRef.subscribe((response) => {
+      console.log(response);
+    });
+  }
+
+  selectSutento(): void {
     // Filter sustentos based on document type
   }
 
-  enableControls(pagoLocExt: string): void {
-    this.isPagoResidente = pagoLocExt === 'LOCAL';
+  enableControls(): void {
+    // this.isPagoResidente = pagoLocExt === 'LOCAL';
   }
 
-  getCountries(tipoRegi: string): void {
+  getCountries(): void {
     // Load countries based on regime type
   }
 
@@ -213,6 +268,10 @@ export class RetencionAtsAddEditComponent {
     ) {
       this.currentPage = page;
     }
+  }
+
+  setPanelOpen(index: number) {
+    this.panelOpenState = index;
   }
 
   // Info adicional
