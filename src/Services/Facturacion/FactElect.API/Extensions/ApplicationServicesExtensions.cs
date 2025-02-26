@@ -23,9 +23,8 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<FactElectContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        string[] nameSpaces =
+        string[] scopedNameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
             "FactElect.API.Services",
             "FactElect.API.Services.Logistica",
             "FactElect.API.Services.RetencionAts",
@@ -35,7 +34,21 @@ public static class ApplicationServicesExtensions
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+
+        string[] transientNameSpaces =
+        [
+            "Common.Infrastructure.Repository.Implementations",
+            "Common.Services.Extensions"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(transientNameSpaces))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()
