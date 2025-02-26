@@ -31,6 +31,6 @@ export class MatCustomDialogComponent {
     showButtonClose: true,
   });
   close = output();
-  @Input() containerTemplate!: TemplateRef<any> | null;
-  @Input() actionsTemplate!: TemplateRef<any> | null;
+  @Input() containerTemplate!: TemplateRef<unknown> | null;
+  @Input() actionsTemplate!: TemplateRef<unknown> | null;
 }
