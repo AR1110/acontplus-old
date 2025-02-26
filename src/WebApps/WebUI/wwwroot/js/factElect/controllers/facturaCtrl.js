@@ -2219,7 +2219,7 @@
             }
         }
 
-        $scope.onChangeTarifaGeneral = async function () {
+        $scope.onChangeTarifaGeneral =  function () {
             if (!$scope.permisoComprobanteVenta.tarifa) {
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
                 tS.toastr("warning", "No tienes permiso para realizar esta acción");
@@ -2229,7 +2229,7 @@
             let tarifa = $scope.tarifas.find(
                 (item) => item.idTarifa === $scope.data.idTarifa
             );
-            let { isConfirmed } = await Swal.fire({
+              Swal.fire({
                 html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
                 icon: "warning",
                 showCancelButton: true,
@@ -2237,30 +2237,31 @@
                 confirmButtonText: `Sí, cambiar!`,
                 cancelButtonText: "No, cancelar!",
                 allowOutsideClick: false,
-            });
+            }).then(result=>{
 
-            if (isConfirmed) {
-                $scope.dataClone.idTarifa = $scope.data.idTarifa;
 
-                if ($scope.gridOptions.data.length === 0) return;
-
-                if (
-                    gridOptionsSvc.setTarifaInDetail(
-                        $scope.gridOptions,
-                        $scope.data.idTarifa,
-                        $scope.decimal,
-                        gridOptionsSvc.calculoColDef
-                    )
-                ) {
-                    recalculateTotalsSimple();
+                if (result.isConfirmed) {
+                    $scope.dataClone.idTarifa = $scope.data.idTarifa; 
+    
+                    if ($scope.gridOptions.data.length > 0 &&
+                        gridOptionsSvc.setTarifaInDetail(
+                            $scope.gridOptions,
+                            $scope.data.idTarifa,
+                            $scope.decimal,
+                            gridOptionsSvc.calculoColDef
+                        )
+                    ) {
+                        recalculateTotalsSimple();
+                    } 
+                    $scope.$apply();
+                } else {
+                    $scope.data.idTarifa = $scope.dataClone.idTarifa;
+                    $scope.$apply();
                 }
+                
                 updateRefProductoVenta()
-                $scope.$apply();
-            } else {
-                $scope.data.idTarifa = $scope.dataClone.idTarifa;
-                updateRefProductoVenta()
-                $scope.$apply();
-            }
+            })
+
 
         };
 
