@@ -1,11 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe, NgClass, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { SharedService } from '@core/services/shared.service';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -22,14 +24,54 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styles: ``,
 })
 export class RetencionAtsAddEditComponent {
-  retencionAtsForm = new FormGroup({
-    id: new FormControl(0),
+  private readonly _fb = inject(FormBuilder);
+  retencionAtsForm = this._fb.group({
+    idRetencionAts: [0],
+    idPuntoEmision: [0],
+    contribuyentEspecial: [''],
+    obligadoContabilidad: [''],
+    tipoIdentificacionSujetoRetenido: [''],
+    tipoSujetoRetenido: [''],
+    parteRel: [''],
+    razonSocialSujetoRetenido: [''],
+    identificacionSujetoRetenido: [''],
+    periodoFiscal: [''],
+    fechaEmision: [''],
+    docSustento: this._fb.group({
+      idRetAtsDocSustento: [0],
+      uniqueIdDoc: [''],
+      codSustento: [''],
+      codDocSustento: [''],
+      numDocSustento: [''],
+      fechaEmisionDocSustento: [''],
+      fechaRegistroContable: [''],
+      numAutDocSustento: [''],
+      pagoLocExt: [''],
+      tipoRegi: [''],
+      paisEfecPago: [''],
+      aplicConvDobTrib: [''],
+      pagExtSujRetNorLeg: [''],
+      pagoRegFis: [''],
+      totalComprobantesReembolsos: [''],
+      totalBaseImponibleReembolso: [''],
+      totalImpuestoReembolso: [''],
+      totalSinImpuestos: [''],
+      importeTotal: [''],
+      taxes: this._fb.array([]),
+      retenciones: this._fb.array([]),
+      reembolsos: this._fb.group({
+        id: [0],
+        taxes: this._fb.array([]),
+      }),
+      payments: this._fb.array([]),
+    }),
+    infoAdicional: this._fb.array([]),
   });
 
   isVisibleInfoComprobante = true;
   infoCompRet: any = {};
   idDocumentoElectronico = 0;
-  estabs: any[] = [];
+  estabs: EstablecimientoSelectHtmlOnly[] = [];
   puntosEmision: any[] = [];
   subContribuyente = '';
   tiposIdentificacion: any[] = [];
@@ -75,6 +117,17 @@ export class RetencionAtsAddEditComponent {
   private readonly dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
   );
+  private readonly _sharedService = inject(SharedService);
+
+  initialLoad() {
+    this._sharedService.getEstabAsign().subscribe((response) => {
+      this.estabs = response;
+    });
+  }
+
+  ngOnInit() {
+    this.initialLoad();
+  }
 
   onClose() {
     this.dialogRef.close();

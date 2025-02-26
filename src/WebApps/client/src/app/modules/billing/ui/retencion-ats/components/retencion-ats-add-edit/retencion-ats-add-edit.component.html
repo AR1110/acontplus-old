@@ -26,17 +26,20 @@
                 <select
                   name="establecimiento"
                   id="establecimiento"
-                  class="form-control border-select"
-                  formControlName="infoCompRet.codEstab"
+                  class="form-select"
+                  formControlName="codEstab"
                   (change)="onChangeEstablecimiento()"
                   [disabled]="idDocumentoElectronico > 0"
                 >
-                  <option *ngFor="let item of estabs" [value]="item.codEstab">
-                    {{ item.nombreComercial }}
-                  </option>
+                  @for (item of estabs; track $index) {
+                    <option [value]="item.codEstab">
+                      {{ item.nombreComercial }}
+                    </option>
+                  }
                 </select>
               </div>
             </div>
+
             <div
               class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12"
               *ngIf="infoCompRet.estab"
@@ -294,7 +297,7 @@
     </div>
 
     <div class="card border border-info rounded">
-      <div class="card-body">
+      <div class="card-body" formGroupName="docSustento">
         <h5 class="card-title">Documento Sustento</h5>
         <div class="row">
           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -702,11 +705,9 @@
   </ng-template>
   <ng-template #actionsTemplate>
     <button mat-raised-button>
-      <mat-icon
-        aria-hidden="false"
-        aria-label="Save Icon"
-        fontIcon="save"
-      >add</mat-icon>
+      <mat-icon aria-hidden="false" aria-label="Save Icon" fontIcon="save"
+        >add</mat-icon
+      >
       Guardar
     </button>
   </ng-template>
