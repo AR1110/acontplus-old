@@ -12,6 +12,8 @@ public static class ApplicationServicesExtensions
     {
         services.AddAdvancedLogging(configuration);
 
+        services.AddHttpContextAccessor();
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
