@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 
-    <uib-tabset>
+    <uib-tabset active="activeTab">
         <uib-tab index="0" heading="General" select="onTabArticulo(1)">
             <div class="card">
                 <div class="card-body border-mb">
@@ -283,7 +283,7 @@
                                 <md-switch ng-model="data.estado" aria-label="Estado">
                                     {{ data.estado?'Activo':'Inactivo' }}
                                 </md-switch>
-                            </div>  
+                            </div>
                         </div>
 
                         <div class="row">
@@ -605,7 +605,7 @@
         </uib-tab>
 
         <!--UBICACIONES-->
-        <uib-tab index="4" heading="Ubicación" select="onTabArticulo(4)" disable="!articlePermission.gestionUbicacion">
+        <uib-tab index="3" heading="Ubicación" select="onTabArticulo(4)" disable="!articlePermission.gestionUbicacion">
             <!--Agregar-->
             <div class="card-body" ng-if="tipoRegistro===1">
                 <div class="row">
@@ -727,8 +727,8 @@
         </uib-tab>
 
         @*   Articulos fraccionados *@
-        <uib-tab index="5" heading="Fraccionados" select="onTabArticulo(5)"
-            ng-if="tipoRegistro===2 && data.productoFraccionable">
+        <uib-tab index="4" heading="Fraccionados" select="onTabArticulo(5)"
+            ng-if="tipoRegistro===2 && data.productoFraccionable && data.idArticulo>0">
             <section ng-if="step===5">
                 <articulo-fraccionado-lista data="data"></articulo-fraccionado-lista>
             </section>

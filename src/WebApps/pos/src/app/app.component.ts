@@ -7,7 +7,7 @@ import {
   Router,
   RouterOutlet,
 } from '@angular/router';
-import { ThemeService } from './ui/theme.service';
+import { ThemeService } from './ui/store/theme.service';
 
 @Component({
   selector: 'app-root',

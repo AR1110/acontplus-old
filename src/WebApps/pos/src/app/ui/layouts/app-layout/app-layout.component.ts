@@ -1,4 +1,11 @@
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -12,8 +19,6 @@ import { map, Observable } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
-import { NavUserInfoToggleComponent } from './nav-user-info-toggle/nav-user-info-toggle.component';
-import { NavUserToggleComponent } from './nav-user-toggle/nav-user-toggle.component';
 import { HeaderComponent } from './header/header.component';
 @Component({
   selector: 'app-app-layout',
@@ -33,6 +38,7 @@ import { HeaderComponent } from './header/header.component';
   ],
   templateUrl: './app-layout.component.html',
   styleUrl: './app-layout.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppLayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;

@@ -50,6 +50,7 @@ import { OrderDocListComponent } from '@ui/orders/components/order-doc-list/orde
 import { OrderRead } from '@domain/models/order.model';
 import { MatCardModule } from '@angular/material/card';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
+import { CartOverlayService } from '@/ui/store/cart-overlay.service';
 
 @Component({
   selector: 'app-order-list',
@@ -79,7 +80,7 @@ import { OrderUseCase } from '@domain/use-cases/order.use-case';
       state('expanded', style({ height: '*' })),
       transition(
         'expanded <=> collapsed',
-        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'),
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
       ),
     ]),
   ],
@@ -101,6 +102,7 @@ export class OrderListComponent {
   private sharedSvc = inject(SharedService);
   private posStoreSvc = inject(PosStoreService);
   private router = inject(Router);
+  private $cartOverlaySvc = inject(CartOverlayService);
 
   displayedColumns: string[] = [
     'index',
@@ -136,7 +138,7 @@ export class OrderListComponent {
 
   isPending = computed(() => this.selectedStatus() === STATUS_ORDER.PENDIENTE);
   isFinished = computed(
-    () => this.selectedStatus() === STATUS_ORDER.FINALIZADO,
+    () => this.selectedStatus() === STATUS_ORDER.FINALIZADO
   );
   isDividing = computed(() => this.selectedStatus() === STATUS_ORDER.PROCESO);
   isDeleted = computed(() => this.selectedStatus() === STATUS_ORDER.ANULADO);
@@ -248,6 +250,11 @@ export class OrderListComponent {
 
         if (this.isComingOfPos()) {
           this.closeDialog.emit();
+          setTimeout(() => {
+            if (data.id > 0 && !this.$cartOverlaySvc.overlayState()) {
+              document.getElementById('cart-button-id')?.click();
+            }
+          }, 1000);
         } else {
           this.navigateToPos();
         }

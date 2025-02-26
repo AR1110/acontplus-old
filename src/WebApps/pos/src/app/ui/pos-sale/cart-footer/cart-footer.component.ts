@@ -24,6 +24,7 @@ import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
 import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
 import { MatInputModule } from '@angular/material/input';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
+import { CartOverlayService } from '@/ui/store/cart-overlay.service';
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -49,6 +50,7 @@ export class CartFooterComponent {
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService);
   public dialog = inject(DialogService);
+  public $cartOverlaySvc = inject(CartOverlayService);
 
   private subtotalSinImpuestos = 0;
   private tax = 0;
@@ -365,6 +367,7 @@ export class CartFooterComponent {
               timer: 1000,
             });
             this.clean();
+            this.$cartOverlaySvc.closeCart();
           }
         });
       } else {
@@ -380,6 +383,7 @@ export class CartFooterComponent {
 
           // Manejo de respuesta con código "1"
           if (response.code === '1') {
+            this.$cartOverlaySvc.closeCart();
             Swal.fire({
               icon: 'success',
               html: response.message,

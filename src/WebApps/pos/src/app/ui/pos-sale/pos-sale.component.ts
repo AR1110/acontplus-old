@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, Pipe } from '@angular/core';
 import { finalize, forkJoin } from 'rxjs';
 import { ItemService } from '@data/repositories/item/item.service';
 import { Pagination } from '@domain/models/pagination.model';
@@ -27,6 +27,7 @@ import { LoadMoreComponent } from './load-more/load-more.component';
 import { DialogService } from '@/domain/services/dialog.service';
 import { ProductsComponent } from './products/products.component';
 import { PromotionsComponent } from './promotions/promotions.component';
+import { CartOverlayService } from '../store/cart-overlay.service';
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -50,8 +51,8 @@ export class PosSaleComponent {
   private mainStore = inject(MainStoreService);
   private _configUseCase = inject(ConfigUseCase);
   private itemSvc = inject(ItemService);
-
   public dialog = inject(DialogService);
+  public $cartOverlaySvc = inject(CartOverlayService);
 
   selectedSubCategoryIndex = 0;
 
@@ -211,8 +212,9 @@ export class PosSaleComponent {
     if (this.posStoreSvc.state().isLoading) return;
 
     this.setLoading(true);
-    this.getDataFormInit()?.subscribe({
-      next: (response) => {
+    this.getDataFormInit()
+      ?.pipe(finalize(() => this.setLoading(false)))
+      .subscribe((response) => {
         this.setLoading(false);
         const [dataForm, dataItem] = response;
 
@@ -245,11 +247,16 @@ export class PosSaleComponent {
         this.subCategorias.update((sc) => [...sc, ...dataForm.subCategorias]);
         this.items.set(dataItem.items);
         this.setTotalRecords();
-      },
-      error: (err) => {
-        this.setLoading(false);
-      },
-    });
+      });
+  }
+
+  ngAfterViewInit() {
+    let orderId = this.posStoreSvc.state().order?.orderId || 0;
+    setTimeout(() => {
+      if (orderId > 0 && !this.$cartOverlaySvc.overlayState()) {
+        document.getElementById('cart-button-id')?.click();
+      }
+    }, 1000);
   }
 
   onTabChange(event: any) {
