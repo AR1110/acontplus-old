@@ -6,6 +6,7 @@ import { map } from 'rxjs';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { DocumentReceived } from '@purchase/core/domain/document-received.model';
 import { DocumentReceivedRepository } from '@purchase/core/repositories/document-received.repository';
+import { TipoDoc } from '@core/models/tipo-doc.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,18 +18,18 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
     super();
   }
   getDataFilter() {
-    let query = {
+    const query = {
       tipo: 2,
     };
     return this._http.get(`${this._url}?json=${JSON.stringify(query)}`).pipe(
       map((response) => {
         if (isApiResponse(response)) {
-          let mainData = JSON.parse(response.payload as string);
+          const mainData = JSON.parse(response.payload as string);
           const documentTypes = mainData.tipoComprobantes.map(
-            (tipoDoc: any) => {
+            (tipoDoc: TipoDoc) => {
               return {
                 descripcion: tipoDoc.descripcion,
-                codigoSri: tipoDoc.codDoc,
+                codigoSri: tipoDoc.codigoSri,
               };
             },
           );

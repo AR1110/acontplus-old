@@ -8,16 +8,16 @@ export class DocumentReceivedUseCase {
     DocumentReceivedRepository,
   );
 
-  getDataFilter<T>() {
-    return this._documentReceivedRepository.getDataFilter<T>();
+  getDataFilter() {
+    return this._documentReceivedRepository.getDataFilter();
   }
 
   get<T>(parameters: T) {
     return this._documentReceivedRepository.get<T>(parameters);
   }
 
-  getById<T>(id: number) {
-    return this._documentReceivedRepository.getById<T>(id);
+  getById(id: number) {
+    return this._documentReceivedRepository.getById(id);
   }
 
   create<T>(data: T) {
