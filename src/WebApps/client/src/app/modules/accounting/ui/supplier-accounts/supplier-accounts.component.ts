@@ -21,17 +21,18 @@ import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 
 @Component({
-    selector: 'app-supplier-accounts',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent,
-        SupplierSearchComponent,
-    ],
-    templateUrl: './supplier-accounts.component.html',
-    styles: ``
+  selector: 'app-supplier-accounts',
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    SupplierSearchComponent,
+  ],
+  templateUrl: './supplier-accounts.component.html',
+  styles: ``,
 })
 export class SupplierAccountsComponent {
   http = inject(HttpClient);
@@ -62,9 +63,8 @@ export class SupplierAccountsComponent {
     this.initialed();
   }
 
-  onSupplierSelected<T extends { data: any }>($event: T) {
-    const { data } = $event;
-    this.dataSearch.supplierName = data.razonSocial;
+  onSupplierSelected(data: SupplierSearch) {
+    this.dataSearch.supplierName = data.razonSocialComprador;
     this.dataSearch.idProveedor = data.idProveedor;
   }
 
