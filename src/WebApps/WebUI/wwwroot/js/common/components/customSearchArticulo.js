@@ -287,18 +287,11 @@ function inputSearchArticuloCtrl($scope, $injector, $timeout) {
 
 
     //BUscador por codigo 
-    function getDataArticuloByEnterCode(isAutocomplete) {
+    function getDataArticuloByEnterCode($event) {
         try {
 
-            if (isAutocomplete && $scope.productsFound.length > 0) {
-
-                let dataArticulo = $scope.productsFound[1];
-                if (dataArticulo) {
-                    $scope.searchText = null;
-                    validarGetDataArticulo(dataArticulo.idArticulo)
-                };
-                return
-            };
+            console.log($event)
+         
 
             // if (!$scope.searchText) {
             //     $scope.searchText = null;
@@ -373,7 +366,7 @@ app.component("customSearchArticuloBarcode", {
     template: `<input  type="text" autocomplete="off"
                        class="form-control border-select" 
                        ng-model="searchText"  
-                       ng-enter="getDataArticuloByEnterCode()"     
+                       ng-enter="getDataArticuloByEnterCode($event)"     
                        ng-keyup="onKeyUpInputBarcode($event)"
                        id="inputBarcode"
                        placeholder="Ej: COMP1"> 

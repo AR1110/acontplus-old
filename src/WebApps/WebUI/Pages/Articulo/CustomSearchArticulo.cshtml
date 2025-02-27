@@ -79,13 +79,14 @@
 <div class="mb-1" id="">
     <md-autocomplete id="mainContentMdAutocomplete" input-focus md-input-id="custom-template-md-autocomplete-articulo"
         uib-tooltip="Buscar Artículo por descripción o Código " tooltip-placement="top" tooltip-trigger="'mouseenter'"
-        ng-enter="getDataArticuloByEnterCode(true);" md-no-cache="false" md-selected-item="selectedItem"
+        ng-enter="getDataArticuloByEnterCode($event);" md-no-cache="false" md-selected-item="selectedItem"
         md-search-text="searchText" md-selected-item-change="selectArticleSearch(item)"
         md-items="item in searchTextChange(searchText)" md-item-text="item.descripcion"
         ng-focus="focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" md-escape-options="clear"
         input-aria-label="Buscador Articulo" placeholder="{{placeholder}}"
         md-menu-class="autocomplete-standard-template" md-menu-container-class="standard-container" md-mode="standard"
-        md-clear-button="false">
+        md-clear-button="false" 
+        >
         <md-item-template>
             <div class="table-responsive">
                 <table class="rtable">
