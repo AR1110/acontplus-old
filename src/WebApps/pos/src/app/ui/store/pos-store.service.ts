@@ -23,6 +23,7 @@ type PosStoreState = {
   promotionsMenu: any[];
   codeSubCategory: string;
   tarifas: any[];
+  pendingOrders: number
 };
 export const orderInitialState = () => {
   let result: Order = {
@@ -110,6 +111,7 @@ export const posStoreStateInitial = (): PosStoreState => {
     promotionsMenu: [],
     codeSubCategory: '',
     tarifas: [],
+    pendingOrders: 0
   };
 };
 

@@ -40,7 +40,7 @@
 .pos-category {
   flex: 0 0 auto;
   width: var(--button-size);
-  height: var(--button-size);
+  height: 135px;
   border-radius: var(--border-radius);
   transition: all var(--transition-speed) ease;
   cursor: pointer;
@@ -66,7 +66,8 @@
     border-radius: 50%; // Make image container round
     overflow: hidden; // Ensure image stays within round container
     border: 2px solid transparent;
-    transition: border-color 0.3sease;
+    transition: border-color 0.3s ease;
+
 
     img {
       max-width: 100%;
@@ -77,14 +78,16 @@
   }
 
   &__label {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-align: center;
     transition: color var(--transition-speed) ease;
     width: 100%; // Ensure label takes full width
     overflow: hidden; // Hide overflow
     text-overflow: ellipsis; // Add ellipsis for overflowing text
-    white-space: nowrap; // Prevent wrapping to new line
+    word-break: break-word; /* Rompe palabras largas */
+    overflow-wrap: break-word; /* Asegura el ajuste dentro del contenedor */
+    white-space: normal; /* Permite saltos de línea */
   }
 
   &:hover:not(.pos-category--disabled) {
@@ -124,7 +127,8 @@
     }
 
     &__label {
-      font-size: 12px;
+      font-size: 0.6rem;
+      font-weight: 600;
     }
   }
 }

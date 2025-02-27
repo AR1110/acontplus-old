@@ -241,6 +241,7 @@ export class PosSaleComponent {
             tarifas: dataForm.tarifas,
             tarifaId,
             oldTarifaId: tarifaId,
+            pendingOrders: dataForm.pendingOrders,
           };
         });
 

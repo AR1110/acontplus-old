@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 import { DialogService } from '@/domain/services/dialog.service';
 import { InfoCompanyComponent } from '../info-company/info-company.component';
+import {truncateText} from "@domain/utils/utils";
 
 @Component({
   selector: 'app-nav-user-info-toggle',
@@ -63,22 +64,17 @@ export class NavUserInfoToggleComponent {
   private setText(): void {
     const maxLength = this.isMobile ? 15 : 250; // Ajusta el tamaño máximo del texto para móvil o escritorio
     this.entidadName.set(
-      this.truncateText(this.mainStore.state().entidadName, maxLength)
+      truncateText(this.mainStore.state().entidadName, maxLength)
     );
     this.estabName.set(
-      this.truncateText(
+      truncateText(
         this.mainStore.state().dataEstab?.nombreComercial,
         maxLength
       )
     );
   }
 
-  private truncateText(text: string | undefined, maxLength: number): string {
-    if (!text) return '';
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
-      : text;
-  }
+
 
   showInfoCompany() {
     this.dialogSvc.open(InfoCompanyComponent, {

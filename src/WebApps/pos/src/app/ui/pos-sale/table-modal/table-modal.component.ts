@@ -16,10 +16,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
-import { ToastrService } from 'ngx-toastr';
 import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { CustomContainerDialogComponent } from '@/ui/components/custom-container-dialog/custom-container-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {ToasterService} from "@domain/services/toaster.service";
 
 @Component({
   selector: 'app-table-modal',
@@ -51,7 +51,7 @@ export class TableModalComponent {
   private mainStore = inject(MainStoreService);
   private posStore = inject(PosStoreService);
   private tableSvc = inject(TableService);
-  private tS = inject(ToastrService);
+  private tS = inject(ToasterService);
 
   selectedOption = computed(() => this.posStore.state().order.tableId);
 
@@ -106,11 +106,17 @@ export class TableModalComponent {
     if (value.assigned) {
       this.tableSvc.unassign(value.id).subscribe((res) => {
         if (res.code === '0') {
-          this.tS.warning(res.message);
+          this.tS.toastr({
+            type: 'warning',
+            message: res.message
+          })
         }
         if (res.code === '1') {
           playBeepSound();
-          this.tS.success(res.message);
+          this.tS.toastr({
+            type: 'success',
+            message: res.message
+          })
           this.getDataForm();
         }
       });

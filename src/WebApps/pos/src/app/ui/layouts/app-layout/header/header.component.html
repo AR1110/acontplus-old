@@ -15,6 +15,7 @@
       aria-label="pedidos"
       appActionOrderDialog
       matTooltip="Pedidos Recientes"
+      [matBadge]="posStoreSvc.state().pendingOrders"
     >
       <mat-icon>av_timer</mat-icon>
     </button>

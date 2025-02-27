@@ -1,4 +1,4 @@
-import { imgDefault } from './../../../domain/utils/utils';
+import {imgDefault, truncateText} from './../../../domain/utils/utils';
 import { NgClass } from '@angular/common';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
@@ -21,6 +21,7 @@ export class CategoriesComponent implements OnInit {
   @Output() categorySelected = new EventEmitter<any>();
   imgDefault = imgDefault;
 
+  truncateText = truncateText;
   constructor() {}
 
   ngOnInit(): void {

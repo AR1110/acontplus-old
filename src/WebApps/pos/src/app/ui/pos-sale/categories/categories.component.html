@@ -16,7 +16,9 @@
           [alt]="category.description + ' Icon'"
         />
       </div>
-      <div class="pos-category__label">{{ category.descripcion }}</div>
+      <div class="pos-category__label">
+        {{truncateText(category.descripcion, 20)}}
+      </div>
     </div>
 
     }
