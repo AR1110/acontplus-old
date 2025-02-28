@@ -4,7 +4,7 @@ import {
   inject,
   model,
   QueryList,
-  signal,
+  signal, TemplateRef,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -21,7 +21,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
@@ -40,31 +39,49 @@ import {ProductList} from "@inventory/domain/models/product.model";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {ActionAperturaCajaDirective} from "@shared/directives/permission/action-apertura-caja.directive";
+import {ActionDeleteDirective} from "@shared/directives/permission/action-delete.directive";
+import {ActionEditDirective} from "@shared/directives/permission/action-edit.directive";
+import {ActionMovCajaDirective} from "@shared/directives/permission/action-mov-caja.directive";
+import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
+import {MatSlideToggle} from "@angular/material/slide-toggle";
+import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
+import {DialogService} from "@core/services/dialog.service";
 
 
 
 @Component({
     selector: 'inventory-product',
-    imports: [
-        FormsModule,
-      MatFormFieldModule,
-      MatInputModule,
-        BreadcrumbComponent,
-        PrimaryStatusPipe,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatTableModule,
-        MatMenuModule,
-        MatTooltipModule,
-        MatCheckboxModule,
-      MatSelectModule,
-        CustomTableContainerComponent,
-        SubCategoryGroupComponent,
-        ProductAddEditDirective,
-        CompraHabitualHistorialDirective,
-        ProductKardexModalDirective,
-    ],
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    CustomTableContainerComponent,
+    SubCategoryGroupComponent,
+    MatDynamicTableComponent,
+    AddEditProductDirective,
+
+    ProductAddEditDirective,
+    CompraHabitualHistorialDirective,
+    ProductKardexModalDirective,
+    ActionAperturaCajaDirective,
+    ActionDeleteDirective,
+    ActionEditDirective,
+    ActionMovCajaDirective,
+    MatSlideToggle,
+  ],
     templateUrl: './product.component.html'
 })
 export class ProductComponent {
@@ -73,17 +90,7 @@ export class ProductComponent {
   @ViewChildren('selectElement') selectElements!: QueryList<
     ElementRef<HTMLSelectElement>
   >;
-  visibleColumns: string[] = [
-    'index',
-    'op',
-    's3ObjectUrl',
-    'codigo',
-    'descripcion',
-    'medida',
-    'subFamilia',
-    'stock',
-    'estado',
-  ];
+  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
   pagination = signal(new MatPagination());
   dataSource = new MatTableDataSource<ProductList>();
   isLoadingResults = false;
@@ -111,8 +118,24 @@ export class ProductComponent {
   private _productUseCase = inject(ProductUseCase)
   private stockSvc = inject(StockService);
   private tS = inject(ToasterService);
-  private modalSvc = inject(ModalService);
+  private $dialogSvc = inject(DialogService);
   private wasEmptyBefore: boolean = false; // Indica si alguna vez el campo estuvo vacío
+
+  columnsDefs: ColumnDefinition[] = [
+
+    { key: 'index', label: '#', type: 'string' },
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 's3ObjectUrl', label: 'Imagen', type: 'image' },
+    { key: 'codigo', label: 'Código', type: 'string' },
+    { key: 'descripcion', label: 'Descripción', type: 'string' },
+    { key: 'subFamilia', label: 'SubFamilia', type: 'string' },
+    { key: 'medida', label: 'Medida', type: 'string' },
+    { key: 'stock', label: 'Stock', type: 'string' },
+    { key: 'status', label: 'Estado', type: 'template' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
     key: K,
@@ -150,6 +173,16 @@ export class ProductComponent {
           console.error('Error load data form and products:', err);
         },
       });
+  }
+
+  ngAfterViewInit(): void {
+    // Asignar el template después de que la vista se haya inicializado
+    this.columnsDefs.forEach((col) => {
+      if (col.type === 'template') {
+        col.templateOutlet = this.statusTemplate;
+      }
+    });
+
   }
 
   onSearch(event: Event): void {
@@ -243,13 +276,12 @@ export class ProductComponent {
   }
 
   onPhotoModal(data: ProductList) {
-    let modalRef = this.modalSvc.open(ProductPhotoComponent, {
+    let modalRef = this.$dialogSvc.open(ProductPhotoComponent, {
       size: 'lg',
+      data
     });
 
-    modalRef.componentInstance.params = data;
-
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object' && result.isRefresh) {
         this.refresh();
       }
@@ -343,4 +375,5 @@ export class ProductComponent {
       this.refresh();
     }
   };
+  protected readonly statusTab = MECHANICAL_STATUS;
 }

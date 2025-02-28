@@ -10,26 +10,37 @@ import { UploadImageComponent } from "@shared/components/upload-image/upload-ima
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 import { NgxFileDropEntry } from "ngx-file-drop";
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatButton} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
-    selector: 'app-sub-category-modal',
-    imports: [
-        FormsModule,
-        UploadImageComponent,
-        ToUpperCaseDirective
-    ],
-    templateUrl: './sub-category-modal.component.html'
+    selector: 'app-sub-category-dialog',
+  imports: [
+    FormsModule,
+    MatFormFieldModule, MatSelectModule, MatInputModule,
+    MatCustomDialogComponent,
+    UploadImageComponent,
+    ToUpperCaseDirective, MatButton,
+    MatIconModule
+  ],
+    templateUrl: './sub-category-dialog.component.html'
 })
 
-export class SubCategoryModalComponent {
-  private activeModal = inject(NgbActiveModal);
+export class SubCategoryDialogComponent {
+  readonly dialogRef = inject(MatDialogRef<SubCategoryDialogComponent>);
+  readonly params = inject<any>(MAT_DIALOG_DATA);
+
   private _productUseCase = inject(ProductUseCase)
 
   private subCategorySvc = inject(SubCategoryService)
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService)
   private tS = inject(ToasterService)
 
-  params = input<any>({})
 
   titleModal = 'Nueva SubCategoria';
   categorias: any[] = []
@@ -54,7 +65,7 @@ export class SubCategoryModalComponent {
   }
 
   private esEditar() {
-    return this.params().idSubFamilia > 0
+    return this.params.idSubFamilia > 0
   }
 
   private getDataForm() {
@@ -65,10 +76,10 @@ export class SubCategoryModalComponent {
   ngOnInit(): void {
     this.getDataForm()
 
-    if (typeof this.params() === 'object' && this.esEditar()) {
+    if (typeof this.params === 'object' && this.esEditar()) {
       this.titleModal = 'Editar SubCategoria';
-      this.data = structuredClone(this.params())
-      this.imageUrl.set(this.params().s3ObjectUrl || imgDefault())
+      this.data = structuredClone(this.params)
+      this.imageUrl.set(this.params.s3ObjectUrl || imgDefault())
     }
   }
 
@@ -99,7 +110,7 @@ export class SubCategoryModalComponent {
         type: 'success',
         message: response.message
       })
-      this.activeModal.close({ isRefresh: true })
+      this.dialogRef.close({ isRefresh: true })
     }
   }
   save() {
@@ -147,7 +158,7 @@ export class SubCategoryModalComponent {
         estado: this.data.estado,
         secuencial: this.data.ultimoSecuencial || 0
       }
-      let id = this.params().idSubFamilia as number
+      let id = this.params.idSubFamilia as number
       if (id > 0) {
         this.subCategorySvc.put(id, data).subscribe(this.successResponse)
 
@@ -187,7 +198,7 @@ export class SubCategoryModalComponent {
     }
     if (this.esEditar() && this.data.subcategoryPhotoId == 0 && this.selectedFile()) {
 
-      this.subCategoryPhotoSvc.post(this.params().idSubFamilia, this.selectedFile()).subscribe(response => {
+      this.subCategoryPhotoSvc.post(this.params.idSubFamilia, this.selectedFile()).subscribe(response => {
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -206,7 +217,7 @@ export class SubCategoryModalComponent {
   }
 
   closeModal() {
-    this.activeModal.close({
+    this.dialogRef.close({
       isRefresh: this.isRefresh()
     });
   }

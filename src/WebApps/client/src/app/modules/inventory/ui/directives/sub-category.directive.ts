@@ -1,6 +1,6 @@
-import { Directive, HostListener, inject, input, Input, output } from "@angular/core";
-import { ModalService } from "@core/services/modal.service";
-import { SubCategoryModalComponent } from "@inventory/ui/sub-category/components/sub-category-modal/sub-category-modal.component";
+import { Directive, HostListener, inject, input,  output } from "@angular/core";
+import { SubCategoryDialogComponent } from "@inventory/ui/sub-category/components/sub-category-dialog/sub-category-dialog.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appSubCategoryModal]',
@@ -9,15 +9,16 @@ import { SubCategoryModalComponent } from "@inventory/ui/sub-category/components
 export class SubCategoryModalDirective {
    onResult = output<any>();
     params = input({});
+    private dialogSvc = inject(DialogService);
 
   @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.open(SubCategoryModalComponent);
-    modalRef.componentInstance.params = this.params || {};
-    modalRef.result.then((result: any) => {
-      if (typeof result === 'object' && result.isRefresh) {
+    const modalRef = this.dialogSvc.open(SubCategoryDialogComponent, {
+      data: this.params() || {}
+    });
+    modalRef.subscribe((result: any) => {
+      if (result && typeof result === 'object' && result.isRefresh) {
         this.onResult.emit(result);
       }
     })
   }
-  constructor(private modalSvc: ModalService) { }
 }
