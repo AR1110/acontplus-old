@@ -25,27 +25,27 @@ BEGIN
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     -->Filters
-    DECLARE @idCliente INT 
-           ,@codEstab VARCHAR(50) 
-           ,@idCuentaPorCobrar INT 
-           ,@ckFecha BIT 
-           ,@fechaInicio DATETIME2 
-           ,@fechaFin DATETIME2 
-           ,@codDoc VARCHAR(10) 
-           ,@codEstado VARCHAR(5)
-           ,@ckCxcVencida BIT 
-           ,@convertToDoc BIT
-           ,@secuencial INT
+    DECLARE @idCliente INT ,@idCuentaPorCobrar INT
 
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
+    --> Json
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT )
 	
     --> Get 
     IF @tipo = 1
         BEGIN
-            
+            DECLARE @codEstab VARCHAR(50) 
+                   ,@ckFecha BIT
+                   ,@fechaInicio DATETIME2 
+                   ,@fechaFin DATETIME2
+                   ,@codDoc VARCHAR(10)
+                   ,@codEstado VARCHAR(5)
+                   ,@ckCxcVencida BIT
+                   ,@convertToDoc BIT
+                   ,@secuencial INT
+
             SET @tableNames = 'cuentasPorCobrar'
 
             SELECT @idCliente         = idCliente  
@@ -112,7 +112,7 @@ BEGIN
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
                               ,codEstado
-                              ,1                                                               as tipo
+                              ,tiempoCredito                                                   as tipo
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
 
@@ -293,19 +293,21 @@ BEGIN
 
             SELECT en.idEmpresa
                   ,cu.BusinessName as nombreComercial
-            FROM Administrador.Empresa en WITH (NOLOCK)
+            FROM Administrador.Empresa   en WITH (NOLOCK)
             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = en.CustomerId
             WHERE en.idEntidad = @idEntidad
               AND en.estado = 1
             
-			SELECT c.idCiudad
-                ,ciudad = c.descripcion
-                ,c.codigo, c.estado
-                ,c.idProvincia
-                ,provincia = pr.descripcion 
-            FROM dbo.Ciudad  c WITH (NOLOCK)																							         
-                INNER JOIN dbo.Provincia pr WITH (NOLOCK) ON pr.idProvincia = c.idProvincia
-            WHERE c.estado = CAST(1 AS bit)
+			SELECT ci.idCiudad
+                  ,ci.descripcion as ciudad
+                  ,ci.codigo
+                  ,ci.estado
+                  ,ci.idProvincia
+                  ,pr.descripcion as provincia
+            FROM dbo.Ciudad          ci WITH (NOLOCK)																							         
+            INNER JOIN dbo.Provincia pr WITH (NOLOCK) ON pr.idProvincia = ci.idProvincia
+            WHERE ci.estado = 1
+
             RETURN 
         END
 
