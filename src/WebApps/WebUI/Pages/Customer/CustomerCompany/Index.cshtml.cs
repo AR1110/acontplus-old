@@ -4,6 +4,6 @@ namespace WebUI.Pages.Customer.CustomerCompany
 {
     public class Index : PageModel
     {
-        
+
     }
 }

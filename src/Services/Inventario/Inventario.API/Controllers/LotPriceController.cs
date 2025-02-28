@@ -1,16 +1,13 @@
-﻿using Common.AppSettings;
-using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class LotPriceController(ILotPriceService lotPriceService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<LegacyApiResponse>> Get(string json)
+    public async Task<ActionResult<ApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await lotPriceService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -23,7 +20,7 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         var response = await lotPriceService.UpdateAsync(parameters);

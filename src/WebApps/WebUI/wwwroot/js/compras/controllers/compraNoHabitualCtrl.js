@@ -46,8 +46,8 @@
 
         $scope.recordsQuantity = [25, 50, 100]
         $scope.dataSearch = {
-            checkBoxFecha: true,
-            codEstado: "",
+            checkBoxFecha: true, 
+            idEstadoDocumento: 0,
             pageIndex: 1,
             pageSize: 25,
             maxSize: 5,
@@ -55,15 +55,7 @@
             // fechaInicio: new Date(),
             // fechaFin: new Date()
         };
-        $scope.subcategories = [];
-        $scope.estadoDocs = [{
-            estado: 'AC',
-            descripcion: 'Activo'
-        }, {
-            estado: 'A',
-            descripcion: 'Anulado',
-        }]
-
+        $scope.subcategories = []; 
 
 
         /**
@@ -207,7 +199,7 @@
                     idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
                     dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    codEstado: fS.isValidField($scope.dataSearch.codEstado),
+                    idEstadoDocumento: fS.getValidId($scope.dataSearch.idEstadoDocumento),
                     secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.secuencial),
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -239,7 +231,7 @@
                     response => {
                         const { estabs, estadosDoc, subcategories } = response;
                         $scope.establecimientos = estabs;
-                        $scope.estadosDoc = estadosDoc;
+                        $scope.estadosDoc = estadosDoc; 
                         $scope.subcategories = subcategories;
                         if ($scope.establecimientos.length > 0) {
                             let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);

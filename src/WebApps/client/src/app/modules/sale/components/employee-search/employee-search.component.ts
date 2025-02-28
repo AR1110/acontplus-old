@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { EmployeeSearchDto } from '@modules/sale/models/employee.model';
+import { EmployeeSearchDto } from '@sale/domain/models/employee.model';
 import { EmployeeService } from '@modules/sale/services/employee.service';
 import { Observable, OperatorFunction, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 import {FormsModule} from "@angular/forms";

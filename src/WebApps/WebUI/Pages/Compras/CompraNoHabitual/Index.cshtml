@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
-    
+
 }
 
 <div ng-controller="compraNoHabitualCtrl">
@@ -57,9 +57,9 @@
                     <div class="form-group">
                         <span for="proveedorFiltro">Proveedor:</span>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
-                               ng-model="proveedor.nombreProveedor" provider-search-drtv on-select="onSelectProveedor(result)"
-                               on-keyup="onKeyupProveedor()" placeholder="Ingrese C.I o Nombre Comercial"
-                               onclick="select();">
+                            ng-model="proveedor.nombreProveedor" provider-search-drtv
+                            on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteProviderTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -72,18 +72,16 @@
                     <div class="card">
                         <div class="card-body">
                             <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
-                                    aria-pressed="false" ng-click="onClickBtnMore()">
+                                aria-pressed="false" ng-click="onClickBtnMore()">
                                 <span class="text">
-                                    <i class="mdi mdi-eye" aria-hidden="true"
-                                       uib-tooltip="Más opciones"></i>
+                                    <i class="mdi mdi-eye" aria-hidden="true" uib-tooltip="Más opciones"></i>
                                 </span>
                                 <span class="text-active">
-                                    <i class="mdi mdi-eye-off" aria-hidden="true"
-                                       uib-tooltip="Ocultar opciones"></i>
+                                    <i class="mdi mdi-eye-off" aria-hidden="true" uib-tooltip="Ocultar opciones"></i>
                                 </span>
                             </button>
                             <button type="button" class="btn btn-success btn-sm" ng-click="getComprasNoHabitual()"
-                                    uib-tooltip="Recargar">
+                                uib-tooltip="Recargar">
                                 <i class="mdi mdi-refresh"></i>
                             </button>
                         </div>
@@ -95,7 +93,7 @@
                     <div class="form-gorup">
                         <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
                         <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                                class="form-control  border-select" ng-change="getComprasNoHabitual()">
+                            class="form-control  border-select" ng-change="getComprasNoHabitual()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -120,9 +118,10 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
-                        <select class="form-control border-select" ng-model="dataSearch.codEstado" ng-change="getComprasNoHabitual()">
-                            <option value="">Todos</option>
-                            <option ng-value="item.codigo" ng-repeat="item in estadoDocs">
+                        <select class="form-control border-select" ng-model="dataSearch.idEstadoDocumento"
+                            ng-change="getComprasNoHabitual()">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.idEstadoPago" ng-repeat="item in estadosDoc">
                                 {{item.descripcion}}
                             </option>
                         </select>
@@ -132,14 +131,14 @@
                     <div class="form-group">
                         <span>Nro. Documento</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.secuencial"
-                               placeholder="Ej: 23">
+                            placeholder="Ej: 23">
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
                     <div class="form-group">
-                        <span  >Subcategoría:</span>
+                        <span>Subcategoría:</span>
                         <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
-                                ng-change="getComprasNoHabitual()">
+                            ng-change="getComprasNoHabitual()">
                             <option ng-value="">Todos</option>
                             <option ng-value="item.id" ng-repeat="item in subcategories">
                                 {{item.name}}
@@ -152,7 +151,7 @@
     </div>
 
     <div class="card">
-        <div class="card-body"> 
+        <div class="card-body">
             <div class="row">
                 <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
@@ -168,7 +167,7 @@
                             placeholder="Buscar">
                     </form> *@
                 </div>
-            </div> 
+            </div>
             <md-table-container style="max-height: 400px;">
                 <table resize md-table>
                     <thead fix-head md-head>
@@ -187,7 +186,7 @@
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
-                                               ng-click="$mdMenu.open($event)">
+                                        ng-click="$mdMenu.open($event)">
                                         <i class="mdi mdi-menu"></i>
                                     </md-button>
                                     <md-menu-content class="md-dense">
@@ -201,7 +200,8 @@
                                         </md-menu-item>
 
                                         <md-menu-item>
-                                            <md-button ng-disabled="!(accion.editar && item.isUpdate)" ng-click="openModalEditar(item)">
+                                            <md-button ng-disabled="!(accion.editar && item.isUpdate)"
+                                                ng-click="openModalEditar(item)">
                                                 <span md-menu-align-target>
                                                     <i class="ti-pencil"></i>
                                                     Editar
@@ -210,7 +210,8 @@
                                         </md-menu-item>
 
                                         <md-menu-item>
-                                            <md-button ng-disabled="!(accion.anular && item.isDelete)" ng-click="askToDelete(item)">
+                                            <md-button ng-disabled="!(accion.anular && item.isDelete)"
+                                                ng-click="askToDelete(item)">
                                                 <span md-menu-align-target>
                                                     <i class="ti-na"></i> Anular
                                                 </span>
@@ -223,14 +224,14 @@
                                             </md-button>
                                         </md-menu-item>
 
-                                         <md-menu-item  >
-                                            <md-button  btn-cuenta-por-pagar>
+                                        <md-menu-item>
+                                            <md-button btn-cuenta-por-pagar>
                                                 <span md-menu-align-target>
-                                                    <i class=" far fa-money-bill-alt"></i>                                                    
+                                                    <i class=" far fa-money-bill-alt"></i>
                                                     Cuenta por pagar
                                                 </span>
                                             </md-button>
-                                        </md-menu-item> 
+                                        </md-menu-item>
 
                                     </md-menu-content>
                                 </md-menu>

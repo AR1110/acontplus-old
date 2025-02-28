@@ -327,12 +327,12 @@
 
 
             const itemsMainMapper = service.detalleMapperTo(detalles);
-            const itemsDeletedMapper = service.detalleMapperTo(detallesDeleted)
+           // const itemsDeletedMapper = service.detalleMapperTo(detallesDeleted)
             const impuestos = fS.impuestoTarifaMapperTo(detalles);
 
             const mergeItems = [
                 ...itemsMainMapper,
-                ...itemsDeletedMapper
+               // ...itemsDeletedMapper
             ]
 
 
@@ -393,7 +393,8 @@
                     llevaInventario: item.llevaInventario,
                     idBodega: item.idBodega,
                     fechaEmision: fS.formatDateTimeZone(item.fechaEmision),
-                    nota: item.nota
+                    nota: item.nota,
+                    estado: item.estado
                 }
                 tempDetail.push(obj);
             }

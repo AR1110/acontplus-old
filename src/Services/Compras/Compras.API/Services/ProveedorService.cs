@@ -1,32 +1,25 @@
 ﻿namespace Compras.API.Services;
-
-public class ProveedorService : IProveedorService
+public class ProveedorService(IAdoRepository _repo) : IProveedorService
 {
-    private readonly IAdoRepository _repository;
-
-    public ProveedorService(IAdoRepository repository)
+    private const string ModuleName = "Compra.Proveedor_";
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
+        var ds = await _repo.GetDataSetAsync($"{ModuleName}Get", parameters);
+        return DataValidation.DataSetIsNull(ds)
+           ? new ApiResponse { Code = "0", Message = "Can't get data" }
+           : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync("Compra.Proveedor_Get", parameters);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
-
-        return DataConverters.DataSetToJson(ds);
-    }
-
-    public async Task<string> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Proveedor_Insert", parameters);
+        return await _repo.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -34,11 +27,11 @@ public class ProveedorService : IProveedorService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Proveedor_Update", parameters);
+        return await _repo.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Compra.Proveedor_Delete", parameters);
+        return await _repo.SpExecuteAsync<ApiResponse>($"{ModuleName}Delete", parameters);
     }
 }

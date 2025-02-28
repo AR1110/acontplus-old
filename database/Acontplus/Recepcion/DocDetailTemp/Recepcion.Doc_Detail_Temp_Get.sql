@@ -28,12 +28,6 @@ CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Get
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT =(SELECT idEntidad FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idRol)
-
-	IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
-		BEGIN
-			RETURN
-		END
 
 	SELECT  d.[idDocumento]
     ,d.[idProveedor]

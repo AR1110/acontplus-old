@@ -1,13 +1,14 @@
-﻿global using Autofac;
-global using Autofac.Extensions.DependencyInjection;
+﻿
+global using Common.Core.Data;
 global using Common.Core.Models;
-global using Common.Core.Utils;
+global using Common.Core.Validation;
 global using Common.Infrastructure.Repository.Interfaces;
+global using Common.Services.Configuration;
+global using Common.Services.Extensions;
+global using Common.Services.Middleware;
 global using Microsoft.AspNetCore.Mvc;
 global using Newtonsoft.Json;
-global using Services.Common.Extensions;
+global using Newtonsoft.Json.Serialization;
+global using Ventas.API.Extensions;
 global using Ventas.API.Interfaces;
 global using Ventas.API.Services;
-global using Services.Common.Middleware;
-global using Ventas.API.Extensions;
-global using Newtonsoft.Json.Serialization;

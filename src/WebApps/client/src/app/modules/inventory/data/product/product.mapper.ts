@@ -135,7 +135,7 @@ export class ProductMapper {
 
   static fromApiDataReport(response:ApiResponse){
 
-    const {brands, documentTypes,fees,subcategories,warehouses} = JSON.parse(response.payload as string);
+    const {brands, documentTypes,fees,subcategories,warehouses, taxes=[]} = JSON.parse(response.payload as string);
 
     let estabs = groupEstabUtil({
       bodegas: warehouses,
@@ -149,7 +149,7 @@ export class ProductMapper {
       marcas : brands,
       tarifas : fees,
       tiposDoc : documentTypes,
-
+      taxes
     }
   }
 

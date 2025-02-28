@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenLocalStorageRepository implements TokenRepository {
   private readonly TOKEN_KEY = 'access_token';
@@ -22,14 +22,26 @@ export class TokenLocalStorageRepository implements TokenRepository {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
+  // parseJwt(): TokenModel['decodedToken'] | null {
+  //   try {
+  //     const token = this.getToken();
+  //     if (token) {
+  //       return JSON.parse(atob(token.split('.')[1]));
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
   parseJwt(): TokenModel['decodedToken'] | null {
     try {
       const token = this.getToken();
       if (token) {
-        return JSON.parse(atob(token.split('.')[1]));
+        return jwtDecode<any>(token);
       }
       return null;
     } catch (e) {
+      console.log(e);
       return null;
     }
   }
@@ -45,7 +57,7 @@ export class TokenLocalStorageRepository implements TokenRepository {
   getUserRoleId(): number {
     const decodedToken = this.parseJwt();
     if (!decodedToken?.userRoleId) {
-      throw new Error("Not found userRoleId");
+      throw new Error('Not found userRoleId');
     }
     return decodedToken.userRoleId;
   }
@@ -61,19 +73,23 @@ export class TokenLocalStorageRepository implements TokenRepository {
     return expiration < now;
   }
 
-
   getUserData(): UserData | null {
     const jwt = this.getToken();
     if (jwt) {
       const token = jwtDecode<any>(jwt);
       return {
         email: token.email || '',
-        name: token['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || token.name,
-        userId: token['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || token.userId,
-        username: token.unique_name || ''
+        name:
+          token[
+            'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'
+          ] || token.name,
+        userId:
+          token[
+            'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+          ] || token.userId,
+        username: token.unique_name || '',
       };
     }
     return null;
   }
-
 }

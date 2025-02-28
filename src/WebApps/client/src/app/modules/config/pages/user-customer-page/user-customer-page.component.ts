@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ModalService } from '@core/services/modal.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UserCustomerRead } from '@modules/config/models/user-customer/user-customer.model';
+import { UserCustomerRead } from '@modules/config/domain/models/user-customer/user-customer.model';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';

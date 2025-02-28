@@ -1,8 +1,6 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Core.Utils;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -12,7 +10,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     public async Task<IActionResult> Get()
     {
         var response =
-            await configService.GetAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() } });
+            await configService.GetAsync(new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") } });
 
         return Ok(response);
     }
@@ -22,7 +20,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     {
         var response = await configService.AddAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -32,7 +30,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     {
         var response = await configService.UpdateAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -43,7 +41,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
         var response =
             await configService.DeleteAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetUserRoleId() }, { "id", id }
+                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
         return Ok(response);
     }

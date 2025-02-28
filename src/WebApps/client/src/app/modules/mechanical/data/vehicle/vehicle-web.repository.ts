@@ -3,9 +3,11 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import { ApiResponse } from "@core/models/api-response";
 import {VehicleRepository} from "@mechanical/domain/repositories/vehicle.repository";
+import {VehicleMapper} from "@mechanical/data/vehicle/vehicle.mapper";
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root'
@@ -14,25 +16,15 @@ export class VehicleWebRepository extends VehicleRepository{
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.VEHICLE}`
   #http = inject(HttpClient);
 
-  getAll<T>(obj: T) {
+  getAll<T>(obj: T): Observable<any[]> {
     let json = JSON.stringify({
       ...obj,
       tipo: 1
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        let vehicles = [];
-        if (response !== null && typeof response === 'object') {
-          let data = response.vehicles;
-          vehicles = data.map((item: any, index: number) => {
-            return {
-              ...item,
-              position: index + 1
-            }
-          });
-        }
-        return vehicles;
-      })
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map((response) =>   VehicleMapper.fromApiGetAll(response))
     )
   }
 
@@ -40,18 +32,10 @@ export class VehicleWebRepository extends VehicleRepository{
     let json = JSON.stringify({
       tipo: 2
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        let data = {
-          countries: [],
-          vehicleTypes: []
-        }
-        if (response !== null && typeof response === 'object') {
-          data.countries = response.countrys;
-          data.vehicleTypes = response.vehicleTypes;
-        }
-        return data;
-      })
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map((response) => VehicleMapper.fromApiDataForm(response))
     )
   }
 
@@ -60,22 +44,10 @@ export class VehicleWebRepository extends VehicleRepository{
       id,
       tipo: 3
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => {
-        let data = {
-          customer: {
-
-            businessName: null,
-            id: 0
-          },
-          vehicle: {}
-        }
-        if (response !== null && typeof response === 'object') {
-          data.customer = response.customer[0];
-          data.vehicle = response.vehicle[0]
-        }
-        return data;
-      })
+    return this.#http.get(`${this.#url}?json=${json}`, {
+      context: getNoLoader()
+    }).pipe(
+      map((response: any) => VehicleMapper.fromApiGetId(response) )
     )
   }
 

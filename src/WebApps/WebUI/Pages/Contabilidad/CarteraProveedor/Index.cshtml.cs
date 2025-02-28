@@ -4,6 +4,6 @@ namespace WebUI.Pages.Contabilidad.CarteraProveedor
 {
     public class Index : PageModel
     {
-        
+
     }
 }

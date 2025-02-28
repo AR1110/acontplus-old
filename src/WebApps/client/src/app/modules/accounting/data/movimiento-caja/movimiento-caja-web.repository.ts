@@ -5,6 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {ApiResponse } from "@core/models/api-response";
 import {MovimientoCajaRepository} from "@accounting/core/repositories/movimiento-caja.repository";
+import {getNoLoader} from "@core/interceptors/loader.interceptor";
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,9 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository{
   getAll<T>(obj: T) {
     let json = JSON.stringify({ ...obj, tipo: 1 })
 
-    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`)
+    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`, {
+      context: getNoLoader()
+    })
       .pipe(
         map(response => {
             if (response.code === "1") {

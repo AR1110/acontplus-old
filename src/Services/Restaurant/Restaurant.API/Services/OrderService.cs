@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository.Interfaces;
-using Restaurant.API.Data;
+﻿using Common.Infrastructure.Repository.Interfaces;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services;
@@ -43,12 +40,12 @@ public class OrderService(
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var order = await context.Orders.FindAsync(id);
-        if (order == null) { return new ApiResponse {Code = "0", Message = "Order not found"}; }
+        if (order == null) { return new ApiResponse { Code = "0", Message = "Order not found" }; }
 
         order.Enabled = false;
         context.Update(order);
         await context.SaveChangesAsync();
-        return new ApiResponse {Code = "1", Message = "Eliminado exitosamente!"};
+        return new ApiResponse { Code = "1", Message = "Eliminado exitosamente!" };
     }
 
     public async Task<ApiResponse> PrintAsync(Dictionary<string, object> parameters)

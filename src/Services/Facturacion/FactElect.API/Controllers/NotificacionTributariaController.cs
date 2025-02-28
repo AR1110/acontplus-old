@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace FactElect.API.Controllers;
+﻿namespace FactElect.API.Controllers;
 
 public class NotificacionTributariaController(INotificacionTributariaService notificacionTributariaService)
     : BaseApiController
@@ -17,7 +15,7 @@ public class NotificacionTributariaController(INotificacionTributariaService not
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(data.Data) }
         };
         return Ok(await notificacionTributariaService.AddAsync(parameters));
     }

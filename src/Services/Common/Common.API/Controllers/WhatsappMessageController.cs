@@ -1,7 +1,4 @@
-﻿using Common.API.Services;
-using Common.AppSettings.Extensions;
-
-namespace Common.API.Controllers;
+﻿namespace Common.API.Controllers;
 
 public class WhatsappMessageController(IWhatsappMessageService whatsappMessageService) : BaseApiController
 {
@@ -10,7 +7,7 @@ public class WhatsappMessageController(IWhatsappMessageService whatsappMessageSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", DataConverters.SerializeDictionary(data.Data) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };

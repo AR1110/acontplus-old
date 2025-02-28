@@ -13,11 +13,11 @@
             {
                 var userAgentMain = JsonConvert.DeserializeObject<UserAgentContainer>(userAgentJson);
                 var userAgent = JsonConvert.DeserializeObject<UserAgentSummary>(userAgentMain.userAgent);
-                if (userAgent == null || string.IsNullOrEmpty(userAgent.browser.name) || 
-                    string.IsNullOrEmpty(userAgent.browser.version) || 
-                    string.IsNullOrEmpty(userAgent.os.name) || 
+                if (userAgent == null || string.IsNullOrEmpty(userAgent.browser.name) ||
+                    string.IsNullOrEmpty(userAgent.browser.version) ||
+                    string.IsNullOrEmpty(userAgent.os.name) ||
                     string.IsNullOrEmpty(userAgent.os.version))
-                { 
+                {
                     return new UserAgentContainer { userAgent = "Incomplete UserAgent data", ipAddress = "" };
                 }
                 var summarizedUserAgent = new
@@ -26,7 +26,7 @@
                     browser = $"{userAgent.browser.name} {userAgent.browser.version}",
                     os = $"{userAgent.os.name} {userAgent.os.version}"
                 };
-                 
+
                 return new UserAgentContainer
                 {
                     userAgent = JsonConvert.SerializeObject(summarizedUserAgent),

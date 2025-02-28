@@ -4,23 +4,18 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
-    <SpaRoot>..\..\..\WebApps\pos</SpaRoot>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\WebApps\pos\pos.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.S3Application" />
-    <PackageReference Include="Acontplus.Services.Common" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Acontplus.Common.Services" />
+    
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -31,9 +26,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Scrutor" />
   </ItemGroup>
   <ItemGroup>
@@ -42,16 +36,4 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
-  <Target Name="PublishRestaurantDev" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Development'">
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run development" />
-  </Target>
-  <Target Name="PublishRestaurantStaging" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Staging'">
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run staging" />
-  </Target>
-  <Target Name="PublishRestaurantPrd" BeforeTargets="PrepareForBuild" AfterTargets="ComputeFilesToPublish" Condition="'$(EnvironmentName)' == 'Production'">
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run prod" />
-  </Target>
 </Project>

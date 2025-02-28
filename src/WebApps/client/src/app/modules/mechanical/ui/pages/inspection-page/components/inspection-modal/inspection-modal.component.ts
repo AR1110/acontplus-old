@@ -3,7 +3,6 @@ import { Component, inject, Input } from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
-import { InspectionWebRepository } from '@mechanical/data/inspection/inspection-web.repository';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -13,8 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
-import { isApiResponse } from '@core/models/api-response';
 import { MatChipsModule } from '@angular/material/chips';
+import {InspectionUseCase} from "@mechanical/domain/use-cases/inspection.use-case";
 
 type VehiclePartNode = VehiclePart & {
   status: number
@@ -44,7 +43,7 @@ export class InspectionModalComponent {
     inspectionId: 0
   }
   modal = inject(NgbActiveModal)
-  inspectionSvc = inject(InspectionWebRepository);
+  _inspectionUseCase = inject(InspectionUseCase);
   tS = inject(ToasterService)
 
   titleModal = 'Registro Inspección'
@@ -74,10 +73,7 @@ export class InspectionModalComponent {
     fechaEmisionDocCreado: null as null | Date
   }
 
-  successResponse = {
-    next: (response: any) => {
-
-      if (isApiResponse(response)) {
+  successResponse = (response: any) => {
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -92,16 +88,13 @@ export class InspectionModalComponent {
 
           this.modal.close(response)
         }
-      }
-    }
   }
 
   ngOnInit(): void {
     try {
 
 
-      this.inspectionSvc.getDataForm(this.params.supportId).subscribe({
-        next: (response) => {
+      this._inspectionUseCase.getDataForm(this.params.supportId).subscribe(  (response) => {
 
 
           this.support = response.support;
@@ -112,24 +105,21 @@ export class InspectionModalComponent {
           if (this.params.inspectionId > 0) {
             this.btnText = 'Actualizar';
 
-            this.inspectionSvc.getId(this.params.inspectionId).subscribe({
-              next: (response) => {
+            this._inspectionUseCase.getId(this.params.inspectionId).subscribe(  (response) => {
 
                 this.data = response.data;
                 let vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
-                  let nodes = response.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[];
+                  let nodes = response.vehicleParts.filter((vp:any) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[];
                   let isCollapsed = nodes.some(n => [1,2,3].includes(n.status))
-                  console.log(isCollapsed, `${item.description}`)
+
                   return {
                     ...item,
                     nodes,
                     isCollapsed: !isCollapsed
                   }
                 })
-                console.log(vehiclePartTypeNodes)
                 this.vehiclePartTypeNodes = vehiclePartTypeNodes;
-              },
-            })
+              } )
           } else {
             this.vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
               let nodes = this.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
@@ -141,14 +131,8 @@ export class InspectionModalComponent {
             })
           }
 
-        },
-        error(err) {
-          ;
-          console.log(err)
-        },
-      })
+        } )
     } catch (error) {
-      ;
       console.log(error)
     }
   }
@@ -208,7 +192,6 @@ export class InspectionModalComponent {
       return
     }
 
-    console.log(this.vehiclePartTypeNodes)
     return true;
   }
   private mapVehiclePart(item: VehiclePartNode) {
@@ -265,11 +248,11 @@ export class InspectionModalComponent {
       }
       if (this.params.inspectionId > 0) {
 
-        this.inspectionSvc.put(this.params.inspectionId, data).subscribe(this.successResponse)
+        this._inspectionUseCase.put(this.params.inspectionId, data).subscribe(this.successResponse)
       }
       if (!(this.params.inspectionId > 0)) {
 
-        this.inspectionSvc.post(data).subscribe(this.successResponse)
+        this._inspectionUseCase.post(data).subscribe(this.successResponse)
       }
     } catch (error) {
 

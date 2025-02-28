@@ -1,19 +1,18 @@
-﻿global using Autofac;
-global using Autofac.Extensions.DependencyInjection;
-global using AutoMapper;
+﻿global using AutoMapper;
+global using Common.Core.Data;
 global using Common.Core.Entities;
 global using Common.Core.Models;
-global using Common.Core.Utils;
+global using Common.Core.Validation;
 global using Common.Infrastructure.Data.Configurations;
 global using Common.Infrastructure.Repository.Interfaces;
-global using Services.Common.Middleware;
+global using Common.Services.Configuration;
+global using Common.Services.Extensions;
+global using Common.Services.Middleware;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Design;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
-global using Services.Common.Extensions;
-
 global using TechnicalSupport.API.Data;
 global using TechnicalSupport.API.Dtos;
 global using TechnicalSupport.API.Entities;

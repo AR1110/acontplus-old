@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UserCustomerCustomerRoleEstab } from "@modules/config/models/user-customer/user-customer-role-estab.model";
+import { UserCustomerCustomerRoleEstab } from "@modules/config/domain/models/user-customer/user-customer-role-estab.model";
 import { UserCustomerRoleEstabService } from "@modules/config/services/user-customer/user-customer-role-estab.service";
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ToasterService } from "@core/services/toaster.service";

@@ -36,7 +36,8 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
             var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
             var response = new FileModel
             {
-                Content = Encoding.UTF8.GetBytes(xmlSri), FileName = dt.Rows[0].Field<string>("filename") + ".xml"
+                Content = Encoding.UTF8.GetBytes(xmlSri),
+                FileName = dt.Rows[0].Field<string>("filename") + ".xml"
             };
             return response;
         }
@@ -46,7 +47,7 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        var result = await adoRepository.OnlyExecuteAsync("FactElect.Doc_Elect_Update", parameters);
+        var result = await adoRepository.ExecuteNonQueryAsync("FactElect.Doc_Elect_Update", parameters);
         return result > 0
             ? new ApiResponse { Code = "1", Message = "Update successful" }
             : new ApiResponse { Code = "0", Message = "Update failed" };

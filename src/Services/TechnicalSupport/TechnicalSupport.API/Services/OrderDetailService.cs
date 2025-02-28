@@ -27,7 +27,8 @@ public class OrderDetailService : IOrderDetailService
         {
             return new ApiResponse
             {
-                Code = "0", Message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
+                Code = "0",
+                Message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
             };
         }
 

@@ -1,22 +1,15 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
-using GatewayAcontplus.API.Data;
-using GatewayAcontplus.API.Delegates;
+﻿using System.Runtime.InteropServices;
 //using GatewayAcontplus.API.Middleware;
 //using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Services.Common.Extensions;
-using Services.Common.Middleware;
-using System.Runtime.InteropServices;
-
+using Common.Services.Configuration;
+using Common.Services.Extensions;
+using Common.Services.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +20,10 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
 // Secure Environment Variable Retrieval (consider secret management for sensitive data)
 var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")
@@ -43,15 +38,17 @@ var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
-{
-    // Register the ReportHeaderDelegatingHandler
-    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
-        .InstancePerLifetimeScope();
+//builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
+//{
+//    // Register the ReportHeaderDelegatingHandler
+//    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
+//        .InstancePerLifetimeScope();
 
-    // Register any other dependencies here
-});
-builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
+//    // Register any other dependencies here
+//});
+//builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
+
+builder.Services.AddOcelot();
 
 // Identity Services (adapt to your specific authentication mechanism)
 builder.Services.AddIdentityService(builder.Configuration);

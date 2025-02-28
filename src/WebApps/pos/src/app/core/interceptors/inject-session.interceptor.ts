@@ -24,6 +24,7 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
       url,
       setHeaders: {
         Authorization: 'Bearer ' + authToken,
+        'X-Client-Id': 'acontplus-restaurant',
       },
     });
   } else {
@@ -32,6 +33,7 @@ export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
       url: req.url,
       setHeaders: {
         Authorization: 'Bearer ' + authToken,
+        'X-Client-Id': 'acontplus-restaurant',
       },
     });
   }

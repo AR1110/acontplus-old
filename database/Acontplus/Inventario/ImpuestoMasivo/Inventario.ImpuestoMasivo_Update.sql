@@ -29,7 +29,7 @@ BEGIN
 	DECLARE @idUsuario INT, @idEntidad INT
 
     --> Dato json
-    DECLARE @taxIdFrom INT, @taxIdTo INT, @decimal INT 
+    DECLARE @taxIdFrom INT, @taxIdTo INT, @decimal INT, @subCategoryId INT
 	       
     DECLARE @tbImpuesto AS TABLE 
     (
@@ -40,6 +40,7 @@ BEGIN
        ,[Action] VARCHAR(150) NOT NULL DEFAULT 'Update'
        ,CreateAt DATETIME2 NOT NULL DEFAULT GETDATE()
        ,Obs VARCHAR(200) NOT NULL
+       ,subCategoryId INT NULL
     )
 
     
@@ -53,25 +54,27 @@ BEGIN
 
         --> Data Json
         INSERT INTO @tbImpuesto
-              (taxIdFrom,taxIdTo,Quantity,Obs)
-        SELECT taxIdFrom,taxIdTo,quantity,obs 
+              (taxIdFrom,taxIdTo,Quantity,Obs, subCategoryId)
+        SELECT taxIdFrom,taxIdTo,quantity,obs, subCategoryId
         FROM OPENJSON(@json) WITH 
         (
              taxIdFrom INT
             ,taxIdTo   INT
             ,quantity  INT
             ,obs       VARCHAR(200)
-        )
+            ,subCategoryId INT
+        ) 
 
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @tbImpuesto) = 0
             BEGIN
+              --  SELECT  '0'code,'Error en la informacion de json'[message]
                 SELECT [Common].[ufnSpResponse]('1','Error en la informacion de json', DEFAULT)
                 RETURN
             END 
 
         --> recuperar informacion variables
-        SELECT TOP 1 @taxIdFrom = taxIdFrom, @taxIdTo = taxIdTo FROM @tbImpuesto
+        SELECT TOP 1 @taxIdFrom = taxIdFrom, @taxIdTo = taxIdTo, @subCategoryId = subCategoryId FROM @tbImpuesto
 
 		BEGIN TRAN
 		    
@@ -80,9 +83,11 @@ BEGIN
             WHERE idEntidad = @idEntidad
               AND estado = 1 
               AND idTipoIva = @taxIdFrom
+              AND (@subCategoryId IS NULL OR idSubFamilia = @subCategoryId)
 
             UPDATE pv SET
-                   pv.precioConIva = ROUND(pv.precioVenta + ((pv.precioVenta * ti.porcentaje) / 100),@decimal)
+                 --  pv.precioConIva = ROUND(pv.precioVenta + ((pv.precioVenta * ti.porcentaje) / 100),@decimal)
+                  pv.precioVenta =    ROUND(pv.precioConIva / (1 + (ti.porcentaje / 100)), @decimal) 
             FROM dbo.ArticuloPvP    pv WITH (ROWLOCK)
             INNER JOIN dbo.Articulo ar WITH (ROWLOCK) ON ar.idArticulo = pv.idArticulo
             INNER JOIN dbo.TipoIva  ti WITH (ROWLOCK) ON ti.idTipoIva  = ar.idTipoIva
@@ -90,9 +95,11 @@ BEGIN
               AND ar.estado = 1
               AND ar.idTipoIva = @taxIdTo
               AND pv.precioVenta > 0
+               AND (@subCategoryId IS NULL OR ar.idSubFamilia = @subCategoryId)
 
             UPDATE fp SET
-                   fp.precioConIva = ROUND(fp.precioVenta + ((fp.precioVenta * ti.porcentaje) / 100),@decimal)
+             --      fp.precioConIva = ROUND(fp.precioVenta + ((fp.precioVenta * ti.porcentaje) / 100),@decimal)
+                     fp.precioVenta =    ROUND(fp.precioConIva / (1 + (ti.porcentaje / 100)), @decimal) 
             FROM dbo.ArticuloFraccionadoPvP    fp WITH (ROWLOCK)
             INNER JOIN dbo.ArticuloFraccionado af WITH (ROWLOCK) ON af.idArticuloFraccionado = fp.idArticuloFraccionado
             INNER JOIN dbo.Articulo            ar WITH (ROWLOCK) ON ar.idArticulo            = af.idArticulo
@@ -101,13 +108,15 @@ BEGIN
                AND ar.estado = 1
                AND ar.idTipoIva = @taxIdTo
                AND fp.precioVenta > 0
+                AND (@subCategoryId IS NULL OR ar.idSubFamilia = @subCategoryId)
 
             INSERT INTO Seguridad.TransactionHistory
                    (UserRoleId,Quantity,Module,[Action],Obs,CreateAt)
             SELECT @userRoleId,Quantity,Module,[Action],Obs,CreateAt FROM @tbImpuesto
 
 		COMMIT TRAN
-        SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
+      --  SELECT  '1'code,'Actualización exitosa'[message]
+         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
 	END TRY
 
 	BEGIN CATCH
@@ -119,6 +128,7 @@ BEGIN
         INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'ImpuestoMasivo/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
+       -- SELECT  '0'code,'Error en el procedimiento'[message]
         SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento', DEFAULT)
     END CATCH
 END

@@ -19,13 +19,9 @@ import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por
 @Injectable({
   providedIn: 'root',
 })
-export class CuentaPorPagarWebRepository extends CuentaPorPagarRepository{
+export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   private http = inject(HttpClient);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
-
-  constructor() {
-    super();
-  }
 
   getDataFilter() {
     let json = JSON.stringify({
@@ -156,7 +152,7 @@ export class CuentaPorPagarWebRepository extends CuentaPorPagarRepository{
       );
   }
 
-  generarCuota(obj: any) {
+  generarCuotas<T>(obj: T) {
     let params = CuentaPorPagarMapper.toApiGenerarCuota(obj);
     let json = JSON.stringify(params);
     return this.http.post<ApiResponse>(`${this.url}${json}`, null, {

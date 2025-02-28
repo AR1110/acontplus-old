@@ -4,6 +4,6 @@ namespace WebUI.Pages.Inventario.Tarifa
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

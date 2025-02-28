@@ -1,4 +1,5 @@
-﻿using Scrutor;
+﻿using Common.Logging;
+using Scrutor;
 
 namespace Compras.API.Extensions;
 
@@ -7,6 +8,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -16,12 +19,12 @@ public static class ApplicationServicesExtensions
             });
         services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-        
-        string[] nameSpaces = 
+
+        string[] nameSpaces =
         [
             "Common.Infrastructure.Repository.Implementations",
             "Compras.API.Services",
-            "FactElect.Application.Services",
+            "Common.FactElect.Services",
         ];
 
         services.Scan(scan => scan
@@ -31,7 +34,7 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-        
+
         return services;
     }
 }

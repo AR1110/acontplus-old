@@ -1,17 +1,12 @@
 ﻿namespace Inventario.API.Services;
 
-public class ArticuloFraccionadoService : IArticuloFraccionadoService
+public class ArticuloFraccionadoService(IAdoRepository _repository) : IArticuloFraccionadoService
 {
-    private readonly IAdoRepository _repository;
-
-    public ArticuloFraccionadoService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
+    private const string nameSp = "Inventario.Fraccionado_";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Inventario.Fraccionado_Get", parameters);
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters);
 
         if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
         {
@@ -26,16 +21,16 @@ public class ArticuloFraccionadoService : IArticuloFraccionadoService
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<string> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> AddAsync(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.Fraccionado_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -43,11 +38,11 @@ public class ArticuloFraccionadoService : IArticuloFraccionadoService
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.Fraccionado_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.Fraccionado_Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
     }
 }

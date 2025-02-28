@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class BodegaController(IBodegaService bodegaService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };
 
@@ -22,7 +20,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json",  SqlStringParam.Sanitize(json) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -37,7 +35,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json",  SqlStringParam.Sanitize(json) }
         };
@@ -51,7 +49,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
         };
 

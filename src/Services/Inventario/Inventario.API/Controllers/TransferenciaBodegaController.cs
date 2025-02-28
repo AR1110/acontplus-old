@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class TransferenciaBodegaController(ITransferenciaBodegaService transferenciaBodegaService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             };
         var response = await transferenciaBodegaService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -21,7 +19,7 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await transferenciaBodegaService.GetIdAsync(parameters);
         if (response == null) { return NoContent(); }
 
@@ -35,13 +33,10 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(data.Data) }
             };
 
         var response = await transferenciaBodegaService.AddAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-            ;
         return Ok(response);
     }
 
@@ -50,14 +45,11 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
         var response = await transferenciaBodegaService.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-            ;
         return Ok(response);
     }
 
@@ -65,11 +57,8 @@ public class TransferenciaBodegaController(ITransferenciaBodegaService transfere
     public async Task<IActionResult> Delete(int id)
     {
 
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await transferenciaBodegaService.DeleteAsync(parameters);
-        if (response == null) { return NoContent(); }
-
-            ;
         return Ok(response);
     }
 }

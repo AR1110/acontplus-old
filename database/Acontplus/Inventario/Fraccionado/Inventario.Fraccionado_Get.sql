@@ -25,6 +25,7 @@ BEGIN
     DECLARE @textSearch VARCHAR(300)
     DECLARE @id INT
 	DECLARE @idEntidad INT
+    DECLARE @idArticulo INT 
     DECLARE @tipo INT 
     DECLARE @sql NVARCHAR(MAX)
     DECLARE @params NVARCHAR(MAX)
@@ -41,11 +42,13 @@ BEGIN
             SELECT @pageIndex  = pageIndex 
                   ,@pageSize   = pageSize 
                   ,@textSearch = REPLACE(textSearch,SPACE(1),'%') 
+                  ,@idArticulo = idArticulo
             FROM OPENJSON(@json) WITH
             (
                 pageIndex  INT 
                ,pageSize   INT 
                ,textSearch VARCHAR(300)
+               ,idArticulo INT
             )
 
             SET @tableNames = 'articulosFraccionados'
@@ -69,12 +72,17 @@ BEGIN
             SET @params = '@idEntidad  INT
                           ,@pageIndex  INT
                           ,@pageSize   INT
-                          ,@textSearch VARCHAR(300)'
+                          ,@textSearch VARCHAR(300)
+                          ,@idArticulo INT'
+
+            IF @idArticulo>0
+                SET @sql = @sql + ' AND af.idArticulo = @idArticulo '
 
             IF @textSearch IS NOT NULL
                 BEGIN
                     SET @sql = @sql + 'AND ar.descripcion + '''' + ar.codigo LIKE ''%'' + @textSearch + ''%'' '
                 END 
+
 
             SET @sql = @sql + 'ORDER BY af.idArticuloFraccionado DESC OFFSET @pageSize * (@pageIndex - 1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
@@ -83,6 +91,7 @@ BEGIN
                                    ,@pageIndex  = @pageIndex
                                    ,@pageSize   = @pageSize
                                    ,@textSearch = @textSearch
+                                   ,@idArticulo = @idArticulo
             
             RETURN 
         END 

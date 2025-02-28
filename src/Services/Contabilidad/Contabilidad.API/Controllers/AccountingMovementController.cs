@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class AccountingMovementController(IAccountingMovementService accountingMovementService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class AccountingMovementController(IAccountingMovementService accountingM
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await accountingMovementService.GetAsync(parameters));
     }

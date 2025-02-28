@@ -28,7 +28,7 @@ BEGIN
 	DECLARE @jsonArticulo NVARCHAR(MAX) ,@jsonPvp VARCHAR(MAX) ,@idBodega INT ,@ubicacion VARCHAR(90) 
 
 	--> Artculo
-	DECLARE @idSubFamilia INT ,@llevaInventario BIT ,@codigo VARCHAR(50) ,@codigoBarra VARCHAR(50) ,@code UNIQUEIDENTIFIER = NEWID() ,@payload VARCHAR(MAX) ,@inventory VARCHAR(5)
+	DECLARE @idSubFamilia INT ,@llevaInventario BIT ,@codigo VARCHAR(100) ,@codigoBarra VARCHAR(50) ,@code UNIQUEIDENTIFIER = NEWID() ,@payload VARCHAR(MAX) ,@inventory VARCHAR(5)
 
 	--> Restaurante
 	DECLARE @siglaFamilia VARCHAR(5)
@@ -72,6 +72,13 @@ BEGIN
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
+
+
+    DECLARE @tbInventario AS TABLE (
+        idBodega INT NOT NULL 
+       ,ubicacion VARCHAR(100) NULL
+    ) 
+
 	BEGIN TRY
         --> Variables Globales
         SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -119,7 +126,7 @@ BEGIN
 				,idEtiqueta
 				,cantMinimaVentaPorMayor)
 			SELECT 
-				 CASE WHEN idSubFamilia   = 0 THEN NULL ELSE idSubFamilia   END
+				 idSubFamilia
 				,CASE WHEN idMarca        = 0 THEN NULL ELSE idMarca        END 
 				,CASE WHEN idModelo       = 0 THEN NULL ELSE idModelo       END 
 				,CASE WHEN idTipoIce      = 0 THEN NULL ELSE idTipoIce      END 
@@ -191,6 +198,13 @@ BEGIN
 
          ) as dt 
 
+         INSERT INTO @tbInventario(idBodega)
+		 SELECT idBodega
+         FROM dbo.Bodega                bo WITH (NOLOCK) 
+         INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab
+         WHERE es.idEntidad = @idEntidad 
+           AND bo.estado = 1
+
 		--> Capturar Variables
         IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
 		    BEGIN
@@ -207,7 +221,7 @@ BEGIN
               ,@siglaFamilia    = t3.siglas
         FROM @tbArticle           t1
         INNER JOIN dbo.SubFamilia t2 ON t2.idSubFamilia = t1.idSubFamilia
-        INNER JOIN dbo.Familia    t3 ON t3.idFamilia    = t2.idFamilia
+         LEFT JOIN dbo.Familia    t3 ON t3.idFamilia    = t2.idFamilia
 
 		--> Validaciones
 		IF NOT EXISTS(SELECT 1 FROM @tbArticle)
@@ -234,10 +248,20 @@ BEGIN
 				RETURN 
 			END 
 
-		IF @llevaInventario = 1 AND @inventory = 'NO'
+		IF @llevaInventario = 1  
 			BEGIN
-				SELECT '0'code,'No se ha establecido una configuración de control de inventario en la sección general de la configuración esto indica que no es posible establecer que este artículo requiere llevar un registro de inventario.' as 'message'
-				RETURN
+                IF @inventory = 'NO'
+                    BEGIN 
+                        SELECT '0'code,'No se ha establecido una configuración de control de inventario en la sección general de la configuración esto indica que no es posible establecer que este artículo requiere llevar un registro de inventario.' as 'message'
+				        RETURN
+                    END 
+
+                IF NOT EXISTS (SELECT 1 FROM @tbInventario)
+                    BEGIN 
+                        SELECT '0'code,'Un Articulo que lleve stock debe cargar la configuración de bodegas' as 'message'
+				        RETURN
+                    END
+				
 			END
 
 		BEGIN TRAN 
@@ -280,16 +304,11 @@ BEGIN
 				,CASE WHEN @ubicacion = '' THEN NULL ELSE @ubicacion END )
 			
             --> Stock Historial
-			IF @llevaInventario = 1 
-				BEGIN
-					INSERT INTO Inventario.Stock
-					       (idArticulo,idBodega,cantidad,lastUpdate,idUsuario)
-					SELECT @idArticulo,bo.idBodega,0,GETDATE(),@idUsuario 
-                    FROM dbo.Bodega bo WITH (NOLOCK) 
-                    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = bo.codEstab
-                    WHERE es.idEntidad = @idEntidad
-				END 
-            
+			INSERT INTO Inventario.Stock
+					(idArticulo,idBodega,cantidad,lastUpdate,idUsuario)
+			SELECT @idArticulo,idBodega,0,GETDATE(),@idUsuario 
+            FROM @tbInventario
+
             --> Restaurant
 			IF(@siglaFamilia IN ('RES', 'POR'))
 				BEGIN
@@ -313,7 +332,7 @@ BEGIN
 					VALUES(@idArticulo,(SELECT descripcion FROM @tbArticle),(SELECT descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 
-            UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial+1 WHERE idSubFamilia = @idSubFamilia
+            UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial + 1 WHERE idSubFamilia = @idSubFamilia
 
             SET @payload = (
 

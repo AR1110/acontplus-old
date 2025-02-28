@@ -4,6 +4,6 @@ namespace WebUI.Pages.Restaurant.Reports
 {
     public class IndexModel : PageModel
     {
-        
+
     }
 }

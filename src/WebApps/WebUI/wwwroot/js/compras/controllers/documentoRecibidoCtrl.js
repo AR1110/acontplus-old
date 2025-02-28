@@ -57,7 +57,11 @@
         $scope.claveAccesoLongitud = null;
 
         $scope.isSelectedDocRetencion = false;
-        $scope.clienteSearch = {}
+        $scope.clienteSearch = {};
+
+
+        //functions binding html 
+        $scope.openModalDocImportacion = openModalDocImportacion;
 
         $scope.onKeyupSearchFilter = () => {
             let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes));
@@ -238,6 +242,22 @@
             return isConfirmed;
         }
 
+
+        function openModalDocImportacion(){
+
+            let modalRef = modalSvc.openWithComponent({
+                component: 'docImportacion',
+                size: 'xl',
+                
+
+            })
+
+            console.log(modalRef)
+
+
+        }
+
+
         $scope.openModalImportacionAutomatica = async function () {
             try {
                 if (!(await alertEstabSelected())) return;
@@ -312,7 +332,7 @@
                         size: "xl",
                         params: {
                             comprobantesFiltered: $scope.comprobantes.filter(
-                                (item) => !item.complete,
+                                (item) => !item.complete || ['03', '06', '07'].includes(item.codDoc)
                             ),
                             establecimientosFiltered: $scope.establecimientos.filter(
                                 (estab) => estab.codEstab !== $scope.dataSearch.codEstab,
@@ -1041,6 +1061,7 @@
         let codDoc = infoTributaria.codDoc;
         $scope.infoTributaria = infoTributaria;
         $scope.infoAdicional = infoAdicional;
+        $scope.refreshMeasureByProductId = refreshMeasureByProductId;
 
         $scope.categoriasCompra = [];
         $scope.sustentosTributario = [];
@@ -1343,6 +1364,17 @@
             });
         }
 
+
+        function refreshMeasureByProductId(item){
+            docRecibidoSvc
+            .getTempDetails($scope.selected[0].idDocumento).then(response=>{
+                let dataFind = response.find(r=>r.idArticulo===item.idArticulo);
+                if(dataFind){
+                    item.medidas = dataFind.medidas;
+                } 
+            })
+        }
+
         $scope.addBodega = async () => {
             try {
                 if (!($scope.comprobanteForm.idBodega > 0)) {
@@ -1443,7 +1475,7 @@
                 tS.toastr("warning", "Primero debe guardar el proveedor!");
                 return;
             }
-            if (!(item.idArticulo > 0 > 0)) {
+            if (!(item.idArticulo > 0 )) {
                 tS.toastr("warning", "Primero debe guardar el Artículo!");
                 return;
             }

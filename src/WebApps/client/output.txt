@@ -65,7 +65,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── tipo-doc.model.ts
 |  |  |  |  └── user.model.ts
 |  |  |  ├── services
-|  |  |  |  ├── dialog.service.ts
+|  |  |  |  ├── dialog-custom.service.ts
 |  |  |  |  ├── modal.service.ts
 |  |  |  |  ├── shared.service.ts
 |  |  |  |  ├── toaster.service.ts
@@ -145,8 +145,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     ├── comprobante-ingreso.use-case.ts
 |  |  |  |  |     ├── control-caja.use-case.ts
 |  |  |  |  |     ├── cuenta-por-cobrar.use-case.ts
-|  |  |  |  |     ├── get-comprobante-egreso.use-case.ts
-|  |  |  |  |     ├── get-cuenta-por-pagar.use-case.ts
+|  |  |  |  |     ├── comprobante-egreso.use-case.ts
+|  |  |  |  |     ├── cuenta-por-pagar.use-case.ts
 |  |  |  |  |     ├── movimiento-caja.use-case.ts
 |  |  |  |  |     ├── resumen-contable.use-case.ts
 |  |  |  |  |     ├── sub-category.use-case.ts
@@ -301,16 +301,16 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── pages
 |  |  |  |  |  ├── ats-page
 |  |  |  |  |  |  ├── ats-page.component.html
-|  |  |  |  |  |  └── ats-page.component.ts
+|  |  |  |  |  |  └── ats.component.ts
 |  |  |  |  |  ├── credit-note-page
-|  |  |  |  |  |  ├── credit-note-page.component.html
-|  |  |  |  |  |  └── credit-note-page.component.ts
+|  |  |  |  |  |  ├── credit-note.component.html
+|  |  |  |  |  |  └── credit-note.component.ts
 |  |  |  |  |  ├── doc-elect-page
-|  |  |  |  |  |  ├── doc-elect-page.component.html
-|  |  |  |  |  |  └── doc-elect-page.component.ts
+|  |  |  |  |  |  ├── doc-elect.component.html
+|  |  |  |  |  |  └── doc-elect.component.ts
 |  |  |  |  |  └── invoice-page
-|  |  |  |  |     ├── invoice-page.component.html
-|  |  |  |  |     └── invoice-page.component.ts
+|  |  |  |  |     ├── invoice.component.html
+|  |  |  |  |     └── invoice.component.ts
 |  |  |  |  ├── reports
 |  |  |  |  |  └── fact-elect-report-page
 |  |  |  |  |     ├── fact-elect-report-page.component.html
@@ -377,7 +377,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── printer-page
 |  |  |  |  |  |  ├── components
 |  |  |  |  |  |  ├── printer-page.component.html
-|  |  |  |  |  |  └── printer-page.component.ts
+|  |  |  |  |  |  └── printer.component.ts
 |  |  |  |  |  ├── tiempo-credito-page
 |  |  |  |  |  |  ├── tiempo-credito-add-edit-modal
 |  |  |  |  |  |  ├── tiempo-credito-page.component.html
@@ -401,7 +401,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── firma-electronica.service.ts
 |  |  |  |  |  ├── general-config.service.ts
 |  |  |  |  |  ├── printer-doc.service.ts
-|  |  |  |  |  ├── printer.service.ts
 |  |  |  |  |  ├── sri
 |  |  |  |  |  |  ├── establishment-logo.service.ts
 |  |  |  |  |  |  ├── establishment.service.ts
@@ -742,7 +741,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  └── restaurant-config.resolver.ts
 |  |  |  |  ├── restaurant.routes.ts
 |  |  |  |  ├── services
-|  |  |  |  |  ├── floor.service.ts
 |  |  |  |  |  ├── ingredient.service.ts
 |  |  |  |  |  ├── item.service.ts
 |  |  |  |  |  ├── menu-item.service.ts

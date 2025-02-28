@@ -1,12 +1,8 @@
-﻿namespace FactElect.API.Services.RetencionAts;
+﻿using FactElect.API.Interfaces.RetencionAts;
 
-public interface IDocSustImpuestoService
-{
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-}
-public class DocSustImpuestoService (IAdoRepository adoRepository): IDocSustImpuestoService
+namespace FactElect.API.Services.RetencionAts;
+
+public class DocSustImpuestoService(IAdoRepository adoRepository) : IDocSustImpuestoService
 {
     private const string ModuleName = "FactElect.RetAts_Doc_Sust_Imp_";
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

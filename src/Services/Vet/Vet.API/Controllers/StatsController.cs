@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
     public class StatsController(IStatsService statsService) : BaseApiController
     {
@@ -9,7 +7,7 @@ namespace Vet.API.Controllers
         {
             var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
             return Ok(await statsService.GetAsync(parameters));
         }

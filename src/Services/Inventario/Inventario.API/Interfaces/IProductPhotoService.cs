@@ -1,12 +1,10 @@
-﻿using Common.AppSettings;
-
-namespace Inventario.API.Interfaces;
+﻿namespace Inventario.API.Interfaces;
 
 public interface IProductPhotoService
 {
-    Task<LegacyApiResponse> GetAsync(int productId);
-    Task<LegacyApiResponse> AddAsync(ProductPhoto productPhoto);
-    Task<LegacyApiResponse> UpdateAsync(int id, ProductPhoto productPhoto);
-    Task<LegacyApiResponse> SetDefaultAsync(int id, bool isDefault, int userId);
-    Task<LegacyApiResponse> DeleteAsync(int id, int userId);
+    Task<ApiResponse> GetAsync(int productId);
+    Task<ApiResponse> AddAsync(ProductPhoto productPhoto);
+    Task<ApiResponse> UpdateAsync(int id, ProductPhoto productPhoto);
+    Task<ApiResponse> SetDefaultAsync(int id, bool isDefault, int userId);
+    Task<ApiResponse> DeleteAsync(int id, int userId);
 }

@@ -123,9 +123,9 @@ BEGIN
 
 
         --> VALIDATION OF INFORMATION 
-        IF (SELECT COUNT(*) FROM @tbVehicle) = 0   
+        IF NOT EXISTS(SELECT 1 FROM @tbVehicle)  
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del vehiculo', NULL)
+                SELECT '0' as code, 'Error en la informacion del vehiculo' as 'message'
                 RETURN
             END
             
@@ -160,7 +160,7 @@ BEGIN
              UPDATE dbo.Cliente WITH (ROWLOCK) SET placa = @LicensePlate WHERE idCliente = @CustomerId
 
         COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Actualizado exitosamente', NULL)
+        SELECT '1' as code, 'Actualizado exitosamente' as 'message'
     END TRY 
 
     BEGIN CATCH
@@ -173,7 +173,7 @@ BEGIN
             (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'Vehicle/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH 
 
 	  

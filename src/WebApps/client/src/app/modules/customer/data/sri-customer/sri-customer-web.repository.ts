@@ -1,0 +1,38 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { PATHS_API, SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
+import { map } from 'rxjs';
+import {SriCustomerRepository} from "@customer/core/repositories/sri-customer.repository";
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SriCustomerWebRepository implements SriCustomerRepository{
+  //FROM REGISTRO CIVIL DATA
+  url = `${PATHS_API.FACT_ELECT}Consultas/`;
+
+  constructor(private http: HttpClient) {}
+
+  search(codigo: string, id: string) {
+    let path;
+    if (codigo == SRI_IDENTIFICATION_CODE.RUC) {
+      path = 'GetRucSRI/';
+    } else {
+      path = 'GetCedulaSri/';
+    }
+    return this.http
+      .get(`${this.url}${path}?Ruc=${id}`)
+  }
+
+  searchByRuc(id: string){
+    return this.http
+      .get(`${this.url}GetRucSRI/?Ruc=${id}`)
+  }
+
+  searchByCedula(id: string){
+    return this.http
+      .get(`${this.url}GetCedulaSri/?Ruc=${id}`)
+
+  }
+
+}

@@ -1,13 +1,11 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Vet.API.Controllers;
+﻿namespace Vet.API.Controllers;
 
 public class MedicalHistoryController(IMedicalHistoryService historyService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await historyService.GetAsync(parameters));
     }
 

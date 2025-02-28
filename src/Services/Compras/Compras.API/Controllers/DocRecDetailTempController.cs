@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Compras.API.Controllers;
+﻿namespace Compras.API.Controllers;
 
 public class DocRecDetailTempController(
     IDocRecDetailTempService detailTempService) : BaseApiController
@@ -10,7 +8,7 @@ public class DocRecDetailTempController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "idDocumento", idDocumento }, { "jsonData", "" }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "idDocumento", idDocumento }, { "jsonData", "" }
         };
         return Ok(await detailTempService.GetAsync(parameters));
     }
@@ -20,7 +18,7 @@ public class DocRecDetailTempController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() },
+            { "idRol", User.GetClaimValue<int>("userRoleId") },
             { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         return Ok(await detailTempService.AddAsync(parameters));
@@ -31,7 +29,7 @@ public class DocRecDetailTempController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() },
+            { "idRol", User.GetClaimValue<int>("userRoleId") },
             { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         return Ok(await detailTempService.UpdateAsync(parameters));

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class CajaController(ICajaService cajaService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await cajaService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -22,7 +20,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await cajaService.AddAsync(parameters);
@@ -37,7 +35,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -51,7 +49,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await cajaService.DeleteAsync(parameters);
         return Ok(response);
     }

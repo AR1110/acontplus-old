@@ -1,4 +1,6 @@
-﻿using Common.Core.Utils;
+﻿
+using Common.Infrastructure.Repository.Implementations;
+using Common.Infrastructure.Repository.Interfaces;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 using Mechanical.API.Services;
@@ -23,7 +25,7 @@ namespace Mechanical.API.Extensions
             services.AddDbContextPool<MechanicalContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<ICustomLogger, CustomLogger>();
+            services.AddScoped<IAdoRepository, AdoRepository>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<ISupportDetailService, SupportDetailService>();

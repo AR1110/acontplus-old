@@ -1,8 +1,5 @@
-
 <div class="c-mat-table-container">
-  <app-custom-mat-spinner
-    [isLoadingResults]="isLoadingData()"
-  />
+  <app-custom-mat-spinner [isLoadingResults]="isLoadingData()" />
   <div class="table-container small-table">
     <table
       #sort="matSort"
@@ -40,30 +37,21 @@
       @for (col of columnDefinitions; track $index) {
 
       <ng-container [matColumnDef]="col.key">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ col.label }}</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+          {{ col.label }}
+        </th>
         <td
           mat-cell
           *matCellDef="let element; let i = index"
           [ngClass]="{ highlighted: highlightRowIndex === i }"
         >
-          @switch (col.key) { @case ('op') {
+          @if(col.key==='op'){
           <div class="d-flex flex-row gap-1">
             <ng-container
               *ngTemplateOutlet="templateOp; context: { item: element }"
             ></ng-container>
           </div>
-          } @case ('image') {
-          <img
-            [src]="element[col.key]"
-            class="img-fluid img-thumbnail my-1"
-            width="50"
-            alt=""
-          />
-          } @case ('number') {
-          <div>{{ element[col.key] | number : "1.2" : locale }}</div>
-          } @case ('date') {
-          <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
-          } @case (showExpand && "expand" ){
+          } @if (showExpand && col.key==="expand") {
           <button
             mat-icon-button
             aria-label="expand row"
@@ -75,6 +63,24 @@
             <mat-icon>keyboard_arrow_down</mat-icon>
             }
           </button>
+          } @switch (col.type) { @case ('image') {
+          <img
+            [src]="element[col.key]"
+            class="img-fluid img-thumbnail my-1"
+            width="50"
+            alt=""
+          />
+          } @case ('number') {
+          <div>{{ element[col.key] | number : "1.2" : locale }}</div>
+          } @case ('date') {
+          <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
+          } @case ("template") {
+          <ng-container
+            *ngTemplateOutlet="
+              col.templateOutlet;
+              context: { $implicit: element }
+            "
+          ></ng-container>
           } @default {
           <div>{{ element[col.key] }}</div>
 
@@ -153,17 +159,17 @@
     </table>
   </div>
 
-
   @if(enablePagination() && paginationConfig() ){
-    <mat-paginator #paginator
-                   (page)="handlePageEvent($event)"
-                   [length]="paginationConfig()?.totalRecords"
-                   [pageSize]="paginationConfig()?.pageSize"
-                   [pageSizeOptions]="paginationConfig()?.pageSizeOptions??[]"
-                   [showFirstLastButtons]="true"
-                   [pageIndex]="paginationConfig()?.pageIndex"
-                   aria-label="Select page">
-    </mat-paginator>
+  <mat-paginator
+    #paginator
+    (page)="handlePageEvent($event)"
+    [length]="paginationConfig()?.totalRecords"
+    [pageSize]="paginationConfig()?.pageSize"
+    [pageSizeOptions]="paginationConfig()?.pageSizeOptions ?? []"
+    [showFirstLastButtons]="true"
+    [pageIndex]="paginationConfig()?.pageIndex"
+    aria-label="Select page"
+  >
+  </mat-paginator>
   }
-
 </div>

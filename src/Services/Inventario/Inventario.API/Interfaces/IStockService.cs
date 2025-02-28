@@ -2,5 +2,5 @@
 
 public interface IStockService
 {
-    Task<string> UpdateAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

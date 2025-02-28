@@ -1,28 +1,26 @@
-﻿using Common.AppSettings;
-
-namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Services;
 
 public class SubcategoryService(ContabilidadContext context, IAdoRepository repository) : ISubcategoryService
 {
-    public async Task<LegacyApiResponse> AddAsync(Subcategory subcategory)
+    public async Task<ApiResponse> AddAsync(Subcategory subcategory)
     {
         if (await context.Subcategories.AnyAsync(x =>
                 (x.CompanyId == subcategory.CompanyId) & (x.Code == subcategory.Code)))
         {
-            return new LegacyApiResponse { code = "0", message = "Código ya existe" };
+            return new ApiResponse { Code = "0", Message = "Código ya existe" };
         }
 
         context.Subcategories.Add(subcategory);
         await context.SaveChangesAsync();
-        return new LegacyApiResponse { code = "1", message = "Registrada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Registrada exitosamente" };
     }
 
-    public async Task<LegacyApiResponse> DeleteAsync(int userId, int id)
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
         if (subcategory == null)
         {
-            return new LegacyApiResponse { code = "0", message = "Subcategoría no encontrada" };
+            return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
         }
 
         subcategory.Enabled = false;
@@ -30,26 +28,26 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
         subcategory.UserId = userId;
         context.Update(subcategory);
         await context.SaveChangesAsync();
-        return new LegacyApiResponse { code = "1", message = "Eliminada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
-    public async Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Contabilidad.Subcategory_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
         {
-            return new LegacyApiResponse { code = "0", message = "Data not found" };
+            return new ApiResponse { Code = "0", Message = "Data not found" };
         }
 
-        return new LegacyApiResponse { code = "1", payload = DataConverters.DataSetToJson(ds) };
+        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<LegacyApiResponse> UpdateAsync(int id, Subcategory subcategory)
+    public async Task<ApiResponse> UpdateAsync(int id, Subcategory subcategory)
     {
         var subcategoryFound = await context.Subcategories.FindAsync(id);
         if (subcategoryFound == null)
         {
-            return new LegacyApiResponse { code = "0", message = "Subcategoría no encontrada" };
+            return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
         }
 
         subcategoryFound.CategoryId = subcategory.CategoryId;
@@ -59,6 +57,6 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
         subcategoryFound.UserId = subcategory.UserId;
         context.Update(subcategoryFound);
         await context.SaveChangesAsync();
-        return new LegacyApiResponse { code = "1", message = "Actualizada exitosamente" };
+        return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };
     }
 }

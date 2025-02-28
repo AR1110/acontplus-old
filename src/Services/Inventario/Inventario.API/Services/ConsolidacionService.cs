@@ -1,14 +1,9 @@
 ﻿namespace Inventario.API.Services;
 
-public class ConsolidacionService : IConsolidacionService
+public class ConsolidacionService(IAdoRepository _repository) : IConsolidacionService
 {
-    private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Inventario.Consolidacion";
 
-    public ConsolidacionService(IAdoRepository repository)
-    {
-        _repository = repository;
-    }
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
@@ -33,18 +28,18 @@ public class ConsolidacionService : IConsolidacionService
     }
 
 
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Delete", parameters);
     }
 }

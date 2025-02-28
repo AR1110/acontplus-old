@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using FactElect.API.Models;
+﻿using FactElect.API.Models;
 using FactElect.API.Services.Logistica;
 
 namespace FactElect.API.Controllers.Logistica;
@@ -18,7 +17,7 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await vehiculoService.GetAsync(parameters));
     }
@@ -28,7 +27,7 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "placa", data.placa },
             { "marca", data.marca },
             { "modelo", data.modelo },
@@ -42,7 +41,7 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "placa", data.placa },
             { "marca", data.marca },
@@ -55,7 +54,7 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await vehiculoService.DeleteAsync(parameters));
     }
 
@@ -65,7 +64,7 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await vehiculoService.SearchAsync(parameters));
     }

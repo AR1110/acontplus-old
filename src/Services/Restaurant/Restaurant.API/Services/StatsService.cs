@@ -1,13 +1,11 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository.Interfaces;
+﻿using Common.Infrastructure.Repository.Interfaces;
 
 namespace Restaurant.API.Services;
 public interface IStatsService
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }
-public class StatsService (IAdoRepository adoRepository): IStatsService
+public class StatsService(IAdoRepository adoRepository) : IStatsService
 {
     private const string ModuleName = "Restaurant.Stats_";
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)

@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using Configuracion.API.Models;
+﻿using Configuracion.API.Models;
 
 namespace Configuracion.API.Controllers;
 
@@ -11,7 +10,7 @@ public class FirmaElectronicaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await firmaElectronicaService.GetAsync(parameters));
     }
@@ -33,16 +32,16 @@ public class FirmaElectronicaController(
         var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
 
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "contrasenia", data.contrasenia },
-                { "fileName", signFile.FileName },
-                { "firma", signFile.Content },
-                { "contentType", signFile.ContentType },
-                { "fechaCaducidad", data.fechaCaducidad },
-                { "demoStepId", data.demoStepId },
-                { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "contrasenia", data.contrasenia },
+            { "fileName", signFile.FileName },
+            { "firma", signFile.Content },
+            { "contentType", signFile.ContentType },
+            { "fechaCaducidad", data.fechaCaducidad },
+            { "demoStepId", data.demoStepId },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+        };
         return Ok(await firmaElectronicaService.AddAsync(parameters));
     }
 
@@ -52,15 +51,16 @@ public class FirmaElectronicaController(
         var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
 
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "id", data.idFirmaElectronica },
-                { "contrasenia", data.contrasenia },
-                { "fechaCaducidad", data.fechaCaducidad },
-                { "estado", data.estado }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", data.idFirmaElectronica },
+            { "contrasenia", data.contrasenia },
+            { "fechaCaducidad", data.fechaCaducidad },
+            { "estado", data.estado }
+        };
         return Ok(await firmaElectronicaService.UpdateAsync(parameters));
     }
+
     [HttpPost("UpdateSignature/{id}")]
     public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
     {
@@ -78,13 +78,12 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-                { "userRoleId", User.GetUserRoleId() },
-                { "id", id },
-                { "fileName", signFile.FileName },
-                { "firma", signFile.Content },
-                { "contentType", signFile.ContentType },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", id },
+            { "fileName", signFile.FileName },
+            { "firma", signFile.Content },
+            { "contentType", signFile.ContentType }
         };
         return Ok(await firmaElectronicaService.UpdateFileAsync(parameters));
     }
-
 }

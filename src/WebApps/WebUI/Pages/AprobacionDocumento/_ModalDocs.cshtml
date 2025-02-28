@@ -1,0 +1,66 @@
+<div class="modal-header">
+    <h5 class="modal-title">Aprobación Documentos</h5>
+    <button type="button" class="close" ng-click="close()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+            <span class="form-group pull-left page-size form-inline">
+                <select class="form-control form-control-sm control-color" ng-model="dataSearch.pageSize"
+                    ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                </select>
+            </span>
+        </div>
+        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12 d-flex justify-content-end">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination-sm" boundary-links="true" rotate="false"></ul>
+        </div>
+    </div>
+    <button type="button" ng-if="docsSelected.length>0" class="btn btn-success btn-lg btn-block" ng-click="addDocs()">
+        Agregar Documentos Seleccionados
+    </button>
+
+    <md-table-container>
+        <table md-table md-row-select="optionsTable.rowSelection" multiple="{{optionsTable.multiSelect}}"
+            ng-model="docsSelected">
+            <thead md-head>
+                <tr md-row>
+                    <th md-column><span>#</span></th>
+                    <th md-column><span>Nro. Doc</span></th>
+                    <th md-column><span>Fecha Emisión</span></th>
+                    <th md-column ng-if="dataSearch.tipo===1"><span>Fecha Vcto</span></th>
+                    <th md-column><span>Cliente</span></th>
+                    <th md-column><span>Total</span></th>
+                    <th md-column><span>Estado</span> </th>
+                    <th md-column><span>Usuario</span> </th>
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row md-select="item" md-on-select="logItem" md-auto-select="optionsTable.autoSelect"
+                    ng-repeat="item in docs">
+                    <td md-cell>{{$index+1}}</td>
+                    <td md-cell>{{item.serieComprobante}} </td>
+                    <td md-cell>{{item.fechaEmision}}</td>
+                    <td md-cell ng-if="dataSearch.tipo===1">{{item.fechaVencimiento}}</td>
+                    <td md-cell>{{item.nombreFiscal || item.razonSocialComprador}}</td>
+                    <td md-cell>{{item.total }}</td>
+                    <td md-cell>{{item.estadoDoc || item.estadoFinanciero}}</td>
+                    <td md-cell>{{item.usuario}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+
+
+
+</div>
+
+
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="close()">
+        &times; Cerrar
+    </button>
+</div>

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class FamiliaController(IFamiliaService familiaService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await familiaService.GetAsync(parameters));
     }
@@ -19,7 +17,7 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         return Ok(await familiaService.AddAsync(parameters));
@@ -30,7 +28,7 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
@@ -40,7 +38,7 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await familiaService.DeleteAsync(parameters));
     }
 }

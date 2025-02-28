@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Restaurant.API.Data;
+﻿using Newtonsoft.Json.Serialization;
 using Scrutor;
 
 
@@ -23,9 +20,15 @@ namespace Restaurant.API.Extensions
             services.AddDbContextPool<RestaurantContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            string[] nameSpaces =
+           [
+               "Common.Infrastructure.Repository.Implementations",
+                "Restaurant.API.Services"
+           ];
+
             services.Scan(scan => scan
                 .FromApplicationDependencies()
-                .AddClasses(classes => classes.InNamespaces("Restaurant.API.Services", "Common.Application.Services"))
+                .AddClasses(classes => classes.InNamespaces(nameSpaces))
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()

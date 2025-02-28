@@ -1,8 +1,6 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Core.Utils;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -13,9 +11,9 @@ public class MenuItemController(IMenuItemService menuItemService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
-        
+
         return Ok(await menuItemService.GetAsync(parameters));
     }
 
@@ -24,7 +22,7 @@ public class MenuItemController(IMenuItemService menuItemService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", json }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", json }
         };
 
         return Ok(await menuItemService.GetIdAsync(parameters));

@@ -7,7 +7,6 @@ SELECT cl.[idCliente]
       ,cl.[idTipoEntidad]
       ,cl.[idSubContribuyente]
       ,cl.[idTiempoCredito]
-      ,cl.[idTipoIdentificacion]
       ,cl.[idCiudad]
       ,cl.[montoCredito]
       ,cl.[direccion]
@@ -24,7 +23,7 @@ SELECT cl.[idCliente]
       ,cl.[placa]
       ,cl.[nota]
       ,cl.[importacion]
-      --,cl.[CustomerId]
+      ,cl.[CustomerId]
       ,cl.correo                                                    as Email
       ,cl.telefono                                                  as Telephone
       ,cl.direccion                                                 as [Address]
@@ -34,19 +33,19 @@ SELECT cl.[idCliente]
       ,ce.BusinessName                                              as empresa
       ,ti.descripcion                                               as tipoIdentificacion
       ,ti.codigo                                                    as codTipoIdentificacion
+      ,ti.codigoSri                                                 as IDType
       ,ti.codigoSri                                                 as codIdentSri
+      ,cs.IdTypeId                                                  as idTipoIdentificacion
       ,cs.SriValidation                                             as validationSri
-      ,cs.IDType
       ,cs.IDCard                                                    
       ,cs.BusinessName                                              
       ,cs.TradeName                                                 
       ,c2.descripcion                                               as ciudadNom
 FROM dbo.Cliente                   cl WITH (NOLOCK)
 INNER JOIN dbo.Entidad             en WITH (NOLOCK) ON en.idEntidad            = cl.idEntidad
-INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
 INNER JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                   = cl.CustomerId
  LEFT JOIN dbo.Ciudad              c2 WITH (NOLOCK) ON c2.idCiudad             = cl.idCiudad
  LEFT JOIN Administrador.Empresa   em WITH (NOLOCK) ON em.idEmpresa            = cl.idEmpresa
  LEFT JOIN Customer.Customer       ce WITH (NOLOCK) ON ce.Id                   = em.CustomerId
- 
+INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cs.IdTypeId 
 )

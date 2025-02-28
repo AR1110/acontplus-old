@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using FactElect.API.Models;
+﻿using FactElect.API.Models;
 using FactElect.API.Services.Sri;
 
 namespace FactElect.API.Controllers.Sri;
@@ -13,7 +12,7 @@ public class AtsController(IAtsService atsService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await atsService.CheckValidationAsync(parameters));
     }
@@ -53,7 +52,7 @@ public class AtsController(IAtsService atsService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var ds = await atsService.GetAsync(parameters);

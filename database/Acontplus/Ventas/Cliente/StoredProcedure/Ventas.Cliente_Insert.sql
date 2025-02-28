@@ -22,31 +22,33 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) ,@idCliente INT
 
     --> Data Cliente
-    DECLARE @idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT
+    DECLARE @numeroIdentificacion NVARCHAR(15) ,@customerId INT
 
     DECLARE @tblCliente AS TABLE(
         idTipoClienteProveedor INT NULL
        ,idTipoEntidad INT NULL
        ,idSubContribuyente INT NULL
        ,idTiempoCredito INT NULL
-       ,idTipoIdentificacion INT NOT NULL
        ,idCiudad INT NULL
        ,idEmpleado INT NULL
        ,idEmpresa INT NULL
        ,idCargo INT NULL
        ,FormaPagoSriId INT NULL
-       ,numeroIdentificacion VARCHAR(20) UNIQUE NOT NULL
-       ,nombreFiscal VARCHAR(300) NOT NULL
-       ,nombreComercial VARCHAR(300) NOT NULL
        ,direccion VARCHAR(150) NULL
        ,telefono VARCHAR(150) NULL
        ,correo VARCHAR(150) NULL
        ,placa VARCHAR(150) NULL
 	   ,montoCredito DECIMAL(15,5) NULL 
 	   ,nota VARCHAR(300) NULL
-	   ,validationSri BIT NOT NULL
        ,infoCrediticia NVARCHAR(MAX) NULL
        ,configValorBruto BIT
+
+       --> Customer
+       ,IdTypeId INT NOT NULL
+       ,IdCard VARCHAR(20) UNIQUE NOT NULL
+       ,BusinessName VARCHAR(300) NOT NULL
+       ,TradeName VARCHAR(300) NOT NULL
+       ,SriValidation BIT NOT NULL
     )
 	
 	BEGIN TRY 
@@ -56,12 +58,12 @@ BEGIN
 
         --> Data Json 
         INSERT INTO @tblCliente 
-              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia,configValorBruto)
-	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri,infoCrediticia,configValorBruto
+              (idEmpleado,IdTypeId,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,IdCard,BusinessName,TradeName,direccion,telefono,correo,placa,nota,montoCredito,SriValidation,infoCrediticia,configValorBruto)
+	    SELECT idEmpleado,IdTypeId,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,IdCard,BusinessName,TradeName,direccion,telefono,correo,placa,nota,montoCredito,SriValidation,infoCrediticia,configValorBruto
 	    FROM OPENJSON(@json) WITH
         (
              idEmpleado             INT 
-	        ,idTipoIdentificacion   INT
+	        ,IdTypeId               INT         '$.idTipoIdentificacion'
 	        ,idTipoClienteProveedor INT
 	        ,idTipoEntidad          INT 
 	        ,idCiudad               INT
@@ -69,70 +71,69 @@ BEGIN
 	        ,idTiempoCredito        INT 
 	        ,idEmpresa              INT
 	        ,idCargo			    INT
-            ,FormaPagoSriId         INT '$.idFormaPagoSri'
-		    ,numeroIdentificacion   VARCHAR(50) 
-		    ,nombreFiscal           VARCHAR(100) 
-		    ,nombreComercial        VARCHAR(100) 
+            ,FormaPagoSriId         INT          '$.idFormaPagoSri'
+		    ,IdCard                 VARCHAR(50)  '$.numeroIdentificacion' 
+		    ,BusinessName           VARCHAR(100) '$.nombreFiscal' 
+		    ,TradeName              VARCHAR(100) '$.nombreComercial'
 		    ,direccion              VARCHAR(200)
 		    ,telefono               VARCHAR(150)
 		    ,correo                 VARCHAR(200)
 		    ,placa                  VARCHAR(150)
 		    ,montoCredito           NUMERIC(15,5) 
 		    ,nota                   VARCHAR(300) 
-		    ,validationSri          BIT
+		    ,SriValidation          BIT          '$.validationSri'
             ,infoCrediticia         NVARCHAR(MAX) 
             ,configValorBruto       BIT
         )
 
         --> Recuperando Informacion
-        SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) , @idTipoIdentificacion = idTipoIdentificacion FROM @tblCliente 
+        SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(IdCard)) FROM @tblCliente 
 
-        SELECT TOP 1 @customerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion
+        SELECT TOP 1 @customerId = ID FROM Customer.Customer WHERE IdCard = @numeroIdentificacion
 
         --> Validacion de informacion 
         IF NOT EXISTS(SELECT 1 FROM @tblCliente)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info del cliente', DEFAULT)
+                SELECT  '0'code,'Error en la info del cliente'[message]
                 RETURN
             END
 
 	    IF EXISTS (SELECT 1 FROM Cliente WITH (NOLOCK) WHERE  CustomerId = @customerId AND idEntidad = @idEntidad)
 		    BEGIN
-			    SELECT [Common].[ufnSpResponse]('0','El cliente ya se encuentra registrado', DEFAULT)
+			    SELECT  '0'code,'El cliente ya se encuentra registrado'[message]
 			    RETURN 
 		    END 
 
 		BEGIN TRAN
 
-			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion)
+			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IdCard = @numeroIdentificacion)
 				BEGIN
-                    DECLARE @IDType VARCHAR(10)
-
-					SELECT TOP 1 @IDType = codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion
-
 					INSERT INTO Customer.Customer WITH (ROWLOCK)
-                           (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
-					SELECT @IDType,LTRIM(RTRIM(numeroIdentificacion)), LTRIM(RTRIM(nombreFiscal)), LTRIM(RTRIM(nombreComercial)), LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion)),validationSri
+                          (IdTypeId,IdCard,BusinessName,TradeName,SriValidation,email,telephone,[Address])
+					SELECT IdTypeId,IdCard,BusinessName,TradeName,SriValidation,LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion))
 					FROM @tblCliente
 
                     SET @customerId = @@IDENTITY
 				END
 			ELSE
 				BEGIN 
-					SELECT TOP 1 @customerId = ID FROM Customer.Customer WHERE IDCard = @numeroIdentificacion
+					SELECT TOP 1 @customerId = ID FROM Customer.Customer WHERE IdCard = @numeroIdentificacion
 				END
 			
 			INSERT INTO Cliente WITH (ROWLOCK)
-			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,configValorBruto,idUsuario,idEntidad,customerId)
-			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,configValorBruto,@idUsuario,@idEntidad,@customerId
+			      (idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,configValorBruto,idUsuario,idEntidad,customerId)
+			SELECT idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,direccion,telefono,correo,placa,montoCredito,nota,configValorBruto,@idUsuario,@idEntidad,@customerId
             FROM @tblCliente
 
 		    SET @idCliente = @@IDENTITY
 
-            SET @payload =  (SELECT @idCliente as idCliente, nombreFiscal, numeroIdentificacion FROM @tblCliente FOR JSON PATH)
+            SET @payload =  (SELECT @idCliente   as idCliente
+                                   ,BusinessName as nombreFiscal
+                                   ,IdCard       as numeroIdentificacion 
+                             FROM @tblCliente FOR JSON PATH)
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1','Registrado Correctamente', @payload)
+        SELECT  '1'code,'Registrado Correctamente'[message], @payload as payload
 	END TRY 
 
 	BEGIN CATCH 
@@ -140,10 +141,11 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN ;
 		    END 
+
 		INSERT INTO ErroresSistema 
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/Cliente/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento', DEFAULT)
+        SELECT  '0'code,'Error en el procedimiento'[message]
 	END CATCH 
 END

@@ -1,0 +1,63 @@
+<app-breadcrumb></app-breadcrumb>
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col-4">
+        <button mat-raised-button type="button" (click)="onDialogOpen()">
+          <mat-icon>add</mat-icon> Registrar
+        </button>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        @if (this.retenciones.length > 0) {
+          <div class="table-responsive">
+            <app-mat-dynamic-table
+              [templateOp]="templateOp"
+              [tableData]="retenciones"
+              [columnDefinitions]="columnsDefs"
+              [visibleColumns]="columns"
+              [showSelectBox]="true"
+            ></app-mat-dynamic-table>
+          </div>
+
+          <mat-paginator
+            [length]="pagination().totalRecords"
+            [pageIndex]="pagination().pageIndex"
+            [pageSize]="pagination().pageSize"
+            [pageSizeOptions]="pagination().pageSizeOptions"
+            (page)="onPageChanged($event)"
+            showFirstLastButtons
+            aria-label="Select page"
+          >
+          </mat-paginator>
+        } @else {
+          <h5>No hay registros</h5>
+        }
+      </div>
+    </div>
+
+    <ng-template #templateOp let-item="item">
+      <mat-menu #menu="matMenu">
+        <button (click)="downloadXml(item)" mat-menu-item>
+          <mat-icon>download</mat-icon>
+          Descargar Xml
+        </button>
+        @if (item.codDoc === "01") {
+          <button mat-menu-item (click)="getRide(item)">
+            <mat-icon>picture_as_pdf</mat-icon>
+            Ride
+          </button>
+        }
+      </mat-menu>
+
+      <button
+        [matMenuTriggerFor]="menu"
+        aria-label="Open Options"
+        mat-icon-button
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

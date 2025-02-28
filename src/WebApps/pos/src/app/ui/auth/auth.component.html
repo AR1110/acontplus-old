@@ -1,10 +1,138 @@
-<form
-  [formGroup]="form"
-  (ngSubmit)="login()"
-  class="form-horizontal form-material text-center"
->
-  <!--Logo-->
-  <a href="javascript:void(0)" class="db">
+<section class="my-lg-14 my-8">
+  <div class="container">
+    <div class="justify-content-center align-items-center row">
+      <div class="col-lg-4 col-md-6 col-12 order-lg-1 order-2">
+        <img
+          src="/img/overview-sale.svg"
+          alt=""
+          class="img-fluid d-none d-md-block"
+        />
+
+        <section class="down-section">
+          <div class="d-flex justify-content-center">
+            <h6>Contactanos por</h6>
+          </div>
+          <div class="hstack gap-3 justify-content-center">
+            <a href="https://www.facebook.com/acontplus.ec" target="_blank">
+              <img
+                src="https://app.tommypos.com/img/facebook-small.jpg"
+                alt="Instagram"
+                height="20"
+                width="20"
+              />
+            </a>
+
+            <a
+              href="https://api.whatsapp.com/send?phone=593986669930"
+              target="_blank"
+            >
+              <img
+                src="https://app.tommypos.com/img/whatsapp-small.jpg"
+                alt="whatsapp"
+                height="20"
+                width="20"
+              />
+            </a>
+
+            <a href="https://www.youtube.com/@acontplusweb" target="_blank">
+              <img
+                src="https://app.tommypos.com/img/youtube-small.jpg"
+                alt="youtube"
+                height="20"
+                width="20"
+              />
+            </a>
+          </div>
+        </section>
+      </div>
+      <div class="col-lg-4 col-md-6 col-12 order-lg-2 offset-lg-1 order-1">
+        <div class="mb-lg-9 mb-5">
+          <h3 class="mb-1 h3 fw-bold">Inicie sesión en AcontPlus POS</h3>
+          <p>
+            ¡Bienvenido de nuevo a AcontPlus POS! Ingrese su usuario para
+            comenzar.
+          </p>
+        </div>
+        <div class="g-2 row">
+          <form [formGroup]="form" (ngSubmit)="login()">
+            <div class="col-12">
+              <!-- <label class="visually-hidden form-label" for="formSigninEmail"
+                >Email address</label
+              ><input
+                placeholder="Email"
+                id="formSigninEmail"
+                class="form-control"
+                type="email"
+                name="email"
+              /> -->
+              <mat-form-field class="w-100">
+                <mat-label>Usuario</mat-label>
+                <input
+                  matInput
+                  placeholder="Usuario"
+                  formControlName="username"
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Contraseña</mat-label>
+                <input
+                  [type]="hide() ? 'password' : 'text'"
+                  matInput
+                  formControlName="password"
+                  placeholder="Contraseña"
+                />
+                <button
+                  type="button"
+                  mat-icon-button
+                  matSuffix
+                  (click)="clickEvent($event)"
+                  [attr.aria-label]="'Hide password'"
+                >
+                  <mat-icon>{{
+                    hide() ? "visibility_off" : "visibility"
+                  }}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+            <div class="d-flex justify-content-between">
+              <!-- <div class="form-check">
+                  <input
+                    id="flexCheckDefault"
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                  /><label for="flexCheckDefault" class="form-check-label"
+                    >Remember me</label
+                  >
+                </div>
+                <div>
+                  Forgot password?<a href="/forgot-password"> Reset It</a>
+                </div> -->
+            </div>
+            <div class="d-grid col-12">
+              <!-- <button type="submit" class="btn btn-primary">Sign In</button> -->
+              <button
+                type="submit"
+                mat-flat-button
+                [disabled]="loading"
+                style="height: 45px"
+                class="btn-lg w-100 text-uppercase btn-rounded cursor-pointer"
+              >
+                Ingresar
+                <mat-icon>exit_to_app</mat-icon>
+              </button>
+            </div>
+            <!-- <div>Don’t have an account?<a href="/signup"> Sign Up</a></div> -->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- <form [formGroup]="form" (ngSubmit)="login()" class="text-center">
+  <a href="javascript:void(0)">
     <img
       src="./img/logo-icon.jpg"
       class="img-responsive"
@@ -21,18 +149,15 @@
   </div>
   <div class="form-group mt-4">
     <div class="col-xs-12">
-      <mat-form-field appearance="outline" class="m3-input-full-width">
+      <mat-form-field class="m3-input-full-width">
         <mat-label>Usuario</mat-label>
         <input matInput placeholder="Usuario" formControlName="username" />
-        <!-- @if (form.controls.username.hasError('required')) {
-          <mat-error>El usuario es <strong>requerido</strong></mat-error>
-        } -->
       </mat-form-field>
     </div>
   </div>
   <div class="form-group">
     <div class="col-xs-12">
-      <mat-form-field appearance="outline" class="m3-input-full-width">
+      <mat-form-field class="m3-input-full-width">
         <mat-label>Contraseña</mat-label>
         <input
           [type]="hide() ? 'password' : 'text'"
@@ -40,9 +165,6 @@
           formControlName="password"
           placeholder="Contraseña"
         />
-        <!-- @if (form.controls.password.hasError('required')) {
-          <mat-error>La contraseña es <strong>requerido</strong></mat-error>
-        } -->
         <button
           type="button"
           mat-icon-button
@@ -69,4 +191,4 @@
       </button>
     </div>
   </div>
-</form>
+</form> -->

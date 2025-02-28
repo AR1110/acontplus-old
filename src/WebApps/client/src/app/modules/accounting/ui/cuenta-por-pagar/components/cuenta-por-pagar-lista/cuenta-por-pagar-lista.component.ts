@@ -55,11 +55,11 @@ import {finalize, forkJoin, switchMap, throwError} from 'rxjs';
 import {ParameterReportUtil} from "@shared/utils/parameter-report.util";
 import {SharedService} from "@core/services/shared.service";
 import {SelectionModel} from '@angular/cdk/collections'; ;
-import {GetCuentaPorPagarUseCase} from "@accounting/core/use-cases/get-cuenta-por-pagar.use-case";
+import {CuentaPorPagarUseCase} from "@accounting/core/use-cases/cuenta-por-pagar.use-case";
 import {
   ComprobanteEgresoLoteComponent
 } from "@accounting/ui/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component";
-import {GetComprobanteEgresoUseCase} from "@accounting/core/use-cases/get-comprobante-egreso.use-case";
+import {ComprobanteEgresoUseCase} from "@accounting/core/use-cases/comprobante-egreso.use-case";
 
 
 @Component({
@@ -90,8 +90,8 @@ export class CuentaPorPagarListaComponent {
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService)
-  private useCase = inject(GetCuentaPorPagarUseCase)
-  private _comprobanteEgresoUseCase = inject(GetComprobanteEgresoUseCase)
+  private useCase = inject(CuentaPorPagarUseCase)
+  private _comprobanteEgresoUseCase = inject(ComprobanteEgresoUseCase)
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];
@@ -421,15 +421,15 @@ export class CuentaPorPagarListaComponent {
 
 
 
-  openCuotaModal(item?: CuentaPorPagarLista) {
+  openCuotaModal(item: CuentaPorPagarLista) {
     let modalRef = this.dialogSvc.open(CuentaPorPagarCuotaModalComponent, {
       size: MODAL_SIZE.XL,
       data: {
-     //   idCuentaPorPagar: item.idCuentaPorPagar,
-     idCuentaPorPagar: 10062,
-
-        codigoEstado: 'PE',
-        total: item?.total || 0
+         idCuentaPorPagar: item?.idCuentaPorPagar,
+        codigoEstado: item?.codigoEstado,
+        total: item?.total || 0,
+        idTiempoCredito: item.idTiempoCredito,
+        fechaEmision: item.fechaEmision
       },
     });
 

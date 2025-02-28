@@ -1,493 +1,485 @@
-//@ts-check
-let mainPath = `/Home/Index?name=~/Pages/Contabilidad/CuentaPorPagar/Components/` ;
+(function () {
+    //@ts-check
+    var mainPath = `/Home/Index?name=~/Pages/Contabilidad/CuentaPorPagar/Components/`;
 
-app.component("appCuentaPorPagarComponent", {
-    templateUrl: `${mainPath}_CuentaPorPagarComponent.cshtml`,
-    bindings: {
-        resolve: '<',
-        close: '&',
-        dismiss: '&',
-        isNotModal:'='
-    },
-    controller: ['$scope', '$injector', '$timeout', function ($scope, $injector, $timeout) {
-        let $ctrl = this;
+    app.component("appCuentaPorPagarComponent", {
+        templateUrl: `${mainPath}_CuentaPorPagarComponent.cshtml`,
+        bindings: {
+            resolve: '<',
+            close: '&',
+            dismiss: '&',
+            isNotModal: '='
+        },
+        controller: ['$scope', '$injector', '$timeout', function ($scope, $injector, $timeout) {
+            let $ctrl = this;
 
-        const tS = $injector.get('toastService');
-        const sS = $injector.get('screenSize');
-        const modalSvc = $injector.get('modalService');
-        const fS = $injector.get('formulario');
-        const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
-        const nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        const mainPaths = $injector.get('mainPaths');
-        const DOC_TYPE = $injector.get('DOC_TYPE');
-        const comprobanteEgresoSvc = $injector.get('comprobanteEgresoService')
-     
-
-        $ctrl.$onInit = function () {  
-            $scope.isNotModal = typeof $ctrl.resolve === 'object' ? true : false;
-        };
+            const tS = $injector.get('toastService');
+            const sS = $injector.get('screenSize');
+            const modalSvc = $injector.get('modalService');
+            const fS = $injector.get('formulario');
+            const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
+            const nombreModalContabilidad = $injector.get('nombreModalContabilidad');
+            const mainPaths = $injector.get('mainPaths');
+            const DOC_TYPE = $injector.get('DOC_TYPE');
+            const comprobanteEgresoSvc = $injector.get('comprobanteEgresoService')
 
 
- 
-
-        $scope.establecimientos = [];
-        $scope.estadosDoc = [];
-
-        $scope.recordsQuantity = [25, 50, 100]
-
-        const selectedDocumentosTemp = [];
-
-        $scope.isMobile = sS.on('xs, sm', function (isMatch) {
-            $scope.isMobile = isMatch
-        })
-
-        if ($scope.isMobile) {
-            Swal.fire(
-                'Dispositivo Movil Detectado!',
-                'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
-                'success'
-            )
-        } else {
-            $timeout(() => {
-                document.getElementById('menu_toggle').click()
-            }, 1100)
-        }
-
-        $scope.moreSearchOptions = false;
-        $scope.dataSearch = {
-            checkBoxFecha: true,
-            pageIndex: 1,
-            pageSize: 25,
-            maxSize: 5,
-            secuencial: null,
-            typeSearchNro: 1
-        }
+            $ctrl.$onInit = function () {
+                $scope.isNotModal = typeof $ctrl.resolve === 'object' ? true : false;
+            };
 
 
-        $scope.tipoDocumentos = [
-            // { codigo: '03', descripcion: 'LIQUIDACION COMPRA' },
-            // { codigo: 'FC', descripcion: 'FACTURA' },
-            // { codigo: 'DH', descripcion: 'DOCUMENTO NO HABITUAL' },
-        ];
-        $scope.typesSearchNro = [
-            { code: 1, description: 'Ninguna' },
-            { code: 2, description: 'Retención' },
-            { code: 3, description: 'Nota Crédito' },
-        ]
 
-        $scope.cuentasPorPagar = [];
-        $scope.selectedDocumentos = [];
-        $scope.proveedor = {};
 
-        $scope.tableOptions = {
-            sortBy: '',
-            rowSelection: true,
-            multiSelect: true
-        };
+            $scope.establecimientos = [];
+            $scope.estadosDoc = [];
 
-        let isCheckedDoc = false;
+            $scope.recordsQuantity = [25, 50, 100]
 
-      
-        $scope.getCuentasPorPagar = () => {
-            try {
+            const selectedDocumentosTemp = [];
 
-                let checkboxFecha = $scope.dataSearch.checkBoxFecha;
+            $scope.isMobile = sS.on('xs, sm', function (isMatch) {
+                $scope.isMobile = isMatch
+            })
 
-                if ($scope.dataSearch.typeSearchNro > 1 && !fS.isValidField($scope.dataSearch.secuencial)){
-                    tS.toastr('warning', 'Ingrese número secuencial')
+            if ($scope.isMobile) {
+                Swal.fire(
+                    'Dispositivo Movil Detectado!',
+                    'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
+                    'success'
+                )
+            } else {
+                $timeout(() => {
+                    document.getElementById('menu_toggle').click()
+                }, 1100)
+            }
+
+            $scope.moreSearchOptions = false;
+            $scope.dataSearch = {
+                checkBoxFecha: true,
+                pageIndex: 1,
+                pageSize: 25,
+                maxSize: 5,
+                secuencial: null,
+                typeSearchNro: 1
+            }
+
+
+            $scope.tipoDocumentos = [
+                // { codigo: '03', descripcion: 'LIQUIDACION COMPRA' },
+                // { codigo: 'FC', descripcion: 'FACTURA' },
+                // { codigo: 'DH', descripcion: 'DOCUMENTO NO HABITUAL' },
+            ];
+            $scope.typesSearchNro = [
+                { code: 1, description: 'Ninguna' },
+                { code: 2, description: 'Retención' },
+                { code: 3, description: 'Nota Crédito' },
+            ]
+
+            $scope.cuentasPorPagar = [];
+            $scope.selectedDocumentos = [];
+            $scope.proveedor = {};
+
+            $scope.tableOptions = {
+                sortBy: '',
+                rowSelection: true,
+                multiSelect: true
+            };
+
+            let isCheckedDoc = false;
+
+
+            $scope.getCuentasPorPagar = () => {
+                try {
+
+                    let checkboxFecha = $scope.dataSearch.checkBoxFecha;
+
+                    if ($scope.dataSearch.typeSearchNro > 1 && !fS.isValidField($scope.dataSearch.secuencial)) {
+                        tS.toastr('warning', 'Ingrese número secuencial')
+                        return
+                    }
+
+                    if (fS.isValidField($scope.dataSearch.secuencial)) {
+                        if (!fS.isNumber($scope.dataSearch.secuencial)) {
+                            tS.toastr('warning', 'Secuencial tiene que ser un número válido')
+                            return
+                        }
+                        checkboxFecha = false;
+                        tS.toastr('info', 'Buscando por Nro. Secuencial')
+                    }
+
+                    let dataSearch = {
+                        codEstab: $scope.dataSearch.codEstab,
+                        checkboxFecha,
+                        codEstado: fS.isValidField($scope.dataSearch.codEstado),
+                        codDoc: fS.isValidField($scope.dataSearch.codDoc),
+                        idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
+                        dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                        dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                        pageIndex: $scope.dataSearch.pageIndex,
+                        pageSize: $scope.dataSearch.pageSize,
+                        secuencial: fS.isValidField($scope.dataSearch.secuencial),
+                        typeSearchNro: $scope.dataSearch.typeSearchNro
+                    }
+
+                    $scope.cuentasPorPagar = [];
+                    $scope.selectedDocumentos = [];
+                    isCheckedDoc = false;
+
+                    showLoader();
+
+                    cuentaPorPagarSvc.getAll(dataSearch).then(response => {
+                        $scope.cuentasPorPagar = response;
+
+
+                        if ($scope.cuentasPorPagar.length > 0) {
+                            $scope.dataSearch.totalRecords = $scope.cuentasPorPagar[0].totalRecords;
+                        } else {
+                            $scope.dataSearch.totalRecords = 0;
+                        }
+                    }).catch((error) => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
+                } catch (error) {
+                    hideLoader();
+                    console.log(error)
+                }
+            }
+
+            initLoad();
+            function initLoad() {
+                try {
+                    showLoader();
+                    cuentaPorPagarSvc.getDataFilter().then(response => {
+                        const {
+                            estabs,
+                            estadosDoc,
+                            tiposDoc
+                        } = response;
+                        $scope.establecimientos = estabs;
+                        $scope.estadosDoc = estadosDoc;
+                        $scope.tipoDocumentos = tiposDoc || []
+
+                        if ($scope.establecimientos.length > 0) {
+                            let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
+                            $scope.dataSearch.codEstab = dataEstab.codEstab;
+                            $scope.getCuentasPorPagar();
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader());
+
+                    comprobanteEgresoSvc.getPosfechadoPagosModal()
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
+            //----------------------------------------------FILTROS ----------------------------------------
+            $scope.resultRangeFilter = function (item) {
+                $scope.dataSearch.fechaInicio = item.startDate;
+                $scope.dataSearch.fechaFin = item.endDate;
+                $scope.getCuentasPorPagar();
+            };
+
+
+
+            $scope.onKeyupProveedor = function () {
+                if (!$scope.proveedor.nombreProveedor) {
+                    $scope.dataSearch.idProveedor = 0;
+                }
+            };
+            $scope.onSelectProveedor = function (item) {
+                $scope.dataSearch.idProveedor = item.idProveedor;
+                $scope.getCuentasPorPagar();
+            };
+
+            $scope.onClickBtnMore = function () {
+                $scope.moreSearchOptions = !$scope.moreSearchOptions;
+            };
+
+            $scope.pagechanged = function () {
+                $scope.getCuentasPorPagar();
+            };
+
+            $scope.changePageSize = function () {
+                $scope.dataSearch.pageIndex = 1;
+                $scope.getCuentasPorPagar();
+            };
+            //==========================END FILTERS===================================
+
+            $scope.rowEnabledPayment = function (item) {
+                return !(["PP", "PE"].includes(item.codEstado));
+            }
+
+
+
+            $scope.onDesSelectDoc = function (item) {
+                isCheckedDoc = false;
+                let index = selectedDocumentosTemp.indexOf(item);
+                selectedDocumentosTemp.splice(index, 1);
+            }
+
+            $scope.onSelectDoc = function () {
+                isCheckedDoc = true;
+            }
+
+            function getDocsBySupplierId(idProveedor) {
+
+                comprobanteEgresoSvc.getDataFormaPago(idProveedor).then(response => {
+                    let docs = response.docs;
+                    if (docs.length === 0) return;
+
+                    // Filtrar las notas de crédito de los documentos
+                    const notasCreditoFiltered = docs.filter(d => d.codDoc === DOC_TYPE.NC_SRI);
+
+
+                    // Clonar los documentos seleccionados
+                    const devolucionesFactura = structuredClone($scope.selectedDocumentos);
+
+                    // Filtrar y mapear las facturas con retención
+                    const facturasRetencion = structuredClone($scope.selectedDocumentos)
+                        .filter(doc => hasRelatedRetention(docs, doc))
+                        .map(doc => processFacturaRetencion(doc, notasCreditoFiltered, docs));
+
+                    // Filtrar y mapear las notas de crédito por factura
+                    const notasCreditoFactura = notasCreditoFiltered
+                        .filter(nc => hasDevolucionFactura(devolucionesFactura, nc))
+                        .map(item => addSerieComprobanteFactura(item, devolucionesFactura));
+
+
+                    // Si no hay notas de crédito o facturas con retención, salir
+                    if (!(notasCreditoFactura.length > 0 || facturasRetencion.length > 0)) return;
+
+                    // Función para verificar si un documento tiene una retención relacionada
+                    function hasRelatedRetention(docs, doc) {
+
+                        return docs.some(d => d.codDoc === DOC_TYPE.R_SRI && d.numAutDocSustento === doc.numAutDocSustento);
+                    }
+
+                    // Función para procesar una factura con retención
+                    function processFacturaRetencion(doc, notasCreditoFiltered, docs) {
+                        const dataDocRel = docs.find(d => d.codDoc === DOC_TYPE.R_SRI && d.numAutDocSustento === doc.numAutDocSustento);
+
+                        const totalValorDevolucion = calculateTotalValorDevolucion(doc, notasCreditoFiltered);
+
+                        let serieComprobanteRetencion = '';
+                        let valorRetencion = 0;
+                        if (dataDocRel) {
+                            serieComprobanteRetencion = dataDocRel.nroDocumento;
+                            valorRetencion = dataDocRel.saldo;
+                        }
+
+                        const sumaValorRetencionValorDevolucion = valorRetencion + totalValorDevolucion;
+                        const valorFactRetencion = doc.importeTotal - sumaValorRetencionValorDevolucion;
+
+
+                        return {
+                            serieComprobante: doc.serieComprobante,
+                            fechaEmision: doc.fechaEmision,
+                            importeTotal: doc.importeTotal,
+                            serieComprobanteRetencion,
+                            valorRetencion,
+                            totalValorDevolucion,
+                            valorFactRetencion: fS.roundNumber(valorFactRetencion, 3),
+                        };
+                    }
+
+                    // Función para calcular el total de valor de devolución de una factura
+                    function calculateTotalValorDevolucion(doc, notasCreditoFiltered) {
+                        return notasCreditoFiltered
+                            .filter(nc => nc.numAutDocSustento === doc.numAutDocSustento)
+                            .reduce((acc, curr) => acc + curr.valor, 0); // Asumiendo que `curr` tiene una propiedad `valor`
+                    }
+
+                    // Función para verificar si hay devolución de factura
+                    function hasDevolucionFactura(devolucionesFactura, nc) {
+                        return devolucionesFactura.some(df => df.numAutDocSustento === nc.numAutDocSustento);
+                    }
+
+                    // Función para agregar el número de serie del comprobante de factura a una nota de crédito
+                    function addSerieComprobanteFactura(item, devolucionesFactura) {
+                        const dataDevolucion = devolucionesFactura.find(df => df.numAutDocSustento === item.numAutDocSustento);
+                        if (dataDevolucion) {
+                            item.serieComprobanteFactura = dataDevolucion.serieComprobante;
+                        }
+                        return item;
+                    }
+
+
+
+
+
+                    modalSvc.openWithComponent({
+                        component: 'appDocRelacionadoComponent',
+                        size: 'xl',
+                        params: {
+                            notasCreditoFactura,
+                            facturasRetencion
+                        }
+                    })
+                })
+
+            }
+
+            $scope.$watch('selectedDocumentos', function (newItems) {
+                if (newItems.length === 0 || !isCheckedDoc) return
+
+                if (!verificarProveedorIgual()) return;
+
+                let idProveedor = $scope.selectedDocumentos[0].idProveedor;
+                getDocsBySupplierId(idProveedor);
+
+            }, true);
+
+
+
+            // Función para verificar si los valores de razonSocialComprador son los mismos
+            function verificarProveedorIgual() {
+                const firstCustomerId = $scope.selectedDocumentos[0].idProveedor;
+
+                // Verificar si todas las demás entradas tienen la misma idProveedor
+                const sonIguales = $scope.selectedDocumentos.every(cuenta => cuenta.idProveedor === firstCustomerId);
+
+                return sonIguales;
+            }
+
+            function mergeCuotas(selectedDocumentos, results) {
+                return selectedDocumentos.map(cxc => {
+                    const [cuotasFiltradas] = results.filter(item =>
+                        item.some(cuota => cuota.idCuentaPorPagar === cxc.idCuentaPorPagar)
+                    )
+                    return {
+                        ...cxc,
+                        saldoTemporal: cxc.saldo,
+                        valorSaldoLectura: cxc.saldo,
+                        cuotas: structuredClone(cuotasFiltradas),
+                        cloneCuotas: structuredClone(cuotasFiltradas)
+                    };
+                });
+            }
+
+
+            $scope.openDocPaymentModal = function () {
+                if ($scope.selectedDocumentos.length === 0) {
+                    tS.toastr('warning', 'Seleccione al menos un documento!');
                     return
                 }
 
-                if (fS.isValidField($scope.dataSearch.secuencial)) {
-                    if (!fS.isNumber($scope.dataSearch.secuencial)) {
-                        tS.toastr('warning', 'Secuencial tiene que ser un número válido')
-                        return
-                    }
-                    checkboxFecha = false;
-                    tS.toastr('info', 'Buscando por Nro. Secuencial')
+                if (!verificarProveedorIgual()) {
+                    tS.toastr('warning', 'Seleccione documentos que pertenezca al mismo proveedor');
+                    return
                 }
 
-                let dataSearch = {
-                    codEstab: $scope.dataSearch.codEstab,
-                    checkboxFecha,
-                    codEstado: fS.isValidField($scope.dataSearch.codEstado),
-                    codDoc: fS.isValidField($scope.dataSearch.codDoc),
-                    idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
-                    dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    pageIndex: $scope.dataSearch.pageIndex,
-                    pageSize: $scope.dataSearch.pageSize,
-                    secuencial: fS.isValidField($scope.dataSearch.secuencial),
-                    typeSearchNro: $scope.dataSearch.typeSearchNro
-                }
+                const selectedDocumentos = structuredClone($scope.selectedDocumentos);
+                // Crear un array de promesas para cada solicitud
+                const promises = selectedDocumentos.map(cxc => comprobanteEgresoSvc.getCuotasByIdCuentaPorPagar(cxc.idCuentaPorPagar));
 
-                $scope.cuentasPorPagar = [];
-                $scope.selectedDocumentos = [];
-                isCheckedDoc = false;
-
+                // Utilizar Promise.all para ejecutar las promesas concurrentemente
                 showLoader();
-              
-                cuentaPorPagarSvc.getAll(dataSearch).then(response => {
-                    $scope.cuentasPorPagar = response; 
+                Promise.all(promises)
+                    .then(results => {
+                        hideLoader();
+                        let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
+                        if (mergeWithCuotas.some(item => !item.cuotas || item.cuotas.length === 0)) {
+                            tS.toastr('warning', 'Algunos de los documentos seleccionados no tiene cuotas');
+                            return
+                        }
+                        openModalCobroLote(mergeWithCuotas);
+                    })
+                    .catch(error => {
+                        console.error('Al menos una solicitud falló:', error);
+                        // Manejar el error
+                    }).finally(() => hideLoader());
 
-
-                    if ($scope.cuentasPorPagar.length > 0) {
-                        $scope.dataSearch.totalRecords = $scope.cuentasPorPagar[0].totalRecords;
-                    }else{
-                        $scope.dataSearch.totalRecords =0;
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                }).finally(() => hideLoader())
-            } catch (error) {
-                hideLoader();
-                console.log(error)
-            }
-        }
-
-        initLoad();
-        function initLoad() {
-            try {
-                showLoader();
-                cuentaPorPagarSvc.getDataFilter().then(response => {
-                    const {
-                        estabs,
-                        estadosDoc,
-                        tiposDoc
-                    } = response;
-                    $scope.establecimientos = estabs;
-                    $scope.estadosDoc = estadosDoc;
-                    $scope.tipoDocumentos = tiposDoc || []
-
-                    if ($scope.establecimientos.length > 0) {
-                        let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
-                        $scope.dataSearch.codEstab = dataEstab.codEstab;
-                        $scope.getCuentasPorPagar();
-                    }
-                }).catch(error => {
-                    console.log(error)
-                }).finally(() => hideLoader());
-
-                comprobanteEgresoSvc.getPosfechadoPagosModal()
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        //----------------------------------------------FILTROS ----------------------------------------
-        $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate;
-            $scope.dataSearch.fechaFin = item.endDate;
-            $scope.getCuentasPorPagar();
-        };
-
-
-
-        $scope.onKeyupProveedor = function () {
-            if (!$scope.proveedor.nombreProveedor) {
-                $scope.dataSearch.idProveedor = 0;
-            }
-        };
-        $scope.onSelectProveedor = function (item) {
-            $scope.dataSearch.idProveedor = item.idProveedor;
-            $scope.getCuentasPorPagar();
-        };
-
-        $scope.onClickBtnMore = function () {
-            $scope.moreSearchOptions = !$scope.moreSearchOptions;
-        };
-
-        $scope.pagechanged = function () {
-            $scope.getCuentasPorPagar();
-        };
-
-        $scope.changePageSize = function () {
-            $scope.dataSearch.pageIndex = 1;
-            $scope.getCuentasPorPagar();
-        };
-        //==========================END FILTERS===================================
-
-        $scope.rowEnabledPayment = function (item) {
-            return !(["PP", "PE"].includes(item.codEstado));
-        }
-
-
-
-        $scope.onDesSelectDoc = function (item) {
-            isCheckedDoc = false;
-            let index = selectedDocumentosTemp.indexOf(item);
-            selectedDocumentosTemp.splice(index, 1);
-        }
-
-        $scope.onSelectDoc = function () {
-            isCheckedDoc = true;
-        }
-
-        function getDocsBySupplierId(idProveedor) {
-
-            comprobanteEgresoSvc.getDataFormaPago(idProveedor).then(response => {
-                let docs = response.docs;
-                if (docs.length === 0) return;
- 
-                // Filtrar las notas de crédito de los documentos
-                const notasCreditoFiltered = docs.filter(d => d.codDoc === DOC_TYPE.NC_SRI);
- 
-              
-                // Clonar los documentos seleccionados
-                const devolucionesFactura = structuredClone($scope.selectedDocumentos);
-
-                // Filtrar y mapear las facturas con retención
-                const facturasRetencion = structuredClone($scope.selectedDocumentos)
-                    .filter(doc => hasRelatedRetention(docs, doc))
-                    .map(doc => processFacturaRetencion(doc, notasCreditoFiltered, docs));
-
-                // Filtrar y mapear las notas de crédito por factura
-                const notasCreditoFactura = notasCreditoFiltered
-                    .filter(nc => hasDevolucionFactura(devolucionesFactura, nc))
-                    .map(item => addSerieComprobanteFactura(item, devolucionesFactura));
-
-               
-                // Si no hay notas de crédito o facturas con retención, salir
-                if (!(notasCreditoFactura.length > 0 || facturasRetencion.length > 0)) return;
-
-                // Función para verificar si un documento tiene una retención relacionada
-                function hasRelatedRetention(docs, doc) {
-                   
-                    return docs.some(d => d.codDoc === DOC_TYPE.R_SRI && d.numAutDocSustento === doc.numAutDocSustento);
-                }
-
-                // Función para procesar una factura con retención
-                function processFacturaRetencion(doc, notasCreditoFiltered, docs) {
-                    const dataDocRel = docs.find(d => d.codDoc === DOC_TYPE.R_SRI && d.numAutDocSustento === doc.numAutDocSustento);
-
-                    const totalValorDevolucion = calculateTotalValorDevolucion(doc, notasCreditoFiltered);
-
-                    let serieComprobanteRetencion = '';
-                    let valorRetencion = 0;
-                    if (dataDocRel) {
-                        serieComprobanteRetencion = dataDocRel.nroDocumento;
-                        valorRetencion = dataDocRel.saldo;
-                    }
-
-                    const sumaValorRetencionValorDevolucion = valorRetencion + totalValorDevolucion;
-                    const valorFactRetencion = doc.importeTotal - sumaValorRetencionValorDevolucion;
- 
-
-                    return {
-                        serieComprobante: doc.serieComprobante,
-                        fechaEmision: doc.fechaEmision,
-                        importeTotal: doc.importeTotal,
-                        serieComprobanteRetencion,
-                        valorRetencion,
-                        totalValorDevolucion,
-                        valorFactRetencion: fS.roundNumber(valorFactRetencion, 3),
-                    };
-                }
-
-                // Función para calcular el total de valor de devolución de una factura
-                function calculateTotalValorDevolucion(doc, notasCreditoFiltered) {
-                    return notasCreditoFiltered
-                        .filter(nc => nc.numAutDocSustento === doc.numAutDocSustento)
-                        .reduce((acc, curr) => acc + curr.valor, 0); // Asumiendo que `curr` tiene una propiedad `valor`
-                }
-
-                // Función para verificar si hay devolución de factura
-                function hasDevolucionFactura(devolucionesFactura, nc) {
-                    return devolucionesFactura.some(df => df.numAutDocSustento === nc.numAutDocSustento);
-                }
-
-                // Función para agregar el número de serie del comprobante de factura a una nota de crédito
-                function addSerieComprobanteFactura(item, devolucionesFactura) {
-                    const dataDevolucion = devolucionesFactura.find(df => df.numAutDocSustento === item.numAutDocSustento);
-                    if (dataDevolucion) {
-                        item.serieComprobanteFactura = dataDevolucion.serieComprobante;
-                    }
-                    return item;
-                }
-
-
-               
-
-
-                modalSvc.openWithComponent({
-                    component:'appDocRelacionadoComponent',  
-                    size: 'xl',
-                    params: {
-                        notasCreditoFactura,
-                        facturasRetencion
-                    }
-                })
-            })
-
-        }
-
-        $scope.$watch('selectedDocumentos', function (newItems) {
-            if (newItems.length === 0 || !isCheckedDoc) return
-
-            if (!verificarProveedorIgual()) return;
-
-            let idProveedor = $scope.selectedDocumentos[0].idProveedor;
-            getDocsBySupplierId(idProveedor);
-
-        }, true);
-
-
-
-        // Función para verificar si los valores de razonSocialComprador son los mismos
-        function verificarProveedorIgual() {
-            const firstCustomerId = $scope.selectedDocumentos[0].idProveedor;
-
-            // Verificar si todas las demás entradas tienen la misma idProveedor
-            const sonIguales = $scope.selectedDocumentos.every(cuenta => cuenta.idProveedor === firstCustomerId);
-
-            return sonIguales;
-        }
-
-        function mergeCuotas(selectedDocumentos, results) {
-            return selectedDocumentos.map(cxc => {
-                const [cuotasFiltradas] = results.filter(item =>
-                    item.some(cuota => cuota.idCuentaPorPagar === cxc.idCuentaPorPagar)
-                )
-                return {
-                    ...cxc,
-                    saldoTemporal: cxc.saldo,
-                    valorSaldoLectura: cxc.saldo,
-                    cuotas: structuredClone(cuotasFiltradas),
-                    cloneCuotas: structuredClone(cuotasFiltradas)
-                };
-            });
-        }
-
-        
-        $scope.openDocPaymentModal = function () {
-            if ($scope.selectedDocumentos.length === 0) {
-                tS.toastr('warning', 'Seleccione al menos un documento!');
-                return
             }
 
-            if (!verificarProveedorIgual()) {
-                tS.toastr('warning', 'Seleccione documentos que pertenezca al mismo proveedor');
-                return
-            }
+            async function openModalCobroLote(selectedDocumentos) {
+                try {
+                    let fileCtrl = nombreModalContabilidad.PAGO.fileCtrl;
+                    let ctrl = nombreModalContabilidad.PAGO.controllers['MPL'];
+                    let template = nombreModalContabilidad.PAGO.templates['MPL'];
+                    let controller = (await import(fileCtrl))[ctrl];
 
-            const selectedDocumentos = structuredClone($scope.selectedDocumentos);
-            // Crear un array de promesas para cada solicitud
-            const promises = selectedDocumentos.map(cxc => comprobanteEgresoSvc.getCuotasByIdCuentaPorPagar(cxc.idCuentaPorPagar));
-
-            // Utilizar Promise.all para ejecutar las promesas concurrentemente
-            showLoader();
-            Promise.all(promises)
-                .then(results => {
-                    hideLoader();
-                    let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
-                    if (mergeWithCuotas.some(item => !item.cuotas || item.cuotas.length === 0)) {
-                        tS.toastr('warning', 'Algunos de los documentos seleccionados no tiene cuotas');
-                        return
-                    }
-                    openModalCobroLote(mergeWithCuotas);
-                })
-                .catch(error => {
-                    console.error('Al menos una solicitud falló:', error);
-                    // Manejar el error
-                }).finally(() => hideLoader());
-
-        }
-
-        async function openModalCobroLote(selectedDocumentos) {
-            try {
-                let fileCtrl = nombreModalContabilidad.PAGO.fileCtrl;
-                let ctrl = nombreModalContabilidad.PAGO.controllers['MPL'];
-                let template = nombreModalContabilidad.PAGO.templates['MPL'];
-                let controller = (await import(fileCtrl))[ctrl];
-
-                let modalRef = modalSvc.open({
-                    controller,
-                    template,
-                    params: {
-                        data: selectedDocumentos[0],
-                        selectedDocumentos
-                    },
-                    size: 'xl',
-                    isRenderRazorPartial: true
-                })
-                modalRef.result.then(result => {
-                    if (typeof result === 'object') {
-                        $scope.getCuentasPorPagar();
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
- 
-
-        //======================================MODAL CUOTA================================================ 
-        $scope.openModalCuota = async (item) => {
-            try {
-
-                let modalParams = {
-                    controller: 'modalCuotaCtrl',
-                    template: `${mainPaths.cuenta_por_pagar_view}Shared/_ModalCuota.cshtml`,
-                    size: 'xl',
-                    isRenderRazorPartial: true
-                }
-
-                showLoader();
-                cuentaPorPagarSvc.getCuotas(item.idCuentaPorPagar).then(response => {
-                    modalParams.params = {
-                        cuotas: response,
-                        data: {
-                            ...item,
-                            id: item.idCuentaPorPagar,
-                            codPago: item.codEstado,
-                            numeroIdentificacion: item.identificacionComprador
+                    let modalRef = modalSvc.open({
+                        controller,
+                        template,
+                        params: {
+                            data: selectedDocumentos[0],
+                            selectedDocumentos
                         },
-                    }
-
-                    let modalRef = modalSvc.open(modalParams);
-                    modalRef.result.then(res => {
-                        if (res !== null && typeof res === 'object') {
-                            initLoad();
-
+                        size: 'xl',
+                        isRenderRazorPartial: true
+                    })
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            $scope.getCuentasPorPagar();
                         }
                     })
-                    hideLoader()
-                }).catch(error => {
+                } catch (error) {
                     console.log(error)
-                }).finally(() => hideLoader());
-            } catch (error) {
-                hideLoader()
-                console.log(error)
-            }
-        }
-
-        $scope.openModalHistorialMov = (item) => {
-            try {
-
-                let modalParams = {
-                    template: `${mainPaths.cuenta_por_pagar_view}Shared/_ModalHistorialPago.cshtml`,
-                    controller: 'historialMovimientoCtrl',
-                    size: 'xl', 
                 }
-                showLoader();
-                cuentaPorPagarSvc.getHistorialPago(item.idCuentaPorPagar).then(response => {
-                    if (response.length === 0) {
-                        tS.toastr('warning', 'No tiene historial de movimientos')
-                        return
+            }
+
+
+            //======================================MODAL CUOTA================================================ 
+            $scope.openModalCuota = async (item) => {
+                try {
+
+                    let modalParams = {
+                        controller: 'modalCuotaCtrl',
+                        template: `${mainPaths.cuenta_por_pagar_view}Shared/_ModalCuota.cshtml`,
+                        size: 'xl',
+                        isRenderRazorPartial: true
                     }
+
+                    showLoader();
+                    cuentaPorPagarSvc.getCuotas(item.idCuentaPorPagar).then(response => {
+                        modalParams.params = {
+                            cuotas: response,
+                            data: {
+                                ...item,
+                                id: item.idCuentaPorPagar,
+                                codPago: item.codEstado,
+                                numeroIdentificacion: item.identificacionComprador
+                            },
+                        }
+
+                        let modalRef = modalSvc.open(modalParams);
+                        modalRef.result.then(res => {
+                            if (res !== null && typeof res === 'object') {
+                                initLoad();
+
+                            }
+                        })
+                        hideLoader()
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader());
+                } catch (error) {
+                    hideLoader()
+                    console.log(error)
+                }
+            }
+
+            $scope.openModalHistorialMov = (item) => {
+                try {
+
+                    let modalParams = {
+                        template: `${mainPaths.cuenta_por_pagar_view}Shared/_ModalHistorialPago.cshtml`,
+                        controller: 'historialMovimientoCtrl',
+                        size: 'xl',
+                    }
+
                     modalParams.params = {
-                        data: item,
-                        historialMovimientos: response
+                        idCuentaPorPagar: item.idCuentaPorPagar
                     }
                     modalSvc.openModalCustom(modalParams)
-                }).catch(error => {
+
+                } catch (error) {
                     console.log(error)
-                }).finally(() => hideLoader());
-            } catch (error) {
-                hideLoader();
-                console.log(error)
+                }
             }
-        }
 
 
 
@@ -502,87 +494,84 @@ app.component("appCuentaPorPagarComponent", {
 
 
 
- 
-
-        $ctrl.ok = function () {
-            $ctrl.close({$value: $ctrl.selected.item});
-        };
-
-        $ctrl.cancel = function () {
-            $ctrl.dismiss({$value: 'cancel'});
-        };
-    }]
-});
 
 
-app.component("appDocRelacionadoComponent", {
-    templateUrl: `${mainPath}_DocRelacionadoComponent.cshtml`,
-    bindings: {
-        resolve: '<',
-        close: '&',
-        dismiss: '&', 
-    },
-    controller: ["$scope", function($scope){
-        let $ctrl = this; 
-        $scope.facturasRetencion = [];
-        $scope.notasCreditoFactura = [];
+            $ctrl.ok = function () {
+                $ctrl.close({ $value: $ctrl.selected.item });
+            };
 
-        $scope.dataTotal = {
-            importeTotal: 0, 
-            valorRetencion: 0,
-            totalValorDevolucion: 0,
-            valorFactRetencion: 0,            
-        }
-        $scope.valorTotalNotaCreditoFactura=0;
-
-        $ctrl.$onInit = function(){
-            
-            $scope.facturasRetencion = $ctrl.resolve.params.facturasRetencion;
-            $scope.notasCreditoFactura = $ctrl.resolve.params.notasCreditoFactura;
-           
-            for(let item of $scope.facturasRetencion){
-                $scope.dataTotal.importeTotal += item.importeTotal;
-                $scope.dataTotal.valorRetencion += item.valorRetencion;
-                $scope.dataTotal.totalValorDevolucion += item.totalValorDevolucion;
-                $scope.dataTotal.valorFactRetencion += item.valorFactRetencion;                
-            } 
-
-            let valorTotalNotaCreditoFactura = $scope.notasCreditoFactura.reduce((acc,curr)=>acc+curr.saldo, 0);
-
-            $scope.dataTotal.importeTotal = fS.roundNumber(item.importeTotal, 3);
-            $scope.dataTotal.valorRetencion = fS.roundNumber(item.valorRetencion, 3);
-            $scope.dataTotal.totalValorDevolucion = fS.roundNumber(item.totalValorDevolucion, 3);
-            $scope.dataTotal.valorFactRetencion = fS.roundNumber(item.valorFactRetencion,3);
-
-            $scope.valorTotalNotaCreditoFactura = fS.roundNumber(valorTotalNotaCreditoFactura, 3);
-
-        }
-
-        $ctrl.ok = function () {
-            
-            
-            $ctrl.close( );
-        };
-
-        $ctrl.cancel = function () {
-            $ctrl.dismiss( );
-        };
-
-    }]
-});
+            $ctrl.cancel = function () {
+                $ctrl.dismiss({ $value: 'cancel' });
+            };
+        }]
+    });
 
 
+    app.component("appDocRelacionadoComponent", {
+        templateUrl: `${mainPath}_DocRelacionadoComponent.cshtml`,
+        bindings: {
+            resolve: '<',
+            close: '&',
+            dismiss: '&',
+        },
+        controller: ["$scope", function ($scope) {
+            let $ctrl = this;
+            $scope.facturasRetencion = [];
+            $scope.notasCreditoFactura = [];
 
-(function () {
+            $scope.dataTotal = {
+                importeTotal: 0,
+                valorRetencion: 0,
+                totalValorDevolucion: 0,
+                valorFactRetencion: 0,
+            }
+            $scope.valorTotalNotaCreditoFactura = 0;
 
-    'use strict'; 
+            $ctrl.$onInit = function () {
+
+                $scope.facturasRetencion = $ctrl.resolve.params.facturasRetencion;
+                $scope.notasCreditoFactura = $ctrl.resolve.params.notasCreditoFactura;
+
+                for (let item of $scope.facturasRetencion) {
+                    $scope.dataTotal.importeTotal += item.importeTotal;
+                    $scope.dataTotal.valorRetencion += item.valorRetencion;
+                    $scope.dataTotal.totalValorDevolucion += item.totalValorDevolucion;
+                    $scope.dataTotal.valorFactRetencion += item.valorFactRetencion;
+                }
+
+                let valorTotalNotaCreditoFactura = $scope.notasCreditoFactura.reduce((acc, curr) => acc + curr.saldo, 0);
+
+                $scope.dataTotal.importeTotal = fS.roundNumber(item.importeTotal, 3);
+                $scope.dataTotal.valorRetencion = fS.roundNumber(item.valorRetencion, 3);
+                $scope.dataTotal.totalValorDevolucion = fS.roundNumber(item.totalValorDevolucion, 3);
+                $scope.dataTotal.valorFactRetencion = fS.roundNumber(item.valorFactRetencion, 3);
+
+                $scope.valorTotalNotaCreditoFactura = fS.roundNumber(valorTotalNotaCreditoFactura, 3);
+
+            }
+
+            $ctrl.ok = function () {
+
+
+                $ctrl.close();
+            };
+
+            $ctrl.cancel = function () {
+                $ctrl.dismiss();
+            };
+
+        }]
+    });
+
+
+
 
     //---------------------------------------------START CUOTAS----------------------------------------------------
     app.controller("modalCuotaCtrl", modalCuotaCtrl);
 
     modalCuotaCtrl.$inject = ["$scope", "$uibModalInstance", "$injector", "formulario", "toastService", "params"];
 
-    function modalCuotaCtrl($scope, $uibModalInstance,$injector, fS, tS, params) {
+    function modalCuotaCtrl($scope, $uibModalInstance, $injector, fS, tS, params) {
         const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
 
         let { data, cuotas } = params;
@@ -879,7 +868,7 @@ app.component("appDocRelacionadoComponent", {
                 Swal.fire({
                     icon: 'warning',
                     html: `<small>Está seguro/a de guardar las cuotas de este Comprobante
-                            N°: <b>${$scope.data.serieComprobante}</b></small>`,
+                         N°: <b>${$scope.data.serieComprobante}</b></small>`,
                     showConfirmButton: true,
                     confirmButtonText: 'Si, guardar',
                     showCancelButton: true,
@@ -934,13 +923,90 @@ app.component("appDocRelacionadoComponent", {
     //=======================================START MOVIMIENTO CAJA============================================== 
     app.controller('historialMovimientoCtrl', historialMovimientoCtrl);
 
-    historialMovimientoCtrl.$inject = ["$scope", "$uibModalInstance", "params"]
-    function historialMovimientoCtrl($scope, $uibModalInstance, params) {
+    historialMovimientoCtrl.$inject = ["$scope","$rootScope", "$uibModalInstance", "cuentaPorPagarService", "params"]
+    function historialMovimientoCtrl($scope,$rootScope, $uibModalInstance, cuentaPorPagarSvc, params) {
 
-        let { data, historialMovimientos } = params
+        $scope.accion = $rootScope.accion;
 
-        $scope.data = Object.assign({}, data)
-        $scope.historialMovimientos = historialMovimientos;
+        let  historialPagosTemp = [],
+            pagosDetalleTemp = []
+
+
+        $scope.cuentaPorPagar = {};
+        $scope.comprobantesEgreso = [];
+        $scope.historialPagos = [];
+        $scope.pagosDetalle = [];
+
+        $scope.showHistorial = function (item) {
+            item.showDetalle = !item.showDetalle;
+
+            item.historialPagos = historialPagosTemp.filter(historial => historial.idComprobanteEgreso === item.idComprobanteEgreso);
+
+        }
+
+
+        $scope.showDetalle = function (data) {
+            let detalles = pagosDetalleTemp.filter(item => item.idPago === data.idPago);
+
+            let html = `<div class="table-responsive">
+                        <table class="table table-hover table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th><small>N°</small></th>                              
+                                    <th><small>Nro. Cuota</small></th>                              
+                                    <th><small>Fecha Vcto.</small></th>
+                                    <th><small>Cuota</small></th>
+                                    <th><small>Abono</small></th>
+                                    <th><small>Saldo</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+            let index = 1;
+            for (let itemDetalle of detalles) {
+                html += ` <tr>
+                            <td>${index++}</td>
+                            <td>${itemDetalle.nroCuota}</td>
+                            <td>${itemDetalle.fechaVencimiento}</td>
+                            <td>$${itemDetalle.cuota}</td>
+                            <td>$${itemDetalle.abono}</td>
+                            <td>$${itemDetalle.saldo}</td>
+                        </tr>
+                    `
+            }
+            html += '</tbody></table></div>'
+            Swal.fire({
+                title: '<small>Detalle Pago</small>',
+                icon: 'info',
+                html,
+                width: 700
+            })
+
+        }
+
+
+        onLoad();
+        function onLoad() {
+            cuentaPorPagarSvc.getHistorialPago(params.idCuentaPorPagar).then(response => {
+                if (response.historialPagos.length === 0 || response.pagosDetalle.length === 0 || response.comprobantesEgreso
+                    .length === 0) {
+                    tS.toastr('warning', 'No tiene historial de movimientos')
+                    return
+                }
+
+                $scope.cuentaPorPagar = response.cuentaPorPagar;
+                $scope.comprobantesEgreso = response.comprobantesEgreso;
+                historialPagosTemp = response.historialPagos;
+                pagosDetalleTemp = response.pagosDetalle;
+
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+
+        $scope.refresh = function () {
+            onLoad()
+        }
 
 
         $scope.closeModal = () => {
@@ -949,5 +1015,4 @@ app.component("appDocRelacionadoComponent", {
 
     }
 
-
-})(window.angular)
+})()

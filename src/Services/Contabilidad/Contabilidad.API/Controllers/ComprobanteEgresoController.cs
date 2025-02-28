@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class ComprobanteEgresoController : BaseApiController
 {
@@ -16,7 +14,7 @@ public class ComprobanteEgresoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _svc.GetAsync(parameters));
     }
@@ -26,7 +24,7 @@ public class ComprobanteEgresoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         return Ok(await _svc.AddAsync(parameters));
@@ -37,7 +35,7 @@ public class ComprobanteEgresoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "observacion", observacion }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "observacion", observacion }
         };
         var response = await _svc.DeleteAsync(parameters);
         return Ok(response);
@@ -48,7 +46,7 @@ public class ComprobanteEgresoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };

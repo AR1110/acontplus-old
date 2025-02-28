@@ -72,13 +72,13 @@ BEGIN
         -- ======================= VALIDATION =============================== 
         IF NOT EXISTS(SELECT 1 FROM @tbInspection) 
             BEGIN
-                 SELECT [Common].[ufnSpResponse]('0', 'Error en la información al registrar', NULL)
+                 SELECT '0' as code, 'Error en la información al registrar' as 'message'
                  RETURN
             END 
 
         IF EXISTS (SELECT 1 FROM Mechanical.Inspection WITH (NOLOCK) WHERE SupportId = @SupportId)
             BEGIN
-                 SELECT [Common].[ufnSpResponse]('0', 'Ya se encuentra realizado la inspeccion de esta Ficha', NULL)
+                 SELECT '0' as code, 'Ya se encuentra realizado la inspeccion de esta Ficha' as 'message'
                  RETURN
             END 
 
@@ -94,7 +94,7 @@ BEGIN
             SELECT @Id = SCOPE_IDENTITY()
 
         COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
+        SELECT '1' as code, 'Éxitos al guardar' as 'message'
     END TRY 
 
     BEGIN CATCH 
@@ -108,6 +108,6 @@ BEGIN
 		VALUES
         (NEWID(), 'Inspection/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error al guardar La Inspección', NULL)
+        SELECT '0' as code, 'Error al guardar La Inspección' as 'message'
     END CATCH 
 END

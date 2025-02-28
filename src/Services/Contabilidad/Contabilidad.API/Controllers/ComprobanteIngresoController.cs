@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class ComprobanteIngresoController(IComprobanteIngresoService comprobanteIngresoService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService comprobante
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await comprobanteIngresoService.GetAsync(parameters));
     }
@@ -19,7 +17,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService comprobante
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         return Ok(await comprobanteIngresoService.AddAsync(parameters));
@@ -30,7 +28,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService comprobante
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
         return Ok(await comprobanteIngresoService.CancelAsync(parameters));
     }
@@ -41,7 +39,7 @@ public class ComprobanteIngresoController(IComprobanteIngresoService comprobante
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };

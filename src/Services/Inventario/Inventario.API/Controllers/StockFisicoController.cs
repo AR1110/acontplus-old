@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class StockFisicoController(InventarioContext context, IStockFisicoService stockFisico) : BaseApiController
 {
@@ -17,7 +15,7 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
         {
             var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", json }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json }
             };
             var response = await stockFisico.GetAsync(parameters);
             if (response == null) { return NoContent(); }
@@ -83,7 +81,7 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
     [HttpPost]
     public async Task<IActionResult> PostStockFisico(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         try
         {
             var response = await stockFisico.AddAsync(request);

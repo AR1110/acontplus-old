@@ -37,7 +37,7 @@ BEGIN
 	DECLARE @LicensePlate VARCHAR(15),@userId INT
 
     --> Customer
-	DECLARE @CustomerId INT, @CustomerIdAdmin INT ,@IDCard VARCHAR(15) ,@CardTypeId INT ,@IDType VARCHAR(5)
+	DECLARE @CustomerId INT, @CustomerCompanyId INT ,@IdTypeId INT ,@IDCard VARCHAR(50) ,@IDType VARCHAR(10)
 
 
 	DECLARE @tbVehicle AS TABLE (
@@ -121,24 +121,24 @@ BEGIN
 
         SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @CardTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = @IDType
+        SELECT TOP 1 @IdTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = @IDType
 
         --> VALIDATION OF INFORMATION 
-        IF (SELECT COUNT(*) FROM @tbVehicle) = 0   
+        IF NOT EXISTS(SELECT 1 FROM @tbVehicle)   
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del vehiculo', NULL)
+                SELECT '0' as code, 'Error en la informacion del vehiculo' as 'message'
                 RETURN
             END 
 
-        IF (SELECT COUNT(*) FROM @tbCustomer) = 0   
+        IF NOT EXISTS(SELECT 1 FROM @tbCustomer)   
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del Cliente', NULL)
+                SELECT '0' as code, 'Error en la informacion del Cliente' as 'message'
                 RETURN
             END
 
         IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate AND CompanyId = @CompanyId AND [Deleted] IS NULL)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'Ya se encuentra registrado', NULL)
+                SELECT '0' as code, 'Ya se encuentra registrado' as 'message'
                 RETURN
             END 
             
@@ -163,36 +163,36 @@ BEGIN
             -->EXISTENCE OF THE CUSTOMER OR DRIVER
             IF EXISTS (SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard)
                 BEGIN
-                    SELECT TOP 1 @CustomerIdAdmin = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard
+                    SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard
                 END 
             ELSE
                 BEGIN 
                     INSERT INTO Customer.Customer
-                          (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
-                    SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation 
+                           (IdTypeId,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
+                    SELECT @IdTypeId,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation 
                     FROM @tbCustomer 
-
-                    SELECT @CustomerIdAdmin = SCOPE_IDENTITY()
-                END 
-                
-            IF NOT EXISTS (SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId)
-                BEGIN
-                    INSERT INTO dbo.Cliente
-                           (idEntidad,idTipoIdentificacion,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,correo,telefono,validationSri,customerId)
-                    SELECT @CompanyId,@CardTypeId,IDCard,TradeName,BusinessName,[Address],Email,telephone,SriValidation,@CustomerIdAdmin
-                    FROM @tbCustomer
 
                     SELECT @CustomerId = SCOPE_IDENTITY()
                 END 
+                
+            IF NOT EXISTS (SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE CustomerId = @CustomerId AND idEntidad = @CompanyId)
+                BEGIN
+                    INSERT INTO dbo.Cliente
+                           (idEntidad,direccion,correo,telefono,customerId)
+                    SELECT @CompanyId,[Address],Email,telephone,@CustomerId
+                    FROM @tbCustomer
+
+                    SELECT @CustomerCompanyId = SCOPE_IDENTITY()
+                END 
             ELSE 
                 BEGIN
-                    SELECT TOP 1 @CustomerId = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId
+                    SELECT TOP 1 @CustomerCompanyId = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE CustomerId = @CustomerId AND idEntidad = @CompanyId
                 END 
 
             -- CUSTOMER RECORD -- 
 			INSERT INTO [Mechanical].[VehicleCompany]
 				   (VehicleId ,CompanyId ,UserId ,CustomerId,Observation)
-			SELECT @VehicleId,@CompanyId,@userId,@CustomerId,Observation
+			SELECT @VehicleId,@CompanyId,@userId,@CustomerCompanyId,Observation
             FROM @tbVehicle
 
             SELECT TOP 1 @LicensePlate = STRING_AGG(ve.LicensePlate,'|')
@@ -209,7 +209,7 @@ BEGIN
             SET @payload = (SELECT @Id as id FOR JSON PATH)
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Guadado Correctamente', @payload)
+        SELECT '1' as code, 'Guadado Correctamente' as 'message', @payload as payload
 	END TRY 
 
 	BEGIN CATCH
@@ -222,7 +222,7 @@ BEGIN
             (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'Vehicle/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH 
 END
 GO

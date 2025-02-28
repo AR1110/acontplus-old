@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class SubcategoryController(ISubcategoryService subcategoryService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class SubcategoryController(ISubcategoryService subcategoryService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await subcategoryService.GetAsync(parameters));
     }
@@ -18,7 +16,7 @@ public class SubcategoryController(ISubcategoryService subcategoryService) : Bas
     public async Task<IActionResult> Post([FromBody] Subcategory subcategory)
     {
         subcategory.UserId = User.GetUserId();
-        subcategory.CompanyId = User.GetCompanyId();
+        subcategory.CompanyId = User.GetClaimValue<int>("companyId");
         return Ok(await subcategoryService.AddAsync(subcategory));
     }
 

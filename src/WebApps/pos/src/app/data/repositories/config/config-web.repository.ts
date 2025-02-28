@@ -72,7 +72,8 @@ export class ConfigWebRepository implements ConfigRepository {
           configVenta: {} as ConfigVenta,
           decimal: {} as DecimalVenta,
           vendedores: [] as any[],
-          tarifas: [] as any[]
+          tarifas: [] as any[],
+          pendingOrders: 0
         }
         if (response.code === "1") {
           let {
@@ -84,7 +85,9 @@ export class ConfigWebRepository implements ConfigRepository {
             customer,
             config,
             vendedores,
-            tarifas
+            tarifas,
+
+            orderCount
           } = JSON.parse(response.payload as string);
 
           const roomTables = groupRoomTableUtil(tables);
@@ -109,6 +112,9 @@ export class ConfigWebRepository implements ConfigRepository {
           resultData.decimal = decimal;
           resultData.vendedores = vendedores;
           resultData.tarifas = tarifas;
+
+          resultData.pendingOrders = Array.isArray(orderCount) && orderCount.length>0? orderCount[0].pendingOrders : 0
+
         }
         return resultData;
       })

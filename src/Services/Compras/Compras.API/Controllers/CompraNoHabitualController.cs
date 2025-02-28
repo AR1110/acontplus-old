@@ -1,27 +1,16 @@
-﻿using Common.AppSettings.Extensions;
+﻿namespace Compras.API.Controllers;
 
-namespace Compras.API.Controllers;
-
-public class CompraNoHabitualController : BaseApiController
+public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApiController
 {
-    private readonly ICompraNoHabitualService _compraNoHabSvc;
-    private IConfiguration _configuration;
 
-    public CompraNoHabitualController(IConfiguration configuration, ICompraNoHabitualService compraNoHabSvc
-        )
-    {
-        _configuration = configuration;
-        _compraNoHabSvc = compraNoHabSvc;
-    }
-
-    [HttpGet("Get")]
+    [HttpGet()]
     public async Task<IActionResult> Get(string json)
     {
         try
         {
-            var response = await _compraNoHabSvc.GetAsync(new Dictionary<string, object>
+            var response = await _svc.GetAsync(new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
             if (response == null) { return NoContent(); }
 
@@ -34,49 +23,26 @@ public class CompraNoHabitualController : BaseApiController
         }
     }
 
-    [HttpPost("Insert")]
+    [HttpPost()]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _compraNoHabSvc.AddAsync(request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+        return Ok(await _svc.AddAsync(request));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _compraNoHabSvc.UpdateAsync(id, request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+        return Ok(await _svc.UpdateAsync(id, request));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _compraNoHabSvc.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+
+        return Ok(await _svc.DeleteAsync(parameters));
     }
 }

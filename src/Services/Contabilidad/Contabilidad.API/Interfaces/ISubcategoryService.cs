@@ -1,11 +1,9 @@
-﻿using Common.AppSettings;
-
-namespace Contabilidad.API.Interfaces;
+﻿namespace Contabilidad.API.Interfaces;
 
 public interface ISubcategoryService
 {
-    Task<LegacyApiResponse> AddAsync(Subcategory subcategory);
-    Task<LegacyApiResponse> DeleteAsync(int userId, int id);
-    Task<LegacyApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<LegacyApiResponse> UpdateAsync(int id, Subcategory subcategory);
+    Task<ApiResponse> AddAsync(Subcategory subcategory);
+    Task<ApiResponse> DeleteAsync(int userId, int id);
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> UpdateAsync(int id, Subcategory subcategory);
 }

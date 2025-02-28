@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace FactElect.API.Controllers;
+﻿namespace FactElect.API.Controllers;
 
 public class FacturaController(IFacturaService service) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var response = await service.GetAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return NoContent(); }
 
@@ -21,7 +19,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await service.AddAsync(parameters);
@@ -33,7 +31,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -46,7 +44,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var response = await service.GetByIdAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "id", id }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
         });
         if (response == null) { return NoContent(); }
 
@@ -59,7 +57,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };

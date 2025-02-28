@@ -6,6 +6,7 @@ import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
 import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
 import {AnticipoMapper} from "@accounting/data/anticipo/anticipo.mapper";
+import {getNoLoader} from "@core/interceptors/loader.interceptor";
 
 
 @Injectable({
@@ -23,7 +24,9 @@ export class AnticipoWebRepository implements AnticipoRepository{
       ...obj
     })
 
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`, {
+      context: getNoLoader()
+    })
       .pipe(
         map(response => {
             if (response.code === "1") {

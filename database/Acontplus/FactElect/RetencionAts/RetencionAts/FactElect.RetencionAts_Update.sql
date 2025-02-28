@@ -9,9 +9,9 @@ GO
 -- Create date: 2022-02-21
 -- Description: sp for update retencion ats
 -- =============================================
-CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Update @idRol INT
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Update @userRoleId INT
 ,@id INT
-,@infoCompRet VARCHAR(MAX) 
+,@json VARCHAR(MAX) 
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -51,13 +51,13 @@ BEGIN
 
 	BEGIN TRY
         --> Informacion General
-        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
               (idRetencionAts,idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
 		SELECT @id           ,idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
-		FROM OPENJSON(@infoCompRet) WITH
+		FROM OPENJSON(@json) WITH
         (
              idPuntoEmision                 INT
             ,secuencial                       VARCHAR(6)

@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { Role } from '@modules/config/models/role.model';
+import { Role } from '@modules/config/domain/models/role.model';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';

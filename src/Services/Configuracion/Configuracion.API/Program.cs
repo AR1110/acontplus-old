@@ -1,20 +1,19 @@
-﻿using Common.AppSettings;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using Configuracion.API.Extensions.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
+
 // Add services to the container.
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 
@@ -26,6 +25,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
+
+app.MapPrinterEndpoints();
 
 app.UseRouting();
 

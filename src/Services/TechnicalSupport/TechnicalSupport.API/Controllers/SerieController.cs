@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace TechnicalSupport.API.Controllers;
+﻿namespace TechnicalSupport.API.Controllers;
 
 public class SerieController : BaseApiController
 {
@@ -16,7 +14,7 @@ public class SerieController : BaseApiController
     {
         var response = await _serieService.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) { return BadRequest("Can't Get Data"); }
 

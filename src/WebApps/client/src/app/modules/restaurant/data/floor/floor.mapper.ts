@@ -1,0 +1,28 @@
+import {ApiResponse} from "@core/models/api-response";
+
+export class FloorMapper {
+  static fromApiGetByEstab(response:ApiResponse) {
+    let data = [] as any[]
+    if(response.code==="1"){
+      let mainData = response.payload as any[] || [];
+
+      data = mainData.map((item:any, index: number)=>{
+        return {
+          index: index + 1,
+          "codEstab": item.codEstab,
+          "establecimientoId": item.establecimientoId,
+          "code": item.code,
+          "description": item.description,
+          "capacity": item.capacity,
+          rooms:  item.rooms,
+          "id": item.id,
+          "enabled": item.enabled,
+          "deleted": item.deleted,
+          "userId": item.userId,
+        }
+      })
+    }
+
+    return data;
+  }
+}

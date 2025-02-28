@@ -25,14 +25,14 @@ BEGIN
 
         IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND idMedida = @idMedida AND estado = 1)
             BEGIN
-                SELECT Common.ufnSpResponse('0', 'El Articulo tiene realizada transacciones no pueden ser editado', NULL)  			
+                SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado'[message]		
 			    RETURN 
             END 
 
 		BEGIN TRAN 
 			DELETE FROM ArticuloFraccionado WHERE idArticuloFraccionado = @id
 		COMMIT TRAN 
-		SELECT Common.ufnSpResponse('1', 'Eliminado Correctamente', NULL)
+		SELECT '0'code, 'Eliminado Correctamente'[message]
 	END TRY
 
 
@@ -41,7 +41,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT Common.ufnSpResponse('0', 'Info: Error en el procedimiento de actualizar ' + ERROR_MESSAGE(), NULL) 		
+		SELECT '0'code, 'Info: Error en el procedimiento de actualizar ' + ERROR_MESSAGE()[message]
 		RETURN
 	END CATCH 
 END

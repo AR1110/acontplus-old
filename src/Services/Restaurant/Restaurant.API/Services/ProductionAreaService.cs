@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Data;
-using Restaurant.API.Entities;
+﻿using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services
@@ -36,7 +33,7 @@ namespace Restaurant.API.Services
 
             //if (!orderExists)
             //{
-                context.Remove(productionArea);
+            context.Remove(productionArea);
             //}
             //else
             //{
@@ -45,7 +42,7 @@ namespace Restaurant.API.Services
             //    productionArea.UserId = userId;
             //    context.Update(productionArea);
             //}
-            
+
             await context.SaveChangesAsync();
             return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
         }

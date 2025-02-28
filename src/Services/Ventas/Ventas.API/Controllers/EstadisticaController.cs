@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Ventas.API.Controllers;
+﻿namespace Ventas.API.Controllers;
 
 public class EstadisticaController(IEstadisticaService estadisticaService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class EstadisticaController(IEstadisticaService estadisticaService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await estadisticaService.GetAsync(parameters));
     }

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
     public class AccountController(IAccountService accountService) : BaseApiController
     {
@@ -9,7 +7,7 @@ namespace Contabilidad.API.Controllers
         {
             var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
             return Ok(await accountService.GetAsync(parameters));
         }

@@ -23,7 +23,7 @@ CREATE OR ALTER VIEW v_CuentaPorCobrar AS (
 		  ,cc.fechaEmision
 		  ,cc.fechaVencimiento
 		  ,identificacionComprador = cu.IDCard
-		  ,razonSocialComprador    = cu.TradeName
+		  ,razonSocialComprador    = cu.BusinessName
 		  ,correo                  = cl.correo
 		  ,telefono                = cl.telefono
           ,cl.CustomerId

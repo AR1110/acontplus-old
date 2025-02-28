@@ -1,0 +1,256 @@
+import { Component, inject } from '@angular/core';
+import { Floor } from '@restaurant/domain/models/floor.model';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { FloorService } from '@restaurant/data/services/floor.service';
+import { SharedService } from '@core/services/shared.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from '@core/services/toaster.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
+import { Room } from '@restaurant/domain/models/room.model';
+import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { MatButton } from '@angular/material/button';
+import { ApiResponse } from '@core/models/api-response';
+import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { RoomService } from '@restaurant/data/services/room.service';
+import {FloorUseCase} from "@restaurant/domain/use-cases/floor.use-case";
+
+@Component({
+    selector: 'app-floor-add-edit-modal',
+    imports: [
+        ReactiveFormsModule,
+        FaIconComponent,
+        TabulatorSemanticUiComponent,
+        MatButton,
+        MatSlideToggle,
+    ],
+    templateUrl: './floor-add-edit-modal.component.html',
+    styles: ``
+})
+export class FloorAddEditModalComponent {
+  data = {} as Floor;
+  roomColumns: any[] = [
+    { title: 'ID', field: 'id', visible: false },
+    { title: 'Código', field: 'code', editor: 'input' },
+    { title: 'Descripción', field: 'description', editor: 'input', width: 250 },
+    {
+      title: 'Capacidad (Mesas)',
+      field: 'capacity',
+      editor: 'number',
+      editorParams: {
+        min: 1,
+        step: 1,
+      },
+      validator: function (cell: any, value: any) {
+        if (value === '' || value === null) {
+          return { valid: false, message: 'Este campo es requerido' };
+        } else if (!Number.isInteger(Number(value)) || Number(value) < 0) {
+          return {
+            valid: false,
+            message: 'Debe ser un número entero positivo',
+          };
+        }
+        return true;
+      },
+    },
+    {
+      title: 'Estado',
+      field: 'enabled',
+      editor: 'tickCross',
+      formatter: 'tickCross',
+    },
+    {
+      formatter: (cell: any) => {
+        //const cellEl = cell.getElement();
+        const rowDataMain = cell.getRow().getData();
+
+        //create edit button
+        let editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.innerHTML = `${icon(faSave).html.join('')}`;
+        editBtn.classList.add('btn', 'btn-success', 'btn-sm');
+        editBtn.title = 'Guardar Sala';
+        editBtn.addEventListener('click', () => {
+          const rowData = cell.getRow().getData();
+          // this.editDetail(rowData);
+        });
+
+        //create delete button
+        let delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
+        delBtn.title = 'Eliminar Sala';
+        delBtn.addEventListener('click', () => {
+          const rowData = cell.getRow();
+          this.deleteRoom(rowData);
+        });
+
+        let buttonHolder = document.createElement('span');
+        buttonHolder.appendChild(delBtn);
+        if (rowDataMain.id > 0 && this.data.id > 0) {
+          buttonHolder.appendChild(editBtn);
+        }
+        return buttonHolder;
+      },
+      hozAlign: 'center',
+      resizable: false,
+      title: 'Opción',
+      width: 100,
+    },
+  ];
+
+  establecimientos: EstablecimientoSelectHtmlOnly[] = [];
+  validation = [undefined, null, '', 0];
+  floorForm = new FormGroup({
+    id: new FormControl(0),
+    establecimientoId: new FormControl(0, [Validators.required]),
+    description: new FormControl('', [Validators.required]),
+    code: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
+    enabled: new FormControl(true),
+  });
+  modalIcon: IconProp = 'plus';
+  modalTitle: string = 'Registrar Piso';
+  rooms: Room[] = [];
+
+  private _floorUseCase = inject(FloorUseCase)
+  _modalRef = inject(NgbActiveModal);
+  _roomService = inject(RoomService);
+  _sharedService = inject(SharedService);
+  _tS = inject(ToasterService);
+
+  deleteRoom(row: any) {
+    const rowData = row.getData();
+
+    // Find the index of the room to delete in the array
+    const index = this.rooms.findIndex((room) => room.id === rowData.id);
+    if (index > -1) {
+      // Remove the room from the array
+      this.rooms.splice(index, 1);
+      // Delete the row from the Tabulator table
+      row.delete();
+    }
+  }
+
+  getEstabAsign() {
+    this._sharedService.getEstabAsign().subscribe((response) => {
+      if (response) {
+        this.establecimientos = response;
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.getEstabAsign();
+    this.floorForm.patchValue({
+      establecimientoId: this.data.establecimientoId,
+    });
+    if (this.data.id > 0) {
+      this.modalIcon = 'edit';
+      this.modalTitle = 'Editar Piso';
+      this.floorForm.patchValue(this.data);
+      this.rooms = this.data.rooms || [];
+    }
+  }
+
+  onSave() {
+    if (this.floorForm.invalid) {
+      return this._tS.toastr({
+        type: 'warning',
+        message: 'Revise los datos correctos',
+      });
+    }
+    if (!(this.rooms.length > 0)) {
+      return this._tS.toastr({
+        type: 'warning',
+        message: 'Debe agregar al menos una sala',
+      });
+    }
+
+    let dataToSave = {
+      ...this.floorForm.value,
+      codEstab:
+        this.establecimientos.find(
+          (x) => x.idEstablecimiento === this.data.establecimientoId,
+        )?.codEstab || null,
+      rooms: this.data.id > 0 ? [] : this.rooms, //solo añade si es nueva
+    };
+
+    if (this.data.id > 0) {
+      this._floorUseCase.put(this.data.id, dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
+    } else {
+      this._floorUseCase.post(dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
+    }
+  }
+
+  setCode() {
+    const description = this.floorForm.get('description')?.value;
+    if (description) {
+      this.floorForm.patchValue({
+        code: description.substring(0, 3).toUpperCase(),
+      });
+    }
+  }
+
+  successResponse(response: ApiResponse) {
+    this._tS.toastr({
+      type: response.code == '1' ? 'success' : 'warning',
+      message: response.message,
+    });
+    if (response.code == '1') {
+      this._modalRef.close(response);
+    }
+  }
+
+  onModalClose() {
+    this._modalRef.close();
+  }
+
+  addRoom() {
+    const maxId =
+      this.rooms.length > 0
+        ? Math.max(...this.rooms.map((room) => room.id))
+        : 0;
+    const code =
+      this.rooms.length > 0
+        ? `${Math.max(...this.rooms.map((room) => parseInt(room.code))) + 1}`
+        : '1';
+    let newRoom: Room = {
+      id: maxId + 1, // Auto-increment the id based on the highest current id;
+      code: code,
+      description: `Sala ${code}`,
+      capacity: 1,
+      enabled: true,
+      floorId: this.data.id,
+    };
+    if (this.data.id > 0) {
+      newRoom.id = 0;
+      this._roomService.post(newRoom).subscribe((response) => {
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code === '1') {
+          const { id } = response.payload as Room;
+          newRoom.id = id;
+          console.log(newRoom);
+          this.rooms.push(newRoom);
+        }
+      });
+    } else {
+      this.rooms.push(newRoom);
+    }
+  }
+}

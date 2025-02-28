@@ -1,7 +1,4 @@
-﻿using Autofac.Core;
-using Common.AppSettings.Extensions;
-
-namespace Contabilidad.API.Controllers;
+﻿namespace Contabilidad.API.Controllers;
 
 public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarService)
     : BaseApiController
@@ -11,7 +8,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await cuentaPorCobrarService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -19,13 +16,13 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
         return Ok(response);
     }
 
-   // este sp trasladar a Controlador CuotaPorCobrarController y el servicio respectivamente
+    // este sp trasladar a Controlador CuotaPorCobrarController y el servicio respectivamente
     [HttpPost("Insert/Cuota")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
         return Ok(await cuentaPorCobrarService.AddAsync(parameters));
     }
@@ -36,7 +33,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
         return Ok(await cuentaPorCobrarService.UpdateAsync(parameters));

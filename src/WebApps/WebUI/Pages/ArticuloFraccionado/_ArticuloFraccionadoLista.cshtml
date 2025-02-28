@@ -1,0 +1,76 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row justify-content-between">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <span class="form-group pull-left page-size form-inline">
+                    <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                    </select>
+                </span>
+            </div>
+
+            <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                <div class="d-flex gap-2 justify-content-end">
+
+                    @* <input type="text" class="form-control border-select mr-2" ng-model="dataSearch.textSearch"
+                        ng-keyup="onChangeTextSearch()" placeholder="Buscar" /> *@
+
+                    <div>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-success  " ng-click="refresh()"><i
+                                    class="fas fa-redo fa-xs"></i></button>
+                            <button type="button" class="btn btn-info  " ng-click="openModal()"><i
+                                    class="fas fa-plus fa-xs"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <md-table-container>
+            <table md-table>
+                <thead md-head>
+                    <tr md-row>
+                        <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
+                        <th md-column>N°</th>
+                        <th md-column>Articulo</th>
+                        <th md-column>Conversión</th>
+                        <th md-column>P. Costo Fraccionado</th>
+                        <th md-column>Medida</th>
+
+                        <th md-column>Estado</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row ng-repeat="af in articuloFraccionados">
+                        <td md-cell ng-if="accion.editar || accion.eliminar">
+                            <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModal(af)">
+                                <i class="mdi mdi-pencil"></i>
+                            </button>
+
+                            <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(af)">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </td>
+                        <td md-cell>{{$index+1}}</td>
+                        <td md-cell><b class="text-primary">{{af.articulo}}</b></td>
+                        <td md-cell>{{af.conversion}}</td>
+                        <td md-cell>${{af.precioCostoFraccionado}}</td>
+                        <td md-cell>{{af.medida}}</td>
+
+                        <td md-cell ng-bind-html="af.estado | estadoPrimario"></td>
+                    </tr>
+                    <tr md-row class="text-center" ng-show="articuloFraccionados.length===0">
+                        <td md-cell colspan="7">No hay registros :)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+    </div>
+    <div class="card-body">
+        <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+            ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize" class="pagination"
+            boundary-links="true" rotate="false"></ul>
+    </div>
+</div>

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Identity.API.Services;
+﻿namespace Identity.API.Services;
 
 public class TokenCleanupService(IServiceScopeFactory scopeFactory, IConfiguration configuration) : BackgroundService
 {

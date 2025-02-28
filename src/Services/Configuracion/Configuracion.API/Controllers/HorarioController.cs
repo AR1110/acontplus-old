@@ -1,11 +1,10 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class HorarioController : BaseApiController
 {
     private readonly IConfiguration _config;
-    private HorarioDao _h;
+    private readonly HorarioDao _h;
+
     public HorarioController(IConfiguration config)
     {
         _config = config;
@@ -16,8 +15,9 @@ public class HorarioController : BaseApiController
     [HttpGet("GetByTurno/{idTurno}")]
     public async Task<IActionResult> Get(int idTurno)
     {
-        return Ok(await _h.ReadHorarioAsync(User.GetUserRoleId(), idTurno));
+        return Ok(await _h.ReadHorarioAsync(User.GetClaimValue<int>("userRoleId"), idTurno));
     }
+
     [HttpGet("GetDays")]
     public async Task<IActionResult> GetDays()
     {

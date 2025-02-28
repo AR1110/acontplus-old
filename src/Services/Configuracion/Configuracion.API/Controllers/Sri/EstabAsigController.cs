@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers.Sri;
+﻿namespace Configuracion.API.Controllers.Sri;
 
 public class EstabAsigController(IEstablecimientoAsignacionService establecimientoAsignacionService)
     : BaseApiController
@@ -8,7 +6,7 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         var response = await establecimientoAsignacionService.GetAsync(parameters);
         return Ok(response);
     }
@@ -16,7 +14,7 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     [HttpGet("GetDataForm")]
     public async Task<IActionResult> GetDataForm(string json)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", json } };
+        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         var response = await establecimientoAsignacionService.GetDataFormAsync(parameters);
         return Ok(response);
     }
@@ -25,7 +23,7 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     public async Task<IActionResult> Post([FromBody] ApiRequest request)
     {
         request.FromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var response = await establecimientoAsignacionService.AddAsync(request);
         return Ok(response);
     }
@@ -33,7 +31,7 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await establecimientoAsignacionService.UpdateAsync(parameters);
         return Ok(response);
     }

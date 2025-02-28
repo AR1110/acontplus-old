@@ -7,7 +7,7 @@ import { ToasterService } from "@core/services/toaster.service";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { isValidField } from "@core/utils/utils";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DocConfig } from "@modules/config/models/doc-config.model";
+import { DocConfig } from "@modules/config/domain/models/doc-config.model";
 import { DocConfigService } from "@modules/config/services/doc-config.service";
 import { ModalService } from "@core/services/modal.service";
 import { DocConfigInfoAdicionalComponent } from "./components/doc-config-info-adicional/doc-config-info-adicional.component";

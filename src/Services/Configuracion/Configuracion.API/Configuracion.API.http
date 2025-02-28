@@ -1,0 +1,5 @@
+﻿@Configuracion.API_HostAddress = https://localhost:7295
+
+GET {{Configuracion.API_HostAddress}}/
+
+###

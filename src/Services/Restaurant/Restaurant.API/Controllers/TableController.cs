@@ -1,9 +1,7 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Core.Utils;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -33,7 +31,7 @@ public class TableController(IAppTableService tableService) : BaseApiController
         appTable.UserId = User.GetUserId();
 
         return Ok(await tableService.UpdateAsync(id, appTable));
-    }   
+    }
     [HttpPut("Unassign/{id}")]
     public async Task<IActionResult> Unassign(int id)
     {

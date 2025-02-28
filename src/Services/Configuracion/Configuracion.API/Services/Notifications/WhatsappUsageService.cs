@@ -1,10 +1,10 @@
-﻿using Common.Infrastructure.Repository.Interfaces;
+﻿namespace Configuracion.API.Services.Notifications;
 
-namespace Configuracion.API.Services.Notifications;
 public interface IWhatsappUsageService
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }
+
 public class WhatsappUsageService(IAdoRepository adoRepository) : IWhatsappUsageService
 {
     private const string ModuleName = "Config.WhatsappUsage_";

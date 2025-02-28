@@ -62,20 +62,20 @@ BEGIN
 		BEGIN
 			IF EXISTS(SELECT 1 FROM ArticuloFraccionado WHERE idArticulo= @idArticulo AND gestionVenta= 1 )
 				BEGIN 
-                     SELECT Common.ufnSpResponse('0', 'Solo puedes asignar una medida como predeterminada en ventas', NULL) 
+                     SELECT '0'code, 'Solo puedes asignar una medida como predeterminada en ventas'[message]
 					RETURN 
 				END 
 		END 
 
 	IF @idMedida = @idMedidaArticulo
 		BEGIN
-            SELECT Common.ufnSpResponse('0', 'No puedes fraccionar aun articulo a su medida principal', NULL)  
+            SELECT '0'code, 'No puedes fraccionar aun articulo a su medida principal'[message]
 			RETURN 
 		END 
 
 	IF EXISTS(SELECT 1 FROM ArticuloFraccionado WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
 		BEGIN
-            SELECT Common.ufnSpResponse('0', 'El Articulo ya se encuentra fraccionado en esta medida', NULL)  
+            SELECT '0'code, 'El Articulo ya se encuentra fraccionado en esta medida'[message]
 			RETURN 
 		END 
 
@@ -119,7 +119,7 @@ BEGIN
 					,porcentajeUtilidad decimal(10,5) '$.porcentajeUtilidad') as jsonValues 
 
 		COMMIT TRAN 
-          SELECT Common.ufnSpResponse('1', 'Fracciondao Exitosamente', NULL)   
+          SELECT '1'code, 'Fracciondao Exitosamente'[message]
 		RETURN;
 	END TRY
 
@@ -128,7 +128,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-         SELECT Common.ufnSpResponse('0', 'Info: Error en el procedimiento de agregar ' + ERROR_MESSAGE(), NULL)    
+         SELECT '0'code, 'Info: Error en el procedimiento de agregar ' + ERROR_MESSAGE()[message] 
 		RETURN
 	END CATCH 
 END

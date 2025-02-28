@@ -1,6 +1,6 @@
 ﻿namespace Identity.API.Services;
 
-public class LoginHistoryService (ApplicationDbContext context): ILoginHistoryService
+public class LoginHistoryService(ApplicationDbContext context) : ILoginHistoryService
 {
     public async Task AddAsync(LoginHistory loginHistory)
     {

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Ventas.API.Controllers;
+﻿namespace Ventas.API.Controllers;
 
 public class EmpresaController(IEmpresaService _svc) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class EmpresaController(IEmpresaService _svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _svc.GetAsync(parameters));
     }
@@ -20,7 +18,7 @@ public class EmpresaController(IEmpresaService _svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         return Ok(await _svc.AddAsync(parameters));
@@ -31,7 +29,7 @@ public class EmpresaController(IEmpresaService _svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
@@ -42,7 +40,7 @@ public class EmpresaController(IEmpresaService _svc) : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await _svc.DeleteAsync(parameters));
     }
 }

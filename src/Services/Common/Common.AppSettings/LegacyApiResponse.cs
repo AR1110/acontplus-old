@@ -6,16 +6,14 @@ public class LegacyApiResponse
     public dynamic data { get; set; }
     public string id { get; set; }
     public string message { get; set; }
-    public dynamic payload { get; set; }
     public string titleSms { get; set; }
     public string typeNotify { get; set; }
 
-    public void Create(string code, string message = null, dynamic payload = null)
+    public void Create(string code, string message = null, dynamic data = null)
     {
         this.code = code;
-        data = payload;
         id = code;
         this.message = message;
-        this.payload = payload;
+        this.data = data;
     }
 }

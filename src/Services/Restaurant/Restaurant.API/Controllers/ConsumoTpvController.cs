@@ -1,8 +1,6 @@
-﻿using Common.AppSettings.Extensions;
-using Common.Core.Utils;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Interfaces;
-using Services.Common.Extensions;
 
 namespace Restaurant.API.Controllers;
 
@@ -13,7 +11,7 @@ public class ConsumoTpvController(IConsumptionService consumption) : BaseApiCont
     {
         var response = await consumption.GetAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -23,7 +21,7 @@ public class ConsumoTpvController(IConsumptionService consumption) : BaseApiCont
     {
         var response = await consumption.AddAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -33,7 +31,7 @@ public class ConsumoTpvController(IConsumptionService consumption) : BaseApiCont
     {
         var response = await consumption.UpdateAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -44,7 +42,7 @@ public class ConsumoTpvController(IConsumptionService consumption) : BaseApiCont
         var response =
             await consumption.DeleteAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetUserRoleId() }, { "id", id }
+                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
         return Ok(response);
     }
@@ -55,7 +53,7 @@ public class ConsumoTpvController(IConsumptionService consumption) : BaseApiCont
         var response =
             await consumption.PrintAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetUserRoleId() }, { "id", id }
+                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
         return Ok(response);
     }

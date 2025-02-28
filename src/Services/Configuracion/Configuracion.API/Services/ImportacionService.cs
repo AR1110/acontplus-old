@@ -30,7 +30,7 @@ public class ImportacionService(IAdoRepository adoRepository) : IImportacionServ
 
     private static string StoredProcedureDynamic(object cod)
     {
-        string storedProcedure = cod switch
+        var storedProcedure = cod switch
         {
             "AR" => "Importaciones.Articulo",
             "AF" => "Importaciones.Fraccionado",

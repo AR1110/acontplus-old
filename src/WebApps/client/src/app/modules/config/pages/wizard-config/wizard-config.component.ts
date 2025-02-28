@@ -35,8 +35,8 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
-import { DemoStep } from '@modules/config/models/wizard-config/demo-step.model';
-import { romanToInt } from '@modules/config/models/wizard-config/roman-to-index';
+import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
+import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 
 import Swal from 'sweetalert2';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
@@ -45,7 +45,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { DocConfig } from '@modules/config/models/doc-config.model';
+import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';

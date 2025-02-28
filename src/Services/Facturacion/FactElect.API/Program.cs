@@ -1,27 +1,20 @@
 ﻿using System.Runtime.InteropServices;
-using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
+
 using FactElect.API.Extensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
+
 // Add services to the container.
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
-
-builder.Services.AddScoped<ICustomLogger, CustomLogger>();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

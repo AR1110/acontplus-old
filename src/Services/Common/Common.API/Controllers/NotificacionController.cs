@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Common.API.Controllers;
+﻿namespace Common.API.Controllers;
 
 public class NotificacionController(INotificationService notificationService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class NotificacionController(INotificationService notificationService) : 
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };

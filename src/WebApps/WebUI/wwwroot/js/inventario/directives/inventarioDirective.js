@@ -163,10 +163,10 @@
                         isRenderRazorPartial: true
                     })
 
-                    modalDialogRef.result.then(result => {
+                    modalDialogRef.result.then(result => { 
                         if (typeof result === "object") {
                             scope.results({
-                                item: result
+                                result
                             })
                         }
                     })

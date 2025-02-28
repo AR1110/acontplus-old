@@ -1,103 +1,52 @@
-﻿using Common.AppSettings.Extensions;
+﻿namespace Compras.API.Controllers;
 
-namespace Compras.API.Controllers;
-
-public class OrdenCompraController : BaseApiController
+public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
 {
-    private IConfiguration _configuration;
-    private readonly IOrdenCompraService _ordeCompraSvc;
 
-    public OrdenCompraController(IConfiguration configuration, IOrdenCompraService ordeCompraSvc)
-    {
-        _configuration = configuration;
-        _ordeCompraSvc = ordeCompraSvc;
-        
-    }
-
-    [HttpGet("Get")]
+    [HttpGet()]
     public async Task<IActionResult> Get(string json)
     {
-        try
+        var response = await _svc.GetAsync(new Dictionary<string, object>
         {
-            var response = await _ordeCompraSvc.GetAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
-            });
-            if (response == null) { return NoContent(); }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        return Ok(response);
 
-            ;
-            return Ok(new { code = "1", payload = response });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error on get: " + ex.Message);
-        }
     }
 
-    [HttpPost("Insert")]
+    [HttpPost()]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _ordeCompraSvc.AddAsync(request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+
+        var response = await _svc.AddAsync(request);
+        return Ok(response);
     }
 
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        try
-        {
-            var response =
-                await _ordeCompraSvc.GetByIdAsync(new Dictionary<string, object>
-                {
-                    { "userRoleId", User.GetUserRoleId() }, { "id", id }
-                });
-            if (response == null) { return NoContent(); }
-
-            ;
-            return Ok(new { code = "1", payload = response });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error on get by id: " + ex.Message);
-        }
+        var response = await _svc.GetByIdAsync(new Dictionary<string, object>
+            {
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
+            });
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _ordeCompraSvc.UpdateAsync(id, request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var response = await _svc.UpdateAsync(id, request);
+        return Ok(response);
+
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _ordeCompraSvc.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var response = await _svc.DeleteAsync(parameters);
+        return Ok(response);
     }
 }

@@ -23,65 +23,68 @@ BEGIN
 	DECLARE @idUsuario INT ,@idEntidad INT ,@idProveedor INT ,@payload VARCHAR(MAX)
     
     --> Customer
-    DECLARE @customerId INT ,@numeroIdentificacion VARCHAR(15) ,@idTipoIdentificacion INT
+    DECLARE @customerId INT ,@numeroIdentificacion VARCHAR(15) 
 
 
     DECLARE @tbProveedor AS TABLE
     (
          idCiudad INT NULL
-        ,idTipoIdentificacion INT NOT NULL
         ,idTipoClienteProveedor INT NULL
         ,idTipoEntidad INT NULL
         ,idSubContribuyente INT NULL
         ,idTiempoCredito INT NULL
-        ,numeroIdentificacion VARCHAR(20) UNIQUE NOT NULL
-        ,nombreFiscal VARCHAR(300) NOT NULL
-        ,nombreComercial VARCHAR(300) NOT NULL
         ,direccion VARCHAR(300) NULL
         ,telefono VARCHAR(300) NULL
         ,correo VARCHAR(300) NULL
-        ,validationSri BIT NOT NULL
+
+        --> Customer
+
+        ,IdTypeId INT NOT NULL
+        ,IdCard VARCHAR(20) UNIQUE NOT NULL
+        ,BusinessName VARCHAR(300) NOT NULL
+        ,TradeName VARCHAR(300) NOT NULL
+        ,SriValidation BIT NOT NULL
     )
 
 	BEGIN TRY 
         
         INSERT INTO @tbProveedor
-              (idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri)
-        SELECT idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,validationSri
+              (idCiudad,IdTypeId,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,IdCard,BusinessName,TradeName,direccion,telefono,correo,SriValidation)
+        SELECT idCiudad,IdTypeId,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,IdCard,BusinessName,TradeName,direccion,telefono,correo,SriValidation
         FROM OPENJSON(@json) WITH
         (
             idCiudad               INT 
-           ,idTipoIdentificacion   INT 
+           ,IdTypeId               INT          '$.idTipoIdentificacion'           
            ,idTipoClienteProveedor INT 
            ,idTipoEntidad          INT 
            ,idSubContribuyente     INT 
            ,idTiempoCredito        INT
-           ,numeroIdentificacion   VARCHAR(20) 
-           ,nombreFiscal           VARCHAR(300) 
-           ,nombreComercial        VARCHAR(300) 
+           ,IdCard                 VARCHAR(20)  '$.numeroIdentificacion'
+           ,BusinessName           VARCHAR(300) '$.nombreFiscal'
+           ,TradeName              VARCHAR(300) '$.nombreComercial' 
            ,direccion              VARCHAR(300) 
            ,telefono               VARCHAR(300) 
            ,correo                 VARCHAR(300) 
-           ,validationSri          BIT '$.validationSri'
+           ,SriValidation          BIT          '$.validationSri'
         )
 
         --> Recoger Variables
         SELECT TOP 1 @idUsuario = idUsuario ,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion ,@idTipoIdentificacion = idTipoIdentificacion FROM @tbProveedor
-        
-        SELECT TOP 1 @customerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @numeroIdentificacion
+        SELECT TOP 1 @numeroIdentificacion = IdCard FROM @tbProveedor
+
+        SELECT TOP 1 @customerId = ID FROM Customer.Customer WHERE IdCard = @numeroIdentificacion
 
         --> Validaciones
         IF EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE CustomerId = @customerId AND idEntidad = @idEntidad)
 		    BEGIN
-			    SELECT Common.ufnSpResponse('0','El Ruc: ' + @numeroIdentificacion + ' ya se encuentra registrado',NULL)
+			    SELECT  '0'code,'El Ruc: ' + @numeroIdentificacion + ' ya se encuentra registrado'[message]
 			    RETURN 
 		    END 
 
         IF NOT EXISTS(SELECT 1 FROM @tbProveedor)
             BEGIN
-			    SELECT Common.ufnSpResponse('0','Error en la informacion',NULL)
+			    SELECT  '0'code,'Error en la informacion'[message] 
 			    RETURN 
 		    END
 
@@ -89,13 +92,9 @@ BEGIN
 			
 			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
 				BEGIN
-                    DECLARE @IDType VARCHAR(5)
-
-					SELECT TOP 1 @IDType = codigoSri FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE idTipoIdentificacion = @idTipoIdentificacion
-
 					INSERT INTO Customer.Customer
-                           (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
-					SELECT @IDType,LTRIM(RTRIM(numeroIdentificacion)),LTRIM(RTRIM(nombreFiscal)),LTRIM(RTRIM(nombreComercial)),LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion)),validationSri 
+                          (IdTypeId,IdCard,BusinessName,TradeName,SriValidation,email,telephone,[Address])
+					SELECT IdTypeId,IdCard,BusinessName,TradeName,SriValidation,LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion)) 
                     FROM @tbProveedor
 
 					SET @customerId = @@IDENTITY
@@ -106,8 +105,8 @@ BEGIN
 				END
 
 			INSERT INTO Proveedor 
-				  (idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,direccion,telefono,correo,idEntidad,idUsuario ,CustomerId)
-			SELECT idCiudad,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,direccion,telefono,correo,@idEntidad,@idUsuario,@customerId
+				  (idCiudad,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,direccion,telefono,correo,idEntidad,idUsuario ,CustomerId)
+			SELECT idCiudad,idTipoClienteProveedor,idTipoEntidad,idSubContribuyente,idTiempoCredito,direccion,telefono,correo,@idEntidad,@idUsuario,@customerId
             FROM @tbProveedor
 
 		    SET @idProveedor = @@IDENTITY
@@ -116,7 +115,7 @@ BEGIN
 
 
 		COMMIT TRAN 
-        SELECT Common.ufnSpResponse('1','Registrado exitosamente',@payload)
+        SELECT  '1'code,'Registrado exitosamente'[message],@payload as payload
 	END TRY 
 
 	BEGIN CATCH 
@@ -129,6 +128,6 @@ BEGIN
 			  (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/Proveedor/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 
-        SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento', NULL)
+        SELECT  '0'code,'Info: Error en el procedimiento'[message] 
 	END CATCH 
 END

@@ -20,7 +20,7 @@ GO
 -- Create date: 8/15/2023
 -- Description:	for the management of all data related to the vehicle.
 -- =============================================
-CREATE OR ALTER PROCEDURE Mechanical.Support_Update @userRoleId INT ,@id INT
+CREATE OR ALTER PROCEDURE Mechanical.Support_Delete @userRoleId INT ,@id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -38,11 +38,11 @@ BEGIN
         --> Variables Globales
         SELECT TOP 1 @userId = idUsuario ,@CompanyId = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'PE'
+        SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'A'
 
         IF EXISTS (SELECT 1 FROM Mechanical.v_Support WHERE Id = @id AND codeStatus NOT IN ('PE'))
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'El soporte no puede ser editado', NULL)
+                SELECT '0' as code, 'El soporte no puede ser editado' as 'message'
                 RETURN 
             END 
 
@@ -54,7 +54,7 @@ BEGIN
             WHERE Id = @id
 
         COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al Anular', NULL)
+        SELECT '1' as code, 'Éxitos al Anular' as 'message'
 	END TRY 
 
 	BEGIN CATCH
@@ -67,7 +67,7 @@ BEGIN
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'Support/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+        SELECT '0' as code, 'Error en el procedimiento' as 'message'
     END CATCH  
 END
 GO

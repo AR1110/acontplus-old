@@ -10,6 +10,7 @@ public class EstadoDocumentoController(IEstadoDocumentoService estadoDocumento) 
         {
             return Ok(response);
         }
+
         return BadRequest("No data");
     }
 }

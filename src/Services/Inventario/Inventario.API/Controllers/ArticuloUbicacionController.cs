@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbicacionService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbica
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloUbicacionService.AddAsync(parameters));
     }
@@ -19,7 +17,7 @@ public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbica
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloUbicacionService.UpdateAsync(parameters));
     }
@@ -28,7 +26,7 @@ public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbica
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await articuloUbicacionService.DeleteAsync(parameters));
     }
 }

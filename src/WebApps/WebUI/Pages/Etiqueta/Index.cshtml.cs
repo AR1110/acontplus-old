@@ -4,6 +4,6 @@ namespace WebUI.Pages.Etiqueta
 {
     public class IndexModel : PageModel
     {
-         
+
     }
 }

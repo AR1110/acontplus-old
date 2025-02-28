@@ -1,39 +1,50 @@
-import {PaymentComponent} from '@ui/components/payment/payment.component';
-import {ActionEmailSendDirective} from '@ui/directives/action-email-send.directive';
-import {ActionWhatsappSendDirective} from '@ui/directives/action-whatsapp-send.directive';
-import {CODE_REPORT, DOC_TYPE} from '@domain/enums/main.enum';
-import {OrderDocRed} from '@domain/models/order-doc.model';
-import {DialogService} from '@domain/services/dialog.service';
-import {SharedService} from '@domain/services/shared.service';
-import {Component, inject, input} from '@angular/core';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatTableModule} from '@angular/material/table';
-import {MatTooltip} from "@angular/material/tooltip";
-import {OrderUseCase} from "@domain/use-cases/order.use-case";
+import { PaymentComponent } from '@ui/components/payment/payment.component';
+import { ActionEmailSendDirective } from '@ui/directives/action-email-send.directive';
+import { ActionWhatsappSendDirective } from '@ui/directives/action-whatsapp-send.directive';
+import { CODE_REPORT, DOC_TYPE } from '@domain/enums/main.enum';
+import { OrderDocRed } from '@domain/models/order-doc.model';
+import { DialogService } from '@domain/services/dialog.service';
+import { SharedService } from '@domain/services/shared.service';
+import { Component, inject, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
+import { OrderUseCase } from '@domain/use-cases/order.use-case';
 
 @Component({
-    selector: 'app-order-doc-list',
-    imports: [
-        MatMenuModule,
-        MatButtonModule,
-        MatIconModule,
-        MatTableModule,
-        ActionWhatsappSendDirective,
-        ActionEmailSendDirective,
-        MatTooltip
-    ],
-    templateUrl: './order-doc-list.component.html'
+  selector: 'app-order-doc-list',
+  imports: [
+    MatMenuModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    ActionWhatsappSendDirective,
+    ActionEmailSendDirective,
+    MatTooltip,
+  ],
+  templateUrl: './order-doc-list.component.html',
 })
 export class OrderDocListComponent {
   readonly data = input.required<{ id: 0 }>();
-  private _orderUseCase= inject(OrderUseCase);
+  private _orderUseCase = inject(OrderUseCase);
   private sharedSvc = inject(SharedService);
-  private dialogSvc = inject(DialogService)
+  private dialogSvc = inject(DialogService);
 
-  displayedColumns: string[] = ['index', 'op', 'tipoDoc', 'nroDoc', 'fechaEmision', 'cliente', 'total', 'abono', 'saldo', 'estado'];
-  dataSource: OrderDocRed[] = []
+  displayedColumns: string[] = [
+    'index',
+    'op',
+    'tipoDoc',
+    'nroDoc',
+    'fechaEmision',
+    'cliente',
+    'total',
+    'abono',
+    'saldo',
+    'estado',
+  ];
+  dataSource: OrderDocRed[] = [];
 
   isLoadingResults = false;
 
@@ -41,18 +52,17 @@ export class OrderDocListComponent {
     this.dataSource = [];
     this.isLoadingResults = true;
     this._orderUseCase.getOrderDocs(this.data().id).subscribe({
-      next: response => {
+      next: (response) => {
         this.isLoadingResults = false;
         this.dataSource = response;
       },
-      error: () => this.isLoadingResults = false
-    })
+      error: () => (this.isLoadingResults = false),
+    });
   }
 
   ngOnInit() {
-    this.getOrderDocs()
+    this.getOrderDocs();
   }
-
 
   getReport(data: OrderDocRed) {
     try {
@@ -61,7 +71,7 @@ export class OrderDocListComponent {
         id: data.documentoId,
         format,
         codEstab: data.codEstab,
-      }
+      };
 
       if (data.docType === DOC_TYPE.NE) {
         const parameters = {
@@ -71,14 +81,14 @@ export class OrderDocListComponent {
             codigo: CODE_REPORT.NE,
             codEstab: data.codEstab,
             format,
-            aditionalParams: []
+            aditionalParams: [],
           }),
-          dataParams: JSON.stringify(dataParms)
-        }
+          dataParams: JSON.stringify(dataParms),
+        };
         this.sharedSvc.getReport({
           data: parameters,
-          isOldVersion: true
-        })
+          isOldVersion: true,
+        });
       }
 
       if (data.docType === DOC_TYPE.FV) {
@@ -89,17 +99,17 @@ export class OrderDocListComponent {
             codigo: CODE_REPORT.FV,
             codEstab: data.codEstab,
             format,
-            aditionalParams: []
+            aditionalParams: [],
           }),
-          dataParams: JSON.stringify(dataParms)
-        }
+          dataParams: JSON.stringify(dataParms),
+        };
         this.sharedSvc.getReport({
           data: parameters,
-          isOldVersion: true
-        })
+          isOldVersion: true,
+        });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -108,15 +118,14 @@ export class OrderDocListComponent {
       size: 'xl',
 
       data: {
-        data
-      }
-    })
-    modalRef.subscribe(result => {
+        data,
+      },
+    });
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
-        this.getOrderDocs()
+        this.getOrderDocs();
       }
-    })
-
+    });
   }
 
   documentPrint(data: OrderDocRed) {
@@ -125,18 +134,22 @@ export class OrderDocListComponent {
         this.sharedSvc.askToPrint({
           id: data.orderId,
           documentoId: data.documentoId,
-          tipo: 3
-        })
+          tipo: 3,
+          codDoc: DOC_TYPE.FV,
+          codEstab: data.codEstab,
+        });
       }
       if (data.docType === DOC_TYPE.NE) {
         this.sharedSvc.askToPrint({
           id: data.orderId,
           documentoId: data.documentoId,
-          tipo: 4
-        })
+          tipo: 4,
+          codDoc: DOC_TYPE.NE,
+          codEstab: data.codEstab,
+        });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 

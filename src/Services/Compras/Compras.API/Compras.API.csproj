@@ -6,10 +6,11 @@
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.FactElect" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <PackageReference Include="Acontplus.FactElect.Application" />
-    <PackageReference Include="Acontplus.Services.Common" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Acontplus.Common.Logging" />
+    <PackageReference Include="Acontplus.Common.Services" />
+    
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Scrutor" />

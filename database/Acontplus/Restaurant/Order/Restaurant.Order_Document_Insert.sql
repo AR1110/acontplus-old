@@ -150,7 +150,11 @@ BEGIN
 
     IF (@customerId IS NULL)
         BEGIN
-            SET @CustomerId = (SELECT TOP 1 Id FROM Customer.Customer WHERE IDTYPE = '07' AND IDCard = '9999999999999')
+            DECLARE @IdTypeId INT 
+
+            SELECT TOP 1 @IdTypeId = idTipoIdentificacion FROM dbo.TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '07'
+
+            SET @CustomerId = (SELECT TOP 1 Id FROM Customer.Customer WHERE IdTypeId = @IdTypeId AND IDCard = '9999999999999')
         END
 
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
@@ -716,7 +720,7 @@ BEGIN
 
                     INSERT INTO Inventario.TransaccionDetalle
                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,conversion,precioCostoFraccionado)
-			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto 
+			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
                            ,ISNULL((SELECT TOP 1 af.conversion
                              FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
                              WHERE af.idArticulo = tb.idArticulo

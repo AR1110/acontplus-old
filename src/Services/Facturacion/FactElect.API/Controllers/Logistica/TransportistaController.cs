@@ -1,5 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-using FactElect.API.Models;
+﻿using FactElect.API.Models;
 using FactElect.API.Services.Logistica;
 
 namespace FactElect.API.Controllers.Logistica;
@@ -18,7 +17,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await transportistaService.GetAsync(parameters));
     }
@@ -28,7 +27,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "idTipoIdentificacion", data.idTipoIdentificacion },
             { "nroIdentificacion", data.nroIdentificacion },
             { "nombre", data.nombre }
@@ -41,7 +40,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "nroIdentificacion", data.nroIdentificacion },
             { "nombre", data.nombre }
@@ -52,7 +51,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await transportistaService.DeleteAsync(parameters));
     }
 }

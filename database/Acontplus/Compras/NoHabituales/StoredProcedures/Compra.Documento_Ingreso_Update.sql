@@ -39,7 +39,7 @@ BEGIN
 
     --> contabilidad
 	DECLARE @idEstablecimiento INT ,@serieComprobante VARCHAR(20) ,@idProveedor INT ,@idTiempoCredito INT
-        ,@subcategoryId INT
+           ,@subcategoryId INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@secuencial INT 
 
     -----DATOS CONTABILIDAD------
 	DECLARE @fechaVencimiento DATETIME2
@@ -216,48 +216,56 @@ BEGIN
         )
 
 		--> Recuperar datos de las Tablas
+        SELECT @secuencial = di.secuencial
+              ,@estab      = es.estab
+              ,@ptoEmi     = pe.ptoEmi
+        FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
+        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = di.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+
 		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento, @subcategoryId = subcategoryId FROM @document
 
         SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
-        IF (@CustomerId = 0)
-            BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Debe validar el proveedor',DEFAULT)
-				RETURN 
-            END
-        
+        SELECT @serieComprobante   = @estab + '-' + @ptoEmi + '-' +  Helper.F_Auto_Sequential(@secuencial)
 
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
 
 		--> Validacion de la informacion
+        IF (@CustomerId = 0)
+            BEGIN
+                SELECT '0'code,'Debe validar el proveedor'[message]
+				RETURN 
+            END
+
         IF (SELECT COUNT(*) FROM @document) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info Factura', DEFAULT)
+                SELECT '0'code,'Error en la info Factura'[message]
                 RETURN
             END 
 
         IF (SELECT COUNT(*) FROM @tblDetails) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en los detalles', DEFAULT)
+                SELECT '0'code,'Error en los detalles'[message]
                 RETURN
             END
            
         IF (SELECT COUNT(*) FROM @tbTaxes) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en los impuestos',DEFAULT)
+                SELECT '0'code,'Error en los impuestos'[message]
                 RETURN
             END
 
         IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en las cuotas',DEFAULT)
+                SELECT '0'code,'Error en las cuotas'[message]
                 RETURN
             END
 
 
 		IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = 'DH' AND codEstado != 'PE' AND idDocumento = @id)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','El Documento tiene movimientos financieros o esta Anulado',DEFAULT)
+                SELECT '0'code,'El Documento tiene movimientos financieros o esta Anulado'[message]
                 RETURN 
             END 
 
@@ -331,15 +339,30 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
-                    SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
-
                     --> Transaccion
-                    UPDATE Inventario.Transaccion WITH (ROWLOCK)
-                       SET fechaEmision = @fechaEmision
-                          ,CustomerId   = @customerId
-                    WHERE idTransaccion = @idTransaccion
+                    IF EXISTS (SELECT 1 FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id)
+                        BEGIN
+                            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
 
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
+                            UPDATE Inventario.Transaccion WITH (ROWLOCK)
+                               SET fechaEmision = @fechaEmision
+                                  ,CustomerId   = @customerId
+                            WHERE idTransaccion = @idTransaccion
+
+                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
+                        END 
+                    ELSE 
+                        BEGIN
+                            IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1 AND estado = 1)
+							    BEGIN 
+                                    INSERT INTO Inventario.Transaccion
+                                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@id,@customerId,@idUsuario,@idEntidad,@serieComprobante 
+                                    FROM @document 
+
+                                    SET @idTransaccion = SCOPE_IDENTITY()
+                                END 
+                        END
 
                     IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 				        BEGIN
@@ -371,7 +394,7 @@ BEGIN
             INNER JOIN @tbCuotas            tc ON tc.idCuotaPorPagar = cp.idCuotaPorPagar
 
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1','Actualizado Correctamente',DEFAULT)
+        SELECT '1'code,'Actualizado Correctamente'[message]
 	END TRY 
 
 	BEGIN CATCH 
@@ -383,7 +406,7 @@ BEGIN
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'CompraHabitual/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento',DEFAULT)
+        SELECT '0'code,'Error en el procedimiento'[message]
     END CATCH 
 END
 GO

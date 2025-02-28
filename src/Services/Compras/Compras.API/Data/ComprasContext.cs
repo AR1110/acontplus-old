@@ -1,6 +1,4 @@
-﻿using Common.Infrastructure.Data.Configurations;
-
-namespace Compras.API.Data;
+﻿namespace Compras.API.Data;
 
 public class ComprasContext : BaseContext
 {

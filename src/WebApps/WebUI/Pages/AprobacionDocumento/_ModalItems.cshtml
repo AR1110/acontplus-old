@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <h5 class="modal-title">Artículos</h5>
+    <button type="button" class="close" ng-click="close()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div ui-grid="gridOptionsDetalle" ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize ui-grid-validate
+        ui-grid-save-state class="grid">
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="close()">
+        &times; Cerrar
+    </button>
+</div>

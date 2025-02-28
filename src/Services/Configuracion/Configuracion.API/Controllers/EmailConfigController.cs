@@ -1,17 +1,13 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class EmailConfigController(IEmailConfigService emailConfigService) : BaseApiController
 {
-
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            {"idUsuarioRol", User.GetUserRoleId()},
-            {"json",  SqlStringParam.Sanitize(json)}
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await emailConfigService.GetAsync(parameters));
     }
@@ -21,9 +17,12 @@ public class EmailConfigController(IEmailConfigService emailConfigService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            {"idUsuarioRol", User.GetUserRoleId()},
-            {"idEmailConfig", id},
-            {"json",  SqlStringParam.Sanitize(SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)))}
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "idEmailConfig", id },
+            {
+                "json",
+                SqlStringParam.Sanitize(SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)))
+            }
         };
         return Ok(await emailConfigService.UpdateAsync(parameters));
     }

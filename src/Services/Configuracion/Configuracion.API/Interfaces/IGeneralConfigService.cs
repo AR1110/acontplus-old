@@ -2,6 +2,6 @@
 
 public interface IGeneralConfigService
 {
-    Task<object> GetAsync(Dictionary<string, object> parameters);
-    Task<string> UpdateAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

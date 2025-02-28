@@ -1,0 +1,57 @@
+<app-mat-custom-dialog
+
+  [containerTemplate]="containerTemplate"
+[actionsTemplate]="actionsTemplate"
+  [title]="modalTitle"
+(close)="close()"
+></app-mat-custom-dialog>
+
+<ng-template #containerTemplate>
+  <form id="formTableId" (ngSubmit)="onSave()" [formGroup]="tableForm" autocomplete="off">
+    <div class="d-grid gap-2">
+      <mat-form-field >
+        <mat-label  >Sala: </mat-label>
+        <mat-select formControlName="roomId"   required>
+          @for (item of rooms; track $index) {
+            <mat-option [value]="item.id">{{ item.floor?.description }} - {{ item.description }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-label>Descripción</mat-label>
+        <input type="text" matInput [maxlength]="50" [minlength]="1"   formControlName="description"
+               placeholder="Mesa I"
+               required  >
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-label>N°. de mesa:</mat-label>
+        <input type="number" matInput [min]="1"   formControlName="numberTable"   required  >
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Capacidad:</mat-label>
+        <input type="number" matInput [min]="1"   formControlName="capacity" id="capacity" required >
+      </mat-form-field>
+
+
+      @if (data.id >0 && !data.enabled){
+        <mat-slide-toggle formControlName="enabled">
+          {{tableForm.value.enabled?'Activo': 'Inactivo'}}
+        </mat-slide-toggle>
+      }
+
+    </div>
+  </form>
+
+</ng-template>
+<ng-template #actionsTemplate>
+  <button type="submit" form="formTableId" [disabled]="tableForm.invalid" mat-flat-button>
+    {{ btnText }}
+  </button>
+
+</ng-template>
+

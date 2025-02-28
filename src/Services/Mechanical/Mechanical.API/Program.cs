@@ -1,17 +1,13 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
-using Common.Core.Utils;
-using Mechanical.API.Extensions;
-using Newtonsoft.Json.Serialization;
-using Services.Common.Extensions;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
+
+using Mechanical.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -21,9 +17,6 @@ builder.Services.AddCors();
 builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

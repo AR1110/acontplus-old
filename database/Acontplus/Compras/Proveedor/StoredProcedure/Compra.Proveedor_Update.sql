@@ -22,7 +22,7 @@ BEGIN
     DECLARE @idUsuario INT
 
     --> Data Cliente
-    DECLARE @IDType VARCHAR(10) ,@idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT ,@nombreFiscal VARCHAR(300) ,@nombreComercial VARCHAR(300)
+    DECLARE @IDType VARCHAR(10) ,@customerId INT ,@nombreFiscal VARCHAR(300) ,@nombreComercial VARCHAR(300)
 
     DECLARE @tbProveedor AS TABLE
     (
@@ -70,9 +70,7 @@ BEGIN
         --> Recuperando Informacion
         SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion 
-                    ,@numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) 
-                    ,@nombreComercial      = LTRIM(RTRIM(nombreComercial)) 
+        SELECT TOP 1 @nombreComercial      = LTRIM(RTRIM(nombreComercial)) 
                     ,@nombreFiscal         = LTRIM(RTRIM(nombreFiscal)) 
         FROM @tbProveedor 
 
@@ -81,7 +79,7 @@ BEGIN
         --> Validacion de informacion 
         IF NOT EXISTS(SELECT 1 FROM @tbProveedor) 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info del proveedor', DEFAULT)
+                SELECT  '0'code,'Error en la info del proveedor' as [message]
                 RETURN
             END
 
@@ -106,10 +104,9 @@ BEGIN
                   ,pr.UpdatedByUserId        = @idUsuario
             FROM dbo.Proveedor      pr WITH (ROWLOCK)
             INNER JOIN @tbProveedor tp ON tp.id = pr.idProveedor 
-			WHERE idProveedor = @id 
 
 		COMMIT TRAN 
-		SELECT Common.ufnSpResponse('1','Actualizado Exitosamente',NULL)
+		SELECT  '1'code,'Actualizado Exitosamente' as [message]
 	END TRY 
 
 	BEGIN CATCH
@@ -122,7 +119,7 @@ BEGIN
 		       (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/Proveedor/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 
-        SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento', NULL)
+        SELECT  '0'code,'Info: Error en el procedimiento' as [message] 
 	END CATCH 
 
 END

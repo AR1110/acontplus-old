@@ -86,8 +86,8 @@ BEGIN
 
 		BEGIN TRAN
 			
-			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [identificacionReceptor], [claveAcceso], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
-			SELECT @idEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, identificacionReceptor, claveAcceso, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
+			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [identificacionReceptor], [claveAcceso], [importeTotal], [idUsuario], [fechaRegistro], downloaded,subcategoryId)
+			SELECT @idEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, identificacionReceptor, claveAcceso, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND',@subcategoryId
 			FROM @Comprobantes t
 			WHERE t.identificacionReceptor = @identificacionReceptor  
 

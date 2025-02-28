@@ -141,10 +141,10 @@ BEGIN
 
         END
         
-    --> Filters 
+    --> Filters
     IF @tipo = 2
-        BEGIN 
-            SET @tableNames = 'estabs'
+        BEGIN
+            SET @tableNames = 'estabs,tipoDocumento,subEntidadFinanciera,banco'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -157,6 +157,28 @@ BEGIN
             WHERE idUsuarioRol = @userRoleId 
             ORDER BY defaultEstab DESC
 
+            --- Added by Ignacio Manchu ---
+            SELECT idTipoDocumento
+                , descripcion
+                , codigoSri
+                , codigo AS codDoc
+            FROM dbo.TipoDocumento
+            WITH (NOLOCK) 
+            WHERE codigo IN ('FV','NE')
+
+            SELECT idSubEntidadFinanciera
+                    , idEntidadFinanciera
+                    , descripcion
+                    , codigo
+                    , interes
+                    , estado
+                    , idEntidad
+                    , predeterminado
+                    , controlCaja
+            FROM SubEntidadFinanciera
+            WHERE idEntidad = @idEntidad
+            
+            SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
             RETURN 
         END 
     
@@ -183,7 +205,7 @@ BEGIN
             SELECT   cp.idCuentaPorPagar as idComprobante
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
-                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
+                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retenciï¿½n')                                     as tipoDocumento
                   ,importeTotal                                                                                     as saldo
                   ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
                                   WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
@@ -225,7 +247,7 @@ BEGIN
              AND ep.codigo !='PA'
 
             RETURN
-        END 
+        END
 
     --> Get For Data Delete 
     IF @tipo = 5

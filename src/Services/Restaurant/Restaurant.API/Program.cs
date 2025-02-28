@@ -1,18 +1,9 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Restaurant.API.Data;
-using Restaurant.API.Extensions;
-using Services.Common.Extensions;
-using System.Runtime.InteropServices;
+﻿var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -37,10 +28,6 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 {
     options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
 });
-
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

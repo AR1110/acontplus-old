@@ -19,7 +19,7 @@ import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 
 import Swal from 'sweetalert2';
-import { InvoiceAdapter } from '@billing/adapters/invoice/invoice.adapter';
+import { InvoiceAdapter } from '@billing/data/invoice/mappers/invoice.adapter';
 import { TiempoCredito } from '@accounting/core/domain/tiempo-credito.interface';
 
 @Component({

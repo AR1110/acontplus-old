@@ -1,16 +1,10 @@
 ﻿namespace Inventario.API.Services;
 
-public class StockService : IStockService
+public class StockService(IAdoRepository _repository) : IStockService
 {
-    private readonly IAdoRepository _repository;
 
-    public StockService(IAdoRepository repository)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
-    }
-
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-    {
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.Articulo_Update_Stock", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.Articulo_Update_Stock", parameters);
     }
 }

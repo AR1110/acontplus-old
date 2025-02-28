@@ -1,5 +1,4 @@
 ﻿using Common.AppSettings;
-using Common.AppSettings.Extensions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
@@ -20,7 +19,7 @@ public class DocumentoRecibidoController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await docRecibidoSvc.GetAsync(parameters));
     }
@@ -32,7 +31,7 @@ public class DocumentoRecibidoController(
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var xdoc = await docRecibidoSvc.GetById(parameters);
 
         if (xdoc == null || !getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
@@ -44,7 +43,7 @@ public class DocumentoRecibidoController(
         {
             var details = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() },
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "idDocumento", id },
                 { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
                 { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
@@ -52,7 +51,7 @@ public class DocumentoRecibidoController(
             await documentoTemp.AddAsync(details);
         }
 
-        response.Create(code: "1", payload: ceXml);
+        response.Create(code: "1", data: ceXml);
 
         return Ok(response);
     }
@@ -80,7 +79,7 @@ public class DocumentoRecibidoController(
 
             if (DataValidation.DataTableIsNull(dt))
             {
-                response.Create("1", payload: DataConverters.DataTableToJson(dt));
+                response.Create("1", data: DataConverters.DataTableToJson(dt));
             }
             else
             {
@@ -92,15 +91,15 @@ public class DocumentoRecibidoController(
                 else
                 {
                     var diff = (from row1 in dt.AsEnumerable()
-                        join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                        {
-                            Column1 = row2["claveAcceso"]
-                        } into gj
-                        from subRow2 in gj.DefaultIfEmpty()
-                        where subRow2 == null
-                        select row1).ToList();
+                                join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                                {
+                                    Column1 = row2["claveAcceso"]
+                                } into gj
+                                from subRow2 in gj.DefaultIfEmpty()
+                                where subRow2 == null
+                                select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
-                    response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
+                    response.Create("1", data: DataConverters.DataTableToJson(filteredDataTable));
                 }
             }
         }
@@ -125,7 +124,7 @@ public class DocumentoRecibidoController(
     [HttpPost("Post")]
     public async Task<IActionResult> Post(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await docRecibidoSvc.AddAsync(request));
     }
 
@@ -145,7 +144,7 @@ public class DocumentoRecibidoController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) },
             { "codDoc", dataComprobante.CodDoc },
             { "claveAcceso", dataComprobante.ClaveAcceso },
@@ -160,7 +159,7 @@ public class DocumentoRecibidoController(
     [HttpPut("Put/{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await docRecibidoSvc.UpdateAsync(id, data));
     }
 
@@ -171,7 +170,7 @@ public class DocumentoRecibidoController(
         var response = new ApiResponse();
 
         var dt = await adoRepository.GetDataTableAsync("Recepcion.Documento_Get_Id",
-            new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
         {
             response.Code = "1";
@@ -207,7 +206,7 @@ public class DocumentoRecibidoController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", DataConverters.SerializeDictionary(data.Data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(data.Data) }
         };
         return Ok(await docRecibidoSvc.MigrateAsync(parameters));
     }
@@ -217,7 +216,7 @@ public class DocumentoRecibidoController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "idDocumento", id }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "idDocumento", id }
         };
         return Ok(await docRecibidoSvc.DeleteAsync(parameters));
     }
@@ -225,7 +224,7 @@ public class DocumentoRecibidoController(
     [HttpGet("DownloadXml/{id}")]
     public async Task<IActionResult> Download(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await docRecibidoSvc.DownloadAsync(parameters);
         if (response == null)
         {
@@ -238,7 +237,7 @@ public class DocumentoRecibidoController(
     [HttpPut("PutSubcategory")]
     public async Task<IActionResult> PutSubcategory([FromBody] ApiRequest data)
     {
-        data.UserRoleId = User.GetUserRoleId();
+        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await docRecibidoSvc.UpdateSubcategoryAsync(data));
     }
 }

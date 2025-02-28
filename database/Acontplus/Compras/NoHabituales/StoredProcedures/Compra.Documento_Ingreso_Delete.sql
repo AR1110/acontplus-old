@@ -44,7 +44,7 @@ BEGIN
 		--> Validando Informacion 
 		IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = 'DH' AND codEstado != 'PE' AND idDocumento = @id)
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','El Documento tiene movimientos financieros o esta Anulado',DEFAULT)
+                SELECT '0'code,'El Documento tiene movimientos financieros o esta Anulado'[message]
                 RETURN 
             END
 		
@@ -76,7 +76,7 @@ BEGIN
 				END 
 
 		COMMIT TRAN 
-		SELECT [Common].[ufnSpResponse]('1','Anulado Correctamente',DEFAULT) 
+		SELECT '1'code,'Anulado Correctamente'[message]
 	END TRY 
 
 	BEGIN CATCH
@@ -88,7 +88,7 @@ BEGIN
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoIngreso/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
-        SELECT [Common].[ufnSpResponse]('0','Info: Error en el procedimiento',DEFAULT)
+        SELECT '0'code,'Info: Error en el procedimiento'[message]
     END CATCH 
 
 

@@ -4,7 +4,7 @@ import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/m
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 
-import {AccesoMenu} from "@modules/config/models/menu.model";
+import {AccesoMenu} from "@modules/config/domain/models/menu.model";
 import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 import {UserCustomerRoleService} from "@modules/config/services/user-customer/user-customer-role.service";
 import {SelectionModel} from "@angular/cdk/collections";

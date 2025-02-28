@@ -2,7 +2,7 @@
 
 import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter";
 import { NotaEntregaComprobanteApi, NotaEntregaDetailApi } from "./nota-entrega-api.model";
-import { NotaEntregaDetail } from "@modules/sale/models/nota-entrega.model";
+import { NotaEntregaDetail } from "@sale/domain/models/nota-entrega.model";
 import { formatDateToString } from "@core/utils/date.util";
 type MainAdapt = {
   comprobante: any

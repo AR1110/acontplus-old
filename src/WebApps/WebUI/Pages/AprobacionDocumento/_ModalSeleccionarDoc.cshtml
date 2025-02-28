@@ -1,0 +1,135 @@
+<div class="modal-header">
+    <h5 class="modal-title"><i class=" fas fa-exchange-alt"></i> Aprobación de Documento</h5>
+    <button class="close" ng-click="close()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12">
+            <div class="form-group">
+                <span for="tipo">Seleccione Doc.:</span>
+                <select name="tipo" id="tipo" ng-model="dataSearch.tipo" class="form-control border-select"
+                    ng-change="onChangeTipo()">
+                    <option ng-value="0" disabled>Seleccion::</option>
+                    <option ng-value="item.code" ng-repeat="item in tipos">
+                        {{item.desc}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.tipo>0">
+            <div class="form-group">
+                <span for="establecimiento">Establecimiento: <span class="text-danger">*</span></span>
+                <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="onChangeEstab()">
+                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                        {{item.nombreComercial}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.tipo>0">
+            <div class="form-group">
+                <span for="puntoEmision">Punto Emision: <span class="text-danger">*</span></span>
+                <select class="form-control border-select" ng-model="dataSearch.idPuntoEmision" ng-change="refresh()">
+                    <option value="">Todos</option>
+                    <option ng-value="item.idPuntoEmision" ng-repeat="item in ptosEmision">
+                        {{item.ptoEmi}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.tipo>0">
+            <div class="form-group">
+                <span for="">Rango de fechas:</span>
+                <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                    end-date="dataSearch.fechaFin" result-range-date="resultDateRange(result)"></date-range-filter>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="dataSearch.tipo>0">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <div class="form-group">
+                <span for="">Cliente: <span class="text-danger">*</span></span>
+                <input type="text" id="customerInputSearch" class="form-control border-select"
+                    ng-model="cliente.nombreCliente" cliente-search-drtv on-select="selectedClienteSearch(result)"
+                    on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial" autocomplete="off"
+                    onclick="select();">
+
+                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                            <div class="autocomplete-suggestion-uib-typeahead">
+                                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                            </div>
+                                        </script>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <div class="form-group">
+                <span for="secuencial">Secuencial: <span class="text-danger">*</span></span>
+
+                <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                    placeholder="Ej: 123 o 1-30">
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 d-flex align-items-center justify-content-end">
+            <div class="btn-group" role="group" aria-label="Option Buttons">
+                <button type="button" class="btn btn-info" ng-click="getDocs()">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+                <button type="button" class="btn btn-success" ng-click="continuar()">
+                    Continuar
+                    <i class=" fas fa-angle-right"></i>
+
+                </button>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+
+    <md-table-container>
+        <table md-table>
+            <thead md-head>
+                <tr md-row>
+                    <th md-column><span>Op.</span></th>
+                    <th md-column><span>#</span></th>
+                    <th md-column><span>Nro. Doc</span></th>
+                    <th md-column><span>Fecha Emisión</span></th>
+                    <th md-column ng-if="dataSearch.tipo===1"><span>Fecha Vcto</span></th>
+                    <th md-column><span>Cliente</span></th>
+                    <th md-column><span>Total</span></th>
+                    <th md-column><span>Estado</span> </th>
+                    <th md-column><span>Usuario</span> </th>
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row ng-repeat="item in docsSelected">
+                    <td md-cell>
+                        <div class="d-flex">
+                            <button type="item" class="btn btn-danger btn-sm" ng-click="askToRemoveDoc(item)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button type="item" class="btn btn-info btn-sm ml-2" ng-click="verItems(item)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td md-cell>{{$index+1}}</td>
+                    <td md-cell>{{item.serieComprobante}} </td>
+                    <td md-cell>{{item.fechaEmision}}</td>
+                    <td md-cell ng-if="dataSearch.tipo===1">{{item.fechaVencimiento}}</td>
+                    <td md-cell>{{item.nombreFiscal || item.razonSocialComprador}}</td>
+                    <td md-cell>{{item.total }}</td>
+                    <td md-cell>{{item.estadoDoc || item.estadoFinanciero}}</td>
+                    <td md-cell>{{item.usuario}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-dark" ng-click="close()">&times; Cerrar</button>
+</div>

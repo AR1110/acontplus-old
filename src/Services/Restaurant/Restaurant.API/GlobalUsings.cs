@@ -1,0 +1,10 @@
+﻿global using System.Runtime.InteropServices;
+global using Common.Core.Data;
+global using Common.Core.Models;
+global using Common.Core.Validation;
+global using Common.Services.Configuration;
+global using Common.Services.Extensions;
+global using Microsoft.AspNetCore.ResponseCompression;
+global using Microsoft.EntityFrameworkCore;
+global using Restaurant.API.Data;
+global using Restaurant.API.Extensions;

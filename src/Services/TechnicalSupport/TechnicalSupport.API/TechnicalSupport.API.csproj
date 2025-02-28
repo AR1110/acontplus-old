@@ -7,8 +7,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <PackageReference Include="Acontplus.Services.Common" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Acontplus.Common.Services" />
+    
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

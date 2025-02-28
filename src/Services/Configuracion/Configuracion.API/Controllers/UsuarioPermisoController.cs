@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class UsuarioPermisoController(IUsuarioPermisoService usuarioPermisoService) : BaseApiController
 {
@@ -16,7 +14,7 @@ public class UsuarioPermisoController(IUsuarioPermisoService usuarioPermisoServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "jsonPermission", SqlStringParam.Sanitize(data.jsonPermission) }
         };
         return Ok(await usuarioPermisoService.UpdateAsync(parameters));
@@ -27,7 +25,7 @@ public class UsuarioPermisoController(IUsuarioPermisoService usuarioPermisoServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await usuarioPermisoService.CheckAsync(parameters));
     }

@@ -1,0 +1,60 @@
+
+
+<div class="card">
+  <div class="card-body">
+    <div class="row cols-xxl-6 cols-xl-6 cols-md-6 cols-sm-12 mb-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select [(ngModel)]="establecimientoId" (selectionChange)="loadData()">
+            @for(item of  establecimientos; track $index){
+            <mat-option [value]="item.idEstablecimiento">{{item.estab}}-{{item.nombreComercial}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <div class="d-flex gap-2 align-items-center justify-content-end">
+          <button mat-icon-button aria-label="Nuevo" (click)="onModalOpen()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button aria-label="Refresh" (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <app-mat-dynamic-table
+      [isLoadingData]="isLoadingResults"
+      [tableData]="floors"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+      [templateOp]="templateOp"
+      [paginationConfig]="pagination()"
+      [enablePagination]="false"
+    >
+    </app-mat-dynamic-table>
+
+    <ng-template #templateOp let-item="item">
+      <button mat-icon-button   (click)="onModalOpen(item)" >
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button  color="primary"  (click)="onDelete(item)">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+
+    </ng-template>
+
+    <ng-template #statusTemplate let-item>
+       <span
+         [ngClass]="item.enabled ? 'text-success' : 'text-danger'"
+         class="badge"
+       >
+                  {{ item.enabled ? 'Activo' : 'Inactivo' }}
+                </span>
+    </ng-template>
+  </div>
+</div>

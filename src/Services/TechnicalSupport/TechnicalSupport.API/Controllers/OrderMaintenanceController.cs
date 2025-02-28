@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace TechnicalSupport.API.Controllers;
+﻿namespace TechnicalSupport.API.Controllers;
 
 public class OrderMaintenanceController : BaseApiController
 {
@@ -16,7 +14,7 @@ public class OrderMaintenanceController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await _service.GetAsync(parameters);
@@ -30,7 +28,7 @@ public class OrderMaintenanceController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
         };
         var response = await _service.AddAsync(parameters);
@@ -45,7 +43,7 @@ public class OrderMaintenanceController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
         };

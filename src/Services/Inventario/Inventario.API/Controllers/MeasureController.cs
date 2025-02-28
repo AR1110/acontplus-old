@@ -1,16 +1,13 @@
-﻿using Common.AppSettings;
-using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class MeasureController(IMeasureService measureService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<LegacyApiResponse>> Get(string json)
+    public async Task<ActionResult<ApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await measureService.GetAsync(parameters);
         if (response == null) { return NoContent(); }
@@ -24,7 +21,7 @@ public class MeasureController(IMeasureService measureService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await measureService.AddAsync(parameters);
@@ -36,7 +33,7 @@ public class MeasureController(IMeasureService measureService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -47,7 +44,7 @@ public class MeasureController(IMeasureService measureService) : BaseApiControll
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await measureService.DeleteAsync(parameters);
         return Ok(response);
     }

@@ -1,12 +1,8 @@
-﻿using Autofac.Extensions.DependencyInjection;
-using Common.AppSettings;
+﻿using System.Runtime.InteropServices;
+
 using Inventario.API.Extensions;
-using Services.Common.Middleware;
-using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -14,17 +10,16 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-builder.Configuration.SetBasePath(DirectoryHelper.GetRuntimeDirectory());
-ConfigurationHelper.AddJsonFiles(builder.Configuration);
+// Use AppConfiguration for loading settings
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
 
+// Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Services.AddOpenApi();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

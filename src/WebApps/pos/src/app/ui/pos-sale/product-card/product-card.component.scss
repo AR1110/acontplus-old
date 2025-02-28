@@ -1,0 +1,209 @@
+/* src/app/components/product-card/product-card.component.scss */
+:host {
+  display: block;
+}
+
+/* Tarjeta de producto */
+.pos-product-card {
+  background-color: var(--card-bg);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition-speed);
+  position: relative;
+  border: 1px solid var(--card-border);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Contenedor de imagen */
+  &__image-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; /* Aspect ratio 1:1 (cuadrado) */
+    //  background-color: var(--pink); /* Fondo crema claro como en la imagen */
+    overflow: hidden;
+  }
+
+  &__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding: 10px;
+    border-radius: 50%;
+  }
+
+  /* Información del producto */
+  &__info {
+    padding: 10px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    margin: 0 0 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+
+  /* Contenedor de precios */
+  &__price-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  &__price {
+    font-size: 14px;
+    color: var(--price-color);
+    display: flex;
+    align-items: center;
+
+    /* Círculo para tamaño/variante */
+    &-size {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #eee;
+      border: 1px solid #ddd;
+      margin-left: 4px;
+    }
+  }
+
+  /* Etiquetas (popular, oferta) */
+  &__tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tag-text);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &--popular {
+      background-color: var(--tag-bg-popular);
+    }
+
+    &--offer {
+      background-color: var(--tag-bg-offer);
+    }
+
+    /* Icono para etiquetas */
+    &-icon {
+      width: 12px;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::before {
+        content: "•";
+        font-size: 18px;
+      }
+    }
+  }
+
+  /* Botón de agregar al carrito */
+  &__info-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    // background-color: var(--pink);
+    // border: 1px solid #ddd;
+    // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.2s ease, background-color 0.3s;
+
+    &::before {
+      // content: "ℹ️";
+      // font-size: 16px;
+      // color: var(--white);
+    }
+
+    &:hover {
+      // background-color: darken(var(--pink), 10%);
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+
+    &.clicked {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+    }
+
+    &.icon {
+      color: var(--mdc-icon-button-icon-color);
+      font-size: 15px;
+    }
+  }
+}
+
+:host-context(.dark-theme) {
+  .pos-product-card {
+    --card-bg: #222;
+    --text-color: #e0e0e0;
+    --price-color: #bbb;
+    --card-border: rgba(255, 255, 255, 0.1);
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    &__image-container {
+      background-color: #333;
+    }
+
+    &__price-size {
+      background-color: #444;
+      border-color: #555;
+    }
+
+    &__add-btn {
+      background-color: #3b82f6;
+      border-color: #1a3450;
+
+      &::before {
+        color: #e0e0e0;
+      }
+
+      &:hover {
+        background-color: #3b82f6;
+      }
+    }
+  }
+}
+
+.info-product-card {
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  background: var(--card-bg);
+  text-align: center;
+  padding: 10px;
+  margin: 0;
+}

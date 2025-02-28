@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '../../enums/config.enums';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { UserCustomerCustomerRoleEstab } from '../../models/user-customer/user-customer-role-estab.model';
+import { UserCustomerCustomerRoleEstab } from '@modules/config/domain/models/user-customer/user-customer-role-estab.model';
 import { isApiResponse } from '@core/models/api-response';
 
 @Injectable({

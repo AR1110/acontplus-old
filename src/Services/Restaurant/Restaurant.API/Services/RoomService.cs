@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Data;
-using Restaurant.API.Entities;
+﻿using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services;
@@ -39,7 +36,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         {
             return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
         }
-        
+
         context.Remove(room);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminadoa correctamente!" };

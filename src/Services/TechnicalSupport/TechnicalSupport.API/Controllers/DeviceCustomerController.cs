@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace TechnicalSupport.API.Controllers;
+﻿namespace TechnicalSupport.API.Controllers;
 
 public class DeviceCustomerController : BaseApiController
 {
@@ -16,7 +14,7 @@ public class DeviceCustomerController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await _service.GetAsync(parameters);
         if (response == null)

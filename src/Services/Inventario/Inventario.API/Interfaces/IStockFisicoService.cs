@@ -3,6 +3,6 @@
 public interface IStockFisicoService
 {
     Task<object> GetAsync(Dictionary<string, object> parameters);
-    Task<string> AddAsync(ApiRequest data);
-    Task<string> UpdateAsync(int id, ApiRequest data);
+    Task<ApiResponse> AddAsync(ApiRequest data);
+    Task<ApiResponse> UpdateAsync(int id, ApiRequest data);
 }

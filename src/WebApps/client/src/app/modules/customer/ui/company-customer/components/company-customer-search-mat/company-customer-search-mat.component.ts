@@ -1,4 +1,4 @@
-import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay } from '@angular/cdk/overlay';
+import {CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule} from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, inject, input, model, output, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ import { isValidField } from '@core/utils/utils';
 import { ResponsiveService } from '@shared/services/responsive.service';
 import {  distinctUntilChanged, finalize,   Observable, switchMap } from 'rxjs';
 import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.use-case";
+import { CompanyCustomerAddEditDirective } from '../../company-customer-add-edit.directive';
 
 @Component({
   selector: 'app-company-customer-search-mat',
@@ -30,7 +31,9 @@ import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.u
     MatButtonModule,
     MatProgressSpinnerModule,
     MatMenuModule,
-    MatCardModule
+    MatCardModule,
+    OverlayModule,
+    CompanyCustomerAddEditDirective
   ],
   templateUrl: './company-customer-search-mat.component.html',
   styles: ``
@@ -106,7 +109,7 @@ export class CompanyCustomerSearchMatComponent {
 
   onSelectionChange(item: any) {
     if (this.isGetId()) {
-      this._companyCustomerUseCase.getId(item.idCliente).subscribe(response => {
+      this._companyCustomerUseCase.getId(item.idCliente || item.id).subscribe(response => {
         this.onSelect.emit(response);
       })
     } else {

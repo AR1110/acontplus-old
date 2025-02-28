@@ -34,14 +34,13 @@ public class EstablishmentService : IEstablishmentService
     public async Task<ApiResponse> PutSriAuth(Dictionary<string, object> parameters)
     {
         var query = @"UPDATE Sri.Establecimiento SET autoSriAuth = @autoSriAuth WHERE idEstablecimiento = @id";
-        var affectedRows = await _repository.OnlyExecuteAsync(query, parameters, false);
+        var affectedRows = await _repository.ExecuteNonQueryAsync(query, parameters, false);
         if (affectedRows > 0)
         {
             return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
         }
-        
-            return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
-        
+
+        return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)

@@ -1,6 +1,4 @@
-﻿using Common.AppSettings;
-
-namespace Identity.API.Controllers.v3;
+﻿namespace Identity.API.Controllers.v3;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
@@ -29,13 +27,11 @@ public class AccountController(
             return BadRequest("Contraseña no puede estar vacia");
         }
 
-        var response =
-            JsonConvert.DeserializeObject<LegacyApiResponse>(
-                await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
+        var response = await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password);
 
-        if (response.code == "1")
+        if (response.Code == "1")
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.payload);
+            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
             switch (userData.Count)
             {

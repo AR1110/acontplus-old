@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class ArticuloController(
     S3ObjectCustom s3ObjectCustom,
@@ -18,7 +16,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloService.GetAsync(parameters));
     }
@@ -37,12 +35,12 @@ public class ArticuloController(
 
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
+            await s3ObjectCustom.Add($"{User.GetClaimValue<string>("idCardCompany")}/articulos/", file);
         }
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
             { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
@@ -52,16 +50,16 @@ public class ArticuloController(
         switch (response.Code)
         {
             case "1" when file != null:
-            {
-                var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-                s3ObjectCustom.Dispose();
-                break;
-            }
+                {
+                    var s3Response = await storageService.UploadAsync(s3ObjectCustom);
+                    s3ObjectCustom.Dispose();
+                    break;
+                }
         }
 
         return Ok(response);
     }
-    
+
     /**
      * Se agrega este metódo porque ocurre un montón de problemas
      * con métodos que aceptan argumentos de tipo archivo
@@ -73,7 +71,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
             { "s3ObjectKey", "" },
             { "s3ObjectUrl", "" }
@@ -88,7 +86,7 @@ public class ArticuloController(
         var data = JsonConvert.DeserializeObject<ApiRequest>(json);
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
@@ -98,7 +96,7 @@ public class ArticuloController(
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await articuloService.DeleteAsync(parameters));
     }
 
@@ -112,7 +110,7 @@ public class ArticuloController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         return Ok(await articuloService.SearchAsync(parameters));

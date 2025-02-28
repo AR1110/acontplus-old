@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Data;
-using Restaurant.API.Entities;
+﻿using Restaurant.API.Entities;
 using Restaurant.API.Interfaces;
 
 namespace Restaurant.API.Services;
@@ -76,20 +73,21 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         {
             return new ApiResponse { Code = "0", Message = "Ingredient not found" };
         }
-        var orderExists = await context.Orders
-                   .Join(context.Tables,
-                         order => order.TableId,
-                         table => table.Id,
-                         (order, table) => new { order, table })
-                   .AnyAsync(t => t.table.Id == id);
+        //var orderExists = await context.Orders
+        //           .Join(context.Tables,
+        //                 order => order.TableId,
+        //                 table => table.Id,
+        //                 (order, table) => new { order, table })
+        //           .AnyAsync(t => t.table.Id == id);
 
-        if (orderExists)
-        {
-            return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
-        }
-        context.Remove(appTable);
+        //if (orderExists)
+        //{
+        //    return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
+        //}
+        appTable.Enabled = false;
+        context.Update(appTable);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminada existosamente" };
+        return new ApiResponse { Code = "1", Message = "Inactivado existosamente" };
     }
 
     public async Task<ApiResponse> UnassignAsync(int userId, int id)

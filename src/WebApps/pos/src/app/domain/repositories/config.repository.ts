@@ -18,6 +18,7 @@ export abstract class ConfigRepository {
     configVenta:   ConfigVenta,
     decimal:  DecimalVenta,
     vendedores:   any[],
-    tarifas:   any[]
+    tarifas:   any[],
+    pendingOrders: number
   }>
 }

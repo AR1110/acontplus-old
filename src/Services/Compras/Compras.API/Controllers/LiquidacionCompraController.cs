@@ -1,28 +1,16 @@
-﻿using Common.AppSettings.Extensions;
+﻿namespace Compras.API.Controllers;
 
-namespace Compras.API.Controllers;
-
-public class LiquidacionCompraController : BaseApiController
+public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseApiController
 {
-    private IConfiguration _configuration;
-    private readonly ILiquidacionCompraService _liquidacionCompraSvc;
 
-    public LiquidacionCompraController(IConfiguration configuration, ILiquidacionCompraService liquidacionCompraSvc
-        )
-    {
-        _configuration = configuration;
-        _liquidacionCompraSvc = liquidacionCompraSvc;
-        
-    }
-
-    [HttpGet("Get")]
+    [HttpGet()]
     public async Task<IActionResult> Get(string json)
     {
         try
         {
-            var response = await _liquidacionCompraSvc.GetAsync(new Dictionary<string, object>
+            var response = await _svc.GetAsync(new Dictionary<string, object>
             {
-                { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
             if (response == null) { return NoContent(); }
 
@@ -35,19 +23,11 @@ public class LiquidacionCompraController : BaseApiController
         }
     }
 
-    [HttpPost("Insert")]
+    [HttpPost()]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _liquidacionCompraSvc.AddAsync(request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+        return Ok(await _svc.AddAsync(request));
     }
 
     [HttpGet("GetId/{id}")]
@@ -56,8 +36,8 @@ public class LiquidacionCompraController : BaseApiController
         try
         {
             var response =
-                await _liquidacionCompraSvc.GetByIdAsync(
-                    new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
+                await _svc.GetByIdAsync(
+                    new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
             if (response == null) { return NoContent(); }
 
             ;
@@ -72,31 +52,16 @@ public class LiquidacionCompraController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-        request.UserRoleId = User.GetUserRoleId();
-        try
-        {
-            var response = await _liquidacionCompraSvc.UpdateAsync(id, request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+        return Ok(await _svc.UpdateAsync(id, request));
+
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } };
-            var response = await _liquidacionCompraSvc.DeleteAsync(parameters);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        return Ok(await _svc.DeleteAsync(parameters));
     }
 }

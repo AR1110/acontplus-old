@@ -1,4 +1,5 @@
-﻿using Scrutor;
+﻿using Common.Logging;
+using Scrutor;
 
 namespace Inventario.API.Extensions;
 
@@ -7,6 +8,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -23,7 +26,7 @@ public static class ApplicationServicesExtensions
             "Common.S3Application.Services",
             "Inventario.API.Services",
         ];
-        
+
         services.Scan(scan => scan
             .FromApplicationDependencies()
             .AddClasses(classes => classes.InNamespaces(nameSpaces))
@@ -31,7 +34,7 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-        
+
         services.AddSingleton<S3ObjectCustom>();
         return services;
     }

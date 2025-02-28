@@ -22,8 +22,8 @@ public class PrecioMasivoService : IPrecioMasivoService
     }
 
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Inventario.PrecioMasivo_Update", parameters);
+        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.PrecioMasivo_Update", parameters);
     }
 }

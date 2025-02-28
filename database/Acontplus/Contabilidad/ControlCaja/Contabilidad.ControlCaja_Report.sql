@@ -225,7 +225,7 @@ BEGIN
 
 	          -----------------------------HISTORIAL DE MOVIMIENTO POR DOCUMENTO DEL CONTROL DE CAJA-----------------------------
 	          SELECT cc.codDoc                                             as tipoDoc
-	                ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro') as nroDoc
+	                ,cc.serieComprobante                                   as nroDoc
 		            ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm')           as fechaEmision
 		            ,cu.BusinessName                                       as cliente
 		            ,CAST(co.abono as numeric(18,2))                       as total

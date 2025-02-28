@@ -4,7 +4,7 @@ import {ApiResponse} from "@core/models/api-response";
 export abstract  class SupportRepository{
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
 
-  abstract getDataFilter():Observable<any>
+  abstract getDataFilter():Observable<{ supportStatus: any[]  }>
 
   abstract getDataForm():Observable<any>
 
@@ -16,7 +16,9 @@ export abstract  class SupportRepository{
 
   abstract getDocView(id: number, loader?: boolean):Observable<any>
 
-  abstract search<T extends { textSearch: string }>(obj: T): Observable<ApiResponse>
+  abstract generateSequential(idPuntoEmision: number): Observable<string>
+
+  abstract search<T extends { textSearch: string }>(obj: T): Observable<any>
 
   abstract  post<T>(data: T): Observable<ApiResponse>
 

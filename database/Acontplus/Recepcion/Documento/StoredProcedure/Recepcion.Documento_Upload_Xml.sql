@@ -40,7 +40,7 @@ BEGIN
     DECLARE @fechaAutorizacion VARCHAR(50) ,@xmlQuery XML ,@xmlCompressed VARBINARY(MAX)
 
     --> Contabilidad
-    DECLARE @idProveedor INT ,@CustomerId INT ,@subcategoryId INT ,@idCliente INT ,@idEstadoPago INT  ,@idTipoIdentificacion INT ,@fechaEmisionC DATETIME2
+    DECLARE @idProveedor INT ,@CustomerId INT ,@subcategoryId INT ,@idCliente INT ,@idEstadoPago INT  ,@IdTypeId INT ,@fechaEmisionC DATETIME2
 
     --> Documento Recibido 
 	DECLARE @identificacionReceptor VARCHAR(20) ,@rucReceptor VARCHAR(15) ,@rucEmisor VARCHAR(13) ,@codEstab  VARCHAR(50) ,@idEstablecimiento INT ,@idDocumento INT ,@importeTotal NUMERIC(18,5)
@@ -208,20 +208,15 @@ BEGIN
             END 
 
 		BEGIN TRAN
-			INSERT  INTO Recepcion.DocumentoRecibido
-                   (idEstablecimiento,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
-			SELECT @idEstablecimiento,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,identificacionReceptor,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
-            FROM @tbDocumento
-
-			SET @idDocumento = SCOPE_IDENTITY()
-
              
             --> Valiration Sri
             IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = LTRIM(RTRIM(@rucEmisor)))
 				BEGIN
+                    SELECT TOP 1 @IdTypeId = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
+
 					INSERT INTO Customer.Customer WITH (ROWLOCK)
-                          (IDType,IDCard,BusinessName,TradeName,[Address],SriValidation)
-					SELECT '04',rucEmisor,razonSocialEmisior,nombreComercial,dirMatriz, 1 
+                           (IdTypeId,IDCard,BusinessName,TradeName,[Address],SriValidation)
+					SELECT @IdTypeId,rucEmisor,razonSocialEmisior,nombreComercial,dirMatriz, 1 
                     FROM @tbDocumento 
 
                     SET @customerId = SCOPE_IDENTITY()
@@ -231,18 +226,23 @@ BEGIN
 					SELECT TOP 1 @customerId = ID FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = LTRIM(RTRIM(@rucEmisor))
 				END
 
+
+            INSERT  INTO Recepcion.DocumentoRecibido
+                   (customerId,idEstablecimiento,comprobante,codDoc, serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,identificacionReceptor,claveAcceso,importeTotal,xmlCompressed,versionComp,idUsuario,fechaRegistro,downloaded,subcategoryId)
+			SELECT @CustomerId,@idEstablecimiento,comprobante,@codDoc,serieComprobante,rucEmisor,razonSocialEmisior,@fechaEmision,@fechaAutorizacion,identificacionReceptor,@claveAcceso,importeTotal,@xmlCompressed, @versionComp,@idUsuario,dbo.ufnGetDateEcuador(),'DE',@subcategoryId
+            FROM @tbDocumento
+
+			SET @idDocumento = SCOPE_IDENTITY()
+
             --> Procesos Internos de la empresa
 			IF @codDoc IN ('01','04')
 				BEGIN	
                     --> Proveedor
 					IF NOT EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId )
 						BEGIN
-                            
-                            SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
-
 							INSERT INTO dbo.Proveedor 
-                                   (idTipoIdentificacion,direccion,idEntidad,CustomerId)
-							SELECT @idTipoIdentificacion,dirMatriz,@idEntidad,@customerId
+                                  (direccion,idEntidad,CustomerId)
+							SELECT dirMatriz,@idEntidad,@customerId
                             FROM @tbDocumento 
 
                             SELECT @idProveedor = SCOPE_IDENTITY()
@@ -268,12 +268,9 @@ BEGIN
                         --> Cliente
 					    IF NOT EXISTS(SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId)
 						    BEGIN
-
-                                SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
-
 							    INSERT INTO dbo.Cliente WITH (ROWLOCK)
-                                       (idTipoIdentificacion,direccion,idEntidad,CustomerId)
-							    SELECT @idTipoIdentificacion,dirMatriz,@idEntidad,@customerId
+                                      (direccion,idEntidad,CustomerId)
+							    SELECT dirMatriz,@idEntidad,@customerId
                                 FROM @tbDocumento 
 
                                 SELECT @idCliente = SCOPE_IDENTITY()

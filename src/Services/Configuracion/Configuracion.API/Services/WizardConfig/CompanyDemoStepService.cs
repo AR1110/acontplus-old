@@ -4,7 +4,8 @@ namespace Configuracion.API.Services.WizardConfig;
 
 public class CompanyDemoStepService(IAdoRepository adoRepository) : ICompanyDemoStepService
 {
-    private string ModuleName = "Config.CompanyDemoStep_";
+    private readonly string ModuleName = "Config.CompanyDemoStep_";
+
     public Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
         return adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);

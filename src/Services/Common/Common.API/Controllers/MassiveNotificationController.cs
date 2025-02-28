@@ -1,6 +1,4 @@
-﻿using Common.API.Services;
-using Common.AppSettings.Extensions;
-using Common.Notifications.Entities;
+﻿using Common.Notifications.Entities;
 
 namespace Common.API.Controllers;
 
@@ -11,7 +9,7 @@ public class MassiveNotificationController(IMassiveNotificationService massiveNo
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "notification", DataConverters.SerializeObjectCustom<Notification>(notification) }
         };
         return Ok(await massiveNotificationService.AddAsync(parameters));

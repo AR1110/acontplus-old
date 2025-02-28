@@ -2,7 +2,7 @@
 
 namespace Vet.API.Data.Configurations;
 
-public class BreedConfiguration: BaseEntityTypeConfiguration<Breed>
+public class BreedConfiguration : BaseEntityTypeConfiguration<Breed>
 {
     public override void Configure(EntityTypeBuilder<Breed> builder)
     {
@@ -15,7 +15,7 @@ public class BreedConfiguration: BaseEntityTypeConfiguration<Breed>
     }
 }
 
-public class GenderConfiguration: BaseEntityTypeConfiguration<Gender>
+public class GenderConfiguration : BaseEntityTypeConfiguration<Gender>
 {
     public override void Configure(EntityTypeBuilder<Gender> builder)
     {
@@ -28,7 +28,7 @@ public class GenderConfiguration: BaseEntityTypeConfiguration<Gender>
     }
 }
 
-public class PetTypeConfiguration: BaseEntityTypeConfiguration<PetType>
+public class PetTypeConfiguration : BaseEntityTypeConfiguration<PetType>
 {
     public override void Configure(EntityTypeBuilder<PetType> builder)
     {

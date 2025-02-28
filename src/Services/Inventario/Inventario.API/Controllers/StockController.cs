@@ -1,6 +1,4 @@
-﻿using Common.AppSettings.Extensions;
-
-namespace Inventario.API.Controllers;
+﻿namespace Inventario.API.Controllers;
 
 public class StockController(IStockService stockService) : BaseApiController
 {
@@ -10,9 +8,9 @@ public class StockController(IStockService stockService) : BaseApiController
         var response =
             await stockService.UpdateAsync(new Dictionary<string, object>
             {
-                    { "userRoleId", User.GetUserRoleId() }, { "id", id }
+                    { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
-        if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Error on put"); }
+        if (response == null) { return BadRequest("Error on put"); }
 
             ;
         return Ok(response);

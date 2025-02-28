@@ -2,15 +2,23 @@
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7060/",
     "RateLimitOptions": {
-      "ClientIdHeader": "Test",
+      "ClientIdHeader": "X-Client-Id",
       "ClientWhitelist": [
+        "acontplus-admin",
+        "acontplus-app",
+        "acontplus-demo",
+        "acontplus-erp",
+        "acontplus-invoice",
+        "acontplus-print",
+        "acontplus-restaurant"
       ],
       "EnableRateLimiting": true,
-      "HttpStatusCode": 123,
-      "Limit": 1,
+      "DisableRateLimitHeaders": false,
+      "HttpStatusCode": 429,
+      "Limit": 100,
       "Period": "1s",
       "PeriodTimespan": 1,
-      "QuotaExceededMessage": "Request not allowed"
+      "QuotaExceededMessage": "Rate limit exceeded. Please wait and try again."
     },
     "RequestIdKey": "OcRequestId"
   },
