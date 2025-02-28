@@ -54,7 +54,7 @@ BEGIN
      --Listado para POS 
     IF @tipo = 2
         BEGIN 
-	        SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,Customer,config,vendedores,tarifas'
+	        SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,Customer,config,vendedores,tarifas,orderCount'
             
             SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V';
 
@@ -90,17 +90,21 @@ BEGIN
             SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
 	        SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
             INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto 
+          
 
              --CUSTOMER DEFAULT      
-	        SELECT cl.idCliente
-	              ,cu.IDCard       as numeroIdentificacion
-	              ,cu.BusinessName as nombreComercial
-	              ,cu.TradeName    as nombreFiscal
-	              ,cl.direccion
-	              ,cl.correo
-	        FROM dbo.Cliente             cl WITH (NOLOCK) 
+	        SELECT TOP 1 cl.idCliente,
+                   cu.IDCard       AS numeroIdentificacion,
+                   cu.BusinessName AS nombreComercial,
+                   cu.TradeName    AS nombreFiscal,
+                   cl.direccion,
+                   cl.correo
+            FROM dbo.Cliente cl WITH (NOLOCK) 
             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = cl.CustomerId
-            WHERE cl.idCliente = @customerCompanyId 
+            INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
+            WHERE cl.idEntidad = @idEntidad AND ((@customerCompanyId IS NOT NULL AND cl.idCliente = @customerCompanyId) 
+               OR (@customerCompanyId IS NULL AND ti.codigoSri = '07'));
+
 
              SELECT CAST(searchCode AS BIT)       as searchCode
 	            ,CAST(printerAutomatic AS BIT) as printerAutomatic
@@ -123,6 +127,19 @@ BEGIN
                 ,predeterminada as defaultTarifa
              FROM dbo.Tarifa 
              WHERE idEntidad = @idEntidad AND estado = 1
+
+
+             SELECT count(*) AS pendingOrders
+            FROM Restaurant.[Order] ro
+            INNER JOIN Sri.Establecimiento se ON se.idEstablecimiento = ro.EstablecimientoId
+            WHERE se.idEntidad = @idEntidad 
+                AND se.codEstab = @codEstab 
+                AND CAST(ro.CreatedAt AS DATE) = CAST(GETDATE() AS DATE)
+                AND ro.Deleted IS NULL 
+                AND ro.Finished = 0
+                AND ro.Divided = 0
+          
+
             RETURN 
         END 
 

@@ -356,48 +356,24 @@ BEGIN
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT cc.codEstab
-                  ,cc.idCuentaPorCobrar 
-                  ,cc.idDocumento as DocumentoId
-                  ,IIF(cc.codDoc='01', 'FV', cc.codDoc)        as docType
-                  ,cc.serieComprobante                         as serie
-                  ,cc.serieComprobante                         as serieComprobante
-                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
-                  ,cc.razonSocialComprador                     as customerName
-                  ,cc.usuario                                  as userName
-                  ,cc.tiempoCredito
-                  ,cc.importeTotal
-                  ,cc.abono
-                  ,cc.saldo
-                  ,cc.estado
-                  ,ISNULL(cc.telefono, '')                     as telefono
-            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
-            WHERE idEntidad = @idEntidad 
-                AND cc.idDocumento IN (SELECT DocumentoId FROM Restaurant.OrderDocument od WITH(NOLOCK) 
-                                                            INNER JOIN dbo.TipoDocumento td WITH(NOLOCK)  ON od.TipoDocumentoId = td.idTipoDocumento
-                                                            WHERE od.orderId = @id  AND td.codigo = cc.codDoc)
-
-            UNION ALL
-
-            SELECT cc.codEstab
-                  ,cc.idCuentaPorCobrar 
-                  ,cc.idDocumento as DocumentoId
-                  ,IIF(cc.codDoc='01', 'FV', cc.codDoc)        as docType
-                  ,cc.serieComprobante                         as serie
-                  ,cc.serieComprobante                         as serieComprobante
-                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
-                  ,cc.razonSocialComprador                     as customerName
-                  ,cc.usuario                                  as userName
-                  ,cc.tiempoCredito
-                  ,cc.importeTotal
-                  ,cc.abono
-                  ,cc.saldo
-                  ,cc.estado
-                  ,ISNULL(cc.telefono, '')                     as telefono
-            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
-            WHERE idEntidad = @idEntidad 
-                AND cc.idDocumento IN (SELECT DocumentoId FROM Restaurant.OrderDocument od WITH(NOLOCK) 
-                                                            INNER JOIN dbo.TipoDocumento td WITH(NOLOCK)  ON od.TipoDocumentoId = td.idTipoDocumento
-                                                            WHERE od.orderId = @id  AND td.codigoSri = cc.codDoc)
+			      ,cc.idCuentaPorCobrar
+				  ,od.DocumentoId
+				  ,td.codigo                                   as docType
+				  ,cc.serieComprobante                         as serie
+				  ,cc.serieComprobante
+				  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm') as createAt
+				  ,cc.razonSocialComprador					   as customerName
+				  ,cc.nombreUsuario							   as userName
+				  ,cc.tiempoCredito
+				  ,cc.importeTotal
+				  ,cc.abono
+				  ,cc.saldo
+				  ,cc.estado
+				  ,ISNULL(cc.telefono, '')                     as telefono
+			FROM Restaurant.OrderDocument  od WITH (NOLOCK)
+			INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = od.TipoDocumentoId
+			INNER JOIN v_CuentaPorCobrar   cc WITH (NOLOCK) ON cc.idDocumento       = od.DocumentoId AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
+			WHERE od.OrderId = @id
 
             RETURN
         END

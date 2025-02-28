@@ -77,7 +77,7 @@ BEGIN
             where oi.OrderId = @id AND oi.TaxPercentId = ti.idTarifaImpuesto
 
           ),0) as [value]
-    FROM Sri.TarifaImpuesto ti WITH (NOLOCK) WHERE ti.codImpuesto='2'
+    FROM Sri.TarifaImpuesto ti WITH (NOLOCK) WHERE ti.codImpuesto = '2' AND estado = 1
 
      SELECT ti.descripcion as [name]
           ,ISNULL
@@ -87,7 +87,7 @@ BEGIN
             where oi.OrderId = @id AND oi.TaxPercentId = ti.idTarifaImpuesto
           ),0) as [value]
     FROM Sri.TarifaImpuesto ti WITH (NOLOCK) 
-    WHERE ti.codImpuesto='2' AND ti.porcentaje > 0 
+    WHERE ti.codImpuesto='2' AND ti.porcentaje > 0 AND estado = 1 
 
 END
 GO

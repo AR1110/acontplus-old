@@ -190,3 +190,12 @@ go
 --inner join dbo.ComprobanteIngreso ci WITH (NOLOCK) on ci.idComprobanteIngreso = co.idComprobanteIngreso
 --where cc.codDoc = '07'
 --and ci.estado = 1
+
+
+
+--> Drop
+DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Insert];
+
+DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Update];
+
+DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Update_Status];
