@@ -27,7 +27,7 @@ public class DocumentoRecibidoController(
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var response = new LegacyApiResponse();
+        var response = new ApiResponse();
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
@@ -51,7 +51,7 @@ public class DocumentoRecibidoController(
             await documentoTemp.AddAsync(details);
         }
 
-        response.Create(code: "1", data: ceXml);
+        response.Create(code: "1", payload: ceXml);
 
         return Ok(response);
     }
@@ -60,7 +60,7 @@ public class DocumentoRecibidoController(
     [HttpPost("Read")]
     public async Task<IActionResult> Post(IFormFile file)
     {
-        var response = new LegacyApiResponse();
+        var response = new ApiResponse();
 
         if (file.ContentType != "text/plain")
         {
@@ -79,7 +79,7 @@ public class DocumentoRecibidoController(
 
             if (DataValidation.DataTableIsNull(dt))
             {
-                response.Create("1", data: DataConverters.DataTableToJson(dt));
+                response.Create("1", payload: DataConverters.DataTableToJson(dt));
             }
             else
             {
@@ -99,7 +99,7 @@ public class DocumentoRecibidoController(
                                 where subRow2 == null
                                 select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
-                    response.Create("1", data: DataConverters.DataTableToJson(filteredDataTable));
+                    response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
                 }
             }
         }
