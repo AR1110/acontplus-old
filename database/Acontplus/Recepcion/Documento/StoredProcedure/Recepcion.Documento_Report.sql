@@ -46,7 +46,8 @@ BEGIN
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
     SELECT TOP 1 @idEntidad = idEntidad, @identificacionReceptor = rucEmpresa FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
-
+    
+    BEGIN TRY
     --> Factura
     IF @tipo = 2
         BEGIN
@@ -228,7 +229,7 @@ BEGIN
                                         ,dr.identificacionReceptor
                                         ,(SELECT TOP 1 cp.subcategoryId FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK) WHERE cp.codDoc = ''01'' AND cp.idDocumento = dr.idDocumento ) as subcategoryId
                                 FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                                INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
+                                INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento  = dr.idEstablecimiento
                                 INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                                 WHERE dr.codDoc = ''01''
                                   AND dr.estado = 1
@@ -609,7 +610,7 @@ BEGIN
 	                            ),0) as importeTotal 
                                 ,us.nombreUsuario as usuario
                         FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab = dr.codEstab
+                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = dr.idEstablecimiento
                         INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                         WHERE dr.codDoc = ''04''
                         AND dr.xmlCompressed IS NOT NULL
@@ -617,7 +618,7 @@ BEGIN
 
             IF LEN(@codEstab) > 6 
                 BEGIN
-                    SET @sql = @sql + 'AND dr.codEstab = @codEstab '
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END 
 
             IF @ckFecha = 1
@@ -735,14 +736,14 @@ BEGIN
 	                          ) as fechaEmisionDocSustento
 	                          ,us.nombreUsuario as usuario
                         FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
+                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento  = dr.idEstablecimiento
                         INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                         WHERE dr.codDoc = ''07''
                           AND dr.xmlCompressed IS NOT NULL '
 
             IF @codEstab IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND dr.codEstab = @codEstab '
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END 
 
             IF @ckFecha = 1
@@ -785,8 +786,14 @@ BEGIN
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
 
-            RETURN  
+            
         END 
+    END TRY
+    BEGIN CATCH
+        INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
+        VALUES('recepcion reporte', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @idUsuario);
+        THROW;
+    END CATCH
 END
 GO
 
