@@ -32,7 +32,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       );
   }
   getDataForm() {
-    const parameters = { tipo: 1 };
+    const parameters = { tipo: 2 };
     const defaultData = this.getDefaultData();
 
     return this._http
