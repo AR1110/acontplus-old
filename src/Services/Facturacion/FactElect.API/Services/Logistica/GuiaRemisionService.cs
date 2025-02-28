@@ -33,7 +33,7 @@ public class GuiaRemisionService(IAdoRepository repository) : IGuiaRemisionServi
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>($"${nameSp}Insert", parameters);
+        return await repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
