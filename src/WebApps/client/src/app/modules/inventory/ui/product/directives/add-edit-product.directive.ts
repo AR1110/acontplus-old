@@ -1,6 +1,8 @@
 import {Directive, HostListener, inject , output} from "@angular/core";
-import { ProductAddEditModalComponent } from "@inventory/ui/product/components/product-add-edit-modal/product-add-edit-modal.component";
 import {DialogService} from "@core/services/dialog.service";
+import {
+  AddEditProductDialogComponent
+} from "@inventory/ui/product/components/add-edit-product-dialog/add-edit-product-dialog.component";
 
 @Directive({
   selector: '[appAddEditProduct]',
@@ -10,7 +12,7 @@ export class AddEditProductDirective {
   onResult = output<any>();
   private dialogSvc = inject(DialogService);
   @HostListener('click') onClick() {
-    const modalRef = this.dialogSvc.open(ProductAddEditModalComponent, {
+    const modalRef = this.dialogSvc.open(AddEditProductDialogComponent, {
       size: 'xl',
     });
     modalRef.subscribe((result: unknown) => {

@@ -28,7 +28,7 @@
       </div>
       <div class="col  ">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button mat-icon-button appProductAddEdit (onResultModal)="refresh()" [disabled]="isLoadingResults">
+          <button mat-icon-button appAddEditProduct (onResult)="refresh()" [disabled]="isLoadingResults">
             <mat-icon>add</mat-icon>
           </button>
           <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">

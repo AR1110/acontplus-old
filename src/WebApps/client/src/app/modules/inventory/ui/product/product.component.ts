@@ -21,7 +21,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
@@ -48,6 +47,8 @@ import {ActionEditDirective} from "@shared/directives/permission/action-edit.dir
 import {ActionMovCajaDirective} from "@shared/directives/permission/action-mov-caja.directive";
 import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
+import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
+import {DialogService} from "@core/services/dialog.service";
 
 
 
@@ -70,6 +71,8 @@ import {MatSlideToggle} from "@angular/material/slide-toggle";
     CustomTableContainerComponent,
     SubCategoryGroupComponent,
     MatDynamicTableComponent,
+    AddEditProductDirective,
+
     ProductAddEditDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
@@ -115,7 +118,7 @@ export class ProductComponent {
   private _productUseCase = inject(ProductUseCase)
   private stockSvc = inject(StockService);
   private tS = inject(ToasterService);
-  private modalSvc = inject(ModalService);
+  private $dialogSvc = inject(DialogService);
   private wasEmptyBefore: boolean = false; // Indica si alguna vez el campo estuvo vacío
 
   columnsDefs: ColumnDefinition[] = [
@@ -273,13 +276,12 @@ export class ProductComponent {
   }
 
   onPhotoModal(data: ProductList) {
-    let modalRef = this.modalSvc.open(ProductPhotoComponent, {
+    let modalRef = this.$dialogSvc.open(ProductPhotoComponent, {
       size: 'lg',
+      data
     });
 
-    modalRef.componentInstance.params = data;
-
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object' && result.isRefresh) {
         this.refresh();
       }
