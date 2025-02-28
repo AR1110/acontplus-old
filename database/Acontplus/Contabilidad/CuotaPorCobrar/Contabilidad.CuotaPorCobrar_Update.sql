@@ -20,160 +20,148 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuotaPorCobrar_Update', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuotaPorCobrar_Update
-GO
-CREATE PROCEDURE Contabilidad.CuotaPorCobrar_Update @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuotaPorCobrar_Update @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-	DECLARE @idUsuario INT
-	DECLARE @fechaEmision AS DATETIME
-	DECLARE @fechaVencimiento AS DATETIME 
-	DECLARE @codEstado VARCHAR(5)
-	DECLARE @idCuentaPorCobrar INT 
-	DECLARE @cuotas VARCHAR(MAX)
-	DECLARE @mora NUMERIC(18,5)
-	DECLARE @diasMora INT
-	DECLARE @tipoConfig VARCHAR(5)
-	DECLARE @interes NUMERIC(18,5)
-	
-	-- ============== PAYLOAD =====================
-	DECLARE @payload AS VARCHAR(MAX)
+    --> Json
+    DECLARE @cuotas  VARCHAR(MAX)
+           ,@cuenta  VARCHAR(MAX)
+           ,@payload VARCHAR(MAX)
 
+	DECLARE @idUsuario INT ,@idCuentaPorCobrar INT ,@idEstadoPago INT
+
+
+    DECLARE @tbCuenta AS TABLE(
+        idCuentaPorCobrar INT NOT NULL
+       ,idTiempoCredito INT NOT NULL
+       ,fechaVencimiento DATETIME2 NOT NULL
+    )
 
 	DECLARE @tbCuotas AS TABLE (
 		idCuotaPorCobrar INT UNIQUE NOT NULL
-	   ,fechaVencimiento DATETIME NOT NULL
+	   ,nroCuota INT UNIQUE NOT NULL
+       ,entrada BIT NOT NULL
+       ,fechaVencimiento DATETIME NOT NULL
 	   ,interes NUMERIC(18,5) NOT NULL
 	   ,cuota NUMERIC(18,5) NOT NULL
 	   ,mora NUMERIC(18,5) NOT NULL
 	   ,diasMora INT NOT NULL
+       ,estado BIT NOT NULL
 	)
 
 	BEGIN TRY
-	
-		SELECT @tipoConfig = tipoConfig, @interes = interes, @codEstado = codEstado, @idCuentaPorCobrar = idCuentaPorCobrar,@cuotas = cuotas 
-		FROM OPENJSON(@json) WITH (codEstado   VARCHAR(5) '$.codEstado' 
-		                          ,tipoConfig  VARCHAR(5) '$.tipoConfig'
-								  ,interes  NUMERIC(18,5) '$.interes'
-								  ,idCuentaPorCobrar  INT '$.idCuentaPorCobrar'
-								  ,cuotas   NVARCHAR(MAX) '$.cuotas' AS JSON
-								  )
+        --> Json
+		SELECT @cuenta = cuenta
+              ,@cuotas = cuotas 
+		FROM OPENJSON(@json) WITH 
+        (
+             cuenta NVARCHAR(MAX) AS JSON            
+            ,cuotas NVARCHAR(MAX) AS JSON             
+		)
 
-		INSERT INTO @tbCuotas (idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora)
-						SELECT idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora
-						FROM OPENJSON(@cuotas) WITH (idCuotaPorCobrar      INT '$.idCuotaPorCobrar'
-												    ,fechaVencimiento DATETIME '$.fechaVencimiento'
-												    ,cuota       NUMERIC(18,5) '$.cuota'
-												    ,interes     NUMERIC(18,5) '$.interes'
-													,mora        NUMERIC(18,5) '$.mora'
-												    ,diasMora              INT '$.diasMora' 
-												    )
+        INSERT INTO @tbCuenta
+              (idCuentaPorCobrar,idTiempoCredito,fechaVencimiento)
+        SELECT idCuentaPorCobrar,idTiempoCredito,fechaVencimiento
+        FROM OPENJSON(@cuenta) WITH 
+        (
+            idCuentaPorCobrar INT
+           ,idTiempoCredito   INT
+           ,fechaVencimiento  DATETIME2
+        )
 
+		INSERT INTO @tbCuotas 
+              (idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora)
+		SELECT idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora
+		FROM OPENJSON(@cuotas) WITH 
+        (
+             idCuotaPorCobrar INT 
+            ,fechaVencimiento DATETIME 
+            ,cuota            NUMERIC(18,5)
+            ,interes          NUMERIC(18,5)
+            ,mora             NUMERIC(18,5)
+            ,diasMora         INT
+		)
 
-	    -- ========================== recuperar variables ==================================================================
+	    --> recuperar variables
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @fechaEmision = fechaEmision FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
-
-		SELECT TOP 1 @fechaVencimiento =  MAX(fechaVencimiento) FROM @tbCuotas
-
-		SELECT @mora =  SUM(mora), @diasMora = SUM(diasMora) FROM @tbCuotas
-		
-
-		-- ========================= validación de datos ===================================================================
-
-		IF CAST(@fechaEmision AS date ) > CAST(@fechaVencimiento AS date)
+		--> validación de datos
+        IF NOT EXISTS(SELECT 1 FROM @tbCuotas)  
 			BEGIN
-				SELECT '0'code,'La ultima fecha de Vencimiento no puede ser menor a la fecha de Emisión' as 'message'
+				SELECT '0'code,'Error en la informacion de las cuotas' as 'message'
 				RETURN 
 			END
 
-		IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
+		IF NOT EXISTS(SELECT 1 FROM @tbCuotas)
 			BEGIN
 				SELECT '0'code,'Error en la informacion de las cuotas' as 'message'
 				RETURN 
 			END 
-		
-		IF @codEstado != 'PE'
-			BEGIN
-				SELECT '0'code,'No puedes Actualizar las cuotas el Documento tiene un historial de Cobro.' as 'message'
-				RETURN 
-			END 
 
 		BEGIN TRAN 
+            --> Cuenta
+            UPDATE cc SET
+                   cc.idTiempoCredito  = tc.idTiempoCredito
+                  ,cc.fechaVencimiento = tc.fechaVencimiento
+            FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
+            INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
+
+            --> Cuotas
 			UPDATE cx SET 
 				cx.fechaVencimiento  = tb.fechaVencimiento
 	           ,cx.cuota             = tb.cuota
 	           ,cx.interes           = tb.interes
 			   ,cx.mora              = tb.mora
 	           ,cx.diasMora          = tb.diasMora
+               ,cx.estado            = tb.estado
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-			INNER JOIN @tbCuotas tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
+			INNER JOIN @tbCuotas             tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
 
-			
-			UPDATE Contabilidad.CuentaPorCobrar SET 
-				fechaVencimiento = @fechaVencimiento
-			   ,mora             = @mora
-			   ,diasMora         = @diasMora
-			   ,tipoConfig       = @tipoConfig
-			   ,interes          = @interes 
-			WHERE idCuentaPorCobrar = @idCuentaPorCobrar
-				
+            INSERT INTO Contabilidad.CuotaPorCobrar
+                   (idCuentaPorCobrar,idEstadoPago ,nroCuota,fechaVencimiento,cuota,entrada)
+	        SELECT @idCuentaPorCobrar,@idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada 
+            FROM @tbCuotas
+            WHERE idCuotaPorCobrar = 0
 
-			SET @payload = (SELECT cx.idCuotaPorCobrar
-			                      ,cx.nroCuota
-								  ,cx.interes
-								  ,cx.cuota
-								  ,cx.diasMora
-								  ,cx.abono
-								  ,cx.saldo
-								  ,cx.mora
-								  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
-								  ,estado           = ep.descripcion
-								  ,codEstado        = ep.codigo
-			                FROM Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK)
-							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-							WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
-                            ORDER BY cx.nroCuota ASC
-						   FOR JSON PATH)
+			SET @payload = (
+                                SELECT cx.idCuotaPorCobrar
+			                          ,cx.nroCuota
+								      ,cx.interes
+								      ,cx.cuota
+								      ,cx.diasMora
+								      ,cx.abono
+								      ,cx.saldo
+								      ,cx.mora
+								      ,FORMAT(cx.fechaVencimiento,'MM/dd/yyyy') as fechaVencimiento
+								      ,ep.descripcion                           as estado
+								      ,ep.codigo                                as codEstado
+			                    FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+							    INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+							    WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar 
+                                  AND cx.estado = 1
+                                ORDER BY cx.nroCuota ASC
+						        FOR JSON PATH
+                           )
 
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Correctamente' as 'message', @payload as payload
 	END TRY 
 
 	BEGIN CATCH 
-		IF @@TRANCOUNT > 0 
-			BEGIN
-				ROLLBACK TRAN; 
-			END
-			SELECT '0' code,'Info: Error en el procedimiento: '+ERROR_MESSAGE() as 'message'
-			INSERT INTO ErroresSistema
-							 (token
-							 ,method
-							 ,errorNumber
-							 ,errorSeverity 
-							 ,errorState
-							 ,errorProcedure
-							 ,errorLine
-							 ,errorMessage
-							 ,errorDate
-							 ,idUsuario)
-						 VALUES
-							 (NEWID()
-							 ,'/CuentaPorCobrar/Update'
-							 ,ERROR_NUMBER()
-							 ,ERROR_SEVERITY()
-							 ,ERROR_STATE()
-							 ,ERROR_PROCEDURE()
-							 ,ERROR_LINE()
-							 ,ERROR_MESSAGE()
-							 ,GETDATE()
-							 ,@idUsuario)
+		IF @@TRANCOUNT > 0
+		    BEGIN
+			    ROLLBACK TRAN;
+		    END
+
+		INSERT INTO ErroresSistema WITH (ROWLOCK)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/CuotaPorCobrar/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT '0' code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH
 END
 GO
