@@ -74,14 +74,6 @@ BEGIN
 
 		) as dt
 
-
-        INSERT INTO @tbCobro
-        SELECT * FROM OPENJSON(@cobro) WITH 
-        (
-             idCobro INT 
-            
-        )
-
         INSERT INTO @tbCuenta
               (idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora)
         SELECT idCuentaPorCobrar,idEstadoPago,abono,mora,diasMora

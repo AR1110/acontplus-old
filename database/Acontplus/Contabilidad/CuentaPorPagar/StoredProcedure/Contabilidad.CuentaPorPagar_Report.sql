@@ -200,7 +200,10 @@ BEGIN
                ,ckCuotas     BIT
             )
 
-            SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
+            SET @sql = 'SELECT CASE cc.codDoc WHEN ''01'' THEN ''FE'' 
+                                              WHEN ''03'' THEN ''LC''
+                                                          ELSE cc.codDoc
+                               END as codDoc  
                               ,razonSocialProveedor
                               ,serieComprobante
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
@@ -224,7 +227,10 @@ BEGIN
             IF @ckCuotas = 1
                 BEGIN
                     SET @sql = 'SELECT cc.idCuentaPorPagar
-                                      ,IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)   as codDoc
+                                      ,CASE cc.codDoc WHEN ''01'' THEN ''FE'' 
+                                                      WHEN ''03'' THEN ''LC''
+                                                                  ELSE cc.codDoc
+                                       END as codDoc
                                       ,cc.razonSocialProveedor
                                       ,cc.serieComprobante
                                       ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision

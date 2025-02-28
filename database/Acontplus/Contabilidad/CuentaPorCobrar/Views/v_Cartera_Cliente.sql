@@ -1,14 +1,11 @@
 use acontplus
+GO
 
-GO
-IF OBJECT_ID(N'v_Cartera_Cliente', N'V') IS NOT NULL
-DROP VIEW v_Cartera_Cliente
-GO
-CREATE VIEW v_Cartera_Cliente AS (
+CREATE OR ALTER VIEW v_Cartera_Cliente AS (
 	SELECT 
 		 idDocumento = cc.idCuentaPorCobrar
 		,cc.idEntidad
-		,pe.codEstab
+		,es.codEstab
 		,cc.idCliente
 		,cc.idEstadoPago
 		,codigo = cc.codDoc
@@ -24,6 +21,7 @@ CREATE VIEW v_Cartera_Cliente AS (
 		           FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar
 				  )
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
-	INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision  = cc.idPuntoEmision
+	INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = cc.idPuntoEmision
+    INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento 
 	--WHERE cc.estado = 1
  )
