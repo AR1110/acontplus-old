@@ -27,10 +27,10 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "FactElect.API.Services",
-            "FactElect.API.Services.Logistica",
-            "FactElect.API.Services.RetencionAts",
-            "FactElect.API.Services.Sri",
+            "FactElect.Application.Services",
+            "FactElect.Application.Services.Logistica",
+            "FactElect.Application.Services.RetencionAts",
+            "FactElect.Application.Services.Sri",
             "Common.FactElect.Services"
         ];
 
