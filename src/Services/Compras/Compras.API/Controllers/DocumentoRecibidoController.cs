@@ -1,5 +1,4 @@
-﻿using Common.AppSettings;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
 
