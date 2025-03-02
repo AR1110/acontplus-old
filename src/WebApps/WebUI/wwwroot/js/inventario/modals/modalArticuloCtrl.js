@@ -1072,7 +1072,9 @@ function modalArticuloCtrl(
                     setResponse(dataRepository)
                 }
             });
-        } 
+        } else{
+            setResponse(dataRepository)
+        }
     }
 
     $scope.uploadFile = () => {
