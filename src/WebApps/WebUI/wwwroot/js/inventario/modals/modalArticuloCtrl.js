@@ -425,17 +425,21 @@ function modalArticuloCtrl(
                     //Disabled Column
                     for (let item of $scope.gridOptions.columnDefs) {
                         if (
-                            ["precioConIva", "porcentajeUtilidad", "ganancia"].includes(
+                            ["precioVenta", "precioConIva", "porcentajeUtilidad"].includes(
                                 item.field
                             )
                         ) {
-                            item.visible = $scope.articlePermission.isUpdatePrice;
+                          //  item.visible = $scope.articlePermission.isUpdatePrice;
+
+                          item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                          item.enableCellEditOnFocus =    $scope.articlePermission.isUpdatePrice;
+
                         }
-                        if (item.field === "precioVenta") {
-                            item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
-                            item.enableCellEditOnFocus =
-                                $scope.articlePermission.isUpdatePrice;
-                        }
+                        // if (item.field === "precioVenta") {
+                        //     item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                        //     item.enableCellEditOnFocus =
+                        //         $scope.articlePermission.isUpdatePrice;
+                        // }
                     }
                 }
             }) 
