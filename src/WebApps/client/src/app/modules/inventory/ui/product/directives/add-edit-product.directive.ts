@@ -1,4 +1,4 @@
-import {Directive, HostListener, inject , output} from "@angular/core";
+import {Directive, HostListener, inject, input, output} from "@angular/core";
 import {DialogService} from "@core/services/dialog.service";
 import {
   AddEditProductDialogComponent
@@ -11,9 +11,13 @@ import {
 export class AddEditProductDirective {
   onResult = output<any>();
   private dialogSvc = inject(DialogService);
+
+  data = input()
+
   @HostListener('click') onClick() {
     const modalRef = this.dialogSvc.open(AddEditProductDialogComponent, {
       size: 'xl',
+      data: this.data() || {}
     });
     modalRef.subscribe((result: unknown) => {
       if (result && typeof result === 'object') {
