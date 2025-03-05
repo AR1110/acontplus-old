@@ -133,8 +133,8 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>Proveedor</label>
-                <app-supplier-search [isSearchSimple]="true" (onSelected)="onSupplierSelected($event)"
-                  (onInputEmpty)="supplierResultEmptyInput($event)"></app-supplier-search>
+                <app-supplier-search [isSearchSimple]="true" (supplierSelected)="onSupplierSelected($event)"
+                  (clearEmpty)="supplierResultEmptyInput($event)"></app-supplier-search>
               </div>
             </div>
 
@@ -319,8 +319,8 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>Proveedor</label>
-                <app-supplier-search [isSearchSimple]="true" (onSelected)="onSupplierSelected($event)"
-                  (onInputEmpty)="supplierResultEmptyInput($event)"></app-supplier-search>
+                <app-supplier-search [isSearchSimple]="true" (supplierSelected)="onSupplierSelected($event)"
+                  (clearEmpty)="supplierResultEmptyInput($event)"></app-supplier-search>
               </div>
             </div>
 
@@ -384,8 +384,8 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label>Proveedor</label>
-                <app-supplier-search [isSearchSimple]="true" (onSelected)="onSupplierSelected($event)"
-                  (onInputEmpty)="supplierResultEmptyInput($event)"></app-supplier-search>
+                <app-supplier-search [isSearchSimple]="true" (supplierSelected)="onSupplierSelected($event)"
+                  (clearEmpty)="supplierResultEmptyInput($event)"></app-supplier-search>
               </div>
             </div>
 

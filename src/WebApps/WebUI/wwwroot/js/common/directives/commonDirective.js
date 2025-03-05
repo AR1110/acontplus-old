@@ -266,7 +266,7 @@
         }
     }])
 
-    app.directive('inputFocus', ['$timeout',function ($timeout) {
+    app.directive('inputFocus', ['$timeout', function ($timeout) {
         return {
             restrict: 'AC',
             link: function (_scope, _element) {
@@ -304,7 +304,7 @@
 
 
     //Permiso Update Artcicle
-    app.directive('updateArticle', ['$rootScope',function ($rootScope) {
+    app.directive('updateArticle', ['$rootScope', function ($rootScope) {
         return {
 
             link: function (scope, element) {
@@ -320,7 +320,7 @@
         }
     }])
 
-    app.directive('estabStock', ['$compile','articuloService', function ( $compile, articuloSvc) {
+    app.directive('estabStock', ['$compile', 'articuloService', function ($compile, articuloSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -357,7 +357,7 @@
                                              `;
 
                         articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
-                            
+
 
                             scope.branchs = response;
 
@@ -376,23 +376,23 @@
                     // container: 'body'
                 };
 
- 
+
                 $(element).popover(popoverOptions);
 
-           
+
                 element.on('mouseover', function () {
-                    if (!isPopoverInitialized){
+                    if (!isPopoverInitialized) {
                         $(element).popover('show');
                     }
                 });
 
-             
+
                 $(document).on('mouseover', function (event) {
                     isPopoverInitialized = false;
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                }); 
+                });
             }
         };
     }])
@@ -400,7 +400,7 @@
 
 
 
-    app.directive('totalesVentaView', ['$rootScope',function ($rootScope) {
+    app.directive('totalesVentaView', ['$rootScope', function ($rootScope) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -508,11 +508,11 @@
 
                 $(element).popover({
                     content: function () {
-                 
+
                         let placas = scope.customer.placas || [];
                         let infoAdicionalDocumento = scope.infoAdicionalDocumento || [];
-                        let placasSeleccionadas = infoAdicionalDocumento.map(v=>v.valor);
-                     
+                        let placasSeleccionadas = infoAdicionalDocumento.map(v => v.valor);
+
                         // Crear una cadena para almacenar el contenido HTML de las casillas de verificación
                         let checkboxesHTML = '';
 
@@ -560,14 +560,14 @@
                             let valor = $(this).val();
                             let isChecked = $(this).is(':checked');
 
-                            if (!scope.infoAdicionalDocumento) return 
+                            if (!scope.infoAdicionalDocumento) return
 
-                      
+
                             let index = scope.infoAdicionalDocumento.findIndex(function (item) {
-                                return  item.valor === valor;
+                                return item.valor === valor;
                             });
 
-                            if (isChecked) { 
+                            if (isChecked) {
                                 if (index === -1) {
                                     scope.infoAdicionalDocumento.push({
                                         nombre: 'Placa',
@@ -575,12 +575,12 @@
                                     });
                                     tS.toastr('success', 'Agregado en información adicional del documento')
                                 }
-                            } else { 
+                            } else {
                                 if (index !== -1) {
                                     scope.infoAdicionalDocumento.splice(index, 1);
                                 }
                             }
-                             
+
                         });
 
                         return $popoverContent;
@@ -607,7 +607,7 @@
         };
     }]);
 
-    app.directive('clienteSearchDrtv', ['$compile','clienteService',function ($compile, clienteSvc) {
+    app.directive('clienteSearchDrtv', ['$compile', 'clienteService', function ($compile, clienteSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -667,7 +667,7 @@
     /**
      * Buscador de cliente para venta en donde incluye a mas del buscador consultar datos del cliente al SRI en caso de no encontrar datos en la base de datos AcontPlus
      */
-    app.directive('customerSearchSaleDrtv', ['$compile', 'clienteService','toastService', function ($compile, clienteSvc, tS) {
+    app.directive('customerSearchSaleDrtv', ['$compile', 'clienteService', 'toastService', function ($compile, clienteSvc, tS) {
         return {
             restrict: 'A',
             scope: {
@@ -815,7 +815,7 @@
 
                     return clienteSvc.search({ textSearch }).then(response => {
                         if (response.code === "0") {
-                            validationSearchCustomerExternal = true; 
+                            validationSearchCustomerExternal = true;
                         }
                         return response;
                     })
@@ -865,7 +865,7 @@
 
 
 
-    app.directive('btnEmpresa', ['modalService','nombreModalVenta', function (modalSvc, nombreModalVenta) {
+    app.directive('btnEmpresa', ['modalService', 'nombreModalVenta', function (modalSvc, nombreModalVenta) {
         return {
             restrict: 'A',
             scope: {
@@ -879,7 +879,7 @@
                     let ctrl = nombreModalVenta.EMPRESA.controller
                     let template = nombreModalVenta.EMPRESA.template
                     let controller = (await import(fileCtrl))[ctrl];
-                    let id = typeof scope.params==='object'? scope.params.idEmpresa : 0
+                    let id = typeof scope.params === 'object' ? scope.params.idEmpresa : 0
 
 
                     const modalDialogRef = modalSvc.openModalCustom({
@@ -1048,7 +1048,7 @@
                 options="dateRangePicker.options" options="{locale: {separator: " :"}}" />`;
                 var e = $compile(html)(scope);
                 element.replaceWith(e);
-            } 
+            }
         };
 
     })
@@ -1176,7 +1176,7 @@
     /**
      * @description Nueva Version usar esta en proximos modulos
      */
-    app.directive('actionSendMail', ['modalService','nombreModalCommon', function (modalSvc, nombreModalCommon) {
+    app.directive('actionSendMail', ['modalService', 'nombreModalCommon', function (modalSvc, nombreModalCommon) {
         return {
             restrict: 'A',
             scope: {
@@ -1192,12 +1192,12 @@
                     let ctrl = nombreModalCommon.SEND_MAIL.controllers['MSM'];
                     let template = nombreModalCommon.SEND_MAIL.templates['MSM'];
                     let controller = (await import(fileCtrl))[ctrl];
-                    
-                     
+
+
                     let params = scope.getParamToSendMail({
-                            params: scope.params
-                        }) || scope.params;
-                      
+                        params: scope.params
+                    }) || scope.params;
+
 
                     modalSvc.open({
                         controller,
@@ -1206,7 +1206,7 @@
                         params: {
                             data: structuredClone(params)
                             //...params,
-                           // typeSend: scope.typeSend
+                            // typeSend: scope.typeSend
                         }
                     })
 
@@ -1312,20 +1312,20 @@
             },
             link: function (scope, element) {
                 element.on('click', async function () {
-                   
+
                     showLoader();
                     let json = JSON.stringify({ tipo: 2, idEntidad: 0 });
                     let url = `Config/WhatsappUsage/?json=${json}`;
-                    
-                    showLoader();
-                    let response =  await  mS.getData('get', url, null, true).finally(()=>hideLoader());
 
-                    if(response.code==="0"){
+                    showLoader();
+                    let response = await mS.getData('get', url, null, true).finally(() => hideLoader());
+
+                    if (response.code === "0") {
                         tS.toastr({
                             type: 'warning',
                             message: response.message
                         })
-                        return 
+                        return
                     }
 
                     let [tempArray] = JSON.parse(response.payload);
@@ -1333,10 +1333,10 @@
 
                     if (tempResponse.code == '0') {
                         Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'warning' })
-                        return 
+                        return
                     }
 
-                    
+
                     if (tempResponse.message) {
                         Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'info' })
                         return
@@ -1344,8 +1344,8 @@
 
                     let { fileCtrl, template, controller } = nombreModalCommon.SEND_WHATSAPP;
                     let ctrl = (await import(fileCtrl))[controller];
- 
-                   
+
+
 
                     const modalRef = modalSvc.open({
                         controller: ctrl,
@@ -1363,8 +1363,8 @@
                             })
                         }
                     })
-                    
- 
+
+
                 });
             }
         }
@@ -1383,16 +1383,16 @@
                 element.on('click', async function () {
 
                     let { fileCtrl, controller, template } = nombreModalCommon.INFO_ADICIONAL_DOC;
-                 
+
                     let ctrl = (await import(fileCtrl))[controller]
 
- 
+
 
                     let params = {
                         isView: scope.isView,
                         infoAdicionalDocumento: scope.datosAdicionales
                     }
-             
+
                     let modalRef = modalService.openModalCustom({
                         controller: ctrl,
                         template,
@@ -1764,7 +1764,7 @@
                     customClass: 'contentArticlePopover',
                     container: 'body'
                 };
- 
+
 
                 $(element).popover(popoverOptions);
 
@@ -1781,7 +1781,7 @@
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                }); 
+                });
 
                 // Clean up the popover when the directive is destroyed
                 // scope.$on('$destroy', function () {
@@ -1901,18 +1901,18 @@
         return {
             restrict: 'A',
             scope: {
-                codDoc:'=',
-                id:'=',
+                codDoc: '=',
+                id: '=',
                 params: '=',
-                onResult: '&'               
+                onResult: '&'
             },
             link: function (scope, element) {
-                element.on('click', async function () { 
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
                     let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["M"];
                     let template = nombreModalVenta.CONVERT_TO_DOC.templates['M'];
                     let controller = (await import(fileCtrl))[ctrl];
-  
+
                     let modalRef = modalService.openModalCustom({
                         controller,
                         template,
@@ -1920,13 +1920,13 @@
                         params: {
                             codDoc: scope.codDoc,
                             id: scope.id,
-                            
+
                         },
                         isRenderRazorPartial: true
                     })
 
-                    modalRef.result.then(result=>{
-                        if (result !== null && typeof result === 'object' && typeof scope.onResult==='function'){
+                    modalRef.result.then(result => {
+                        if (result !== null && typeof result === 'object' && typeof scope.onResult === 'function') {
                             scope.onResult(result)
                         }
                     })
@@ -1947,7 +1947,7 @@
                 onResult: '&'
             },
             link: function (scope, element) {
-                element.on('click', async function () { 
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
                     let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["MHCD"];
                     let template = nombreModalVenta.CONVERT_TO_DOC.templates['MHCD'];
@@ -1963,7 +1963,7 @@
 
                         },
                         isRenderRazorPartial: true
-                    }) 
+                    })
 
                 })
             }
@@ -1975,7 +1975,7 @@
     app.directive('btnHistorialCobro', function (modalService, nombreModalContabilidad) {
         return {
             restrict: 'A',
-            scope: { 
+            scope: {
                 params: '=',
                 onResult: '&'
             },
@@ -1992,14 +1992,14 @@
                         size: 'xl',
                         params: {
                             idComprobanteIngreso: scope.params.idComprobanteIngreso,
-                            idCuentaPorCobrar: scope.params.idCuentaPorCobrar,                            
+                            idCuentaPorCobrar: scope.params.idCuentaPorCobrar,
 
                         },
                         isRenderRazorPartial: true
                     })
 
-                    modalRef.result.then(result=>{
-                        if(result!==null && typeof result==='object' && typeof scope.onResult==='function'){
+                    modalRef.result.then(result => {
+                        if (result !== null && typeof result === 'object' && typeof scope.onResult === 'function') {
                             scope.onResult(result)
                         }
                     })
@@ -2014,12 +2014,12 @@
     app.directive('btnComprobanteIngresoReport', ['commonService', function (commonSvc) {
         return {
             restrict: 'A',
-            scope: { 
+            scope: {
                 unique: '=',
-                codEstab:'='
+                codEstab: '='
             },
             link: function (scope, element) {
-                element.on('click',  function () {
+                element.on('click', function () {
 
                     let format = 'pdf';
 
@@ -2064,17 +2064,17 @@
                 onResult: '&'
             },
             link: function (scope, element) {
-                element.on('click', async function () { 
+                element.on('click', async function () {
 
                     let modalRef = modalSvc.openWithComponent({
                         component: 'appCuentaPorPagarComponent',
                         size: 'xl',
-                        windowClass: 'uibModalFullScreen',                         
+                        windowClass: 'uibModalFullScreen',
                     })
 
                     modalRef.result.then(result => {
                         if (result && typeof result === 'object' && typeof scope.onResult === 'function') {
-                          //  scope.onResult(result)
+                            //  scope.onResult(result)
                         }
                     })
 
@@ -2102,10 +2102,10 @@
                     let modalRef = modalSvc.openWithComponent({
                         component: 'appCuentaPorCobrarComponent',
                         size: 'xl',
-                        windowClass: 'uibModalFullScreen', 
+                        windowClass: 'uibModalFullScreen',
                         params: {
                             idCuentaPorCobrar: params.idCuentaPorCobrar
-                        }                       
+                        }
                     })
 
                     modalRef.result.then(result => {
@@ -2121,11 +2121,11 @@
 
 
 
-     /***
-     * @description anular comprobante ingreso 
-     * 
-     */
-    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService','toastService', 'formulario',function (compIngresoSvc,tS,fS) {
+    /***
+    * @description anular comprobante ingreso 
+    * 
+    */
+    app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService', 'toastService', 'formulario', function (compIngresoSvc, tS, fS) {
         return {
             restrict: 'A',
             scope: {
@@ -2156,7 +2156,7 @@
 
                         if (!isContinue) return
 
-                        const response = await compIngresoSvc.getDataForDelete(idComprobanteIngreso); 
+                        const response = await compIngresoSvc.getDataForDelete(idComprobanteIngreso);
 
                         cuentasPorCobrar = response.cuentasPorCobrar;
                         cuotasPorCobrar = response.cuotasPorCobrar;
@@ -2168,7 +2168,7 @@
                             console.log("cuotasPorCobrar", cuotasPorCobrar);
                             return;
                         }
-                    
+
                         const { isConfirmed, value } = await Swal.fire({
                             icon: 'warning',
                             html: '<small>¿Está seguro/a de anular este registro ahora?</small>',
@@ -2188,7 +2188,7 @@
                         const data = {
                             observacion: value,
                             ...dataParams
-                        } 
+                        }
                         showLoader();
                         const updateResponse = await compIngresoSvc.update(idComprobanteIngreso, data);
 
@@ -2223,7 +2223,7 @@
                     const cuentasPorCobrarAgrupado = cuentasPorCobrar.reduce((acc, curr) => {
                         let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorCobrar === curr.idCuentaPorCobrar);
                         //let abono = curr.cobro ? curr.abono : 0;
-                        let abono =  curr.abono;
+                        let abono = curr.abono;
 
                         if (!existeDato) {
                             acc.push({
@@ -2231,10 +2231,10 @@
                                 abonoDoc: fS.instanceDecimal(curr.abonoDoc).toNumber(),
                                 abono,
                                 diasMora: curr.diasMora,
-                                mora: curr.mora 
+                                mora: curr.mora
                             });
-                        } else { 
-                             existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                        } else {
+                            existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
                         }
                         return acc;
                     }, []);
@@ -2242,8 +2242,8 @@
                     // Agrupa cuotas por cobrar
                     const cuotasPorCobrarAgrupado = cuotasPorCobrar.reduce((acc, curr) => {
                         let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorCobrar === curr.idCuotaPorCobrar);
-                    //    let abono = curr.cobro ? curr.abono : 0;
-                    let abono = curr.abono
+                        //    let abono = curr.cobro ? curr.abono : 0;
+                        let abono = curr.abono
 
                         if (!existeDato) {
                             acc.push({
@@ -2253,14 +2253,14 @@
                                 diasMora: curr.diasMora,
                                 mora: curr.mora
                             });
-                        } else { 
-                             existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                        } else {
+                            existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
                         }
                         return acc;
                     }, []);
 
                     // Calcula los valores residuales y el estado de pago para cuentas por cobrar
-                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => { 
+                    const tempCuentasPorCobrar = cuentasPorCobrarAgrupado.map(item => {
                         let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber()
                         return {
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
@@ -2272,14 +2272,14 @@
                     });
 
                     // Calcula los valores residuales y el estado de pago para cuotas por cobrar
-                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => { 
+                    const tempCuotasPorCobrar = cuotasPorCobrarAgrupado.map(item => {
                         let valorResiduo = fS.instanceDecimal(item.abonoCuota).minus(item.abono).toNumber()
                         return {
                             idCuotaPorCobrar: item.idCuotaPorCobrar,
-                            abono:  valorResiduo ,
+                            abono: valorResiduo,
                             idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP'),
                             mora: item.mora,
-                            diasMora: item.diasMora                            
+                            diasMora: item.diasMora
                         };
                     });
 
@@ -2296,7 +2296,7 @@
     }])
 
 
-    
+
     /**
      *========================================================== 
      * DIRECTIVAS COMUNES
@@ -2313,19 +2313,19 @@
     * DIRECTIVAS VENTAS
     * =========================================================
     */
-    app.directive('actionInfoAdicionalArticuloVenta', ['nombreModalVenta', 'modalService', function (nombreModalVenta, modalSvc){
+    app.directive('actionInfoAdicionalArticuloVenta', ['nombreModalVenta', 'modalService', function (nombreModalVenta, modalSvc) {
         return {
             restrict: 'A',
             scope: {
                 entity: '=', //Datos del detalle 
-                resultModalAdicional: '&', 
-                infoAdicionalDoc:"=" //Información Adicional del Documento 
+                resultModalAdicional: '&',
+                infoAdicionalDoc: "=" //Información Adicional del Documento 
             },
-           link
+            link
         }
 
-        function link (scope, element) {
-            element.on('click', async ()=>{
+        function link(scope, element) {
+            element.on('click', async () => {
 
 
                 if (!Number.isInteger(scope.entity.cantidad)) {
@@ -2345,10 +2345,10 @@
                     template,
                     size: 'lg',
                     params: {
-                        entity: scope.entity,  
+                        entity: scope.entity,
                         infoAdicionalDoc: scope.infoAdicionalDoc || []
 
-                    }, 
+                    },
                 })
 
                 modalRef.result.then(result => {
@@ -2359,10 +2359,10 @@
 
 
 
-            })  
+            })
         }
 
-      
+
 
 
 
@@ -2371,8 +2371,248 @@
 
 
     //============================END===========================
-    
-    
+
+
+    //-------------------------------COMPROBANTE EGRESO START---------------------------------------
+    /***
+ * @description anular comprobante EGRESO 
+ * 
+ */
+    app.directive('btnAnularComprobanteEgreso', ['comprobanteEgresoService', 'toastService', 'formulario', function (comprobanteEgresoSvc, tS, fS) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                onResult: '&'
+            },
+            link: async function (scope, element) {
+                let cuentasPorPagar = [], cuotasPorPagar = [], estadosPago = [];
+
+                async function messageQtyDoc() {
+                    let isConfirmed = await Swal.fire({
+                        icon: 'warning',
+                        text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
+                    })
+                    return isConfirmed;
+                }
+
+                element.on('click', async function () {
+                    const { idComprobanteEgreso } = scope.params;
+
+                    try {
+
+                        let isContinue = true;
+
+                        if (scope.params.cantDocs > 1) {
+                            isContinue = await messageQtyDoc();
+                        }
+
+                        if (!isContinue) return
+                        let response = await comprobanteEgresoSvc.getDataToDelete(idComprobanteEgreso);
+
+                        cuentasPorPagar = response.cuentasPorPagar;
+                        cuotasPorPagar = response.cuotasPorPagar;
+                        estadosPago = response.estadosPago;
+
+                        if (cuentasPorPagar.length === 0 || cuotasPorPagar.length === 0) {
+
+                            console.log("cuentasPorPagar", cuentasPorPagar);
+                            console.log("cuotasPorPagar", cuotasPorPagar);
+                            return;
+                        }
+
+                        const { isConfirmed, value } = await Swal.fire({
+                            icon: 'warning',
+                            html: '<small>Esta seguro/a de Anular este registro de pago ahora?</small>',
+                            input: 'text',
+                            inputPlaceholder: 'Ingrese la observación',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Sí, anular',
+                            showCancelButton: true,
+                            cancelButtonText: 'No, cancelar!',
+                            allowOutsideClick: false,
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'Ingrese la Observación!'
+                                }
+                                if (value.length <= 8) {
+                                    return 'La observación tiene que tener al menos 10 caracteres!'
+                                }
+                            }
+                        })
+
+                        if (!isConfirmed) return;
+
+                        const dataParams = getDataParams(cuentasPorPagar, cuotasPorPagar, estadosPago);
+                        const data = {
+                            observacion: value,
+                            ...dataParams
+                        }
+
+                        try {
+
+
+                            comprobanteEgresoSvc.anular(idComprobanteEgreso, data).then(response => {
+                                if (response.code == "0") {
+                                    fS.sweetAlert('warning', response.message, response.titleSms)
+                                }
+                                if (response.code == "1") {
+                                    fS.sweetAlert('success', response.message, response.titleSms, 1000)
+                                    scope.onResult(response);
+                                }
+                            }).catch(error => {
+                                console.log(error);
+                            })
+                        } catch (error) {
+                            console.log(error)
+                        }
+
+
+                    } catch (error) {
+                        console.error(error);
+                    }
+                });
+
+                /**
+                    * 
+                    * @param {*} codigoEstadoPago 
+                    * @param {*} estadosPago 
+                    * @returns 
+                    */
+                function getDataIdEstadoPago(codigoEstadoPago, estadosPago) {
+                    const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
+                    return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
+                }
+
+                /**
+                 * 
+                 * @param {*} cuentasPorPagar 
+                 * @param {*} cuotasPorPagar 
+                 * @param {*} estadosPago 
+                 * @returns 
+                 */
+                function getDataParams(cuentasPorPagar, cuotasPorPagar, estadosPago) {
+                    // Agrupa cuentas por pagar
+                    const cuentasPorPagarAgrupado = cuentasPorPagar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuentaPorPagar === curr.idCuentaPorPagar);
+                        //   let abono = curr.cobro ? curr.abono : 0;
+                        let abono = curr.abono;
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuentaPorPagar: curr.idCuentaPorPagar,
+                                abonoDoc: fS.instanceDecimal(curr.abonoDoc).toNumber(),
+                                abono,
+                            });
+                        } else {
+                            existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono).toNumber();
+                        }
+                        return acc;
+                    }, []);
+
+                    // Agrupa cuotas por pagar
+                    const cuotasPorPagarAgrupado = cuotasPorPagar.reduce((acc, curr) => {
+                        let existeDato = acc.find(dataCxc => dataCxc.idCuotaPorPagar === curr.idCuotaPorPagar);
+                        //  let abono = curr.cobro ? curr.abono : 0;
+                        let abono = curr.abono
+
+                        if (!existeDato) {
+                            acc.push({
+                                idCuotaPorPagar: curr.idCuotaPorPagar,
+                                abonoCuota: curr.abonoCuota,
+                                abono,
+                            });
+                        } else {
+                            existeDato.abono = fS.instanceDecimal(existeDato.abono).plus(curr.abono);
+                        }
+                        return acc;
+                    }, []);
+
+                    // Calcula los valores residuales y el estado de pago para cuentas por cobrar
+                    const tempCuentasPorPagar = cuentasPorPagarAgrupado.map(item => {
+                        //let valorResiduo = fS.minus(item.abonoDoc,item.abono).toNumber()
+                        let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber();
+
+                        //quitar cuando se haya validado bien tema de decimales en compras 
+                        let abonoDocRounded = fS.roundNumber(item.abonoDoc, 2);
+                        let abonoRounded = fS.roundNumber(item.abono, 2)
+                        let valorResiduoValidar = fS.minus(abonoDocRounded, abonoRounded, 2);
+
+                        return {
+                            idCuentaPorPagar: item.idCuentaPorPagar,
+                            abono: valorResiduo,
+                            idEstadoPago: getDataIdEstadoPago(valorResiduoValidar === 0 ? 'PE' : 'PP', estadosPago)
+                        };
+                    });
+
+                    // Calcula los valores residuales y el estado de pago para cuotas por cobrar
+                    const tempCuotasPorCobrar = cuotasPorPagarAgrupado.map(item => {
+                        let valorResiduo = fS.instanceDecimal(item.abonoCuota).minus(item.abono).toNumber()
+
+                        return {
+                            idCuotaPorPagar: item.idCuotaPorPagar,
+                            abono: valorResiduo,
+                            idEstadoPago: getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP', estadosPago)
+                        };
+                    });
+
+                    // Retorna los datos agrupados y calculados
+                    return {
+                        cuenta: tempCuentasPorPagar,
+                        cuota: tempCuotasPorCobrar
+                    };
+                }
+
+            }
+
+        }
+    }])
+
+    //-------------------------------COMPROBANTE EGRESO END---------------------------------------
+
+
+
+    //Reporte Comprobante Egreso 
+    app.directive('btnComprobanteEgresoReport', ['commonService', function (commonSvc) {
+        return {
+            restrict: 'A',
+            scope: {
+                unique: '=',
+                codEstab: '='
+            },
+            link: function (scope, element) {
+                element.on('click', function () {
+
+                    let format = 'pdf';
+
+                    let dataParms = { 
+                        codEstab: scope.codEstab,
+                        id: scope.unique
+                    }
+                    const parameters = {
+                        reportParams: JSON.stringify({
+                            hasParams: true,
+                            codEstab: scope.codEstab,
+                            codigo: "RCEGR",
+                            format,
+                            aditionalParams: []
+                        }),
+                        dataParams: JSON.stringify(dataParms)
+                    }
+
+
+                    commonSvc.getReport({
+                        parameters,
+                        formatType: format,
+                        v2: true
+                    })
+
+                })
+            }
+        }
+    }])
+
+
 
 
 })(window.angular)

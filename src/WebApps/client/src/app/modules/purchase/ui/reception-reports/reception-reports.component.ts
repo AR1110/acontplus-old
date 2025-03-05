@@ -17,18 +17,19 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { Subcategory } from '@accounting/core/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 
 @Component({
-    selector: 'app-reception-reports',
-    imports: [
-        FormsModule,
-        SupplierSearchComponent,
-        DateRangeSelectionComponent,
-        UserSearchComponent,
-        BreadcrumbComponent,
-    ],
-    templateUrl: './reception-reports.component.html',
-    styles: ``
+  selector: 'app-reception-reports',
+  imports: [
+    FormsModule,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+    UserSearchComponent,
+    BreadcrumbComponent,
+  ],
+  templateUrl: './reception-reports.component.html',
+  styles: ``,
 })
 export class ReceptionReportsComponent {
   establecimientos: Array<
@@ -87,10 +88,9 @@ export class ReceptionReportsComponent {
     });
   }
 
-  onSupplierSelected<T extends { data: any }>($event: T) {
-    const { data } = $event;
-    this.dataSearch.supplierName = data.razonSocial;
-    this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
+  onSupplierSelected(data: SupplierSearch) {
+    this.dataSearch.supplierName = data.razonSocialComprador;
+    this.dataSearch.numeroIdentificacion = data.identificacionComprador;
   }
 
   supplierResultEmptyInput($event: any) {

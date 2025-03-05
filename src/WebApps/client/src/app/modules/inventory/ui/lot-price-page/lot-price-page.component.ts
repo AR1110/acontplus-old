@@ -14,13 +14,17 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
-import { LotPrice, LotPriceTarifa } from '@inventory/domain/models/lot-price.model';
+import {
+  LotPrice,
+  LotPriceTarifa,
+} from '@inventory/domain/models/lot-price.model';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { LotPriceService } from '@inventory/services/lot-price.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
+import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -32,21 +36,21 @@ enum OptionsCalculateEnum {
 type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
 
 @Component({
-    selector: 'app-lot-price-page',
-    imports: [
-        FontAwesomeModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgbTooltipModule,
-        BreadcrumbComponent,
-        TabulatorComponent,
-        SubCategorySelectMultipleComponent,
-        ProductSearchComponent,
-        SupplierSearchComponent,
-    ],
-    templateUrl: './lot-price-page.component.html'
+  selector: 'app-lot-price-page',
+  imports: [
+    FontAwesomeModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbTooltipModule,
+    BreadcrumbComponent,
+    TabulatorComponent,
+    SubCategorySelectMultipleComponent,
+    ProductSearchComponent,
+    SupplierSearchComponent,
+  ],
+  templateUrl: './lot-price-page.component.html',
 })
 export class LotPricePageComponent {
   private readonly lotPriceSvc = inject(LotPriceService);
@@ -99,14 +103,14 @@ export class LotPricePageComponent {
     const isSamePvPProduct =
       data.idArticuloPvP === dataProductModified.idArticuloPvP ||
       data.idArticuloFraccionadoPvP ===
-      dataProductModified.idArticuloFraccionadoPvP;
+        dataProductModified.idArticuloFraccionadoPvP;
 
     const isSameProduct =
       (data.idArticulo > 0 &&
         data.idArticulo === dataProductModified.idArticulo) ||
       (data.idArticuloFraccionado > 0 &&
         dataProductModified.idArticuloFraccionado ===
-        data.idArticuloFraccionado);
+          data.idArticuloFraccionado);
 
     const isSamePvP = data.idTarifa === dataProductModified.idTarifa;
 
@@ -276,8 +280,8 @@ export class LotPricePageComponent {
     tipo: 2,
     opcion: 3,
     idArticulo: 0,
-    rucProveedor: null,
-    nroDocumento: null,
+    rucProveedor: '',
+    nroDocumento: '',
     valueToCalculate: 0,
     optionToCalculate: OptionsCalculateEnum.A,
   };
@@ -409,10 +413,11 @@ export class LotPricePageComponent {
           value,
           porcentajeImpuesto,
         );
-        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
-          precioVenta,
-          precioCosto,
-        );
+        porcentajeUtilidad =
+          pricingCalculateUtil.calculateProfitMarginPercentage(
+            precioVenta,
+            precioCosto,
+          );
       } else {
         precioVenta = oldValue;
       }
@@ -425,10 +430,11 @@ export class LotPricePageComponent {
       );
       if (precioVentaValidar >= precioCosto) {
         precioVenta = precioVentaValidar;
-        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
-          precioVenta,
-          precioCosto,
-        );
+        porcentajeUtilidad =
+          pricingCalculateUtil.calculateProfitMarginPercentage(
+            precioVenta,
+            precioCosto,
+          );
       } else {
         precioConIva = oldValue;
       }
@@ -513,12 +519,12 @@ export class LotPricePageComponent {
     this.mainForm.idArticulo = 0;
   }
 
-  onSupplierSelected<T extends { data: any }>({ data }: T) {
+  onSupplierSelected(data: SupplierSearch) {
     this.mainForm.rucProveedor = data.identificacionComprador;
   }
 
   supplierResultEmptyInput($event: any) {
-    this.mainForm.rucProveedor = null;
+    this.mainForm.rucProveedor = '';
   }
 
   isValidFilter() {

@@ -62,6 +62,7 @@ function modalArticuloCtrl(
 
     $scope.tipoRegistro = 1;
     $scope.step = 1; //Por Defecto Tab General
+    $scope.activeTab = 0;
 
     $scope.opcionCalculate = null;
     $scope.dataTarifaOption = {
@@ -424,17 +425,21 @@ function modalArticuloCtrl(
                     //Disabled Column
                     for (let item of $scope.gridOptions.columnDefs) {
                         if (
-                            ["precioConIva", "porcentajeUtilidad", "ganancia"].includes(
+                            ["precioVenta", "precioConIva", "porcentajeUtilidad"].includes(
                                 item.field
                             )
                         ) {
-                            item.visible = $scope.articlePermission.isUpdatePrice;
+                          //  item.visible = $scope.articlePermission.isUpdatePrice;
+
+                          item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                          item.enableCellEditOnFocus =    $scope.articlePermission.isUpdatePrice;
+
                         }
-                        if (item.field === "precioVenta") {
-                            item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
-                            item.enableCellEditOnFocus =
-                                $scope.articlePermission.isUpdatePrice;
-                        }
+                        // if (item.field === "precioVenta") {
+                        //     item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                        //     item.enableCellEditOnFocus =
+                        //         $scope.articlePermission.isUpdatePrice;
+                        // }
                     }
                 }
             }) 
@@ -576,17 +581,15 @@ function modalArticuloCtrl(
     };
 
     $scope.refreshSubFamilia = function () {
-        try {
-            showLoader();
+        try { 
             articuloSvc.getDataForForm().then(response => {
 
                 $scope.subFamilias = response.subFamilias;
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader())
+            }) 
         } catch (error) {
-            console.log(error)
-            hideLoader();
+            console.log(error) 
         }
     }
 
@@ -627,13 +630,12 @@ function modalArticuloCtrl(
     }
 
     $scope.refreshMedida = async function () {
-        try {
-            showLoader();
+        try { 
             articuloSvc.getDataForForm().then(response => {
                 $scope.medidas = response.medidas;
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader())
+            }) 
         } catch (error) {
             console.log(error);
         }
@@ -702,9 +704,7 @@ function modalArticuloCtrl(
     function getTarifaGanacia(precioVenta, precioCosto) {
         return precioVenta - precioCosto;
     }
-    /**
-     * @param {any} precioCosto
-     */
+   
     function recalculateTarifaRegister() {
         if (
             [null, undefined, ""].includes($scope.data.precioCosto) ||
@@ -1015,8 +1015,7 @@ function modalArticuloCtrl(
         };
 
         let dataRepository = {};
-        if (!($scope.data.idArticulo > 0)) {
-            showLoader();
+        if (!($scope.data.idArticulo > 0)) { 
             articuloSvc
                 .save($scope.image.selectedFile, senData)
                 .then((response) => {
@@ -1026,17 +1025,15 @@ function modalArticuloCtrl(
                     if (response.code == 1) {
                         tS.toastr("success", response.message, response.titleSms);
                         dataRepository = JSON.parse(response.payload)[0];
-                        if (dataRepository) {
-                            setResponse(dataRepository);
+                        if (dataRepository) { 
+                            verificarProductoFraccionado(dataRepository);
                         }
                     }
                 })
                 .catch((error) => {
                     console.log(error);
-                })
-                .finally(() => hideLoader());
-        } else if ($scope.data.idArticulo > 0) {
-            showLoader();
+                }) 
+        } else if ($scope.data.idArticulo > 0) { 
             articuloSvc
                 .update($scope.data.idArticulo, senData)
                 .then((response) => {
@@ -1053,14 +1050,40 @@ function modalArticuloCtrl(
                 })
                 .catch((error) => {
                     console.log(error);
-                })
-                .finally(() => hideLoader());
+                }) 
         }
     };
 
+    function verificarProductoFraccionado(dataRepository){
+        if(!($scope.data.idArticulo > 0) && $scope.data.productoFraccionable){
+            Swal.fire({
+                icon: "warning",
+                html: `<small>¿Deseas fraccionar este articulo ahora?</small>`,
+                confirmButtonText: "Sí",
+                showDenyButton: true,
+                denyButtonText: "No",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    params.idArticulo = dataRepository.idArticulo;
+                    initiload();
+                    setTimeout(()=>{
+                       $scope.$apply(()=>{
+                        $scope.activeTab = 4; 
+                        $scope.step = 5;
+                       })
+                    }, 1000)
+                }else{
+                    setResponse(dataRepository)
+                }
+            });
+        } else{
+            setResponse(dataRepository)
+        }
+    }
+
     $scope.uploadFile = () => {
         if ($scope.data.productPhotoId > 0 && $scope.image.selectedFile != null) {
-            showLoader();
+       
             productPhotoService.update({ id: $scope.data.productPhotoId, data: JSON.stringify({ id: $scope.data.productPhotoId, s3ObjectKey: null, s3ObjectUrl: null }), file: $scope.image.selectedFile, }).then(response => {
                 if (response.code == "0") {
                     tS.toastr("warning", response.message)
@@ -1070,14 +1093,13 @@ function modalArticuloCtrl(
                     document.getElementById('productImage').src = src
                     tS.toastr("success", response.message)
                 }
-                hideLoader()
-            }).catch(error => {
-                hideLoader()
+                
+            }).catch(error => { 
                 console.log(error);
             });
         }
         if ($scope.data.idArticulo > 0 && $scope.data.productPhotoId == 0 && $scope.image.selectedFile != null) {
-            showLoader();
+           
             productPhotoService.post({ productId: $scope.data.idArticulo, file: $scope.image.selectedFile, }).then(response => {
                 if (response.code == "0") {
                     tS.toastr("warning", response.message)
@@ -1086,10 +1108,8 @@ function modalArticuloCtrl(
                     let src = URL.createObjectURL($scope.image.selectedFile)
                     document.getElementById('productImage').src = src
                     tS.toastr("success", response.message)
-                }
-                hideLoader()
-            }).catch(error => {
-                hideLoader()
+                } 
+            }).catch(error => { 
                 console.log(error);
             });
         }
@@ -1122,14 +1142,14 @@ function modalArticuloCtrl(
     $scope.articuloCodigoBarras = [];
     //=======================================ARTICULO CODIGO BARRA ============================
     function getCodigoBarraArticulo() {
-        showLoader();
+        
         articuloSvc.findById(params.idArticulo).then((response) => {
             let { articuloCodigoBarras } = response;
             $scope.articuloCodigoBarras = articuloCodigoBarras;
         })
             .catch((err) => {
                 console.log(err);
-            }).finally(() => hideLoader())
+            }) 
     }
 
     $scope.resultModalMedidaCodigoBarra = async function (result) {

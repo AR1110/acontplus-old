@@ -98,9 +98,9 @@
           <label>Proveedor</label>
           <app-supplier-search
             [isSearchSimple]="isSearchSupplierSimple"
-            (onSelected)="onSupplierSelected($event)"
+            (supplierSelected)="onSupplierSelected($event)"
             [textSearch]="dataSearch.supplierName"
-            (onInputEmpty)="supplierResultEmptyInput($event)"
+            (clearEmpty)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
       </div>

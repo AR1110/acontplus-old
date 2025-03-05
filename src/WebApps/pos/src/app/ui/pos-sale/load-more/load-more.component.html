@@ -1,0 +1,14 @@
+<!-- load-more.component.html -->
+<div class="pos-load-more">
+  <button
+    mat-flat-button
+    [class.pos-load-more__button--small]="size === 'small'"
+    [class.pos-load-more__button--large]="size === 'large'"
+    [disabled]="loading"
+    (click)="onLoadMore()"
+  >
+    <span>{{ loading ? "Cargando..." : "Cargar más" }}</span>
+
+    <mat-icon class="pos-load-more__button-icon">arrow_downward</mat-icon>
+  </button>
+</div>

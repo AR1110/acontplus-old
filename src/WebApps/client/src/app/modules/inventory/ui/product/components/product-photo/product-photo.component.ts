@@ -1,26 +1,32 @@
 
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject,   signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { ProductPhotoService } from '@inventory/services/product-photo.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
     selector: 'app-product-photo',
     imports: [
         MatCardModule,
         MatButtonModule,
-        MatIconModule
+        MatIconModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatCustomDialogComponent
     ],
     templateUrl: './product-photo.component.html',
     styleUrl: './product-photo.component.scss'
 })
 export class ProductPhotoComponent {
-  @Input() params = {} as any;
-  modal = inject(NgbActiveModal)
+  readonly dialogRef = inject(MatDialogRef<ProductPhotoComponent>);
+  readonly params = inject(MAT_DIALOG_DATA);
   private tS = inject(ToasterService)
   private productPhotoSvc = inject(ProductPhotoService)
 
@@ -219,7 +225,7 @@ export class ProductPhotoComponent {
 
 
   closeModal() {
-    this.modal.close({
+    this.dialogRef.close({
       isRefresh: this.isRefresh()
     })
   }

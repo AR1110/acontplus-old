@@ -190,7 +190,7 @@
                                             </md-menu-item>
 
                                             <!-- ng-if="accion.anular && !c.esAnulado"-->
-                                            <md-menu-item>
+                                            <md-menu-item ng-if="accion.anular && !c.esAnulado">
                                                 <md-button btn-anular-comprobante-ingreso params="c"
                                                     on-result="refresh()">
                                                     <span md-menu-align-target>
@@ -263,10 +263,10 @@
 
 
 @section Scripts {
-    <environment include="Development">
-        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
-    </environment>
-    <environment include="Staging,Production">
-        <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
-    </environment>
+        <environment include="Development">
+            <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
+        </environment>
+        <environment include="Staging,Production">
+            <script src="~/js/contabilidad/controllers/comprobanteIngresoCtrl.min.js" asp-append-version="true"></script>
+        </environment>
 }

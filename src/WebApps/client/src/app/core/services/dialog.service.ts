@@ -1,24 +1,26 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 
-type DialogOptions = {
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
-  data?: any,
-  disableClose?: boolean,
-  isFullScreen?: boolean,
-  isScrollable?: boolean
+interface DialogOptions {
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  data?: unknown;
+  disableClose?: boolean;
+  isFullScreen?: boolean;
+  isScrollable?: boolean;
+  enterAnimationDuration?: number;
+  exitAnimationDuration?: number;
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DialogService {
+  constructor(
+    private dialog: MatDialog,
+    private overlay: Overlay,
+  ) {}
 
-  constructor(private dialog: MatDialog, private overlay: Overlay) { }
-
-  open(component: any, options: DialogOptions): Observable<any> {
-
+  open(component: any, options: DialogOptions) {
     const dialogConfig = new MatDialogConfig();
 
     if (options.isFullScreen) {
@@ -29,13 +31,13 @@ export class DialogService {
       dialogConfig.panelClass = ['full-screen-dialog'];
       dialogConfig.position = {
         top: '0',
-        left: '0'
+        left: '0',
       };
     } else {
       dialogConfig.width = this.getDialogWidth(options.size);
       dialogConfig.maxWidth = '90vw';
       dialogConfig.height = 'auto';
-    //  dialogConfig.maxHeight = options.isScrollable ? '90vh' : undefined;
+      //  dialogConfig.maxHeight = options.isScrollable ? '90vh' : undefined;
     }
 
     // dialogConfig.panelClass = [
@@ -48,13 +50,17 @@ export class DialogService {
     dialogConfig.autoFocus = false;
     dialogConfig.scrollStrategy = this.overlay.scrollStrategies.noop();
     dialogConfig.disableClose = options.disableClose ?? true;
+    dialogConfig.enterAnimationDuration = options.enterAnimationDuration ?? 500;
+    dialogConfig.exitAnimationDuration = options.exitAnimationDuration ?? 700;
 
     const dialogRef = this.dialog.open(component, dialogConfig);
 
     return dialogRef.afterClosed();
   }
 
-  private getDialogWidth(size?: 'default' | 'sm' | 'md' | 'lg' | 'xl'| 'xxl'): string {
+  private getDialogWidth(
+    size?: 'default' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl',
+  ): string {
     switch (size) {
       case 'sm':
         return '300px';
@@ -65,11 +71,10 @@ export class DialogService {
       case 'xl':
         return '1200px';
 
-        case 'xxl':
-          return '1400px';
+      case 'xxl':
+        return '1400px';
       default:
         return '600px'; // Default size
     }
   }
-
 }

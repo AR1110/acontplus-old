@@ -16,6 +16,7 @@ export interface PosState {
   isRefreshPromotion: boolean
   promotionsMenu: any[]
   codeSubCategory: string
+  pendingOrdes: number
 }
 
 export const orderInitialState = () => {
@@ -100,7 +101,8 @@ export const fnInitialPosState = (): PosState => {
     },
     isRefreshPromotion: false,
     promotionsMenu: [],
-    codeSubCategory: ''
+    codeSubCategory: '',
+    pendingOrdes: 0
   }
 }
 

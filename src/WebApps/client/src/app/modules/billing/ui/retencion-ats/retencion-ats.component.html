@@ -1,7 +1,14 @@
 <app-breadcrumb></app-breadcrumb>
-<mat-card>
+<mat-card appearance="outlined">
   <mat-card-content>
-    <div class="row mt-3">
+    <div class="row mb-3">
+      <div class="col-4">
+        <button mat-raised-button type="button" (click)="onDialogOpen()">
+          <mat-icon>add</mat-icon> Registrar
+        </button>
+      </div>
+    </div>
+    <div class="row mb-3">
       <div class="col">
         @if (this.retenciones.length > 0) {
           <div class="table-responsive">

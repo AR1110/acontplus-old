@@ -1,61 +1,99 @@
-<div class="header-widget">
-  <h2>Dashboard</h2>
-  <button mat-raised-button [mat-menu-trigger-for]="widgetMenu">
-    <mat-icon>add_circle</mat-icon>
-    Añadir widget
-  </button>
-  <mat-menu #widgetMenu="matMenu">
-    @for (item of dashboardStore.widgetsToAdd(); track $index) {
-    <button mat-menu-item (click)="dashboardStore.addWidget(item)">
-      {{ item.label }}
-    </button>
-    }@empty {
-    <button mat-menu-item>No hay widget para agregar</button>
-    }
-  </mat-menu>
-</div>
-<div class="d-flex flex-column gap-4">
-  <div class="dashboard-widgets">
+<div class="dashboard-container">
+  <!-- Metrics Grid -->
+  <div class="metrics-grid">
     @for (item of dashboardStore.documentCounts(); track $index) {
-    <app-widget [data]="item"></app-widget>
+
+    <app-metric-card [metric]="item"></app-metric-card>
     }
   </div>
-  <div class="dashboard-widgets">
-    @for (item of dashboardStore.addedWidgets(); track $index) {
-    <app-widget [data]="item"></app-widget>
-    }
+  <div class="dashboard-content">
+    <!-- Main Content -->
+    <div class="main-section">
+      <div class="kpi-grid">
+        <mat-card class="kpi-card">
+          <mat-card-content>
+            <app-sale-chart />
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="kpi-card">
+          <mat-card-content>
+            <app-top-products />
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- <div class="kpi-grid">
+        <mat-card class="kpi-card">
+          <mat-card-content>
+            <h2>New clients</h2>
+            <div class="kpi-value">
+              <span class="number">54</span>
+              <span class="percentage positive">+18.7%</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="kpi-card">
+          <mat-card-content>
+            <h2>Invoices overdue</h2>
+            <div class="kpi-value">
+              <span class="number">6</span>
+              <span class="percentage negative">+2.7%</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div> -->
+
+      <!-- <mat-card class="chart-card">
+        <mat-card-content>
+          <div class="chart-header">
+            <h2>Revenue</h2>
+            <span class="chart-period">Last 7 days VS prior week</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="email-card">
+        <mat-card-content>
+          <h2>Recent emails</h2>
+        </mat-card-content>
+      </mat-card> -->
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="side-section">
+      <!-- Formation Status -->
+      <!-- <mat-card class="status-card">
+        <mat-card-content>
+          <h2>Formation status</h2>
+          <p class="status-text">In progress</p>
+          <mat-progress-bar mode="determinate" value="70"></mat-progress-bar>
+          <p class="status-estimate">
+            Estimated processing<br />
+            4-5 business days
+          </p>
+          <button mat-flat-button color="primary">View status</button>
+        </mat-card-content>
+      </mat-card> -->
+
+      <!-- Todo List -->
+      <!-- <mat-card class="todo-card">
+        <mat-card-content>
+          <h2>Your to-Do list</h2>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="meeting-card">
+        <mat-card-content>
+          <h2>Board meeting</h2>
+          <div class="meeting-info">
+            <span class="meeting-date">Feb 22 at 6:00 PM</span>
+            <p class="meeting-description">
+              You have been invited to attend a meeting of the Board Directors.
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card> -->
+    </div>
   </div>
 </div>
-<!-- <div class="hstack gap-3 my-2">
-  <mat-form-field>
-    <mat-label>Año</mat-label>
-    <mat-select [(ngModel)]="dataSearch().anio" (selectionChange)="refresh()">
-      @for(item of anios();track $index){
-      <mat-option [value]="item">{{ item }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-</div> -->
-
-<!-- <div class="row gy-2">
-  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-    <app-sale-stats [sales]="sales()" />
-  </div>
-  <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-    <app-best-selling-product-stats
-      [bestSellingProduct]="bestSellingProduct()"
-    />
-  </div>
-</div> -->
-
-<button
-  class="float-button-custom-pink d-flex align-content-center"
-  (click)="navigateToPos()"
->
-  <mat-icon
-    aria-hidden="false"
-    aria-label="Example home icon"
-    fontIcon="add"
-  ></mat-icon>
-  Crear Orden
-</button>

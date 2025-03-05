@@ -8,7 +8,8 @@
     "prod": "ng build -c production --base-href /client/",
     "staging": "ng build -c staging --base-href /client/",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -62,6 +63,8 @@
     "@types/jasmine": "^5.1.6",
     "@types/tabulator-tables": "^6.2.4",
     "@types/uuid": "^10.0.0",
+    "angular-eslint": "19.1.0",
+    "eslint": "^9.20.0",
     "jasmine-core": "^5.6.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "~3.2.0",
@@ -69,6 +72,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "tree-cli": "^0.6.7",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "8.23.0"
   }
 }

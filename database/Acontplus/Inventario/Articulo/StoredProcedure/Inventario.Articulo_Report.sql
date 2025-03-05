@@ -359,7 +359,7 @@ BEGIN
 							  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
 							  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
 							  ,precioCosto             = CAST(IIF(@viewCostPrice = 0,0,tt.precioCostoFraccionado) as numeric(18,2))
-                              ,valorImpuesto           = CAST(ISNULL(tt.valorImpuesto,0) as numeric(18,2))
+                           --   ,valorImpuesto           = CAST(ISNULL(tt.valorImpuesto,0) as numeric(18,2))
 							  ,precioTotalSinImpuestos = CASE WHEN tt.codTransaccion = ''S'' THEN CAST(tt.totalSalida as numeric(18,2)) 
 															  WHEN tt.codTransaccion = ''E'' THEN CAST(tt.totalEntrada as numeric(18,2)) 
 															  ELSE 0
@@ -413,6 +413,7 @@ BEGIN
                ,idCliente                 INT
                ,numeroIdentificacion      VARCHAR(25)
 			)
+
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
 

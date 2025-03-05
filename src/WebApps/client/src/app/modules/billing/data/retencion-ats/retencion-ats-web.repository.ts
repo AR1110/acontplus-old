@@ -8,7 +8,8 @@ import {
 import { PATHS_API } from '@core/constants/global.constants';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { GroupedEstab } from '@core/models/estab.model';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
@@ -29,6 +30,51 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           };
         }),
       );
+  }
+  getDataForm() {
+    const parameters = { tipo: 2 };
+    const defaultData = this.getDefaultData();
+
+    return this._http
+      .get(`${this._url}?json=${JSON.stringify(parameters)}`)
+      .pipe(
+        map((response) => {
+          if (!isApiResponse(response)) return defaultData;
+
+          try {
+            const payload = JSON.parse(response.payload as string);
+            return {
+              ...defaultData,
+              ...payload,
+              estabs: payload.estabs as GroupedEstab[],
+            };
+          } catch (error) {
+            console.error('Error parsing response:', error);
+            return defaultData;
+          }
+        }),
+      );
+  }
+
+  private getDefaultData() {
+    return {
+      tiposIdentificacion: [],
+      sujetoRetenido: [],
+      documentoSustento: [],
+      sustentoTributario: [],
+      tiposPago: [],
+      tiposRegimen: [],
+      countries: [],
+      paraisosFiscales: [],
+      taxes: [],
+      tarifasImpuesto: [],
+      impuestosRetencion: [],
+      porcentajesRetIva: [],
+      codigosRetencion: [],
+      formasPago: [],
+      estabs: [],
+      infoAdicional: [],
+    };
   }
   getById(id: number): Observable<RetencionAts> {
     throw new Error('Method not implemented.');

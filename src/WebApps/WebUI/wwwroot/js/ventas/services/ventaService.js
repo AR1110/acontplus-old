@@ -2410,7 +2410,8 @@
 
 
     app.factory('creditoGaranteService', ['$injector', function ($injector) {
-        let url = `${URL_API}CreditoGarante`;
+       // let url = `${URL_API}CreditoGarante`;
+        const url = 'Contabilidad/CuentaPorCobrar/';
         let mS = $injector.get('mainService');
         return {
             getAll,
@@ -2419,7 +2420,7 @@
 
         function getAll(obj) {
             let json = JSON.stringify({
-                tipo: 1,
+                tipo: 3,
                 ...obj
             })
             return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {

@@ -67,3 +67,11 @@ export const consumirFinalSuperaElValorPermitido = function (codTipoIdentificaci
 }
 
 export const messageSuperaElValorTotalPermitido = `La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del CONSUMIDOR FINAL`
+
+
+export const truncateText = function (text: string | undefined, maxLength: number): string {
+  if (!text) return '';
+  return text.length > maxLength
+    ? `${text.substring(0, maxLength)}...`
+    : text;
+}

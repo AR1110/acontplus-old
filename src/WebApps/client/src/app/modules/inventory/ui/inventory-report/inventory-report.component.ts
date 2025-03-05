@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
@@ -27,13 +27,11 @@ import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-u
 import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
-import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import {FileButtonsComponent} from "@shared/components/file-buttons/file-buttons.component";
-import {UserRoleStateService} from "@shared/store/user-role-state.service";
-
+import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
+import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 const imports = [
   NgbNavModule,
@@ -63,11 +61,10 @@ const imports = [
   selector: 'app-inventory-report',
   imports,
   templateUrl: './inventory-report.component.html',
-  styles: `
-  `,
+  styles: ``,
 })
 export class InventoryReportComponent {
-  private pS = inject(UserRoleStateService)
+  private pS = inject(UserRoleStateService);
   private tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
   appNotifiSvc = inject(NotificacionService);
@@ -82,7 +79,7 @@ export class InventoryReportComponent {
   bodegas: GroupedEstabBodega[] = [];
   subCategories: any[] = [];
   marcas: Brand[] = [];
-  taxes = signal<any[]>([])
+  taxes = signal<any[]>([]);
 
   dataSearch = {
     idEstablecimiento: 0,
@@ -116,7 +113,7 @@ export class InventoryReportComponent {
     idTarifa: 0,
     idTipoIva: 0,
     checkboxSupplier: false,
-    nameSupplier: ''
+    nameSupplier: '',
   };
 
   expirationStates = [
@@ -145,7 +142,7 @@ export class InventoryReportComponent {
       this.subCategories = subCategorias;
       this.marcas = marcas;
       this.tarifas = response.tarifas;
-      this.taxes.set(response.taxes)
+      this.taxes.set(response.taxes);
       let dataEstab = this.estabs.find((e) => e.defaultEstab);
       if (dataEstab) {
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
@@ -158,11 +155,10 @@ export class InventoryReportComponent {
 
   ngOnInit() {
     this.getDatFormReport();
-    this.pS.getAction().subscribe(res=>{
-     this.isReporting = res?.reporte;
-     this.isSendingEmail = res?.enviarCorreo;
-
-   })
+    this.pS.getAction().subscribe((res) => {
+      this.isReporting = res?.reporte;
+      this.isSendingEmail = res?.enviarCorreo;
+    });
   }
 
   onNavChange($event: any) {
@@ -239,7 +235,6 @@ export class InventoryReportComponent {
 
   supplierResultEmptyInput($event: any) {
     this.dataSearch.numeroIdentificacion = null;
-
   }
 
   onChangeCheckProveedor() {
@@ -336,7 +331,6 @@ export class InventoryReportComponent {
       }
     }
 
-    
     if (selectedTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
@@ -411,18 +405,18 @@ export class InventoryReportComponent {
       : null;
 
     let numeroIdentificacion = null as string | null;
-    if(this.dataSearch.checkboxCompanyCustomer ){
+    if (this.dataSearch.checkboxCompanyCustomer) {
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
-    if(this.dataSearch.checkboxSupplier){
+    if (this.dataSearch.checkboxSupplier) {
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
     return {
       tipo: 4,
       checkBoxFecha: true,
-      checkboxPrecioCostoFiltro : this.dataSearch.checkboxPrecioCostoFiltro,
+      checkboxPrecioCostoFiltro: this.dataSearch.checkboxPrecioCostoFiltro,
       idUsuario: this.dataSearch.checkboxUsuarioFiltro
         ? isValidField(this.dataSearch.idUsuario)
         : null,
@@ -478,7 +472,10 @@ export class InventoryReportComponent {
         idBodega: isValidField(this.dataSearch.idBodega),
         idMarca: isValidField(this.dataSearch.idMarca),
         filtroFecha,
-        stockStatusCode: this.dataSearch.stockStatusCode ===0? null : isValidField(this.dataSearch.stockStatusCode),
+        stockStatusCode:
+          this.dataSearch.stockStatusCode === 0
+            ? null
+            : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
       };
 
@@ -522,7 +519,10 @@ export class InventoryReportComponent {
         idMarca: isValidField(this.dataSearch.idMarca),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         filtroFecha,
-        stockStatusCode:this.dataSearch.stockStatusCode===0? null: isValidField(this.dataSearch.stockStatusCode),
+        stockStatusCode:
+          this.dataSearch.stockStatusCode === 0
+            ? null
+            : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
       };
 
@@ -555,14 +555,17 @@ export class InventoryReportComponent {
       let dataSearch = {
         tipo: 2,
         bySubFamilia,
-        stockStatusCode: this.dataSearch.stockStatusCode===0?null: isValidField(this.dataSearch.stockStatusCode),
+        stockStatusCode:
+          this.dataSearch.stockStatusCode === 0
+            ? null
+            : isValidField(this.dataSearch.stockStatusCode),
         idTarifa: getValidId(this.dataSearch.idTarifa),
         idMarca: isValidField(this.dataSearch.idMarca),
         userRoleId: this._tokenUseCase.getUserRoleId(),
         ckFechaModificaccion: this.dataSearch.ckFechaModificaccion,
         fechaInicio: this.dataSearch.fromDate,
         fechaFin: this.dataSearch.toDate,
-        idTipoIva: getValidId(this.dataSearch.idTipoIva)
+        idTipoIva: getValidId(this.dataSearch.idTipoIva),
       };
       const parameters = {
         reportParams: JSON.stringify({

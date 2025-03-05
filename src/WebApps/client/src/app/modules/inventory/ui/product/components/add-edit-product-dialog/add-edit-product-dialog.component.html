@@ -1,0 +1,188 @@
+
+<app-mat-custom-dialog
+[containerTemplate]="containerTemplate"
+[actionsTemplate]="actionsTemplate"
+(close)="close()"
+></app-mat-custom-dialog>
+
+<ng-template #containerTemplate>
+  <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">thumb_up</mat-icon>
+        General
+      </ng-template>
+
+
+     <div class="my-2 m-2 p-0">
+       <div class="d-grid gap-2">
+         <mat-form-field class="w-100">
+           <mat-label>Descripción</mat-label>
+           <input matInput placeholder="Ex. Pizza" value="Sushi">
+         </mat-form-field>
+
+
+         <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Sub Familia:</mat-label>
+               <mat-select  >
+                 @for (group of subCategoriesGroup(); track $index) {
+                   <mat-optgroup [label]="group.name"
+                                 [disabled]="group.disabled">
+                     @for (item of group.subFamilias; track $index) {
+                       <mat-option [value]="item.idSubFamilia">{{item.subFamilia}}</mat-option>
+                     }
+                   </mat-optgroup>
+                 }
+               </mat-select>
+               <button matSuffix mat-icon-button aria-label="Add" appSubCategoryModal >
+                 <mat-icon>add</mat-icon>
+               </button>
+             </mat-form-field>
+
+           </div>
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Medida: </mat-label>
+               <mat-select>
+                 @for (item of medidas(); track $index) {
+                   <mat-option [value]="item.idMedida">{{item.descripcion}}</mat-option>
+                 }
+               </mat-select>
+               <span matSuffix class="d-flex gap-1">
+
+                 <mat-icon class="cursor-pointer">add</mat-icon>
+                 <mat-icon class="cursor-pointer">refresh</mat-icon>
+
+
+               </span>
+             </mat-form-field>
+           </div>
+           <div class="col">
+
+
+             <mat-form-field class="w-100">
+               <mat-label>Tipo Artículo: </mat-label>
+               <mat-select>
+                 @for (item of tiposArticulo(); track $index) {
+                   <mat-option [value]="item.idTipoArticulo">{{item.descripcion}}</mat-option>
+                 }
+               </mat-select>
+             </mat-form-field>
+
+           </div>
+
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Adicionales: </mat-label>
+               <mat-checkbox matPrefix ></mat-checkbox>
+               <mat-select>
+                 @for (item of tiposArticulo(); track $index) {
+                   <mat-option [value]="item.idTipoArticulo">{{item.descripcion}}</mat-option>
+                 }
+               </mat-select>
+               <span matSuffix class="d-flex gap-1">
+
+                 <mat-icon class="cursor-pointer">add</mat-icon>
+                 <mat-icon class="cursor-pointer">refresh</mat-icon>
+
+
+               </span>
+             </mat-form-field>
+           </div>
+
+         </div>
+
+
+         <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Código:</mat-label>
+               <input matInput [(ngModel)]="data.codigo" placeholder="Ej: COM050"/>
+             </mat-form-field>
+           </div>
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Código Aux::</mat-label>
+               <input matInput [(ngModel)]="data.codigoAuxiliar" placeholder="Ej: COM050"/>
+             </mat-form-field>
+           </div>
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Código de Barra:</mat-label>
+               <input matInput [(ngModel)]="data.codigoBarra" placeholder="Ej: COM050"/>
+             </mat-form-field>
+           </div>
+
+           <div class="col text-center">
+             <mat-checkbox [(ngModel)]="data.llevaInventario">Inventario</mat-checkbox>
+           </div>
+           <div class="col text-center">
+             <mat-checkbox [(ngModel)]="data.productoFraccionable">Fraccionable</mat-checkbox>
+           </div>
+
+         </div>
+
+
+
+         <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Tipo Iva: </mat-label>
+               <mat-select  [(ngModel)]="data.idTipoIva" (change)="onChangeTipoIva()">
+                 @for (item of tiposIva(); track $index) {
+                   <mat-option [value]="item.idTipoIva">{{ item.descripcion }}</mat-option>
+                 }
+               </mat-select>
+             </mat-form-field>
+           </div>
+
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Precio Costo:</mat-label>
+               <input type="number" matInput placeholder="0.00"  [(ngModel)]="data.precioCosto" (keyup)="onChangePrecioCosto()" >
+             </mat-form-field>
+           </div>
+
+           <div class="col">
+             <mat-form-field class="w-100">
+               <mat-label>Precio Sin Subsidio:</mat-label>
+               <input type="number" matInput [(ngModel)]="data.precioSinSubsidio" placeholder="0.00">
+             </mat-form-field>
+           </div>
+
+
+         </div>
+
+
+
+
+       </div>
+     </div>
+
+
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">thumb_up</mat-icon>
+        Datos Adicionales
+      </ng-template>
+      Content 2
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">thumb_up</mat-icon>
+        Third
+      </ng-template>
+
+      Ubicación
+    </mat-tab>
+  </mat-tab-group>
+
+
+
+</ng-template>
+<ng-template #actionsTemplate></ng-template>

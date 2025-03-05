@@ -1,6 +1,4 @@
-﻿using FactElect.API.Interfaces.RetencionAts;
-
-namespace FactElect.API.Controllers.RetencionAts;
+﻿namespace FactElect.API.Controllers.RetencionAts;
 
 public class DocSustentoController(IDocSustentoService docSustentoService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class DocSustentoController(IDocSustentoService docSustentoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "idRetencionAts", idRetencionAts },
             { "json", SqlStringParam.Sanitize(json) }
         };
@@ -21,7 +19,7 @@ public class DocSustentoController(IDocSustentoService docSustentoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await docSustentoService.UpdateAsync(parameters));
     }
@@ -29,7 +27,7 @@ public class DocSustentoController(IDocSustentoService docSustentoService) : Bas
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await docSustentoService.DeleteAsync(parameters));
     }
 }

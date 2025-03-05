@@ -7,10 +7,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Widget } from '@domain/models/widget.model';
-import { TopProductsComponent } from '@ui/dashboard/widget/top-products.component';
 import { computed, inject, input } from '@angular/core';
-import { TotalSummaryComponent } from '@ui/dashboard/widget/total-summary.component';
-import { SaleChartComponent } from '@ui/dashboard/widget/sale-chart.component';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
 
 function getAnios() {
@@ -68,7 +65,6 @@ const initialDashboardState: DashboardStata = {
     {
       id: 4,
       label: 'Ventas',
-      content: SaleChartComponent,
       backgroundColor: 'var(--mdc-elevated-card-container-color)',
       columns: 2,
       rows: 3,
@@ -76,7 +72,6 @@ const initialDashboardState: DashboardStata = {
     {
       id: 5,
       label: 'Productos más vendidos',
-      content: TopProductsComponent,
       backgroundColor: 'var(--mdc-elevated-card-container-color)',
       columns: 2,
       rows: 3,
@@ -134,15 +129,17 @@ export const DashboardStore = signalStore(
           return {
             id: index + 1,
             label: item.descripcion,
-            content: TotalSummaryComponent,
+            title: item.descripcion,
             backgroundColor: '#1679AB',
             color: 'whitesmoke',
             input: item.cantidad,
+            value: item.cantidad,
             props: {
               count: item.cantidad,
             },
           };
         });
+
         patchState(store, () => ({
           sales: response.sales,
           topProducts: response.productsTop,

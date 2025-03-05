@@ -1,4 +1,3 @@
-
 <app-custom-container-dialog
   [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
@@ -14,57 +13,49 @@
     (onSelect)="onSelectProduct($event)"
   />
 
-
-
   @if(orderItemCustom().productId>0){
   <div class="form-group">
-    <mat-form-field class="m3-input-full-width" appearance="outline">
+    <mat-form-field class="w-100" appearance="outline">
       <mat-label>Descripción personalizada</mat-label>
-      <input matInput placeholder="..." [(ngModel)]="descriptionCustom" appToUpperCase>
+      <input
+        matInput
+        placeholder="..."
+        [(ngModel)]="descriptionCustom"
+        appToUpperCase
+      />
     </mat-form-field>
   </div>
 
-
   <div class="d-flex justify-content-center align-items-center">
     <dl class="row">
-
       <dt class="col-sm-7">Código</dt>
       <dd class="col-sm-5">
-        <h5>{{orderItemCustom().code}}</h5>
+        <h5>{{ orderItemCustom().code }}</h5>
       </dd>
 
-
-      <dt class="col-sm-7">Cantidad
-      </dt>
+      <dt class="col-sm-7">Cantidad</dt>
       <dd class="col-sm-5">
-        <h5>{{orderItemCustom().quantity}}</h5>
+        <h5>{{ orderItemCustom().quantity }}</h5>
       </dd>
-
-
 
       <dt class="col-sm-7">Precio Unitario</dt>
       <dd class="col-sm-5">
-        <h5>{{orderItemCustom().price}}</h5>
+        <h5>{{ orderItemCustom().price }}</h5>
       </dd>
 
       <dt class="col-sm-7">Valor Iva</dt>
       <dd class="col-sm-5">
-        <h5>{{orderItemCustom().taxValue}}</h5>
+        <h5>{{ orderItemCustom().taxValue }}</h5>
       </dd>
 
       <dt class="col-sm-7">Total</dt>
       <dd class="col-sm-5">
-        <h3>{{importeTotal}}</h3>
+        <h3>{{ importeTotal }}</h3>
       </dd>
-
-
     </dl>
-
   </div>
   }
-
 </ng-template>
-
 
 <ng-template #actionsTemplate>
   <button mat-flat-button color="primary" (click)="saveInvoice()">

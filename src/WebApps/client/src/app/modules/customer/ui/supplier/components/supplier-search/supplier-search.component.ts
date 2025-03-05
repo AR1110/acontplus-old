@@ -20,8 +20,8 @@ import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
   styles: ``,
 })
 export class SupplierSearchComponent {
-  onSelected = output<any>();
-  onInputEmpty = output();
+  supplierSelected = output<SupplierSearch>();
+  clearEmpty = output();
   isSearchSimple = input(true);
   @Input() textSearch = '';
   searching = false;
@@ -30,7 +30,7 @@ export class SupplierSearchComponent {
   searchFailed = false;
   private readonly _supplierUseCase = inject(SupplierUseCase);
 
-  search: OperatorFunction<string, Array<SupplierSearch>> = (
+  search: OperatorFunction<string, SupplierSearch[]> = (
     text$: Observable<string>,
   ) =>
     text$.pipe(
@@ -59,9 +59,9 @@ export class SupplierSearchComponent {
     return x;
   };
 
-  onSelect($event: any) {
-    let customer: SupplierSearch = $event.item;
-    this.onSelected.emit({
+  onSelect($event: unknown) {
+    const customer = $event as SupplierSearch;
+    this.supplierSelected.emit({
       ...customer,
       razonSocialComprador: customer.razonSocialComprador,
       identificacionComprador: customer.identificacionComprador,
@@ -70,7 +70,7 @@ export class SupplierSearchComponent {
 
   onKeyupSearch() {
     if (!this.textSearch) {
-      this.onInputEmpty.emit();
+      this.clearEmpty.emit();
     }
   }
 }

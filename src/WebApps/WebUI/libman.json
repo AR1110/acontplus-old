@@ -31,7 +31,7 @@
       "destination": "wwwroot/lib/angular-messages/"
     },
     {
-      "library": "angular-ui-grid@4.12.4",
+      "library": "angular-ui-grid@4.12.7",
       "destination": "wwwroot/lib/angular-ui-grid/"
     },
     {
@@ -39,7 +39,7 @@
       "destination": "wwwroot/lib/angular-file-saver/"
     },
     {
-      "library": "angular-ui-router@1.1.0",
+      "library": "angular-ui-router@1.1.1",
       "destination": "wwwroot/lib/angular-ui-router/"
     },
     {
@@ -87,11 +87,11 @@
       "destination": "wwwroot/lib/jquery-sparklines/"
     },
     {
-      "library": "font-awesome@6.5.2",
+      "library": "font-awesome@6.7.2",
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.12.2",
+      "library": "limonte-sweetalert2@11.15.10",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -103,7 +103,7 @@
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
-      "library": "moment-timezone@0.5.45",
+      "library": "moment-timezone@0.5.46",
       "destination": "wwwroot/lib/moment-timezone/"
     },
     {
@@ -123,10 +123,6 @@
       "destination": "wwwroot/lib/ngStorage/"
     },
     {
-      "library": "microsoft-signalr@8.0.7",
-      "destination": "wwwroot/lib/microsoft-signalr/"
-    },
-    {
       "library": "html2canvas@1.4.1",
       "destination": "wwwroot/lib/html2canvas/"
     },
@@ -139,11 +135,11 @@
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.7.2",
+      "library": "axios@1.7.9",
       "destination": "wwwroot/lib/axios/"
     },
     {
-      "library": "tabulator@6.2.1",
+      "library": "tabulator@6.3.0",
       "destination": "wwwroot/lib/tabulator/",
       "files": [
         "js/tabulator.min.js",
@@ -151,7 +147,7 @@
       ]
     },
     {
-      "library": "jquery.perfect-scrollbar@1.5.5",
+      "library": "jquery.perfect-scrollbar@1.5.6",
       "destination": "wwwroot/lib/jquery.perfect-scrollbar/"
     },
     {

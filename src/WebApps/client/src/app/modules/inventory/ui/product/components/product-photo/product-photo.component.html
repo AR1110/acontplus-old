@@ -1,48 +1,50 @@
-<div class="modal-header">
-  <h4 class="modal-title">Imagenes del Producto -> {{productPhoto.descripcion}}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
-</div>
-<div class="modal-body">
-  <div class="form-group">
-    <label for="photo">
-      Añadir Imagen:
-      <small class="text-warning">Tamaño recomendado 500x500 y 1MB</small>
-    </label>
-    <input type="file" id="photo" class="form-control" (change)="onFileSelected($event)" accept="image/*" />
-  </div>
+<app-mat-custom-dialog
+[title]="'Imagenes del Producto ->' + productPhoto.descripcion"
+  [containerTemplate]="containerTemplate"
+(close)="closeModal()"
+/>
 
+<ng-template #containerTemplate>
+  <div class="d-grid gap-2">
+    <mat-form-field class="w-100">
+      <mat-label>Seleccionar archivo</mat-label>
+      <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" >
+      <input matInput class="cursor-pointer"  readonly (click)="fileInput.click()">
+
+      <ng-container matSuffix>
+        <button mat-icon-button (click)="fileInput.click()">
+          <mat-icon>attach_file</mat-icon>
+        </button>
+      </ng-container>
+      <mat-hint>Tamaño recomendado 500x500 y 1MB</mat-hint>
+    </mat-form-field>
 
   <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
     @for (item of productPhotos(); track $index) {
-    <div class="col">
-      <mat-card class="custom-card" appearance="outlined">
-        @if (item.isDefault) {
-        <div class="success-default">&#10004;</div>
-        }
+      <div class="col">
+        <mat-card class="custom-card" appearance="outlined">
+          @if (item.isDefault) {
+            <div class="success-default">&#10004;</div>
+          }
 
-        <!-- Imagen centrada con borde -->
-        <div class="image-container m-3" (click)="setDefault(item)">
-          <img mat-card-image [src]="item.s3ObjectUrl" [alt]="'img' + $index" class="custom-image-center">
-        </div>
+          <!-- Imagen centrada con borde -->
+          <div class="image-container m-3" (click)="setDefault(item)">
+            <img mat-card-image [src]="item.s3ObjectUrl" [alt]="'img' + $index" class="custom-image-center">
+          </div>
 
-        <mat-card-actions>
-          <button mat-icon-button aria-label="Btn Remove Photo" (click)="removePhoto(item)">
-            <mat-icon>delete_forever</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
+          <mat-card-actions>
+            <button mat-icon-button aria-label="Btn Remove Photo" (click)="removePhoto(item)">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
 
-    </div>
+      </div>
 
     }
 
   </div>
 
+  </div>
+</ng-template>
 
-
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-dark" (click)="closeModal()">
-    &times; Cerrar
-  </button>
-</div>

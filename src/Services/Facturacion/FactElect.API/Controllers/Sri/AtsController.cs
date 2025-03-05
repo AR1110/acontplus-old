@@ -1,7 +1,4 @@
-﻿using FactElect.API.Models;
-using FactElect.API.Services.Sri;
-
-namespace FactElect.API.Controllers.Sri;
+﻿namespace FactElect.API.Controllers.Sri;
 
 public class AtsController(IAtsService atsService) : BaseApiController
 {

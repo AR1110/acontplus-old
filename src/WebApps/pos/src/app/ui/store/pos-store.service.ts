@@ -1,36 +1,38 @@
-import { generateUuidv4 } from "@domain/utils/generate-uuidv4";
-import { SRI_IDENTIFICATION_CODE } from "@domain/enums/main.enum";
-import { Order, OrderItem } from "@domain/models/order.model";
-import { Tax, TaxRate } from "@domain/models/tax.model";
-import { GenericStoreSignalService } from "@domain/services/generic-store-signal.service";
-import { PromotionService } from "@data/repositories/promotion/promotion.service";
-import { inject, Injectable } from "@angular/core";
+import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
+import { SRI_IDENTIFICATION_CODE } from '@domain/enums/main.enum';
+import { Order, OrderItem } from '@domain/models/order.model';
+import { Tax, TaxRate } from '@domain/models/tax.model';
+import { GenericStoreSignalService } from '@domain/services/generic-store-signal.service';
+import { PromotionService } from '@data/repositories/promotion/promotion.service';
+import { inject, Injectable } from '@angular/core';
+import { CartOverlayService } from './cart-overlay.service';
 
 type PosStoreState = {
-  isLoading: boolean
-  isSelectedItem: boolean
-  tarifaId: 0,
-  oldTarifaId: 0,
-  order: Order
-  orderItems: OrderItem[]
+  isModulePos: boolean;
+  isLoading: boolean;
+  isSelectedItem: boolean;
+  tarifaId: 0;
+  oldTarifaId: 0;
+  order: Order;
+  orderItems: OrderItem[];
   vendedores: any[];
-  taxes: Record<string | number, Tax>
-  taxRates: Record<string | number, TaxRate>
-  orderItem: OrderItem
-  isRefreshPromotion: boolean
-  promotionsMenu: any[]
-  codeSubCategory: string
-  tarifas: any[]
-}
+  taxes: Record<string | number, Tax>;
+  taxRates: Record<string | number, TaxRate>;
+  orderItem: OrderItem;
+  isRefreshPromotion: boolean;
+  promotionsMenu: any[];
+  codeSubCategory: string;
+  tarifas: any[];
+  pendingOrders: number
+};
 export const orderInitialState = () => {
-
   let result: Order = {
     uuid: generateUuidv4(),
     orderId: 0,
     userId: 0,
     tipoIdentificacionSri: SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL,
     customerCompanyId: 0,
-    customerName: "CONSUMIDOR FINAL",
+    customerName: 'CONSUMIDOR FINAL',
     createdAt: new Date(),
     subtotalSinImpuestos: 0,
     items: [],
@@ -49,13 +51,14 @@ export const orderInitialState = () => {
     quickSale: undefined,
     bodegaId: undefined,
     saveDoc: undefined,
-    updateOrder: undefined
-  }
+    updateOrder: undefined,
+  };
   return result;
-}
+};
 
 export const posStoreStateInitial = (): PosStoreState => {
   return {
+    isModulePos: false,
     isLoading: false,
     isSelectedItem: false,
     tarifaId: 0,
@@ -66,8 +69,8 @@ export const posStoreStateInitial = (): PosStoreState => {
     taxes: {},
     taxRates: {},
     orderItem: {
-      uuid: "",
-      itemTypeCode: "",
+      uuid: '',
+      itemTypeCode: '',
       itemTypeId: undefined,
       id: 0,
       menuId: 0,
@@ -85,15 +88,15 @@ export const posStoreStateInitial = (): PosStoreState => {
       obs: undefined,
       bodegaId: 0,
       medidaId: 0,
-      codigoTarifaImpuesto: "",
+      codigoTarifaImpuesto: '',
       taxPercent: 0,
       summary: undefined,
       productId: 0,
-      code: "",
+      code: '',
       precioConIva: 0,
       precioTotalSinImpuesto: 0,
-      medida: "",
-      descripcion: "",
+      medida: '',
+      descripcion: '',
       llevaInventario: false,
       img: undefined,
       medidas: [],
@@ -102,56 +105,56 @@ export const posStoreStateInitial = (): PosStoreState => {
       envioSri: undefined,
       paid: undefined,
       conversion: 1,
-      costoFraccionado: 0
+      costoFraccionado: 0,
     },
     isRefreshPromotion: false,
     promotionsMenu: [],
     codeSubCategory: '',
-    tarifas: []
-  }
-}
+    tarifas: [],
+    pendingOrders: 0
+  };
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PosStoreService extends GenericStoreSignalService<PosStoreState> {
-  private promotionSvc = inject(PromotionService)
+  private promotionSvc = inject(PromotionService);
+
   constructor() {
     super();
   }
 
   setLoading(isLoading: boolean) {
-    this.state.update(e => ({
+    this.state.update((e) => ({
       ...e,
-      isLoading
-    }))
+      isLoading,
+    }));
   }
 
-
-  public getPromotions(estabId:number) {
+  public getPromotions(estabId: number) {
     let params = {
-      estabId
-    }
-    this.setLoading(true)
-    this.state.update(e => ({
+      estabId,
+    };
+    this.setLoading(true);
+    this.state.update((e) => ({
       ...e,
-      promotionsMenu: []
-    }))
+      promotionsMenu: [],
+    }));
     this.promotionSvc.getPromotions(params).subscribe({
-      next: response => {
-        this.setLoading(false)
-        this.state.update(e => ({
+      next: (response) => {
+        this.setLoading(false);
+        this.state.update((e) => ({
           ...e,
-          promotionsMenu: response
-        }))
+          promotionsMenu: response,
+        }));
       },
-      error: err => {
-        this.setLoading(false)
-        console.log(err)
-      }
-    })
+      error: (err) => {
+        this.setLoading(false);
+        console.log(err);
+      },
+    });
   }
-
 
   addRow() {
     let data: OrderItem = {
@@ -184,12 +187,8 @@ export class PosStoreService extends GenericStoreSignalService<PosStoreState> {
       pvps: [],
       consolidacionesFecha: [],
       costoFraccionado: 0,
-      conversion: 1
-    }
+      conversion: 1,
+    };
     return data;
   }
-
-
-
-
 }

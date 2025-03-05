@@ -1,6 +1,4 @@
-﻿using FactElect.API.Interfaces.RetencionAts;
-
-namespace FactElect.API.Controllers.RetencionAts;
+﻿namespace FactElect.API.Controllers.RetencionAts;
 
 public class RetAtsInfoAdicionalController(IRetAtsInfoAdicionalService retAtsInfoAdicionalService) : BaseApiController
 {
@@ -9,7 +7,7 @@ public class RetAtsInfoAdicionalController(IRetAtsInfoAdicionalService retAtsInf
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await retAtsInfoAdicionalService.AddAsync(parameters));
@@ -20,7 +18,7 @@ public class RetAtsInfoAdicionalController(IRetAtsInfoAdicionalService retAtsInf
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "json", SqlStringParam.Sanitize(json) }
         };
@@ -32,7 +30,7 @@ public class RetAtsInfoAdicionalController(IRetAtsInfoAdicionalService retAtsInf
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
         };
         return Ok(await retAtsInfoAdicionalService.DeleteAsync(parameters));
