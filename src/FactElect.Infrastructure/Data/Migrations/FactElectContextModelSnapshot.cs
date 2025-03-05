@@ -42,7 +42,9 @@ namespace FactElect.API.Data.Migrations
                         .HasColumnType("varchar(300)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -53,7 +55,9 @@ namespace FactElect.API.Data.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
