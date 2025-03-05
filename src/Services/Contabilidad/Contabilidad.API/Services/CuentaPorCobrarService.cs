@@ -4,26 +4,23 @@ public class CuentaPorCobrarService(IAdoRepository adoRepository) : ICuentaPorCo
 {
     private const string ModuleName = "Contabilidad.CuentaPorCobrar_";
 
+    // Cuenta
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
         return ds.Tables.Count == 0 ? null : DataConverters.DataSetToJson(ds);
     }
 
-
-    //
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
-    {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"Contabilidad.CuotaPorCobrar_Insert", parameters);
-    }
-
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    //Cuotas
+    public async Task<ApiResponse> UpdateCuotaAsync(Dictionary<string, object> parameters)
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"Contabilidad.CuotaPorCobrar_Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    // Credito Garante
+    public async Task<ApiResponse> AddGaranteAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Delete", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"Ventas.CreditoGarante_Insert", parameters);
     }
+
 }

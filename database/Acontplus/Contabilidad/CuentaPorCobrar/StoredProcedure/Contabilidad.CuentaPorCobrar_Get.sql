@@ -21,8 +21,6 @@ BEGIN
     --> Global
     DECLARE @idEntidad INT ,@tipo INT 
 
-    --> Sql
-	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     -->Filters
     DECLARE @idCliente INT ,@idCuentaPorCobrar INT
@@ -36,6 +34,11 @@ BEGIN
     --> Get 
     IF @tipo = 1
         BEGIN
+            --> Sql
+	        DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
+
+            --> Filter
             DECLARE @codEstab VARCHAR(50) 
                    ,@ckFecha BIT
                    ,@fechaInicio DATETIME2 
@@ -250,6 +253,32 @@ BEGIN
             RETURN 
 		END
 	
+    --> Garantes 
+    IF @tipo = 3
+        BEGIN 
+            SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH(idCuentaPorCobrar INT)
+
+            SET @tableNames='guarantors'
+
+	        SELECT cg.idCreditoGarante
+				  ,cg.idCuentaPorCobrar
+				  ,cl.idCliente
+				  ,cu.BusinessName as razonSocialComprador
+				  ,cu.TradeName    as nombreComercial
+				  ,cu.IDCard       as identificacionComprador
+				  ,cl.direccion
+				  ,cl.correo
+				  ,cl.telefono
+                  ,tipoAccion = 'U'
+	         FROM Ventas.CreditoGarante   cg WITH (NOLOCK)
+			 INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente  = cg.idCliente
+             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id         = cl.CustomerId
+	         WHERE cg.estado = 1 
+               AND cg.idCuentaPorCobrar = @idCuentaPorCobrar
+
+             RETURN
+        END 
+
     --> Notificacion para deudas del cliente 
     IF @tipo = 5
         BEGIN
