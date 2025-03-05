@@ -9,23 +9,23 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace FactElect.API.Data.Migrations
+namespace FactElect.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(FactElectContext))]
-    [Migration("20250211135939_DropColumnIDDType")]
-    partial class DropColumnIDDType
+    [Migration("20250305154434_FixingMigrations")]
+    partial class FixingMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FactElect.API.Entities.AppCustomer", b =>
+            modelBuilder.Entity("FactElect.Domain.Entities.AppCustomer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,9 +45,7 @@ namespace FactElect.API.Data.Migrations
                         .HasColumnType("varchar(300)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -58,9 +56,7 @@ namespace FactElect.API.Data.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<bool?>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValueSql("1");
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("FromMobile")
                         .HasColumnType("bit");
@@ -97,7 +93,7 @@ namespace FactElect.API.Data.Migrations
 
                     b.HasIndex("IdCard")
                         .IsUnique()
-                        .HasDatabaseName("UXC_Customer_IDCard");
+                        .HasDatabaseName("UX_Customer_IdCard");
 
                     b.ToTable("Customer", "Customer");
                 });
