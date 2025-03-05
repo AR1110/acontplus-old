@@ -20,7 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Contabilidad.CuotaPorCobrar_Update @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuotaPorCobrar_Update @userRoleId INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -87,7 +87,7 @@ BEGIN
 		)
 
 	    --> recuperar variables
-		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
 		--> validación de datos
         IF NOT EXISTS(SELECT 1 FROM @tbCuotas)  

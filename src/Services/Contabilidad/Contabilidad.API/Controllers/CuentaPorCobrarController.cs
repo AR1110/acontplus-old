@@ -16,26 +16,29 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
         return Ok(response);
     }
 
-    // este sp trasladar a Controlador CuotaPorCobrarController y el servicio respectivamente
-    [HttpPost("Insert/Cuota")]
-    public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
-        };
-        return Ok(await cuentaPorCobrarService.AddAsync(parameters));
-    }
-
+    // Cuotas
     [HttpPut("Update/Cuota")]
     public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
     {
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
-        return Ok(await cuentaPorCobrarService.UpdateAsync(parameters));
+        return Ok(await cuentaPorCobrarService.UpdateCuotaAsync(parameters));
+    }
+
+    // Credito Garante
+    [HttpPost("Insert/Garante")]
+    public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
+    {
+
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+        };
+        return Ok(await cuentaPorCobrarService.AddGaranteAsync(parameters));
     }
 }

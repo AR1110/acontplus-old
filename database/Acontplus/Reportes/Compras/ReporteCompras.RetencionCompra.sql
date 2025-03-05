@@ -65,8 +65,8 @@ BEGIN
                     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
                     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
 					INNER JOIN Entidad                  en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
-                     LEFT JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = pv.idTipoIdentificacion
                     INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pv.CustomerId
+                    INNER JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = cu.IdTypeId
  					WHERE rc.idRetencionAts =  @id
 
                     SELECT ds.codDocSustento                                as comprobante

@@ -17,41 +17,39 @@ BEGIN
 
 	SET LANGUAGE SPANISH 
 
-    -- GLOBAL
+    --> GLOBAL
 	DECLARE @idUsuario INT , @fechaRegistro DATETIME2	
 
-    -- Data Json
-    DECLARE @creditoGarante VARCHAR(MAX)
  
-
-	
-	 
     DECLARE @tbCreditoGarante AS TABLE (
-		idCuentaPorCobrar INT NOT NULL
+	    idCreditoGarante INT NOT NULL
+       ,idCuentaPorCobrar INT NOT NULL
 	   ,idCliente INT NOT NULL
-	   ,tipoAccion CHAR(1) NOT NULL
 	)
 	 
 
      
 	BEGIN TRY
-         
-        SELECT TOP 1 @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+        
+        --> Json
+        INSERT INTO @tbCreditoGarante
+		      (idCreditoGarante,idCuentaPorCobrar,idCliente)
+		SELECT idCreditoGarante,idCuentaPorCobrar,idCliente
+		FROM OPENJSON(@json, '$.guarantors') WITH 
+        (
+            idCreditoGarante  INT
+           ,idCuentaPorCobrar INT
+           ,idCliente         INT
+
+        ) AS js
+
+        --> Variables
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
 		SET @fechaRegistro = (SELECT dbo.ufnGetDateEcuador())
  
-
-        INSERT INTO @tbCreditoGarante
-		      (idCuentaPorCobrar, idCliente, tipoAccion)
-		SELECT idCuentaPorCobrar, idCliente, tipoAccion
-		FROM OPENJSON(@json, '$.guarantors') WITH (
-            idCuentaPorCobrar INT,
-            idCliente INT,
-			tipoAccion CHAR(1)
-        ) AS js;
-
-
-		   
-        IF NOT EXISTS(SELECT * FROM @tbCreditoGarante)  
+		--> Validaciones
+        IF NOT EXISTS(SELECT 1 FROM @tbCreditoGarante)  
             BEGIN
                 SELECT '0' code,'Error Empty Data' AS 'message'
 				RETURN
@@ -60,30 +58,17 @@ BEGIN
         
 		BEGIN TRAN 
 
-			
-
-		    -- C - create
 			INSERT INTO Ventas.CreditoGarante 
 				  (idCuentaPorCobrar, idCliente, idUsuario, fechaRegistro)
 			SELECT idCuentaPorCobrar, idCliente, @idUsuario,@fechaRegistro 
 			FROM @tbCreditoGarante  tb
-			WHERE tb.tipoAccion='C'
+			WHERE tb.idCreditoGarante = 0
 
-            -- D - deleted
-		/**	DELETE cg
-			FROM Ventas.CreditoGarante cg
-			INNER JOIN @tbCreditoGarante tg ON cg.idCuentaPorCobrar = tg.idCuentaPorCobrar AND cg.idCliente = tg.idCliente
-			WHERE tg.tipoAccion = 'D';**/
             UPDATE cg
-            SET cg.estado = 0, cg.updatedAt =  (SELECT dbo.ufnGetDateEcuador())
-            FROM Ventas.CreditoGarante cg
-            INNER JOIN @tbCreditoGarante tg 
-                ON cg.idCuentaPorCobrar = tg.idCuentaPorCobrar 
-                AND cg.idCliente = tg.idCliente
-            WHERE tg.tipoAccion = 'D';
-
-
-
+               SET cg.estado    = 0
+                  ,cg.updatedAt = (SELECT dbo.ufnGetDateEcuador())
+            FROM Ventas.CreditoGarante   cg
+            INNER JOIN @tbCreditoGarante tg ON tg.idCreditoGarante = cg.idCreditoGarante
 				
 		COMMIT TRAN
 		SELECT '1'code,'Registrado Correctamente' as 'message'
