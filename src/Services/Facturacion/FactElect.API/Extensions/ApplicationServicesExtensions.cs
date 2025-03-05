@@ -2,13 +2,14 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Scrutor;
+using Serilog;
 
 namespace FactElect.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddAdvancedLogging(configuration);
 
@@ -23,7 +24,12 @@ public static class ApplicationServicesExtensions
             });
 
         services.AddDbContextPool<FactElectContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("FactElect.Infrastructure")) //Migrations in infrastructure library
+            .EnableSensitiveDataLogging(environment.IsDevelopment()) // Enable only in Development
+            .EnableDetailedErrors(environment.IsDevelopment())
+            .LogTo(Log.Warning, LogLevel.Warning) // Log EF Core queries using Serilog
+);
 
         string[] scopedNameSpaces =
         [

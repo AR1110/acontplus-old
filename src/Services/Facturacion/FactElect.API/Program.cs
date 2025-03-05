@@ -10,7 +10,7 @@ builder.Configuration.AddConfiguration(configuration);
 
 // Add services to the container.
 
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
 builder.Services.AddIdentityService(builder.Configuration);
 
