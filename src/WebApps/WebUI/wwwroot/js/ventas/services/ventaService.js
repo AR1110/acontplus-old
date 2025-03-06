@@ -2427,8 +2427,8 @@
                 let result = {
                     guarantors: []
                 }
-                if (response.code === "1") {
-                    let { guarantors } = JSON.parse(response.payload)
+                if (response && response.guarantors) {
+                    let { guarantors } =  response
                     result.guarantors = guarantors;
                 }
                 return result;
@@ -2436,7 +2436,7 @@
         }
 
         function post(data) {
-            return mS.getData('post', url, { data }, true)
+            return mS.getData('post', `${url}Insert/Garante`, { data }, true)
         }
     }])
 

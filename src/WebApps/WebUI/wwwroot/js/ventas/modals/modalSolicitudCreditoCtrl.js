@@ -71,13 +71,12 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, decodeTo
                 ...response
             }
             if(dataDeletedFinded){
-                let index = $scope.guarantorsDeleted.indexOf(dataDeletedFinded);
-                obj.idCreditoGarante = dataDeletedFinded.idCreditoGarante;
-                obj.tipoAccion = "U";
-                $scope.guarantorsDeleted.slice(index, 1);
-            }else{
-                obj.tipoAccion = "C"
-            }
+                tS.toastr({
+                    type: 'warning',
+                    message: 'El cliente ya se encuentra asignado y has eliminado'
+                })
+                return  
+            } 
             $scope.guarantors.push(obj);
         })
             .catch(error => {
@@ -106,8 +105,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, decodeTo
                 $scope.guarantors.splice(index, 1);
                 if(item.idCreditoGarante>0){
                     let obj = {
-                        ...item,
-                        tipoAccion: "D"
+                        ...item, 
                     }
                     $scope.guarantorsDeleted.push(obj)
                 }
@@ -165,19 +163,18 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, decodeTo
 
         let guarantors = $scope.guarantors.map((item) => {
             return {
-                idCreditoGarante: item.idCreditoGarante,
+                idCreditoGarante: item.idCreditoGarante || 0,
                 idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar,
                 idCliente: item.idCliente,
-                tipoAccion: item.tipoAccion
+                estado: 0
             }
         })
 
         let guarantorsDeleted = $scope.guarantorsDeleted.map((item) => {
             return {
-                idCreditoGarante: item.idCreditoGarante,
+                idCreditoGarante: item.idCreditoGarante || 0,
                 idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar,
-                idCliente: item.idCliente,
-                tipoAccion: item.tipoAccion
+                idCliente: item.idCliente, 
             }
         })
 
