@@ -80,6 +80,7 @@ export class AddEditProductDialogComponent implements OnInit {
   private userRoleStateSvc = inject(UserRoleStateService);
 
   title = 'Nuevo Artículo'
+  btnText = 'Guardar';
 
   subCategories = signal<any[]>([]);
   subCategoriesGroup = signal<any[]>([]);
@@ -214,6 +215,9 @@ export class AddEditProductDialogComponent implements OnInit {
   isAdd() {
     return !(this.params.idArticulo > 0);
   }
+
+
+
   ngOnInit() {
     this.userRoleStateSvc.select('permission').subscribe((p) => {
       this.isChangePrecio = p?.product?.precio;
@@ -235,6 +239,7 @@ export class AddEditProductDialogComponent implements OnInit {
           tiposIce,
           tiposIva,
         } = response;
+        console.log(response)
 
         this.estabs.set(estabs);
         this.subCategories.set(subCategorias);
@@ -269,6 +274,7 @@ export class AddEditProductDialogComponent implements OnInit {
           }
         }
 
+
         if (!(this.params.idArticulo > 0)) {
           //default data
           if (this.tiposArticulo().length > 0) {
@@ -299,6 +305,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
         //editar
         if (this.params.idArticulo > 0) {
+          this.btnText = 'Actualizar'
         }
       },
     });
