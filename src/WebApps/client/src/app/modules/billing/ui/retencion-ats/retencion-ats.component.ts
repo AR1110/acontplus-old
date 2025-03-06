@@ -6,7 +6,7 @@ import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { RetencionAtsList } from '@billing/domain/models/retencion-ats.model';
+import { RetencionAtsList } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';

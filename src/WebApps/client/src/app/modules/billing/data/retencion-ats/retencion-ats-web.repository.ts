@@ -4,12 +4,13 @@ import { map, Observable } from 'rxjs';
 import {
   RetencionAts,
   RetencionAtsList,
-} from '@billing/domain/models/retencion-ats.model';
+} from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { PATHS_API } from '@core/constants/global.constants';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
+import {DocumentoSustento} from "@billing/domain/models/retencion-ats/documento-sustento";
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
@@ -87,5 +88,24 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   }
   delete(id: number): Observable<RetencionAts> {
     throw new Error('Method not implemented.');
+  }
+  getDocs<T extends { idCard: string }>(parameters: T) {
+    const obj = {
+      ...parameters,
+      tipo: 4,
+    };
+
+    return this._http
+      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`)
+      .pipe(
+        map((response) => {
+          if (response.code !== '1') {
+            return { documents: [] };
+          }
+          const { documents } = JSON.parse(response.payload as string);
+
+          return { documents: documents as DocumentoSustento[] };
+        }),
+      );
   }
 }
