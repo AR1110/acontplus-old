@@ -305,14 +305,14 @@
             try {
                 showLoader();
                 aprobacionDocSvc.findById(item.idAprob_Document).then(response => { 
-                    let modalRef = modalSvc.openWithComponent({
-                        // controller: 'ModalApproveDocCtrl',
-                        // template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',
-                        // size: 'xl',
+                    let modalRef = modalSvc.open({
+                        controller: 'ModalApproveDocCtrl',
+                        template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',
+                        size: 'xl',
                         // windowClass: 'uibModalFullScreen',
 
-                        component:'aprobarDocumentoComponente',  
-                        size: 'xl',
+                   //     component:'aprobarDocumentoComponente',  
+                    //    size: 'xl',
                         windowClass: 'uibModalFullScreen',
                         // params: {
                         //     mainDataForm
