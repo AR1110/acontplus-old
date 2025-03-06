@@ -150,84 +150,89 @@ BEGIN
 			    RETURN
 		    END
 
-        --> FOR RETENCION ATS
+        --> FOR EMIT RETENCION ATS
 	IF @tipo = 4
 		BEGIN
 			DECLARE @idCard VARCHAR(25);
 
-            SET @tableNames = 'comprobantes';
+            SET @tableNames = 'documents';
 
-            SELECT @idCard = idCard FROM OPENJSON(@json) WITH (idCard VARCHAR(20))
+            SELECT @idCard = idCard FROM OPENJSON(@json) WITH (idCard VARCHAR(25));
 
             DECLARE @docsFounded AS TABLE(
-				 idDocumento INT
-				,documento VARCHAR(50)
-				,secuencial VARCHAR(25)
-				,fechaEmision DATETIME
-				,isAutomatic BIT
-			)
+				idDocumento INT, 
+                documentName VARCHAR(100),
+                numDocSustento VARCHAR(50) NOT NULL,
+				fechaEmisionDocSustento VARCHAR(25),
+                numAutDocSustento VARCHAR(50) NOT NULL,
+                importeTotal NUMERIC(18,2),
+				isAutomatic BIT
+			);
 
-			INSERT INTO @docsFounded(idDocumento, documento, secuencial, fechaEmision, isAutomatic)
-			SELECT de.idFacturaCompra idDocumento
-			,'Factura' documento
-			,secuencial = (de.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), de.nroDocumento),9))
-			,de.fechaEmision
-			,0
-			FROM dbo.FacturaCompra       de WITH (NOLOCK)
-			INNER JOIN dbo.Proveedor     pr WITH (NOLOCK) ON pr.idProveedor = de.idProveedor
+			INSERT INTO @docsFounded(idDocumento, documentName, numDocSustento,
+            fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
+			SELECT fc.idFacturaCompra,'Factura Física',(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9))
+            ,fc.fechaEmision,fc.nroAutorizacion,fc.total,CAST(0 AS BIT)
+			FROM dbo.FacturaCompra       fc WITH (NOLOCK)
+			INNER JOIN dbo.Proveedor     pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id          = pr.CustomerId
-			WHERE de.idEntidad = @idEntidad
-			  AND de.estado = 1
+			WHERE fc.idEntidad = @idEntidad
+			  AND fc.estado = 1
               AND cu.IDCard = @idCard 
-			  AND de.retencion = 0 
-			  AND REPLACE(de.puntoEmision,'-','')+Helper.F_Auto_Sequential(de.nroDocumento) 
-			NOT IN 
-            (
-                    SELECT rd.numDocSustento
-					FROM FactElect.RetencionAts            ra WITH (NOLOCK)
-                    INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
-					INNER JOIN FactElect.RetAtsDocSustento rd WITH (NOLOCK) ON ra.idRetencionAts         = rd.idRetencionAts
-					INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                    INNER JOIN sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-					WHERE es.idEntidad   = @idEntidad 
-                      AND ra.idProveedor = pr.idProveedor
-                      AND ra.anuladaSri  = 0
-			)
-			--print convert(varchar(10), @byentidad)
-			INSERT INTO @docsFounded(idDocumento, documento, secuencial, fechaEmision, isAutomatic)
+			  AND fc.retencion = 0
+              AND MONTH(fc.fechaEmision) = MONTH(GETDATE())
+			  AND REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) 
+			    NOT IN 
+                (
+                        SELECT rd.numDocSustento
+					    FROM FactElect.RetencionAts            ra WITH (NOLOCK)
+                        INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
+					    INNER JOIN FactElect.RetAtsDocSustento rd WITH (NOLOCK) ON ra.idRetencionAts         = rd.idRetencionAts
+					    INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+                        INNER JOIN sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+					    WHERE es.idEntidad   = @idEntidad 
+                          AND ra.idProveedor = pr.idProveedor
+                          AND ra.anuladaSri  = 0
+			    ) 
+            
+
+			INSERT INTO @docsFounded(idDocumento, documentName, numDocSustento, fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
 			SELECT dr.idDocumento
-			,documento = CASE 
+			,CASE 
 							WHEN dr.codDoc = '01' THEN 'Factura'
 							WHEN dr.codDoc = '04' THEN 'Nota de Crédito'
 							WHEN dr.codDoc = '06' THEN 'Guía de Remisión'
 							WHEN dr.codDoc = '07' THEN 'Comprobante de Retención'
 						 END
-			,secuencial = dr.serieComprobante-- REPLACE(dr.serieComprobante, '-', '')
-			,fechaEmision = CONVERT(DATETIME, dr.fechaEmision, 103)
-			,isAutomatic = 1
+			,dr.serieComprobante
+			,dr.fechaEmision
+            ,dr.claveAcceso
+            ,ISNULL(dr.importeTotal, 0)
+			,CAST(1 AS BIT)
  			FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento   e ON e.idEstablecimiento = dr.idEstablecimiento
  			WHERE e.idEntidad = @idEntidad
 			  AND dr.estado = 1
               AND dr.rucEmisor = @idCard
               AND dr.codDoc = '01'
+              AND MONTH(dr.fechaEmision) = MONTH(GETDATE())
 			  AND REPLACE(dr.serieComprobante, '-', '') 
-			NOT IN (
+			    NOT IN (
                     
-                    SELECT rd.numDocSustento
-					FROM FactElect.RetencionAts             ra WITH (NOLOCK)
-                    INNER JOIN dbo.DocumentoElectronico     de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
-                    INNER JOIN dbo.Proveedor                pr WITH (NOLOCK) ON pr.idProveedor            = ra.idProveedor
-					INNER JOIN FactElect.RetAtsDocSustento  rd WITH (NOLOCK) ON rd.idRetencionAts         = ra.idRetencionAts
-					INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                    INNER JOIN sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-                    INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
-					WHERE es.idEntidad = @idEntidad 
-                      AND cu.IDCard = dr.rucEmisor
-                      AND ra.anuladaSri = 0
-			       )
-			SELECT * FROM @docsFounded ORDER BY fechaEmision DESC
-			RETURN
+                        SELECT rd.numDocSustento
+					    FROM FactElect.RetencionAts             ra WITH (NOLOCK)
+                        INNER JOIN dbo.DocumentoElectronico     de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
+                        INNER JOIN dbo.Proveedor                pr WITH (NOLOCK) ON pr.idProveedor            = ra.idProveedor
+					    INNER JOIN FactElect.RetAtsDocSustento  rd WITH (NOLOCK) ON rd.idRetencionAts         = ra.idRetencionAts
+					    INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+                        INNER JOIN sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+                        INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
+					    WHERE es.idEntidad = @idEntidad 
+                          AND cu.IDCard = dr.rucEmisor
+                          AND ra.anuladaSri = 0
+			           )
+              
+			SELECT * FROM @docsFounded ORDER BY fechaEmisionDocSustento DESC
 		END
     
     -->For retetenciones ats
