@@ -245,20 +245,20 @@
       }
     </mat-card>
 
-    <mat-accordion multi>
+    <mat-accordion multi formArrayName="docSustento">
       @for (item of docSustento; track $index) {
         <mat-expansion-panel
           [expanded]="panelOpenState === $index"
           (opened)="setPanelOpen($index)"
           (closed)="setPanelOpen(-1)"
-          formGroupName="docSustento-{{ $index }}}"
+          [formGroupName]="$index"
         >
           <mat-expansion-panel-header class="mb-5 mb-md-0">
             <mat-panel-title class="pt-5 pt-md-0"
-              >{{ item.nroDocumento }}
+              >{{ item.numDocSustento }}
             </mat-panel-title>
             <mat-panel-description class="pt-5 pt-md-0">
-              <h5>{{ item.proveedor }}</h5>
+              <h5>{{ item.fechaEmisionDocSustento }}</h5>
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div class="table-responsive">

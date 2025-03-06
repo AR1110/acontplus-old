@@ -2,9 +2,10 @@ import { Observable } from 'rxjs';
 import {
   RetencionAts,
   RetencionAtsList,
-} from '@billing/domain/models/retencion-ats.model';
+} from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { GroupedEstab } from '@core/models/estab.model';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
+import {DocumentoSustento} from "@billing/domain/models/retencion-ats/documento-sustento";
 
 export abstract class RetencionAtsRepository {
   abstract getDataForm(parameters: unknown): Observable<{
@@ -32,4 +33,7 @@ export abstract class RetencionAtsRepository {
   abstract create(data: RetencionAts): Observable<RetencionAts>;
   abstract update(data: RetencionAts): Observable<RetencionAts>;
   abstract delete(id: number): Observable<RetencionAts>;
+  abstract getDocs(parameters: unknown): Observable<{
+    documents: DocumentoSustento[];
+  }>;
 }

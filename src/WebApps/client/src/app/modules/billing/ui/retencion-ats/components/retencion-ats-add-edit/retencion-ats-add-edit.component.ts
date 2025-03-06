@@ -27,6 +27,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
+import { DocumentoSustento } from '@billing/domain/models/retencion-ats/documento-sustento';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -69,34 +70,36 @@ export class RetencionAtsAddEditComponent {
     idProveedor: [0],
     periodoFiscal: [''],
     fechaEmision: [''],
-    docSustento: this._fb.group({
-      idRetAtsDocSustento: [0],
-      uniqueIdDoc: [''],
-      codSustento: [''],
-      codDocSustento: [''],
-      numDocSustento: [''],
-      fechaEmisionDocSustento: [''],
-      fechaRegistroContable: [''],
-      numAutDocSustento: [''],
-      pagoLocExt: [''],
-      tipoRegi: [''],
-      paisEfecPago: [''],
-      aplicConvDobTrib: [''],
-      pagExtSujRetNorLeg: [''],
-      pagoRegFis: [''],
-      totalComprobantesReembolsos: [''],
-      totalBaseImponibleReembolso: [''],
-      totalImpuestoReembolso: [''],
-      totalSinImpuestos: [''],
-      importeTotal: [''],
-      taxes: this._fb.array([]),
-      retenciones: this._fb.array([]),
-      reembolsos: this._fb.group({
-        id: [0],
+    docSustento: this._fb.array([
+      this._fb.group({
+        idRetAtsDocSustento: [0],
+        uniqueIdDoc: [''],
+        codSustento: [''],
+        codDocSustento: [''],
+        numDocSustento: [''],
+        fechaEmisionDocSustento: [''],
+        fechaRegistroContable: [''],
+        numAutDocSustento: [''],
+        pagoLocExt: [''],
+        tipoRegi: [''],
+        paisEfecPago: [''],
+        aplicConvDobTrib: [''],
+        pagExtSujRetNorLeg: [''],
+        pagoRegFis: [''],
+        totalComprobantesReembolsos: [''],
+        totalBaseImponibleReembolso: [''],
+        totalImpuestoReembolso: [''],
+        totalSinImpuestos: [''],
+        importeTotal: [''],
         taxes: this._fb.array([]),
+        retenciones: this._fb.array([]),
+        reembolsos: this._fb.group({
+          id: [0],
+          taxes: this._fb.array([]),
+        }),
+        payments: this._fb.array([]),
       }),
-      payments: this._fb.array([]),
-    }),
+    ]),
     infoAdicional: this._fb.array([]),
   });
 
@@ -109,7 +112,7 @@ export class RetencionAtsAddEditComponent {
   tiposSujRetenido: any[] = [];
   isNotForeign = true;
   genericAnswer: any[] = [{ codigo: 'SI' }, { codigo: 'NO' }];
-  docSustento: any[] = [];
+  docSustento: DocumentoSustento[] = [];
   documentos: any[] = [];
   sustentosFiltered: any[] = [];
   isPagoResidente = true;
@@ -216,11 +219,17 @@ export class RetencionAtsAddEditComponent {
       size: 'lg',
       data: {
         idProveedor: this.retencionAtsForm.get('idProveedor')?.value,
+        idCard: this.retencionAtsForm.get('identificacionSujetoRetenido')
+          ?.value,
       },
     });
 
     dialogRef.subscribe((response) => {
-      console.log(response);
+      const { documents } = response;
+      if (documents.length > 0) {
+        this.docSustento = documents;
+        console.log(this.docSustento);
+      }
     });
   }
 

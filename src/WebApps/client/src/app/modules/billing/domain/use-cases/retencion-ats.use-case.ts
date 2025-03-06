@@ -14,4 +14,8 @@ export class RetencionAtsUseCase {
   getAll<T>(parameters: T) {
     return this._retencionAtsRepository.getAll(parameters);
   }
+
+  getDocs(parameters: unknown) {
+    return this._retencionAtsRepository.getDocs(parameters);
+  }
 }
