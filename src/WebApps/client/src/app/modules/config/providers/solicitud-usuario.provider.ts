@@ -1,8 +1,8 @@
 import { ClassProvider } from '@angular/core';
-import { PrinterWebRepository } from '@modules/config/data/printer/printer-web.repository';
-import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
+import {SolicitudUsuarioRepository} from "@modules/config/domain/repositories/solicitud-usuario.repository";
+import {SolicitudUsuarioWebRepository} from "@modules/config/data/printer/solicitud-usuario-web.repository";
 
-export const printerProvider: ClassProvider = {
-  provide: PrinterRepository,
-  useClass: PrinterWebRepository,
+export const solicitudUsuarioProvider: ClassProvider = {
+  provide: SolicitudUsuarioRepository,
+  useClass: SolicitudUsuarioWebRepository,
 };

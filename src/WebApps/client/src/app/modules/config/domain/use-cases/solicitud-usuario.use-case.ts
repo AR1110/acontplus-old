@@ -1,40 +1,22 @@
 import { inject, Injectable } from '@angular/core';
-import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
+import {SolicitudUsuarioRepository} from "@modules/config/domain/repositories/solicitud-usuario.repository";
 
 @Injectable({
   providedIn: 'root',
 })
-export class PrinterUseCase {
-  private readonly _printerRepository = inject(PrinterRepository);
+export class SolicitudUsuarioUseCase {
+  private readonly _repo = inject(SolicitudUsuarioRepository);
 
-  getPrinters() {
-    return this._printerRepository.getPrinters();
-  }
-
-  getDataForm() {
-    return this._printerRepository.getDataForm();
+  getFilter() {
+    return this._repo.getFilter();
   }
 
-  getLocalPrinters() {
-    return this._printerRepository.getLocalPrinters();
+  getAll<T>(obj:T) {
+    return this._repo.getAll(obj);
   }
 
-  getById(id: number) {
-    return this._printerRepository.getById(id);
+  put<T>(obj:T) {
+    return this._repo.put(obj);
   }
 
-  updateStatus<T>(id: number, printer: T) {
-    return this._printerRepository.updateStatus(id, printer);
-  }
-
-  removePrinter(id: number) {
-    return this._printerRepository.removePrinter(id);
-  }
-
-  create<T>(printer: T) {
-    return this._printerRepository.create(printer);
-  }
-  update<T>(id: number, printer: T) {
-    return this._printerRepository.update(id, printer);
-  }
 }
