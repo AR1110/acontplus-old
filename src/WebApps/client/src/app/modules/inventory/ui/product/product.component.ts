@@ -96,6 +96,7 @@ export class ProductComponent {
   isLoadingResults = false;
   pageEvent!: PageEvent;
   dataSearch = model({
+    filterMode: 4,
     textSearch: null as string | null,
     checkBoxFraccionado: false,
     checkBoxInventario: false,
