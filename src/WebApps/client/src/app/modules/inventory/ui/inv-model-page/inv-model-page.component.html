@@ -25,7 +25,7 @@
       [tableData]="dataSource.data" [columnDefinitions]="columnsDefs" [visibleColumns]="columns"
     [paginationConfig]="pagination()"
       [enablePagination]="true"
-      (onPageEvent)="handlePageEvent($event)"
+      (pageEvent)="handlePageEvent($event)"
       [templateOp]="templateOp"
     >
 

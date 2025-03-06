@@ -28,7 +28,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { TableCellIndex } from '@shared/models/mat-table-models/table-cell-index.model';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSortModule } from '@angular/material/sort';
-import { CommonModule, DatePipe, DecimalPipe,  NgClass } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -85,10 +85,10 @@ export class MatDynamicTableComponent<T> {
 
   @Input() showSelectBox: boolean = false;
   @Input() tableData: T[] = [];
-  @Output() rowSelected = new EventEmitter<T>();
+  @Output() rowSelected = new EventEmitter<T[]>();
   @Output() copyRow = new EventEmitter<T>();
-  onShowExpanded = output<T>();
-  onHideExpanded = output<T>();
+  showExpanded = output<T>();
+  hideExpanded = output<T>();
 
   dataSource = new MatTableDataSource<T>([]);
   selection: SelectionModel<T> = new SelectionModel<T>(true, []);
@@ -111,16 +111,14 @@ export class MatDynamicTableComponent<T> {
   expandedElement!: T | null;
 
   enablePagination = input(false);
-  onPageEvent = output<PageEvent>();
+  pageEvent = output<PageEvent>();
   paginationConfig = input<Pagination>();
 
   handlePageEvent(e: PageEvent) {
-    this.onPageEvent.emit(e);
+    this.pageEvent.emit(e);
   }
 
   isLoadingData = input<boolean>(false);
-
-  constructor() {}
 
   ngAfterContentInit(): void {
     this.columnDefs.forEach((columnDef) => this.table.addColumnDef(columnDef));
@@ -165,7 +163,8 @@ export class MatDynamicTableComponent<T> {
   }
 
   selectRow(row: T): void {
-    this.rowSelected.emit(row); // this.selection.selected
+    // this.rowSelected.emit(row);
+    this.rowSelected.emit(this.selection.selected);
   }
 
   // ----START CHECKBOX LOGIC
@@ -237,9 +236,9 @@ export class MatDynamicTableComponent<T> {
     $event.stopPropagation();
     this.expandedElement = this.expandedElement === element ? null : element;
     if (this.expandedElement) {
-      this.onShowExpanded.emit(element);
+      this.showExpanded.emit(element);
     } else {
-      this.onHideExpanded.emit(element);
+      this.hideExpanded.emit(element);
     }
   }
 }

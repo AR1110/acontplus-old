@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import {MatButton, MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { Room } from '@restaurant/domain/models/room.model';
 import { ModalService } from '@core/services/modal.service';
 import { RoomAddEditModalComponent } from '@restaurant/ui/room/room-add-edit-modal/room-add-edit-modal.component';
@@ -16,29 +15,27 @@ import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatIconModule} from "@angular/material/icon";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-room-list',
-    imports: [
-        FaIconComponent,
-        MatButton,
-        FormsModule,
-      MatFormFieldModule,
-      MatInputModule,
-      MatSelectModule,
-      MatIconModule,
-      MatButtonModule,
-        TabulatorSemanticUiComponent,
-    ],
-    templateUrl: './room-list.component.html',
-    styles: ``
+  selector: 'app-room-list',
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconModule,
+    MatButtonModule,
+    TabulatorSemanticUiComponent,
+  ],
+  templateUrl: './room-list.component.html',
+  styles: ``,
 })
 export class RoomListComponent {
-  establecimientoId: number = 0;
+  establecimientoId = 0;
   columnNames = [
     { title: 'floorId', field: 'floorId', visible: false },
     {
@@ -155,8 +152,8 @@ export class RoomListComponent {
     this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
 
-      let dataEstab = this.establecimientos.find(item=>item.predeterminado);
-      if(dataEstab){
+      let dataEstab = this.establecimientos.find((item) => item.predeterminado);
+      if (dataEstab) {
         this.establecimientoId = dataEstab.idEstablecimiento;
         setTimeout(() => {
           this.loadData(this.establecimientoId);
@@ -179,8 +176,8 @@ export class RoomListComponent {
     });
   }
 
-  refresh(){
-    this.loadData(this.establecimientoId)
+  refresh() {
+    this.loadData(this.establecimientoId);
   }
 
   ngOnInit() {
