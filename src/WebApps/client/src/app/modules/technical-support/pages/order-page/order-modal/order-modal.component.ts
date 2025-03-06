@@ -1,5 +1,10 @@
-import {Component, inject,  ViewChild, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormGroup,  ReactiveFormsModule, Validators} from '@angular/forms';
+import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -20,11 +25,7 @@ import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
-import {
-  faSave,
-  faTrashAlt,
-} from '@fortawesome/free-regular-svg-icons';
-import { InputDateComponent } from '@shared/components/input-date/input-date.component';
+import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -32,24 +33,24 @@ import {
   formatDateToString,
   isDateValid,
 } from '@core/utils/date.util';
-import { CommonModule, DatePipe} from '@angular/common';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { CommonModule, DatePipe } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-    selector: 'app-order-modal',
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        FontAwesomeModule,
-        CompanyCustomerSearchComponent,
-        DeviceSearchComponent,
-        NgbAccordionModule,
-        TabulatorComponent,
-    ],
-    templateUrl: './order-modal.component.html',
-    styles: ``,
-    encapsulation: ViewEncapsulation.None,
-    providers: [DatePipe]
+  selector: 'app-order-modal',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    CompanyCustomerSearchComponent,
+    DeviceSearchComponent,
+    NgbAccordionModule,
+    TabulatorComponent,
+  ],
+  templateUrl: './order-modal.component.html',
+  styles: ``,
+  encapsulation: ViewEncapsulation.None,
+  providers: [DatePipe],
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
@@ -215,18 +216,18 @@ export class OrderModalComponent {
       cancelButtonText: 'No',
     }).then((response) => {
       if (response.isConfirmed) {
-        this.oDS.delete(detail.id).subscribe( (response) => {
-            if (isApiResponse(response)) {
-              this.tS.toastr({
-                type: response.code == '1' ? 'success' : 'warning',
-                message: response.message,
-              });
-              if (response.code == '1') {
-                this.orderDetails = this.orderDetails.filter(
-                  (x) => x.id != detail.id
-                );
-              }
+        this.oDS.delete(detail.id).subscribe((response) => {
+          if (isApiResponse(response)) {
+            this.tS.toastr({
+              type: response.code == '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code == '1') {
+              this.orderDetails = this.orderDetails.filter(
+                (x) => x.id != detail.id,
+              );
             }
+          }
         });
       }
     });
@@ -237,68 +238,66 @@ export class OrderModalComponent {
   }
 
   editDetail(detail: any) {
-
-    this.oDS.put(detail.id, detail).subscribe(  (response) => {
-        if (isApiResponse(response)) {
-          this.tS.toastr({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-        }
+    this.oDS.put(detail.id, detail).subscribe((response) => {
+      if (isApiResponse(response)) {
+        this.tS.toastr({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+      }
     });
   }
 
   get() {
-
     let parameters = { tipo: 1, id: this.data.id };
     if (this.data.id > 0) {
       this.modalTitle = 'Editar Orden';
       this.modalIcon = 'edit';
     }
-    this.orderService.get(parameters).subscribe( (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '1') {
-            let parsedResponse = JSON.parse(response.payload as string);
-            let { puntosEmision, users } = parsedResponse;
-            this.establecimientos = groupEstabUtil({
-              estabs: puntosEmision,
-              isGroupPuntoEmision: true,
+    this.orderService.get(parameters).subscribe((response) => {
+      if (isApiResponse(response)) {
+        if (response.code == '1') {
+          let parsedResponse = JSON.parse(response.payload as string);
+          let { puntosEmision, users } = parsedResponse;
+          this.establecimientos = groupEstabUtil({
+            estabs: puntosEmision,
+            isGroupPuntoEmision: true,
+          });
+          const dataEstab = this.establecimientos.find(
+            (estab) => estab.defaultEstab,
+          );
+          if (dataEstab) {
+            this.orderForm.patchValue({
+              establecimientoId: dataEstab.idEstablecimiento,
             });
-            const dataEstab = this.establecimientos.find(
-              (estab) => estab.defaultEstab
+            this.order.codEstab = dataEstab.codEstab;
+            this.puntosEmision = dataEstab.puntosEmision;
+            const dataPuntoEmision = this.puntosEmision.find(
+              (ptoEmi) => ptoEmi.defaultPtoEmi,
             );
-            if (dataEstab) {
+            if (dataPuntoEmision) {
               this.orderForm.patchValue({
-                establecimientoId: dataEstab.idEstablecimiento,
+                puntoEmisionId: dataPuntoEmision.idPuntoEmision,
               });
-              this.order.codEstab = dataEstab.codEstab;
-              this.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = this.puntosEmision.find(
-                (ptoEmi) => ptoEmi.defaultPtoEmi
-              );
-              if (dataPuntoEmision) {
-                this.orderForm.patchValue({
-                  puntoEmisionId: dataPuntoEmision.idPuntoEmision,
-                });
-              }
-            }
-            this.users = users;
-            if (this.data.id > 0) {
-              let { order, orderDetails } = parsedResponse;
-              this.order = order[0];
-              this.customerBusinessName = this.order.businessName;
-              this.orderDetails = orderDetails || [];
-              this.orderForm.patchValue(this.order);
             }
           }
+          this.users = users;
+          if (this.data.id > 0) {
+            let { order, orderDetails } = parsedResponse;
+            this.order = order[0];
+            this.customerBusinessName = this.order.businessName;
+            this.orderDetails = orderDetails || [];
+            this.orderForm.patchValue(this.order);
+          }
         }
+      }
     });
   }
 
   getDevices() {
     const modalRef = this.modalService.openModalCustom(
       DeviceListModalComponent,
-      { size: 'lg', centered: true, backdrop: true }
+      { size: 'lg', centered: true, backdrop: true },
     );
     modalRef.componentInstance.data = {
       customerCompanyId: this.order.customerCompanyId,
@@ -326,7 +325,7 @@ export class OrderModalComponent {
     let establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
       let estabs = this.establecimientos.find(
-        (x) => x.idEstablecimiento == Number(establecimientoId)
+        (x) => x.idEstablecimiento == Number(establecimientoId),
       );
       this.puntosEmision = estabs?.puntosEmision || [];
       let puntoEmisionId =
@@ -411,20 +410,16 @@ export class OrderModalComponent {
       fechaEmision: formatDateToString(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
-
       this.orderService.put(this.data.id, dataToSave).subscribe({
         next: this.successResponse,
-
       });
     } else {
-
       this.orderService.post(dataToSave).subscribe({
         next: this.successResponse,
       });
     }
   }
   successResponse = (response: object) => {
-
     if (isApiResponse(response)) {
       this.tS.toastr({
         type: response.code == '1' ? 'success' : 'warning',
