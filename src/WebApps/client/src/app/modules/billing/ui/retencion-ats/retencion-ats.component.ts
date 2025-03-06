@@ -62,7 +62,7 @@ export class RetencionAtsComponent {
 
   onDialogOpen() {
     const dialogRef = this._dialogService.open(RetencionAtsAddEditComponent, {
-      size: 'xl',
+      size: 'xxl',
     });
 
     dialogRef.subscribe((response) => {

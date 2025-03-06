@@ -246,7 +246,7 @@
     </mat-card>
 
     <mat-accordion multi formArrayName="docSustento">
-      @for (item of docSustento; track $index) {
+      @for (item of docSustentoArray.controls; track $index) {
         <mat-expansion-panel
           [expanded]="panelOpenState === $index"
           (opened)="setPanelOpen($index)"
@@ -255,10 +255,10 @@
         >
           <mat-expansion-panel-header class="mb-5 mb-md-0">
             <mat-panel-title class="pt-5 pt-md-0"
-              >{{ item.numDocSustento }}
+              >{{ item.get("numDocSustento")?.value }}
             </mat-panel-title>
             <mat-panel-description class="pt-5 pt-md-0">
-              <h5>{{ item.fechaEmisionDocSustento }}</h5>
+              <h5>{{ item.get("fechaEmisionDocSustento")?.value }}</h5>
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div class="table-responsive">
@@ -268,7 +268,7 @@
                   <label for="codDocSustento">Documento Sustento:</label>
                   <select
                     id="codDocSustento"
-                    class="form-control"
+                    class="form-select"
                     formControlName="codDocSustento"
                     (change)="selectSutento()"
                   >
@@ -287,7 +287,7 @@
                   <label for="codSustento">Sustento Tributario:</label>
                   <select
                     id="codSustento"
-                    class="form-control"
+                    class="form-select"
                     formControlName="codSustento"
                     [disabled]="sustentosFiltered.length === 0"
                   >
@@ -364,7 +364,7 @@
                   <label for="pagoLocExt">Pago Local Exterior:</label>
                   <select
                     id="pagoLocExt"
-                    class="form-control"
+                    class="form-select"
                     formControlName="pagoLocExt"
                     (change)="enableControls()"
                     required
@@ -384,7 +384,7 @@
                   <label for="tipoRegi">Regimen Fiscal:</label>
                   <select
                     id="tipoRegi"
-                    class="form-control"
+                    class="form-select"
                     formControlName="tipoRegi"
                     (change)="getCountries()"
                     [disabled]="isPagoResidente"
@@ -406,7 +406,7 @@
                   <label for="paisEfecPago">Pais Efec. Pago:</label>
                   <select
                     id="paisEfecPago"
-                    class="form-control"
+                    class="form-select"
                     formControlName="paisEfecPago"
                     [disabled]="isPagoResidente"
                   >
@@ -427,7 +427,7 @@
                   >
                   <select
                     id="aplicConvDobTrib"
-                    class="form-control"
+                    class="form-select"
                     formControlName="aplicConvDobTrib"
                     [disabled]="isPagoResidente"
                   >
@@ -448,7 +448,7 @@
                   <!--                  disabled =  isPagoResidente || docSustento.aplicConvDobTrib === 'SI'-->
                   <select
                     id="pagExtSujRetNorLeg"
-                    class="form-control"
+                    class="form-select"
                     formControlName="pagExtSujRetNorLeg"
                   >
                     <option>::seleccione::</option>
@@ -465,7 +465,7 @@
                   <label for="pagoRegFis">Pago Regimen Fiscal:</label>
                   <select
                     id="pagoRegFis"
-                    class="form-control"
+                    class="form-select"
                     formControlName="pagoRegFis"
                     [disabled]="isPagoResidente"
                   >
@@ -522,14 +522,22 @@
             </div>
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-                <button
-                  type="button"
-                  id="btnAddDocSust"
-                  mat-raised-button
-                  title="Click para agregar documento de sustento"
-                >
-                  <mat-icon>save</mat-icon> Guardar
-                </button>
+                <app-theme-button
+                  text="Guardar"
+                  variant="success"
+                  icon="save"
+                  type="submit"
+                  [disabled]="
+                    !docSustentoArray.get('idRetAtsDocSustento')?.value
+                  "
+                ></app-theme-button>
+                <app-theme-button
+                  text="Eliminar"
+                  variant="danger"
+                  icon="save"
+                  type="submit"
+                  (handleClick)="removeDocSustento($index)"
+                ></app-theme-button>
               </div>
             </div>
           </div>
