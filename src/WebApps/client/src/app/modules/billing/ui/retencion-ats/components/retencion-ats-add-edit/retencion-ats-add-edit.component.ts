@@ -1,8 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CurrencyPipe, DatePipe, NgClass, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -13,8 +12,6 @@ import {
   MatCardActions,
   MatCardContent,
   MatCardFooter,
-  MatCardHeader,
-  MatCardTitle,
 } from '@angular/material/card';
 import {
   MatAccordion,
@@ -28,22 +25,18 @@ import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
 import { DocumentoSustento } from '@billing/domain/models/retencion-ats/documento-sustento';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { formatDate, formatDateToString } from '@core/utils/date.util';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
     MatCustomDialogComponent,
     ReactiveFormsModule,
-    NgClass,
     MatIcon,
-    CurrencyPipe,
-    DatePipe,
-    SlicePipe,
     MatButton,
     MatCard,
     MatCardContent,
     MatCardFooter,
-    MatCardHeader,
-    MatCardTitle,
     MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelTitle,
@@ -51,11 +44,12 @@ import { DocumentoSustento } from '@billing/domain/models/retencion-ats/document
     MatExpansionPanelDescription,
     SupplierSearchComponent,
     MatCardActions,
+    ThemeButtonComponent,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
 })
-export class RetencionAtsAddEditComponent {
+export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
@@ -70,36 +64,7 @@ export class RetencionAtsAddEditComponent {
     idProveedor: [0],
     periodoFiscal: [''],
     fechaEmision: [''],
-    docSustento: this._fb.array([
-      this._fb.group({
-        idRetAtsDocSustento: [0],
-        uniqueIdDoc: [''],
-        codSustento: [''],
-        codDocSustento: [''],
-        numDocSustento: [''],
-        fechaEmisionDocSustento: [''],
-        fechaRegistroContable: [''],
-        numAutDocSustento: [''],
-        pagoLocExt: [''],
-        tipoRegi: [''],
-        paisEfecPago: [''],
-        aplicConvDobTrib: [''],
-        pagExtSujRetNorLeg: [''],
-        pagoRegFis: [''],
-        totalComprobantesReembolsos: [''],
-        totalBaseImponibleReembolso: [''],
-        totalImpuestoReembolso: [''],
-        totalSinImpuestos: [''],
-        importeTotal: [''],
-        taxes: this._fb.array([]),
-        retenciones: this._fb.array([]),
-        reembolsos: this._fb.group({
-          id: [0],
-          taxes: this._fb.array([]),
-        }),
-        payments: this._fb.array([]),
-      }),
-    ]),
+    docSustento: this._fb.array([]),
     infoAdicional: this._fb.array([]),
   });
 
@@ -131,16 +96,9 @@ export class RetencionAtsAddEditComponent {
   paginationLimit = 5;
 
   // Info adicional
-  infoAdicional: any[] = [];
+  infoAdicional: unknown[] = [];
   panelOpenState = -1;
   // Computed properties
-  get startIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage;
-  }
-
-  get endIndex(): number {
-    return this.startIndex + this.itemsPerPage;
-  }
 
   dialogIcon = signal('add');
   dialogTitle = signal('Registrar Retención ATS');
@@ -153,6 +111,75 @@ export class RetencionAtsAddEditComponent {
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _dialogService = inject(DialogService);
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage;
+  }
+
+  get endIndex(): number {
+    return this.startIndex + this.itemsPerPage;
+  }
+
+  get docSustentoArray() {
+    return this.retencionAtsForm.get('docSustento') as FormArray;
+  }
+
+  addDocSustento() {
+    this.docSustentoArray.push(this.createDocSustentoGroup());
+  }
+  // Add a docSustento with predefined values
+  addDocSustentoWithValues(doc: any) {
+    const docGroup = this.createDocSustentoGroup();
+
+    let formattedFecha = '';
+
+    // Check if fecha is a valid date before formatting
+    if (doc.fechaEmisionDocSustento) {
+      const parsedDate = new Date(doc.fechaEmisionDocSustento);
+      if (!isNaN(parsedDate.getTime())) {
+        formattedFecha = parsedDate.toISOString().split('T')[0];
+      }
+    }
+    console.log(formattedFecha);
+    // Patch the values into the form
+    docGroup.patchValue({ ...doc, fechaEmisionDocSustento: formattedFecha });
+    this.docSustentoArray.push(docGroup);
+  }
+
+  // Remove a docSustento at a specific index
+  removeDocSustento(index: number) {
+    this.docSustentoArray.removeAt(index);
+  }
+  // Create a new docSustento FormGroup
+  createDocSustentoGroup() {
+    return this._fb.group({
+      idRetAtsDocSustento: [0],
+      uniqueIdDoc: [''],
+      codSustento: [''],
+      codDocSustento: [''],
+      numDocSustento: [''],
+      fechaEmisionDocSustento: [''],
+      fechaRegistroContable: [''],
+      numAutDocSustento: [''],
+      pagoLocExt: [''],
+      tipoRegi: [''],
+      paisEfecPago: [''],
+      aplicConvDobTrib: [''],
+      pagExtSujRetNorLeg: [''],
+      pagoRegFis: [''],
+      totalComprobantesReembolsos: [''],
+      totalBaseImponibleReembolso: [''],
+      totalImpuestoReembolso: [''],
+      totalSinImpuestos: [''],
+      importeTotal: [''],
+      taxes: this._fb.array([]),
+      retenciones: this._fb.array([]),
+      reembolsos: this._fb.group({
+        id: [0],
+        taxes: this._fb.array([]),
+      }),
+      payments: this._fb.array([]),
+    });
+  }
 
   initialLoad() {
     this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
@@ -163,6 +190,9 @@ export class RetencionAtsAddEditComponent {
   }
 
   ngOnInit() {
+    const fechaEmision = formatDateToString(new Date());
+    console.log(fechaEmision);
+    this.retencionAtsForm.get('fechaEmision')?.setValue(fechaEmision);
     this.initialLoad();
   }
 
@@ -225,10 +255,15 @@ export class RetencionAtsAddEditComponent {
     });
 
     dialogRef.subscribe((response) => {
-      const { documents } = response;
-      if (documents.length > 0) {
-        this.docSustento = documents;
-        console.log(this.docSustento);
+      if (response !== 'undefined') {
+        const { documents } = response;
+        if (documents.length > 0) {
+          this.docSustento = documents;
+          console.log(this.docSustento);
+          this.docSustento.forEach((doc) => {
+            this.addDocSustentoWithValues(doc);
+          });
+        }
       }
     });
   }
@@ -247,10 +282,6 @@ export class RetencionAtsAddEditComponent {
 
   removeTaxTemp(index: number): void {
     this.tempTaxes.splice(index, 1);
-  }
-
-  addDocSustento(validate: boolean): void {
-    // Add document sustento logic
   }
 
   updateDocSustento(): void {
