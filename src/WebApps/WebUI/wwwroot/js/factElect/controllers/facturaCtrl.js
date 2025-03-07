@@ -187,7 +187,7 @@
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
-                    byUsuario: $scope.dataSearch.byUsuario,
+                    idUsuario: $scope.dataSearch.byUsuario,
                     byEstado: $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
