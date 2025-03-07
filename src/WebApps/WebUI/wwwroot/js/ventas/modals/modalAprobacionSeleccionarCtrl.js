@@ -433,7 +433,7 @@ app.component("modalAprobacionSeleccionarDoc", {
                 
 
                 let modalRef = modalSvc.openWithComponent({
-                    component: 'modalAprobarDoc',
+                    component: 'modalAddEditAprobarDoc',
                     size: 'xl',
                     windowClass: 'uibModalFullScreen',
                     params: {
