@@ -172,7 +172,7 @@ BEGIN
 			INSERT INTO @docsFounded(idDocumento, documentName, numDocSustento,
             fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
 			SELECT fc.idFacturaCompra,'Factura Física',(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9))
-            ,fc.fechaEmision,fc.nroAutorizacion,fc.total,CAST(0 AS BIT)
+            ,CONVERT(VARCHAR, fc.fechaEmision, 23),fc.nroAutorizacion,fc.total,CAST(0 AS BIT)
 			FROM dbo.FacturaCompra       fc WITH (NOLOCK)
 			INNER JOIN dbo.Proveedor     pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id          = pr.CustomerId
@@ -181,6 +181,7 @@ BEGIN
               AND cu.IDCard = @idCard 
 			  AND fc.retencion = 0
               AND MONTH(fc.fechaEmision) = MONTH(GETDATE())
+              AND YEAR(fc.fechaEmision) = YEAR(GETDATE())
 			  AND REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) 
 			    NOT IN 
                 (
@@ -197,41 +198,51 @@ BEGIN
             
 
 			INSERT INTO @docsFounded(idDocumento, documentName, numDocSustento, fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
-			SELECT dr.idDocumento
-			,CASE 
-							WHEN dr.codDoc = '01' THEN 'Factura'
-							WHEN dr.codDoc = '04' THEN 'Nota de Crédito'
-							WHEN dr.codDoc = '06' THEN 'Guía de Remisión'
-							WHEN dr.codDoc = '07' THEN 'Comprobante de Retención'
-						 END
-			,dr.serieComprobante
-			,dr.fechaEmision
-            ,dr.claveAcceso
-            ,ISNULL(dr.importeTotal, 0)
-			,CAST(1 AS BIT)
- 			FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento   e ON e.idEstablecimiento = dr.idEstablecimiento
- 			WHERE e.idEntidad = @idEntidad
-			  AND dr.estado = 1
-              AND dr.rucEmisor = @idCard
-              AND dr.codDoc = '01'
-              AND MONTH(dr.fechaEmision) = MONTH(GETDATE())
-			  AND REPLACE(dr.serieComprobante, '-', '') 
-			    NOT IN (
-                    
-                        SELECT rd.numDocSustento
-					    FROM FactElect.RetencionAts             ra WITH (NOLOCK)
-                        INNER JOIN dbo.DocumentoElectronico     de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
-                        INNER JOIN dbo.Proveedor                pr WITH (NOLOCK) ON pr.idProveedor            = ra.idProveedor
-					    INNER JOIN FactElect.RetAtsDocSustento  rd WITH (NOLOCK) ON rd.idRetencionAts         = ra.idRetencionAts
-					    INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                        INNER JOIN sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-                        INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
-					    WHERE es.idEntidad = @idEntidad 
-                          AND cu.IDCard = dr.rucEmisor
-                          AND ra.anuladaSri = 0
-			           )
-              
+			SELECT 
+            dr.idDocumento,
+            CASE 
+                WHEN dr.codDoc = '01' THEN 'Factura'
+                WHEN dr.codDoc = '04' THEN 'Nota de Crédito'
+                WHEN dr.codDoc = '06' THEN 'Guía de Remisión'
+                WHEN dr.codDoc = '07' THEN 'Comprobante de Retención'
+            END,
+            dr.serieComprobante,
+            FORMAT(CAST(dr.fechaEmision AS DATE), 'yyyy-MM-dd'),
+            dr.claveAcceso,
+            COALESCE(dr.importeTotal, 0),
+            CAST(1 AS BIT)
+            FROM 
+                Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+                INNER JOIN Sri.Establecimiento e WITH (NOLOCK)
+                    ON e.idEstablecimiento = dr.idEstablecimiento
+            WHERE 
+                e.idEntidad = @idEntidad
+                AND dr.estado = 1
+                AND dr.rucEmisor = @idCard
+                AND dr.codDoc = '01'
+                AND MONTH(CAST(dr.fechaEmision AS DATE)) = MONTH(GETDATE())
+                AND YEAR(CAST(dr.fechaEmision AS DATE)) = YEAR(GETDATE())
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM FactElect.RetencionAts ra WITH (NOLOCK)
+                    INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK)
+                        ON de.idDocumentoElectronico = ra.idDocumentoElectronico
+                    INNER JOIN dbo.Proveedor pr WITH (NOLOCK)
+                        ON pr.idProveedor = ra.idProveedor
+                    INNER JOIN FactElect.RetAtsDocSustento rd WITH (NOLOCK)
+                        ON rd.idRetencionAts = ra.idRetencionAts
+                    INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK)
+                        ON pe.idPuntoEmision = de.idPuntoEmision
+                    INNER JOIN sri.Establecimiento es WITH (NOLOCK)
+                        ON es.idEstablecimiento = pe.idEstablecimiento
+                    INNER JOIN Customer.Customer cu WITH (NOLOCK)
+                        ON cu.Id = pr.CustomerId
+                    WHERE 
+                        es.idEntidad = @idEntidad
+                        AND cu.IDCard = dr.rucEmisor
+                        AND ra.anuladaSri = 0
+                        AND rd.numDocSustento = REPLACE(dr.serieComprobante, '-', '')
+                );
 			SELECT * FROM @docsFounded ORDER BY fechaEmisionDocSustento DESC
 		END
     
