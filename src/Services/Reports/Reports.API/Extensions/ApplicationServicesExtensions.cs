@@ -4,7 +4,7 @@
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IAdoSqlServer, AdoSqlServer>();
+            services.AddScoped<IAdoRepository, AdoRepository>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRdlcReportService, RdlcReportService>();
             return services;
