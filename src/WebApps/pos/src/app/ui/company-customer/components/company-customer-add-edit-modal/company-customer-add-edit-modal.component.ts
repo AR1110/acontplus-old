@@ -18,6 +18,11 @@ import { M3InputChipComponent } from "@ui/components/m3-input-chip/m3-input-chip
 import { CustomContainerDialogComponent } from "@ui/components/custom-container-dialog/custom-container-dialog.component";
 import { SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE } from "@domain/enums/main.enum";
 import { isValidField } from "@domain/utils/utils";
+import {CompanyCustomerDataFormUseCase} from "@domain/use-cases/company-customer/company-customer-data-form.use-case";
+import {MatTabsModule} from "@angular/material/tabs";
+import {CompanyCustomerGetIdUseCase} from "@domain/use-cases/company-customer/company-customer-get-id.use-case";
+import {CompanyCustomerPostUseCase} from "@domain/use-cases/company-customer/company-customer-post.use-case";
+import {CompanyCustomerPutUseCase} from "@domain/use-cases/company-customer/company-customer-put.use-case";
 
 @Component({
     selector: 'app-company-customer-add-edit-modal',
@@ -31,6 +36,7 @@ import { isValidField } from "@domain/utils/utils";
         MatCheckboxModule,
         MatSlideToggleModule,
         MatTooltipModule,
+      MatTabsModule,
         M3InputChipComponent,
         CustomContainerDialogComponent
     ],
@@ -38,14 +44,17 @@ import { isValidField } from "@domain/utils/utils";
 })
 export class CompanyCustomerAddEditModalComponent {
 
-  readonly matDialogData = inject<any>(MAT_DIALOG_DATA);
+  readonly params = inject<any>(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<CompanyCustomerAddEditModalComponent>);
   private companyCustomerSvc = inject(CompanyCustomerService)
   private tS = inject(ToasterService)
+  private $dataFormUseCase = inject(CompanyCustomerDataFormUseCase)
+  private $getIdUseCase = inject(CompanyCustomerGetIdUseCase)
+  private $postUseCase = inject(CompanyCustomerPostUseCase)
+  private $putUseCase = inject(CompanyCustomerPutUseCase)
 
-  selectedTab = 0;
 
-
+  selected = signal(0);
 
   modalTitle = 'Nuevo Cliente';
   btnText = 'Guardar'
@@ -85,25 +94,21 @@ export class CompanyCustomerAddEditModalComponent {
   });
 
 
-  selectTab(index: number) {
-    this.selectedTab = index;
-  }
 
   getLoadData(): Observable<any> {
-    if (this.matDialogData.id > 0) {
-      return forkJoin([
-        this.companyCustomerSvc.getDataForm(),
-        this.companyCustomerSvc.getId(this.matDialogData.id),
-      ]);
-    } else {
+    const requests = [this.$dataFormUseCase.execute()] ;
+
+    if (this.params.id > 0) {
+      requests.push(this.$getIdUseCase.execute(this.params.id));
     }
-    return this.companyCustomerSvc.getDataForm();
+
+    return forkJoin(requests);
   }
 
   ngOnInit() {
     try {
 
-      this.getLoadData().subscribe((response) => {
+      this.getLoadData()?.subscribe((response) => {
         let mainDataForm = {} as any;
         let dataCompanyCustomer = {} as any;
         if (Array.isArray(response)) {
@@ -116,7 +121,7 @@ export class CompanyCustomerAddEditModalComponent {
         this.tiposIdentificacion = mainDataForm.tipoIdentificacion;
         this.tiemposCredito = mainDataForm.tiempoCreditos;
 
-        if (this.matDialogData.dataOfSri) {
+        if (this.params.dataOfSri) {
 
           let {
             numeroRuc,
@@ -126,7 +131,7 @@ export class CompanyCustomerAddEditModalComponent {
             telefonos,
             correos,
             codigoSri
-          } = this.matDialogData;
+          } = this.params;
           const dataIdentificacion = this.tiposIdentificacion.find(obj => obj.codigoSri === codigoSri);
 
 
@@ -147,7 +152,7 @@ export class CompanyCustomerAddEditModalComponent {
           this.telefonos = telefonos;
 
 
-        } else if (!(this.matDialogData.id > 0)) {
+        } else if (!(this.params.id > 0)) {
           let dataIdentificacion = this.tiposIdentificacion.find(
             (ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC,
           );
@@ -244,7 +249,7 @@ export class CompanyCustomerAddEditModalComponent {
 
   private updateEmailTelOfSri(correos: any, telefonos:any){
 
-    if(this.matDialogData.id>0) return
+    if(this.params.id>0) return
 
     this.emails = correos;
     this.telefonos = telefonos;
@@ -340,7 +345,7 @@ export class CompanyCustomerAddEditModalComponent {
         type: 'success',
         message: response.message
       })
-      let id = this.matDialogData.id > 0 ? this.matDialogData.id : (response.payload as any).id;
+      let id = this.params.id > 0 ? this.params.id : (response.payload as any).id;
 
       this.dialogRef.close({
         id,
@@ -351,7 +356,7 @@ export class CompanyCustomerAddEditModalComponent {
   onSave() {
 
     const dataNroIdentificacion = this.getDataNroIdentificacion();
-    if (this.matDialogData.id > 0 && dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL) {
+    if (this.params.id > 0 && dataNroIdentificacion.codigoSri === SRI_IDENTIFICATION_CODE.CONSUMIDOR_FINAL) {
       this.tS.toastr({
         type: 'warning',
         message: 'Consumidor Final no puede ser editada'
@@ -382,18 +387,12 @@ export class CompanyCustomerAddEditModalComponent {
       })
       return
     }
-
-
-
-    const dataForm = this.companyCustomerSvc.adapterTo(this.customerForm.value)
-
-
-    if (this.matDialogData.id > 0) {
-      this.companyCustomerSvc.put(this.matDialogData.id, dataForm).subscribe(this.successResponse);
+    if (this.params.id > 0) {
+      this.$putUseCase.execute(this.params.id, this.customerForm.value).subscribe(this.successResponse);
     }
 
-    if (!(this.matDialogData.id > 0)) {
-      this.companyCustomerSvc.post(dataForm).subscribe(this.successResponse);
+    if (!(this.params.id > 0)) {
+      this.$postUseCase.execute(this.customerForm.value).subscribe(this.successResponse);
     }
   }
 
