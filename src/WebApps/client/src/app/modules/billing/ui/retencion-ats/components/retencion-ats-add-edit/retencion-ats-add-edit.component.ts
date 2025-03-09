@@ -24,9 +24,15 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
-import { DocumentoSustento } from '@billing/domain/models/retencion-ats/documento-sustento';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { formatDate, formatDateToString } from '@core/utils/date.util';
+import { DatePipe } from '@angular/common';
+import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
+import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
+import { TipoPago } from '@sri/domain/models/tipo-pago';
+import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
+import { PuntoEmision } from '@core/models/punto-emision.model';
+import { TipoIdentificacion } from '@core/models/tipo-identificacion';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -51,6 +57,14 @@ import { formatDate, formatDateToString } from '@core/utils/date.util';
 })
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
+  private datePipe = inject(DatePipe);
+  readonly data = inject<unknown>(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject(
+    MatDialogRef<RetencionAtsAddEditComponent>,
+  );
+  private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
+  private readonly _dialogService = inject(DialogService);
+
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
     idPuntoEmision: [0],
@@ -71,18 +85,19 @@ export class RetencionAtsAddEditComponent implements OnInit {
   isVisibleInfoComprobante = true;
   idDocumentoElectronico = 0;
   estabs: GroupedEstab[] = [];
-  puntosEmision: any[] = [];
+  puntosEmision: PuntoEmision[] = [];
   subContribuyente = '';
-  tiposIdentificacion: any[] = [];
+  tiposIdentificacion: TipoIdentificacion[] = [];
   tiposSujRetenido: any[] = [];
   isNotForeign = true;
   genericAnswer: any[] = [{ codigo: 'SI' }, { codigo: 'NO' }];
-  docSustento: DocumentoSustento[] = [];
-  documentos: any[] = [];
-  sustentosFiltered: any[] = [];
+  retAtsDocSustentos: RetAtsDocSustento[] = [];
+  documentosSustento: DocumentoSustento[] = [];
+  sustentosTributarios: SustentoTributario[] = [];
+  sustentosFiltered: SustentoTributario[] = [];
   isPagoResidente = true;
-  tiposPago: any[] = [];
-  tiposRegimenFE: any[] = [];
+  tiposPago: TipoPago[] = [];
+  tiposRegimenFe: TipoRegimenFe[] = [];
   countries: any[] = [];
   tempTaxes: any[] = [];
   docsAdded: any[] = [];
@@ -105,12 +120,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   // Services
 
-  readonly data = inject<unknown>(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject(
-    MatDialogRef<RetencionAtsAddEditComponent>,
-  );
-  private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
-  private readonly _dialogService = inject(DialogService);
   get startIndex(): number {
     return (this.currentPage - 1) * this.itemsPerPage;
   }
@@ -186,20 +195,26 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.estabs = response.estabs;
       this.tiposIdentificacion = response.tiposIdentificacion;
       this.tiposSujRetenido = response.sujetoRetenido;
+      this.documentosSustento = response.documentoSustento;
+      this.sustentosTributarios = response.sustentoTributario;
+      this.tiposPago = response.tiposPago;
+      this.tiposRegimenFe = response.tiposRegimen;
     });
   }
 
   ngOnInit() {
-    const fechaEmision = formatDateToString(new Date());
-    console.log(fechaEmision);
-    this.retencionAtsForm.get('fechaEmision')?.setValue(fechaEmision);
+    this.retencionAtsForm
+      .get('fechaEmision')
+      ?.setValue(this.datePipe.transform(new Date(), 'yyyy-MM-dd'));
     this.initialLoad();
   }
 
   onClose() {
     this.dialogRef.close();
   }
-  onSave() {}
+  onSave() {
+    console.log(this.retencionAtsForm.value);
+  }
 
   onClickVisibleInfoComprobante(): void {
     this.isVisibleInfoComprobante = !this.isVisibleInfoComprobante;
@@ -258,9 +273,9 @@ export class RetencionAtsAddEditComponent implements OnInit {
       if (response !== 'undefined') {
         const { documents } = response;
         if (documents.length > 0) {
-          this.docSustento = documents;
-          console.log(this.docSustento);
-          this.docSustento.forEach((doc) => {
+          this.retAtsDocSustentos = documents;
+          console.log(this.retAtsDocSustentos);
+          this.retAtsDocSustentos.forEach((doc) => {
             this.addDocSustentoWithValues(doc);
           });
         }
@@ -268,8 +283,15 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
   }
 
-  selectSutento(): void {
+  selectSutento(index: number) {
     // Filter sustentos based on document type
+    this.sustentosFiltered = [];
+    const codDocSustento =
+      this.docSustentoArray.controls[index].get('codDocSustento')?.value;
+
+    this.sustentosFiltered = this.sustentosTributarios.filter(
+      (x) => x.codDocSustento === codDocSustento,
+    );
   }
 
   enableControls(): void {

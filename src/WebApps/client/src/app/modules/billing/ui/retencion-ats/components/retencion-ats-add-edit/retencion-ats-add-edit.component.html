@@ -270,10 +270,10 @@
                     id="codDocSustento"
                     class="form-select"
                     formControlName="codDocSustento"
-                    (change)="selectSutento()"
+                    (change)="selectSutento($index)"
                   >
                     <option>::seleccione::</option>
-                    @for (doc of documentos; track $index) {
+                    @for (doc of documentosSustento; track $index) {
                       <option [value]="doc.codDocSustento">
                         {{ doc.codDocSustento }} -
                         {{ doc.descripcion }}
@@ -390,7 +390,7 @@
                     [disabled]="isPagoResidente"
                   >
                     <option>::seleccione::</option>
-                    @for (tipoRegimen of tiposRegimenFE; track $index) {
+                    @for (tipoRegimen of tiposRegimenFe; track $index) {
                       <option [value]="tipoRegimen.tipoRegi">
                         {{ tipoRegimen.tipoRegi }} -
                         {{ tipoRegimen.descripcion }}

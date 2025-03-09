@@ -5,24 +5,36 @@ import {
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { GroupedEstab } from '@core/models/estab.model';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
-import {DocumentoSustento} from "@billing/domain/models/retencion-ats/documento-sustento";
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
+import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
+import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
+import { TipoPago } from '@sri/domain/models/tipo-pago';
+import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
+import { Pais } from '@sri/domain/models/pais';
+import { ParaisoFiscal } from '@sri/domain/models/paraiso-fiscal';
+import { Impuesto } from '@sri/domain/models/impuesto';
+import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
+import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
+import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
+import { FormaPago } from '@sri/domain/models/forma-pago';
+import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
 
 export abstract class RetencionAtsRepository {
   abstract getDataForm(parameters: unknown): Observable<{
     tiposIdentificacion: TipoIdentificacion[];
     sujetoRetenido: unknown[];
-    documentoSustento: unknown[];
-    sustentoTributario: unknown[];
-    tiposPago: unknown[];
-    tiposRegimen: unknown[];
-    countries: unknown[];
-    paraisosFiscales: unknown[];
-    taxes: unknown[];
-    tarifasImpuesto: unknown[];
-    impuestosRetencion: unknown[];
-    porcentajesRetIva: unknown[];
-    codigosRetencion: unknown[];
-    formasPago: unknown[];
+    documentoSustento: DocumentoSustento[];
+    sustentoTributario: SustentoTributario[];
+    tiposPago: TipoPago[];
+    tiposRegimen: TipoRegimenFe[];
+    countries: Pais[];
+    paraisosFiscales: ParaisoFiscal[];
+    taxes: Impuesto[];
+    tarifasImpuesto: TarifaImpuesto[];
+    impuestosRetencion: ImpuestoRetencion[];
+    porcentajesRetIva: PorcentajeRetIva[];
+    codigosRetencion: CodigoRetencion[];
+    formasPago: FormaPago[];
     estabs: GroupedEstab[];
     infoAdicional?: unknown[];
   }>;
@@ -34,6 +46,6 @@ export abstract class RetencionAtsRepository {
   abstract update(data: RetencionAts): Observable<RetencionAts>;
   abstract delete(id: number): Observable<RetencionAts>;
   abstract getDocs(parameters: unknown): Observable<{
-    documents: DocumentoSustento[];
+    documents: RetAtsDocSustento[];
   }>;
 }

@@ -10,7 +10,7 @@ import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
-import {DocumentoSustento} from "@billing/domain/models/retencion-ats/documento-sustento";
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
@@ -104,7 +104,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           }
           const { documents } = JSON.parse(response.payload as string);
 
-          return { documents: documents as DocumentoSustento[] };
+          return { documents: documents as RetAtsDocSustento[] };
         }),
       );
   }

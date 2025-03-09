@@ -1,4 +1,4 @@
-export interface DocumentoSustento {
+export interface RetAtsDocSustento {
   idDocumento?: number;
   documentName?: string;
   idRetDocSustento?: number;
