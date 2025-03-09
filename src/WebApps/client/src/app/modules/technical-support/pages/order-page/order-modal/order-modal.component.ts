@@ -95,27 +95,27 @@ export class OrderModalComponent {
     {
       formatter: (cell: any) => {
         //let cellEl = cell.getElement();
-        let rowDataMain = cell.getRow().getData();
+        const rowDataMain = cell.getRow().getData();
 
         //create edit button
-        let editBtn = document.createElement('button');
+        const editBtn = document.createElement('button');
         editBtn.type = 'button';
         editBtn.innerHTML = `${icon(faSave).html.join('')}`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
         editBtn.title = 'Guardar Detalle';
         editBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           this.editDetail(rowData);
         });
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.title = 'Eliminar detalle';
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           console.log(rowData);
           if (rowData.id > 0) {
             this.askToDeleteDetail(rowData);
@@ -124,7 +124,7 @@ export class OrderModalComponent {
           }
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
         if (rowDataMain.id > 0) {
           buttonHolder.appendChild(editBtn);
@@ -143,13 +143,13 @@ export class OrderModalComponent {
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
-  establecimientos: Array<GroupedEstab> = [];
+  establecimientos: GroupedEstab[] = [];
   formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nueva Orden';
   order: any = {};
   orderDetails: OrderDetail[] = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
   users: any = [];
 
   orderForm = new FormGroup({
@@ -249,7 +249,7 @@ export class OrderModalComponent {
   }
 
   get() {
-    let parameters = { tipo: 1, id: this.data.id };
+    const parameters = { tipo: 1, id: this.data.id };
     if (this.data.id > 0) {
       this.modalTitle = 'Editar Orden';
       this.modalIcon = 'edit';
@@ -257,8 +257,8 @@ export class OrderModalComponent {
     this.orderService.get(parameters).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '1') {
-          let parsedResponse = JSON.parse(response.payload as string);
-          let { puntosEmision, users } = parsedResponse;
+          const parsedResponse = JSON.parse(response.payload as string);
+          const { puntosEmision, users } = parsedResponse;
           this.establecimientos = groupEstabUtil({
             estabs: puntosEmision,
             isGroupPuntoEmision: true,
@@ -322,13 +322,13 @@ export class OrderModalComponent {
     }
   }
   onChangeEstab() {
-    let establecimientoId = this.orderForm.get('establecimientoId')?.value;
+    const establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
-      let estabs = this.establecimientos.find(
+      const estabs = this.establecimientos.find(
         (x) => x.idEstablecimiento == Number(establecimientoId),
       );
       this.puntosEmision = estabs?.puntosEmision || [];
-      let puntoEmisionId =
+      const puntoEmisionId =
         this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
           ?.idPuntoEmision || 0;
       this.orderForm.patchValue({
@@ -338,7 +338,7 @@ export class OrderModalComponent {
     }
   }
   onCustomerSelected($event: any) {
-    let { data } = $event;
+    const { data } = $event;
     this.order.customerCompanyId = data.idCliente;
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
@@ -348,16 +348,14 @@ export class OrderModalComponent {
   }
 
   removeFromList(deviceId: number) {
-    let newArray = this.orderDetails.filter((x) => x.deviceId !== deviceId);
-    this.orderDetails = newArray;
+    this.orderDetails = this.orderDetails.filter(
+      (x) => x.deviceId !== deviceId,
+    );
   }
 
   onChangeDate(event: Event) {
     const inputElement = event.target as HTMLInputElement;
-    const timeString = inputElement.value;
-    console.log(inputElement.value);
-
-    let dateObject: any = timeString;
+    const dateObject: string = inputElement.value;
 
     this.orderForm.patchValue({ fechaEmision: dateObject }); // Emitir el nuevo valor al componente padre
   }
@@ -398,7 +396,7 @@ export class OrderModalComponent {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: fechaEmision,
       setHoursZero: true,
     });
