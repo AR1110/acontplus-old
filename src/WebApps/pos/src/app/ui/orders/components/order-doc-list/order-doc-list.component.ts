@@ -5,13 +5,14 @@ import { CODE_REPORT, DOC_TYPE } from '@domain/enums/main.enum';
 import { OrderDocRed } from '@domain/models/order-doc.model';
 import { DialogService } from '@domain/services/dialog.service';
 import { SharedService } from '@domain/services/shared.service';
-import { Component, inject, input } from '@angular/core';
+import {Component, inject, input, signal} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-order-doc-list',
@@ -46,17 +47,17 @@ export class OrderDocListComponent {
   ];
   dataSource: OrderDocRed[] = [];
 
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
 
   private getOrderDocs() {
     this.dataSource = [];
-    this.isLoadingResults = true;
-    this._orderUseCase.getOrderDocs(this.data().id).subscribe({
-      next: (response) => {
-        this.isLoadingResults = false;
+    this.isLoadingResults.set(true);
+    this._orderUseCase.getOrderDocs(this.data().id)
+      .pipe(
+        finalize(()=> this.isLoadingResults.set(false))
+      )
+      .subscribe( (response) => {
         this.dataSource = response;
-      },
-      error: () => (this.isLoadingResults = false),
     });
   }
 

@@ -1,116 +1,91 @@
-<div class="row gx-1">
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-    <div class="row">
-      <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-12">
-        <div class="form-check form-check-inline">
-          <input
-            class="form-check-input"
-            type="radio"
-            name="typeSearchCustomer"
-            id="pedido"
-            [(ngModel)]="dataSearch.typeSearchCustomer"
-            value="OR"
-            (change)="onChangeTypeSearchCustomer()"
-          />
-          <label class="form-check-label" for="pedido"> Pedido </label>
-        </div>
-        <div class="form-check">
-          <input
-            class="form-check-input"
-            type="radio"
-            name="typeSearchCustomer"
-            id="doc"
-            [(ngModel)]="dataSearch.typeSearchCustomer"
-            value="DOC"
-            (change)="onChangeTypeSearchCustomer()"
-          />
-          <label class="form-check-label" for="doc"> Doc </label>
-        </div>
-      </div>
-      <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-12">
-        <app-company-customer-search
-          [isSimple]="true"
-          (onSelect)="onSelectCustomer($event)"
-          (clearInput)="clearCustomer()"
+<div class="d-grid">
+  <div class="row">
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Opción Cliente</mat-label>
+        <mat-select [(ngModel)]="dataSearch.typeSearchCustomer" (selectionChange)="onChangeTypeSearchCustomer()">
+          <mat-option  value ="OR">Pedido</mat-option>
+          <mat-option  value ="DOC">Documento</mat-option>
+
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <app-company-customer-search
+        [isSimple]="true"
+        (onSelect)="onSelectCustomer($event)"
+        (clearInput)="clearCustomer()"
+      >
+      </app-company-customer-search>
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="selectionChangeStatusOrder()">
+          @for (item of statusOrder(); track $index) {
+          <mat-option  [value] ="item.code">{{item.description}}</mat-option>
+
+          }
+
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div
+    class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2"
+  >
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Mesa</mat-label>
+        <mat-select
+          [(ngModel)]="dataSearch.tableId"
+          (selectionChange)="refresh()"
         >
-        </app-company-customer-search>
+          <mat-option [value]="0">-- Todos --</mat-option>
+          @for (group of tablesGroup; track $index) {
+            <mat-optgroup [label]="group.name" style="font-weight: 500">
+              @for (children of group.tables; track $index) {
+                <mat-option [value]="children.id">{{
+                    children.description
+                  }}</mat-option>
+              }
+            </mat-optgroup>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Usuario</mat-label>
+        <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
+          <mat-option [value]="0">-- Todos --</mat-option>
+          @for(item of users;track $index){
+            <mat-option [value]="item.idUsuario">{{
+                item.nombreUsuario
+              }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">  </div>
+    <div class="col">
+      <div class="d-flex justify-content-end">
+        <button
+          mat-icon-button
+          (click)="refresh()"
+          color="primary"
+          [disabled]="isLoadingResults()"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </div>
   </div>
-
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-    <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
-  </div>
-
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-    <mat-form-field class="w-100">
-      <mat-label>Mesa</mat-label>
-      <mat-select
-        [(ngModel)]="dataSearch.tableId"
-        (selectionChange)="refresh()"
-      >
-        <mat-option [value]="0">-- Todos --</mat-option>
-        @for (group of tablesGroup; track $index) {
-        <mat-optgroup [label]="group.name" style="font-weight: 500">
-          @for (children of group.tables; track $index) {
-          <mat-option [value]="children.id">{{
-            children.description
-          }}</mat-option>
-          }
-        </mat-optgroup>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-    <mat-form-field class="w-100">
-      <mat-label>Usuario</mat-label>
-      <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
-        <mat-option [value]="0">-- Todos --</mat-option>
-        @for(item of users;track $index){
-        <mat-option [value]="item.idUsuario">{{
-          item.nombreUsuario
-        }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
 </div>
-<div class="d-flex flex-column flex-md-row gap-1 justify-content-between mb-1">
-  <div
-    class="btn-group"
-    role="group"
-    aria-label="Basic radio toggle button group"
-  >
-    @for(item of statusOrder();track $index){
 
-    <input
-      type="radio"
-      class="btn-check"
-      name="btnradio"
-      [id]="'statusId' + $index"
-      [value]="item.code"
-      [disabled]="isLoadingResults()"
-      [(ngModel)]="selectedStatus"
-      autocomplete="off"
-      (change)="selectionChangeStatusOrder()"
-    />
-    <label class="btn btn-outline-primary" [for]="'statusId' + $index">{{
-      item.description
-    }}</label>
-    }
-  </div>
-
-  <button
-    mat-icon-button
-    (click)="refresh()"
-    color="primary"
-    [disabled]="isLoadingResults()"
-  >
-    <mat-icon>refresh</mat-icon>
-  </button>
-</div>
 
 <app-custom-table-container
   [pagination]="pagination()"
