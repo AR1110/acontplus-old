@@ -1,4 +1,4 @@
-﻿using Common.Infrastructure.Repository.Interfaces;
+﻿using Common.Infrastructure.Data.Repository.Interfaces;
 
 namespace Restaurant.API.Services;
 public interface IPromotionMenuService

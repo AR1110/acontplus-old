@@ -22,7 +22,7 @@ namespace Restaurant.API.Extensions
 
             string[] nameSpaces =
            [
-               "Common.Infrastructure.Repository.Implementations",
+               "Common.Infrastructure.Data.Repository.Implementations",
                 "Restaurant.API.Services"
            ];
 

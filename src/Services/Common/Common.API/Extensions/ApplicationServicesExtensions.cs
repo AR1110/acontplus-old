@@ -27,7 +27,7 @@ public static class ApplicationServicesExtensions
 
         string[] nameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Common.Infrastructure.Data.Repository.Implementations",
             "Common.API.Endpoints.Implementations",
             "Common.API.Services",
             "Common.Services.Extensions",

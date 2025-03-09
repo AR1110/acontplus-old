@@ -50,7 +50,7 @@ public static class ApplicationServicesExtensions
 
         string[] transientNameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Common.Infrastructure.Data.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

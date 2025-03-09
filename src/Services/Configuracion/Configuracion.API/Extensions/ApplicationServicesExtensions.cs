@@ -46,7 +46,7 @@ public static class ApplicationServicesExtensions
         // Other services that can be transient
         string[] transientNamespaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Common.Infrastructure.Data.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 
