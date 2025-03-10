@@ -160,7 +160,8 @@ BEGIN
             SELECT @idCard = idCard FROM OPENJSON(@json) WITH (idCard VARCHAR(25));
 
             DECLARE @docsFounded AS TABLE(
-				idDocumento INT, 
+				idDocumento INT NOT NULL,
+                codDocSustento VARCHAR(2) NOT NULL,
                 documentName VARCHAR(100),
                 numDocSustento VARCHAR(50) NOT NULL,
 				fechaEmisionDocSustento VARCHAR(25),
@@ -169,9 +170,9 @@ BEGIN
 				isAutomatic BIT
 			);
 
-			INSERT INTO @docsFounded(idDocumento, documentName, numDocSustento,
+			INSERT INTO @docsFounded(idDocumento, codDocSustento, documentName, numDocSustento,
             fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
-			SELECT fc.idFacturaCompra,'Factura Física',(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9))
+			SELECT fc.idFacturaCompra, '01' ,'Factura Física',(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9))
             ,CONVERT(VARCHAR, fc.fechaEmision, 23),fc.nroAutorizacion,fc.total,CAST(0 AS BIT)
 			FROM dbo.FacturaCompra       fc WITH (NOLOCK)
 			INNER JOIN dbo.Proveedor     pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
@@ -197,9 +198,10 @@ BEGIN
 			    ) 
             
 
-			INSERT INTO @docsFounded(idDocumento, documentName, numDocSustento, fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
+			INSERT INTO @docsFounded(idDocumento, codDocSustento, documentName, numDocSustento, fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
 			SELECT 
             dr.idDocumento,
+            dr.codDoc,
             CASE 
                 WHEN dr.codDoc = '01' THEN 'Factura'
                 WHEN dr.codDoc = '04' THEN 'Nota de Crédito'
@@ -245,134 +247,7 @@ BEGIN
                 );
 			SELECT * FROM @docsFounded ORDER BY fechaEmisionDocSustento DESC
 		END
-    
-    -->For retetenciones ats
-	IF @tipo = 5
-			BEGIN
-                DECLARE @documentId INT,
-                    @isAutomatic BIT;
-
-                SET @tableNames = 'data';
-
-                SELECT @documentId = documentId, @isAutomatic = isAutomatic FROM OPENJSON(@json) WITH (documentId INT, isAutomatic BIT)
-
-				DECLARE @table TABLE 
-				(
-					codDoc VARCHAR(2),
-					xmlComp XML
-				)
-				DECLARE @docSustento AS TABLE(
-					idDocumento INT
-					,isAutomatic BIT
-					,codDocSustento VARCHAR(2)
-					,fechaEmisionDocSustento DATETIME
-					,numDocSustento VARCHAR(25)
-					,numAutDocSustento VARCHAR(49)
-					,totalSinImpuestos NUMERIC(18,2)
-					,importeTotal NUMERIC(18,2)
-				)
-				DECLARE @taxes TABLE
-				(
-					codigo VARCHAR(5) NOT NULL
-				   ,codigoPorcentaje VARCHAR(5) NOT NULL
-				   ,baseImponible NUMERIC(18,2)NOT NULL 
-				   ,valor NUMERIC(18,2)NOT NULL
-				)
-				DECLARE @tblPagos AS TABLE(
-					formaPago varchar(2)
-					,total NUMERIC (18,2)
-				)
-
-				IF (@isAutomatic = 1)
-					BEGIN
-						INSERT INTO @table (codDoc, xmlComp)
-						SELECT ci.codDoc, xmlComp = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), CONVERT(XML, DECOMPRESS(ci.xmlCompressed)).query('/autorizacion/comprobante'))))
-						FROM Recepcion.DocumentoRecibido ci
-						WHERE idDocumento = @documentId
-
-						INSERT INTO @docSustento(idDocumento, isAutomatic, codDocSustento, fechaEmisionDocSustento, numDocSustento, numAutDocSustento, totalSinImpuestos, importeTotal)
-						SELECT dr.idDocumento idDocumento
-						,1 isAutomatic
-						,dr.codDoc codDocSustento
-						,CONVERT(DATETIME, dr.fechaEmision, 103) fechaEmisionDocSustento
-						,REPLACE(dr.serieComprobante,'-', '') numDocSustento
-						,dr.claveAcceso numAutDocSustento
-						,totalSinImpuestos = ISNULL((SELECT xmlComp.query('//comprobante/factura/infoFactura').value('(/infoFactura/totalSinImpuestos)[1]', 'NUMERIC(18,2)') FROM @table),0)
-						,dr.importeTotal
-						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-						WHERE dr.idDocumento = @documentId
-
-						INSERT INTO @taxes (codigo,codigoPorcentaje,baseImponible,valor)
-						SELECT
-							 codigo           = x.y.value('(codigo)[1]','VARCHAR(5)')
-							,codigoPorcentaje = x.y.value('(codigoPorcentaje)[1]','VARCHAR(5)')
-							,baseImponible    = x.y.value('(baseImponible)[1]','NUMERIC(18,2)')
-							,valor            = x.y.value('(valor)[1]','NUMERIC(18,2)')
-						FROM @table t
-						CROSS APPLY t.xmlComp.nodes('//comprobante/factura/infoFactura/totalConImpuestos/totalImpuesto') x(y)
-
-						INSERT INTO @tblPagos(formaPago, total)
-						SELECT
-							 formaPago           = x.y.value('(formaPago)[1]','VARCHAR(2)')
-							,total = x.y.value('(total)[1]','numeric(18,2)')
-						FROM @table t
-						CROSS APPLY t.xmlComp.nodes('//comprobante/factura/infoFactura/pagos/pago') x(y)
-
-						IF NOT EXISTS (SELECT 1 FROM @tblPagos)
-							BEGIN
-						        INSERT INTO @tblPagos(formapago, total)
-						        SELECT '20' formaPago, importeTotal 
-                                FROM Recepcion.DocumentoRecibido ci 
-                                WHERE idDocumento = @documentId
-                            END
-
-					END
-				ELSE
-					BEGIN
-						INSERT INTO @docSustento(idDocumento, isAutomatic, codDocSustento, fechaEmisionDocSustento, numDocSustento, numAutDocSustento, totalSinImpuestos, importeTotal)
-						SELECT fc.idFacturaCompra idDocumento
-						,ISNULL(fc.isAutomatic, 0) isAutomatic
-						,'01' codDocSustento
-						,fc.fechaEmision fechaEmisionDocSustento
-						,(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9)) numDocSustento
-						,fc.nroAutorizacion numAutDocSustento
-						,fc.subTotalSinImpuestos totalSinImpuestos
-						,fc.total importeTotal
-						FROM FacturaCompra fc WITH (NOLOCK)
-						WHERE fc.idFacturaCompra = @documentId
-
-						INSERT INTO @taxes (codigo,codigoPorcentaje,baseImponible,valor)
-						SELECT im.codigo, ti.codigoPorcentaje, CAST(ROUND( sum(fci.TaxBase),2,1) AS numeric(18,2)), CAST(ROUND( sum(fci.TaxValue),2,1) AS numeric(18,2)) 
-						FROM Compra.FacturaImpuesto fci
-                        INNER JOIN dbo.TipoIva ti ON ti.idTipoIva = fci.TaxPercentId
-                        INNER JOIN dbo.Impuesto im ON im.idImpuesto = fci.TaxId 
-						WHERE fci.FacturaCompraId = @documentId
-						GROUP BY ti.codigoPorcentaje ,im.codigo
-
-						INSERT INTO @tblPagos(formapago, total)
-                        SELECT formaPago, total FROM Compra.FormaPago WHERE idDocumento = @documentId  
-					END
-
-				SELECT doc   = (SELECT * FROM @docSustento FOR JSON PATH)
-				      ,taxes = (SELECT 
-								        impuesto = i.descripcion 
-							           ,codImpuestoDocSustento = fci.codigo
-							           ,porcentaje = ti.descripcion
-							           ,codigoPorcentaje = fci.codigoPorcentaje
-							           ,baseImponible = fci.baseImponible
-							           ,ti.porcentaje tarifa
-							           ,valorImpuesto = fci.valor
-							    FROM @taxes fci
-							    LEFT JOIN Sri.Impuesto i ON fci.codigo = i.codigo
-							    LEFT JOIN Sri.TarifaImpuesto ti ON fci.codigo = ti.codImpuesto AND fci.codigoPorcentaje = ti.codigo
-							    WHERE fci.baseImponible > 0 
-							    FOR JSON PATH
-						        )
-
-				        ,payments = (SELECT * FROM @tblPagos FOR JSON PATH)
-
-				RETURN
-			END
+ 
     END TRY
     BEGIN CATCH
         INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
