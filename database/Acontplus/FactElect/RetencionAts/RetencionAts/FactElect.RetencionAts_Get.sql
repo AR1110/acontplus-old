@@ -35,34 +35,37 @@ BEGIN
 	    --> DataForm
 	    IF @tipo = 2
 		    BEGIN
-                SET @tableNames = 'tiposIdentificacion,sujetoRetenido,documentoSustento,sustentoTributario,tiposPago,tiposRegimen,countries,paraisosFiscales,taxes,tarifasImpuesto,impuestosRetencion,porcentajesRetIva,codigosRetencion,formasPago,estabs,infoAdicional';
+                SET @tableNames = 'tiposIdentificacion,sujetoRetenido,documentoSustento,sustentoTributario,tiposPago,tiposRegimen,countries,paraisosFiscales,taxes,tarifaImpuestos,impuestosRetencion,porcentajesRetIva,codigosRetencion,formasPago,estabs,infoAdicional';
 			    
-                SELECT * FROM TipoIdentificacion WITH (NOLOCK) 
+                SELECT * FROM TipoIdentificacion WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.SujetoRetenido WITH (NOLOCK) 
+			    SELECT * FROM Sri.SujetoRetenido WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.DocumentoSustento WITH (NOLOCK) 
+			    SELECT * FROM Sri.DocumentoSustento WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT dst.codDocSustento, st.codSustento, st.descripcion  FROM Sri.SustentoTributario st  WITH (NOLOCK)
+			    SELECT dst.codDocSustento, st.codSustento, st.descripcion  
+                FROM Sri.SustentoTributario st  WITH (NOLOCK)
 			    INNER JOIN Sri.DocumentoSustentoTrib dst  WITH (NOLOCK) ON st.codSustento = dst.codSustento
-			
-                SELECT * FROM Sri.TipoPago WITH (NOLOCK) 
+			    WHERE st.estado = 1
 
-			    SELECT * FROM Sri.TipoRegimenFE WITH (NOLOCK) 
+                SELECT * FROM Sri.TipoPago WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.Pais WITH (NOLOCK)  
+			    SELECT * FROM Sri.TipoRegimenFE WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.ParaisoFiscal WITH (NOLOCK) 
+			    SELECT * FROM Sri.Pais WITH (NOLOCK) WHERE estado = 1  
 
-			    SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
+			    SELECT * FROM Sri.ParaisoFiscal WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK) 
+			    SELECT * FROM Sri.Impuesto WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.ImpuestoRetencion  WITH (NOLOCK)
+			    SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
 
-			    SELECT * FROM Sri.PorcentajeRetIva  WITH (NOLOCK)
+			    SELECT * FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE estado = 1
 
-			    SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado FROM Sri.CodigoRetencion  WITH (NOLOCK)
+			    SELECT * FROM Sri.PorcentajeRetIva  WITH (NOLOCK) WHERE estado = 1
+
+			    SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado
+                FROM Sri.CodigoRetencion  WITH (NOLOCK) WHERE estado = 1
 			
                 SELECT * FROM Sri.FormaPago WITH (NOLOCK) WHERE estado = 1 
 
