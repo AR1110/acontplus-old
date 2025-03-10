@@ -151,7 +151,6 @@ export const DashboardStore = signalStore(
 
   withHooks({
     onInit(store) {
-      console.log('init store');
     },
     onDestroy(store) {},
   })

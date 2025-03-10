@@ -66,11 +66,10 @@ export class AppComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((params) => {
-      console.log(params);
+
 
       const { token, route, permission: dataPermission, userRoleData } = params;
 
-      console.log(route);
 
       if (dataPermission) {
         localStorage.setItem('permisos', dataPermission);

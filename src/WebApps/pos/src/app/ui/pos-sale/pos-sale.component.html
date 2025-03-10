@@ -1,5 +1,31 @@
 <div class="pos-container">
   <div class="pos-header">
+
+    <div class="pos-search-products">
+      <div
+        class="d-flex flex-row gap-1 justify-content-center align-items-center"
+      >
+        <mat-form-field class="w-100" style="border-radius: 12px;">
+          <input
+            matInput
+            [ngModel]="dataItemSearch().textSearch"
+            (keydown.enter)="onEnterInputSearch($event)"
+            (blur)="onBlurTextSearch($event)"
+            matTooltip="Presiona 'Enter' para buscar o haz clic en el botón recargar"
+            [disabled]="loading()"
+            placeholder="Buscar producto aqui..."
+          />
+
+          <button matSuffix   mat-icon-button
+                  [disabled]="loading()"
+                  aria-label="icon button refresh"
+                  (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+
+        </mat-form-field>
+      </div>
+    </div>
     <!-- Componente de categorías -->
     <div class="pos-categories">
       <div class="category-container">
@@ -11,37 +37,7 @@
       </div>
     </div>
 
-    <div class="pos-search-products">
-      <!-- <app-product-input-search
-        (textSearch)="dataItemSearch().textSearch"
-        (onEnterInputSearch)="onEnterInputSearch($event)"
-        (onBlurTextSearch)="onBlurTextSearch($event)"
-        (refresh)="refresh()"
-      /> -->
-      <div
-        class="d-flex flex-row gap-1 justify-content-center align-items-center"
-      >
-        <mat-form-field class="w-100">
-          <input
-            matInput
-            [ngModel]="dataItemSearch().textSearch"
-            (keydown.enter)="onEnterInputSearch($event)"
-            (blur)="onBlurTextSearch($event)"
-            matTooltip="Presiona 'Enter' para buscar o haz clic en el botón recargar"
-            [disabled]="loading()"
-            placeholder="..."
-          />
-        </mat-form-field>
-        <button
-          mat-icon-button
-          [disabled]="loading()"
-          aria-label="icon button refresh"
-          (click)="refresh()"
-        >
-          <mat-icon>refresh</mat-icon>
-        </button>
-      </div>
-    </div>
+
   </div>
 
   <!-- Contenedor del contenido de la página -->
