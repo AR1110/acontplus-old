@@ -4,20 +4,19 @@ namespace Common.API.Extensions;
 
 public static class CommonEndpointsExtensions
 {
-    public static WebApplication MapCommonEndpoints(this WebApplication app)
+    public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        var apiGroup = app.MapGroup("/api")
+        var commonGroup = endpointRouteBuilder.MapGroup("/api")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("Dashbaord;Releases");
 
-        var endpoints = app.Services.GetRequiredService<ICommonEndpoints>();
-        //dashboard data
+        commonGroup.MapGet("/dashboard", async (ICommonEndpoints commonEndpoints, string json) =>
+           await commonEndpoints.GetDashboardAsync(json));
 
-        apiGroup.MapGet("/dashboard", endpoints.GetDashboardAsync);
-        //releases data
-        apiGroup.MapGet("/release", endpoints.GetReleaseAsync);
+        commonGroup.MapGet("/release", async (ICommonEndpoints commonEndpoints) =>
+           await commonEndpoints.GetReleaseAsync());
 
-        return app;
+        return endpointRouteBuilder;
     }
 }

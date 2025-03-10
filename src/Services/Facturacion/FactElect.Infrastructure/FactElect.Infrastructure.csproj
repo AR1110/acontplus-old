@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Services\Facturacion\FactElect.Domain\FactElect.Domain.csproj" />
+    <ProjectReference Include="..\FactElect.Domain\FactElect.Domain.csproj" />
   </ItemGroup>
 </Project>

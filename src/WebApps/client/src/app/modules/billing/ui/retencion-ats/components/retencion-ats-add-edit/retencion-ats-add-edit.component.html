@@ -164,9 +164,9 @@
                   formControlName="parteRel"
                   required
                 >
-                  @for (item of genericAnswer; track $index) {
-                    <option [value]="item.codigo">
-                      {{ item.codigo }}
+                  @for (item of generic; track $index) {
+                    <option [value]="item.code">
+                      {{ item.code }}
                     </option>
                   }
                 </select>
@@ -270,7 +270,7 @@
                     id="codDocSustento"
                     class="form-select"
                     formControlName="codDocSustento"
-                    (change)="selectSutento($index)"
+                    (change)="selectSustento($index)"
                   >
                     <option>::seleccione::</option>
                     @for (doc of documentosSustento; track $index) {
@@ -411,10 +411,10 @@
                     [disabled]="isPagoResidente"
                   >
                     <option>::seleccione::</option>
-                    @for (countrie of countries; track $index) {
-                      <option [value]="countrie.codigo">
-                        {{ countrie.codigo }} -
-                        {{ countrie.descripcion }}
+                    @for (country of countries; track $index) {
+                      <option [value]="country.codigo">
+                        {{ country.codigo }} -
+                        {{ country.descripcion }}
                       </option>
                     }
                   </select>
@@ -432,9 +432,9 @@
                     [disabled]="isPagoResidente"
                   >
                     <option>::seleccione::</option>
-                    @for (cdt of genericAnswer; track $index) {
-                      <option [value]="cdt.codigo">
-                        {{ cdt.codigo }}
+                    @for (cdt of generic; track $index) {
+                      <option [value]="cdt.code">
+                        {{ cdt.code }}
                       </option>
                     }
                   </select>
@@ -452,9 +452,9 @@
                     formControlName="pagExtSujRetNorLeg"
                   >
                     <option>::seleccione::</option>
-                    @for (pagoExt of genericAnswer; track $index) {
-                      <option [value]="pagoExt.codigo">
-                        {{ pagoExt.codigo }}
+                    @for (pagoExt of generic; track $index) {
+                      <option [value]="pagoExt.code">
+                        {{ pagoExt.code }}
                       </option>
                     }
                   </select>
@@ -470,9 +470,9 @@
                     [disabled]="isPagoResidente"
                   >
                     <option>::seleccione::</option>
-                    @for (pagoRegFis of genericAnswer; track $index) {
-                      <option [value]="pagoRegFis.codigo">
-                        {{ pagoRegFis.codigo }}
+                    @for (pagoRegFis of generic; track $index) {
+                      <option [value]="pagoRegFis.code">
+                        {{ pagoRegFis.code }}
                       </option>
                     }
                   </select>
@@ -523,6 +523,15 @@
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
                 <app-theme-button
+                  text="Añadir Impuestos"
+                  icon="plus"
+                  (handleClick)="addTaxes($index)"
+                ></app-theme-button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                <app-theme-button
                   text="Guardar"
                   variant="success"
                   icon="save"
@@ -530,12 +539,18 @@
                   [disabled]="
                     !docSustentoArray.get('idRetAtsDocSustento')?.value
                   "
+                >
+                </app-theme-button>
+                <app-theme-button
+                  text="Ver Doc."
+                  variant="info"
+                  icon="picture_as_pdf"
+                  (handleClick)="docPreview(item)"
                 ></app-theme-button>
                 <app-theme-button
                   text="Eliminar"
                   variant="danger"
-                  icon="save"
-                  type="submit"
+                  icon="delete"
                   (handleClick)="removeDocSustento($index)"
                 ></app-theme-button>
               </div>

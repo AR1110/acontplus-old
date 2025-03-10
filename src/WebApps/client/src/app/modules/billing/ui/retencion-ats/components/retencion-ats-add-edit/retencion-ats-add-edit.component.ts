@@ -33,6 +33,11 @@ import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
 import { PuntoEmision } from '@core/models/punto-emision.model';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
+import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
+import { Pais } from '@sri/domain/models/pais';
+import { Impuesto } from '@sri/domain/models/impuesto';
+import { GenericModel } from '@core/models/generic.model';
+import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -64,6 +69,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _dialogService = inject(DialogService);
+  private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
 
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
@@ -88,9 +94,9 @@ export class RetencionAtsAddEditComponent implements OnInit {
   puntosEmision: PuntoEmision[] = [];
   subContribuyente = '';
   tiposIdentificacion: TipoIdentificacion[] = [];
-  tiposSujRetenido: any[] = [];
+  tiposSujRetenido: SujetoRetenido[] = [];
   isNotForeign = true;
-  genericAnswer: any[] = [{ codigo: 'SI' }, { codigo: 'NO' }];
+  generic: GenericModel[] = [{ code: 'SI' }, { code: 'NO' }];
   retAtsDocSustentos: RetAtsDocSustento[] = [];
   documentosSustento: DocumentoSustento[] = [];
   sustentosTributarios: SustentoTributario[] = [];
@@ -98,9 +104,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
   isPagoResidente = true;
   tiposPago: TipoPago[] = [];
   tiposRegimenFe: TipoRegimenFe[] = [];
-  countries: any[] = [];
-  tempTaxes: any[] = [];
-  docsAdded: any[] = [];
+  countries: Pais[] = [];
+  tempTaxes: Impuesto[] = [];
   btnIcon = 'save';
   btnText = 'Guardar';
 
@@ -162,6 +167,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   createDocSustentoGroup() {
     return this._fb.group({
       idRetAtsDocSustento: [0],
+      idDocumento: [0],
       uniqueIdDoc: [''],
       codSustento: [''],
       codDocSustento: [''],
@@ -187,6 +193,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
         taxes: this._fb.array([]),
       }),
       payments: this._fb.array([]),
+      isAutomatic: [false],
     });
   }
 
@@ -283,7 +290,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
   }
 
-  selectSutento(index: number) {
+  selectSustento(index: number) {
     // Filter sustentos based on document type
     this.sustentosFiltered = [];
     const codDocSustento =
@@ -318,15 +325,11 @@ export class RetencionAtsAddEditComponent implements OnInit {
     // Edit document logic
   }
 
-  deleteDocSust(index: number): void {
-    // Delete document logic
-  }
-
   // Pagination methods
   changePage(page: number): void {
     if (
       page >= 1 &&
-      page <= Math.ceil(this.docsAdded.length / this.itemsPerPage)
+      page <= Math.ceil(this.documentosSustento.length / this.itemsPerPage)
     ) {
       this.currentPage = page;
     }
@@ -339,5 +342,18 @@ export class RetencionAtsAddEditComponent implements OnInit {
   // Info adicional
   addInfoAdicional(info: any): void {
     this.infoAdicional.push(info);
+  }
+
+  addTaxes($index: number) {
+    const documentId =
+      this.docSustentoArray.controls[$index].get('idDocumento')?.value;
+    const isAutomatic =
+      this.docSustentoArray.controls[$index].get('isAutomatic')?.value;
+
+    this._docSustentoUseCase
+      .getTaxes({ documentId, isAutomatic })
+      .subscribe((response) => {
+        console.log(response);
+      });
   }
 }

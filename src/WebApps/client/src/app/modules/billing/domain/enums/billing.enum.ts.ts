@@ -5,6 +5,11 @@ export enum BILLING_PATHS {
   NOTIFICACION_TRIBUTARIA = 'NotificacionTributaria',
   RETENCION_ATS = 'RetencionAts/',
 }
+
+export enum RETENCION_ATS_PATHS {
+  DOC_SUSTENTO = 'DocSustento/',
+}
+
 export const enum BILLING_CODE_REPORT {
   FEG = 'FEG',
   NCRG = 'NCRG',

@@ -6,57 +6,60 @@ public static class PrinterEndpointsExtensions
 {
     private const string ApiGroup = "/api/";
 
-    public static WebApplication MapPrinterEndpoints(this WebApplication app)
+    public static IEndpointRouteBuilder MapPrinterEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        // Create a scope to resolve scoped services
-        using (var scope = app.Services.CreateScope())
-        {
-            var serviceProvider = scope.ServiceProvider;
+        // Map the Printer endpoints
+        var printerGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}Printer")
+            .RequireAuthorization()
+            .WithOpenApi()
+            .WithTags("Printer");
 
-            // Resolve the endpoints within the scope
-            var endpoints = serviceProvider.GetRequiredService<IPrinterEndpoints>();
-            var endpointsPrinterType = serviceProvider.GetRequiredService<IPrinterTypeEndpoints>();
-            var endpointsPrint = serviceProvider.GetRequiredService<IPrintEndpoints>();
-            var endpointsPrinterDocument = serviceProvider.GetRequiredService<IPrinterDocumentEndpoints>();
 
-            // Map the Printer endpoints
-            var apiGroup = app.MapGroup($"{ApiGroup}Printer")
-                .RequireAuthorization()
-                .WithOpenApi()
-                .WithTags("Printer");
+        printerGroup.MapGet("/", async (IPrinterEndpoints printerEndpoints, string json) =>
+            await printerEndpoints.GetPrinters(json));
 
-            apiGroup.MapGet("/", endpoints.GetPrinters);
-            apiGroup.MapGet("/{id}", endpoints.GetPrinterById);
-            apiGroup.MapPost("/", endpoints.CreatePrinter);
-            apiGroup.MapPut("/{id}", endpoints.UpdatePrinter);
-            apiGroup.MapDelete("/{id}", endpoints.DeletePrinter);
+        printerGroup.MapGet("/{id}", async (IPrinterEndpoints printerEndpoints, int id) =>
+            await printerEndpoints.GetPrinterById(id));
 
-            // Map the PrinterType endpoints
-            var printerTypeGroup = app.MapGroup($"{ApiGroup}PrinterType")
+        printerGroup.MapPost("/", async (IPrinterEndpoints printerEndpoints, Printer printer) =>
+            await printerEndpoints.CreatePrinter(printer));
+
+        printerGroup.MapPut("/{id}", async (IPrinterEndpoints printerEndpoints, int id, Printer printer) =>
+            await printerEndpoints.UpdatePrinter(id, printer));
+
+        printerGroup.MapDelete("/{id}", async (IPrinterEndpoints printerEndpoints, int id) =>
+            await printerEndpoints.DeletePrinter(id));
+
+        // Map the PrinterType endpoints
+        var printerTypeGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}PrinterType")
                 .RequireAuthorization()
                 .WithOpenApi()
                 .WithTags("PrinterType");
 
-            printerTypeGroup.MapGet("/", endpointsPrinterType.GetPrinterTypes);
+        printerTypeGroup.MapGet("/", async (IPrinterTypeEndpoints printerTypeEndpoints) =>
+            await printerTypeEndpoints.GetPrinterTypes());
 
-            // Map the Print endpoints
-            var printGroup = app.MapGroup($"{ApiGroup}Print")
+        // Map the Print endpoints
+        var printGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}Print")
                 .RequireAuthorization()
                 .WithOpenApi()
                 .WithTags("Print");
 
-            printGroup.MapGet("/", endpointsPrint.Print);
+        printGroup.MapGet("/", async (IPrintEndpoints printEndpoints, string json) =>
+            await printEndpoints.Print(json));
 
-            // Map the PrinterDocument endpoints
-            var printerDocumentGroup = app.MapGroup($"{ApiGroup}PrinterDocument")
+        // Map the PrinterDocument endpoints
+        var printerDocumentGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}PrinterDocument")
                 .RequireAuthorization()
                 .WithOpenApi()
                 .WithTags("PrinterDocument");
 
-            printerDocumentGroup.MapPost("/", endpointsPrinterDocument.CreatePrinterDocument);
-            printerDocumentGroup.MapPut("/{id}", endpointsPrinterDocument.UpdatePrinterDocument);
-        }
+        printerDocumentGroup.MapPost("/", async (IPrinterDocumentEndpoints printerDocumentEndpoints, PrinterDocument printerDocument) =>
+               await printerDocumentEndpoints.CreatePrinterDocument(printerDocument));
 
-        return app;
+        printerDocumentGroup.MapPut("/{id}", async (IPrinterDocumentEndpoints printerDocumentEndpoints, int id, PrinterDocument printerDocument) =>
+            await printerDocumentEndpoints.UpdatePrinterDocument(id, printerDocument));
+
+        return endpointRouteBuilder;
     }
 }
