@@ -1,9 +1,7 @@
-import { ActionAddDirective } from './../../../../../shared/directives/permission/action-add.directive';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
@@ -11,8 +9,6 @@ import { MovimientoCajaRead } from '@accounting/core/domain/movimiento-caja.mode
 import Swal from 'sweetalert2';
 import { ModalEgresoIngresoComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/modal-egreso-ingreso/modal-egreso-ingreso.component';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
-import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
-import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { formatDateToString } from '@core/utils/date.util';
 import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,7 +23,11 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { PageEvent } from '@angular/material/paginator';
 import { finalize } from 'rxjs/operators';
 import { MatMenuModule } from '@angular/material/menu';
-import {UserRoleStateManager} from "@shared/store/user-role-state-manager";
+import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
+import { DialogService } from '@core/services/dialog.service';
+import {
+  EgresoIngresoDialogComponent
+} from "@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -41,9 +41,6 @@ import {UserRoleStateManager} from "@shared/store/user-role-state-manager";
     MatMenuModule,
     DateRangeSelectionComponent,
     CompanyCustomerSearchMatComponent,
-    ActionAnularDirective,
-    ActionReportDirective,
-    ActionAddDirective,
     MatDynamicTableComponent,
   ],
   templateUrl: './egreso-ingreso-caja.component.html',
@@ -57,11 +54,11 @@ export class EgresoIngresoCajaComponent implements OnInit {
     codEstado: '',
   };
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
-  private modalSvc = inject(ModalService);
+  private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
-    $userRoleStateManager = inject(UserRoleStateManager);
+  $userRoleStateManager = inject(UserRoleStateManager);
 
   dataSource: MovimientoCajaRead[] = [];
 
@@ -153,12 +150,11 @@ export class EgresoIngresoCajaComponent implements OnInit {
   }
 
   openModal(params?: any) {
-    const modalRef = this.modalSvc.openModalCustom(
-      ModalEgresoIngresoComponent,
-      { size: 'lg', backdrop: 'static' }
-    );
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then((result) => {
+    const modalRef = this.dialogSvc.open(EgresoIngresoDialogComponent, {
+      size: 'lg',
+      data: params || {},
+    });
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getMovimientosCaja();
       }
