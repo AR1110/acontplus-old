@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { ActionAddDirective } from './../../../../../shared/directives/permission/action-add.directive';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -26,6 +27,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { PageEvent } from '@angular/material/paginator';
 import { finalize } from 'rxjs/operators';
 import { MatMenuModule } from '@angular/material/menu';
+import {UserRoleStateManager} from "@shared/store/user-role-state-manager";
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -41,11 +43,12 @@ import { MatMenuModule } from '@angular/material/menu';
     CompanyCustomerSearchMatComponent,
     ActionAnularDirective,
     ActionReportDirective,
+    ActionAddDirective,
     MatDynamicTableComponent,
   ],
   templateUrl: './egreso-ingreso-caja.component.html',
 })
-export class EgresoIngresoCajaComponent {
+export class EgresoIngresoCajaComponent implements OnInit {
   dataSearch = {
     codEstab: '',
     fromDate: formatDateToString(new Date()),
@@ -58,6 +61,7 @@ export class EgresoIngresoCajaComponent {
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
+    $userRoleStateManager = inject(UserRoleStateManager);
 
   dataSource: MovimientoCajaRead[] = [];
 
@@ -84,7 +88,7 @@ export class EgresoIngresoCajaComponent {
   pagination = signal(new MatPagination());
 
   getMovimientosCaja() {
-    let params = {
+    const params = {
       codEstab: this.dataSearch.codEstab,
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
@@ -118,8 +122,8 @@ export class EgresoIngresoCajaComponent {
     this._movimientoCajaUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       if (this.establecimientos.length > 0) {
-        let dataEstab = this.establecimientos.find(
-          (item) => item.predeterminado,
+        const dataEstab = this.establecimientos.find(
+          (item) => item.predeterminado
         );
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
@@ -151,7 +155,7 @@ export class EgresoIngresoCajaComponent {
   openModal(params?: any) {
     const modalRef = this.modalSvc.openModalCustom(
       ModalEgresoIngresoComponent,
-      { size: 'lg', backdrop: 'static' },
+      { size: 'lg', backdrop: 'static' }
     );
     modalRef.componentInstance.params = params || {};
     modalRef.result.then((result) => {
@@ -162,7 +166,7 @@ export class EgresoIngresoCajaComponent {
   }
 
   getPrint(item: MovimientoCajaRead) {
-    let parameters = {
+    const parameters = {
       idDocument: item.idMovimientoCaja,
       idTipoDocumento: item.idTipoDocumento,
       codEstab: item.codEstab,
@@ -177,8 +181,8 @@ export class EgresoIngresoCajaComponent {
 
   getReport(item: MovimientoCajaRead) {
     try {
-      let format = 'pdf';
-      let dataParms = {
+      const format = 'pdf';
+      const dataParms = {
         tipo: 1,
         id: item.idMovimientoCaja,
       };

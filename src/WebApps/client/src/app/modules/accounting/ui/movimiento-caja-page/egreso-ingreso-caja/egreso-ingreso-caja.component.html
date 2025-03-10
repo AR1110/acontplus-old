@@ -1,6 +1,5 @@
 <div class="row">
   <div class="col-xxl-10 col-xl-10 col-md-10 col-sm-12 col-12">
-
     <div
       class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-4"
     >
@@ -12,7 +11,9 @@
             (selectionChange)="getMovimientosCaja()"
           >
             @for (item of establecimientos; track $index) {
-              <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
+            <mat-option [value]="item.codEstab">{{
+              item.nombreComercial
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -27,26 +28,29 @@
         <app-company-customer-search-mat
           (onSelect)="onSelectCustomer($event)"
           (clearInput)="onEmptyCustomer()"
-        [isSimpleMode]="true"
+          [isSimpleMode]="true"
         />
       </div>
-
-
     </div>
-
   </div>
   <div class="col-xxl-2 col-xl-2 col-md-2 col-sm-12 col-12">
     <div class="hstack gap-2">
       <button mat-icon-button aria-label="refresh" (click)="refresh()">
         <mat-icon>refresh</mat-icon>
       </button>
-      <button mat-icon-button  aria-label="Add"  (click)="openModal()">
+      @if($userRoleStateManager.canCreate()){
+      <button
+        mat-icon-button
+        aria-label="Add" 
+        (click)="openModal()"
+      >
         <mat-icon>add</mat-icon>
       </button>
+
+      }
     </div>
   </div>
 </div>
-
 
 <app-mat-dynamic-table
   [isLoadingData]="isLoadingResults()"
@@ -66,20 +70,25 @@
   </button>
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="getReport(item)" appActionReport>
+    @if($userRoleStateManager.canGenerateReport()){
+    <button mat-menu-item (click)="getReport(item)"  >
       <mat-icon>download</mat-icon>
       <span>Reporte</span>
     </button>
+
+    }
 
     <button mat-menu-item (click)="getPrint(item)">
       <mat-icon>edit</mat-icon>
       <span>Imprimir</span>
     </button>
 
-    <button mat-menu-item (click)="askToDelete(item)" appActionAnular>
+    @if($userRoleStateManager.canCancel()){
+    <button mat-menu-item   (click)="askToDelete(item)">
       <mat-icon>delete</mat-icon>
       <span>Anular</span>
     </button>
 
+    }
   </mat-menu>
 </ng-template>

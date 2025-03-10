@@ -10,15 +10,18 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
-import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
+import {
+  UserPermission,
+  UserRoleStateService,
+} from '@shared/store/user-role-state.service';
+import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 @Component({
-    selector: 'app-root',
-    imports: [CommonModule, RouterOutlet],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  imports: [CommonModule, RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   title = 'client';
@@ -30,21 +33,21 @@ export class AppComponent implements OnInit {
   #themeService = inject(ThemeService);
   #document = inject(DOCUMENT);
   #renderer = inject(Renderer2);
-  private _tokenUseCase = inject(TokenUseCase)
+  private _tokenUseCase = inject(TokenUseCase);
   //end temporalmente
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private _authUseCase: AuthUseCase,
-    library: FaIconLibrary,
+    library: FaIconLibrary
   ) {
     library.addIconPacks(fab, fas, far);
     effect(() => {
       this.#renderer.setAttribute(
         this.#document.documentElement,
         'class',
-        this.#themeService.theme(),
+        this.#themeService.theme()
       );
     });
   }
@@ -57,30 +60,30 @@ export class AppComponent implements OnInit {
   //end temporalmente
 
   ngOnInit() {
-    let self = this;
+    const self = this;
     Object.keys(sessionStorage).forEach(function (key) {
       sessionStorage.removeItem(key);
     });
 
     this.route.queryParams.subscribe((params) => {
+      console.log(params);
 
-      let { token, route, permission: dataPermission, userRoleData } = params;
+      const { token, route, permission: dataPermission, userRoleData } = params;
 
       console.log(route);
 
       if (dataPermission) {
         localStorage.setItem('permisos', dataPermission);
         localStorage.setItem('userRoleData', userRoleData);
-        let getPermission = localStorage.getItem('permisos');
-        let getUserRoleData = localStorage.getItem('userRoleData');
+        const getPermission = localStorage.getItem('permisos');
+        const getUserRoleData = localStorage.getItem('userRoleData');
         if (getPermission && getUserRoleData) {
-          let { acciones } = JSON.parse(getPermission);
+          const { acciones } = JSON.parse(getPermission);
 
+          const permission = JSON.parse(dataPermission);
+          const userRoleData = JSON.parse(getUserRoleData);
 
-          let permission = JSON.parse(dataPermission);
-          let userRoleData = JSON.parse(getUserRoleData);
-
-          let instancePermission = new UserPermission();
+          const instancePermission = new UserPermission();
           this.userRoleState.setState({
             permission: {
               ...instancePermission,
@@ -108,7 +111,7 @@ export class AppComponent implements OnInit {
         if (!this._tokenUseCase.isTokenExpired()) {
           localStorage.removeItem('access_token');
         }
-        let route_page = getEnumValueByKey(GlobalRoutes, route);
+        const route_page = getEnumValueByKey(GlobalRoutes, route);
 
         localStorage.setItem('access_token', token);
         self.router.navigate(['/', ...route_page.split('/')]);
