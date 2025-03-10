@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { FormArray, FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
@@ -38,6 +38,12 @@ import { Pais } from '@sri/domain/models/pais';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { GenericModel } from '@core/models/generic.model';
 import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { ambienteSriOptions } from '@shared/models/ambiente-sri';
+import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
+import {
+  DocSustentoAddEditComponent
+} from "@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component";
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -56,6 +62,8 @@ import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-c
     SupplierSearchComponent,
     MatCardActions,
     ThemeButtonComponent,
+    FaIconComponent,
+    DocSustentoAddEditComponent,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
@@ -105,7 +113,9 @@ export class RetencionAtsAddEditComponent implements OnInit {
   tiposPago: TipoPago[] = [];
   tiposRegimenFe: TipoRegimenFe[] = [];
   countries: Pais[] = [];
-  tempTaxes: Impuesto[] = [];
+  taxes: Impuesto[] = [];
+  tarifaImpuestos: TarifaImpuesto[] = [];
+  tarifaImpuestosFiltered: TarifaImpuesto[] = [];
   btnIcon = 'save';
   btnText = 'Guardar';
 
@@ -197,6 +207,40 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
   }
 
+  getTaxesArray(docIndex: number): FormArray {
+    return this.docSustentoArray.at(docIndex).get('taxes') as FormArray;
+  }
+
+  createTaxGroup(): FormGroup {
+    return this._fb.group({
+      impuesto: [''],
+      porcentaje: [''],
+      codImpuestoDocSustento: [
+        '',
+        [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
+      ],
+      codigoPorcentaje: [''],
+      baseImponible: ['', Validators.required],
+      tarifa: [''],
+      valorImpuesto: [''],
+    });
+  }
+
+  createTax(docIndex: number, tax: any): void {
+    const taxesArray = this.getTaxesArray(docIndex);
+    const taxGroup = this.createTaxGroup();
+    taxGroup.patchValue(tax);
+    taxesArray.push(taxGroup);
+  }
+
+  removeTax(docIndex: number, taxIndex: number): void {
+    const taxesArray = this.getTaxesArray(docIndex);
+
+    if (taxIndex >= 0 && taxIndex < taxesArray.length) {
+      taxesArray.removeAt(taxIndex);
+    }
+  }
+
   initialLoad() {
     this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
       this.estabs = response.estabs;
@@ -206,6 +250,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.sustentosTributarios = response.sustentoTributario;
       this.tiposPago = response.tiposPago;
       this.tiposRegimenFe = response.tiposRegimen;
+      this.taxes = response.taxes;
+      this.tarifaImpuestos = response.tarifaImpuestos;
     });
   }
 
@@ -281,7 +327,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
         const { documents } = response;
         if (documents.length > 0) {
           this.retAtsDocSustentos = documents;
-          console.log(this.retAtsDocSustentos);
           this.retAtsDocSustentos.forEach((doc) => {
             this.addDocSustentoWithValues(doc);
           });
@@ -310,7 +355,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   removeTaxTemp(index: number): void {
-    this.tempTaxes.splice(index, 1);
+    this.taxes.splice(index, 1);
   }
 
   updateDocSustento(): void {
@@ -353,7 +398,19 @@ export class RetencionAtsAddEditComponent implements OnInit {
     this._docSustentoUseCase
       .getTaxes({ documentId, isAutomatic })
       .subscribe((response) => {
-        console.log(response);
+        response.taxes.forEach((tax) => {
+          this.selectTarifa(tax);
+          this.createTax($index, tax);
+        });
       });
+  }
+
+  protected readonly ambientes = ambienteSriOptions;
+
+  selectTarifa(tax: any) {
+    this.tarifaImpuestosFiltered = [];
+    this.tarifaImpuestosFiltered = this.tarifaImpuestos.filter(
+      (x) => x.codImpuesto === tax.codImpuestoDocSustento,
+    );
   }
 }

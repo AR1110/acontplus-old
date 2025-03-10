@@ -68,7 +68,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       countries: [],
       paraisosFiscales: [],
       taxes: [],
-      tarifasImpuesto: [],
+      tarifaImpuestos: [],
       impuestosRetencion: [],
       porcentajesRetIva: [],
       codigosRetencion: [],

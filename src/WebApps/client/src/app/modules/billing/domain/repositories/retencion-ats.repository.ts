@@ -31,7 +31,7 @@ export abstract class RetencionAtsRepository {
     countries: Pais[];
     paraisosFiscales: ParaisoFiscal[];
     taxes: Impuesto[];
-    tarifasImpuesto: TarifaImpuesto[];
+    tarifaImpuestos: TarifaImpuesto[];
     impuestosRetencion: ImpuestoRetencion[];
     porcentajesRetIva: PorcentajeRetIva[];
     codigosRetencion: CodigoRetencion[];
