@@ -18,11 +18,12 @@ import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
+import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
 
 export abstract class RetencionAtsRepository {
   abstract getDataForm(parameters: unknown): Observable<{
     tiposIdentificacion: TipoIdentificacion[];
-    sujetoRetenido: unknown[];
+    sujetoRetenido: SujetoRetenido[];
     documentoSustento: DocumentoSustento[];
     sustentoTributario: SustentoTributario[];
     tiposPago: TipoPago[];
