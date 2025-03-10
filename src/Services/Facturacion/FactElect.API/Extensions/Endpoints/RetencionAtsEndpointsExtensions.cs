@@ -6,9 +6,9 @@ public static class RetencionAtsEndpointsExtensions
 {
     private const string ApiGroup = "/api/";
 
-    public static IEndpointRouteBuilder MapRetencionAtsEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapRetencionAtsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        var retencionAtsGroup = endpoints.MapGroup($"{ApiGroup}DocSustento")
+        var retencionAtsGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}DocSustento")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("DocSustento");
@@ -28,6 +28,6 @@ public static class RetencionAtsEndpointsExtensions
         retencionAtsGroup.MapDelete("/{id}", async (IDocSustentoEndpoints printerEndpoints, int id) =>
             await printerEndpoints.DeleteDocSustento(id));
 
-        return endpoints;
+        return endpointRouteBuilder;
     }
 }
