@@ -1,9 +1,15 @@
 
-export interface ApiResponse {
+export class ApiResponse<T=unknown> {
     code: "0" | "1" | "2"
     message: string
-    payload: unknown
+    payload: T | null
     titleSms?: string
+
+  constructor() {
+      this.code = "0"
+    this.message = ""
+    this.payload = null
+  }
 }
 
 

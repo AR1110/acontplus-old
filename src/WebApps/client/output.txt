@@ -501,7 +501,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── product
 |  |  |  |  |  |  ├── product-deprecated.mapper.ts
 |  |  |  |  |  |  ├── product-deprecated.repository.ts
-|  |  |  |  |  |  ├── product-web.repository.ts
+|  |  |  |  |  |  ├── product-repository-impl.ts
 |  |  |  |  |  |  └── product.mapper.ts
 |  |  |  |  |  └── tag
 |  |  |  |  |     ├── tag-web.repository.ts
