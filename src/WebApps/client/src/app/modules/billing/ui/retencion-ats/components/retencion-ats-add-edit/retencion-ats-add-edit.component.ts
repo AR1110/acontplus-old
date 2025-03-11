@@ -28,7 +28,6 @@ import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { DatePipe } from '@angular/common';
 import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
-import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
 import { PuntoEmision } from '@core/models/punto-emision.model';
@@ -41,9 +40,8 @@ import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-c
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ambienteSriOptions } from '@shared/models/ambiente-sri';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
-import {
-  DocSustentoAddEditComponent
-} from "@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component";
+import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
+// import { DocSustentoAddEditComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component';
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
@@ -63,7 +61,7 @@ import {
     MatCardActions,
     ThemeButtonComponent,
     FaIconComponent,
-    DocSustentoAddEditComponent,
+    // DocSustentoAddEditComponent,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
@@ -108,7 +106,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   retAtsDocSustentos: RetAtsDocSustento[] = [];
   documentosSustento: DocumentoSustento[] = [];
   sustentosTributarios: SustentoTributario[] = [];
-  sustentosFiltered: SustentoTributario[] = [];
+
   isPagoResidente = true;
   tiposPago: TipoPago[] = [];
   tiposRegimenFe: TipoRegimenFe[] = [];
@@ -127,7 +125,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   // Info adicional
   infoAdicional: unknown[] = [];
-  panelOpenState = -1;
+
   // Computed properties
 
   dialogIcon = signal('add');
@@ -147,9 +145,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
     return this.retencionAtsForm.get('docSustento') as FormArray;
   }
 
-  addDocSustento() {
-    this.docSustentoArray.push(this.createDocSustentoGroup());
-  }
   // Add a docSustento with predefined values
   addDocSustentoWithValues(doc: any) {
     const docGroup = this.createDocSustentoGroup();
@@ -163,7 +158,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
         formattedFecha = parsedDate.toISOString().split('T')[0];
       }
     }
-    console.log(formattedFecha);
     // Patch the values into the form
     docGroup.patchValue({ ...doc, fechaEmisionDocSustento: formattedFecha });
     this.docSustentoArray.push(docGroup);
@@ -335,17 +329,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
   }
 
-  selectSustento(index: number) {
-    // Filter sustentos based on document type
-    this.sustentosFiltered = [];
-    const codDocSustento =
-      this.docSustentoArray.controls[index].get('codDocSustento')?.value;
-
-    this.sustentosFiltered = this.sustentosTributarios.filter(
-      (x) => x.codDocSustento === codDocSustento,
-    );
-  }
-
   enableControls(): void {
     // this.isPagoResidente = pagoLocExt === 'LOCAL';
   }
@@ -378,10 +361,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
     ) {
       this.currentPage = page;
     }
-  }
-
-  setPanelOpen(index: number) {
-    this.panelOpenState = index;
   }
 
   // Info adicional
