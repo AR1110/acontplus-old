@@ -234,94 +234,18 @@
       ></app-theme-button>
     </div>
   </div>
-  <div class="row g-3 align-items-center" formArrayName="taxes">
-    @for (
-      tax of getTaxesArray(indexDoc()).controls;
-      let i = $index;
-      track i
-    ) {
-      <div class="row g-2 align-items-center" [formGroupName]="i">
-        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-          <select
-            class="form-select"
-            formControlName="codImpuestoDocSustento"
-            id="codImpuestoDocSustento-{{ i }}"
-          >
-            <option>Seleccione un impuesto</option>
-            @for (sriTax of taxes(); track $index) {
-              <option [value]="sriTax.codigo">
-                {{ sriTax.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-          <select
-            class="form-select"
-            formControlName="codigoPorcentaje"
-            id="codigoPorcentaje-{{ i }}"
-            (change)="selectTarifa(tax)"
-          >
-            <option>Seleccione una tarifa</option>
-            @for (tarifaImpuesto of tarifaImpuestosFiltered; track $index) {
-              <option [value]="tarifaImpuesto.codigo">
-                {{ tarifaImpuesto.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
-          <input
-            class="form-control"
-            formControlName="baseImponible"
-            id="tax-{{ i }}"
-            type="number"
-            step="any"
-            placeholder="Base imponible"
-          />
-        </div>
-        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
-          <input
-            class="form-control"
-            formControlName="tarifa"
-            id="tarifa-{{ i }}"
-            type="number"
-            step="any"
-            readonly
-            placeholder="Tarifa"
-          />
-        </div>
-        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
-          <input
-            class="form-control"
-            formControlName="valorImpuesto"
-            id="valorImpuesto-{{ i }}"
-            type="number"
-            step="any"
-            readonly
-            placeholder="Valor impuesto"
-          />
-        </div>
-        <div class="col-auto">
-          <button
-            (click)="removeTax(indexDoc(), i)"
-            class="btn btn-danger btn-sm"
-            type="button"
-            title="Eliminar impuesto"
-          >
-            <fa-icon [icon]="'trash'"></fa-icon>
-          </button>
-        </div>
-      </div>
+  <div class="row g-3 align-items-center" formArrayName="impuestos">
+    @for (tax of getTaxesArray(indexDoc()).controls; let i = $index; track i) {
+      <app-doc-sustento-taxes
+        [docSustentoArray]="docSustentoArray()"
+        [taxGroup]="tax"
+        [taxes]="taxes()"
+        [tarifaImpuestos]="tarifaImpuestos()"
+        [indexTax]="indexDoc()"
+      />
     }
-    <div class="col-auto mt-3">
-      <app-theme-button
-        text="Añadir Impuestos Manualmente"
-        icon="add"
-        (handleClick)="createTax(indexDoc(), {})"
-      ></app-theme-button>
-    </div>
   </div>
+
   <div class="row">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
       <app-theme-button

@@ -1,0 +1,81 @@
+<div class="row g-2 align-items-center" [formGroupName]="taxGroup()">
+  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+    <select
+      class="form-select"
+      formControlName="codImpuestoDocSustento"
+      id="codImpuestoDocSustento-{{ indexTax() }}"
+    >
+      <option>Seleccione un impuesto</option>
+      @for (sriTax of taxes(); track $index) {
+        <option [value]="sriTax.codigo">
+          {{ sriTax.descripcion }}
+        </option>
+      }
+    </select>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+    <select
+      class="form-select"
+      formControlName="codigoPorcentaje"
+      id="codigoPorcentaje-{{ indexTax() }}"
+      (change)="selectTarifa(taxGroup().value)"
+    >
+      <option>Seleccione una tarifa</option>
+      @for (tarifaImpuesto of tarifaImpuestosFiltered; track $index) {
+        <option [value]="tarifaImpuesto.codigo">
+          {{ tarifaImpuesto.descripcion }}
+        </option>
+      }
+    </select>
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
+    <input
+      class="form-control"
+      formControlName="baseImponible"
+      id="tax-{{ indexTax() }}"
+      type="number"
+      step="any"
+      placeholder="Base imponible"
+    />
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
+    <input
+      class="form-control"
+      formControlName="tarifa"
+      id="tarifa-{{ indexTax() }}"
+      type="number"
+      step="any"
+      readonly
+      placeholder="Tarifa"
+    />
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
+    <input
+      class="form-control"
+      formControlName="valorImpuesto"
+      id="valorImpuesto-{{ indexTax() }}"
+      type="number"
+      step="any"
+      readonly
+      placeholder="Valor impuesto"
+    />
+  </div>
+  <div class="col-auto">
+    <button
+      (click)="removeTax(indexTax(), indexTax())"
+      class="btn btn-danger btn-sm"
+      type="button"
+      title="Eliminar impuesto"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</div>
+
+<!--  <div class="col-auto mt-3">-->
+<!--    <app-theme-button-->
+<!--      text="Añadir Impuestos Manualmente"-->
+<!--      icon="add"-->
+<!--      (handleClick)="createTax(indexDoc(), {})"-->
+<!--    ></app-theme-button>-->
+<!--  </div>-->

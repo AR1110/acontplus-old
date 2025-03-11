@@ -24,6 +24,7 @@ import { GenericModel } from '@core/models/generic.model';
 import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { Impuesto } from '@sri/domain/models/impuesto';
+import { DocSustentoTaxesComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-taxes/doc-sustento-taxes.component';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -36,12 +37,13 @@ import { Impuesto } from '@sri/domain/models/impuesto';
     MatExpansionPanelTitle,
     ReactiveFormsModule,
     ThemeButtonComponent,
+    DocSustentoTaxesComponent,
   ],
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,
 })
 export class DocSustentoAddEditComponent {
-  docSustentoGroup = input.required<FormGroup>();
+  docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
   documentosSustento = input.required<DocumentoSustento[]>();
@@ -148,4 +150,6 @@ export class DocSustentoAddEditComponent {
   removeDocSustento(index: number) {
     this.docSustentoArray().removeAt(index);
   }
+
+  protected readonly FormArray = FormArray;
 }
