@@ -88,7 +88,7 @@ export class DocSustentoAddEditComponent {
   }
 
   getTaxesArray(docIndex: number): FormArray {
-    return this.docSustentoArray().at(docIndex).get('taxes') as FormArray;
+    return this.docSustentoArray().at(docIndex).get('impuestos') as FormArray;
   }
 
   createTaxGroup(): FormGroup {

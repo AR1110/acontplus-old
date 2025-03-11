@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { AfterViewInit, Component, input } from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
@@ -16,14 +16,12 @@ export class DocSustentoTaxesComponent {
   taxes = input.required<Impuesto[]>();
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   indexTax = input.required<number>();
-
-  tarifaImpuestosFiltered: TarifaImpuesto[] = [];
-
+  tarifaImpuestosFiltered = input.required<TarifaImpuesto[]>();
+  // tarifaImpuestosFiltered: TarifaImpuesto[] = [];
   selectTarifa(tax: any) {
-    this.tarifaImpuestosFiltered = [];
-    this.tarifaImpuestosFiltered = this.tarifaImpuestos().filter(
-      (x) => x.codImpuesto === tax.codImpuestoDocSustento,
-    );
+    // this.tarifaImpuestosFiltered() = this.tarifaImpuestos().filter(
+    //     (x) => x.codImpuesto === tax.codImpuestoDocSustento,
+    // );
   }
   removeTax(docIndex: number, taxIndex: number): void {
     const taxesArray = this.docSustentoArray()

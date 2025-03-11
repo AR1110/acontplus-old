@@ -1,4 +1,4 @@
-<div class="row g-2 align-items-center" [formGroupName]="taxGroup()">
+<div class="row g-2 align-items-center" [formGroup]="taxGroup()">
   <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
     <select
       class="form-select"
@@ -21,7 +21,7 @@
       (change)="selectTarifa(taxGroup().value)"
     >
       <option>Seleccione una tarifa</option>
-      @for (tarifaImpuesto of tarifaImpuestosFiltered; track $index) {
+      @for (tarifaImpuesto of tarifaImpuestosFiltered(); track $index) {
         <option [value]="tarifaImpuesto.codigo">
           {{ tarifaImpuesto.descripcion }}
         </option>
