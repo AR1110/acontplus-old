@@ -13,11 +13,21 @@ export class AddEditProductDirective {
   private dialogSvc = inject(DialogService);
 
   data = input()
+  id = input(0)
 
   @HostListener('click') onClick() {
+    let data:any = {};
+    if(this.data() && typeof this.data()==='object'){
+      data = this.data();
+    }
+
+    if(this.id()>0){
+      data.id = this.id();
+    }
+
     const modalRef = this.dialogSvc.open(AddEditProductDialogComponent, {
       size: 'xl',
-      data: this.data() || {}
+      data
     });
     modalRef.subscribe((result: unknown) => {
       if (result && typeof result === 'object') {

@@ -1,4 +1,10 @@
-import {Component, inject, signal, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,19 +23,25 @@ import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ProductUseCase } from '@modules/inventory/domain/usecases/product.use-case';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
-import {GroupedEstab, GroupedEstabBodega} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { TAX_RATE_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
-import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
-import {BrandAddEditDirective} from "@inventory/ui/directives/brand-add-edit.directive";
-import {ModelAddEditDirective} from "@inventory/ui/directives/model-add-edit.directive";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {MatDatepickerModule} from "@angular/material/datepicker";
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
+import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product-data-form.use-case";
+import {ProductPostUseCase} from "@inventory/domain/usecases/product/product-post.use-case";
+import {ProductPutUseCase} from "@inventory/domain/usecases/product/product-put.use-case";
+import {ApiResponse} from "@core/models/api-response";
+import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
+import {forkJoin} from "rxjs";
 interface ProductTarifa {
   tipoIva: string;
   tarifa: string;
@@ -64,7 +76,7 @@ interface ProductTarifa {
     TagsAddEditModalDirective,
     BrandAddEditDirective,
     ToUpperCaseDirective,
-    ModelAddEditDirective
+    ModelAddEditDirective,
   ],
   templateUrl: './add-edit-product-dialog.component.html',
   styles: ``,
@@ -73,13 +85,24 @@ interface ProductTarifa {
 })
 export class AddEditProductDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<AddEditProductDialogComponent>);
-  readonly params = inject<any>(MAT_DIALOG_DATA);
+  readonly params = inject<{
+    id: number
+    isImport?: number
+    codigo?: string
+    codigoAuxiliar?:string
+    descripcion?: string
+    precioCosto?: number
+  }>(MAT_DIALOG_DATA);
 
   private tS = inject(ToasterService);
   private _productUseCase = inject(ProductUseCase);
+  private $productDataFormUseCase = inject(ProductDataFormUseCase)
+  private $productPostUseCase = inject(ProductPostUseCase)
+  private $productPutUseCase = inject(ProductPutUseCase)
+  private $productGetIdUseCase = inject(ProductGetIdUseCase)
   private userRoleStateSvc = inject(UserRoleStateService);
 
-  title = 'Nuevo Artículo'
+  title = 'Nuevo Artículo';
   btnText = 'Guardar';
 
   subCategories = signal<any[]>([]);
@@ -89,14 +112,14 @@ export class AddEditProductDialogComponent implements OnInit {
 
   tiposIva = signal<TipoIvaSelectHtmlOnly[]>([]);
   estabs = signal<GroupedEstab[]>([]);
-  bodegas: GroupedEstabBodega[] = []
+  bodegas: GroupedEstabBodega[] = [];
 
   etiquetas = signal<any[]>([]);
   tarifas: TarifaSelectHtmlOnly[] = [];
 
-  marcas:any[] = [];
-  modelos:any[] = [];
-  tiposIce:any[] = [];
+  marcas: any[] = [];
+  modelos: any[] = [];
+  tiposIce: any[] = [];
 
   decimal = {
     nroPrecio: 6,
@@ -141,12 +164,12 @@ export class AddEditProductDialogComponent implements OnInit {
   dataUbicacion = {
     idEstablecimiento: 0,
     idBodega: 0,
-    ubicacion: null
-  }
+    ubicacion: null,
+  };
   columnNames = [
     {
       title: 'Tarifa',
-      field: 'tarifa',
+      field: 'nomTarifa',
       headerSort: false,
       resizable: true,
     },
@@ -188,7 +211,7 @@ export class AddEditProductDialogComponent implements OnInit {
     },
     {
       title: 'Estado',
-      field: 'estado',
+      field: 'nomEstado',
       headerSort: false,
       resizable: true,
     },
@@ -209,106 +232,118 @@ export class AddEditProductDialogComponent implements OnInit {
   private timeoutIdNav: any; // Para almacenar el ID del setTimeout
 
   isUpdate() {
-    return this.params.idArticulo > 0;
+    return this.params.id > 0;
   }
 
   isAdd() {
-    return !(this.params.idArticulo > 0);
+    return !(this.params.id > 0);
+  }
+
+  private onLoadForm(){
+    const requests:any = [this.$productDataFormUseCase.execute()]
+
+    if(this.isUpdate()){
+      requests.push(this.$productGetIdUseCase.execute(this.params.id))
+    }
+    return forkJoin(requests)
   }
 
 
+  private loadDataAdd(){
+    //default data
+    if (this.tiposArticulo().length > 0) {
+      this.data.idTipoArticulo = this.tiposArticulo()[0].idTipoArticulo;
+    }
+
+    if (this.medidas().length > 0) {
+      this.data.idMedida = this.medidas()[0].idMedida;
+    }
+
+    if (this.tiposIva().length > 0) {
+      const dataTipoIva = this.tiposIva().find(
+        (ti: any) =>
+          ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIVE_PERCENT
+      );
+      this.data.idTipoIva = dataTipoIva?.idTipoIva ?? 0;
+    }
+    console.log(this.data);
+
+    this.setDataSubCategoria();
+    this.setProductPvpAdd();
+
+    //Registro de artículo desde Importación
+    if (this.params && this.params.isImport) {
+      this.setDataRecepcion();
+    }
+  }
 
   ngOnInit() {
     this.userRoleStateSvc.select('permission').subscribe((p) => {
       this.isChangePrecio = p?.product?.precio;
     });
 
-    this._productUseCase.getDataForm().subscribe({
-      next: (response) => {
-        const {
-          categorias,
-          decimal,
-          estabs,
-          etiquetas,
-          marcas,
-          medidas,
-          modelos,
-          subCategorias,
-          tarifas,
-          tiposArticulo,
-          tiposIce,
-          tiposIva,
-        } = response;
-        console.log(response)
-
-        this.estabs.set(estabs);
-        this.subCategories.set(subCategorias);
-        this.subCategoriesGroup.set(response.subCategoriasGroup);
-        this.tiposArticulo.set(tiposArticulo);
-        this.medidas.set(medidas);
-        this.tiposIva.set(tiposIva);
-        this.tarifas = tarifas;
-        this.etiquetas.set(etiquetas);
-        this.marcas = marcas;
-        this.modelos = modelos;
-        this.tiposIce = tiposIce;
+    this.onLoadForm().subscribe(response=>{
+      const [dataForm, dataId] = response as any;
+      const {
+        categorias,
+        decimal,
+        estabs,
+        etiquetas,
+        marcas,
+        medidas,
+        modelos,
+        subCategorias,
+        tarifas,
+        tiposArticulo,
+        tiposIce,
+        tiposIva,
+      } = dataForm;
 
 
-        if (this.estabs().length > 0) {
-          let dataEstab = this.estabs().find(
-            (estab) => estab.defaultEstab
-          );
-          if(dataEstab){
+      this.estabs.set(estabs);
+      this.subCategories.set(subCategorias);
+      this.subCategoriesGroup.set(dataForm.subCategoriasGroup);
+      this.tiposArticulo.set(tiposArticulo);
+      this.medidas.set(medidas);
+      this.tiposIva.set(tiposIva);
+      this.tarifas = tarifas;
+      this.etiquetas.set(etiquetas);
+      this.marcas = marcas;
+      this.modelos = modelos;
+      this.tiposIce = tiposIce;
+
+      if (this.estabs().length > 0) {
+        const dataEstab = this.estabs().find((estab) => estab.defaultEstab);
+        if (dataEstab) {
           this.bodegas = dataEstab.bodegas;
           this.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
-
-          }
-          if (this.bodegas.length > 0) {
-            let dataBodega = this.bodegas.find(
-              (bodega) => bodega.defaultBodega
-            );
-            if(dataBodega){
+        }
+        if (this.bodegas.length > 0) {
+          const dataBodega = this.bodegas.find(
+            (bodega) => bodega.defaultBodega
+          );
+          if (dataBodega) {
             this.dataUbicacion.idBodega = dataBodega.idBodega;
-
-            }
           }
         }
+      }
+
+      if (this.isAdd()) {
+       this.loadDataAdd()
+      }
+
+      //editar
+      if (this.isUpdate()) {
+        this.data = dataId.payload.data;
+        console.log(dataId)
+        this.btnText = 'Actualizar';
+        this.title='Editar Artículo'
+      }
 
 
-        if (!(this.params.idArticulo > 0)) {
-          //default data
-          if (this.tiposArticulo().length > 0) {
-            this.data.idTipoArticulo = this.tiposArticulo()[0].idTipoArticulo;
-          }
 
-          if (this.medidas().length > 0) {
-            this.data.idMedida = this.medidas()[0].idMedida;
-          }
+    })
 
-          if (this.tiposIva().length > 0) {
-            const dataTipoIva = this.tiposIva().find(
-              (ti: any) =>
-                ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIVE_PERCENT
-            );
-            this.data.idTipoIva = dataTipoIva?.idTipoIva ?? 0;
-          }
-          console.log(this.data);
-
-          this.setDataSubCategoria();
-          this.setProductPvpAdd();
-
-          //Registro de artículo desde Importación
-          if (this.params && this.params.isImport) {
-            this.setDataRecepcion();
-          }
-        }
-
-        //editar
-        if (this.params.idArticulo > 0) {
-          this.btnText = 'Actualizar'
-        }
-      },
-    });
   }
 
   selectOnChangeTab(index: number) {
@@ -345,18 +380,18 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   setDataRecepcion() {
-    this.data.codigo = this.params.codigo;
-    this.data.codigoAuxiliar = this.params.codigoAuxiliar;
-    this.data.codigoBarra = this.params.codigo;
-    this.data.descripcion = this.params.descripcion;
+    this.data.codigo = this.params.codigo || '';
+    this.data.codigoAuxiliar = this.params.codigoAuxiliar || '';
+    this.data.codigoBarra = this.params.codigo || '';
+    this.data.descripcion = this.params.descripcion || '';
     this.data.precioCosto = roundNumber(
-      this.params.precioCosto,
+      this.params.precioCosto || 0.1,
       this.decimal.nroPrecio
     );
     if (this.data.codigoAuxiliar) {
-      this.data.codigoAuxiliar = this.params.codigoAuxiliar;
+      this.data.codigoAuxiliar = this.params.codigoAuxiliar || '';
     } else {
-      this.data.codigoAuxiliar = this.params.codigo;
+      this.data.codigoAuxiliar = this.params.codigo || '';
     }
   }
 
@@ -371,13 +406,15 @@ export class AddEditProductDialogComponent implements OnInit {
       for (const tarifa of this.tarifas) {
         dataTemp.push({
           tipoIva: dataTipoIva.descripcion,
-          tarifa: tarifa.descripcion,
+          idTarifa: tarifa.idTarifa,
+          nomTarifa: tarifa.descripcion,
           porcentajeIva: dataTipoIva.porcentaje,
           precioVenta: 0,
           precioConIva: 0,
           porcentajeUtilidad: 0,
           utilidad: 0,
-          estado: tarifa.predeterminada ? 'Predeterminada' : '',
+          nomEstado: tarifa.predeterminada ? 'Predeterminada' : '',
+          precioPredeterminado : tarifa.predeterminada
         });
       }
     }
@@ -422,7 +459,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModalSubFamilia(result: any) {
+  resultModalSubFamilia(result: unknown) {
     try {
       if (result && typeof result !== 'object') return;
 
@@ -454,7 +491,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModalMedida(result: any) {
+  resultModalMedida(result: unknown) {
     try {
       if (result && typeof result !== 'object') return;
 
@@ -480,7 +517,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModalTag(result: any) {
+  resultModalTag(result: unknown) {
     try {
       if (result && typeof result !== 'object') return;
 
@@ -490,8 +527,11 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  refreshTag() {
+  refreshTag($event?: MouseEvent) {
     try {
+      if ($event) {
+        $event.stopPropagation();
+      }
       this._productUseCase.getDataForm().subscribe((response) => {
         this.etiquetas.set(response.etiquetas);
       });
@@ -500,9 +540,8 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-
-  resultBrand($event: MouseEvent){
-    $event.stopPropagation()
+  resultBrand($event: MouseEvent) {
+    $event.stopPropagation();
     try {
       this._productUseCase.getDataForm().subscribe((response) => {
         this.marcas = response.marcas;
@@ -512,8 +551,8 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModel($event:MouseEvent){
-    $event.stopPropagation()
+  resultModel($event: MouseEvent) {
+    $event.stopPropagation();
     try {
       this._productUseCase.getDataForm().subscribe((response) => {
         this.modelos = response.modelos;
@@ -522,7 +561,6 @@ export class AddEditProductDialogComponent implements OnInit {
       console.log(error);
     }
   }
-
 
   private validateCalculateTarifa() {
     if (this.isUpdate() && !this.isChangePrecio) {
@@ -846,12 +884,105 @@ export class AddEditProductDialogComponent implements OnInit {
 
   save() {
     if (!this.isValidForm()) return;
+
+    const senData = {
+      id: this.params.id,
+      data: structuredClone(this.data),
+      dataPvp: structuredClone(this.productTarifa),
+      dataUbicacion: structuredClone(this.dataUbicacion)
+    };
+
+    if(this.isAdd()){
+      this.$productPostUseCase.execute(senData).subscribe(response=>{
+        if(response.code==="0"){
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message,
+          })
+        }
+        if(response.code==="1"){
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+          if (response.payload) {
+            this.verificarProductoFraccionado(response.payload);
+          }
+        }
+      })
+    }
+
+
+    if(this.isUpdate()){
+      this.$productPutUseCase.execute(senData).subscribe(response=>{
+        if(response.code==="0"){
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message,
+          })
+        }
+        if(response.code==="1"){
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+           this.dialogRef.close(response.payload)
+        }
+      })
+    }
+
   }
 
+  private verificarProductoFraccionado(response:any){
+    if(this.isAdd() && this.data.productoFraccionable){
+      Swal.fire({
+        icon: "warning",
+        html: `<small>¿Deseas fraccionar este articulo ahora?</small>`,
+        confirmButtonText: "Sí",
+        showDenyButton: true,
+        denyButtonText: "No",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // params.idArticulo = dataRepository.idArticulo;
+          // initiload();
+          // setTimeout(()=>{
+          //   $scope.$apply(()=>{
+          //     $scope.activeTab = 4;
+          //     $scope.step = 5;
+          //   })
+          // }, 1000)
+        }else{
+          this.setResponse(response)
+        }
+      });
+    } else{
+      this.setResponse(response)
+    }
+  }
+
+  private setResponse(response:any) {
+
+    const etiquetas = (response.etiquetas || []).map((item:any) => {
+      return {
+        ...item,
+        etiquetas: item.etiquetas.split(";"),
+      };
+    });
+
+    const data = {
+      idArticulo: response.idArticulo,
+      idMedida: response.idMedida,
+      codigoPrincipal: response.codigo,
+      codigoAuxiliar: response.codigoAuxiliar,
+      codigoBarra: response.codigoBarra,
+      etiquetas
+    };
+    this.dialogRef.close(data)
+  }
 
   //=============================================ARTICULO UBICACION=========================
-   articuloUbicaciones = [];
-   private getUbicacionArticulo() {
+  articuloUbicaciones = [];
+  private getUbicacionArticulo() {
     if (!this.params) return;
 
     // articuloSvc.findById(params.idArticulo).then((response) => {
@@ -863,15 +994,17 @@ export class AddEditProductDialogComponent implements OnInit {
     //   }).finally(() => hideLoader())
   }
 
-   onChangeEstab   () {
-    let dataEstab = this.estabs().find(estab => estab.idEstablecimiento === this.dataUbicacion.idEstablecimiento);
-    if(dataEstab){
-
-    this.bodegas = dataEstab.bodegas;
-    let dataBodega = this.bodegas.find(b=>b.defaultBodega);
-    if(dataBodega){
-    this.dataUbicacion.idBodega = dataBodega.idBodega;
-    }
+  onChangeEstab() {
+    const dataEstab = this.estabs().find(
+      (estab) =>
+        estab.idEstablecimiento === this.dataUbicacion.idEstablecimiento
+    );
+    if (dataEstab) {
+      this.bodegas = dataEstab.bodegas;
+      const dataBodega = this.bodegas.find((b) => b.defaultBodega);
+      if (dataBodega) {
+        this.dataUbicacion.idBodega = dataBodega.idBodega;
+      }
     }
   }
 
@@ -959,9 +1092,6 @@ export class AddEditProductDialogComponent implements OnInit {
   //   }
   // }
   //====================================UBICACION END==========================
-
-
-
 
   close() {
     this.dialogRef.close();

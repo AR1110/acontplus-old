@@ -14,7 +14,7 @@
 //     return resultNumber / factor;
 // }
 
-export const roundNumber = function name(number: number, max: number = 2) {
+export const roundNumber = function name(number: number, max = 2) {
   if (typeof number !== 'number' || isNaN(number)) {
     throw new TypeError('Número inválido: ' + number);
   }

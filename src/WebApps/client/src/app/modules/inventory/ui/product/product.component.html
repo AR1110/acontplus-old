@@ -225,7 +225,7 @@
         </button>
       </mat-menu>
 
-      <button mat-icon-button matTooltip="Editar">
+      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">

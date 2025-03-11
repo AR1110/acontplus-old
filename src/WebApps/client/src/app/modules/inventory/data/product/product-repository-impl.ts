@@ -7,24 +7,25 @@ import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
 import {getNoLoader} from "@core/interceptors/loader.interceptor"; ;
 import {ProductRepository} from "@inventory/domain/repositories/product.repository";
 import {GroupedEstab} from "@core/models/estab.model";
-import {GroupedSubFamilia} from "@inventory/domain/models/sub-category.model";
-import {ProductSale, ProductSearch} from "@inventory/domain/models/product.model";
+import {ProductDataForm, ProductSale, ProductSearch} from "@inventory/domain/models/product.model";
 import {MedidaProducto} from "@inventory/domain/models/measure.model";
 import {ProductMapper} from "@inventory/data/product/product.mapper";
+import {ProductDataFormMapper} from "@inventory/data/product/product-data-form.mapper";
+import {ProductSaveMapper} from "@inventory/data/product/product-save.mapper";
+import {ProductGetIdMapper} from "@inventory/data/product/product-get-id.mapper";
+
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductWebRepository extends ProductRepository{
+export class ProductRepositoryImpl implements ProductRepository{
+
+
 
   private _url =   `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT_OLD}`;
   private _http = inject(HttpClient);
 
-
-  constructor() {
-    super();
-  }
 
   getAll<T >(obj: T) {
     let params = {
@@ -79,24 +80,10 @@ export class ProductWebRepository extends ProductRepository{
       params
     }).pipe(
       map((response) => {
-        let result = {
-          categorias: [],
-          decimal: {},
-          estabs: [] as GroupedEstab[],
-          etiquetas: [],
-          marcas: [],
-          medidas: [],
-          modelos: [],
-          subCategorias: [],
-          subCategoriasGroup: [] as GroupedSubFamilia[],
-          tarifas: [],
-          tiposArticulo: [],
-          tiposIce: [],
-          tiposIva: [],
-        }
+        let result =  new ProductDataForm()
 
         if (response.code === "1") {
-          result = ProductMapper.fromApiDataForm(response)
+          result = ProductDataFormMapper.fromJson(response)
         }
         return result;
       })
@@ -196,5 +183,29 @@ export class ProductWebRepository extends ProductRepository{
   updateStatus(id: number) {
     return this._http.delete<ApiResponse>(`${this._url}${id}`)
   }
+
+  getId(id: number): Observable<ApiResponse> {
+   return this._http.get<ApiResponse>(`${this._url}${id}`).pipe(
+     map(response=>ProductGetIdMapper.fromJson(response))
+   )
+  }
+
+
+   post<T>(obj: T, file?: Blob)  {
+    let data = ProductSaveMapper.toJson(obj)
+     let paramsJson = JSON.stringify({data})
+     const formData = new FormData();
+    if(file){
+     formData.append('file', file);
+    }
+    return  this._http.post<ApiResponse>(`${this._url}?json=${paramsJson}`, formData)
+      .pipe(
+        map((response) => ProductSaveMapper.fromJson(response))
+      )
+  }
+   put<T>(id: number, obj: T): Observable<ApiResponse> {
+    throw new Error("Method not implemented.");
+  }
+
 
 }
