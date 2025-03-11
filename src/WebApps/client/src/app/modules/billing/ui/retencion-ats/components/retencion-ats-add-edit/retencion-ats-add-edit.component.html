@@ -247,7 +247,19 @@
 
     <mat-accordion multi formArrayName="docSustento">
       @for (item of docSustentoArray.controls; track $index) {
-        <!--       <app-doc-sustento-add-edit />-->
+        <app-doc-sustento-add-edit
+          [indexDoc]="$index"
+          [docSustentoGroup]="item"
+          [docSustentoArray]="docSustentoArray"
+          [documentosSustento]="documentosSustento"
+          [sustentosTributarios]="sustentosTributarios"
+          [tiposPago]="tiposPago"
+          [tiposRegimenFe]="tiposRegimenFe"
+          [countries]="countries"
+          [generic]="generic"
+          [taxes]="taxes"
+          [tarifaImpuestos]="tarifaImpuestos"
+        />
       } @empty {
         <p>Aun no se han añadido documentos!</p>
       }
