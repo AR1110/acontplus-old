@@ -1,13 +1,20 @@
 
 import {ApiResponse} from "@core/models/api-response";
 import {formatDate} from "@core/utils/date.util";
+import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 
 
 export class ProductGetIdMapper {
 
   static fromJson(responseApi:ApiResponse){
     let resultResponse = new ApiResponse()
-    const {products,productPvps: productPvpsApi , productBarcodes, productLocations, productMeasures} = JSON.parse(responseApi.payload as string)
+    const {
+      products,
+      productPvps: productPvpsApi ,
+      productBarcodes,
+      productLocations: productLocationsApi=[],
+      productMeasures
+    } = JSON.parse(responseApi.payload as string)
 
     console.log(responseApi)
 
@@ -66,6 +73,10 @@ export class ProductGetIdMapper {
     }
 
     const productPvps = productPvpsApi.map((item:any, index: number)=>{
+      const utilidad = pricingCalculateUtil.getValueUtility(
+        item.precioVenta,
+        data.precioCosto
+      );
       return {
         idArticuloPvP: item.idArticuloPvP,
         idTarifa: item.idTarifa,
@@ -74,9 +85,23 @@ export class ProductGetIdMapper {
         porcentajeUtilidad: item.porcentajeUtilidad,
         precioPredeterminado: item.precioPredeterminado,
         nomTarifa: item.tarifa,
-        porcentajeIva: item.porcentajeIva
+        porcentajeIva: item.porcentajeIva,
+        utilidad
       }
     })
+
+
+    const productLocations = productLocationsApi.map((item:any, index:number)=>{
+      return {
+        index: index+1,
+        idArticuloUbicacion: item.idArticuloUbicacion,
+        idBodega: item.idBodega,
+        ubicacion: item.ubicacion,
+        estado: item.estado,
+        nomBodega: item.descripcion,
+      }
+    })
+
     resultResponse.payload = {
       data,
       productPvps,

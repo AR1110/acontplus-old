@@ -261,6 +261,14 @@
                 />
               </mat-form-field>
             </div>
+            @if(!showStatus){
+
+            <div class="col">
+              <mat-checkbox [(ngModel)]="data.estado">
+                {{ data.estado ? "Activo" : "Inactivo" }}
+              </mat-checkbox>
+            </div>
+            }
           </div>
 
           <div class="row m-0 p-0">
@@ -506,7 +514,6 @@
                 <mat-label>Bodega: </mat-label>
                 <mat-select
                   [(ngModel)]="dataUbicacion.idBodega"
-                  (selectionChange)="onChangeTipoIva()"
                 >
                   @for (item of bodegas; track $index) {
                   <mat-option [value]="item.idBodega">{{
@@ -529,8 +536,36 @@
             </div>
           </div>
 
-          } @if (isUpdate()) { }
+          } @if (isUpdate() && selectedTab()===2) {
+          <div class="row justify-content-md-center mx-2">
+
+            <div class="col-md-auto">
+              <app-product-ubication
+                [estabs]="estabs()"
+              [bodegas]="bodegas"
+                [data]="dataUbicacion"
+                (onChangeEstab)="onChangeEstab()"
+                [productId]="params.id"
+              />
+
+            </div>
+
+          </div>
+        }
         </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>Código Barras</ng-template>
+      <div class="my-2 m-2 p-0">
+
+      </div>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>Fraccionados</ng-template>
+      <div class="my-2 m-2 p-0">
+
       </div>
     </mat-tab>
   </mat-tab-group>

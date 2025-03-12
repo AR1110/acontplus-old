@@ -14,7 +14,8 @@ export const enum INVENTORY_PATHS {
   TAGS = 'Etiqueta/',
   PRODUCT_PHOTO ='ProductPhoto/',
   STOCK = 'Stock/',
-  TRANSFERENCIA_BODEGA = 'TransferenciaBodega/'
+  TRANSFERENCIA_BODEGA = 'TransferenciaBodega/',
+  PRODUCT_UBICATION = 'ArticuloUbicacion'
 }
 
 

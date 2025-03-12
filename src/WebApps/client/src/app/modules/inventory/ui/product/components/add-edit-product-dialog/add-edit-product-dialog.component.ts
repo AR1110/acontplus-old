@@ -36,12 +36,15 @@ import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.d
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product-data-form.use-case";
-import {ProductPostUseCase} from "@inventory/domain/usecases/product/product-post.use-case";
-import {ProductPutUseCase} from "@inventory/domain/usecases/product/product-put.use-case";
-import {ApiResponse} from "@core/models/api-response";
-import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
-import {forkJoin} from "rxjs";
+import { ProductDataFormUseCase } from '@inventory/domain/usecases/product/product-data-form.use-case';
+import { ProductPostUseCase } from '@inventory/domain/usecases/product/product-post.use-case';
+import { ProductPutUseCase } from '@inventory/domain/usecases/product/product-put.use-case';
+import { ApiResponse } from '@core/models/api-response';
+import { ProductGetIdUseCase } from '@inventory/domain/usecases/product/product-get-id.use-case';
+import { forkJoin } from 'rxjs';
+import {
+  ProductUbicationComponent
+} from "@inventory/ui/product/components/product-ubication/product-ubication.component";
 interface ProductTarifa {
   tipoIva: string;
   tarifa: string;
@@ -68,7 +71,7 @@ interface ProductTarifa {
     //Components
     TabulatorComponent,
     MatCustomDialogComponent,
-
+    ProductUbicationComponent,
     //Directives
     SubCategoryModalDirective,
     ReactiveFormsModule,
@@ -86,20 +89,20 @@ interface ProductTarifa {
 export class AddEditProductDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<AddEditProductDialogComponent>);
   readonly params = inject<{
-    id: number
-    isImport?: number
-    codigo?: string
-    codigoAuxiliar?:string
-    descripcion?: string
-    precioCosto?: number
+    id: number;
+    isImport?: number;
+    codigo?: string;
+    codigoAuxiliar?: string;
+    descripcion?: string;
+    precioCosto?: number;
   }>(MAT_DIALOG_DATA);
 
   private tS = inject(ToasterService);
   private _productUseCase = inject(ProductUseCase);
-  private $productDataFormUseCase = inject(ProductDataFormUseCase)
-  private $productPostUseCase = inject(ProductPostUseCase)
-  private $productPutUseCase = inject(ProductPutUseCase)
-  private $productGetIdUseCase = inject(ProductGetIdUseCase)
+  private $productDataFormUseCase = inject(ProductDataFormUseCase);
+  private $productPostUseCase = inject(ProductPostUseCase);
+  private $productPutUseCase = inject(ProductPutUseCase);
+  private $productGetIdUseCase = inject(ProductGetIdUseCase);
   private userRoleStateSvc = inject(UserRoleStateService);
 
   title = 'Nuevo Artículo';
@@ -159,7 +162,13 @@ export class AddEditProductDialogComponent implements OnInit {
     lote: null,
     fechaCreacion: null,
     fechaCaducidadLote: null,
+    estado: true,
   };
+
+  private dataClone = {
+    idSubFamilia: 0,
+  };
+  showStatus = false;
 
   dataUbicacion = {
     idEstablecimiento: 0,
@@ -239,17 +248,16 @@ export class AddEditProductDialogComponent implements OnInit {
     return !(this.params.id > 0);
   }
 
-  private onLoadForm(){
-    const requests:any = [this.$productDataFormUseCase.execute()]
+  private onLoadForm() {
+    const requests: any = [this.$productDataFormUseCase.execute()];
 
-    if(this.isUpdate()){
-      requests.push(this.$productGetIdUseCase.execute(this.params.id))
+    if (this.isUpdate()) {
+      requests.push(this.$productGetIdUseCase.execute(this.params.id));
     }
-    return forkJoin(requests)
+    return forkJoin(requests);
   }
 
-
-  private loadDataAdd(){
+  private loadDataAdd() {
     //default data
     if (this.tiposArticulo().length > 0) {
       this.data.idTipoArticulo = this.tiposArticulo()[0].idTipoArticulo;
@@ -282,7 +290,7 @@ export class AddEditProductDialogComponent implements OnInit {
       this.isChangePrecio = p?.product?.precio;
     });
 
-    this.onLoadForm().subscribe(response=>{
+    this.onLoadForm().subscribe((response) => {
       const [dataForm, dataId] = response as any;
       const {
         categorias,
@@ -298,7 +306,6 @@ export class AddEditProductDialogComponent implements OnInit {
         tiposIce,
         tiposIva,
       } = dataForm;
-
 
       this.estabs.set(estabs);
       this.subCategories.set(subCategorias);
@@ -329,21 +336,24 @@ export class AddEditProductDialogComponent implements OnInit {
       }
 
       if (this.isAdd()) {
-       this.loadDataAdd()
+        this.loadDataAdd();
       }
 
       //editar
       if (this.isUpdate()) {
-        this.data = dataId.payload.data;
-        console.log(dataId)
+        const { data, productPvps } = dataId.payload;
+        console.log(dataId);
         this.btnText = 'Actualizar';
-        this.title='Editar Artículo'
+        this.title = 'Editar Artículo';
+
+        this.data = data;
+
+        this.productTarifa = productPvps;
+
+        this.dataClone.idSubFamilia = this.data.idSubFamilia;
+        this.showStatus = this.data.estado;
       }
-
-
-
-    })
-
+    });
   }
 
   selectOnChangeTab(index: number) {
@@ -414,7 +424,7 @@ export class AddEditProductDialogComponent implements OnInit {
           porcentajeUtilidad: 0,
           utilidad: 0,
           nomEstado: tarifa.predeterminada ? 'Predeterminada' : '',
-          precioPredeterminado : tarifa.predeterminada
+          precioPredeterminado: tarifa.predeterminada,
         });
       }
     }
@@ -889,58 +899,56 @@ export class AddEditProductDialogComponent implements OnInit {
       id: this.params.id,
       data: structuredClone(this.data),
       dataPvp: structuredClone(this.productTarifa),
-      dataUbicacion: structuredClone(this.dataUbicacion)
+      dataUbicacion: structuredClone(this.dataUbicacion),
     };
 
-    if(this.isAdd()){
-      this.$productPostUseCase.execute(senData).subscribe(response=>{
-        if(response.code==="0"){
+    if (this.isAdd()) {
+      this.$productPostUseCase.execute(senData).subscribe((response) => {
+        if (response.code === '0') {
           this.tS.toastr({
             type: 'warning',
             message: response.message,
-          })
+          });
         }
-        if(response.code==="1"){
+        if (response.code === '1') {
           this.tS.toastr({
             type: 'success',
-            message: response.message
-          })
+            message: response.message,
+          });
           if (response.payload) {
             this.verificarProductoFraccionado(response.payload);
           }
         }
-      })
+      });
     }
 
-
-    if(this.isUpdate()){
-      this.$productPutUseCase.execute(senData).subscribe(response=>{
-        if(response.code==="0"){
+    if (this.isUpdate()) {
+      this.$productPutUseCase.execute(senData).subscribe((response) => {
+        if (response.code === '0') {
           this.tS.toastr({
             type: 'warning',
             message: response.message,
-          })
+          });
         }
-        if(response.code==="1"){
+        if (response.code === '1') {
           this.tS.toastr({
             type: 'success',
-            message: response.message
-          })
-           this.dialogRef.close(response.payload)
+            message: response.message,
+          });
+          this.dialogRef.close(response.payload);
         }
-      })
+      });
     }
-
   }
 
-  private verificarProductoFraccionado(response:any){
-    if(this.isAdd() && this.data.productoFraccionable){
+  private verificarProductoFraccionado(response: any) {
+    if (this.isAdd() && this.data.productoFraccionable) {
       Swal.fire({
-        icon: "warning",
+        icon: 'warning',
         html: `<small>¿Deseas fraccionar este articulo ahora?</small>`,
-        confirmButtonText: "Sí",
+        confirmButtonText: 'Sí',
         showDenyButton: true,
-        denyButtonText: "No",
+        denyButtonText: 'No',
       }).then((result) => {
         if (result.isConfirmed) {
           // params.idArticulo = dataRepository.idArticulo;
@@ -951,21 +959,20 @@ export class AddEditProductDialogComponent implements OnInit {
           //     $scope.step = 5;
           //   })
           // }, 1000)
-        }else{
-          this.setResponse(response)
+        } else {
+          this.setResponse(response);
         }
       });
-    } else{
-      this.setResponse(response)
+    } else {
+      this.setResponse(response);
     }
   }
 
-  private setResponse(response:any) {
-
-    const etiquetas = (response.etiquetas || []).map((item:any) => {
+  private setResponse(response: any) {
+    const etiquetas = (response.etiquetas || []).map((item: any) => {
       return {
         ...item,
-        etiquetas: item.etiquetas.split(";"),
+        etiquetas: item.etiquetas.split(';'),
       };
     });
 
@@ -975,9 +982,9 @@ export class AddEditProductDialogComponent implements OnInit {
       codigoPrincipal: response.codigo,
       codigoAuxiliar: response.codigoAuxiliar,
       codigoBarra: response.codigoBarra,
-      etiquetas
+      etiquetas,
     };
-    this.dialogRef.close(data)
+    this.dialogRef.close(data);
   }
 
   //=============================================ARTICULO UBICACION=========================

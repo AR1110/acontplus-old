@@ -56,6 +56,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           bodega: bodega.bodega,
           descripcion: bodega.bodega,
           defaultBodega: bodega.defaultBodega,
+          idEstablecimiento: bodega.idEstablecimiento,
         })) || [],
       }));
     }
@@ -76,6 +77,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           puntosEmision: [],
           bodegas: [
             {
+              idEstablecimiento: item.idEstablecimiento,
               idBodega: item.idBodega,
               descripcion: item.bodega,
               defaultBodega: item.defaultBodega,
@@ -84,6 +86,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
         });
       } else {
         existingItem.bodegas?.push({
+          idEstablecimiento: item.idEstablecimiento,
           idBodega: item.idBodega,
           descripcion: item.bodega,
           defaultBodega: item.defaultBodega,
