@@ -1,4 +1,7 @@
-﻿namespace Configuracion.Application.Services;
+﻿using System.Text;
+using System.Web;
+
+namespace Configuracion.Application.Services;
 
 public class FirmaElectronicaService(IAdoRepository adoRepository) : IFirmaElectronicaService
 {
@@ -8,7 +11,27 @@ public class FirmaElectronicaService(IAdoRepository adoRepository) : IFirmaElect
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
     }
+    public async Task<FileModel> DownloadAsync(Dictionary<string, object> parameters)
+    { 
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Download", parameters);
 
+        if (DataValidation.DataSetIsNull(ds))
+            return null;
+
+        var dt = ds.Tables[0];
+
+        if (dt.Rows.Count > 0 && dt.Columns.Contains("signature"))
+        {
+            var response = new FileModel
+            {
+                Content = dt.Rows[0].Field<byte[]>("signature"),
+                FileName = dt.Rows[0].Field<string>("filename")
+            };
+            return response;
+        }
+
+        return null;
+    }
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, false);
