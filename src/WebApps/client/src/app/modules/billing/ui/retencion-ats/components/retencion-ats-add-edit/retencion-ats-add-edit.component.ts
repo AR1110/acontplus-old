@@ -33,24 +33,27 @@ import { ambienteSriOptions } from '@shared/models/ambiente-sri';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
 import { DocSustentoAddEditComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
+import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
+import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
-    imports: [
-        MatCustomDialogComponent,
-        ReactiveFormsModule,
-        MatIcon,
-        MatButton,
-        MatCard,
-        MatCardContent,
-        MatCardFooter,
-        MatAccordion,
-        SupplierSearchComponent,
-        MatCardActions,
-        DocSustentoAddEditComponent,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    MatCustomDialogComponent,
+    ReactiveFormsModule,
+    MatIcon,
+    MatButton,
+    MatCard,
+    MatCardContent,
+    MatCardFooter,
+    MatAccordion,
+    SupplierSearchComponent,
+    MatCardActions,
+    DocSustentoAddEditComponent,
+    ThemeButtonComponent,
+  ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
 })
@@ -93,13 +96,14 @@ export class RetencionAtsAddEditComponent implements OnInit {
   retAtsDocSustentos: RetAtsDocSustento[] = [];
   documentosSustento: DocumentoSustento[] = [];
   sustentosTributarios: SustentoTributario[] = [];
-
   tiposPago: TipoPago[] = [];
   tiposRegimenFe: TipoRegimenFe[] = [];
   countries: Pais[] = [];
   taxes: Impuesto[] = [];
   tarifaImpuestos: TarifaImpuesto[] = [];
-
+  impuestosRetencion: ImpuestoRetencion[] = [];
+  codigosRetencion: CodigoRetencion[] = [];
+  porcentajesRetIva: PorcentajeRetIva[] = [];
   // Pagination
   currentPage = 1;
   itemsPerPage = 10;

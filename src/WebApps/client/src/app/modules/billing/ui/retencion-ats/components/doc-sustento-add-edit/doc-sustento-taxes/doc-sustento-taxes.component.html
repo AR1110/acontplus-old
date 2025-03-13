@@ -2,13 +2,13 @@
   <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
     <select
       class="form-select"
-      formControlName="codImpuestoDocSustento"
-      id="codImpuestoDocSustento-{{ indexTax() }}"
+      formControlName="idImpuesto"
+      id="idImpuesto-{{ indexTax() }}"
       (change)="selectTax(taxGroup().value)"
     >
       <option>Seleccione un impuesto</option>
       @for (sriTax of taxes(); track $index) {
-        <option [value]="sriTax.codigo">
+        <option [value]="sriTax.idImpuesto">
           {{ sriTax.descripcion }}
         </option>
       }
@@ -17,13 +17,13 @@
   <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
     <select
       class="form-select"
-      formControlName="codigoPorcentaje"
-      id="codigoPorcentaje-{{ indexTax() }}"
+      formControlName="idTarifaImpuesto"
+      id="idTarifaImpuesto-{{ indexTax() }}"
       (change)="selectTarifa(taxGroup().value)"
     >
       <option>Seleccione una tarifa</option>
       @for (tarifaImpuesto of tarifaImpuestosFiltered(); track $index) {
-        <option [value]="tarifaImpuesto.codigo">
+        <option [value]="tarifaImpuesto.idTarifaImpuesto">
           {{ tarifaImpuesto.descripcion }}
         </option>
       }

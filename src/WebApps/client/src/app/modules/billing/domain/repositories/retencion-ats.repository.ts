@@ -22,22 +22,22 @@ import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
 
 export abstract class RetencionAtsRepository {
   abstract getDataForm(parameters: unknown): Observable<{
-    tiposIdentificacion: TipoIdentificacion[];
-    sujetoRetenido: SujetoRetenido[];
+    codigosRetencion: CodigoRetencion[];
+    countries: Pais[];
     documentoSustento: DocumentoSustento[];
+    estabs: GroupedEstab[];
+    formasPago: FormaPago[];
+    impuestosRetencion: ImpuestoRetencion[];
+    infoAdicional?: unknown[];
+    paraisosFiscales: ParaisoFiscal[];
+    porcentajesRetIva: PorcentajeRetIva[];
+    sujetoRetenido: SujetoRetenido[];
     sustentoTributario: SustentoTributario[];
+    tarifaImpuestos: TarifaImpuesto[];
+    taxes: Impuesto[];
+    tiposIdentificacion: TipoIdentificacion[];
     tiposPago: TipoPago[];
     tiposRegimen: TipoRegimenFe[];
-    countries: Pais[];
-    paraisosFiscales: ParaisoFiscal[];
-    taxes: Impuesto[];
-    tarifaImpuestos: TarifaImpuesto[];
-    impuestosRetencion: ImpuestoRetencion[];
-    porcentajesRetIva: PorcentajeRetIva[];
-    codigosRetencion: CodigoRetencion[];
-    formasPago: FormaPago[];
-    estabs: GroupedEstab[];
-    infoAdicional?: unknown[];
   }>;
   abstract getAll<T>(parameters: T): Observable<{
     retenciones: RetencionAtsList[];

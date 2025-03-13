@@ -25,6 +25,11 @@ import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-c
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { DocSustentoTaxesComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-taxes/doc-sustento-taxes.component';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { DocSustentoRetencionComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-retencion/doc-sustento-retencion.component';
+import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
+import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
+import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -37,6 +42,7 @@ import { DocSustentoTaxesComponent } from '@billing/ui/retencion-ats/components/
     ReactiveFormsModule,
     ThemeButtonComponent,
     DocSustentoTaxesComponent,
+    DocSustentoRetencionComponent,
   ],
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,
@@ -53,6 +59,9 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   generic = input.required<GenericModel[]>();
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   taxes = input.required<Impuesto[]>();
+  impuestosRetencion = input.required<ImpuestoRetencion[]>();
+  codigosRetencion = input.required<CodigoRetencion[]>();
+  porcentajesRetIva = input.required<PorcentajeRetIva[]>();
   panelOpenState = -1;
   sustentosFiltered = signal<SustentoTributario[]>([]);
   isPagoResidente = true;
@@ -77,7 +86,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
     );
   }
 
-  enableControls(): void {
+  pagoLocExtSelect(): void {
     // this.isPagoResidente = pagoLocExt === 'LOCAL';
   }
 
@@ -85,8 +94,12 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
     // Load countries based on regime type
   }
 
-  getTaxesArray(docIndex: number): FormArray {
-    return this.docSustentoArray().at(docIndex).get('impuestos') as FormArray;
+  getTaxesArray(indexDoc: number): FormArray {
+    return this.docSustentoArray().at(indexDoc).get('impuestos') as FormArray;
+  }
+
+  getRetencionesArray(indexDoc: number): FormArray {
+    return this.docSustentoArray().at(indexDoc).get('retenciones') as FormArray;
   }
 
   ngAfterViewInit(): void {
@@ -95,39 +108,67 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
 
   createTaxGroup(): FormGroup {
     return this._fb.group({
+      idRetencionAts: [0],
       impuesto: [''],
       porcentaje: [''],
-      codImpuestoDocSustento: [
-        '',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
-      ],
-      codigoPorcentaje: [''],
-      baseImponible: ['', Validators.required],
-      tarifa: [''],
-      valorImpuesto: [''],
+      idImpuesto: [0],
+      idTarifaImpuesto: [0],
+      baseImponible: [0, Validators.required],
+      tarifa: [0],
+      valorImpuesto: [0],
+      uniqueIdDoc: [generateUuidv4(), [Validators.required]],
     });
   }
 
-  createTax(docIndex: number, tax: any): void {
-    const taxesArray = this.getTaxesArray(docIndex);
+  createRetencionGroup(): FormGroup {
+    return this._fb.group({
+      idRetencionAtsRet: [0],
+      idRetencionAts: [0],
+      idRetencionAtsDocSustento: [0],
+      uniqueDocId: [generateUuidv4(), [Validators.required]],
+      impuesto: [''],
+      idImpuestoRetencion: [0, [Validators.required]],
+      codigoDescripcion: [''],
+      idCodigoRetencion: [0, [Validators.required]],
+      baseImponible: [0, [Validators.required]],
+      porcentajeRetener: [0, [Validators.required]],
+      valorRetenido: [0, [Validators.required]],
+    });
+  }
+
+  createTax(indexDoc: number, tax: any): void {
+    const taxesArray = this.getTaxesArray(indexDoc);
     const taxGroup = this.createTaxGroup();
     taxGroup.patchValue(tax);
     taxesArray.push(taxGroup);
   }
 
-  addTaxes($index: number) {
+  createRetencion(indexDoc: number, retencion: any): void {
+    const retencionesArray = this.getRetencionesArray(indexDoc);
+    const retencionGroup = this.createRetencionGroup();
+    if (retencion != typeof 'object') {
+      retencionGroup.patchValue(retencion);
+    }
+    retencionesArray.push(retencionGroup);
+  }
+
+  addTaxes(indexDoc: number) {
     const documentId =
-      this.docSustentoArray().controls[$index].get('idDocumento')?.value;
+      this.docSustentoArray().controls[indexDoc].get('idDocumento')?.value;
     const isAutomatic =
-      this.docSustentoArray().controls[$index].get('isAutomatic')?.value;
+      this.docSustentoArray().controls[indexDoc].get('isAutomatic')?.value;
 
     this._docSustentoUseCase
       .getTaxes({ documentId, isAutomatic })
       .subscribe((response) => {
         response.taxes.forEach((tax) => {
-          this.createTax($index, tax);
+          this.createTax(indexDoc, tax);
         });
       });
+  }
+
+  addRetencion(indexDoc: number) {
+    this.createRetencion(indexDoc, {});
   }
 
   docPreview(item: any): void {
@@ -138,6 +179,4 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   removeDocSustento(index: number) {
     this.docSustentoArray().removeAt(index);
   }
-
-  protected readonly FormArray = FormArray;
 }

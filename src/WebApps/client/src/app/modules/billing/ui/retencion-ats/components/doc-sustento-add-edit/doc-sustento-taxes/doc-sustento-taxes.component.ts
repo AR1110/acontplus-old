@@ -1,14 +1,9 @@
-import {
-  AfterViewInit,
-  Component,
-  input,
-  signal,
-} from '@angular/core';
+import { AfterViewInit, Component, input, signal } from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-doc-sustento-taxes',
@@ -25,13 +20,12 @@ export class DocSustentoTaxesComponent implements AfterViewInit {
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   tarifaImpuestosFiltered = signal<TarifaImpuesto[]>([]); // Signal mutable
 
-  // tarifaImpuestosFiltered: TarifaImpuesto[] = [];
   selectTax(tax: any) {
+    console.log(tax);
+    console.log(this.tarifaImpuestos());
     setTimeout(() => {
       this.tarifaImpuestosFiltered.set(
-        this.tarifaImpuestos().filter(
-          (x) => x.codImpuesto === tax.codImpuestoDocSustento,
-        ),
+        this.tarifaImpuestos().filter((x) => x.idImpuesto === tax.idImpuesto),
       );
     });
   }
