@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {
   FormArray,
@@ -29,7 +29,6 @@ import { DocSustentoTaxesComponent } from '@billing/ui/retencion-ats/components/
 @Component({
   selector: 'app-doc-sustento-add-edit',
   imports: [
-    FaIconComponent,
     FormsModule,
     MatExpansionPanel,
     MatExpansionPanelDescription,
@@ -42,7 +41,7 @@ import { DocSustentoTaxesComponent } from '@billing/ui/retencion-ats/components/
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,
 })
-export class DocSustentoAddEditComponent {
+export class DocSustentoAddEditComponent implements AfterViewInit {
   docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
@@ -57,7 +56,6 @@ export class DocSustentoAddEditComponent {
   panelOpenState = -1;
   sustentosFiltered = signal<SustentoTributario[]>([]);
   isPagoResidente = true;
-  tarifaImpuestosFiltered: TarifaImpuesto[] = [];
 
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
@@ -89,6 +87,10 @@ export class DocSustentoAddEditComponent {
 
   getTaxesArray(docIndex: number): FormArray {
     return this.docSustentoArray().at(docIndex).get('impuestos') as FormArray;
+  }
+
+  ngAfterViewInit(): void {
+    this.selectSustento(this.indexDoc());
   }
 
   createTaxGroup(): FormGroup {
@@ -123,23 +125,9 @@ export class DocSustentoAddEditComponent {
       .getTaxes({ documentId, isAutomatic })
       .subscribe((response) => {
         response.taxes.forEach((tax) => {
-          this.selectTarifa(tax);
           this.createTax($index, tax);
         });
       });
-  }
-  removeTax(docIndex: number, taxIndex: number): void {
-    const taxesArray = this.getTaxesArray(docIndex);
-
-    if (taxIndex >= 0 && taxIndex < taxesArray.length) {
-      taxesArray.removeAt(taxIndex);
-    }
-  }
-  selectTarifa(tax: any) {
-    this.tarifaImpuestosFiltered = [];
-    this.tarifaImpuestosFiltered = this.tarifaImpuestos().filter(
-      (x) => x.codImpuesto === tax.codImpuestoDocSustento,
-    );
   }
 
   docPreview(item: any): void {

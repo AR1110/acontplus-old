@@ -231,15 +231,12 @@
       @if (retencionAtsForm.get("identificacionSujetoRetenido")?.value) {
         <mat-card-footer>
           <mat-card-actions>
-            <button
-              type="button"
-              mat-raised-button
-              (click)="searchDocs()"
+            <app-theme-button
+              icon="search"
+              text="Buscar Documentos"
               title="Click para buscar los documentos a retener"
-            >
-              <mat-icon>search</mat-icon>
-              Buscar documentos
-            </button>
+              (handleClick)="searchDocs()"
+            ></app-theme-button>
           </mat-card-actions>
         </mat-card-footer>
       }
@@ -268,11 +265,17 @@
     <!-- <app-info-adicional [infoAdicional]="infoAdicional" (onAddInfo)="addInfoAdicional($event)"></app-info-adicional> -->
   </ng-template>
   <ng-template #actionsTemplate>
-    <button mat-raised-button>
-      <mat-icon aria-hidden="false" aria-label="Save Icon" fontIcon="save"
-        >add</mat-icon
-      >
-      Guardar
-    </button>
+    <!--    <button mat-raised-button>-->
+    <!--      <mat-icon aria-hidden="false" aria-label="Save Icon" fontIcon="save"-->
+    <!--        >add</mat-icon-->
+    <!--      >-->
+    <!--      Guardar-->
+    <!--    </button>-->
+    <app-theme-button
+      variant="success"
+      icon="save"
+      text="Guardar"
+      [disabled]="retencionAtsForm.invalid"
+    ></app-theme-button>
   </ng-template>
 </form>

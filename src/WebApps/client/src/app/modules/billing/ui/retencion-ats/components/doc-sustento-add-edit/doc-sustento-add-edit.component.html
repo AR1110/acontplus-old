@@ -225,7 +225,7 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
       <app-theme-button
         text="Añadir Impuestos Automaticamente"
@@ -234,20 +234,20 @@
       ></app-theme-button>
     </div>
   </div>
-  <div class="row g-3 align-items-center" formArrayName="impuestos">
+  <div class="row g-3 align-items-center mb-3" formArrayName="impuestos">
     @for (tax of getTaxesArray(indexDoc()).controls; let i = $index; track i) {
       <app-doc-sustento-taxes
         [docSustentoArray]="docSustentoArray()"
         [taxGroup]="tax"
         [taxes]="taxes()"
         [tarifaImpuestos]="tarifaImpuestos()"
-        [tarifaImpuestosFiltered]="tarifaImpuestosFiltered"
-        [indexTax]="indexDoc()"
+        [indexDoc]="indexDoc()"
+        [indexTax]="i"
       />
     }
   </div>
 
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
       <app-theme-button
         text="Guardar"
