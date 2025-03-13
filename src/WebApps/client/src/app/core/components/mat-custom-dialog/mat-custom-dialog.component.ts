@@ -1,12 +1,20 @@
 import { CommonModule } from '@angular/common';
-import {Component, inject, Input, input, output, TemplateRef} from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  input,
+  output,
+  TemplateRef,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {OverlayContainer, OverlayModule} from "@angular/cdk/overlay";
-import {DragDropModule} from "@angular/cdk/drag-drop";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import { OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 export interface MatCustomDialogOptions {
   showButtonClose?: boolean | true | false;
@@ -22,6 +30,7 @@ export interface MatCustomDialogOptions {
     MatProgressSpinnerModule,
     OverlayModule,
     DragDropModule,
+    ThemeButtonComponent,
   ],
   templateUrl: './mat-custom-dialog.component.html',
   styleUrl: './mat-custom-dialog.component.scss',
