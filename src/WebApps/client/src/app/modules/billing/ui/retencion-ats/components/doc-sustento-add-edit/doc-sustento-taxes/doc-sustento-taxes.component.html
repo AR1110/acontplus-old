@@ -4,6 +4,7 @@
       class="form-select"
       formControlName="codImpuestoDocSustento"
       id="codImpuestoDocSustento-{{ indexTax() }}"
+      (change)="selectTax(taxGroup().value)"
     >
       <option>Seleccione un impuesto</option>
       @for (sriTax of taxes(); track $index) {
@@ -61,14 +62,12 @@
     />
   </div>
   <div class="col-auto">
-    <button
-      (click)="removeTax(indexTax(), indexTax())"
-      class="btn btn-danger btn-sm"
-      type="button"
-      title="Eliminar impuesto"
-    >
-      <mat-icon>delete</mat-icon>
-    </button>
+    <app-theme-button
+      variant="danger"
+      icon="delete"
+      matStyle="icon"
+      (handleClick)="removeTax(indexDoc(), indexTax())"
+    ></app-theme-button>
   </div>
 </div>
 
