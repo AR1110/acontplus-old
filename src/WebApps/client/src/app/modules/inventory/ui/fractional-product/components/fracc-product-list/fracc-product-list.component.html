@@ -16,7 +16,11 @@
     </div>
     <div class="col">
       <div class="d-flex flex-row gap-2 justify-content-end">
-        <button mat-icon-button [disabled]="isLoadingResults()" (click)="openAddEdit()">
+        <button
+          mat-icon-button
+          [disabled]="isLoadingResults()"
+          (click)="openAddEdit()"
+        >
           <mat-icon>add</mat-icon>
         </button>
         <button mat-icon-button (click)="refresh()">
@@ -40,12 +44,12 @@
     <app-theme-button
       [variant]="'success'"
       [icon]="'edit'"
-      [buttonStyle]="'icon'"
+      [matStyle]="'icon'"
     />
     <app-theme-button
       [variant]="'danger'"
       [icon]="'delete'"
-      [buttonStyle]="'icon'"
+      [matStyle]="'icon'"
     />
   </ng-template>
 </app-mat-dynamic-card>
