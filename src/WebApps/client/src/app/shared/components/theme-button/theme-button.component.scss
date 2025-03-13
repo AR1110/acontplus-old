@@ -41,31 +41,31 @@
 .btn-danger {
   background-color: var(--danger-color, #dc3545) !important;
   color: var(--on-danger-color, white) !important;
-  border: 1px solid var(--danger-color, #dc3545) !important;
+  //border: 1px solid var(--danger-color, #dc3545) !important;
 }
 
 .btn-warning {
   background-color: var(--warning-color, #ffc107) !important;
   color: var(--on-warning-color, #212529) !important;
-  border: 1px solid var(--warning-color, #ffc107) !important;
+  //border: 1px solid var(--warning-color, #ffc107) !important;
 }
 
 .btn-info {
   background-color: var(--info-color, #17a2b8) !important;
   color: var(--on-info-color, white) !important;
-  border: 1px solid var(--info-color, #17a2b8) !important;
+  //border: 1px solid var(--info-color, #17a2b8) !important;
 }
 
 .btn-light {
   background-color: var(--light-color, #f8f9fa) !important;
   color: var(--on-light-color, #212529) !important;
-  border: 1px solid #ddd !important;
+  //border: 1px solid #ddd !important;
 }
 
 .btn-dark {
   background-color: var(--dark-color, #343a40) !important;
   color: var(--on-dark-color, white) !important;
-  border: 1px solid var(--dark-color, #343a40) !important;
+  //border: 1px solid var(--dark-color, #343a40) !important;
 }
 
 /* Outlined variants (for stroked buttons or when outlined=true) */

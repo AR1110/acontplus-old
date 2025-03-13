@@ -29,8 +29,8 @@ export type MaterialButtonStyle =
   selector: 'app-theme-button',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
-  templateUrl: `./theme-button.component.html`,
-  styleUrl: `./theme-button.component.scss`,
+  templateUrl: './theme-button.component.html',
+  styleUrl: './theme-button.component.scss',
 })
 export class ThemeButtonComponent {
   @Input() variant: ButtonVariant = 'primary';
@@ -41,6 +41,15 @@ export class ThemeButtonComponent {
   @Input() useThemeColor: boolean = false;
   @Input() type: ButtonType = 'button';
   @Input() matStyle: MaterialButtonStyle = 'raised';
+
+  // Additional common button properties
+  @Input() title: string = ''; // Tooltip text shown on hover
+  @Input() ariaLabel: string = ''; // Accessibility label
+  @Input() name: string = ''; // Name attribute for form submission
+  @Input() id: string = ''; // ID for element reference
+  @Input() form: string = ''; // Associated form ID
+  @Input() tabIndex: number | null = null; // Tab order
+  @Input() testId: string = ''; // For testing purposes
 
   @Output() handleClick = new EventEmitter<unknown>();
 
