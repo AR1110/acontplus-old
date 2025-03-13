@@ -41,6 +41,7 @@
     "icheck-bootstrap": "^3.0.1",
     "jest-editor-support": "^31.1.2",
     "jwt-decode": "^4.0.0",
+    "ngx-colors": "^3.6.0",
     "ngx-cookie-service": "^19.1.0",
     "ngx-file-drop": "^16.0.0",
     "ngx-mask": "^19.0.6",

@@ -201,6 +201,7 @@ export class ProductUbicationComponent {
         message: response.message
       })
 
+      this.productUbicationId = 0;
       this.loadData()
     }
   }

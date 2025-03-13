@@ -21,7 +21,6 @@ import { TabulatorComponent } from '@core/components/tabulator/tabulator.compone
 import { ToasterService } from '@core/services/toaster.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { ProductUseCase } from '@modules/inventory/domain/usecases/product.use-case';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
@@ -39,12 +38,16 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ProductDataFormUseCase } from '@inventory/domain/usecases/product/product-data-form.use-case';
 import { ProductPostUseCase } from '@inventory/domain/usecases/product/product-post.use-case';
 import { ProductPutUseCase } from '@inventory/domain/usecases/product/product-put.use-case';
-import { ApiResponse } from '@core/models/api-response';
 import { ProductGetIdUseCase } from '@inventory/domain/usecases/product/product-get-id.use-case';
 import { forkJoin } from 'rxjs';
 import {
   ProductUbicationComponent
 } from "@inventory/ui/product/components/product-ubication/product-ubication.component";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {ProductBarcodeComponent} from "@inventory/ui/product/components/product-barcode/product-barcode.component";
+import {
+  FraccProductListComponent
+} from "@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component";
 interface ProductTarifa {
   tipoIva: string;
   tarifa: string;
@@ -80,6 +83,9 @@ interface ProductTarifa {
     BrandAddEditDirective,
     ToUpperCaseDirective,
     ModelAddEditDirective,
+    ThemeButtonComponent,
+    ProductBarcodeComponent,
+    FraccProductListComponent,
   ],
   templateUrl: './add-edit-product-dialog.component.html',
   styles: ``,
@@ -98,7 +104,6 @@ export class AddEditProductDialogComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
 
   private tS = inject(ToasterService);
-  private _productUseCase = inject(ProductUseCase);
   private $productDataFormUseCase = inject(ProductDataFormUseCase);
   private $productPostUseCase = inject(ProductPostUseCase);
   private $productPutUseCase = inject(ProductPutUseCase);
@@ -123,6 +128,8 @@ export class AddEditProductDialogComponent implements OnInit {
   marcas: any[] = [];
   modelos: any[] = [];
   tiposIce: any[] = [];
+
+  productBarcodes = [] as any[]
 
   decimal = {
     nroPrecio: 6,
@@ -473,7 +480,7 @@ export class AddEditProductDialogComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
 
@@ -492,7 +499,7 @@ export class AddEditProductDialogComponent implements OnInit {
   refreshSubFamilia($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
       });
@@ -505,7 +512,7 @@ export class AddEditProductDialogComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidas.set(response.medidas);
         this.data.idMedida = this.medidas().at(
           this.medidas().length - 1
@@ -519,7 +526,7 @@ export class AddEditProductDialogComponent implements OnInit {
   refreshMedida($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidas.set(response.medidas);
       });
     } catch (error) {
@@ -542,7 +549,7 @@ export class AddEditProductDialogComponent implements OnInit {
       if ($event) {
         $event.stopPropagation();
       }
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.etiquetas.set(response.etiquetas);
       });
     } catch (error) {
@@ -553,7 +560,7 @@ export class AddEditProductDialogComponent implements OnInit {
   resultBrand($event: MouseEvent) {
     $event.stopPropagation();
     try {
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.marcas = response.marcas;
       });
     } catch (error) {
@@ -564,7 +571,7 @@ export class AddEditProductDialogComponent implements OnInit {
   resultModel($event: MouseEvent) {
     $event.stopPropagation();
     try {
-      this._productUseCase.getDataForm().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.modelos = response.modelos;
       });
     } catch (error) {

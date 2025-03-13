@@ -23,7 +23,7 @@
           </mat-form-field>
           <mat-form-field class="w-100">
             <mat-label>Buscar</mat-label>
-            <input matInput  (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="...">
+            <input matInput  [(ngModel)]="dataSearch().textSearch" placeholder="...">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>

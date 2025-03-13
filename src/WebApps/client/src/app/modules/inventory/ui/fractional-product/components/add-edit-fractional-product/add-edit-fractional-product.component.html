@@ -1,0 +1,52 @@
+<app-mat-custom-dialog
+
+  [title]="title"
+(close)="close()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [options]="{
+  showButtonClose: false
+  }"
+/>
+
+<ng-template #body>
+  <div class="d-grid gap-2">
+
+    <app-product-search
+    [isSearchSimple]="true"
+    [isInputMat]="true"
+    />
+
+    <div
+      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Input</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Input</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Input</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </div>
+</ng-template >
+<ng-template #footer>
+  <app-theme-button [type]="'button'" [variant]="'success'" [icon]="isUpdate()? 'edit': 'save'" [text]="btnText"
+                    (handleClick)="save()"
+  />
+  <app-theme-button [type]="'button'" [variant]="'dark'" [icon]=" 'clear'" [text]="'Cerrar'"
+                    (handleClick)="close()"
+  />
+</ng-template>

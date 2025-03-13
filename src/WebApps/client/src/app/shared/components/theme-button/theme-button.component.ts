@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   template: `
+    @if(buttonStyle()==='raised'){
     <button
       mat-raised-button
       [ngClass]="getButtonClasses()"
@@ -29,13 +30,30 @@ export type ButtonType = 'button' | 'submit' | 'reset';
       (click)="handleClick.emit($event)"
     >
       @if (icon) {
-        <mat-icon class="button-icon">{{ icon }}</mat-icon>
-      }
-      @if (text) {
-        <span class="button-text">{{ text }}</span>
+      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+      } @if (text) {
+      <span class="button-text">{{ text }}</span>
       }
       <ng-content></ng-content>
     </button>
+
+    } @if(buttonStyle()==='icon'){
+    <button
+      mat-icon-button
+      [ngClass]="getButtonClasses()"
+      [disabled]="disabled"
+      [color]="getThemeColor()"
+      [type]="type"
+      (click)="handleClick.emit($event)"
+    >
+      @if (icon) {
+      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+      } @if (text) {
+      <span class="button-text">{{ text }}</span>
+      }
+      <ng-content></ng-content>
+    </button>
+    }
   `,
   styles: [
     `
@@ -145,12 +163,13 @@ export type ButtonType = 'button' | 'submit' | 'reset';
 })
 export class ThemeButtonComponent {
   @Input() variant: ButtonVariant = 'primary';
-  @Input() text: string = '';
-  @Input() icon: string = '';
-  @Input() outlined: boolean = false;
-  @Input() disabled: boolean = false;
-  @Input() useThemeColor: boolean = false;
+  @Input() text = '';
+  @Input() icon = '';
+  @Input() outlined = false;
+  @Input() disabled = false;
+  @Input() useThemeColor = false;
   @Input() type: ButtonType = 'button';
+  buttonStyle = input<'raised' | 'flat' | 'icon'>('raised');
 
   @Output() handleClick = new EventEmitter<unknown>();
 

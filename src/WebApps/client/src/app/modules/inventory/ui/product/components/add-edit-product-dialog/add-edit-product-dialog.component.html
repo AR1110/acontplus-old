@@ -3,6 +3,9 @@
   [actionsTemplate]="actionsTemplate"
   (close)="close()"
   [title]="title"
+  [options]="{
+  showButtonClose: false
+  }"
 ></app-mat-custom-dialog>
 
 <ng-template #containerTemplate>
@@ -24,7 +27,7 @@
                 <mat-label>Descripción</mat-label>
                 <textarea
                   matInput
-                  placeholder="Ej. Pizza"
+                  placeholder="..."
                   appToUpperCase
                   [(ngModel)]="data.descripcion"
                 ></textarea>
@@ -486,7 +489,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab>
+    <mat-tab  >
       <ng-template mat-tab-label> Ubicación </ng-template>
       <div class="my-2 m-2 p-0">
         <div class="d-grid gap-3">
@@ -556,29 +559,58 @@
       </div>
     </mat-tab>
 
+    @if (isUpdate()   ) {
     <mat-tab>
       <ng-template mat-tab-label>Código Barras</ng-template>
       <div class="my-2 m-2 p-0">
+        <div class="row justify-content-md-center mx-2">
+        <div class="col-md-auto">
+          @if(selectedTab()===3){
 
+          <app-product-barcode
+          [medidas]="medidas()"
+          [productId]="params.id"
+          [data]="{
+           idMedida: data.idMedida,
+           descripcion: data.descripcion ,
+           color: null,
+           codigoBarra: null
+          }"
+          />
+
+          }
+        </div>
+        </div>
       </div>
     </mat-tab>
+
+    }
+
+    @if (isUpdate()) {
+
     <mat-tab>
       <ng-template mat-tab-label>Fraccionados</ng-template>
       <div class="my-2 m-2 p-0">
 
+        @if(selectedTab()===4){
+
+        <app-fracc-product-list
+        [productId]="params.id"
+        />
+        }
+
       </div>
     </mat-tab>
+    }
+
   </mat-tab-group>
 </ng-template>
 <ng-template #actionsTemplate>
-  <button type="button" mat-flat-button (click)="save()">
-    <mat-icon>
-      @if(isUpdate()){
-      <ng-container>edit</ng-container>
-      }@else{
-      <ng-container>save</ng-container>
-      }
-    </mat-icon>
-    {{ btnText }}
-  </button>
+  <app-theme-button [type]="'submit'" [variant]="'success'" [icon]="isUpdate()? 'edit': 'save'" [text]="btnText"
+  (handleClick)="save()"
+  />
+  <app-theme-button [type]="'button'" [variant]="'dark'" [icon]=" 'clear'" [text]="'Cerrar'"
+                    (handleClick)="close()"
+  />
+
 </ng-template>

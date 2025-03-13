@@ -11,7 +11,7 @@ export class ProductGetIdMapper {
     const {
       products,
       productPvps: productPvpsApi ,
-      productBarcodes,
+      productBarcodes: productBarcodesApi ,
       productLocations: productLocationsApi=[],
       productMeasures
     } = JSON.parse(responseApi.payload as string)
@@ -102,6 +102,18 @@ export class ProductGetIdMapper {
       }
     })
 
+    const productBarcodes = productBarcodesApi.map((item:any, index: number)=>{
+      return {
+        index: index +1,
+        idArticuloCodigoBarra: item.idArticuloCodigoBarra,
+        idMedida: item.idMedida,
+        codigoBarra: item.codigoBarra,
+        descripcion: item.descripcion,
+        color: item.color,
+        estado: item.estado,
+        nomMedida: item.medida,
+      }
+    })
     resultResponse.payload = {
       data,
       productPvps,

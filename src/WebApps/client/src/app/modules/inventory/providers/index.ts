@@ -6,6 +6,9 @@ import {measureProvider} from "@inventory/providers/measure.provider";
 import {massiveTaxProvider} from "@inventory/providers/massive-tax.provider";
 import {transferenciaBodegaProvider} from "@inventory/providers/transferencia-bodega.provider";
 import {productUbicationProvider} from "@inventory/providers/product-ubication.provider";
+import {productBarcodeProvider} from "@inventory/providers/product-barcode.provider";
+import {fractionalProvider} from "@inventory/providers/fractional-product.provider";
+
 export const inventoryProviders = [
   productProvider,
   tagProvider,
@@ -14,5 +17,7 @@ export const inventoryProviders = [
   measureProvider,
   massiveTaxProvider,
   transferenciaBodegaProvider,
-  productUbicationProvider
+  productUbicationProvider,
+  productBarcodeProvider,
+  fractionalProvider
 ]
