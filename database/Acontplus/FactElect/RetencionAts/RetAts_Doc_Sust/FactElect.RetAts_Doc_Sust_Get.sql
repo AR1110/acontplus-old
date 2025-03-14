@@ -115,11 +115,13 @@ BEGIN
 
 				SELECT * FROM @docSustento
 
-				SELECT impuesto = i.descripcion 
+				SELECT i.idImpuesto
+                ,impuesto = i.descripcion 
 				,codImpuestoDocSustento = fci.codigo
 				,porcentaje = ti.descripcion
 				,codigoPorcentaje = fci.codigoPorcentaje
 				,baseImponible = fci.baseImponible
+                ,ti.idTarifaImpuesto
 				,ti.porcentaje tarifa
 				,valorImpuesto = fci.valor
 			    FROM @taxes fci

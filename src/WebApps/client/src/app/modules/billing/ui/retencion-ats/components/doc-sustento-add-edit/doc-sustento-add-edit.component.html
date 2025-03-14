@@ -114,7 +114,7 @@
           id="pagoLocExt"
           class="form-select"
           formControlName="pagoLocExt"
-          (change)="enableControls()"
+          (change)="pagoLocExtSelect()"
           required
         >
           <option>::seleccione::</option>
@@ -247,6 +247,35 @@
     }
   </div>
 
+  @if (docSustentoArray().length > 0) {
+    <div class="row mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+        <app-theme-button
+          text="Añadir Retenciones"
+          icon="add"
+          (handleClick)="addRetencion(indexDoc())"
+        ></app-theme-button>
+      </div>
+    </div>
+  }
+
+  <div class="row g-3 align-items-center mb-3" formArrayName="retenciones">
+    @for (
+      retencion of getRetencionesArray(indexDoc()).controls;
+      let i = $index;
+      track i
+    ) {
+      <app-doc-sustento-retencion
+        [docSustentoArray]="docSustentoArray()"
+        [retencionGroup]="retencion"
+        [impuestosRetencion]="impuestosRetencion()"
+        [codigosRetencion]="codigosRetencion()"
+        [porcentajesRetIva]="porcentajesRetIva()"
+        [indexDoc]="indexDoc()"
+        [indexRetencion]="i"
+      />
+    }
+  </div>
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
       <app-theme-button
