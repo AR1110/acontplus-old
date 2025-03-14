@@ -13,6 +13,14 @@ public class DocSustentoService(IAdoRepository adoRepository) : IDocSustentoServ
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Delete", parameters);
     }
 
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);

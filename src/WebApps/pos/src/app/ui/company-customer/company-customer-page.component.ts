@@ -9,42 +9,30 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Pagination } from '@domain/models/pagination.model';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { CompanyCustomerService } from '@data/repositories/company-customer/company-customer.service';
 import { MatButtonModule } from '@angular/material/button';
 import { CompanyCustomerRead } from '@domain/models/company-customer.model';
 import { PrimaryStatusPipe } from '@core/pipes/primary-status.pipe';
 import { ActionCompanyCustomerAddEditModalDirective } from '@ui/directives/action-company-customer-add-edit.directive';
 import { ColumnDefinition } from '../models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '../components/mat-dynamic-table/mat-dynamic-table.component';
+import {CompanyCustomerGetAllUseCase} from "@domain/use-cases/company-customer/company-customer-get-all.use-case";
+import {MatDynamicCardComponent} from "@ui/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
   selector: 'app-company-customer',
   imports: [
     MatIconModule,
-    MatCardModule,
-    MatTableModule,
     MatButtonModule,
     PrimaryStatusPipe,
     ActionCompanyCustomerAddEditModalDirective,
     MatDynamicTableComponent,
+    MatDynamicCardComponent
   ],
   templateUrl: './company-customer-page.component.html',
 })
 export class CompanyCustomerPageComponent {
-  private companyCustomerSvc = inject(CompanyCustomerService);
-  displayedColumns: string[] = [
-    'index',
-    'op',
-    'ruc',
-    'razonSocial',
-    'nombreComercial',
-    'direccion',
-    'correo',
-    'telefono',
-    'estado',
-  ];
+  private $companyCustomerGetAllUseCase = inject(CompanyCustomerGetAllUseCase)
+
 
   data: CompanyCustomerRead[] = [];
 
@@ -80,10 +68,10 @@ export class CompanyCustomerPageComponent {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this.companyCustomerSvc.getAll(params).subscribe({
+    this.$companyCustomerGetAllUseCase.execute(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
-        this.data = response;
+        this.data = response.data;
         this.pagination().totalRecords =
           this.data.length > 0 ? this.data[0].totalRecords : 0;
       },

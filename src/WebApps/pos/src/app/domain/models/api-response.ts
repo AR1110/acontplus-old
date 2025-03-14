@@ -1,8 +1,8 @@
 
-export interface ApiResponse {
+export interface ApiResponse<T = unknown> {
     code: "0" | "1" | "2"
     message: string
-    payload: unknown
+    payload: T
     titleSms?: string
 }
 

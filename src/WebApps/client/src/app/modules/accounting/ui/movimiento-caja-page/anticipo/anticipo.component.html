@@ -40,9 +40,12 @@
       <button mat-icon-button aria-label="refresh" (click)="refresh()">
         <mat-icon>refresh</mat-icon>
       </button>
+      @if($userRoleStateManager.canCreate()){
       <button mat-icon-button  aria-label="Add"  (click)="openModal()">
         <mat-icon>add</mat-icon>
       </button>
+
+      }
     </div>
   </div>
 </div>
@@ -56,7 +59,7 @@
   [templateOp]="templateOp"
   [paginationConfig]="pagination()"
   [enablePagination]="true"
-  (onPageEvent)="handlePageEvent($event)"
+  (pageEvent)="handlePageEvent($event)"
 >
 </app-mat-dynamic-table>
 
@@ -66,20 +69,26 @@
   </button>
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="getReport(item)" appActionReport>
+    @if($userRoleStateManager.canGenerateReport()){
+    <button mat-menu-item (click)="getReport(item)"  >
       <mat-icon>download</mat-icon>
       <span>Reporte</span>
     </button>
+
+    }
 
     <button mat-menu-item (click)="getPrint(item)">
       <mat-icon>edit</mat-icon>
       <span>Imprimir</span>
     </button>
 
-    <button mat-menu-item (click)="askToDelete(item)" appActionAnular>
+    @if($userRoleStateManager.canCancel()){
+    <button mat-menu-item (click)="askToDelete(item)"  >
       <mat-icon>delete</mat-icon>
       <span>Anular</span>
     </button>
+
+    }
 
   </mat-menu>
 </ng-template>

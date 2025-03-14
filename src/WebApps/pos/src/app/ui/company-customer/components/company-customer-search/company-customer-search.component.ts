@@ -24,6 +24,8 @@ import { catchError, finalize, map,  switchMap } from "rxjs/operators";
 import { CompanyCustomerAddEditModalComponent } from '../company-customer-add-edit-modal/company-customer-add-edit-modal.component';
 import { ResponsiveService } from '@domain/services/responsive.service';
 import {  MatMenuModule } from '@angular/material/menu';
+import {CompanyCustomerGetIdUseCase} from "@domain/use-cases/company-customer/company-customer-get-id.use-case";
+import {CompanyCustomerSearchUseCase} from "@domain/use-cases/company-customer/company-customer-search.use-case";
 
 @Component({
     selector: 'app-company-customer-search',
@@ -65,8 +67,10 @@ import {  MatMenuModule } from '@angular/material/menu';
 export class CompanyCustomerSearchComponent {
 
   private responsiveService = inject(ResponsiveService)
-
+  private $getIdUseCase = inject(CompanyCustomerGetIdUseCase)
+  private $searchUseCase = inject(CompanyCustomerSearchUseCase)
   private companyCustomerSvc = inject(CompanyCustomerService)
+
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService)
 
@@ -82,7 +86,6 @@ export class CompanyCustomerSearchComponent {
   control = new FormControl<null | string>(null);
   filteredCustomers!: Observable<any[]>;
 
-  companyCustomers: CompanyCustomerSearch[] = [];
 
   isLoadingResults = false;
 
@@ -124,9 +127,9 @@ export class CompanyCustomerSearchComponent {
 
   private _filter(value: string) {
     this.isLoadingResults = true;
-    return this.companyCustomerSvc.search({ textSearch: value }).pipe(
+    return this.$searchUseCase.execute({ textSearch: value }).pipe(
       map((response) => {
-        return response;
+        return response.payload;
       }),
       catchError(() => {
         return []
@@ -139,7 +142,7 @@ export class CompanyCustomerSearchComponent {
 
   onSelectionChange(item: CompanyCustomerSearch) {
     if (this.isApplyGetId()) {
-      this.companyCustomerSvc.getId(item.idCliente).subscribe(response => {
+      this.$getIdUseCase.execute(item.idCliente).subscribe(response => {
         this.onSelect.emit(response);
       })
     } else {
@@ -263,7 +266,7 @@ export class CompanyCustomerSearchComponent {
         { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
         { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' },
       ]);
-      this.companyCustomerSvc.getId(this.id(), true).subscribe(response => {
+      this.$getIdUseCase.execute(this.id(), true).subscribe(response => {
         this.dataDetail = response;
       })
 

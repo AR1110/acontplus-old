@@ -1,4 +1,4 @@
-﻿using Common.Infrastructure.Repository.Implementations;
+﻿using Common.Infrastructure.Data.Repository.Implementations;
 
 namespace TechnicalSupport.API.Extensions;
 

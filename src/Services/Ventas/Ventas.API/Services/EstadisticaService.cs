@@ -5,13 +5,13 @@ public interface IEstadisticaService
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }
 
-public class EstadisticaService(IAdoSqlServer adoSqlServer) : IEstadisticaService
+public class EstadisticaService(IAdoRepository AdoRepository) : IEstadisticaService
 {
     private const string ModuleName = "Ventas.Estadisticas_Dashboard_";
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await adoSqlServer.GetDataTableAsync($"{ModuleName}Get", parameters);
+        var dt = await AdoRepository.GetDataTableAsync($"{ModuleName}Get", parameters);
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "Data not found" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };

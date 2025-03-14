@@ -11,8 +11,6 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
-import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
-import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { formatDateToString } from '@core/utils/date.util';
 import {AnticipoUseCase} from "@accounting/core/use-cases/anticipo.use-case";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -30,6 +28,7 @@ import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {finalize} from "rxjs/operators";
+import {UserRoleStateManager} from "@shared/store/user-role-state-manager";
 
 @Component({
     selector: 'app-anticipo',
@@ -44,8 +43,6 @@ import {finalize} from "rxjs/operators";
         CompanyCustomerSearchMatComponent,
         DateRangeSelectionComponent,
       MatDynamicTableComponent,
-        ActionAnularDirective,
-        ActionReportDirective
     ],
     templateUrl: './anticipo.component.html'
 })
@@ -61,6 +58,7 @@ export class AnticipoComponent {
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private _anticipoUseCase = inject(AnticipoUseCase)
+  $userRoleStateManager = inject(UserRoleStateManager);
 
 
   dataSource: AnticipoRead[] = [];

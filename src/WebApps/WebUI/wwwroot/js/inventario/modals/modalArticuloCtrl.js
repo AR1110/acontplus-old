@@ -424,6 +424,10 @@ function modalArticuloCtrl(
 
                     //Disabled Column
                     for (let item of $scope.gridOptions.columnDefs) {
+                        if(["ganancia", "porcentajeUtilidad"].includes(item.field)){
+                            item.visible = $scope.articlePermission.isUpdatePrice;
+                        }
+
                         if (
                             ["precioVenta", "precioConIva", "porcentajeUtilidad"].includes(
                                 item.field

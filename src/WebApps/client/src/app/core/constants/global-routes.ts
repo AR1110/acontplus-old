@@ -6,7 +6,7 @@ export enum GlobalRoutes {
   ConfigGeneralConfig = 'config/general-config-page',
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer-page',
-  ConfigUserCustomerRequest = 'config/user-customer-request-page',
+  ConfigUserCustomerRequest = 'config/solicitud-usuario',
 
   FactElectAts = 'billing/ats',
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',

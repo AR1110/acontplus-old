@@ -20,7 +20,7 @@ import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.direct
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
-import { FraccProductListComponent } from '@inventory/ui/product/components/fracc-product-list/fracc-product-list.component';
+import { FraccProductListComponent } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 interface ProductTarifa {

@@ -32,7 +32,7 @@ export interface GroupedEstabPuntoEmision
   > {}
 
 export interface GroupedEstabBodega
-  extends Pick<BodegaEstablecimiento, 'idBodega' | 'defaultBodega'> {
+  extends Pick<BodegaEstablecimiento, 'idBodega' | 'defaultBodega' | 'idEstablecimiento'> {
   descripcion: string;
 }
 

@@ -1,0 +1,303 @@
+<mat-expansion-panel
+  [expanded]="panelOpenState === indexDoc()"
+  (opened)="setPanelOpen(indexDoc())"
+  (closed)="setPanelOpen(-1)"
+  [formGroup]="docSustentoGroup()"
+>
+  <mat-expansion-panel-header class="mb-5 mb-md-0">
+    <mat-panel-title class="pt-5 pt-md-0"
+      >{{ docSustentoGroup().get("numDocSustento")?.value }}
+    </mat-panel-title>
+    <mat-panel-description class="pt-5 pt-md-0">
+      <h5>{{ docSustentoGroup().get("fechaEmisionDocSustento")?.value }}</h5>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="codDocSustento">Documento Sustento:</label>
+        <select
+          id="codDocSustento"
+          class="form-select"
+          formControlName="codDocSustento"
+          (change)="selectSustento(indexDoc())"
+        >
+          <option>::seleccione::</option>
+          @for (doc of documentosSustento(); track $index) {
+            <option [value]="doc.codDocSustento">
+              {{ doc.codDocSustento }} -
+              {{ doc.descripcion }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="codSustento">Sustento Tributario:</label>
+        <select
+          id="codSustento"
+          class="form-select"
+          formControlName="codSustento"
+          [disabled]="sustentosFiltered().length === 0"
+        >
+          <option value="0">::seleccione::</option>
+          @for (sustento of sustentosFiltered(); track $index) {
+            <option [value]="sustento.codSustento">
+              {{ sustento.codSustento }} - {{ sustento.descripcion }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+      <div class="form-group">
+        <label for="numDocSustento">N° Doc. Sustento:</label>
+        <input
+          #numDocSustento
+          type="text"
+          class="form-control"
+          id="numDocSustento"
+          (click)="numDocSustento.select()"
+          formControlName="numDocSustento"
+          maxlength="15"
+        />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+      <div class="form-group">
+        <label for="fechaEmisionDocSustento"
+          >Fecha Emisión Doc. Sustento:</label
+        >
+        <input
+          type="date"
+          id="fechaEmisionDocSustento"
+          class="form-control"
+          formControlName="fechaEmisionDocSustento"
+        />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+      <div class="form-group">
+        <label for="fechaRegistroContable">Fecha Registro Contable:</label>
+        <input
+          type="date"
+          id="fechaRegistroContable"
+          class="form-control"
+          formControlName="fechaRegistroContable"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+      <div class="form-group">
+        <label for="numAutDocSustento">N° Autorización:</label>
+        <input
+          #numAutDocSustento
+          type="text"
+          name="numAutDocSustento"
+          id="numAutDocSustento"
+          class="form-control"
+          (click)="numAutDocSustento.select()"
+          formControlName="numAutDocSustento"
+          maxlength="49"
+        />
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
+      <div class="form-group">
+        <label for="pagoLocExt">Pago Local Exterior:</label>
+        <select
+          id="pagoLocExt"
+          class="form-select"
+          formControlName="pagoLocExt"
+          (change)="pagoLocExtSelect()"
+          required
+        >
+          <option>::seleccione::</option>
+          @for (tipoPago of tiposPago(); track $index) {
+            <option [value]="tipoPago.pagoLocExt">
+              {{ tipoPago.pagoLocExt }} -
+              {{ tipoPago.descripcion }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
+      <div class="form-group">
+        <label for="tipoRegi">Regimen Fiscal:</label>
+        <select
+          id="tipoRegi"
+          class="form-select"
+          formControlName="tipoRegi"
+          (change)="getCountries()"
+          [disabled]="isPagoResidente"
+        >
+          <option>::seleccione::</option>
+          @for (tipoRegimen of tiposRegimenFe(); track $index) {
+            <option [value]="tipoRegimen.tipoRegi">
+              {{ tipoRegimen.tipoRegi }} -
+              {{ tipoRegimen.descripcion }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <div class="form-group">
+        <label for="paisEfecPago">Pais Efec. Pago:</label>
+        <select
+          id="paisEfecPago"
+          class="form-select"
+          formControlName="paisEfecPago"
+          [disabled]="isPagoResidente"
+        >
+          <option>::seleccione::</option>
+          @for (country of countries(); track $index) {
+            <option [value]="country.codigo">
+              {{ country.codigo }} -
+              {{ country.descripcion }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <div class="form-group">
+        <label for="aplicConvDobTrib">Convenio Doble Tributación:</label>
+        <select
+          id="aplicConvDobTrib"
+          class="form-select"
+          formControlName="aplicConvDobTrib"
+          [disabled]="isPagoResidente"
+        >
+          <option>::seleccione::</option>
+          @for (cdt of generic(); track $index) {
+            <option [value]="cdt.code">
+              {{ cdt.code }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <div class="form-group">
+        <label for="pagExtSujRetNorLeg"
+          >Pago al Exterior Sujeto a Retención:</label
+        >
+        <!--                  disabled =  isPagoResidente || docSustento.aplicConvDobTrib === 'SI'-->
+        <select
+          id="pagExtSujRetNorLeg"
+          class="form-select"
+          formControlName="pagExtSujRetNorLeg"
+        >
+          <option>::seleccione::</option>
+          @for (pagoExt of generic(); track $index) {
+            <option [value]="pagoExt.code">
+              {{ pagoExt.code }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <div class="form-group">
+        <label for="pagoRegFis">Pago Regimen Fiscal:</label>
+        <select
+          id="pagoRegFis"
+          class="form-select"
+          formControlName="pagoRegFis"
+          [disabled]="isPagoResidente"
+        >
+          <option>::seleccione::</option>
+          @for (pagoRegFis of generic(); track $index) {
+            <option [value]="pagoRegFis.code">
+              {{ pagoRegFis.code }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+      <app-theme-button
+        text="Añadir Impuestos Automaticamente"
+        icon="add"
+        (handleClick)="addTaxes(indexDoc())"
+      ></app-theme-button>
+    </div>
+  </div>
+  <div class="row g-3 align-items-center mb-3" formArrayName="impuestos">
+    @for (tax of getTaxesArray(indexDoc()).controls; let i = $index; track i) {
+      <app-doc-sustento-taxes
+        [docSustentoArray]="docSustentoArray()"
+        [taxGroup]="tax"
+        [taxes]="taxes()"
+        [tarifaImpuestos]="tarifaImpuestos()"
+        [indexDoc]="indexDoc()"
+        [indexTax]="i"
+      />
+    }
+  </div>
+
+  @if (docSustentoArray().length > 0) {
+    <div class="row mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+        <app-theme-button
+          text="Añadir Retenciones"
+          icon="add"
+          (handleClick)="addRetencion(indexDoc())"
+        ></app-theme-button>
+      </div>
+    </div>
+  }
+
+  <div class="row g-3 align-items-center mb-3" formArrayName="retenciones">
+    @for (
+      retencion of getRetencionesArray(indexDoc()).controls;
+      let i = $index;
+      track i
+    ) {
+      <app-doc-sustento-retencion
+        [docSustentoArray]="docSustentoArray()"
+        [retencionGroup]="retencion"
+        [impuestosRetencion]="impuestosRetencion()"
+        [codigosRetencion]="codigosRetencion()"
+        [porcentajesRetIva]="porcentajesRetIva()"
+        [indexDoc]="indexDoc()"
+        [indexRetencion]="i"
+      />
+    }
+  </div>
+  <div class="row mb-3">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+      <app-theme-button
+        text="Guardar"
+        variant="success"
+        icon="save"
+        type="submit"
+        [disabled]="!docSustentoArray().get('idRetAtsDocSustento')?.value"
+      >
+      </app-theme-button>
+      <app-theme-button
+        text="Ver Doc."
+        variant="info"
+        icon="picture_as_pdf"
+        (handleClick)="docPreview(docSustentoGroup)"
+      ></app-theme-button>
+      <app-theme-button
+        text="Eliminar"
+        variant="danger"
+        icon="delete"
+        (handleClick)="removeDocSustento(indexDoc())"
+      ></app-theme-button>
+    </div>
+  </div>
+</mat-expansion-panel>

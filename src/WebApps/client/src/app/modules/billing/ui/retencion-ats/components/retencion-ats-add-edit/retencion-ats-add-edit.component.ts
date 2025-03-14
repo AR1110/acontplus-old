@@ -1,8 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CurrencyPipe, DatePipe, NgClass, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -13,49 +12,61 @@ import {
   MatCardActions,
   MatCardContent,
   MatCardFooter,
-  MatCardHeader,
-  MatCardTitle,
 } from '@angular/material/card';
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
+import { MatAccordion } from '@angular/material/expansion';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
+import { DatePipe } from '@angular/common';
+import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
+import { TipoPago } from '@sri/domain/models/tipo-pago';
+import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
+import { PuntoEmision } from '@core/models/punto-emision.model';
+import { TipoIdentificacion } from '@core/models/tipo-identificacion';
+import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
+import { Pais } from '@sri/domain/models/pais';
+import { Impuesto } from '@sri/domain/models/impuesto';
+import { GenericModel } from '@core/models/generic.model';
+import { ambienteSriOptions } from '@shared/models/ambiente-sri';
+import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
+import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
+import { DocSustentoAddEditComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
+import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
+import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
+
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
     MatCustomDialogComponent,
     ReactiveFormsModule,
-    NgClass,
     MatIcon,
-    CurrencyPipe,
-    DatePipe,
-    SlicePipe,
     MatButton,
     MatCard,
     MatCardContent,
     MatCardFooter,
-    MatCardHeader,
-    MatCardTitle,
     MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelTitle,
-    MatExpansionPanelHeader,
-    MatExpansionPanelDescription,
     SupplierSearchComponent,
     MatCardActions,
+    DocSustentoAddEditComponent,
+    ThemeButtonComponent,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
 })
-export class RetencionAtsAddEditComponent {
+export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
+  private datePipe = inject(DatePipe);
+  readonly data = inject<unknown>(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject(
+    MatDialogRef<RetencionAtsAddEditComponent>,
+  );
+  private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
+  private readonly _dialogService = inject(DialogService);
+
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
     idPuntoEmision: [0],
@@ -69,8 +80,77 @@ export class RetencionAtsAddEditComponent {
     idProveedor: [0],
     periodoFiscal: [''],
     fechaEmision: [''],
-    docSustento: this._fb.group({
+    docSustento: this._fb.array([]),
+    infoAdicional: this._fb.array([]),
+  });
+
+  isVisibleInfoComprobante = true;
+  idDocumentoElectronico = 0;
+  estabs: GroupedEstab[] = [];
+  puntosEmision: PuntoEmision[] = [];
+  subContribuyente = '';
+  tiposIdentificacion: TipoIdentificacion[] = [];
+  tiposSujRetenido: SujetoRetenido[] = [];
+  isNotForeign = true;
+  generic: GenericModel[] = [{ code: 'SI' }, { code: 'NO' }];
+  retAtsDocSustentos: RetAtsDocSustento[] = [];
+  documentosSustento: DocumentoSustento[] = [];
+  sustentosTributarios: SustentoTributario[] = [];
+  tiposPago: TipoPago[] = [];
+  tiposRegimenFe: TipoRegimenFe[] = [];
+  countries: Pais[] = [];
+  taxes: Impuesto[] = [];
+  tarifaImpuestos: TarifaImpuesto[] = [];
+  impuestosRetencion: ImpuestoRetencion[] = [];
+  codigosRetencion: CodigoRetencion[] = [];
+  porcentajesRetIva: PorcentajeRetIva[] = [];
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages: number[] = [];
+  paginationLimit = 5;
+
+  // Info adicional
+  infoAdicional: unknown[] = [];
+
+  // Computed properties
+
+  dialogIcon = signal('add');
+  dialogTitle = signal('Registrar Retención ATS');
+
+  // Services
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage;
+  }
+
+  get docSustentoArray(): FormArray {
+    return this.retencionAtsForm.get('docSustento') as FormArray;
+  }
+
+  // Add a docSustento with predefined values
+  addDocSustentoWithValues(doc: any) {
+    const docGroup = this.createDocSustentoGroup();
+
+    let formattedFecha = '';
+
+    // Check if fecha is a valid date before formatting
+    if (doc.fechaEmisionDocSustento) {
+      const parsedDate = new Date(doc.fechaEmisionDocSustento);
+      if (!isNaN(parsedDate.getTime())) {
+        formattedFecha = parsedDate.toISOString().split('T')[0];
+      }
+    }
+    // Patch the values into the form
+    docGroup.patchValue({ ...doc, fechaEmisionDocSustento: formattedFecha });
+    this.docSustentoArray.push(docGroup);
+  }
+
+  // Create a new docSustento FormGroup
+  createDocSustentoGroup() {
+    return this._fb.group({
       idRetAtsDocSustento: [0],
+      idDocumento: [0],
       uniqueIdDoc: [''],
       codSustento: [''],
       codDocSustento: [''],
@@ -89,84 +169,44 @@ export class RetencionAtsAddEditComponent {
       totalImpuestoReembolso: [''],
       totalSinImpuestos: [''],
       importeTotal: [''],
-      taxes: this._fb.array([]),
+      impuestos: this._fb.array([]),
       retenciones: this._fb.array([]),
       reembolsos: this._fb.group({
         id: [0],
         taxes: this._fb.array([]),
       }),
       payments: this._fb.array([]),
-    }),
-    infoAdicional: this._fb.array([]),
-  });
-
-  isVisibleInfoComprobante = true;
-  idDocumentoElectronico = 0;
-  estabs: GroupedEstab[] = [];
-  puntosEmision: any[] = [];
-  subContribuyente = '';
-  tiposIdentificacion: any[] = [];
-  tiposSujRetenido: any[] = [];
-  isNotForeign = true;
-  genericAnswer: any[] = [{ codigo: 'SI' }, { codigo: 'NO' }];
-  docSustento: any[] = [];
-  documentos: any[] = [];
-  sustentosFiltered: any[] = [];
-  isPagoResidente = true;
-  tiposPago: any[] = [];
-  tiposRegimenFE: any[] = [];
-  countries: any[] = [];
-  tempTaxes: any[] = [];
-  docsAdded: any[] = [];
-  btnIcon = 'save';
-  btnText = 'Guardar';
-
-  // Pagination
-  currentPage = 1;
-  itemsPerPage = 10;
-  totalPages: number[] = [];
-  paginationLimit = 5;
-
-  // Info adicional
-  infoAdicional: any[] = [];
-  panelOpenState = -1;
-  // Computed properties
-  get startIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage;
+      isAutomatic: [false],
+    });
   }
-
-  get endIndex(): number {
-    return this.startIndex + this.itemsPerPage;
-  }
-
-  dialogIcon = signal('add');
-  dialogTitle = signal('Registrar Retención ATS');
-
-  // Services
-
-  readonly data = inject<unknown>(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject(
-    MatDialogRef<RetencionAtsAddEditComponent>,
-  );
-  private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
-  private readonly _dialogService = inject(DialogService);
 
   initialLoad() {
     this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
       this.estabs = response.estabs;
       this.tiposIdentificacion = response.tiposIdentificacion;
       this.tiposSujRetenido = response.sujetoRetenido;
+      this.documentosSustento = response.documentoSustento;
+      this.sustentosTributarios = response.sustentoTributario;
+      this.tiposPago = response.tiposPago;
+      this.tiposRegimenFe = response.tiposRegimen;
+      this.taxes = response.taxes;
+      this.tarifaImpuestos = response.tarifaImpuestos;
     });
   }
 
   ngOnInit() {
+    this.retencionAtsForm
+      .get('fechaEmision')
+      ?.setValue(this.datePipe.transform(new Date(), 'yyyy-MM-dd'));
     this.initialLoad();
   }
 
   onClose() {
     this.dialogRef.close();
   }
-  onSave() {}
+  onSave() {
+    console.log(this.retencionAtsForm.value);
+  }
 
   onClickVisibleInfoComprobante(): void {
     this.isVisibleInfoComprobante = !this.isVisibleInfoComprobante;
@@ -216,66 +256,50 @@ export class RetencionAtsAddEditComponent {
       size: 'lg',
       data: {
         idProveedor: this.retencionAtsForm.get('idProveedor')?.value,
+        idCard: this.retencionAtsForm.get('identificacionSujetoRetenido')
+          ?.value,
       },
     });
 
     dialogRef.subscribe((response) => {
-      console.log(response);
+      if (response !== 'undefined') {
+        const { documents } = response;
+        if (documents.length > 0) {
+          this.retAtsDocSustentos = documents;
+          this.retAtsDocSustentos.forEach((doc) => {
+            this.addDocSustentoWithValues(doc);
+          });
+        }
+      }
     });
   }
 
-  selectSutento(): void {
-    // Filter sustentos based on document type
-  }
-
-  enableControls(): void {
-    // this.isPagoResidente = pagoLocExt === 'LOCAL';
-  }
-
-  getCountries(): void {
-    // Load countries based on regime type
-  }
-
   removeTaxTemp(index: number): void {
-    this.tempTaxes.splice(index, 1);
-  }
-
-  addDocSustento(validate: boolean): void {
-    // Add document sustento logic
+    this.taxes.splice(index, 1);
   }
 
   updateDocSustento(): void {
     // Update document sustento logic
   }
 
-  docPreview(item: any): void {
-    // Preview document logic
-  }
-
   editDocSust(index: number): void {
     // Edit document logic
-  }
-
-  deleteDocSust(index: number): void {
-    // Delete document logic
   }
 
   // Pagination methods
   changePage(page: number): void {
     if (
       page >= 1 &&
-      page <= Math.ceil(this.docsAdded.length / this.itemsPerPage)
+      page <= Math.ceil(this.documentosSustento.length / this.itemsPerPage)
     ) {
       this.currentPage = page;
     }
-  }
-
-  setPanelOpen(index: number) {
-    this.panelOpenState = index;
   }
 
   // Info adicional
   addInfoAdicional(info: any): void {
     this.infoAdicional.push(info);
   }
+
+  protected readonly ambientes = ambienteSriOptions;
 }

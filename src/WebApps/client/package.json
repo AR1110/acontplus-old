@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --no-hmr",
     "development": "ng build -c development --base-href /client/",
     "prod": "ng build -c production --base-href /client/",
     "staging": "ng build -c staging --base-href /client/",
@@ -41,6 +41,7 @@
     "icheck-bootstrap": "^3.0.1",
     "jest-editor-support": "^31.1.2",
     "jwt-decode": "^4.0.0",
+    "ngx-colors": "^3.6.0",
     "ngx-cookie-service": "^19.1.0",
     "ngx-file-drop": "^16.0.0",
     "ngx-mask": "^19.0.6",

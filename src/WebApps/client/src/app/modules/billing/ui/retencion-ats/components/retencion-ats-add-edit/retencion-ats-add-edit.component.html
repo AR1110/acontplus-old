@@ -164,9 +164,9 @@
                   formControlName="parteRel"
                   required
                 >
-                  @for (item of genericAnswer; track $index) {
-                    <option [value]="item.codigo">
-                      {{ item.codigo }}
+                  @for (item of generic; track $index) {
+                    <option [value]="item.code">
+                      {{ item.code }}
                     </option>
                   }
                 </select>
@@ -231,442 +231,54 @@
       @if (retencionAtsForm.get("identificacionSujetoRetenido")?.value) {
         <mat-card-footer>
           <mat-card-actions>
-            <button
-              type="button"
-              mat-raised-button
-              (click)="searchDocs()"
+            <app-theme-button
+              icon="search"
+              text="Buscar Documentos"
               title="Click para buscar los documentos a retener"
-            >
-              <mat-icon>search</mat-icon>
-              Buscar documentos
-            </button>
+              (handleClick)="searchDocs()"
+            ></app-theme-button>
           </mat-card-actions>
         </mat-card-footer>
       }
     </mat-card>
 
-    <mat-accordion multi>
-      @for (item of docSustento; track $index) {
-        <mat-expansion-panel
-          [expanded]="panelOpenState === $index"
-          (opened)="setPanelOpen($index)"
-          (closed)="setPanelOpen(-1)"
-          formGroupName="docSustento-{{ $index }}}"
-        >
-          <mat-expansion-panel-header class="mb-5 mb-md-0">
-            <mat-panel-title class="pt-5 pt-md-0"
-              >{{ item.nroDocumento }}
-            </mat-panel-title>
-            <mat-panel-description class="pt-5 pt-md-0">
-              <h5>{{ item.proveedor }}</h5>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <div class="table-responsive">
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="form-group">
-                  <label for="codDocSustento">Documento Sustento:</label>
-                  <select
-                    id="codDocSustento"
-                    class="form-control"
-                    formControlName="codDocSustento"
-                    (change)="selectSutento()"
-                  >
-                    <option>::seleccione::</option>
-                    @for (doc of documentos; track $index) {
-                      <option [value]="doc.codDocSustento">
-                        {{ doc.codDocSustento }} -
-                        {{ doc.descripcion }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="form-group">
-                  <label for="codSustento">Sustento Tributario:</label>
-                  <select
-                    id="codSustento"
-                    class="form-control"
-                    formControlName="codSustento"
-                    [disabled]="sustentosFiltered.length === 0"
-                  >
-                    <option value="0">::seleccione::</option>
-                    @for (sustento of sustentosFiltered; track $index) {
-                      <option [value]="sustento.codSustento">
-                        {{ sustento.codSustento }} - {{ sustento.descripcion }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-                <div class="form-group">
-                  <label for="numDocSustento">N° Doc. Sustento:</label>
-                  <input
-                    #numDocSustento
-                    type="text"
-                    class="form-control"
-                    id="numDocSustento"
-                    (click)="numDocSustento.select()"
-                    formControlName="numDocSustento"
-                    maxlength="15"
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
-                <div class="form-group">
-                  <label for="fechaEmisionDocSustento"
-                    >Fecha Emisión Doc. Sustento:</label
-                  >
-                  <input
-                    type="date"
-                    id="fechaEmisionDocSustento"
-                    class="form-control"
-                    formControlName="fechaEmisionDocSustento"
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
-                <div class="form-group">
-                  <label for="fechaRegistroContable"
-                    >Fecha Registro Contable:</label
-                  >
-                  <input
-                    type="date"
-                    id="fechaRegistroContable"
-                    class="form-control"
-                    formControlName="fechaRegistroContable"
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-                <div class="form-group">
-                  <label for="numAutDocSustento">N° Autorización:</label>
-                  <input
-                    #numAutDocSustento
-                    type="text"
-                    name="numAutDocSustento"
-                    id="numAutDocSustento"
-                    class="form-control"
-                    (click)="numAutDocSustento.select()"
-                    formControlName="numAutDocSustento"
-                    maxlength="49"
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
-                <div class="form-group">
-                  <label for="pagoLocExt">Pago Local Exterior:</label>
-                  <select
-                    id="pagoLocExt"
-                    class="form-control"
-                    formControlName="pagoLocExt"
-                    (change)="enableControls()"
-                    required
-                  >
-                    <option>::seleccione::</option>
-                    @for (tipoPago of tiposPago; track $index) {
-                      <option [value]="tipoPago.pagoLocExt">
-                        {{ tipoPago.pagoLocExt }} -
-                        {{ tipoPago.descripcion }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
-                <div class="form-group">
-                  <label for="tipoRegi">Regimen Fiscal:</label>
-                  <select
-                    id="tipoRegi"
-                    class="form-control"
-                    formControlName="tipoRegi"
-                    (change)="getCountries()"
-                    [disabled]="isPagoResidente"
-                  >
-                    <option>::seleccione::</option>
-                    @for (tipoRegimen of tiposRegimenFE; track $index) {
-                      <option [value]="tipoRegimen.tipoRegi">
-                        {{ tipoRegimen.tipoRegi }} -
-                        {{ tipoRegimen.descripcion }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label for="paisEfecPago">Pais Efec. Pago:</label>
-                  <select
-                    id="paisEfecPago"
-                    class="form-control"
-                    formControlName="paisEfecPago"
-                    [disabled]="isPagoResidente"
-                  >
-                    <option>::seleccione::</option>
-                    @for (countrie of countries; track $index) {
-                      <option [value]="countrie.codigo">
-                        {{ countrie.codigo }} -
-                        {{ countrie.descripcion }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label for="aplicConvDobTrib"
-                    >Convenio Doble Tributación:</label
-                  >
-                  <select
-                    id="aplicConvDobTrib"
-                    class="form-control"
-                    formControlName="aplicConvDobTrib"
-                    [disabled]="isPagoResidente"
-                  >
-                    <option>::seleccione::</option>
-                    @for (cdt of genericAnswer; track $index) {
-                      <option [value]="cdt.codigo">
-                        {{ cdt.codigo }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label for="pagExtSujRetNorLeg"
-                    >Pago al Exterior Sujeto a Retención:</label
-                  >
-                  <!--                  disabled =  isPagoResidente || docSustento.aplicConvDobTrib === 'SI'-->
-                  <select
-                    id="pagExtSujRetNorLeg"
-                    class="form-control"
-                    formControlName="pagExtSujRetNorLeg"
-                  >
-                    <option>::seleccione::</option>
-                    @for (pagoExt of genericAnswer; track $index) {
-                      <option [value]="pagoExt.codigo">
-                        {{ pagoExt.codigo }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label for="pagoRegFis">Pago Regimen Fiscal:</label>
-                  <select
-                    id="pagoRegFis"
-                    class="form-control"
-                    formControlName="pagoRegFis"
-                    [disabled]="isPagoResidente"
-                  >
-                    <option>::seleccione::</option>
-                    @for (pagoRegFis of genericAnswer; track $index) {
-                      <option [value]="pagoRegFis.codigo">
-                        {{ pagoRegFis.codigo }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
-                @if (tempTaxes.length > 0) {
-                  <!--                  <div class="table-responsive">-->
-                  <!--                    <table class="table">-->
-                  <!--                      <caption>-->
-                  <!--                        Impuestos del Documento-->
-                  <!--                      </caption>-->
-                  <!--                      <thead>-->
-                  <!--                        <tr>-->
-                  <!--                          <th>Impuesto</th>-->
-                  <!--                          <th>Porcentaje</th>-->
-                  <!--                          <th>Base Imponible</th>-->
-                  <!--                          <th>Tarifa</th>-->
-                  <!--                          <th>Valor Impuesto</th>-->
-                  <!--                          <th>Opc.</th>-->
-                  <!--                        </tr>-->
-                  <!--                      </thead>-->
-                  <!--                      <tbody>-->
-                  <!--                        <tr *ngFor="let tax of tempTaxes; let i = index">-->
-                  <!--                          <td>{{ tax.impuesto }}</td>-->
-                  <!--                          <td>{{ tax.porcentaje }}</td>-->
-                  <!--                          <td>{{ tax.baseImponible | currency }}</td>-->
-                  <!--                          <td>{{ tax.tarifa }}</td>-->
-                  <!--                          <td>{{ tax.valorImpuesto | currency }}</td>-->
-                  <!--                          <td>-->
-                  <!--                            <button-->
-                  <!--                              type="button"-->
-                  <!--                              class="btn btn-danger btn-sm"-->
-                  <!--                              (click)="removeTaxTemp(i)"-->
-                  <!--                            >-->
-                  <!--                              <i class="ti-trash"></i>-->
-                  <!--                            </button>-->
-                  <!--                          </td>-->
-                  <!--                        </tr>-->
-                  <!--                      </tbody>-->
-                  <!--                    </table>-->
-                  <!--                  </div>-->
-                }
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-                <button
-                  type="button"
-                  id="btnAddDocSust"
-                  mat-raised-button
-                  title="Click para agregar documento de sustento"
-                >
-                  <mat-icon>save</mat-icon> Guardar
-                </button>
-              </div>
-            </div>
-          </div>
-        </mat-expansion-panel>
+    <mat-accordion multi formArrayName="docSustento">
+      @for (item of docSustentoArray.controls; track $index) {
+        <app-doc-sustento-add-edit
+          [indexDoc]="$index"
+          [docSustentoGroup]="item"
+          [docSustentoArray]="docSustentoArray"
+          [documentosSustento]="documentosSustento"
+          [sustentosTributarios]="sustentosTributarios"
+          [tiposPago]="tiposPago"
+          [tiposRegimenFe]="tiposRegimenFe"
+          [countries]="countries"
+          [generic]="generic"
+          [taxes]="taxes"
+          [tarifaImpuestos]="tarifaImpuestos"
+          [impuestosRetencion]="impuestosRetencion"
+          [codigosRetencion]="codigosRetencion"
+          [porcentajesRetIva]="porcentajesRetIva"
+        />
       } @empty {
         <p>Aun no se han añadido documentos!</p>
       }
     </mat-accordion>
-
-    <!--    <mat-card appearance="outlined">-->
-    <!--      <mat-card-header>-->
-    <!--        <mat-card-title><h4>Documento Sustento</h4> </mat-card-title>-->
-    <!--      </mat-card-header>-->
-    <!--      <mat-card-content>-->
-    <!--        &lt;!&ndash;        <div class="table-responsive" *ngIf="docsAdded.length > 0">&ndash;&gt;-->
-    <!--        &lt;!&ndash;          <table class="table table-bordered">&ndash;&gt;-->
-    <!--        &lt;!&ndash;            <thead>&ndash;&gt;-->
-    <!--        &lt;!&ndash;              <tr>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th></th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th>N° Doc.</th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th>Documento</th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th>Sustento</th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th>Fecha Emisión</th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th>Importe Total</th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <th></th>&ndash;&gt;-->
-    <!--        &lt;!&ndash;              </tr>&ndash;&gt;-->
-    <!--        &lt;!&ndash;            </thead>&ndash;&gt;-->
-    <!--        &lt;!&ndash;            <tbody>&ndash;&gt;-->
-    <!--        &lt;!&ndash;              <ng-container&ndash;&gt;-->
-    <!--        &lt;!&ndash;                *ngFor="&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  let item of docsAdded | slice: startIndex : endIndex;&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  let i = index&ndash;&gt;-->
-    <!--        &lt;!&ndash;                "&ndash;&gt;-->
-    <!--        &lt;!&ndash;              >&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <tr [ngClass]="{ even: i % 2 === 0, odd: i % 2 !== 0 }">&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    <button&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      type="button"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      (click)="item.expanded = !item.expanded"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      class="btn btn-info btn-sm"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      title="Mostrar detalles"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    >&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      <span>{{ item.expanded ? "-" : "+" }}</span>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    </button>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  </td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>{{ item.numDocSustento }}</td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>{{ item.docSustento }}</td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>{{ item.sustento }}</td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    {{ item.fechaEmisionDocSustento | date: "dd/MM/yyyy" }}&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  </td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>{{ item.importeTotal | currency }}</td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    <button&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      type="button"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      class="btn btn-info btn-sm"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      (click)="docPreview(item)"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      title="Ver Documento de Sustento"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    >&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      <i class="fa fa-eye"></i>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    </button>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    <button&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      type="button"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      class="btn btn-warning btn-sm"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      (click)="editDocSust(startIndex + i)"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      title="Editar datos"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    >&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      <i class="ti-pencil"></i>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    </button>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    <button&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      type="button"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      class="btn btn-danger btn-sm"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      (click)="deleteDocSust(startIndex + i)"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    >&ndash;&gt;-->
-    <!--        &lt;!&ndash;                      <i class="ti-trash"></i>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    </button>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  </td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                </tr>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                <tr class="sub" *ngIf="item.expanded">&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td></td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  <td colspan="5">&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    &lt;!&ndash; Replace with modern Angular component implementation &ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    &lt;!&ndash; <app-impuestos-doc-sustento [docSustento]="item"></app-impuestos-doc-sustento>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    <app-retenciones [docSustento]="item"></app-retenciones>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                    <app-pagos [docSustento]="item"></app-pagos> &ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;                  </td>&ndash;&gt;-->
-    <!--        &lt;!&ndash;                </tr>&ndash;&gt;-->
-    <!--        &lt;!&ndash;              </ng-container>&ndash;&gt;-->
-    <!--        &lt;!&ndash;            </tbody>&ndash;&gt;-->
-    <!--        &lt;!&ndash;          </table>&ndash;&gt;-->
-
-    <!--        &lt;!&ndash;          &lt;!&ndash; Pagination component &ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;          <nav aria-label="Page navigation">&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;            <ul class="pagination justify-content-center">&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              <li class="page-item" [ngClass]="{ disabled: currentPage === 1 }">&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                <a&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  class="page-link"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  (click)="changePage(currentPage - 1)"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  aria-label="Previous"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                >&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  <span aria-hidden="true">&laquo;</span>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                </a>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              </li>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              <li&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                class="page-item"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                *ngFor="let page of totalPages | slice: 0 : paginationLimit"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                [ngClass]="{ active: currentPage === page }"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              >&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                <a class="page-link" (click)="changePage(page)">{{ page }}</a>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              </li>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              <li&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                class="page-item"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                [ngClass]="{ disabled: currentPage === totalPages.length }"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              >&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                <a&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  class="page-link"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  (click)="changePage(currentPage + 1)"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  aria-label="Next"&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                >&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                  <span aria-hidden="true">&raquo;</span>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;                </a>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;              </li>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;            </ul>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;          &lt;!&ndash;          </nav>&ndash;&gt;&ndash;&gt;-->
-    <!--        &lt;!&ndash;        </div>&ndash;&gt;-->
-    <!--      </mat-card-content>-->
-    <!--    </mat-card>-->
-
     <!-- Info Adicional Component -->
     <!-- <app-info-adicional [infoAdicional]="infoAdicional" (onAddInfo)="addInfoAdicional($event)"></app-info-adicional> -->
   </ng-template>
   <ng-template #actionsTemplate>
-    <button mat-raised-button>
-      <mat-icon aria-hidden="false" aria-label="Save Icon" fontIcon="save"
-        >add</mat-icon
-      >
-      Guardar
-    </button>
+    <!--    <button mat-raised-button>-->
+    <!--      <mat-icon aria-hidden="false" aria-label="Save Icon" fontIcon="save"-->
+    <!--        >add</mat-icon-->
+    <!--      >-->
+    <!--      Guardar-->
+    <!--    </button>-->
+    <app-theme-button
+      variant="success"
+      icon="save"
+      text="Guardar"
+      [disabled]="retencionAtsForm.invalid"
+    ></app-theme-button>
   </ng-template>
 </form>

@@ -2,8 +2,8 @@
 global using Asp.Versioning;
 global using Common.ApiDocumentation;
 global using Common.Core.Data;
-global using Common.Infrastructure.Repository.Implementations;
-global using Common.Infrastructure.Repository.Interfaces;
+global using Common.Infrastructure.Data.Repository.Implementations;
+global using Common.Infrastructure.Data.Repository.Interfaces;
 global using Common.Reports.Interfaces;
 global using Common.Reports.Services;
 global using Common.Services.Configuration;

@@ -1,0 +1,74 @@
+import { inject, Injectable } from '@angular/core';
+import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { PATHS_API } from '@core/constants/global.constants';
+import { CONFIG_PATHS } from '@modules/config/enums/config.enums';
+import { map, Observable } from 'rxjs';
+import { ApiResponse } from '@core/models/api-response';
+import { customUrl } from '@core/interceptors/inject-session.interceptor';
+import {SolicitudUsuarioRepository} from "@modules/config/domain/repositories/solicitud-usuario.repository";
+import {groupEstabUtil} from "@core/utils/group-estab.util";
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository {
+  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_REQUEST}`;
+  private http = inject(HttpClient)
+
+  getFilter() {
+    let json = JSON.stringify({
+      tipo: 3
+    })
+
+    return this.http.get(`${this.url}?json=${json}`).pipe(
+      map((response: any) => {
+        if (response !== null && typeof response === 'object') {
+
+          let estabs = groupEstabUtil({
+            estabs: response.estabs,
+            isGroupPuntoEmision: true
+          })
+
+          return {
+            establecimientos: estabs,
+            usersRole: response.usersRole
+          }
+        }
+
+        return {
+          establecimientos: [],
+          usersRole: []
+        }
+      })
+    )
+  }
+
+  getAll<T>(obj: T) {
+    let json = JSON.stringify({
+      ...obj,
+      tipo: 1
+    })
+
+    return this.http.get(`${this.url}?json=${json}`).pipe(
+      map((response: any) => {
+        let requests = [] as any[]
+        if (response !== null && typeof response === 'object') {
+          requests = response.requests || [];
+        }
+        return {
+          data: requests.map((item:any, index:number)=>{
+            return {
+              index: index + 1,
+              ...item
+            }
+          })
+        };
+      })
+    )
+  }
+
+  put<T>(data: T) {
+    return this.http.put<ApiResponse>(`${this.url}`, { data })
+  }
+}

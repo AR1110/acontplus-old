@@ -387,8 +387,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  ├── user-customer-page.component.html
 |  |  |  |  |  |  └── user-customer-page.component.ts
 |  |  |  |  |  ├── user-customer-request-page
-|  |  |  |  |  |  ├── user-customer-request-page.component.html
-|  |  |  |  |  |  └── user-customer-request-page.component.ts
+|  |  |  |  |  |  ├── solicitud-usuario.component.html
+|  |  |  |  |  |  └── solicitud-usuario.component.ts
 |  |  |  |  |  ├── user-profile-page
 |  |  |  |  |  |  ├── user-profile-page.component.html
 |  |  |  |  |  |  └── user-profile-page.component.ts
@@ -501,7 +501,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── product
 |  |  |  |  |  |  ├── product-deprecated.mapper.ts
 |  |  |  |  |  |  ├── product-deprecated.repository.ts
-|  |  |  |  |  |  ├── product-web.repository.ts
+|  |  |  |  |  |  ├── product-repository-impl.ts
 |  |  |  |  |  |  └── product.mapper.ts
 |  |  |  |  |  └── tag
 |  |  |  |  |     ├── tag-web.repository.ts

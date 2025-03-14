@@ -2,12 +2,12 @@
 
 namespace Common.API.Services;
 
-public class ReleaseService(IAdoSqlServer adoSqlServer) : IReleaseService
+public class ReleaseService(IAdoRepository AdoRepository) : IReleaseService
 {
     public async Task<ApiResponse> GetAsync(int userRoleId)
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", userRoleId } };
-        var releases = await adoSqlServer.DynamicListAsync<ReleaseDto>("Common.Release_Get", parameters);
+        var releases = await AdoRepository.DynamicListAsync<ReleaseDto>("Common.Release_Get", parameters);
 
         if (releases == null || releases.Count == 0)
         {

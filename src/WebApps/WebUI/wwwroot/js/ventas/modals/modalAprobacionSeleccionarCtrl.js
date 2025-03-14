@@ -424,16 +424,16 @@ app.component("modalAprobacionSeleccionarDoc", {
                 if (detalles.length > 300) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Advertencia', // Si quieres agregar un título (opcional)
+                        title: 'Advertencia', 
                         text: 'El número máximo de items permitidos es 300.',
-                        confirmButtonText: 'Aceptar' // Botón para cerrar la alerta
+                        confirmButtonText: 'Aceptar'  
                     });
-                    return; // Detener la ejecución del código si la condición es verdadera
+                    return;  
                 }
                 
 
                 let modalRef = modalSvc.openWithComponent({
-                    component: 'modalAprobarDoc',
+                    component: 'modalAddEditAprobarDoc',
                     size: 'xl',
                     windowClass: 'uibModalFullScreen',
                     params: {

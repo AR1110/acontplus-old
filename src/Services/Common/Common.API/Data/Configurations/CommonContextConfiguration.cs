@@ -1,5 +1,4 @@
 ﻿using Common.API.Entities;
-using Common.Infrastructure.Data.Configurations;
 using Common.Notifications.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

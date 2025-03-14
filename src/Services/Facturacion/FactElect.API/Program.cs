@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 
 using FactElect.API.Extensions;
+using FactElect.API.Extensions.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Configuration.AddConfiguration(configuration);
 
 // Add services to the container.
 
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
 builder.Services.AddIdentityService(builder.Configuration);
 
@@ -35,6 +36,8 @@ else
 {
     app.UseHttpsRedirection();
 }
+
+app.MapRetencionAtsEndpoints();
 
 app.UseRouting();
 

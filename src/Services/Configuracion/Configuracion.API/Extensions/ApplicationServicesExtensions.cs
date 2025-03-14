@@ -28,11 +28,11 @@ public static class ApplicationServicesExtensions
         // Services that should be scoped (have dependencies on ConfigContext)
         string[] scopedNamespaces =
         [
-            "Configuracion.API.Services.Printing",
             "Configuracion.API.Endpoints.Implementations",
-            "Configuracion.API.Services",
-            "Configuracion.API.Services.Sri",
-            "Configuracion.API.Services.WizardConfig"
+            "Configuracion.Application.Services",
+            "Configuracion.Application.Services.Printing",
+            "Configuracion.Application.Services.Sri",
+            "Configuracion.Application.Services.WizardConfig"
         ];
 
         // Register scoped services
@@ -46,7 +46,7 @@ public static class ApplicationServicesExtensions
         // Other services that can be transient
         string[] transientNamespaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Common.Infrastructure.Data.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

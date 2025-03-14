@@ -10,14 +10,14 @@ export const groupSubCategoryUtil = (subCategorias: any) => {
     if (existingGroup) {
       existingGroup.subFamilias.push({
         idSubFamilia: obj.idSubFamilia,
-        subFamilia: obj.subFamilia
+        subFamilia: obj.subFamilia || obj.descripcion
       });
     } else {
       acc.push({
         familia: key,
         subFamilias: [{
           idSubFamilia: obj.idSubFamilia,
-          subFamilia: obj.subFamilia
+          subFamilia: obj.subFamilia || obj.descripcion
         }]
       });
     }

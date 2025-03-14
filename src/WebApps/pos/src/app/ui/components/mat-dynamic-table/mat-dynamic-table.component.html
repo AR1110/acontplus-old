@@ -146,11 +146,14 @@
       }
 
       <!-- No Data Row -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center" [attr.colspan]="visibleColumns.length">
-          Sin Registro
-        </td>
-      </tr>
+        @if(!isLoadingData()){
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center" [attr.colspan]="visibleColumns.length">
+            Sin Registro
+          </td>
+        </tr>
+
+        }
 
       <!-- Footer Row -->
       @if(showFooter && dataSource.data.length > 0) {

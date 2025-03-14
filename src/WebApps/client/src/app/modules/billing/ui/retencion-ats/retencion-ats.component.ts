@@ -6,28 +6,30 @@ import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { RetencionAtsList } from '@billing/domain/models/retencion-ats.model';
+import { RetencionAtsList } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
 import { DialogService } from '@core/services/dialog.service';
 import { RetencionAtsAddEditComponent } from './components/retencion-ats-add-edit/retencion-ats-add-edit.component';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-retencion-ats',
-  imports: [
-    BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
-    MatMenuTrigger,
-    MatIconButton,
-    MatIcon,
-    MatMenuItem,
-    MatMenu,
-    MatDynamicTableComponent,
-    MatPaginator,
-    MatButton,
-  ],
+    imports: [
+        BreadcrumbComponent,
+        MatCard,
+        MatCardContent,
+        MatMenuTrigger,
+        MatIconButton,
+        MatIcon,
+        MatMenuItem,
+        MatMenu,
+        MatDynamicTableComponent,
+        MatPaginator,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './retencion-ats.component.html',
   styles: ``,
 })
@@ -62,7 +64,7 @@ export class RetencionAtsComponent {
 
   onDialogOpen() {
     const dialogRef = this._dialogService.open(RetencionAtsAddEditComponent, {
-      size: 'xl',
+      size: 'xxl',
     });
 
     dialogRef.subscribe((response) => {

@@ -17,6 +17,7 @@ import { restaurantProvider } from '@restaurant/providers';
 import { configProvider } from '@modules/config/providers';
 import { saleProvider } from '@sale/providers';
 import { billingProviders } from '@modules/billing/providers';
+import { DatePipe } from '@angular/common';
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -24,7 +25,7 @@ export const infrastructureProviders = [
       injectSessionInterceptor,
       loaderInterceptor,
       errorInterceptor,
-    ])
+    ]),
   ),
   provideAnimationsAsync(),
   provideEnvironmentNgxMask(),
@@ -40,6 +41,7 @@ export const uiProviders = [
     provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
     useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
   },
+  DatePipe,
 ];
 
 export const featureProviders = [

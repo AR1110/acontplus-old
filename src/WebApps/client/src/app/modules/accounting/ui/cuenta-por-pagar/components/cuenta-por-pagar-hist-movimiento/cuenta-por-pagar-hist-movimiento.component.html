@@ -14,8 +14,8 @@
             [tableData]="comprobantesEgreso.data"
             [expandedDetail]="expandedDetail"
             [showExpand]="true"
-            (onShowExpanded)="onShowExpanded($event)"
-            (onHideExpanded)="onHideExpanded()"
+            (showExpanded)="onShowExpanded($event)"
+            (hideExpanded)="onHideExpanded()"
             [templateOp]="templateOp"
     ></app-mat-dynamic-table>
 

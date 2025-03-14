@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { GeneralConfigComponent } from './pages/general-config/general-config.component';
 import { DocConfigPageComponent } from './pages/doc-config/doc-config.component';
 import { UserCustomerPageComponent } from './pages/user-customer-page/user-customer-page.component';
-import { UserCustomerRequestPageComponent } from './pages/user-customer-request-page/user-customer-request-page.component';
+import { SolicitudUsuarioComponent } from '@modules/config/ui/solicitud-usuario/solicitud-usuario.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { EstablishmentPageComponent } from './pages/establishment-page/establishment-page.component';
 import { CompanyPageComponent } from '@modules/config/pages/company-page/company-page.component';
@@ -36,9 +36,9 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'user-customer-request-page',
+    path: 'solicitud-usuario',
     title: 'Solicitudes de Usuario',
-    component: UserCustomerRequestPageComponent,
+    component: SolicitudUsuarioComponent,
     data: {
       breadcrumb: 'Solicitudes de Usuario',
     },

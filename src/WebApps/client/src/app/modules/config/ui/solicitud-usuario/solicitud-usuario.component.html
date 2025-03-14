@@ -1,0 +1,123 @@
+<app-breadcrumb />
+
+<app-mat-dynamic-card>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+
+      <div class="col">
+
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select  [(ngModel)]="dataSearch.codEstab" (selectionChange)="refresh()">
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.codEstab">{{item.nombreEstab}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+
+      </div>
+      <div class="col">
+        <app-date-range-selection
+        [showInputMaterial]="true"
+        (onChangeDateRange)="onDateRangeSelection($event)"
+        />
+      </div>
+
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Doc.:</mat-label>
+
+          <mat-select  [(ngModel)]="dataSearch.codDoc" (selectionChange)="refresh()">
+            <mat-option [value]="0">Todos</mat-option>
+
+            @for (item of tiposDoc; track $index) {
+              <mat-option [value]="item.code">{{item.description}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col  ">
+        <div class="d-flex flex-row gap-1 justify-content-end">
+          <button mat-icon-button (click)="refresh()" [disabled]="loading">
+            <mat-icon>refresh</mat-icon>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Usuario Solicitante</mat-label>
+        <mat-select [(ngModel)]="dataSearch.usuarioSolicitanteId" (selectionChange)="refresh()">
+          <mat-option [value]="0">Todos</mat-option>
+          @for (item of usersRole; track $index) {
+            <mat-option [value]="item.idUsuarioRol">{{item.nombreCompleto}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="dataSearch.codEstado" (selectionChange)="refresh()">
+          <mat-option [value]="0">Todos</mat-option>
+          @for (item of estadosDoc; track $index) {
+            <mat-option [value]="item.code">{{item.description}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  </div>
+
+
+  <app-mat-dynamic-table
+    [tableData]="dataSource"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [isLoadingData]="loading"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  >
+  </app-mat-dynamic-table>
+
+  <ng-template #templateOp let-item="item">
+    @if (item.codEstado==='A') {
+
+      <mat-icon>done_all</mat-icon>
+    } @else if (item.codEstado==='F') {}
+    @else {
+      <button type="button" mat-icon-button (click)="askToApprobe(item)"  matTooltip="Aprobar Solicitud de Clave de Autorización para editar o anular el documento de venta">
+        <mat-icon>check_circle</mat-icon>
+      </button>
+    }
+
+
+  </ng-template>
+
+
+  <ng-template #statusTemplate let-item>
+    @if (item.codEstado=="P") {
+      <span class="badge bg-danger">
+                {{item.estadoDescripcion}}
+              </span>
+    }
+    @if (item.codEstado=="A") {
+      <span class="badge bg-success">
+                {{item.estadoDescripcion}}
+              </span>
+    }
+    @if (item.codEstado=="F") {
+      <span class="badge bg-warning">
+                {{item.estadoDescripcion}}
+              </span>
+    }
+  </ng-template>
+
+</app-mat-dynamic-card>

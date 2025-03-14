@@ -16,9 +16,12 @@ export  interface CompanyCustomerRead extends CompanyCustomer {
   totalRecords: number
 }
 
-export interface CompanyCustomerSearch extends CompanyCustomer {
+export interface CompanyCustomerSearch   {
+  customerId: number
+  idCliente: number
   razonSocialComprador: string
-  identificacionComprador:string,
+  identificacionComprador:string
+  nombreComercial: string
   name: string
   codigoSri: string
 }
@@ -29,4 +32,28 @@ export type CompanyCustomerDefault = {
     nombreComercial: string
     identificacionComprador: string
     name: string
+}
+
+
+
+export class CompanyCustomerDataForm  {
+  tipoIdentificacion: any[]
+  tipoContribuyentes: any[]
+  tiempoCreditos: any[]
+  ciudades: any[]
+  tiposCliente: any[]
+  empresas: any[]
+  cargos: any[]
+  formasPagoSri: any[]
+
+  constructor() {
+    this.tipoIdentificacion = []
+    this.tipoContribuyentes = []
+    this.tiempoCreditos = []
+    this.ciudades = []
+    this.tiposCliente = []
+    this.empresas = []
+    this.cargos = []
+    this.formasPagoSri = []
+  }
 }

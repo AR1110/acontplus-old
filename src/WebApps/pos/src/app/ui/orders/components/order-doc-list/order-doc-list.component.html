@@ -88,7 +88,7 @@
 
   <tr class="mat-row" *matNoDataRow>
     <td class="mat-cell text-center" colspan="10">
-      @if (isLoadingResults) {
+      @if (isLoadingResults()) {
         <span>Cargando...</span>
       } @else {
         Sin registro
