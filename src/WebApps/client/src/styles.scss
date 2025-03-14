@@ -5,28 +5,21 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "assets/template/css/style.css";
 @import "assets/css/forms.css";
-@import "@angular/material/prebuilt-themes/azure-blue.css";
+@import "styles/theme/_theme-colors.scss";
+@import "styles/theme/variables";
+@import "styles/utilities/spinner";
 
-//based on deep seek
-//:root {
-//  --primary-color: #d61672;
-//  --secondary-color: #6c757d;
-//  --success-color: #28a745;
-//  --danger-color: #dc3545;
-//  --warning-color: #ffc107;
-//  --info-color: #17a2b8;
-//  --light-color: #f8f9fa;
-//  --dark-color: #343a40;
-//
-//  --on-primary-color: white;
-//  --on-secondary-color: white;
-//  --on-success-color: white;
-//  --on-danger-color: white;
-//  --on-warning-color: #212529;
-//  --on-info-color: white;
-//  --on-light-color: #212529;
-//  --on-dark-color: white;
-//}
+.mat-mdc-icon-button {
+  font-size: inherit !important;
+}
+
+$compact-theme: mat.define-theme(
+  (
+    density: (
+      scale: -4,
+    ),
+  )
+);
 
 //based on copilot
 /* Brand-Inspired Color Palette */
@@ -48,26 +41,24 @@
   --on-info-color: #ffffff;
   --on-light-color: #212529;
   --on-dark-color: #ffffff;
-}
 
-.mat-mdc-icon-button {
-  font-size: inherit !important;
-}
-
-$compact-theme: mat.define-theme(
-  (
-    density: (
-      scale: -4,
-    ),
-  )
-);
-:root {
   @include mat.form-field-density($compact-theme);
 }
 
 html,
 body {
   height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: $primary-palette,
+        tertiary: $tertiary-palette,
+        theme-type: light,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
 }
 
 button,
@@ -88,65 +79,6 @@ table {
 .section-container-table {
   max-height: 400px;
   overflow: auto;
-}
-
-/*Loader */
-.loading {
-  display: inline-block;
-  color: #ffffff;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  border-radius: 50%;
-  cursor: pointer;
-  vertical-align: middle;
-}
-
-.positionLoading {
-  position: fixed;
-  right: 0rem;
-  top: 0rem;
-  left: 0rem;
-  bottom: 0rem;
-  z-index: 2147483647;
-  background-color: rgba(0, 0, 0, 0.3) !important;
-}
-
-.spinner,
-.spinner:after {
-  width: 150px;
-  height: 150px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  margin-top: -75px;
-  margin-left: -75px;
-  /*margin: 100%;*/
-  border-radius: 50%;
-  z-index: 2;
-}
-
-.spinner {
-  background-color: transparent;
-  border-top: 10px solid #d61672;
-  border-right: 10px solid #d61672;
-  border-bottom: 10px solid #d61672;
-  border-left: 10px solid rgba(255, 255, 255, 1);
-  transform: translateZ(0);
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-duration: 0.8s;
-  animation-name: spinner-loading;
-}
-
-@keyframes spinner-loading {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(1turn);
-  }
 }
 
 //autocomplete search inside boostrap modal
