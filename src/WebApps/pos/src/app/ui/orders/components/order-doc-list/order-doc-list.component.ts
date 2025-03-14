@@ -45,19 +45,19 @@ export class OrderDocListComponent {
     'saldo',
     'estado',
   ];
-  dataSource: OrderDocRed[] = [];
+  dataSource = signal<OrderDocRed[]>([]) ;
 
   isLoadingResults = signal(false);
 
   private getOrderDocs() {
-    this.dataSource = [];
+    this.dataSource.set([]);
     this.isLoadingResults.set(true);
     this._orderUseCase.getOrderDocs(this.data().id)
       .pipe(
         finalize(()=> this.isLoadingResults.set(false))
       )
       .subscribe( (response) => {
-        this.dataSource = response;
+        this.dataSource.set(response)
     });
   }
 
@@ -155,6 +155,6 @@ export class OrderDocListComponent {
   }
 
   ngOnDestroy() {
-    this.dataSource = [];
+    this.dataSource.set([]);
   }
 }
