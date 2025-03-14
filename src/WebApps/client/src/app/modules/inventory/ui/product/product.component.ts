@@ -168,6 +168,12 @@ export class ProductComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onEnter($event: Event){
+    if( isValidField(this.dataSearch().textSearch)){
+      this.refresh()
+    }
+  }
+
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
     const searchValue = isValidField(target.value);

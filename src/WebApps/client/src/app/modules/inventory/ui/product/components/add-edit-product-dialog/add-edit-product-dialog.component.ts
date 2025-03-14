@@ -292,7 +292,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  private  loadDataForm(){
     this.userRoleStateSvc.select('permission').subscribe((p) => {
       this.isChangePrecio = p?.product?.precio;
     });
@@ -361,6 +361,10 @@ export class AddEditProductDialogComponent implements OnInit {
         this.showStatus = this.data.estado;
       }
     });
+  }
+
+  ngOnInit() {
+    this.loadDataForm()
   }
 
   selectOnChangeTab(index: number) {
@@ -958,14 +962,13 @@ export class AddEditProductDialogComponent implements OnInit {
         denyButtonText: 'No',
       }).then((result) => {
         if (result.isConfirmed) {
-          // params.idArticulo = dataRepository.idArticulo;
-          // initiload();
-          // setTimeout(()=>{
-          //   $scope.$apply(()=>{
-          //     $scope.activeTab = 4;
-          //     $scope.step = 5;
-          //   })
-          // }, 1000)
+          this.params.id = response.idArticulo;
+          this.loadDataForm()
+
+          setTimeout(()=>{
+          this.selectedTab.set(4)
+
+          }, 1000)
         } else {
           this.setResponse(response);
         }

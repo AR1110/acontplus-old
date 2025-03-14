@@ -96,16 +96,27 @@
     </div>
 
     <div
-      class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1"
+      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1"
     >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Precio Costo Fraccionable: <span class="text-danger">*</span></mat-label>
-          <input type="number" matInput [(ngModel)]="data.precioCostoFraccionado">
+          <input type="number" matInput [(ngModel)]="data.precioCostoFraccionado" (keyup)="recalculateTarifaAdd()">
         </mat-form-field>
       </div>
-      <div class="col">
+      <div class="col d-flex justify-content-center">
         <mat-slide-toggle [(ngModel)]="data.gestionVenta">Para venta</mat-slide-toggle>
+      </div>
+      <div class="col d-flex justify-content-center">
+        <app-theme-button
+          [type]="'button'"
+          [variant]="'info'"
+          [icon]="'refresh'"
+          [text]="'Calcular precios'"
+          (handleClick)="recalculatePercentage()"
+          matTooltip="Calcula los precios tomando el valor de porcentaje utilidad"
+        />
+
       </div>
     </div>
 

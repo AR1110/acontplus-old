@@ -3,16 +3,16 @@
     class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
   >
     <div class="col">
-      <mat-form-field>
-        <mat-label></mat-label>
-        <input matInput (keyup)="onSearch($event)" (input)="onSearch($event)" />
+<!--      <mat-form-field>-->
+<!--        <mat-label></mat-label>-->
+<!--        <input matInput (keyup)="onSearch($event)" (input)="onSearch($event)" />-->
 
-        <span matSuffix>
-          <button type="button" mat-icon-button (click)="refresh()">
-            <mat-icon>search</mat-icon>
-          </button>
-        </span>
-      </mat-form-field>
+<!--        <span matSuffix>-->
+<!--          <button type="button" mat-icon-button (click)="refresh()">-->
+<!--            <mat-icon>search</mat-icon>-->
+<!--          </button>-->
+<!--        </span>-->
+<!--      </mat-form-field>-->
     </div>
     <div class="col">
       <div class="d-flex flex-row gap-2 justify-content-end">
@@ -45,6 +45,7 @@
       [variant]="'success'"
       [icon]="'edit'"
       [matStyle]="'icon'"
+      (handleClick)="openAddEdit(item)"
     />
     <app-theme-button
       [variant]="'danger'"

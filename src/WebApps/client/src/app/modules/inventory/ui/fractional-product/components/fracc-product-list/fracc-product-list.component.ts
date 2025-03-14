@@ -102,12 +102,15 @@ export class FraccProductListComponent implements OnInit {
   }
 
   openAddEdit(item?:any){
+    let data = {} as any;
+    if(item){
+      data.id =item.idArticuloFraccionado;
+    }else{
+      data.productId = this.productId();
+        data.isCalledFromProductModal = this.isCalledFromProductModal()
+    }
     let ref = this.dialogSvc.open(AddEditFractionalProductComponent, {
-      data: {
-        id: 0,
-        productId: this.productId(),
-        isCalledFromProductModal: this.isCalledFromProductModal()
-      },
+      data,
       size: 'lg'
     })
 

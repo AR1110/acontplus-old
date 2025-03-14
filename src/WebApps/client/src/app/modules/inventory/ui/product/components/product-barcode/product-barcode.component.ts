@@ -9,27 +9,21 @@ import { MatSelectModule} from "@angular/material/select";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {ToasterService} from "@core/services/toaster.service";
 import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
-import {
-  ProductUbicationPostUseCase
-} from "@inventory/domain/usecases/product-ubication/product-ubication-post.use-case";
-import {ProductUbicationPutUseCase} from "@inventory/domain/usecases/product-ubication/product-ubication-put.use-case";
+
 import {
   ProductUbicationRemoveUseCase
 } from "@inventory/domain/usecases/product-ubication/product-ubication-remove.use-case";
-import {MatTableDataSource} from "@angular/material/table";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {finalize} from "rxjs/operators";
 import {getValidId, isValidField} from "@core/utils/utils";
 import Swal from "sweetalert2";
 import {ApiResponse} from "@core/models/api-response";
 import {MatButtonModule, MatIconButton} from "@angular/material/button";
-import {MeasureAddEditDirective} from "@inventory/ui/directives/measure-add-edit.directive";
 import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product-data-form.use-case";
 import {NgxColorsModule} from "ngx-colors";
 import {ProductBarcodePostUseCase} from "@inventory/domain/usecases/product-barcode/product-barcode-post.use-case";
 import {ProductBarcodePutUseCase} from "@inventory/domain/usecases/product-barcode/product-barcode-put.use-case";
-import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
+import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum"; 
 
 @Component({
   selector: 'app-product-barcode',
@@ -45,8 +39,6 @@ import {MatSlideToggle} from "@angular/material/slide-toggle";
     NgxColorsModule,
     ToUpperCaseDirective,
     MatIconButton,
-    MeasureAddEditDirective,
-    MatSlideToggle
   ],
   templateUrl: './product-barcode.component.html',
   styles: `

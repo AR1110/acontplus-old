@@ -19,6 +19,17 @@ import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product
 import {DECIMALS} from "@core/constants/global.constants";
 import {getValidId} from "@core/utils/utils";
 import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
+import {
+  FractionalProductPostUseCase
+} from "@inventory/domain/usecases/fractional-product/fractional-product-post.use-case";
+import {ApiResponse} from "@core/models/api-response";
+import {
+  FractionalProductPutUseCase
+} from "@inventory/domain/usecases/fractional-product/fractional-product-put.use-case";
+import {
+  FractionalProductGetIdUseCase
+} from "@inventory/domain/usecases/fractional-product/fractional-product-get-id.use-case";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-add-edit-fractional-product',
@@ -30,6 +41,7 @@ import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-ge
     FormsModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatTooltipModule,
     MatCustomDialogComponent,
     ProductSearchComponent,
     ThemeButtonComponent,
@@ -49,16 +61,20 @@ export class AddEditFractionalProductComponent {
 
   private $productDataFormUseCase = inject(ProductDataFormUseCase)
   private $productGetIdUseCase = inject(ProductGetIdUseCase)
+  private $fractionalProductPostUseCase = inject(FractionalProductPostUseCase)
+  private $fractionalProductPutUseCase = inject(FractionalProductPutUseCase)
+  private $fractionalProductGetIdUseCase = inject(FractionalProductGetIdUseCase)
   private tS = inject(ToasterService)
 
 
 
-  title = 'Nuevo'
+  title = 'Nuevo Artículo Fraccionado'
   btnText = 'Guardar';
 
   medidas = signal<any[]>([])
 
   data = {
+    idArticulo: 0,
     idMedida: 0,
     precioCosto: 0,
     precioCostoFraccionado: 0,
@@ -129,13 +145,14 @@ export class AddEditFractionalProductComponent {
     height: null, // Elimina la altura fija para que sea auto
   };
 
+  articuloPrincipalTarifa = [] as any[]
   productTarifa: any[] = [];
   tarifas = [] as any[]
 private decimal = {
   nroPrecio: DECIMALS.GENERAL
 }
   isUpdate(){
-    return true;
+    return this.params.id>0;
   }
 
   isAdd(){
@@ -143,11 +160,30 @@ private decimal = {
   }
 
 
-  resultModalMedida($event:MouseEvent){
-    $event.stopPropagation()
+  resultModalMedida(result:any){
+    try {
+      if (result && typeof result !== 'object') return;
+
+      this.$productDataFormUseCase.execute().subscribe((response) => {
+        this.medidas.set(response.medidas);
+        this.data.idMedida = this.medidas().at(
+          this.medidas().length - 1
+        ).idMedida;
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
   refreshMedida($event:MouseEvent){
     $event.stopPropagation()
+    try {
+      $event.stopPropagation();
+      this.$productDataFormUseCase.execute().subscribe((response) => {
+        this.medidas.set(response.medidas);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
@@ -158,6 +194,7 @@ private decimal = {
     const value = parseFloat(cell.getValue());
 
     const data = cell.getData();
+    const precioCosto = this.data.precioCostoFraccionado;
     let precioVenta = parseFloat(data.precioVenta);
     const porcentajeIva = parseFloat(data.porcentajeIva);
     let precioConIva = parseFloat(data.precioConIva);
@@ -173,25 +210,25 @@ private decimal = {
 
     //Validacion de Campos
     if (
-      [null, undefined, '', 0].includes(this.data.precioCosto) ||
-      isNaN(this.data.precioCosto)
+      [null, undefined, '', 0].includes(precioCosto) ||
+      isNaN(precioCosto)
     ) {
       cell.setValue(oldValue);
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese el Precio de Costo',
+        message: 'Ingrese el precio costo fraccionado',
       });
       return;
     }
 
     if (column === 'precioVenta' && value > 0) {
-      if (value < this.data.precioCosto) {
+      if (value < precioCosto) {
         cell.setValue(oldValue);
       }
     }
 
     if (column === 'precioConIva' && value > 0) {
-      if (value < this.data.precioCosto) {
+      if (value < precioCosto) {
         cell.setValue(oldValue);
       }
     }
@@ -206,7 +243,7 @@ private decimal = {
         porcentajeUtilidad =
           pricingCalculateUtil.calculateProfitMarginPercentage(
             precioVenta,
-            this.data.precioCosto
+            precioCosto
           );
 
         break;
@@ -219,14 +256,14 @@ private decimal = {
         porcentajeUtilidad =
           pricingCalculateUtil.calculateProfitMarginPercentage(
             precioVenta,
-            this.data.precioCosto
+            precioCosto
           );
 
         break;
       case 'porcentajeUtilidad':
         precioVenta =
           pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
-            this.data.precioCosto,
+            precioCosto,
             porcentajeUtilidad
           );
         precioConIva = pricingCalculateUtil.calculatePriceWithVat(
@@ -238,9 +275,8 @@ private decimal = {
 
     const utilidad = pricingCalculateUtil.getValueUtility(
       precioVenta,
-      this.data.precioCosto
+      precioCosto
     );
-    console.log(utilidad);
 
     precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
     precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
@@ -266,12 +302,25 @@ private decimal = {
 
     this.tarifas = response.tarifas;
 
+    if(this.isUpdate()){
+      this.title = 'Editar Artículo Fraccionado'
+      this.btnText = 'Actualizar';
+      this.loadDataUpdate()
+    }
+
     if(this.params.isCalledFromProductModal && this.params.productId>0){
       this.selectProduct(this.params.productId);
     }
   })
   }
 
+  private loadDataUpdate(){
+    this.$fractionalProductGetIdUseCase.execute(this.params.id).subscribe(response=>{
+      console.log(response)
+      this.data = response.payload?.data
+      this.productTarifa = response.payload?.productPvps
+    })
+  }
 
   onChangeConversion (){
     if(this.data.conversion>0){
@@ -292,11 +341,16 @@ private decimal = {
       this.$productGetIdUseCase.execute( idArticulo).subscribe((response) => {
         if(response.payload){
           this.data = response.payload.data
-          this.productTarifa = structuredClone(response.payload.productPvps).map((item) => {
+
+          const productoTarifas = structuredClone(response.payload.productPvps)
+          this.articuloPrincipalTarifa = structuredClone(productoTarifas)
+
+
+          this.productTarifa = structuredClone(productoTarifas).map((item) => {
             item.precioVenta = 0;
             item.precioConIva = 0;
             item.porcentajeUtilidad = 0;
-            item.ganancia = 0;
+            item.utilidad = 0;
             return item;
           });
         }
@@ -328,7 +382,6 @@ private decimal = {
 
 
     try {
-      let index = 0;
       for (let val of this.productTarifa) {
         val.porcentajeIva = porcentajeIva;
 
@@ -359,12 +412,11 @@ private decimal = {
           DECIMALS.GENERAL
         );
 
-        let ganancia = pricingCalculateUtil.getValueUtility(
+        let utilidad = pricingCalculateUtil.getValueUtility(
           val.precioVenta,
           precioCosto
         );
-        val.ganancia =  roundNumber(ganancia, DECIMALS.GENERAL);
-        index++;
+        val.utilidad =  roundNumber(utilidad, DECIMALS.GENERAL);
       }
     } catch (error) {
       console.log(error)
@@ -372,10 +424,124 @@ private decimal = {
   }
 
 
+   recalculatePercentage(){
+    if(!getValidId(this.data.precioCostoFraccionado)){
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese precio costo fraccionado'
+      })
+      return
+    }
+    let precioCosto = Number(this.data.precioCostoFraccionado);
+
+
+    this.articuloPrincipalTarifa.forEach((item, index)=>{
+      let precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(precioCosto, item.porcentajeUtilidad)
+
+      let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+        precioVenta,
+        item.porcentajeIva
+      );
+
+      this.productTarifa[index].precioVenta = roundNumber(
+        precioVenta,
+        this.decimal.nroPrecio
+      );
+      this.productTarifa[index].precioConIva = roundNumber(
+        precioConIva,
+        this.decimal.nroPrecio
+      );
+      this.productTarifa[index].porcentajeUtilidad =  item.porcentajeUtilidad;
+      let utilidad = pricingCalculateUtil.getValueUtility(item.precioVenta, precioCosto)
+      this.productTarifa[index].utilidad =  roundNumber(utilidad, DECIMALS.GENERAL);
+
+
+    })
+
+
+  }
 
 
   save(){
+    if (!getValidId(this.data.idArticulo)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "Seleccione el Articulo"
+      })
+      return;
+    }
 
+    if (!getValidId(this.data.conversion)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "Ingrese la Conversión"
+      })
+      return;
+    }
+
+    if (isNaN(this.data.conversion)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Valor no válido en el campo Conversión'
+      })
+      return;
+    }
+    if (!getValidId(this.data.idMedida)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "Seleccione la Medida"
+      })
+      return;
+    }
+    if (!getValidId(this.data.precioCostoFraccionado)) {
+      this.tS.toastr({
+        type: 'warning',
+        message:"Ingrese el Precio Costo Fraccionado"
+      })
+      return;
+    }
+
+    if (isNaN(this.data.precioCostoFraccionado)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: "Valor no válido en el campo Precio Costo Fraccionado"
+      })
+      return;
+    }
+
+    let data = {
+      id: this.params.id,
+     data: structuredClone(this.data),
+      pvps: structuredClone(this.productTarifa),
+    }
+
+
+    if(this.isAdd()){
+      this.$fractionalProductPostUseCase.execute(data)
+        .subscribe(this.successResponse)
+    }
+
+    if(this.isUpdate()){
+      this.$fractionalProductPutUseCase.execute(data)
+        .subscribe(this.successResponse)
+    }
+
+  }
+
+  private successResponse = (response:ApiResponse)=>{
+    if(response.code==="0"){
+      this.tS.toastr({
+        type: 'warning',
+        message: response.message
+      })
+    }
+    if(response.code==="1"){
+      this.tS.toastr({
+        type: 'success',
+        message: response.message
+      })
+      this.dialogRef.close(response)
+    }
   }
 
   close(){
