@@ -6,7 +6,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
@@ -298,10 +298,10 @@ export class LotPricePageComponent {
   isCalculateManual = false;
 
   protected getDataFilter() {
-    showLoader();
+    
     this.lotPriceSvc.getDataFilter().subscribe({
       next: (response) => {
-        hideLoader();
+        
         this.tarifas = response.tarifas;
         this.taxRates = response.tarifasImpuesto;
         this.decimal = response.decimal;
@@ -314,14 +314,14 @@ export class LotPricePageComponent {
       },
       error(err) {
         console.log(err);
-        hideLoader();
+        
       },
     });
   }
 
   getProducts() {
     try {
-      showLoader();
+      
       let subCategoriasChecked =
         Array.isArray(this.checkedSubCategorias.value) &&
         this.checkedSubCategorias.value.join(',');
@@ -351,18 +351,18 @@ export class LotPricePageComponent {
 
       this.lotPriceSvc.getAll(dataSearch).subscribe({
         next: (response) => {
-          hideLoader();
+          
           let results = response;
           this.nestedProducts = structuredClone(results);
           this.cloneNestedProducts = structuredClone(results);
         },
         error(err) {
-          hideLoader();
+          
           console.log(err);
         },
       });
     } catch (error) {
-      hideLoader();
+      
       console.log(error);
     }
   }
@@ -1016,10 +1016,10 @@ export class LotPricePageComponent {
           tipo: this.mainForm.tipo,
           articles: results,
         };
-        showLoader();
+        
         this.lotPriceSvc.put(data).subscribe({
           next: (response) => {
-            hideLoader();
+            
             if (isApiResponse(response)) {
               if (response.code === '0') {
                 Swal.fire({
@@ -1044,7 +1044,7 @@ export class LotPricePageComponent {
               icon: 'error',
               text: typeof err == 'object' ? err.error : err,
             });
-            hideLoader();
+            
           },
         });
       }

@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Category } from '@modules/technical-support/models/category';
@@ -56,7 +56,7 @@ export class CategoryModalComponent {
     this.modalRef.close();
   }
   onSave() {
-    showLoader();
+    
     const dataToSave = {
       ...this.categoryForm.value,
     };
@@ -65,10 +65,10 @@ export class CategoryModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     } else {
@@ -76,10 +76,10 @@ export class CategoryModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     }

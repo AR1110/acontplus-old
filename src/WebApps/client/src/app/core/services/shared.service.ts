@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS, PATHS_API } from '@core/constants/global.constants';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
 import { isApiResponse } from '@core/models/api-response';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { SendMailModalComponent } from '@shared/components/send-mail-modal/send-mail-modal.component';
 import FileSaver from 'file-saver';
 import { map } from 'rxjs';
@@ -120,14 +120,14 @@ export class SharedService {
     if (isConfirmed) {
       let url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
       console.log(parameters);
-      showLoader();
+      
       this.http
         .post(url, JSON.parse(parameters), {
           context: customUrl(),
         })
         .subscribe({
           next: (response) => {
-            hideLoader();
+            
             if (isApiResponse(response)) {
               if (response.code === '1') {
                 this.tS.toastr({
@@ -143,7 +143,7 @@ export class SharedService {
             }
           },
           error(err) {
-            hideLoader();
+            
             console.log('Hubo un problema al imprimir:' + err?.message);
           },
         });
@@ -196,10 +196,10 @@ export class SharedService {
         params[0].rdlcParams
       }`;
 
-      showLoader();
+      
       this.http.post(urlPrinter, null).subscribe({
         next: (response) => {
-          hideLoader();
+          
           if (isApiResponse(response)) {
             if (response.code === '1') {
               this.tS.toastr({
@@ -215,12 +215,12 @@ export class SharedService {
           }
         },
         error(err) {
-          hideLoader();
+          
           console.log('Hubo un problema al imprimir:' + err?.message);
         },
       });
     } catch (error) {
-      hideLoader();
+      
       console.log(error);
     }
   }

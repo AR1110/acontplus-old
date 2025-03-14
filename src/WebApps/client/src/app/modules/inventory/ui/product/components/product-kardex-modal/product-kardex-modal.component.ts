@@ -6,7 +6,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -293,10 +293,10 @@ export class ProductKardexModalComponent {
   }
 
   ngOnInit() {
-    showLoader();
+    
     this.transactionSvc.getDataFilter().subscribe({
       next: (response) => {
-        hideLoader();
+        
         this.establecimientos = response.estabs;
         this.tiposTransaccion = response.tiposTransaccion;
         let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
@@ -316,7 +316,7 @@ export class ProductKardexModalComponent {
       },
       error(err) {
         console.log(err);
-        hideLoader();
+        
       },
     });
   }
@@ -350,7 +350,7 @@ export class ProductKardexModalComponent {
 
   getDataKardex() {
     try {
-      showLoader();
+      
       let params = {
         checkBoxFecha: this.dataSearch.option === 1,
         checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
@@ -364,7 +364,7 @@ export class ProductKardexModalComponent {
       };
       this.transactionSvc.getDataKardex(params).subscribe({
         next: (response) => {
-          hideLoader();
+          
           this.dataArticulo = response.dataArticulo || {};
           this.transacciones = response.kardex || [];
           if (this.transacciones.length === 0) {
@@ -392,7 +392,7 @@ export class ProductKardexModalComponent {
       });
     } catch (error) {
       console.log(error);
-      hideLoader();
+      
     }
   }
 

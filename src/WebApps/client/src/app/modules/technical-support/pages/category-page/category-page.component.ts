@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
@@ -31,7 +31,7 @@ export class CategoryPageComponent {
     this.onModalOpen();
   }
   onGet() {
-    showLoader();
+    
     this.categoryService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response) && response.code == '1') {
@@ -39,11 +39,11 @@ export class CategoryPageComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
         console.error(err);
       },
       complete() {
-        hideLoader();
+        
       },
     });
   }

@@ -18,7 +18,7 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@restaurant/data/services/item.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { isValidField } from '@core/utils/utils';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
@@ -50,10 +50,10 @@ export class ItemReportComponent {
   private _productUseCase = inject(ProductUseCase)
 
   ngOnInit() {
-    showLoader();
+    
     this._productUseCase.getDataReport().subscribe({
       next: (response) => {
-        hideLoader();
+        
         const { estabs, subCategorias } = response;
         this.establecimientos = estabs;
         this.subCategorias = subCategorias;
@@ -63,7 +63,7 @@ export class ItemReportComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
         console.log(err);
       },
     });
