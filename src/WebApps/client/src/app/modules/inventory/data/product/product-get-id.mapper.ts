@@ -86,7 +86,8 @@ export class ProductGetIdMapper {
         precioPredeterminado: item.precioPredeterminado,
         nomTarifa: item.tarifa,
         porcentajeIva: item.porcentajeIva,
-        utilidad
+        utilidad,
+        nomEstado: item.precioPredeterminado ? 'Predeterminado' : '',
       }
     })
 
