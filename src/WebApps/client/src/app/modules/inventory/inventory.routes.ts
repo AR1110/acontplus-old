@@ -12,6 +12,7 @@ import { TarifaPageComponent } from '@inventory/ui/tarifa-page/tarifa-page.compo
 import { TagsComponent } from '@inventory/ui/tags/tags.component';
 import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
 import { ProductComponent } from '@inventory/ui/product/product.component';
+import {TransferenciaBodegaComponent} from "@inventory/ui/transferencia-bodega/transferencia-bodega.component";
 
 export const routes: Route[] = [
   {
@@ -114,10 +115,7 @@ export const routes: Route[] = [
   },
   {
     path: 'transferencia-bodega',
-    loadComponent: () =>
-      import(
-        '@inventory/ui/transferencia-bodega/transferencia-bodega.component'
-      ).then((c) => c.TransferenciaBodegaComponent),
+    component: TransferenciaBodegaComponent,
     data: {
       breadcrumb: 'Transferencia de Mercaderia',
     },
