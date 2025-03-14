@@ -5,7 +5,7 @@ import { CODE_REPORT } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader } from '@core/utils/loader';
+
 import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -68,7 +68,7 @@ export class FiltroDetalleCajaReportModal {
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
-          hideLoader();
+          
           let { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
@@ -77,7 +77,7 @@ export class FiltroDetalleCajaReportModal {
           this.tipoDocumentos = tipoDocumento;
         },
         error(err) {
-          hideLoader();
+          
           console.log(err);
         },
       });

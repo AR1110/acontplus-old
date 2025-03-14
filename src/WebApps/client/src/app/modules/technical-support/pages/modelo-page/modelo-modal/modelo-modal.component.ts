@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Brand } from '@modules/technical-support/models/brand';
@@ -75,7 +75,7 @@ export class ModeloModalComponent {
     this.onBrandGet($event.target.value);
   }
   onBrandGet(brandId: number) {
-    showLoader();
+    
     this.series = [];
     this.serieService.get({ tipo: 2, brandId }).subscribe({
       next: (response) => {
@@ -89,15 +89,15 @@ export class ModeloModalComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
       },
       complete() {
-        hideLoader();
+        
       },
     });
   }
   onGet() {
-    showLoader();
+    
     this.brandService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -107,11 +107,11 @@ export class ModeloModalComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
         console.log(err);
       },
       complete() {
-        hideLoader();
+        
       },
     });
   }
@@ -119,7 +119,7 @@ export class ModeloModalComponent {
     this.modalRef.close();
   }
   onSave() {
-    showLoader();
+    
     const dataToSave = {
       ...this.modeloForm.value,
     };
@@ -128,10 +128,10 @@ export class ModeloModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     } else {
@@ -139,10 +139,10 @@ export class ModeloModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     }

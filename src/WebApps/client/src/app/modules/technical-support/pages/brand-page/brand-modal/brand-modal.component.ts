@@ -8,7 +8,7 @@ import {
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
@@ -143,7 +143,7 @@ export class BrandModalComponent {
     this.onGet();
   }
   onGet() {
-    showLoader();
+    
     this.categoryService.get({}).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -153,11 +153,11 @@ export class BrandModalComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
         console.log(err);
       },
       complete() {
-        hideLoader();
+        
       },
     });
   }
@@ -165,18 +165,18 @@ export class BrandModalComponent {
     this.modalRef.close();
   }
   onSave() {
-    showLoader();
+    
     if (this.series.length > 0) {
       this.series.forEach((x) => {
         if (!x.code) {
-          hideLoader();
+          
           return this.tS.toastr({
             type: 'warning',
             message: 'Código de la serie invalido',
           });
         }
         if (!x.name) {
-          hideLoader();
+          
           return this.tS.toastr({
             type: 'warning',
             message: 'Nombre de la serie invalido',
@@ -193,10 +193,10 @@ export class BrandModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     } else {
@@ -204,10 +204,10 @@ export class BrandModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     }
@@ -229,7 +229,7 @@ export class BrandModalComponent {
       confirmButtonText: 'Si',
     }).then((response) => {
       if (response.isConfirmed) {
-        showLoader();
+        
         this.serieService.delete(item.id).subscribe({
           next: (response) => {
             if (isApiResponse(response)) {
@@ -246,11 +246,11 @@ export class BrandModalComponent {
             }
           },
           error(err) {
-            hideLoader();
+            
             console.log(err);
           },
           complete() {
-            hideLoader();
+            
           },
         });
       }

@@ -1,6 +1,13 @@
-import { HttpContext, HttpContextToken, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
-import { hideLoader, showLoader } from '@core/utils/loader';
+import {
+  HttpContext,
+  HttpContextToken,
+  HttpInterceptorFn,
+  HttpRequest,
+} from '@angular/common/http';
+
 import { finalize } from 'rxjs/operators';
+import { OverlayService } from '@core/services/overlay.service';
+import { inject } from '@angular/core';
 
 const isLoader = new HttpContextToken<boolean>(() => true);
 export function getNoLoader() {
@@ -8,9 +15,10 @@ export function getNoLoader() {
 }
 
 export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
-  let requests: HttpRequest<any>[] = [];
+  const requests: HttpRequest<any>[] = [];
+  const overlayService = inject(OverlayService);
 
-  if (!req.context.get(isLoader)){
+  if (!req.context.get(isLoader)) {
     return next(req);
   }
 
@@ -21,13 +29,14 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
   // console.log("No of requests--->" + requests.length);
 
   if (requests.length === 1) {
-    showLoader();
+    // 
+    overlayService.showSpinner();
   }
 
   return next(req).pipe(
     finalize(() => {
       removeRequest(req);
-    })
+    }),
   );
 
   function removeRequest(req: HttpRequest<any>): void {
@@ -37,7 +46,8 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
     }
 
     if (requests.length === 0) {
-      hideLoader();
+      // 
+      overlayService.hideSpinner();
     }
   }
-}
+};

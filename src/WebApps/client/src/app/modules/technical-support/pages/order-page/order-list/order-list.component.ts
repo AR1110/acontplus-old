@@ -4,7 +4,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
@@ -85,7 +85,7 @@ export class OrderListComponent implements OnInit {
       denyButtonText: 'No',
     });
     if (result.isConfirmed) {
-      showLoader();
+      
       this.orderService.delete(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
@@ -100,17 +100,17 @@ export class OrderListComponent implements OnInit {
         },
         error(err) {
           console.log(err);
-          hideLoader();
+          
         },
         complete() {
-          hideLoader();
+          
         },
       });
     }
   }
 
   get() {
-    showLoader();
+    
     let params = {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
@@ -128,11 +128,11 @@ export class OrderListComponent implements OnInit {
         }
       },
       complete() {
-        hideLoader();
+        
       },
       error(error) {
         console.log(error);
-        hideLoader();
+        
       },
     });
   }

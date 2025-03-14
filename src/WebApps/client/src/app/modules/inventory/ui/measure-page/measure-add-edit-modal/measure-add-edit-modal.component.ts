@@ -1,7 +1,7 @@
 import {Component, inject, Input, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader } from '@core/utils/loader';
+
 import { isValidField } from '@core/utils/utils';
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -59,7 +59,7 @@ export class MeasureAddEditModalComponent {
         }
     },
     error(error: any) {
-      hideLoader()
+      
       console.log(error)
     }
   }

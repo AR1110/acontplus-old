@@ -22,7 +22,6 @@ File: scss
  *	12. Forms
  *	14. Component
  */
-@import url(../../../assets/icons/themify-icons/themify-icons.css);
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 
@@ -582,29 +581,42 @@ File: scss
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 :root {
+  /* Bootstrap default colors */
   --bs-blue: #03a9f3;
   --bs-indigo: #6610f2;
   --bs-purple: #ab8ce4;
   --bs-pink: #e83e8c;
   --bs-red: #e46a76;
-  --bs-orange: #d61672;
-  --bs-yellow: #fec107;
-  --bs-green: #00c292;
+  --bs-orange: #d61672; /* Updated to match primary color */
+  --bs-yellow: #ffc107; /* Updated to match warning color */
+  --bs-green: #18d6a6; /* Updated to match success color */
   --bs-teal: #20c997;
-  --bs-cyan: #01c0c8;
+  --bs-cyan: #17a2b8; /* Updated to match info color */
   --bs-white: #fff;
   --bs-gray: #6c757d;
-  --bs-gray-dark: #343a40;
-  --bs-primary: #d61672;
-  --bs-secondary: #f8f9fa;
-  --bs-success: #00c292;
-  --bs-info: #03a9f3;
-  --bs-warning: #fec107;
-  --bs-danger: #e46a76;
-  --bs-light: #f8f9fa;
-  --bs-cyan: #01c0c8;
-  --bs-dark: #343a40;
-  --bs-purple: #ab8ce4;
+  --bs-gray-dark: #1a202c; /* Updated to match dark color */
+
+  /* Main theme colors */
+  --bs-primary: #d61672; /* Primary color */
+  --bs-secondary: #f94c8e; /* Secondary color */
+  --bs-success: #18d6a6; /* Success color */
+  --bs-info: #17a2b8; /* Info color */
+  --bs-warning: #ffc107; /* Warning color */
+  --bs-danger: #ff4b5c; /* Danger color */
+  --bs-light: #f8f9fa; /* Light color */
+  --bs-dark: #1a202c; /* Dark color */
+
+  /* Text colors on backgrounds */
+  --bs-on-primary: #ffffff;
+  --bs-on-secondary: #ffffff;
+  --bs-on-success: #ffffff;
+  --bs-on-danger: #ffffff;
+  --bs-on-warning: #212529;
+  --bs-on-info: #ffffff;
+  --bs-on-light: #212529;
+  --bs-on-dark: #ffffff;
+
+  /* Fonts */
   --bs-font-sans-serif: "Poppins", sans-serif;
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
@@ -5599,8 +5611,7 @@ fieldset:disabled .btn {
   float: left;
   padding-right: 0.5rem;
   color: #6c757d;
-  content: var(--bs-breadcrumb-divider, "/")
-  /* rtl: var(--bs-breadcrumb-divider, "/") */;
+  content: ">"
 }
 
 /* .breadcrumb-item.active {
@@ -27983,16 +27994,6 @@ ul.list-inline li {
   margin: 0 5px;
 }
 
-/*******************
-icons path
-*******************/
-
-@font-face {
-  font-family: 'themify';
-  src: url("fonts/themify.ttf") format("truetype");
-}
-
-
 /*==============================================================
  For all pages
  ============================================================== */
@@ -28044,11 +28045,11 @@ icons path
 }
 
 .page-titles .breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-  float: unset !important;
-  content: "\e649";
-  font-family: themify;
-  color: #ced4da;
-  font-size: 11px;
+  display: inline-block;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  color: #6c757d;
+  content: ">"; /* Changed from "/" to ">" */
 }
 
 .page-titles .breadcrumb .breadcrumb-item.active {

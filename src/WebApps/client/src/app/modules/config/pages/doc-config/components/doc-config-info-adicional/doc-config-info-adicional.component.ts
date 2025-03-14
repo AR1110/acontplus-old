@@ -8,7 +8,7 @@ import { faPlusSquare, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import Swal from 'sweetalert2';
 import { isValidField } from '@core/utils/utils';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -125,10 +125,10 @@ export class DocConfigInfoAdicionalComponent {
         infoAdicional: this.infoAdicional.length == 0 ? null : JSON.stringify(this.infoAdicional)
       };
 
-      showLoader();
+      
       this.docConfigSvc.post(data).subscribe({
         next: (response) => {
-          hideLoader()
+          
 
           if (response.code === "0") {
             this.tS.toastr({
@@ -145,7 +145,7 @@ export class DocConfigInfoAdicionalComponent {
           }
         },
         error(err) {
-          hideLoader();
+          
           console.log(err)
         },
       })

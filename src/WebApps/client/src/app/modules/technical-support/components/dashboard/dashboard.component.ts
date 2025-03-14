@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
-import { hideLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrderListComponent } from '@modules/technical-support/pages/order-page/order-list/order-list.component';
 import { OrderService } from '@modules/technical-support/services/order.service';
@@ -77,11 +77,11 @@ export class DashboardComponent implements OnInit {
         }
       },
       complete() {
-        hideLoader();
+        
       },
       error(error) {
         console.log(error);
-        hideLoader();
+        
       },
     });
   }
