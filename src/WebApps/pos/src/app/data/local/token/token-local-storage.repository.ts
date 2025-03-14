@@ -90,7 +90,9 @@ export class TokenLocalStorageRepository implements TokenRepository {
 
   removeAllStorage(){
   Object.keys(localStorage).forEach(function (key) {
+    if(key !=='theme'){
     localStorage.removeItem(key);
+    }
   });
 
   }

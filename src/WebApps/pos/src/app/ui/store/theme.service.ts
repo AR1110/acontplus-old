@@ -9,23 +9,15 @@ export class ThemeService {
   private darkMode = new BehaviorSubject<boolean>(false);
   isDarkMode$ = this.darkMode.asObservable();
 
-  constructor() {
-    const savedTheme = localStorage.getItem('theme')
-    if(!savedTheme) {
-      localStorage.setItem('theme',   'light');
-    }
-  }
-
   loadMode() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       this.darkMode.next(savedTheme === 'dark');
       this.applyTheme(savedTheme === 'dark');
     } else {
-
       // Check system preference
       const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark-theme)'
+        '(prefers-color-scheme: dark)'
       ).matches;
       this.darkMode.next(prefersDark);
       this.applyTheme(prefersDark);
