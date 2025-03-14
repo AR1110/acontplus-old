@@ -40,6 +40,7 @@ export class FraccProductListComponent implements OnInit {
   private dialogSvc = inject(DialogService)
 
   productId = input(0);
+  isCalledFromProductModal = input(false);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
@@ -102,8 +103,12 @@ export class FraccProductListComponent implements OnInit {
 
   openAddEdit(item?:any){
     let ref = this.dialogSvc.open(AddEditFractionalProductComponent, {
-      data: {},
-      size: 'xl'
+      data: {
+        id: 0,
+        productId: this.productId(),
+        isCalledFromProductModal: this.isCalledFromProductModal()
+      },
+      size: 'lg'
     })
 
     ref.subscribe(result=>{
