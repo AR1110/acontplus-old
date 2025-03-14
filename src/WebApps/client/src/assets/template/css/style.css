@@ -22,7 +22,6 @@ File: scss
  *	12. Forms
  *	14. Component
  */
-@import url(../../../assets/icons/themify-icons/themify-icons.css);
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 
@@ -5612,8 +5611,7 @@ fieldset:disabled .btn {
   float: left;
   padding-right: 0.5rem;
   color: #6c757d;
-  content: var(--bs-breadcrumb-divider, "/")
-  /* rtl: var(--bs-breadcrumb-divider, "/") */;
+  content: ">"
 }
 
 /* .breadcrumb-item.active {
@@ -27996,16 +27994,6 @@ ul.list-inline li {
   margin: 0 5px;
 }
 
-/*******************
-icons path
-*******************/
-
-@font-face {
-  font-family: 'themify';
-  src: url("fonts/themify.ttf") format("truetype");
-}
-
-
 /*==============================================================
  For all pages
  ============================================================== */
@@ -28057,11 +28045,11 @@ icons path
 }
 
 .page-titles .breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-  float: unset !important;
-  content: "\e649";
-  font-family: themify;
-  color: #ced4da;
-  font-size: 11px;
+  display: inline-block;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  color: #6c757d;
+  content: ">"; /* Changed from "/" to ">" */
 }
 
 .page-titles .breadcrumb .breadcrumb-item.active {
