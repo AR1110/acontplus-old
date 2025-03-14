@@ -8,6 +8,7 @@ import {transferenciaBodegaProvider} from "@inventory/providers/transferencia-bo
 import {productUbicationProvider} from "@inventory/providers/product-ubication.provider";
 import {productBarcodeProvider} from "@inventory/providers/product-barcode.provider";
 import {fractionalProvider} from "@inventory/providers/fractional-product.provider";
+import {productPhotoProvider} from "@inventory/providers/product-photo.provider";
 
 export const inventoryProviders = [
   productProvider,
@@ -19,5 +20,6 @@ export const inventoryProviders = [
   transferenciaBodegaProvider,
   productUbicationProvider,
   productBarcodeProvider,
-  fractionalProvider
+  fractionalProvider,
+  productPhotoProvider
 ]

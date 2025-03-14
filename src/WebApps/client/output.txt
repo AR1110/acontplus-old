@@ -515,7 +515,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── category.service.ts
 |  |  |  |  |  ├── lot-price.service.ts
 |  |  |  |  |  ├── massive-tax.service.ts
-|  |  |  |  |  ├── product-photo.service.ts
 |  |  |  |  |  ├── stock.service.ts
 |  |  |  |  |  ├── sub-category.service.ts
 |  |  |  |  |  ├── subcategory-photo.service.ts

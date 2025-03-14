@@ -23,7 +23,7 @@ import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product
 import {NgxColorsModule} from "ngx-colors";
 import {ProductBarcodePostUseCase} from "@inventory/domain/usecases/product-barcode/product-barcode-post.use-case";
 import {ProductBarcodePutUseCase} from "@inventory/domain/usecases/product-barcode/product-barcode-put.use-case";
-import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum"; 
+import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
 
 @Component({
   selector: 'app-product-barcode',
