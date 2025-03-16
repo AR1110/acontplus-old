@@ -6,7 +6,7 @@
 @import "assets/template/css/style.css";
 @import "styles/components/_forms.scss";
 @import "styles/theme/_theme-colors.scss";
-@import "styles/theme/variables";
+@import "styles/theme/_variables.scss";
 
 $compact-theme: mat.define-theme(
   (
