@@ -15,7 +15,7 @@ export interface GuiaRemisionList {
   serieComprobante: string;
   razonSocialDestinatario: string;
   identificacionDestinatario: string;
-  serieComprobanteFactura: string;
+  serieComprobanteInvoice: string;
   razonSocialTransportista: string;
   nomEstado: string;
   nomUsuario: string;

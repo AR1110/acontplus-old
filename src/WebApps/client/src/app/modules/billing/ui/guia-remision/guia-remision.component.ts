@@ -19,9 +19,16 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { getValidId, isValidField } from '@core/utils/utils';
+import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { FormsModule } from '@angular/forms';
+import {formatDateToString} from "@core/utils/date.util";
+import {GuiaRemisionList} from "@billing/domain/models/guia-remision.model";
+import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
+import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habitual-historial.directive";
+import {MatMenu, MatMenuItem, MatMenuModule} from "@angular/material/menu";
+import {MatTooltip} from "@angular/material/tooltip";
+import {ProductKardexModalDirective} from "@inventory/ui/product/directives/product-kardex-modal.directive";
 
 @Component({
   selector: 'app-guia-remision',
@@ -32,11 +39,18 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     FormsModule,
+    MatMenuModule,
     BreadcrumbComponent,
     MatDynamicCardComponent,
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchMatComponent,
+    AddEditProductDirective,
+    CompraHabitualHistorialDirective,
+    MatMenu,
+    MatMenuItem,
+    MatTooltip,
+    ProductKardexModalDirective,
   ],
   templateUrl: './guia-remision.component.html',
   styles: ``,
@@ -55,19 +69,31 @@ export class GuiaRemisionComponent implements OnInit {
   dataSearch = {
     codEstab: '',
     puntoEmisionId: 0,
+    filterByDate: true,
+    clienteId: 0,
+    usuarioId: 0,
+    codEstado: null,
+    nroSecuencial: "" as string  ,
+    toDate: formatDateToString(new Date()),
+    fromDate: formatDateToString(new Date())
   };
 
   loading = false;
   isFilterAdvanced = signal(false);
 
-  dataSource = signal([]);
+  dataSource = signal<GuiaRemisionList[]>([]);
 
   columnsDefs: ColumnDefinition[] = [
+    { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
-    { key: 'descripcion', label: 'Descripción', type: 'string' },
-    { key: 'turno', label: 'Turno', type: 'string' },
-    { key: 'actividad', label: 'Actividad', type: 'string' },
+    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
+    { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
+    { key: 'razonSocialDestinatario', label: 'Cliente', type: 'string' },
+    { key: 'fechaInicio', label: 'Fecha Inicio', type: 'string' },
+    { key: 'fechaFin', label: 'Fecha Llegada', type: 'string' },
+    { key: 'serieComprobanteInvoice', label: 'Doc', type: 'string' },
+    { key: 'razonSocialTransportista', label: 'Transportista', type: 'string' },
+    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
@@ -94,6 +120,16 @@ export class GuiaRemisionComponent implements OnInit {
     return {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
+      codEstab: this.dataSearch.codEstab,
+      idPuntoEmision: this.dataSearch.puntoEmisionId,
+      filterByDate: this.dataSearch.filterByDate, // Usamos el nuevo nombre
+      idCliente: isValidField(this.dataSearch.clienteId),
+      codEstado: isValidField(this.dataSearch.codEstado),
+      byUsuario: isValidField(this.dataSearch.usuarioId),
+      // Solo incluir las fechas si filterByDate es true
+      fechaInicio: this.dataSearch.filterByDate ? isValidField(this.dataSearch.fromDate) : null,
+      fechaFin: this.dataSearch.filterByDate ? isValidField(this.dataSearch.toDate) : null,
+      secuencial: ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
     };
   }
 
@@ -102,7 +138,31 @@ export class GuiaRemisionComponent implements OnInit {
   }
 
   private getGuiasRemision() {
-    this.$listGuiasRemisionUseCase.execute(this.getParams());
+
+    if (isValidField(this.dataSearch.nroSecuencial)) {
+      if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
+       this.dataSearch.filterByDate = true;
+        this.tS.toastr({
+          type: 'error',
+          message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
+        })
+        return
+      }
+      if (!(this.dataSearch.clienteId > 0)) {
+        this.dataSearch.filterByDate = false;
+      }
+    }
+
+    this.$listGuiasRemisionUseCase.execute(this.getParams()).subscribe(response=>{
+      console.log(response);
+      this.dataSource.set(response.data);
+      this.pagination.update(e=>{
+        return {
+          ...e,
+          totalRecords: response.totalRecords
+        }
+      })
+    })
   }
 
   ngOnInit() {
@@ -130,6 +190,13 @@ export class GuiaRemisionComponent implements OnInit {
         }
         this.refresh();
       });
+  }
+
+
+  changeDateRange($event:any){
+    this.dataSearch.fromDate = $event.from;
+    this.dataSearch.toDate = $event.to;
+    this.refresh()
   }
 
   handlePageEvent(e: PageEvent) {

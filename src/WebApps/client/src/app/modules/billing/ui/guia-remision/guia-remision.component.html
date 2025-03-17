@@ -21,7 +21,11 @@
             </mat-form-field>
           </div>
           <div class="col">
-            <app-date-range-selection [showInputMaterial]="true" />
+            <app-date-range-selection [showInputMaterial]="true"
+
+
+                                      (onChangeDateRange)="changeDateRange($event)"
+            />
           </div>
         </div>
       </div>
@@ -34,8 +38,7 @@
             <div class="d-flex flex-row gap-1 justify-content-end">
               <button
                 mat-icon-button
-                appAddEditProduct
-                (onResult)="refresh()"
+
                 [disabled]="loading"
               >
                 <mat-icon>add</mat-icon>
@@ -67,6 +70,30 @@
     >
     </app-mat-dynamic-table>
 
-    <ng-template #templateOp let-item="item"> </ng-template>
+    <ng-template #templateOp let-item="item">
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+
+
+
+        <button mat-menu-item appCompraHabitualHistorial [params]="item">
+          <mat-icon>history</mat-icon>
+          <span>Hist. compras</span>
+        </button>
+      </mat-menu>
+
+      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">
+        <mat-icon>timeline</mat-icon>
+      </button>
+    </ng-template>
   </div>
 </app-mat-dynamic-card>

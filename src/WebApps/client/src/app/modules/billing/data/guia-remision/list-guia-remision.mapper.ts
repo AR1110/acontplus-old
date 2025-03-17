@@ -10,10 +10,11 @@ export class ListGuiaRemisionMapper {
   }
 
   static fromJson(response: any): GuiasRemisionResponse {
-    const guias = response.guias = [];
+    const guias = response.guias || [];
 
     const data = guias.map((item:any, index: number) => {
       return {
+        index: index+1,
         idGuiaRemision: item.idGuiaRemision,
         codEstab: item.codEstab,
         fechaEmision: item.fechaEmision,
@@ -23,7 +24,7 @@ export class ListGuiaRemisionMapper {
         serieComprobante: item.serieComprobante,
         razonSocialDestinatario: item.razonSocialDestinatario,
         identificacionDestinatario: item.identificacionDestinatario,
-        serieComprobanteFactura: item.serieFactura,
+        serieComprobanteInvoice: item.serieFactura,
         razonSocialTransportista: item.razonSocialTransportista,
         nomEstado: item.estado,
         nomUsuario: item.usuario,
