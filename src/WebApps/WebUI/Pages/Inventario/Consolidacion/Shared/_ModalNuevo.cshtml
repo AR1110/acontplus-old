@@ -83,13 +83,18 @@
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                 <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
-                    abrir-modal-articulo="abrirModalArticulo(item)"  
+                    abrir-modal-articulo="abrirModalArticulo(item)"
                     set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
                 </md-autocomplete-articulo-component>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                 <button type="button" class="btn btn-outline-info btn-lg" ng-click="openModalAdvanced($event)"><i
                         class="ti-search"></i> Busqueda Avanzada</button>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                <button type="button" class="btn btn-secondary" ng-click="resetQuantityZero()">
+                    Cambiar cantidad a 0
+                </button>
             </div>
         </div>
         <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
@@ -100,7 +105,8 @@
         <div class="row">
             <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-8">
                 <div class="form-group">
-                    <textarea class="form-control border-select" placeholder="Observación" ng-model="data.observacion"></textarea>
+                    <textarea class="form-control border-select" placeholder="Observación"
+                        ng-model="data.observacion"></textarea>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-8">

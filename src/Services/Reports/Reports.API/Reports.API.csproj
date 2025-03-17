@@ -190,6 +190,9 @@
     <Content Include="Reports\Ventas\Clientes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Contabilidad\Deudores.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Ventas\CuentaPorCobrar.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
