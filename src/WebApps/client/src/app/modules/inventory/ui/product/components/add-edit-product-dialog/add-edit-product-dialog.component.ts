@@ -26,7 +26,7 @@ import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { TAX_RATE_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
-import { getValidId, isValidField } from '@core/utils/utils';
+import {getValidId, imgDefault, isValidField} from '@core/utils/utils';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -48,6 +48,9 @@ import {ProductBarcodeComponent} from "@inventory/ui/product/components/product-
 import {
   FraccProductListComponent
 } from "@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component";
+import {UploadImageComponent} from "@shared/components/upload-image/upload-image.component";
+import {ProductPhotoPostUseCase} from "@inventory/domain/usecases/product-photo/product-photo-post.use-case";
+import {ProductPhotoPutUseCase} from "@inventory/domain/usecases/product-photo/product-photo-put.use-case";
 interface ProductTarifa {
   tipoIva: string;
   tarifa: string;
@@ -75,6 +78,10 @@ interface ProductTarifa {
     TabulatorComponent,
     MatCustomDialogComponent,
     ProductUbicationComponent,
+    ThemeButtonComponent,
+    ProductBarcodeComponent,
+    FraccProductListComponent,
+    UploadImageComponent,
     //Directives
     SubCategoryModalDirective,
     ReactiveFormsModule,
@@ -83,9 +90,7 @@ interface ProductTarifa {
     BrandAddEditDirective,
     ToUpperCaseDirective,
     ModelAddEditDirective,
-    ThemeButtonComponent,
-    ProductBarcodeComponent,
-    FraccProductListComponent,
+
   ],
   templateUrl: './add-edit-product-dialog.component.html',
   styles: ``,
@@ -108,6 +113,10 @@ export class AddEditProductDialogComponent implements OnInit {
   private $productPostUseCase = inject(ProductPostUseCase);
   private $productPutUseCase = inject(ProductPutUseCase);
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
+
+  private $productPhotoPostUseCase = inject(ProductPhotoPostUseCase)
+  private $productPhotoPutUseCase = inject(ProductPhotoPutUseCase)
+
   private userRoleStateSvc = inject(UserRoleStateService);
 
   title = 'Nuevo Artículo';
@@ -170,6 +179,7 @@ export class AddEditProductDialogComponent implements OnInit {
     fechaCreacion: null,
     fechaCaducidadLote: null,
     estado: true,
+    productPhotoId: 0
   };
 
   private dataClone = {
@@ -182,6 +192,11 @@ export class AddEditProductDialogComponent implements OnInit {
     idBodega: 0,
     ubicacion: null,
   };
+
+
+  selectedFile = signal<any>('')
+  imageUrl = signal(imgDefault())
+
   columnNames = [
     {
       title: 'Tarifa',
@@ -359,6 +374,10 @@ export class AddEditProductDialogComponent implements OnInit {
 
         this.dataClone.idSubFamilia = this.data.idSubFamilia;
         this.showStatus = this.data.estado;
+
+        if(data.imgUrl){
+        this.imageUrl.set(data.imageUrl)
+        }
       }
     });
   }
@@ -781,6 +800,64 @@ export class AddEditProductDialogComponent implements OnInit {
     });
   }
 
+
+  onSelected($event: any) {
+    this.selectedFile.set($event)
+    if(this.isUpdate()){
+      this.uploadImage()
+    }
+  }
+
+
+  private uploadImage(){
+    if (this.data.productPhotoId > 0 && this.selectedFile()) {
+
+      this.$productPhotoPutUseCase.execute({
+        productId: this.params.id,
+        id: this.data.productPhotoId,
+        data: JSON.stringify({
+          id: this.data.productPhotoId,
+          s3ObjectKey: null,
+          s3ObjectUrl: null
+        }),
+        file: this.selectedFile()
+      }).subscribe(response => {
+        if (response.code == "0") {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message
+          })
+        }
+        if (response.code == "1") {
+         this.tS.toastr({
+           type: 'success',
+           message: response.message
+         })
+        }
+
+      })
+    }
+    if (this.isUpdate() && this.data.productPhotoId == 0 && this.selectedFile()) {
+      this.$productPhotoPostUseCase.execute({
+        productId: this.params.id,
+        file: this.selectedFile()
+      }).subscribe(response => {
+        if (response.code == "0") {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message
+          })
+        }
+        if (response.code == "1") {
+          this.tS.toastr({
+            type: 'success',
+            message: response.message
+          })
+        }
+      })
+    }
+  }
+
   private isValidForm() {
     const showWarning = (message: string) => {
       this.tS.toastr({
@@ -911,6 +988,7 @@ export class AddEditProductDialogComponent implements OnInit {
       data: structuredClone(this.data),
       dataPvp: structuredClone(this.productTarifa),
       dataUbicacion: structuredClone(this.dataUbicacion),
+      file: this.selectedFile()
     };
 
     if (this.isAdd()) {
@@ -997,19 +1075,6 @@ export class AddEditProductDialogComponent implements OnInit {
     this.dialogRef.close(data);
   }
 
-  //=============================================ARTICULO UBICACION=========================
-  articuloUbicaciones = [];
-  private getUbicacionArticulo() {
-    if (!this.params) return;
-
-    // articuloSvc.findById(params.idArticulo).then((response) => {
-    //   const { articuloUbicaciones } = response;
-    //   $scope.articuloUbicaciones = articuloUbicaciones;
-    // })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   }).finally(() => hideLoader())
-  }
 
   onChangeEstab() {
     const dataEstab = this.estabs().find(
@@ -1025,90 +1090,6 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  //  saveUbicacion = function () {
-  //   if (!($scope.dataUbicacion.idBodega > 0)) {
-  //     tS.toastr('warning', "Seleccione la Bodega");
-  //     return;
-  //   }
-  //   if (!($scope.dataUbicacion.ubicacion)) {
-  //     tS.toastr('warning', "Ingrese la Descripción");
-  //     return;
-  //   }
-  //
-  //   $scope.dataUbicacion.idArticulo = params.idArticulo;
-  //
-  //   if ($scope.dataUbicacion.idArticuloUbicacion > 0) {
-  //     showLoader();
-  //     articuloUbicacionSvc.update($scope.dataUbicacion.idArticuloUbicacion, $scope.dataUbicacion)
-  //       .then((response) => {
-  //         if (response.code == "0") {
-  //           tS.toastr('warning', response.message)
-  //         }
-  //         if (response.code == "1") {
-  //           tS.toastr('success', response.message)
-  //           getUbicacionArticulo();
-  //           $scope.dataUbicacion = {};
-  //         }
-  //       }).finally(() => hideLoader())
-  //   }
-  //
-  //   if ((!$scope.dataUbicacion.idArticuloUbicacion > 0)) {
-  //     showLoader();
-  //     articuloUbicacionSvc.save($scope.dataUbicacion)
-  //       .then((response) => {
-  //         if (response.code == "0") {
-  //           tS.toastr('warning', response.message)
-  //           return;
-  //         }
-  //         if (response.code == "1") {
-  //           tS.toastr('success', response.message)
-  //           getUbicacionArticulo();
-  //           $scope.dataUbicacion = {};
-  //         }
-  //       }).finally(() => hideLoader())
-  //   }
-  // }
-  //
-  // $scope.editarUbicacion = function (item) {
-  //   let dataBodega = $scope.bodegas.find(bodega => bodega.idBodega === item.idBodega);
-  //   $scope.dataUbicacion = Object.assign({}, item);
-  //   if (dataBodega) {
-  //     let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === dataBodega.idEstablecimiento);
-  //     $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
-  //   }
-  // }
-  //
-  // $scope.resetDataUbicacion = function () {
-  //   $scope.dataUbicacion = {};
-  // }
-  //
-  // $scope.askToDeleteUbicacion = async function (item) {
-  //   const { isConfirmed } = await Swal.fire({
-  //     icon: "warning",
-  //     html: `<small>Esta seguro/a de eliminar este Ubicación del Articulo ahora?</small>`,
-  //     showConfirmButton: true,
-  //     confirmButtonText: "Si, eliminar",
-  //     showCancelButton: true,
-  //     cancelButtonText: "No, cancelar",
-  //     allowOutsideClick: false,
-  //   });
-  //
-  //   if (isConfirmed) {
-  //     showLoader();
-  //     articuloUbicacionSvc.delete(item.idArticuloUbicacion)
-  //       .then((response) => {
-  //         if (response.code == "0") {
-  //           tS.toastr('warning', response.message)
-  //         }
-  //         if (response.code == "1") {
-  //           tS.toastr('success', response.message)
-  //           getUbicacionArticulo();
-  //           $scope.dataUbicacion = {};
-  //         }
-  //       }).finally(() => hideLoader())
-  //   }
-  // }
-  //====================================UBICACION END==========================
 
   close() {
     this.dialogRef.close();

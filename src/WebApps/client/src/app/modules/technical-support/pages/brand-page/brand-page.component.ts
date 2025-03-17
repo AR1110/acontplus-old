@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { Brand } from '@modules/technical-support/models/brand';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { BrandModalComponent } from './brand-modal/brand-modal.component';
@@ -33,7 +33,7 @@ export class BrandPageComponent {
     this.onModalOpen();
   }
   onGet() {
-    showLoader();
+    
     this.brandService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -43,11 +43,11 @@ export class BrandPageComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
         console.error(err);
       },
       complete() {
-        hideLoader();
+        
       },
     });
   }

@@ -4,7 +4,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -50,7 +50,7 @@ export class OrderDeliveryModalComponent implements OnInit {
   }
 
   save() {
-    showLoader();
+    
 
     let dataModified = {
       isOtherReceiver : this.isOtherReceiver,
@@ -73,10 +73,10 @@ export class OrderDeliveryModalComponent implements OnInit {
       },
       error(err) {
         console.log(err);
-        hideLoader();
+        
       },
       complete() {
-        hideLoader();
+        
       },
     });
   }

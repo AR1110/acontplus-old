@@ -4,12 +4,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
-import { ProductPhotoService } from '@inventory/services/product-photo.service';
 import Swal from 'sweetalert2';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {ProductPhotoPostUseCase} from "@inventory/domain/usecases/product-photo/product-photo-post.use-case";
+import {ProductPhotoPutUseCase} from "@inventory/domain/usecases/product-photo/product-photo-put.use-case";
+import {GetProductPhotoUseCase} from "@inventory/domain/usecases/product-photo/get-product-photo.use-case";
+import {
+  ProductPhotoDefaultUseCase
+} from "@inventory/domain/usecases/product-photo/product-photo-default.use-case";
+import {ProductPhotoPutStatusUseCase} from "@inventory/domain/usecases/product-photo/product-photo-put-status.use-case";
 
 @Component({
     selector: 'app-product-photo',
@@ -28,7 +34,11 @@ export class ProductPhotoComponent {
   readonly dialogRef = inject(MatDialogRef<ProductPhotoComponent>);
   readonly params = inject(MAT_DIALOG_DATA);
   private tS = inject(ToasterService)
-  private productPhotoSvc = inject(ProductPhotoService)
+  private $productPhotoPostUseCase = inject(ProductPhotoPostUseCase)
+  private $productPhotoPutUseCase = inject(ProductPhotoPutUseCase)
+  private $getProductPhotoUseCase = inject(GetProductPhotoUseCase)
+  private $productPhotoDefaultUseCase = inject(ProductPhotoDefaultUseCase)
+  private $productPhotoPutStatusUseCase= inject(ProductPhotoPutStatusUseCase)
 
   selectedFile: File | null = null;
 
@@ -44,8 +54,11 @@ export class ProductPhotoComponent {
   productPhotos = signal<any[]>([])
 
   private getProductPhotos() {
-    this.productPhotoSvc.getByProductId(this.productPhoto.idArticulo).subscribe(response => {
-      this.productPhotos.set(response.productPhotos)
+    this.$getProductPhotoUseCase.execute(this.productPhoto.idArticulo).subscribe(response => {
+      if(response.payload){
+      this.productPhotos.set(response.payload.productPhotos)
+
+      }
     })
   }
 
@@ -116,7 +129,12 @@ export class ProductPhotoComponent {
           s3ObjectKey: this.productPhoto.s3ObjectKey,
           s3ObjectUrl: this.productPhoto.s3ObjectUrl
         }
-        this.productPhotoSvc.put(this.productPhoto.id, data, this.selectedFile).subscribe(response => {
+
+        this.$productPhotoPutUseCase.execute({
+          id: this.productPhoto.id,
+          data,
+          file: this.selectedFile
+        }).subscribe(response => {
           if (response.code === "0") {
             this.tS.toastr({
               type: 'warning',
@@ -133,7 +151,11 @@ export class ProductPhotoComponent {
           }
         })
       } else {
-        this.productPhotoSvc.post(this.productPhoto.idArticulo, this.selectedFile).subscribe(response => {
+
+        this.$productPhotoPostUseCase.execute({
+          productId: this.productPhoto.idArticulo,
+          file: this.selectedFile
+        }).subscribe(response => {
           if (response.code === "0") {
             this.tS.toastr({
               type: 'warning',
@@ -171,7 +193,7 @@ export class ProductPhotoComponent {
 
     if (isConfirmed) {
 
-      this.productPhotoSvc.setDefault(item.id, !item.isDefault).subscribe(response => {
+      this.$productPhotoDefaultUseCase.execute(item.id, !item.isDefault).subscribe(response => {
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',
@@ -203,7 +225,7 @@ export class ProductPhotoComponent {
     })
 
     if (isConfirmed) {
-      this.productPhotoSvc.updateStatus(item.id).subscribe(response => {
+      this.$productPhotoPutStatusUseCase.execute(item.id).subscribe(response => {
         if (response.code === "0") {
           this.tS.toastr({
             type: 'warning',

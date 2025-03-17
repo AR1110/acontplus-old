@@ -32,6 +32,10 @@ export class AppComponent {
       }
     });
 
-    themeService.loadMode();
+
+  }
+
+  ngOnInit(){
+    this.themeService.loadMode();
   }
 }

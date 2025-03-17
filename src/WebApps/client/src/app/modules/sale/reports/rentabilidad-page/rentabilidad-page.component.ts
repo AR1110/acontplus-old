@@ -17,7 +17,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { SALE_CODE_REPORT } from '@modules/sale/enums/sale.enum';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { formatDateToString } from '@core/utils/date.util';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
@@ -82,10 +82,10 @@ export class RentabilidadPageComponent {
 
 
   ngOnInit() {
-    showLoader();
+    
     this._productUseCase.getDataReport().subscribe({
       next: (response) => {
-        hideLoader();
+        
         let { estabs, tarifas, tiposDoc, subCategorias } = response;
         this.estalecimientos = estabs;
         this.tarifas = tarifas;
@@ -112,7 +112,7 @@ export class RentabilidadPageComponent {
         }
       },
       error(err) {
-        hideLoader();
+        
         console.log(err);
       },
     });

@@ -8,7 +8,7 @@ import {GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision,} from '@core
 import {ToasterService} from '@core/services/toaster.service';
 import {ajustarFechaEmisionModificada, dateIsAfterCurrentDate, isDateValid,} from '@core/utils/date.util';
 import {generateUuidv4} from '@core/utils/generate-uuidv4';
-import {hideLoader, showLoader} from '@core/utils/loader';
+
 import {pricingCalculateUtil} from '@core/utils/pricing-calculate.util';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {icon} from '@fortawesome/fontawesome-svg-core';
@@ -544,10 +544,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     };
 
     getId() {
-        showLoader();
+        
         this.orderSvc.getId(this.params.id).subscribe({
             next: (response) => {
-                hideLoader();
+                
                 this.establecimientos = response.establecimientos;
                 this.order = response.order;
                 this.orderDetails = response.orderDetails;
@@ -598,7 +598,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
                 this.drawImpuestoTotales();
             },
             error(err) {
-                hideLoader();
+                
                 console.log(err);
             },
         });
@@ -1062,7 +1062,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
                 consolidacionesFecha: row.consolidacionesBodega,
             });
 
-            showLoader();
+            
             this._productUseCase
                 .checkNotificationStock({
                     idArticulo: row.productId,
@@ -1072,7 +1072,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
                 })
                 .subscribe({
                     next: async (response) => {
-                        hideLoader();
+                        
 
                         if (isApiResponse(response)) {
                             let {code, message, titleSms} = response;
@@ -1106,7 +1106,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
                         }
                     },
                     error(error) {
-                        hideLoader();
+                        
                         console.log(error);
                     },
                 });

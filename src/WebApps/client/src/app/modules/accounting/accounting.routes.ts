@@ -15,6 +15,7 @@ import {
   ResumenContableComponent
 } from "@accounting/ui/resumen-contable/resumen-contable.component";
 import {CarteraClienteComponent} from "@accounting/ui/cartera-cliente/cartera-cliente.component";
+import {ComprobanteIngresoComponent} from "@accounting/ui/comprobante-ingreso/comprobante-ingreso.component";
 
 export const routes: Routes = [
   {
@@ -37,7 +38,7 @@ export const routes: Routes = [
   {
     path: 'cobro-page',
     title: 'Comprobante Ingreso',
-    loadComponent: ()=>import('@accounting/ui/comprobante-ingreso/comprobante-ingreso.component').then(c=>c.ComprobanteIngresoComponent),
+    component: ComprobanteIngresoComponent,
     data: {
       breadcrumb: 'Comprobante Ingreso',
     },
@@ -101,8 +102,7 @@ export const routes: Routes = [
   {
     path: 'cartera-cliente',
     title: 'Cartera Cliente',
-    loadComponent: ()=>import('@accounting/ui/cartera-cliente/cartera-cliente.component').then(c=>c.CarteraClienteComponent),
-
+    component: CarteraClienteComponent,
     data: {
       breadcrumb: 'Cartera Cliente',
     },
@@ -126,8 +126,7 @@ export const routes: Routes = [
   {
     path: 'cuenta-por-cobrar',
     title: 'Cuenta por cobrar',
-    loadComponent: ()=>import('@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component').then(c=>c.CuentaPorCobrarComponent),
-
+    component: CuentaPorCobrarComponent,
     data: {
       breadcrumb: 'Cuenta por cobrar',
     },

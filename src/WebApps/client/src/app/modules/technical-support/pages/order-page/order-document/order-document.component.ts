@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -49,7 +49,7 @@ export class OrderDocumentComponent implements OnInit {
   }
 
   get() {
-    showLoader();
+    
     let params = { tipo: 5, id: this.data.id };
 
     this.orderService.get(params).subscribe({
@@ -64,11 +64,11 @@ export class OrderDocumentComponent implements OnInit {
         }
       },
       complete() {
-        hideLoader();
+        
       },
       error(error) {
         console.log(error);
-        hideLoader();
+        
       },
     });
   }

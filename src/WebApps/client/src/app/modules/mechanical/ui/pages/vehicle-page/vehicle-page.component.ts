@@ -5,7 +5,7 @@ import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { VehicleRead } from '@mechanical/domain/models/vehicle.model';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
@@ -135,7 +135,7 @@ export class VehiclePageComponent {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.isConfirmed) {
-        showLoader();
+        
         this.vehicleUseCase.remove(id).subscribe({
           next: (response) => {
             if (isApiResponse(response)) {
@@ -156,7 +156,7 @@ export class VehiclePageComponent {
           },
           error(err) {
             console.log(err)
-            hideLoader();
+            
           },
         })
       }
@@ -166,10 +166,10 @@ export class VehiclePageComponent {
 
   //Status Vehicle
   putState(id: number, state: boolean) {
-    showLoader();
+    
     this.vehicleUseCase.putState(id, state).subscribe({
       next: (response) => {
-        hideLoader();
+        
         if (response) {
           this.tS.toastr({
             type: 'success',
