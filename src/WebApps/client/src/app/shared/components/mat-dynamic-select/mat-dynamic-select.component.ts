@@ -2,21 +2,20 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
+  input,
   OnDestroy,
   OnInit,
-  Output,
+  output,
   ViewChild,
 } from '@angular/core';
-import {MatFormField} from '@angular/material/form-field';
-import {MatSelect, MatSelectModule} from '@angular/material/select';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {ReplaySubject, Subject} from 'rxjs';
-import {take, takeUntil} from 'rxjs/operators';
-import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
-import {AsyncPipe} from '@angular/common';
-import {SelectOption} from '@shared/models/select-option';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReplaySubject, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { AsyncPipe } from '@angular/common';
+import { SelectOption } from '@shared/models/select-option';
 
 @Component({
   selector: 'app-mat-dynamic-select',
@@ -37,11 +36,11 @@ import {SelectOption} from '@shared/models/select-option';
 export class MatDynamicSelectComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  @Input() options: SelectOption[] = [];
-  @Input() label: string = 'Select an option';
-  @Input() selectedValue: any;
+  label = input<string>('Seleccione una opción');
+  options = input.required<SelectOption[]>();
+  selectedValue = input<any>();
 
-  @Output() selectionChange = new EventEmitter<any>();
+  selectionChange = output<any>();
 
   public selectControl: FormControl = new FormControl();
   public selectFilterControl: FormControl = new FormControl();
@@ -56,7 +55,7 @@ export class MatDynamicSelectComponent
   protected _onDestroy = new Subject<void>();
 
   ngOnInit() {
-    this.filteredOptions.next(this.options.slice());
+    this.filteredOptions.next(this.options().slice());
 
     this.selectFilterControl.valueChanges
       .pipe(takeUntil(this._onDestroy))
@@ -98,14 +97,14 @@ export class MatDynamicSelectComponent
 
     let search = this.selectFilterControl.value;
     if (!search) {
-      this.filteredOptions.next(this.options.slice());
+      this.filteredOptions.next(this.options().slice());
       return;
     } else {
       search = search.toLowerCase();
     }
 
     this.filteredOptions.next(
-      this.options.filter(
+      this.options().filter(
         (option) => option.viewValue.toLowerCase().indexOf(search) > -1,
       ),
     );
