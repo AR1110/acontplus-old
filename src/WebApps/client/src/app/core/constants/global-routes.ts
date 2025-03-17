@@ -8,7 +8,11 @@ export enum GlobalRoutes {
   ConfigUserCustomer = 'config/user-customer-page',
   ConfigUserCustomerRequest = 'config/solicitud-usuario',
 
+  //Facturación start
   FactElectAts = 'billing/ats',
+  FactElectGuiaRemision='billing/guia-remision',
+  //Facturacion end
+
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
   InventarioMeasure = 'inventory/measure',

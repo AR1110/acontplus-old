@@ -1,0 +1,31 @@
+import { GroupedEstab } from '@core/models/estab.model';
+
+export class GuiasRemisionResponse {
+  totalRecords = 0;
+  data: GuiaRemisionList[] = [];
+}
+
+export interface GuiaRemisionList {
+  idGuiaRemision: number;
+  codEstab: string;
+  fechaEmision: string;
+  fechaInicio: string;
+  fechaFin: string;
+  claveAcceso: string;
+  serieComprobante: string;
+  razonSocialDestinatario: string;
+  identificacionDestinatario: string;
+  serieComprobanteFactura: string;
+  razonSocialTransportista: string;
+  nomEstado: string;
+  nomUsuario: string;
+  statusStyle: string;
+  totalRecords: string;
+}
+
+export interface GuiaRemisionDataForm {}
+
+export interface GuiaRemisionFilterData {
+  estabs: GroupedEstab[];
+  estadosDoc: any[];
+}
