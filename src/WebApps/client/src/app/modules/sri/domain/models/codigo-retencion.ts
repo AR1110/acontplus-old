@@ -5,3 +5,6 @@ export interface CodigoRetencion {
   porcentaje: number;
   estado: boolean;
 }
+
+export interface CodigoRetencionMixed
+  extends Pick<CodigoRetencion, "codigo" | "descripcion" | "porcentaje"> {}
