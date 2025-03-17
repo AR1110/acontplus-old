@@ -33,6 +33,7 @@ import {
 } from '@angular/material/card';
 import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 
 @Component({
@@ -51,8 +52,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatCard,
     MatCardContent,
     MatCardActions,
+    MatTabsModule,
     FileButtonsComponent,
-    MatTabsModule
+    MatDynamicCardComponent
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
