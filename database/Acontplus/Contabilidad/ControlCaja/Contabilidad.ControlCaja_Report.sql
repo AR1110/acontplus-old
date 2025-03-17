@@ -68,7 +68,7 @@ BEGIN
     --> Reporte Control Caja
     IF @tipo = 1 
         BEGIN 
-	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro,secuencial)
+	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro,secuencial,observacion)
 	        SELECT 'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ci.nroDocumento AS VARCHAR(9)), 9)
 		          ,IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,cc.serieComprobante 
@@ -82,6 +82,7 @@ BEGIN
 		          ,co.idEntidadFinanciera
 		          ,co.cobro
                   ,co.secuencial
+                  ,ci.observacion
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.idEstablecimiento      = ci.idEstablecimiento
 	        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
@@ -93,7 +94,7 @@ BEGIN
 			WHERE ci.idControlCaja = @idControlCaja  
               AND ci.estado = 1
 	        
-            INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
+            INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera,observacion)
             SELECT 'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ci.nroDocumento AS VARCHAR(9)), 9) as nroComprobante
                   ,'A'                                                                                       as tipoDoc
                   ,'A' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(an.nroDoc AS VARCHAR(9)),9)         as nroDoc
@@ -103,6 +104,7 @@ BEGIN
                   ,an.valor                                                                                  as abono
                   ,sf.descripcion                                                                            as pay
                   ,sf.idEntidadFinanciera
+                  ,ci.observacion
             FROM dbo.Anticipo                   an WITH (NOLOCK)
             INNER JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = an.idComprobanteIngreso
             INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
@@ -111,7 +113,7 @@ BEGIN
             WHERE ci.estado = 1
               AND ci.idControlCaja = @idControlCaja
 
-            INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
+            INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera,observacion)
             SELECT 'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ci.nroDocumento AS VARCHAR(9)),9) as nroComprobante
                   ,'IC'                                                                                     as tipoDoc
                   ,'IC' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(mc.nroDoc AS VARCHAR(9)),9)       as nroDoc
@@ -121,6 +123,7 @@ BEGIN
                   ,mc.valor                                                                                 as abono
                   ,sf.descripcion                                                                           as pay
                   ,sf.idEntidadFinanciera
+                  ,ci.observacion
             FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
             INNER JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = mc.idComprobanteIngreso
             INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
@@ -129,7 +132,7 @@ BEGIN
             WHERE ci.estado = 1
               AND ci.idControlCaja = @idControlCaja
 
-            INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
+            INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera,observacion)
             SELECT 'CE' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ce.nroDocumento AS VARCHAR(9)), 9) as nroComprobante
                   ,'EC'                                                                                      as tipoDoc
                   ,'EC' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(mc.nroDoc AS VARCHAR(9)),9)        as nroDoc
@@ -139,6 +142,7 @@ BEGIN
                   ,mc.valor * -1                                                                             as abono
                   ,sf.descripcion                                                                            as pay
                   ,sf.idEntidadFinanciera
+                  ,mc.observaciones
             FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
             INNER JOIN dbo.ComprobanteEgreso    ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = mc.idComprobanteEgreso
             INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
@@ -252,8 +256,7 @@ BEGIN
 		          ,abono = CAST(abono AS numeric(15,2))
 		          ,saldo = CAST(saldo AS numeric(15,2))
 		          ,pay =   pay
-                  ,sortByDefault  = @sortByDefault 
-                  ,sortOrder = @sortOrder
+                  ,observacion
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
 	         ORDER BY nroComprobante,secuencial,tipDoc,nroDoc ASC 

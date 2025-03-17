@@ -3625,7 +3625,7 @@
             <DataSetName>detalleDs</DataSetName>
             <Top>3.75109cm</Top>
             <Height>2.4cm</Height>
-            <Width>60.1554cm</Width>
+            <Width>60.15541cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -3697,7 +3697,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>610.28527mm</Width>
+      <Width>601.5541mm</Width>
       <Page>
         <PageFooter>
           <Height>7.05833mm</Height>
@@ -3798,7 +3798,7 @@
           </Style>
         </PageFooter>
         <PageHeight>29.7cm</PageHeight>
-        <PageWidth>60cm</PageWidth>
+        <PageWidth>65cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>
