@@ -45,6 +45,7 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { AddEditProductDirective } from '@inventory/ui/product/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
   selector: 'inventory-product',
@@ -64,6 +65,7 @@ import { DialogService } from '@core/services/dialog.service';
     MatSelectModule,
     SubCategoryGroupComponent,
     MatDynamicTableComponent,
+    MatDynamicCardComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,

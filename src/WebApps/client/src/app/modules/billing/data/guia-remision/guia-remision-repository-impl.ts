@@ -8,13 +8,21 @@ import { GuiaRemisionDataForm } from '@modules/billing/domain/models/guia-remisi
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { GetGuiaRemisionFilterDataMapper } from './get-guia-remision-filter-data.mapper';
 import {ListGuiaRemisionMapper} from "@billing/data/guia-remision/list-guia-remision.mapper";
+import {GetGuiaRemisionFormDataMapper} from "@billing/data/guia-remision/get-guia-remision-form-data.mapper";
 
 @Injectable({
   providedIn: 'root',
 })
 export class GuiaRemisionRepositoryImpl implements GuiaRemisionRepository {
-    getFormData(): Observable<ApiResponse<GuiaRemisionDataForm>> {
-    throw new Error('Method not implemented.');
+    getFormData()  {
+      const json = JSON.stringify({
+        tipo: 3,
+      });
+      return this._http
+        .get(`${this._url}?json=${json}`)
+        .pipe(
+          map((response) => GetGuiaRemisionFormDataMapper.fromJson(response))
+        );
   }
     getFilterData() {
     const json = JSON.stringify({
