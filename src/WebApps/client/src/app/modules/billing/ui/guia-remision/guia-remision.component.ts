@@ -29,6 +29,10 @@ import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habi
 import {MatMenu, MatMenuItem, MatMenuModule} from "@angular/material/menu";
 import {MatTooltip} from "@angular/material/tooltip";
 import {ProductKardexModalDirective} from "@inventory/ui/product/directives/product-kardex-modal.directive";
+import {DialogService} from "@core/services/dialog.service";
+import {
+  AddEditGuiaRemisionComponent
+} from "@billing/ui/guia-remision/components/add-edit-guia-remision/add-edit-guia-remision.component";
 
 @Component({
   selector: 'app-guia-remision',
@@ -55,12 +59,13 @@ import {ProductKardexModalDirective} from "@inventory/ui/product/directives/prod
   templateUrl: './guia-remision.component.html',
   styles: ``,
 })
-export class GuiaRemisionComponent implements OnInit {
+export class GuiaRemisionComponent   {
   private $getGuiaRemisionFilterDataUseCase = inject(
     GetGuiaRemisionFilterDataUseCase
   );
   private $listGuiasRemisionUseCase = inject(ListGuiasRemisionUseCase);
   private tS = inject(ToasterService);
+  private _dialogSvc = inject(DialogService)
 
   estabs = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
@@ -106,7 +111,7 @@ export class GuiaRemisionComponent implements OnInit {
         type: 'warning',
         message: 'Establecimiento no seleccionado',
       });
-      return;
+
     }
 
     if (!getValidId(this.dataSearch.puntoEmisionId)) {
@@ -153,7 +158,9 @@ export class GuiaRemisionComponent implements OnInit {
       }
     }
 
-    this.$listGuiasRemisionUseCase.execute(this.getParams()).subscribe(response=>{
+    let params = this.getParams()
+    if(!params) return;
+    this.$listGuiasRemisionUseCase.execute(params).subscribe(response=>{
       console.log(response);
       this.dataSource.set(response.data);
       this.pagination.update(e=>{
@@ -165,32 +172,32 @@ export class GuiaRemisionComponent implements OnInit {
     })
   }
 
-  ngOnInit() {
-    this.loading = true;
-    this.$getGuiaRemisionFilterDataUseCase
-      .execute()
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe((filterData) => {
-        this.estabs.set(filterData.estabs);
-        this.estadosDoc = filterData.estadosDoc;
-
-        if (this.estabs().length > 0) {
-          const dataEstab = this.estabs().find((item) => item.defaultEstab);
-
-          this.dataSearch.codEstab = dataEstab?.codEstab || '';
-          this.puntosEmision.set(dataEstab?.puntosEmision || []);
-          if (this.puntosEmision().length > 0) {
-            const dataPuntoEmision = this.puntosEmision().find(
-              (item) => item.defaultPtoEmi
-            );
-
-            this.dataSearch.puntoEmisionId =
-              dataPuntoEmision?.idPuntoEmision || 0;
-          }
-        }
-        this.refresh();
-      });
-  }
+  // ngOnInit() {
+  //   this.loading = true;
+  //   this.$getGuiaRemisionFilterDataUseCase
+  //     .execute()
+  //     .pipe(finalize(() => (this.loading = false)))
+  //     .subscribe((filterData) => {
+  //       this.estabs.set(filterData.estabs);
+  //       this.estadosDoc = filterData.estadosDoc;
+  //
+  //       if (this.estabs().length > 0) {
+  //         const dataEstab = this.estabs().find((item) => item.defaultEstab);
+  //
+  //         this.dataSearch.codEstab = dataEstab?.codEstab || '';
+  //         this.puntosEmision.set(dataEstab?.puntosEmision || []);
+  //         if (this.puntosEmision().length > 0) {
+  //           const dataPuntoEmision = this.puntosEmision().find(
+  //             (item) => item.defaultPtoEmi
+  //           );
+  //
+  //           this.dataSearch.puntoEmisionId =
+  //             dataPuntoEmision?.idPuntoEmision || 0;
+  //         }
+  //       }
+  //       this.refresh();
+  //     });
+  // }
 
 
   changeDateRange($event:any){
@@ -198,6 +205,20 @@ export class GuiaRemisionComponent implements OnInit {
     this.dataSearch.toDate = $event.to;
     this.refresh()
   }
+
+
+  public openAddEditModal(){
+    let ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
+      size: 'xl',
+      data: {
+
+      }
+    })
+    ref.subscribe(rs=>{
+      console.log(rs)
+    })
+  }
+
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
