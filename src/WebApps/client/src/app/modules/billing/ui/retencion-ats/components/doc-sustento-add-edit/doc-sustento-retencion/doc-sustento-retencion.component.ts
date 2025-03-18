@@ -1,12 +1,28 @@
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
-import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
+import {
+  CodigoRetencion,
+  CodigoRetencionMixed,
+} from '@sri/domain/models/codigo-retencion';
 import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva';
+import { MatDynamicSelectComponent } from '@shared/components/mat-dynamic-select/mat-dynamic-select.component';
+import { SelectOption } from '@shared/models/select-option';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-doc-sustento-retencion',
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    MatDynamicSelectComponent,
+    MatFormField,
+    MatSelectModule,
+    MatInput,
+    ThemeButtonComponent,
+  ],
   templateUrl: './doc-sustento-retencion.component.html',
   styles: ``,
 })
@@ -18,10 +34,105 @@ export class DocSustentoRetencionComponent {
   impuestosRetencion = input.required<ImpuestoRetencion[]>();
   codigosRetencion = input.required<CodigoRetencion[]>();
   porcentajesRetIva = input.required<PorcentajeRetIva[]>();
+  codigosRetencionMixed = signal<CodigoRetencionMixed[]>([]);
 
-  setPorcentajesRet(codigo: string, uniqueIdDoc: string) {
+  options = signal<SelectOption[]>([]);
+
+  selectedRetencionCode = '';
+  onSelectionChange(value: any) {
+    console.log('Selected value:', value);
+    // this.selectedRetencionCode = value;
+
+    this.retencionGroup().get('codigoRetencion').setValue(value);
+  }
+  setBaseImponible(codigo: string) {
+    const baseImponibleControl = this.retencionGroup().get('baseImponible');
+    let taxValue = 0;
+    if (codigo === '2') {
+      const taxesArray = this.docSustentoArray()
+        .at(this.indexDoc())
+        .get('impuestos') as FormArray;
+
+      for (let i = 0; i < taxesArray.length; i++) {
+        const taxItem = taxesArray.at(i).value;
+        if (taxItem.codigo === '2') {
+          taxValue = taxItem.valorImpuesto;
+          break;
+        }
+      }
+    }
+    setTimeout(() => {
+      switch (codigo) {
+        case '1':
+          baseImponibleControl.setValue(
+            this.docSustentoArray().at(this.indexDoc()).get('totalSinImpuestos')
+              ?.value,
+          );
+          break;
+        case '2':
+          baseImponibleControl.setValue(taxValue);
+
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  setPorcentajesRet(idImpuestoRetencion: number, uniqueIdDoc: string) {
     // Logic to set porcentajes based on codigo
+    const codigo = this.impuestosRetencion().filter(
+      (x) => x.idImpuestoRetencion === idImpuestoRetencion,
+    )[0].codigo;
+
     console.log('Selected Codigo:', codigo);
+
+    if (codigo === '1') {
+      const retRentaValues = [...this.codigosRetencion()]; // Create a shallow copy
+
+      this.options.set(
+        retRentaValues.map((ret) => ({
+          value: ret.codigo,
+          viewValue: `${ret.codigo} - ${ret.descripcion}`,
+        })),
+      );
+    }
+
+    if (codigo === '2') {
+      const retIvaValues = [...this.porcentajesRetIva()]; // Create a shallow copy
+
+      this.options.set(
+        retIvaValues.map((ret) => ({
+          value: ret.codigo,
+          viewValue: `${ret.codigo} - ${ret.descripcion}`,
+        })),
+      );
+    }
+
+    setTimeout(() => {
+      switch (codigo) {
+        case '1':
+          this.setBaseImponible(codigo);
+          // this.codigosRetencionMixed.set(this.codigosRetencion());
+
+          break;
+        case '2':
+          this.setBaseImponible(codigo);
+          // this.codigosRetencionMixed.set(this.porcentajesRetIva());
+          this.options().map((x, index) => {
+            return {
+              ...x,
+              value:
+                this.porcentajesRetIva()[
+                  index % this.porcentajesRetIva().length
+                ], // Cycle through retIvaValues
+            };
+          });
+          break;
+        default:
+          break;
+      }
+    });
   }
   setPorcentajeRet() {
     // Logic to set porcentaje based on codigo
@@ -34,5 +145,15 @@ export class DocSustentoRetencionComponent {
       this.retencionGroup().get('porcentajeRetener')?.value;
     const valorRetenido = baseImponible * (porcentajeRetener / 100);
     this.retencionGroup().get('valorRetenido')?.setValue(valorRetenido);
+  }
+
+  removeRetencion(indexDoc: number, indexRet: number) {
+    const taxesArray = this.docSustentoArray()
+      .at(indexDoc)
+      .get('retenciones') as FormArray;
+
+    if (indexRet >= 0 && indexRet < taxesArray.length) {
+      taxesArray.removeAt(indexRet);
+    }
   }
 }
