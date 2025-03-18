@@ -1,14 +1,9 @@
 <form [formGroup]="retencionGroup()">
-  <div class="row">
-    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-      <div class="form-group">
-        <label
-          for="idImpuestoRetencion-{{
-            retencionGroup().get('uniqueIdDoc')?.value
-          }}"
-          >Impuesto:</label
-        >
-        <select
+  <div class="row mb-3">
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Impuesto:</mat-label>
+        <mat-select
           formControlName="idImpuestoRetencion"
           id="idImpuestoRetencion-{{
             retencionGroup().get('uniqueIdDoc')?.value
@@ -16,50 +11,32 @@
           class="form-control"
           (change)="
             setPorcentajesRet(
-              retencionGroup().get('codigo')?.value,
+              retencionGroup().get('idImpuestoRetencion')?.value,
               retencionGroup().get('uniqueIdDoc')?.value
             )
           "
         >
-          <option value="">Seleccione un impuesto</option>
+          <mat-option [value]="0">Seleccione un impuesto</mat-option>
           @for (impuesto of impuestosRetencion(); track $index) {
-            <option [value]="impuesto.idImpuestoRetencion">
+            <mat-option [value]="impuesto.idImpuestoRetencion">
               {{ impuesto.codigo }} - {{ impuesto.descripcion }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-      <div class="form-group">
-        <label
-          for="codigoRetencion-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
-          >Código Retención:</label
-        >
-        <select
-          formControlName="idCodigoRetencion"
-          id="{{
-            retencionGroup().get('uniqueIdDoc')?.value
-          }}-idCodigoRetencion"
-          class="form-control"
-          (change)="setPorcentajeRet()"
-        >
-          <option value="">Seleccione un código</option>
-          @for (codigoRetencion of codigosRetencion(); track $index) {
-            <option [value]="codigoRetencion.idCodigoRetencion">
-              {{ codigoRetencion.codigo }} - {{ codigoRetencion.descripcion }}
-            </option>
-          }
-        </select>
-      </div>
+    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+      <app-mat-dynamic-select
+        [options]="options()"
+        label="Código Retención"
+        (selectionChange)="onSelectionChange($event)"
+      />
     </div>
-    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3">
-      <div class="form-group">
-        <label
-          for="baseImponible-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
-          >Base Imponible:</label
-        >
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Base Imponible:</mat-label>
         <input
+          matInput
           type="number"
           formControlName="baseImponible"
           id="baseImponible-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
@@ -68,17 +45,13 @@
           min="0"
           (blur)="setValueRet()"
         />
-      </div>
+      </mat-form-field>
     </div>
-    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3">
-      <div class="form-group">
-        <label
-          for="porcentajeRetener-{{
-            retencionGroup().get('uniqueIdDoc')?.value
-          }}"
-          >Porcentaje:</label
-        >
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Porcentaje:</mat-label>
         <input
+          matInput
           type="text"
           formControlName="porcentajeRetener"
           id="porcentajeRetener-{{
@@ -89,15 +62,15 @@
           min="0"
           (blur)="setPorcentajeRet()"
         />
-      </div>
+      </mat-form-field>
     </div>
-    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3">
-      <div class="form-group">
-        <label
-          for="valorRetenido-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
-          >Valor Retenido:</label
-        >
+  </div>
+  <div class="row mb-3">
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Valor Retenido:</mat-label>
         <input
+          matInput
           type="text"
           formControlName="valorRetenido"
           id="valorRetenido-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
@@ -106,24 +79,16 @@
           min="0"
           readonly
         />
-      </div>
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+      <app-theme-button
+        variant="danger"
+        icon="delete"
+        matStyle="icon"
+        id="btnEditRet-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
+        (handleClick)="removeRetencion(indexDoc(), indexRetencion())"
+      ></app-theme-button>
     </div>
   </div>
-  <!--  <button-->
-  <!--    type="button"-->
-  <!--    id="btnAddRet-{{ retencionGroup().get('uniqueIdDoc')?.value }}"-->
-  <!--    class="btn btn-info btn-sm"-->
-  <!--    (click)="onAddRetencion()"-->
-  <!--  >-->
-  <!--    <i class="ti-plus"></i> Añadir Retención-->
-  <!--  </button>-->
-  <!--  <button-->
-  <!--    type="button"-->
-  <!--    id="btnEditRet-{{ retencionGroup().get('uniqueIdDoc')?.value }}"-->
-  <!--    class="btn btn-info btn-sm"-->
-  <!--    (click)="onUpdateRet()"-->
-  <!--    style="display: none"-->
-  <!--  >-->
-  <!--    <i class="ti-save"></i> Guardar Retención-->
-  <!--  </button>-->
 </form>
