@@ -10,6 +10,7 @@ import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatOption} from "@angular/material/core";
 import {MatSelect} from "@angular/material/select";
 import {MatInput} from "@angular/material/input";
+import {MatDivider} from "@angular/material/divider";
 
 @Component({
   selector: 'app-docs-guia-remision',
@@ -21,7 +22,8 @@ import {MatInput} from "@angular/material/input";
     MatLabel,
     MatOption,
     MatSelect,
-    MatInput
+    MatInput,
+    MatDivider
   ],
   templateUrl: './docs-guia-remision.component.html',
   styles: ``
