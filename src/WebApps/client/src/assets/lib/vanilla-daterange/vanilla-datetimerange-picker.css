@@ -21,9 +21,9 @@
   margin-top: 7px;
   top: 100px;
   left: 20px;
-  z-index: 3001;
+  z-index:999999;
   display: none;
-  font-family: arial;
+  font-family: Arial;
   font-size: 15px;
   line-height: 1em;
 }

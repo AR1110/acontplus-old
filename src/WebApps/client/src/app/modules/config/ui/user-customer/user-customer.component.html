@@ -1,0 +1,55 @@
+<app-breadcrumb/>
+
+<app-mat-dynamic-card>
+
+  <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+
+    <div class="col">
+
+
+    </div>
+    <div class="col  ">
+      <div class="d-flex flex-row gap-1 justify-content-end">
+        <app-theme-button
+         [variant]="'success'"
+         [icon]="'add'"
+         [matStyle]="'icon'"
+         [disabled]="$loading()"
+         (handleClick)="openAddEdit()"
+        />
+        <app-theme-button
+          [variant]="'info'"
+          [icon]="'refresh'"
+          [matStyle]="'icon'"
+          [disabled]="$loading()"
+          (handleClick)="refresh()"
+        />
+      </div>
+    </div>
+
+  </div>
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  >
+  </app-mat-dynamic-table>
+
+  <ng-template #templateOp let-item="item">
+    <button mat-icon-button (click)="openAddEdit(item)">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button (click)="openSetting(item)">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </ng-template>
+
+
+
+
+
+</app-mat-dynamic-card>

@@ -1,0 +1,19 @@
+<div class="my-2">
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+  >
+  </app-mat-dynamic-table>
+
+  <ng-template #templateOp let-item="item">
+
+  </ng-template>
+
+  <ng-template #statusTemplate let-item>
+  <mat-slide-toggle>Slide me!</mat-slide-toggle>
+</ng-template>
+</div>
+

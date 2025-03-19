@@ -7,6 +7,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatInputModule } from "@angular/material/input";
 import { addDay, format, monthEnd, monthStart, weekEnd, weekStart } from "@formkit/tempo";
 import { formatDateToString, zonaHorariaEcuador } from "@core/utils/date.util";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
 
 @Component({
     selector: 'app-date-range-selection',
@@ -48,6 +49,8 @@ export class DateRangeSelectionComponent {
     format: "YYYY-MM-DD HH:mm:ss",
     tz: zonaHorariaEcuador,
   })
+
+  public uniqueId  = `date-range${generateUuidv4()}`
 
   private getDateAddDay(day:number){
     return  addDay(this.currentDate, day)
@@ -102,7 +105,12 @@ export class DateRangeSelectionComponent {
       ]
     };
 
-    const valorInput = this.dateRangeInput.nativeElement;
+
+    //const valorInput = this.dateRangeInput.nativeElement;
+      const valorInput = document.getElementById(`${this.uniqueId}`) as any;
+      console.log(valorInput);
+
+
     (function (DateRangePicker) {
       let drp = new DateRangePicker(valorInput,
         {
@@ -122,7 +130,7 @@ export class DateRangeSelectionComponent {
           //timePickerSeconds: true,
           //showCustomRangeLabel: false,
           alwaysShowCalendars: true,
-          //opens: 'center',
+           opens: 'center',
           //drops: 'up',
           //singleDatePicker: true,
           //autoApply: true,

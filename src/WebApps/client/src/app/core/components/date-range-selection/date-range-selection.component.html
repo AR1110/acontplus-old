@@ -14,6 +14,7 @@
     class="form-control"
     id="date-range-selection-input-checked"
     #dateRangeInput
+    [id]="uniqueId"
   />
 </div>
 } @else if(showInputMaterial()){
@@ -30,7 +31,7 @@
   <input
     matInput
     placeholder="Placeholder"
-    id="date-range-selection-input"
+    [id]="uniqueId"
     #dateRangeInput
   />
   @if(showMatSuffix()){
@@ -46,7 +47,7 @@
 <input
   type="text"
   class="form-control"
-  id="date-range-selection-input"
+  [id]="uniqueId"
   #dateRangeInput
 />
 }

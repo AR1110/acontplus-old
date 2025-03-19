@@ -4,6 +4,7 @@ export enum BILLING_PATHS {
   INVOICE = 'Factura/',
   NOTIFICACION_TRIBUTARIA = 'NotificacionTributaria',
   RETENCION_ATS = 'RetencionAts/',
+  GUIA_REMISION='GuiaRemision'
 }
 
 export enum RETENCION_ATS_PATHS {

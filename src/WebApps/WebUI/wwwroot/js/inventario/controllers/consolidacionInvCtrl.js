@@ -56,7 +56,7 @@
                     },
                     isRenderRazorPartial: true,
                     windowClass: 'uibModalFullScreen'
-                }).result.then(result => { 
+                }).result.then(result => {
                     if (typeof result === 'object') {
                         $scope.getConsolidaciones()
                     }
@@ -153,7 +153,7 @@
                 params,
                 isRenderRazorPartial: true,
                 windowClass: 'uibModalFullScreen'
-            }).result.then(result => { 
+            }).result.then(result => {
                 if (typeof result === 'object') {
                     $scope.getConsolidaciones()
                 }
@@ -170,16 +170,16 @@
         //     })
         // }
         $scope.openModalFiltro = async () => {
-        
-            
+
+
         }
 
         $scope.openModalDetalle = async (item) => {
-            try { 
+            try {
                 let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
                 let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
                 let template = URL_TEMPLATE + '_ModalDetalle.cshtml';
-       
+
                 let controller = (await import(fileCtrl))[ctrl];
                 modalSvc.openModalCustom({
                     controller,
@@ -190,11 +190,11 @@
                     },
                     isRenderRazorPartial: true,
                     windowClass: 'uibModalFullScreen'
-                }) 
-                
+                })
+
             } catch (error) {
                 console.log(error)
-            }  
+            }
         }
 
         $scope.openModalEditar = async (item) => {
@@ -214,7 +214,7 @@
                             isRenderRazorPartial: true,
                             windowClass: 'uibModalFullScreen'
                         }).result.then(result => {
-                            
+
                             if (result !== null && typeof result === 'object') {
                                 $scope.getConsolidaciones()
                             }
@@ -366,22 +366,22 @@
         }
 
         $scope.onChangeTipoDocumento = async () => {
-            let dataDoc = $scope.tipoDocumento.find(t=>t.idTipoDocumento === $scope.data.idTipoDocumento)
+            let dataDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento)
             let dataMovimiento = {};
 
-            if (dataDoc.codigo == 'CI'){
-                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='A')
+            if (dataDoc.codigo == 'CI') {
+                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A')
             }
 
-            if (dataDoc.codigo == 'BI'){
-                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='S')
+            if (dataDoc.codigo == 'BI') {
+                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'S')
             }
 
-            if (dataDoc.codigo == 'EI'){
-                dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo ==='E')
+            if (dataDoc.codigo == 'EI') {
+                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'E')
             }
 
-            if(dataMovimiento){
+            if (dataMovimiento) {
                 $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
             }
 
@@ -410,13 +410,13 @@
                 }
 
                 if (colDef.field === "precioUnitario") {
-                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio) 
+                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio)
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio); 
+                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
                     rowEntity.conversion = dataMedida.conversion;
                 }
 
@@ -462,7 +462,7 @@
                 $scope.decimal = decimal;
                 $scope.tipoDocumento = tipoDocumento;
                 $scope.tipoTransaccion = tiposTransaccion;
-                
+
                 if (params.tipoRegistro === 1) {
                     let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
                     if (dataEstab) {
@@ -505,10 +505,10 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
-                    $scope.onChangeTipoDocumento() 
+                    $scope.onChangeTipoDocumento()
                 }
 
-                if(params.tipoRegistro===3){
+                if (params.tipoRegistro === 3) {
                     const { comprobante, detalles } = params.data;
                     let dataPuntoEmision = $scope.establecimientos.flatMap(e => e.puntosEmision).find(p => p.idPuntoEmision === comprobante.idPuntoEmision);
                     let dataEstab = $scope.establecimientos.find(e => e.codEstab === dataPuntoEmision.codEstab);
@@ -517,7 +517,7 @@
                     $scope.bodegas = dataEstab.bodegas;
 
                     comprobante.idConsolidacionInventario = 0;
-                    comprobante.fechaEmisionDocCreado= null;
+                    comprobante.fechaEmisionDocCreado = null;
                     comprobante.fechaEmision = new Date()
                     $scope.data = structuredClone(comprobante);
                     $scope.data.codEstab = dataPuntoEmision.codEstab;
@@ -530,24 +530,24 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
-                    $scope.onChangeTipoDocumento() 
+                    $scope.onChangeTipoDocumento()
                 }
 
                 setColumnDefs();
-                
+
             } catch (error) {
                 console.log(error)
             }
         }
 
-        function setDefaultTipoDoc(){
-            let dataTipoDoc = $scope.tipoDocumento.find(t=>t.codigo==='CI')
-            let dataMovimiento = $scope.tipoTransaccion.find(t=>t.codigo==='A')
-            if(dataTipoDoc){
+        function setDefaultTipoDoc() {
+            let dataTipoDoc = $scope.tipoDocumento.find(t => t.codigo === 'CI')
+            let dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A')
+            if (dataTipoDoc) {
                 $scope.data.idTipoDocumento = dataTipoDoc.idTipoDocumento;
             }
 
-            if(dataMovimiento){
+            if (dataMovimiento) {
                 $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
             }
         }
@@ -662,7 +662,7 @@
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
-                visible : false,
+                visible: false,
                 aggregationType: uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = fS.roundNumber(aggregation.value, 2)
@@ -741,8 +741,8 @@
                     },
                     isRenderRazorPartial: true,
                     //windowClass: 'uibModalFullScreen'
-                }).result.then((result) => { 
-                
+                }).result.then((result) => {
+
                     if (result && Array.isArray(result.articlesSelected)) {
                         const {
                             articlesSelected,
@@ -755,10 +755,10 @@
                                 obj.precioUnitario = obj.precioUnitario;
                                 obj.precioCosto = obj.precioCosto;
                                 obj.precioCostoFraccionado = obj.precioCostoFraccionado;
-                          
-                                if (!importedExcel){
-                                    obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
-                                } 
+
+                                if (!importedExcel) {
+                                    obj.cantidad = opcion && opcion === 6 ? obj.cantidad : 1;
+                                }
                                 obj.idBodega = $scope.data.idBodega;
                                 let total = obj.cantidad * obj.precioUnitario;
                                 obj.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
@@ -766,7 +766,7 @@
                             }
                         }
 
-                        setCountIndex(); 
+                        setCountIndex();
                         setTotalDetalle();
                     }
                 })
@@ -896,6 +896,29 @@
             }
         }
 
+        $scope.resetQuantityZero = function () {
+            Swal.fire({
+                text: "¿Estás seguro de cambiar la cantidad de los artículos en 0",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si!',
+                cancelButtonText: 'No'
+            }).then(result => {
+                if (result.isConfirmed) {
+
+
+                    for (let item of $scope.gridOptions.data) {
+                        item.cantidad =0;
+                        setTotalColumn(item);
+                    }
+                    setTotalDetalle();
+                    $scope.$apply()
+                }
+            })
+        }
+
         function addRow() {
             $scope.gridOptions.data.push({
                 idConsolidacionInventarioDetalle: 0,
@@ -917,7 +940,7 @@
 
 
         function setItem(entity, articulo, medidas) {
-            
+
             const dataMedida = medidas.find(m => m.defaultMedida);
 
             entity.codigo = articulo.codigoArticulo;
@@ -935,11 +958,11 @@
             entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
             entity.precioUnitario = dataMedida.precioUnitario;
             entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
-          //  entity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+            //  entity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
 
             entity.total = fS.roundNumber(entity.cantidad * dataMedida.precioUnitario, $scope.decimal.nroPrecio)
 
-            
+
         }
 
 
@@ -974,7 +997,7 @@
 
         $scope.setItemArticuloEnDetalle = async function (item) {
             try {
-              
+
                 const { articulo, medidas } = item;
                 if (!articulo.llevaInventario) {
                     Swal.fire({
@@ -1006,8 +1029,8 @@
                     entity = $scope.gridOptions.data[index];
                     setItem(entity, articulo, medidas); // item row
                 }
-            
-                
+
+
                 setCountIndex();
                 setTotalColumn(entity);
                 setTotalDetalle();
@@ -1078,10 +1101,10 @@
                 let documento;
 
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
-                
-                let dataTipoDoc = $scope.tipoDocumento.find(t=>t.idTipoDocumento === $scope.data.idTipoDocumento)
-            
-                if(dataTipoDoc){
+
+                let dataTipoDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento)
+
+                if (dataTipoDoc) {
                     documento = dataTipoDoc.descripcion;
                 }
 
@@ -1092,11 +1115,11 @@
                     })
                     hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
-                    titleSwal = '<small>Guardar el documento <b>' + documento +  '</b> </small>';
+                    titleSwal = '<small>Guardar el documento <b>' + documento + '</b> </small>';
                     confirmButtonText = 'Guardar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 } else {
-                    titleSwal = '<small>Actualizar el documento <b>' + documento +  '</b> </small>';
+                    titleSwal = '<small>Actualizar el documento <b>' + documento + '</b> </small>';
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de actualizar este Documento</small>?`;
                 }
@@ -1169,20 +1192,20 @@
     //app.controller("advancedSearchCtrl", advancedSearchCtrl)
     advancedSearchCtrl.$inject = [
         "$scope",
-        "$uibModalInstance", 
+        "$uibModalInstance",
         "toastService",
         "params"
     ]
     function advancedSearchCtrl($scope, $uibModalInstance, tS, params) {
-        const {idBodega, bodegas} = params;
+        const { idBodega, bodegas } = params;
 
         $scope.mainForm = {
             idBodega: idBodega,
-            descripcionBodega: bodegas.find(b=>b.idBodega===idBodega).descripcion,
+            descripcionBodega: bodegas.find(b => b.idBodega === idBodega).descripcion,
             selectedFile: []
         };
 
-        
+
 
         $scope.catalogs = [
             { code: 1, description: 'Articulo' },
@@ -1190,12 +1213,12 @@
             { code: 4, description: 'Proveedor' },
             { code: 5, description: 'N° Documento' },
             { code: 6, description: 'Artículos Importados' },
-            
+
         ]
         $scope.subfamilias = mainDataForm.subFamilias;
         $scope.articlesSelected = [];
-        $scope.articlesFounded = []; 
-        
+        $scope.articlesFounded = [];
+
         $scope.mainForm.opcion = $scope.catalogs.find(x => x.code == '4').code;
 
         $scope.proveedor = {};
@@ -1218,37 +1241,37 @@
         $scope.subirArchivo = subirArchivo;
         $scope.showArticuloNoVinculado = showArticuloNoVinculado;
 
-        function onChangeOption(){
+        function onChangeOption() {
             $scope.mainForm.rucProveedor = null;
             $scope.mainForm.idArticulo = 0;
-            if ($scope.mainForm.opcion===6){
+            if ($scope.mainForm.opcion === 6) {
                 $scope.getArticles();
             }
         }
 
-        function onKeyupProveedor () {
+        function onKeyupProveedor() {
             if (!$scope.proveedor.nombreProveedor) {
                 $scope.mainForm.rucProveedor = null;
             }
         }
-        function onSelectProveedor (item) {
+        function onSelectProveedor(item) {
             $scope.mainForm.rucProveedor = item.numeroIdentificacion
             $scope.getArticles()
         }
 
-        function onKeyupArticle () {
+        function onKeyupArticle() {
             if ($scope.articuloSearch.nombreArticulo) {
                 $scope.mainForm.idArticulo = 0;
             }
         }
-        function onSelectArticle(item) { 
+        function onSelectArticle(item) {
             $scope.mainForm.idArticulo = item.idArticulo
             $scope.getArticles()
         }
 
 
         //importacion archivo  
-        function subirArchivo()     {
+        function subirArchivo() {
             let formatFile = [{
                 "name": "jayanth",
                 "data": "scd",
@@ -1257,15 +1280,15 @@
             $scope.articulosNotFounded = [];
 
 
-            let {files} = document.getElementById('selectedFile');
+            let { files } = document.getElementById('selectedFile');
 
-            if(files.length===0){
+            if (files.length === 0) {
                 tS.toastr({
                     type: 'warning',
                     message: 'Seleccione el archivo de tipo formato excel'
                 })
-                return 
-            } 
+                return
+            }
 
             try {
                 XLSX.utils.json_to_sheet(formatFile, 'out.xlsx');
@@ -1275,19 +1298,19 @@
                 fileReader.onload = (event) => {
                     let data = event.target.result;
                     let workbook = XLSX.read(data, { type: "binary", cellDates: true });
-                
+
 
                     workbook.SheetNames.forEach(async sheetName => {
 
-                        let product = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]); 
-                        
+                        let product = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+
                         getProductsValidateImport({
                             product
                         })
- 
+
                     })
 
-                }      
+                }
 
             } catch (error) {
                 console.log(error)
@@ -1295,16 +1318,16 @@
 
         }
 
-        function getProductsValidateImport(obj){
+        function getProductsValidateImport(obj) {
 
-            consolidacionInvSvc.getProductsValidateImport(obj).then(response=>{
+            consolidacionInvSvc.getProductsValidateImport(obj).then(response => {
                 $scope.articlesFounded = response.articulos;
                 $scope.articulosNotFounded = response.noVinculados;
                 importedExcel = true;
             })
         }
 
-        function showArticuloNoVinculado(){
+        function showArticuloNoVinculado() {
             let html = `<div class="table-responsive" style="max-height: 400px;">
                     <table class="table table-hover table-bordered table-sm">
                         <thead>
@@ -1335,7 +1358,7 @@
 
         }
 
-        function getArticles(){
+        function getArticles() {
             try {
                 showLoader();
                 $scope.articulosNotFounded = [];
@@ -1349,7 +1372,7 @@
                     idFamilia: fS.isValidField($scope.mainForm.idFamilia),
                     idSubFamilia: fS.isValidField($scope.mainForm.idSubFamilia),
                     nroDocumento: fS.isValidField($scope.mainForm.nroDocumento),
-                    idBodega: $scope.mainForm.opcion===6? $scope.mainForm.idBodega: null
+                    idBodega: $scope.mainForm.opcion === 6 ? $scope.mainForm.idBodega : null
                 }
 
                 consolidacionInvSvc.getProducts(dataSearch).then(response => {
@@ -1367,7 +1390,7 @@
             }
         }
 
-        function setArticlesSelected () {
+        function setArticlesSelected() {
             $uibModalInstance.close({
                 articlesSelected: $scope.articlesSelected,
                 opcion: $scope.mainForm.opcion,
@@ -1375,9 +1398,9 @@
             })
         }
 
-        function closeAdvancedSearch  (){
+        function closeAdvancedSearch() {
             $uibModalInstance.close()
         }
-    } 
+    }
 
 })(window.angular)

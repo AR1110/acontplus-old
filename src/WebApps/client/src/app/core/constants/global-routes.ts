@@ -1,14 +1,22 @@
 export enum GlobalRoutes {
   ComprasReportes = 'purchase/reports',
   ComprasReportesRecepcion = 'purchase/reception-reports',
+
+  //Configuration Start
   ConfigDocConfig = 'config/doc-config-page',
   ConfigEstablishment = 'config/establishment',
   ConfigGeneralConfig = 'config/general-config-page',
   ConfigUserProfile = 'config/user-profile-page',
-  ConfigUserCustomer = 'config/user-customer-page',
+  ConfigUserCustomer = 'config/user-customer',
   ConfigUserCustomerRequest = 'config/solicitud-usuario',
 
+  //Configuration End
+
+  //Facturación start
   FactElectAts = 'billing/ats',
+  FactElectGuiaRemision='billing/guia-remision',
+  //Facturacion end
+
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
   InventarioMeasure = 'inventory/measure',
