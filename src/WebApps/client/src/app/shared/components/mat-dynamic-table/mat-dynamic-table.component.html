@@ -162,6 +162,7 @@
   @if(enablePagination() && paginationConfig() ){
   <mat-paginator
     #paginator
+    [disabled]="isLoadingData()"
     (page)="handlePageEvent($event)"
     [length]="paginationConfig()?.totalRecords"
     [pageSize]="paginationConfig()?.pageSize"

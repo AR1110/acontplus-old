@@ -29,6 +29,11 @@ import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habi
 import {MatMenu, MatMenuItem, MatMenuModule} from "@angular/material/menu";
 import {MatTooltip} from "@angular/material/tooltip";
 import {ProductKardexModalDirective} from "@inventory/ui/product/directives/product-kardex-modal.directive";
+import {DialogService} from "@core/services/dialog.service";
+import {
+  AddEditGuiaRemisionComponent
+} from "@billing/ui/guia-remision/components/add-edit-guia-remision/add-edit-guia-remision.component";
+import {MatUserSearchComponent} from "@shared/components/mat-user-search/mat-user-search.component";
 
 @Component({
   selector: 'app-guia-remision',
@@ -45,6 +50,7 @@ import {ProductKardexModalDirective} from "@inventory/ui/product/directives/prod
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchMatComponent,
+    MatUserSearchComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     MatMenu,
@@ -55,12 +61,13 @@ import {ProductKardexModalDirective} from "@inventory/ui/product/directives/prod
   templateUrl: './guia-remision.component.html',
   styles: ``,
 })
-export class GuiaRemisionComponent implements OnInit {
+export class GuiaRemisionComponent   {
   private $getGuiaRemisionFilterDataUseCase = inject(
     GetGuiaRemisionFilterDataUseCase
   );
   private $listGuiasRemisionUseCase = inject(ListGuiasRemisionUseCase);
   private tS = inject(ToasterService);
+  private _dialogSvc = inject(DialogService)
 
   estabs = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
@@ -72,7 +79,7 @@ export class GuiaRemisionComponent implements OnInit {
     filterByDate: true,
     clienteId: 0,
     usuarioId: 0,
-    codEstado: null,
+    codEstado: 0,
     nroSecuencial: "" as string  ,
     toDate: formatDateToString(new Date()),
     fromDate: formatDateToString(new Date())
@@ -106,7 +113,7 @@ export class GuiaRemisionComponent implements OnInit {
         type: 'warning',
         message: 'Establecimiento no seleccionado',
       });
-      return;
+
     }
 
     if (!getValidId(this.dataSearch.puntoEmisionId)) {
@@ -122,7 +129,7 @@ export class GuiaRemisionComponent implements OnInit {
       pageSize: this.pagination().pageSize,
       codEstab: this.dataSearch.codEstab,
       idPuntoEmision: this.dataSearch.puntoEmisionId,
-      filterByDate: this.dataSearch.filterByDate, // Usamos el nuevo nombre
+      checkBoxDate: this.dataSearch.filterByDate, // Usamos el nuevo nombre
       idCliente: isValidField(this.dataSearch.clienteId),
       codEstado: isValidField(this.dataSearch.codEstado),
       byUsuario: isValidField(this.dataSearch.usuarioId),
@@ -138,6 +145,13 @@ export class GuiaRemisionComponent implements OnInit {
   }
 
   private getGuiasRemision() {
+    if(this.loading) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Esta cargando los datos...'
+      })
+      return
+    }
 
     if (isValidField(this.dataSearch.nroSecuencial)) {
       if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
@@ -153,7 +167,9 @@ export class GuiaRemisionComponent implements OnInit {
       }
     }
 
-    this.$listGuiasRemisionUseCase.execute(this.getParams()).subscribe(response=>{
+    let params = this.getParams()
+    if(!params) return;
+    this.$listGuiasRemisionUseCase.execute(params).subscribe(response=>{
       console.log(response);
       this.dataSource.set(response.data);
       this.pagination.update(e=>{
@@ -198,6 +214,20 @@ export class GuiaRemisionComponent implements OnInit {
     this.dataSearch.toDate = $event.to;
     this.refresh()
   }
+
+
+  public openAddEditModal(){
+    let ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
+      size: 'xl',
+      data: {
+
+      }
+    })
+    ref.subscribe(rs=>{
+      console.log(rs)
+    })
+  }
+
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {

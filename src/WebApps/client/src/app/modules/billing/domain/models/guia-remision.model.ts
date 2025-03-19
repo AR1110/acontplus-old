@@ -1,4 +1,5 @@
 import { GroupedEstab } from '@core/models/estab.model';
+import {TipoDoc} from "@core/models/tipo-doc.model";
 
 export class GuiasRemisionResponse {
   totalRecords = 0;
@@ -23,7 +24,11 @@ export interface GuiaRemisionList {
   totalRecords: string;
 }
 
-export interface GuiaRemisionDataForm {}
+export interface GuiaRemisionDataForm {
+  estabs: GroupedEstab[],
+  tiposDoc: TipoDoc[],
+  informacionesAdicionales: any[]
+}
 
 export interface GuiaRemisionFilterData {
   estabs: GroupedEstab[];

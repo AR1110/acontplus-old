@@ -7,7 +7,7 @@ import {
 } from '@billing/domain/models/guia-remision.model';
 
 export abstract class GuiaRemisionRepository {
-  abstract getFormData(): Observable<ApiResponse<GuiaRemisionDataForm>>;
+  abstract getFormData(): Observable<GuiaRemisionDataForm>;
   abstract getFilterData(): Observable<GuiaRemisionFilterData>;
   abstract list<T>(parameters: T): Observable<GuiasRemisionResponse>;
   // abstract getById(id: number): Observable<any>;
