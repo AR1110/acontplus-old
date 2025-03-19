@@ -6,8 +6,24 @@
 />
 
 <ng-template #body>
+  <mat-list>
+    <mat-list-item><span class="text-muted">Usuario:</span> {{params.nombreCompleto}} </mat-list-item>
+    <mat-divider></mat-divider>
+    <mat-list-item><span class="text-muted">Ruc Empresa:</span> {{userCustomerRoleData.rucEmpresa}}</mat-list-item>
+    <mat-divider></mat-divider>
+    <mat-list-item><span class="text-muted">Razón Social:</span> {{userCustomerRoleData.razonSocialEmpresa}}</mat-list-item>
+    <mat-divider></mat-divider>
+    <mat-list-item><span class="text-muted">Rol:</span> {{userCustomerRoleData.roleName}}</mat-list-item>
+  </mat-list>
+
+
   <mat-tab-group>
-    <mat-tab label="Establecimientos"> Establecimientos </mat-tab>
+    <mat-tab label="Establecimientos">
+      @if(userCustomerRoleData.idUsuarioRol>0){
+      <app-list-asignacion-estab/>
+      }
+
+    </mat-tab>
     <mat-tab label="Permisos"> Permisos </mat-tab>
     <mat-tab label="Accessos"> Accessos </mat-tab>
   </mat-tab-group>
