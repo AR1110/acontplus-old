@@ -7,9 +7,9 @@ CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 		  ,cp.idTiempoCredito
 		  ,cp.idEstadoPago
 		  ,cp.idUsuario
-		  ,cp.idEntidad
 		  ,cp.idDocumento
-		  ,es.idEstablecimiento
+		  ,es.idEntidad
+          ,es.idEstablecimiento
           ,es.nombreComercial
           ,es.codEstab
 		  ,cp.codDoc
