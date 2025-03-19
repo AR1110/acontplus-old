@@ -1,0 +1,163 @@
+<app-mat-custom-dialog
+
+[containerTemplate]="body"
+[actionsTemplate]="footer"
+(close)="close()"
+[title]="titleModal"
+/>
+<ng-template #body>
+  <form (ngSubmit)="onSubmit()" id="formUserCustomer" [formGroup]="dataForm" autocomplete="off">
+  <div class="d-grid gap-2">
+    <mat-form-field class="w-100">
+      <mat-label>Número Identificación:</mat-label>
+      <input matInput formControlName="nroIdentificacion" >
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Nombre:</mat-label>
+      <input matInput formControlName="firstName">
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Apellido:</mat-label>
+      <input matInput formControlName="lastName">
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Correo:</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+
+
+    @if (isAdd()) {
+      <mat-form-field class="w-100">
+        <mat-label>Usuario:</mat-label>
+        <input matInput formControlName="username">
+      </mat-form-field>
+
+      <div
+        class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
+      >
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Contraseña:</mat-label>
+            <input matInput formControlName="contrasena">
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Confirmar Contraseña::</mat-label>
+            <input matInput formControlName="confirmContrasena">
+            @if (dataForm.hasError('matchValidator')) {
+              <mat-hint>Las contraseñas no coinciden</mat-hint>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-form-field>
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="roleId">
+          @for (item of roles; track $index) {
+          <mat-option [value]="item.id">
+            {{item.name}}
+          </mat-option>
+
+
+          }
+        </mat-select>
+      </mat-form-field>
+
+          }
+
+
+    @if(isUpdate()){
+      <mat-radio-group aria-label="Select an status" formControlName="estado">
+        <mat-radio-button [value]="true">Activo</mat-radio-button>
+        <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+      </mat-radio-group>
+
+    }
+
+  </div>
+
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [type]="'submit'"
+  [variant]="'success'"
+  [icon]="isAdd()?'save': 'edit'"
+    [form]="'formUserCustomer'"
+    [text]="isAdd()?'Guardar': 'Actualizar'"
+  />
+</ng-template>
+<!--<form (ngSubmit)="onSubmit()" [formGroup]="dataForm" autocomplete="off">-->
+<!--  <div class="modal-header">-->
+<!--    <h4 class="modal-title" id="modal-basic-title">-->
+<!--      <fa-icon [icon]="modalIcon"></fa-icon>-->
+<!--      {{ titleModal }}-->
+<!--    </h4>-->
+<!--    <button (click)="modal.dismiss('Cross click')" aria-label="Close" class="btn-close" type="button"></button>-->
+<!--  </div>-->
+<!--  <div class="modal-body">-->
+
+<
+<!--    @if (!(params.idUsuario > 0)) {-->
+<!--      <div class="form-group">-->
+<!--        <label for="username">Usuario: <span class="text-danger">*</span></label>-->
+<!--        <input type="text" id="username" formControlName="username" class="form-control"-->
+<!--               placeholder="..." required>-->
+<!--      </div>-->
+<!--      <div class="row">-->
+<!--        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">-->
+<!--          <div class="form-group">-->
+<!--            <label for="contrasena">Contraseña: <span class="text-danger">*</span></label>-->
+<!--            <input type="text" id="contrasena" formControlName="contrasena" class="form-control"-->
+<!--                   placeholder=".." required>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">-->
+<!--          <div class="form-group">-->
+<!--            <label for="confirmContrasena">Confirmar Contraseña: <span class="text-danger">*</span></label>-->
+<!--            <input type="text" id="confirmContrasena" formControlName="confirmContrasena"-->
+<!--                   class="form-control" placeholder=".." required>-->
+<!--            @if (dataForm.hasError('matchValidator')) {-->
+<!--              <span class="text-danger">Las contraseñas no coinciden</span>-->
+<!--            }-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">-->
+<!--          <div class="form-group">-->
+<!--            <label for="roleId">Rol: <span class="text-danger">*</span></label>-->
+<!--            <select id="roleId" class="form-select" formControlName="roleId" required>-->
+<!--              @for (item of roles; track $index) {-->
+<!--                <option [ngValue]="item.id">{{ item.name }}</option>-->
+<!--              }-->
+<!--            </select>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    }-->
+<!--    @if (params.idUsuario > 0) {-->
+<!--      <div class="icheck-primary icheck-inline">-->
+<!--        <input type="radio" id="activo" [value]="true" formControlName="estado"/>-->
+<!--        <label for="activo">Activo</label>-->
+<!--      </div>-->
+<!--      <div class="icheck-primary">-->
+<!--        <input type="radio" id="inactivo" [value]="false" formControlName="estado"/>-->
+<!--        <label for="inactivo">Inactivo</label>-->
+<!--      </div>-->
+<!--    }-->
+<!--  </div>-->
+<!--  <div class="modal-footer">-->
+<!--    <button [disabled]="dataForm.invalid" class="btn btn-outline-success" type="submit">-->
+<!--      <fa-icon [icon]="'save'"></fa-icon>-->
+<!--      Guardar-->
+<!--    </button>-->
+<!--    <button (click)="modal.close('Save click')" class="btn btn-outline-dark" type="button">-->
+<!--      &times; Cerrar-->
+<!--    </button>-->
+<!--  </div>-->
+
+<!--</form>-->

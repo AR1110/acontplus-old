@@ -9,6 +9,7 @@ import { CompanyPageComponent } from '@modules/config/pages/company-page/company
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
 import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
+import {UserCustomerComponent} from "@modules/config/ui/user-customer/user-customer.component";
 
 export const routes: Routes = [
   {
@@ -28,9 +29,9 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'user-customer-page',
+    path: 'user-customer',
     title: 'Usuario',
-    component: UserCustomerPageComponent,
+    component: UserCustomerComponent,
     data: {
       breadcrumb: 'Usuario',
     },

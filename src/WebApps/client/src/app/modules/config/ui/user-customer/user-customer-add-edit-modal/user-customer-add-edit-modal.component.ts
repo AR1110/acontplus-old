@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject  } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,22 +8,42 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { Role } from '@modules/config/domain/models/role.model';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {CreateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/create-user-customer.use-case";
+import {UpdateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/update-user-customer.use-case";
+import {
+  GetUserCustomerFormDataUseCase
+} from "@modules/config/domain/use-cases/user-customer/get-user-customer-form-data.use-case.";
+import {MatRadioModule} from "@angular/material/radio";
 
 @Component({
     selector: 'app-user-customer-add-edit-modal',
-    imports: [FormsModule, ReactiveFormsModule, FaIconComponent],
+  imports: [FormsModule, ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatRadioModule,
+
+    MatCustomDialogComponent, ThemeButtonComponent
+  ],
     templateUrl: './user-customer-add-edit-modal.component.html'
 })
 export class UserCustomerAddEditModalComponent {
-  @Input() params = {
+
+  private $createUserCustomerUseCase = inject(CreateUserCustomerUseCase)
+  private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase)
+  private $getUserCustomerDataFormUseCase = inject(GetUserCustomerFormDataUseCase)
+  private dialogRef = inject(MatDialogRef<UserCustomerAddEditModalComponent>)
+
+  readonly params = inject<{
     idUsuario: 0,
     email: '',
     username: '',
@@ -32,32 +52,42 @@ export class UserCustomerAddEditModalComponent {
     nroIdentificacion: null,
     roleId: 0,
     estado: false,
-  };
+  }>(MAT_DIALOG_DATA);
+
+  // @Input() params = {
+  //   idUsuario: 0,
+  //   email: '',
+  //   username: '',
+  //   firstName: null,
+  //   lastName: null,
+  //   nroIdentificacion: null,
+  //   roleId: 0,
+  //   estado: false,
+  // };
   titleModal = 'Nuevo Usuario';
   dataForm!: FormGroup;
   roles: Role[] = [];
-  modalIcon: IconProp = 'plus';
-  // user = {} as UserData;
-  protected modal = inject(NgbActiveModal);
   protected tS = inject(ToasterService);
   private userCustomerSvc = inject(UserCustomerService);
-  private _tokenUseCase= inject(TokenUseCase)
 
 
   constructor(private fb: FormBuilder) {}
 
+
+  isUpdate(){
+    return this.params.idUsuario>0
+  }
+  isAdd(){
+    return !(this.params.idUsuario>0)
+  }
+
+
   ngOnInit() {
-    this.userCustomerSvc.getDataForm().subscribe({
-      next: (response: any) => {
+    this.$getUserCustomerDataFormUseCase.execute().subscribe(  (response: any) => {
         this.roles = response.roles;
-      },
-    });
-    const decodedToken = this._tokenUseCase.getUserData();
-    // if (decodedToken) {
-    //   this.user = decodedToken;
-    // }
+      } );
+
     if (this.params.idUsuario > 0) {
-      this.modalIcon = 'edit';
       this.titleModal = 'Editar Usuario';
       this.dataForm = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
@@ -136,34 +166,35 @@ export class UserCustomerAddEditModalComponent {
         ?.roleCode,
     };
 
-    if (this.params.idUsuario > 0) {
-      this.userCustomerSvc
-        .put(this.params.idUsuario, data)
-        .subscribe((response) => {
-          if (isApiResponse(response)) {
+    if (this.isUpdate()) {
+      this.$updateUserCustomerUseCase.execute({
+        id: this.params.idUsuario,
+        data
+      }).subscribe((response) => {
             this.tS.toastr({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
             if (response.code === '1') {
-              this.modal.close(response);
+              this.dialogRef.close(response);
             }
-          }
         });
     }
 
-    if (!(this.params.idUsuario > 0)) {
-      this.userCustomerSvc.post(data).subscribe((response) => {
-        if (isApiResponse(response)) {
+    if (this.isAdd()) {
+      this.$createUserCustomerUseCase.execute(data).subscribe((response) => {
           this.tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
           if (response.code === '1') {
-            this.modal.close(response);
+            this.dialogRef.close(response);
           }
-        }
       });
     }
+  }
+
+  close(){
+    this.dialogRef.close()
   }
 }

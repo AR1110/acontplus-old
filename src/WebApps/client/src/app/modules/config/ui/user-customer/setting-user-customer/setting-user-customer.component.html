@@ -1,0 +1,17 @@
+<app-mat-custom-dialog
+  [title]="'Configuración Usuario'"
+(close)="close()"
+[containerTemplate]="body"
+[actionsTemplate]="footer"
+/>
+
+<ng-template #body>
+  <mat-tab-group>
+    <mat-tab label="Establecimientos"> Establecimientos </mat-tab>
+    <mat-tab label="Permisos"> Permisos </mat-tab>
+    <mat-tab label="Accessos"> Accessos </mat-tab>
+  </mat-tab-group>
+
+
+</ng-template>
+<ng-template #footer></ng-template>

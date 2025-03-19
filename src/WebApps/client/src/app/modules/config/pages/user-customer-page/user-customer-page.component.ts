@@ -8,7 +8,7 @@ import { UserCustomerService } from '@modules/config/services/user-customer/user
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 
-import { UserCustomerAddEditModalComponent } from './components/user-customer-add-edit-modal/user-customer-add-edit-modal.component';
+import { UserCustomerAddEditModalComponent } from '@modules/config/ui/user-customer/user-customer-add-edit-modal/user-customer-add-edit-modal.component';
 import { UserCustomerRoleModalComponent } from './components/user-customer-role-modal/user-customer-role-modal.component';
 
 @Component({
