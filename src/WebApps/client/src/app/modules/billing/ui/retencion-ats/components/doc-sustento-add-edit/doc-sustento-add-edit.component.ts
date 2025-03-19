@@ -1,31 +1,34 @@
-import {AfterViewInit, Component, inject, input, signal} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   MatExpansionPanel,
   MatExpansionPanelDescription,
   MatExpansionPanelHeader,
   MatExpansionPanelTitle,
 } from '@angular/material/expansion';
-import {ThemeButtonComponent} from '@shared/components/theme-button/theme-button.component';
-import {SustentoTributario} from '@sri/domain/models/sustento-tributario';
-import {DocumentoSustento} from '@sri/domain/models/documento-sustento';
-import {TipoPago} from '@sri/domain/models/tipo-pago';
-import {TipoRegimenFe} from '@sri/domain/models/tipo-regimen-fe';
-import {Pais} from '@sri/domain/models/pais';
-import {GenericModel} from '@core/models/generic.model';
-import {DocSustentoUseCase} from '@billing/domain/use-cases/doc-sustento.use-case';
-import {TarifaImpuesto} from '@sri/domain/models/tarifa-impuesto';
-import {Impuesto} from '@sri/domain/models/impuesto';
-import {
-  DocSustentoTaxesComponent
-} from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-taxes/doc-sustento-taxes.component';
-import {generateUuidv4} from '@core/utils/generate-uuidv4';
-import {
-  DocSustentoRetencionComponent
-} from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-retencion/doc-sustento-retencion.component';
-import {ImpuestoRetencion} from '@sri/domain/models/impuesto-retencion';
-import {CodigoRetencion} from '@sri/domain/models/codigo-retencion';
-import {PorcentajeRetIva} from '@modules/sri/domain/models/porcentaje-ret-iva';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
+import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
+import { TipoPago } from '@sri/domain/models/tipo-pago';
+import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
+import { Pais } from '@sri/domain/models/pais';
+import { GenericModel } from '@core/models/generic.model';
+import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
+import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
+import { Impuesto } from '@sri/domain/models/impuesto';
+import { DocSustentoTaxComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-tax/doc-sustento-tax.component';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { DocSustentoRetencionComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-retencion/doc-sustento-retencion.component';
+import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
+import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
+import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -37,7 +40,7 @@ import {PorcentajeRetIva} from '@modules/sri/domain/models/porcentaje-ret-iva';
     MatExpansionPanelTitle,
     ReactiveFormsModule,
     ThemeButtonComponent,
-    DocSustentoTaxesComponent,
+    DocSustentoTaxComponent,
     DocSustentoRetencionComponent,
   ],
   templateUrl: './doc-sustento-add-edit.component.html',
@@ -121,7 +124,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       idRetencionAtsRet: [0],
       idRetencionAts: [0],
       idRetencionAtsDocSustento: [0],
-      uniqueDocId: [generateUuidv4(), [Validators.required]],
+      uniqueIdDoc: [generateUuidv4(), [Validators.required]],
       impuesto: [''],
       idImpuestoRetencion: [0, [Validators.required]],
       codigoDescripcion: [''],
@@ -157,9 +160,15 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
     this._docSustentoUseCase
       .getTaxes({ documentId, isAutomatic })
       .subscribe((response) => {
-        response.taxes.forEach((tax) => {
+        let totalSinImpuestos = 0;
+        response.taxes.forEach((tax: any) => {
           this.createTax(indexDoc, tax);
+          totalSinImpuestos += tax.baseImponible;
         });
+        console.log(totalSinImpuestos);
+        this.docSustentoArray()
+          .controls[indexDoc].get('totalSinImpuestos')
+          ?.setValue(totalSinImpuestos);
       });
   }
 

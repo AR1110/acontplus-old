@@ -6,12 +6,12 @@ import { MatIcon } from '@angular/material/icon';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-  selector: 'app-doc-sustento-taxes',
+  selector: 'app-doc-sustento-tax',
   imports: [FormsModule, ReactiveFormsModule, MatIcon, ThemeButtonComponent],
-  templateUrl: './doc-sustento-taxes.component.html',
+  templateUrl: './doc-sustento-tax.component.html',
   styles: ``,
 })
-export class DocSustentoTaxesComponent implements AfterViewInit {
+export class DocSustentoTaxComponent implements AfterViewInit {
   indexDoc = input.required<number>();
   indexTax = input.required<number>();
   docSustentoArray = input.required<FormArray>();
@@ -21,8 +21,6 @@ export class DocSustentoTaxesComponent implements AfterViewInit {
   tarifaImpuestosFiltered = signal<TarifaImpuesto[]>([]); // Signal mutable
 
   selectTax(tax: any) {
-    console.log(tax);
-    console.log(this.tarifaImpuestos());
     setTimeout(() => {
       this.tarifaImpuestosFiltered.set(
         this.tarifaImpuestos().filter((x) => x.idImpuesto === tax.idImpuesto),

@@ -9,14 +9,14 @@
             retencionGroup().get('uniqueIdDoc')?.value
           }}"
           class="form-control"
-          (change)="
-            setPorcentajesRet(
+          (selectionChange)="
+            selectImpuestoRetencion(
               retencionGroup().get('idImpuestoRetencion')?.value,
               retencionGroup().get('uniqueIdDoc')?.value
             )
           "
         >
-          <mat-option [value]="0">Seleccione un impuesto</mat-option>
+          <mat-option [value]="">Seleccione un impuesto</mat-option>
           @for (impuesto of impuestosRetencion(); track $index) {
             <mat-option [value]="impuesto.idImpuestoRetencion">
               {{ impuesto.codigo }} - {{ impuesto.descripcion }}
@@ -29,7 +29,7 @@
       <app-mat-dynamic-select
         [options]="options()"
         label="Código Retención"
-        (selectionChange)="onSelectionChange($event)"
+        (selectionChange)="selectCodigoRetencion($event)"
       />
     </div>
     <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
@@ -43,7 +43,7 @@
           class="form-control"
           step="any"
           min="0"
-          (blur)="setValueRet()"
+          (blur)="calcularRetencion()"
         />
       </mat-form-field>
     </div>
