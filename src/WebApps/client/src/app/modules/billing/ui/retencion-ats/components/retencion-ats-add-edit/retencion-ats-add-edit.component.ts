@@ -42,6 +42,10 @@ import { MatInput } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { RetAtsInfoAdicional } from '@billing/domain/models/retencion-ats/retencion-ats.model';
+import {
+  RetencionAtsInfoAdicionalAddEditComponent
+} from "@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component";
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -61,6 +65,7 @@ import { generateUuidv4 } from '@core/utils/generate-uuidv4';
     MatSelectModule,
     MatInput,
     MatIconButton,
+    RetencionAtsInfoAdicionalAddEditComponent,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
@@ -120,7 +125,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   paginationLimit = 5;
 
   // Info adicional
-  infoAdicional: unknown[] = [];
+  infoAdicional: RetAtsInfoAdicional[] = [];
 
   // Computed properties
 
@@ -137,22 +142,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
     return this.retencionAtsForm.get('docSustento') as FormArray;
   }
 
-  // Add a docSustento with predefined values
-  addDocSustentoWithValues(doc: any) {
-    const docGroup = this.createDocSustentoGroup();
-
-    let formattedFecha = '';
-
-    // Check if fecha is a valid date before formatting
-    if (doc.fechaEmisionDocSustento) {
-      const parsedDate = new Date(doc.fechaEmisionDocSustento);
-      if (!isNaN(parsedDate.getTime())) {
-        formattedFecha = parsedDate.toISOString().split('T')[0];
-      }
-    }
-    // Patch the values into the form
-    docGroup.patchValue({ ...doc, fechaEmisionDocSustento: formattedFecha });
-    this.docSustentoArray.push(docGroup);
+  get infoAdicionalArray(): FormArray {
+    return this.retencionAtsForm.get('infoAdicional') as FormArray;
   }
 
   // Create a new docSustento FormGroup
@@ -187,6 +178,37 @@ export class RetencionAtsAddEditComponent implements OnInit {
       payments: this._fb.array([]),
       isAutomatic: [false],
     });
+  }
+
+  createInfoAdicional() {
+    return this._fb.group({
+      idRetAtsInfoAdicional: [0],
+      idRetencionAts: [0],
+      nombre: ['', [Validators.required]],
+      valor: ['', [Validators.required]],
+    });
+  }
+
+  // Add a docSustento with predefined values
+  addDocSustento(doc: any) {
+    const docGroup = this.createDocSustentoGroup();
+
+    let formattedFecha = '';
+
+    // Check if fecha is a valid date before formatting
+    if (doc.fechaEmisionDocSustento) {
+      const parsedDate = new Date(doc.fechaEmisionDocSustento);
+      if (!isNaN(parsedDate.getTime())) {
+        formattedFecha = parsedDate.toISOString().split('T')[0];
+      }
+    }
+    // Patch the values into the form
+    docGroup.patchValue({ ...doc, fechaEmisionDocSustento: formattedFecha });
+    this.docSustentoArray.push(docGroup);
+  }
+
+  addInfoAdicional() {
+    this.infoAdicionalArray.push(this.createInfoAdicional());
   }
 
   initialLoad() {
@@ -280,7 +302,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
         if (documents.length > 0) {
           this.retAtsDocSustentos = documents;
           this.retAtsDocSustentos.forEach((doc) => {
-            this.addDocSustentoWithValues(doc);
+            this.addDocSustento(doc);
           });
         }
       }
@@ -307,11 +329,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
     ) {
       this.currentPage = page;
     }
-  }
-
-  // Info adicional
-  addInfoAdicional(info: any): void {
-    this.infoAdicional.push(info);
   }
 
   protected readonly ambientes = ambienteSriOptions;

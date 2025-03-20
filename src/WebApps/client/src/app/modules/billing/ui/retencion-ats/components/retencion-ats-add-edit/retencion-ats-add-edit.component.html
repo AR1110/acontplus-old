@@ -252,8 +252,26 @@
         <p>Aun no se han añadido documentos!</p>
       }
     </mat-accordion>
-    <!-- Info Adicional Component -->
-    <!-- <app-info-adicional [infoAdicional]="infoAdicional" (onAddInfo)="addInfoAdicional($event)"></app-info-adicional> -->
+    <div class="row mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+        <app-theme-button
+          text="Añadir Información Adicional"
+          icon="add"
+          (handleClick)="addInfoAdicional()"
+        ></app-theme-button>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col" formArrayName="infoAdicional">
+        @for (ia of infoAdicionalArray.controls; track $index) {
+          <app-retencion-ats-info-adicional-add-edit
+            [indexInfoAdicional]="$index"
+            [infoAdicionalGroup]="ia"
+            [infoAdicionalArray]="infoAdicionalArray"
+          ></app-retencion-ats-info-adicional-add-edit>
+        }
+      </div>
+    </div>
   </ng-template>
   <ng-template #actionsTemplate>
     <app-theme-button
