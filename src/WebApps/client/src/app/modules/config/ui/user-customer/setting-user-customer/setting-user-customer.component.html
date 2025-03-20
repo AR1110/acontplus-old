@@ -19,9 +19,14 @@
 
   <mat-tab-group>
     <mat-tab label="Establecimientos">
-      @if(userCustomerRoleData.idUsuarioRol>0){
-      <app-list-asignacion-estab/>
-      }
+     <div class="my-2">
+       @if(userCustomerRoleData.idUsuarioRol>0){
+         <app-mat-dynamic-card>
+           <app-list-asignacion-estab/>
+
+         </app-mat-dynamic-card>
+       }
+     </div>
 
     </mat-tab>
     <mat-tab label="Permisos"> Permisos </mat-tab>

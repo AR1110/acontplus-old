@@ -20,7 +20,7 @@ export class ListAsignacionEstabMapper {
         codEstab: item.codEstab,
         estab: item.estab,
         nombreComercial: item.nombreComercial,
-        predeterminado: item.predeterminado,
+        defaultEstab: item.predeterminado,
         estado: item.estado,
         idEstablecimiento: item.idEstablecimiento
       }
