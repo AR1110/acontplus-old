@@ -4,7 +4,7 @@
       <mat-label>Impuesto</mat-label>
       <mat-select
         formControlName="idImpuesto"
-        id="idImpuesto-{{ indexTax() }}"
+        id="idImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         (selectionChange)="selectTax(taxGroup().value)"
       >
         <mat-option>Seleccione un impuesto</mat-option>
@@ -21,7 +21,7 @@
       <mat-label>Tarifa</mat-label>
       <mat-select
         formControlName="idTarifaImpuesto"
-        id="idTarifaImpuesto-{{ indexTax() }}"
+        id="idTarifaImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         (change)="selectTarifa(taxGroup().value)"
       >
         <mat-option>Seleccione una tarifa</mat-option>
@@ -39,7 +39,7 @@
       <input
         matInput
         formControlName="baseImponible"
-        id="baseImponible-{{ indexTax() }}"
+        id="baseImponible-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         type="number"
         step="any"
         placeholder="Base imponible"
@@ -52,7 +52,7 @@
       <input
         matInput
         formControlName="tarifa"
-        id="tarifa-{{ indexTax() }}"
+        id="tarifa-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         type="number"
         step="any"
         readonly
@@ -66,7 +66,7 @@
       <input
         matInput
         formControlName="valorImpuesto"
-        id="valorImpuesto-{{ indexTax() }}"
+        id="valorImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         type="number"
         step="any"
         readonly
@@ -79,7 +79,8 @@
       variant="danger"
       icon="delete"
       matStyle="icon"
-      (handleClick)="removeTax(indexDoc(), indexTax())"
+      id="btnDeleteTax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+      (handleClick)="removeTax()"
     ></app-theme-button>
   </div>
 </div>

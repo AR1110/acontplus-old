@@ -10,7 +10,7 @@ import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {

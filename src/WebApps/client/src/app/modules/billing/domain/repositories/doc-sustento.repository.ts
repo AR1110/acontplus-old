@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 
 export abstract class DocSustentoRepository {
   abstract getTaxes(parameters: unknown): Observable<{

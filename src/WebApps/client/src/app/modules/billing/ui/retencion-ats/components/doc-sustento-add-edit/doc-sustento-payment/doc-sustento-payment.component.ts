@@ -27,7 +27,7 @@ export class DocSustentoPaymentComponent {
   removePayment() {
     const taxesArray = this.docSustentoArray()
       .at(this.indexDoc())
-      .get('retenciones') as FormArray;
+      .get('payments') as FormArray;
 
     if (this.indexPayment() >= 0 && this.indexPayment() < taxesArray.length) {
       taxesArray.removeAt(this.indexPayment());

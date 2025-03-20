@@ -234,6 +234,7 @@
           [indexDoc]="$index"
           [docSustentoGroup]="item"
           [docSustentoArray]="docSustentoArray"
+          [uniqueIdDoc]="item.get('uniqueIdDoc')?.value"
           [documentosSustento]="documentosSustento"
           [sustentosTributarios]="sustentosTributarios"
           [tiposPago]="tiposPago"
@@ -245,6 +246,7 @@
           [impuestosRetencion]="impuestosRetencion"
           [codigosRetencion]="codigosRetencion"
           [porcentajesRetIva]="porcentajesRetIva"
+          [formasPago]="formasPago"
         />
       } @empty {
         <p>Aun no se han añadido documentos!</p>

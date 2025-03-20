@@ -9,7 +9,9 @@
       >{{ docSustentoGroup().get("numDocSustento")?.value }}
     </mat-panel-title>
     <mat-panel-description class="pt-5 pt-md-0">
-      <h5>{{ docSustentoGroup().get("fechaEmisionDocSustento")?.value }}</h5>
+      <h5 class="p-r-5">
+        {{ docSustentoGroup().get("fechaEmisionDocSustento")?.value }}
+      </h5>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <div class="row mb-3">
@@ -272,6 +274,34 @@
       />
     }
   </div>
+  @if (docSustentoArray().length > 0) {
+    <div class="row mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+        <app-theme-button
+          text="Añadir Pagos"
+          icon="add"
+          (handleClick)="addPayment(indexDoc())"
+        ></app-theme-button>
+      </div>
+    </div>
+  }
+
+  <div class="row g-3 align-items-center mb-3" formArrayName="payments">
+    @for (
+      payment of getPaymentsArray(indexDoc()).controls;
+      let i = $index;
+      track i
+    ) {
+      <app-doc-sustento-payment
+        [docSustentoArray]="docSustentoArray()"
+        [paymentGroup]="payment"
+        [formasPago]="formasPago()"
+        [indexDoc]="indexDoc()"
+        [indexPayment]="i"
+      />
+    }
+  </div>
+
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
       <app-theme-button

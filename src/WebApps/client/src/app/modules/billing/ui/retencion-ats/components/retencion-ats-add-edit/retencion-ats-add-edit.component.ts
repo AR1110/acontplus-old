@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { FormArray, FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 import { DatePipe } from '@angular/common';
 import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
@@ -38,8 +38,10 @@ import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
 import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import {MatInput} from "@angular/material/input";
-import {MatIconButton} from "@angular/material/button";
+import { MatInput } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { FormaPago } from '@sri/domain/models/forma-pago';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -110,6 +112,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   impuestosRetencion: ImpuestoRetencion[] = [];
   codigosRetencion: CodigoRetencion[] = [];
   porcentajesRetIva: PorcentajeRetIva[] = [];
+  formasPago: FormaPago[] = [];
   // Pagination
   currentPage = 1;
   itemsPerPage = 10;
@@ -157,7 +160,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     return this._fb.group({
       idRetAtsDocSustento: [0],
       idDocumento: [0],
-      uniqueIdDoc: [''],
+      uniqueIdDoc: [generateUuidv4(), [Validators.required]],
       codSustento: [''],
       codDocSustento: [''],
       numDocSustento: [''],
@@ -200,6 +203,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.impuestosRetencion = response.impuestosRetencion;
       this.codigosRetencion = response.codigosRetencion;
       this.porcentajesRetIva = response.porcentajesRetIva;
+      this.formasPago = response.formasPago;
     });
   }
 

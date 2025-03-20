@@ -25,3 +25,14 @@ export interface RetAtsDocSustento {
   estado?: boolean;
   isAutomatic?: boolean;
 }
+
+export interface RetencionAtsDocPayment
+  extends Pick<
+    RetAtsDocSustento,
+    'idRetDocSustento' | 'idRetencionAts' | 'uniqueIdDoc'
+  > {
+  idFormaPago: number;
+  formaPago: string;
+  descripcion: string;
+  total?: number;
+}

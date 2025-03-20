@@ -5,7 +5,7 @@ import {
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { GroupedEstab } from '@core/models/estab.model';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
 import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
 import { TipoPago } from '@sri/domain/models/tipo-pago';

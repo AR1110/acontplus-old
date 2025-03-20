@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import {MatInput} from "@angular/material/input";
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-doc-sustento-tax',
@@ -43,13 +43,13 @@ export class DocSustentoTaxComponent implements AfterViewInit {
     this.selectTax(this.taxGroup().value);
   }
 
-  removeTax(indexDoc: number, taxIndex: number): void {
+  removeTax(): void {
     const taxesArray = this.docSustentoArray()
-      .at(indexDoc)
+      .at(this.indexDoc())
       .get('impuestos') as FormArray;
 
-    if (taxIndex >= 0 && taxIndex < taxesArray.length) {
-      taxesArray.removeAt(taxIndex);
+    if (this.indexTax() >= 0 && this.indexTax() < taxesArray.length) {
+      taxesArray.removeAt(this.indexTax());
     }
   }
 
