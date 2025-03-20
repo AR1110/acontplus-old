@@ -4,7 +4,7 @@ export interface AsignacionEstabList {
   codEstab: string
   estab: string
   nombreComercial: string
-  predeterminado: boolean
+  defaultEstab: boolean
   estado: boolean
   idEstablecimiento: number
 }

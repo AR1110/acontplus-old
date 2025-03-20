@@ -11,6 +11,7 @@ import {
 } from "@modules/config/domain/use-cases/user-customer-role/list-user-customer-role.use-case";
 import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
 import {MatListModule} from "@angular/material/list";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -18,6 +19,7 @@ import {MatListModule} from "@angular/material/list";
     MatTabsModule,
     MatListModule,
     MatCustomDialogComponent,
+    MatDynamicCardComponent,
     ListAsignacionEstabComponent
   ],
   templateUrl: './setting-user-customer.component.html',
