@@ -4,7 +4,7 @@ import { CONFIG_PATHS } from "../../enums/config.enums";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import { UserCustomerCustomerRoleEstab } from "@modules/config/domain/models/user-customer/user-customer-role-estab.model";
-import { UserCustomerCustomerRoleBodega } from "@modules/config/domain/models/user-customer/user-customer-role-bodega.model";
+import { UserCustomerCustomerRoleBodega } from "@modules/config/domain/models/user-customer/asignacion-bodega.model";
 
 
 @Injectable({

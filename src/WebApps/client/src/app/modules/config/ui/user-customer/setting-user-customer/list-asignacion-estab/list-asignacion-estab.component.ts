@@ -23,7 +23,7 @@ import {
 import {DialogService} from "@core/services/dialog.service";
 import {
   AsignacionBodegaPuntoEmisionDialogComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/asignacionr-bodega-punto-emision-dialog/asignacion-bodega-punto-emision-dialog.component";
+} from "@modules/config/ui/user-customer/setting-user-customer/asignacion-bodega-punto-emision-dialog/asignacion-bodega-punto-emision-dialog.component";
 
 @Component({
   selector: 'app-list-asignacion-estab',
@@ -68,7 +68,6 @@ export class ListAsignacionEstabComponent {
     this.$listAsignacionEstabUseCase.execute({
       userRoleId: this.$userCustomerStore.userRoleId()
     }).subscribe(response=>{
-      console.log(response)
       this.dataSource.set(response.data)
     })
   }
@@ -79,7 +78,6 @@ this.getList()
   }
 
   ngAfterViewInit(): void {
-    // Asignar el template después de que la vista se haya inicializado
     this.columnsDefs.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;

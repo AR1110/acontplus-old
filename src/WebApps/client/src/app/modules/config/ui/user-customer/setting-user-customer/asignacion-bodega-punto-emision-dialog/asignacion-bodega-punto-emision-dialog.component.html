@@ -19,6 +19,30 @@
      >
      </app-mat-dynamic-table>
 
+     <ng-template #templateOpPuntoEmision let-item="item">
+       @if (item.idPtoEmi_Asig > 0) {
+         <button mat-icon-button
+           (click)="addPuntoEmision(item)"
+         >
+           <mat-icon>delete_outline</mat-icon>
+         </button>
+       } @else {
+         <button mat-icon-button
+           (click)="addPuntoEmision(item)"
+         >
+           <mat-icon>save</mat-icon>
+         </button>
+       }
+     </ng-template>
+
+     <ng-template #templatePuntoEmisionDefault let-item>
+       @if (item.estado) {
+         <mat-slide-toggle
+           [(ngModel)]="item.defaultPtoEmi"
+           (change)="onChangePuntoEmisionDefault(item)"
+         ></mat-slide-toggle>
+       }
+     </ng-template>
 
    </app-mat-dynamic-card>
 
@@ -35,19 +59,31 @@
      >
      </app-mat-dynamic-table>
 
-
+     <ng-template #templateOpBodega let-item="item">
+       @if (item.idBodeg_Asig > 0) {
+         <button mat-icon-button (click)="addBodega(item)"
+         >
+           <mat-icon>delete_outline</mat-icon>
+         </button>
+       } @else {
+         <button mat-icon-button  (click)="addBodega(item)"
+         >
+           <mat-icon>save</mat-icon>
+         </button>
+       }
+     </ng-template>
+     <ng-template #templateDefaultBodega let-item>
+       @if (item.estado) {
+         <mat-slide-toggle
+           [(ngModel)]="item.defaultBodga"
+           (change)="onChangeBodegaDefault(item)"
+         ></mat-slide-toggle>
+       }
+     </ng-template>
    </app-mat-dynamic-card>
 
-   <ng-template #templateOpPuntoEmision let-item="item">
-     <button mat-icon-button  >
-       <mat-icon>delete_outline</mat-icon>
-     </button>
-   </ng-template>
-   <ng-template #templateOpBodega let-item="item">
-     <button mat-icon-button  >
-       <mat-icon>delete_outline</mat-icon>
-     </button>
-   </ng-template>
+
+
  </div>
 </ng-template>
 <ng-template #footer></ng-template>
