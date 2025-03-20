@@ -1,12 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 @use "@angular/material" as mat;
 @use "sass:map";
-@import "ngx-toastr/toastr";
-@import "bootstrap/dist/css/bootstrap.min.css";
-@import "assets/template/css/style.css";
-@import "styles/components/_forms.scss";
-@import "styles/theme/_theme-colors.scss";
-@import "styles/theme/_variables.scss";
+@use "ngx-toastr/toastr";
+@use "styles/components/forms" as forms;
+@use "styles/theme/theme-colors" as acontplus-theme;
+
+/* Brand-Inspired Color Palette */
+
+:root {
+  --primary-color: #d61672;
+  --secondary-color: #f94c8e; /* Slightly lighter pink */
+  --success-color: #18d6a6; /* Fresh teal */
+  --danger-color: #ff4b5c; /* Vivid coral red */
+  --warning-color: #ffc107; /* Vibrant yellow-orange */
+  --info-color: #17a2b8; /* Calming teal blue */
+  --light-color: #f8f9fa; /* Soft light gray */
+  --dark-color: #343a40; /* Classic dark gray */
+  --on-primary-color: #ffffff;
+  --on-secondary-color: #ffffff;
+  --on-success-color: #ffffff;
+  --on-danger-color: #ffffff;
+  --on-warning-color: #212529;
+  --on-info-color: #ffffff;
+  --on-light-color: #212529;
+  --on-dark-color: #ffffff;
+}
 
 $compact-theme: mat.define-theme(
   (
@@ -26,8 +44,8 @@ body {
   @include mat.theme(
     (
       color: (
-        primary: $primary-palette,
-        tertiary: $tertiary-palette,
+        primary: acontplus-theme.$primary-palette,
+        tertiary: acontplus-theme.$tertiary-palette,
         theme-type: light,
       ),
       typography: Roboto,
