@@ -29,6 +29,9 @@ import { DocSustentoRetencionComponent } from '@billing/ui/retencion-ats/compone
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
 import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -42,6 +45,9 @@ import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva'
     ThemeButtonComponent,
     DocSustentoTaxComponent,
     DocSustentoRetencionComponent,
+    MatFormField,
+    MatSelectModule,
+    MatInput,
   ],
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,

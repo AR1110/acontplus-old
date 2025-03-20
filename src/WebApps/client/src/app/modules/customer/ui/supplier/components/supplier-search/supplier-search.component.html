@@ -1,19 +1,23 @@
 @if (isSearchSimple()) {
-  <input
-    id="typeahead-supplier"
-    type="text"
-    class="form-control"
-    [(ngModel)]="textSearch"
-    [ngbTypeahead]="search"
-    [resultTemplate]="rtSuppliers"
-    [class.is-invalid]="searchFailed"
-    (selectItem)="onSelect($event.item)"
-    onclick="select();"
-    (keyup)="onKeyupSearch()"
-    [inputFormatter]="formatter"
-    [resultFormatter]="formatter"
-    placeholder="Ej. Jorge"
-  />
+  <mat-form-field class="w-100">
+    <mat-label>Proveedor:</mat-label>
+    <input
+      matInput
+      id="typeahead-supplier"
+      type="text"
+      [(ngModel)]="textSearch"
+      [ngbTypeahead]="search"
+      [resultTemplate]="rtSuppliers"
+      [class.is-invalid]="searchFailed"
+      (selectItem)="onSelect($event.item)"
+      onclick="select();"
+      (keyup)="onKeyupSearch()"
+      [inputFormatter]="formatter"
+      [resultFormatter]="formatter"
+      placeholder="Buscar proveedor"
+    />
+  </mat-form-field>
+
   @if (searching) {
     <small class="form-text text-muted">Buscando...</small>
   }

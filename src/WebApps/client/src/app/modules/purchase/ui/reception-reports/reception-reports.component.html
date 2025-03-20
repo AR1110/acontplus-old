@@ -41,7 +41,7 @@
             name="tipoComprobante"
           >
             @for (item of documentTypes; track $index) {
-            <option [ngValue]="item.codigoSri">{{ item.descripcion }}</option>
+              <option [ngValue]="item.codigoSri">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -57,9 +57,9 @@
           >
             <option value="">Todos</option>
             @for (item of establecimientos; track $index) {
-            <option [ngValue]="item.codEstab">
-              {{ item.nombreComercial }}
-            </option>
+              <option [ngValue]="item.codEstab">
+                {{ item.nombreComercial }}
+              </option>
             }
           </select>
         </div>
@@ -73,29 +73,27 @@
         </div>
       </div>
       @if (dataSearch.codDoc === "01") {
-      <div class="col-lg-2 col-md-2 col-sm-6 col-12" ng-if="showField">
-        <div class="form-group">
-          <label for="retencion">Retencion</label>
-          <select
-            id="retencion"
-            class="form-select"
-            [(ngModel)]="dataSearch.ckRetencion"
-          >
-            @for (item of estadosRetencion; track $index) {
-            <option [ngValue]="item.estado">
-              {{ item.descripcion }}
-            </option>
-            }
-          </select>
+        <div class="col-lg-2 col-md-2 col-sm-6 col-12" ng-if="showField">
+          <div class="form-group">
+            <label for="retencion">Retencion</label>
+            <select
+              id="retencion"
+              class="form-select"
+              [(ngModel)]="dataSearch.ckRetencion"
+            >
+              @for (item of estadosRetencion; track $index) {
+                <option [ngValue]="item.estado">
+                  {{ item.descripcion }}
+                </option>
+              }
+            </select>
+          </div>
         </div>
-      </div>
       }
     </div>
     <div class="row">
       @if (dataSearch.supplierChecked) {
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-        <div class="form-group">
-          <label>Proveedor</label>
+        <div class="col-xl-4 col-lg-4 col-md-12 col-12">
           <app-supplier-search
             [isSearchSimple]="isSearchSupplierSimple"
             (supplierSelected)="onSupplierSelected($event)"
@@ -103,18 +101,18 @@
             (clearEmpty)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
-      </div>
-      } @if (dataSearch.userChecked) {
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-        <div class="form-group">
-          <label>Usuario: </label>
-          <app-user-search
-            (onUserSelected)="onUserSelected($event)"
-            [textSearch]="dataSearch.userName"
-            (emptyInput)="userResultEmptyInput($event)"
-          ></app-user-search>
+      }
+      @if (dataSearch.userChecked) {
+        <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+          <div class="form-group">
+            <label>Usuario: </label>
+            <app-user-search
+              (onUserSelected)="onUserSelected($event)"
+              [textSearch]="dataSearch.userName"
+              (emptyInput)="userResultEmptyInput($event)"
+            ></app-user-search>
+          </div>
         </div>
-      </div>
       }
       <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
         <div class="form-group">
@@ -126,9 +124,9 @@
           >
             <option [ngValue]="0">Todas</option>
             @for (item of subcategories; track $index) {
-            <option [ngValue]="item.id">
-              {{ item.name }}
-            </option>
+              <option [ngValue]="item.id">
+                {{ item.name }}
+              </option>
             }
           </select>
         </div>

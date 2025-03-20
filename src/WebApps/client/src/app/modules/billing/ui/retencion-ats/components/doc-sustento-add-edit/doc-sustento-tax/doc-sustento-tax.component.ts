@@ -4,10 +4,20 @@ import { Impuesto } from '@sri/domain/models/impuesto';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { MatIcon } from '@angular/material/icon';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import {MatInput} from "@angular/material/input";
 
 @Component({
   selector: 'app-doc-sustento-tax',
-  imports: [FormsModule, ReactiveFormsModule, MatIcon, ThemeButtonComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    MatFormField,
+    MatSelectModule,
+    MatInput,
+  ],
   templateUrl: './doc-sustento-tax.component.html',
   styles: ``,
 })

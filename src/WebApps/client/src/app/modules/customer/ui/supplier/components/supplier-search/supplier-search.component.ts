@@ -12,10 +12,12 @@ import {
 } from 'rxjs';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-supplier-search',
-  imports: [FormsModule, NgbTypeaheadModule],
+  imports: [FormsModule, NgbTypeaheadModule, MatLabel, MatFormField, MatInput],
   templateUrl: './supplier-search.component.html',
   styles: ``,
 })

@@ -11,23 +11,23 @@
           [(ngModel)]="mainForm.tipo"
         >
           @for (item of tiposArticulo; track $index) {
-          <option [ngValue]="item.code">{{ item.description }}</option>
+            <option [ngValue]="item.code">{{ item.description }}</option>
           }
         </select>
       </div>
       @for (item of catalogs; track $index) {
-      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-        <div class="icheck-primary">
-          <input
-            type="radio"
-            [id]="item.code"
-            [value]="item.code"
-            name="someGroupCatalogo"
-            [(ngModel)]="mainForm.opcion"
-          />
-          <label [for]="item.code">{{ item.description }}</label>
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+          <div class="icheck-primary">
+            <input
+              type="radio"
+              [id]="item.code"
+              [value]="item.code"
+              name="someGroupCatalogo"
+              [(ngModel)]="mainForm.opcion"
+            />
+            <label [for]="item.code">{{ item.description }}</label>
+          </div>
         </div>
-      </div>
       }
     </div>
     <hr />
@@ -52,14 +52,11 @@
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="supplierSearch">Proveedor</label>
-          <app-supplier-search
-            [isSearchSimple]="isSearchSupplierSimple"
-            (supplierSelected)="onSupplierSelected($event)"
-            (clearEmpty)="supplierResultEmptyInput($event)"
-          ></app-supplier-search>
-        </div>
+        <app-supplier-search
+          [isSearchSimple]="isSearchSupplierSimple"
+          (supplierSelected)="onSupplierSelected($event)"
+          (clearEmpty)="supplierResultEmptyInput($event)"
+        ></app-supplier-search>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12"></div>
     </div>
@@ -114,7 +111,7 @@
                 (change)="onChangeOptionCalculate()"
               >
                 @for (item of optionsCalculate; track $index) {
-                <option [ngValue]="item.code">{{ item.description }}</option>
+                  <option [ngValue]="item.code">{{ item.description }}</option>
                 }
               </select>
             </div>
@@ -131,9 +128,9 @@
                 class="form-select"
               >
                 @for (item of tarifas; track $index) {
-                <mat-option [value]="item.idTarifa">{{
-                  item.descripcion
-                }}</mat-option>
+                  <mat-option [value]="item.idTarifa">{{
+                    item.descripcion
+                  }}</mat-option>
                 }
               </mat-select>
             </div>
@@ -150,7 +147,7 @@
                 [(ngModel)]="optionPvp"
               >
                 @for (item of optionsPvps; track $index) {
-                <option [ngValue]="item.code">{{ item.description }}</option>
+                  <option [ngValue]="item.code">{{ item.description }}</option>
                 }
               </select>
             </div>
