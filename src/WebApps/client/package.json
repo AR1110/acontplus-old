@@ -73,6 +73,7 @@
     "karma-coverage": "^2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "sass": "^1.86.0",
     "tree-cli": "^0.6.7",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1"
