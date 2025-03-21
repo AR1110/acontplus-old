@@ -241,7 +241,7 @@
                                 ? notificacionVenta
                                 : notificacionVentaTemp[0];
 
-                        // Extrae datos temporales para establecimientos y puntos de emisión
+                        // Extrae datos temporales para establecimientos y puntos de emisiÃ³n
                         let tempEstabsAndPtosEmision = mainData[9];
                         let tempBodegas = mainData[10];
 
@@ -249,7 +249,7 @@
                         let { sales, permisoEditarDoc } =
                             userCustomerPermissionSvc.userPermissionAdapter();
 
-                        // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
+                        // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisiÃ³n
                         let dataToGroup = {
                             estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
                             bodegas: tempBodegas, // Establecimientos con bodegas
@@ -669,7 +669,7 @@
                             cantidad: restItem.cantidad,
                             cantidadOriginal: restItem.cantidad,
                             codigo: restItem.codigo,
-                            codigoPorcentaje: restItem.codigoPorcentaje, //✅
+                            codigoPorcentaje: restItem.codigoPorcentaje, //âœ…
                             descripcion: restItem.descripcion,
                             ice: restItem.ice || 0,
                             idArticulo: restItem.idArticulo,
@@ -685,9 +685,9 @@
                             precioCosto: restItem.precioCosto,
                             precioUnitario: restItem.precioUnitario,
                             precioConIva: precioConIva || 0,
-                            tarifa: restItem.tarifa, //✅
+                            tarifa: restItem.tarifa, //âœ…
                             valorDescuento: restItem.valorDescuento,
-                            valorImpuesto: restItem.valorImpuesto, //✅
+                            valorImpuesto: restItem.valorImpuesto, //âœ…
                             precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
@@ -824,7 +824,7 @@
                                 cantidad: itemPrincipal.cantidad,
                                 cantidadOriginal: itemPrincipal.cantidad,
                                 codigo: itemPrincipal.codigo,
-                                codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
+                                codigoPorcentaje: itemPrincipal.codigoPorcentaje, //âœ…
                                 descripcion: itemPrincipal.descripcion,
                                 ice: itemPrincipal.ice || 0,
                                 idArticulo: itemPrincipal.idArticulo,
@@ -839,9 +839,9 @@
                                 precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                                 precioCosto: itemPrincipal.precioCosto,
                                 precioUnitario: itemPrincipal.precioUnitario,
-                                tarifa: itemPrincipal.tarifa, //✅
+                                tarifa: itemPrincipal.tarifa, //âœ…
                                 valorDescuento: itemPrincipal.valorDescuento,
-                                valorImpuesto: itemPrincipal.valorImpuesto, //✅
+                                valorImpuesto: itemPrincipal.valorImpuesto, //âœ…
                                 medidas,
                                 conversion: dataMedida.conversion,
                                 precioCostoFraccionado: dataMedida.precioCostoFraccionado,
@@ -934,7 +934,7 @@
                 fromAprobacion = false,
             } = params;
 
-            //data que se usara dentro de la función "getCantidadStock"
+            //data que se usara dentro de la funciÃ³n "getCantidadStock"
             service.data = Object.assign({}, data);
 
             let factura = Object.assign({}, data);
@@ -1074,8 +1074,8 @@
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
                     idTipoIva: item.idTipoIva,
-                    tarifa: item.tarifa, //✅
-                    codigoPorcentaje: item.codigoPorcentaje, //✅
+                    tarifa: item.tarifa, //âœ…
+                    codigoPorcentaje: item.codigoPorcentaje, //âœ…
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
@@ -1093,7 +1093,7 @@
                         ? item.cantidadTransaccion
                         : item.cantidad * item.conversion,
                     estado: item.estado,
-                    valorImpuesto: item.valorImpuesto, //✅
+                    valorImpuesto: item.valorImpuesto, //âœ…
                 });
             }
             return tempDetails;
@@ -1177,7 +1177,6 @@
                     }
                 });
         };
-
 
         service.getDataFilter = function(){
             let params = JSON.stringify({
@@ -1448,7 +1447,7 @@
                                 cantidad: itemPrincipal.cantidad,
                                 cantidadOriginal: itemPrincipal.cantidad,
                                 codigo: itemPrincipal.codigo,
-                                codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
+                                codigoPorcentaje: itemPrincipal.codigoPorcentaje, //âœ…
                                 descripcion: itemPrincipal.descripcion,
                                 ice: itemPrincipal.ice,
                                 idArticulo: itemPrincipal.idArticulo,
@@ -1463,9 +1462,9 @@
                                 precioConIva: precioConIva || 0,
                                 precioCosto: itemPrincipal.precioCosto,
                                 precioUnitario: itemPrincipal.precioUnitario,
-                                tarifa: itemPrincipal.tarifa, //✅
+                                tarifa: itemPrincipal.tarifa, //âœ…
                                 valorDescuento: itemPrincipal.valorDescuento,
-                                valorImpuesto: itemPrincipal.valorImpuesto, //✅
+                                valorImpuesto: itemPrincipal.valorImpuesto, //âœ…
                                 precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                                 medidas,
                                 conversion: dataMedida.conversion,
