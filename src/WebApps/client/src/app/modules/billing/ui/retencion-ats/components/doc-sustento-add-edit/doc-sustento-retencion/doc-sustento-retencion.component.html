@@ -8,7 +8,6 @@
           id="idImpuestoRetencion-{{
             retencionGroup().get('uniqueIdDoc')?.value
           }}"
-          class="form-control"
           (selectionChange)="
             selectImpuestoRetencion(
               retencionGroup().get('idImpuestoRetencion')?.value,
@@ -40,7 +39,6 @@
           type="number"
           formControlName="baseImponible"
           id="baseImponible-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
-          class="form-control"
           step="any"
           min="0"
           (blur)="calcularRetencion()"
@@ -57,7 +55,6 @@
           id="porcentajeRetener-{{
             retencionGroup().get('uniqueIdDoc')?.value
           }}"
-          class="form-control"
           step="any"
           min="0"
           (blur)="setPorcentajeRet()"
@@ -74,7 +71,6 @@
           type="text"
           formControlName="valorRetenido"
           id="valorRetenido-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
-          class="form-control"
           step="any"
           min="0"
           readonly
@@ -86,8 +82,8 @@
         variant="danger"
         icon="delete"
         matStyle="icon"
-        id="btnEditRet-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
-        (handleClick)="removeRetencion(indexDoc(), indexRetencion())"
+        id="btnDeleteRetencion-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
+        (handleClick)="removeRetencion()"
       ></app-theme-button>
     </div>
   </div>

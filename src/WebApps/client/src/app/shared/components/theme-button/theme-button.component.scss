@@ -1,4 +1,4 @@
-@import "src/styles/theme/_variables.scss"; //based on copilot
+//based on copilot
 /* Icon and text spacing */
 .button-icon {
   margin-right: 4px;
@@ -22,51 +22,51 @@
 
 /* Primary Buttons */
 .btn-primary {
-  background-color: $primary-color !important;
-  color: $on-primary-color !important;
+  background-color: var(--primary-color) !important;
+  color: var(--on-primary-color) !important;
   //border: 1px solid $primary-color !important;
 }
 
 .btn-secondary {
-  background-color: $secondary-color !important;
-  color: $on-secondary-color !important;
-  //border: 1px solid $secondary-color !important;
+  background-color: var(--secondary-color) !important;
+  color: var(--on-secondary-color) !important;
+  //border: 1px solid var(--secondary-color) !important;
 }
 
 .btn-success {
-  background-color: $success-color !important;
-  color: $on-success-color !important;
-  //border: 1px solid $success-color !important;
+  background-color: var(--success-color) !important;
+  color: var(--on-success-color) !important;
+  //border: 1px solid var(--success-color) !important;
 }
 
 .btn-danger {
-  background-color: $danger-color !important;
-  color: $on-danger-color !important;
-  //border: 1px solid $danger-color !important;
+  background-color: var(--danger-color) !important;
+  color: var(--on-danger-color) !important;
+  //border: 1px solid var(--danger-color) !important;
 }
 
 .btn-warning {
-  background-color: $warning-color !important;
-  color: $on-warning-color !important;
-  //border: 1px solid $warning-color !important;
+  background-color: var(--warning-color) !important;
+  color: var(--on-warning-color) !important;
+  //border: 1px solid var(--warning-color) !important;
 }
 
 .btn-info {
-  background-color: $info-color !important;
-  color: $on-info-color !important;
-  //border: 1px solid $info-color !important;
+  background-color: var(--info-color) !important;
+  color: var(--on-info-color) !important;
+  //border: 1px solid var(--info-color) !important;
 }
 
 .btn-light {
-  background-color: $light-color !important;
-  color: $on-light-color !important;
+  background-color: var(--light-color) !important;
+  color: var(--on-light-color) !important;
   //border: 1px solid #ddd !important;
 }
 
 .btn-dark {
-  background-color: $dark-color !important;
-  color: $on-dark-color !important;
-  //border: 1px solid $dark-color !important;
+  background-color: var(--dark-color) !important;
+  color: var(--on-dark-color) !important;
+  //border: 1px solid var(--dark-color) !important;
 }
 
 /* Outlined Variants */
@@ -77,50 +77,50 @@
 
 .btn-primary.btn-outlined,
 [mat-stroked-button].btn-primary {
-  color: $primary-color !important;
-  border-color: $primary-color !important;
+  color: var(--primary-color) !important;
+  border-color: var(--on-primary-color) !important;
 }
 
 .btn-secondary.btn-outlined,
 [mat-stroked-button].btn-secondary {
-  color: $secondary-color !important;
-  border-color: $secondary-color !important;
+  color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
 }
 
 .btn-success.btn-outlined,
 [mat-stroked-button].btn-success {
-  color: $success-color !important;
-  border-color: $success-color !important;
+  color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
 }
 
 .btn-danger.btn-outlined,
 [mat-stroked-button].btn-danger {
-  color: $danger-color !important;
-  border-color: $danger-color !important;
+  color: var(--danger-color) !important;
+  border-color: var(--danger-color) !important;
 }
 
 .btn-warning.btn-outlined,
 [mat-stroked-button].btn-warning {
-  color: $warning-color !important;
-  border-color: $warning-color !important;
+  color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
 }
 
 .btn-info.btn-outlined,
 [mat-stroked-button].btn-info {
-  color: $info-color !important;
-  border-color: $info-color !important;
+  color: var(--info-color) !important;
+  border-color: var(--info-color) !important;
 }
 
 .btn-light.btn-outlined,
 [mat-stroked-button].btn-light {
-  color: $light-color !important;
-  border-color: $light-color !important;
+  color: var(--light-color) !important;
+  border-color: var(--light-color) !important;
 }
 
 .btn-dark.btn-outlined,
 [mat-stroked-button].btn-dark {
-  color: $dark-color !important;
-  border-color: $dark-color !important;
+  color: var(--dark-color) !important;
+  border-color: var(--dark-color) !important;
 }
 
 /* Hover Effect */

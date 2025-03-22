@@ -9,220 +9,218 @@
       >{{ docSustentoGroup().get("numDocSustento")?.value }}
     </mat-panel-title>
     <mat-panel-description class="pt-5 pt-md-0">
-      <h5>{{ docSustentoGroup().get("fechaEmisionDocSustento")?.value }}</h5>
+      <h5 class="p-r-5">
+        {{ docSustentoGroup().get("fechaEmisionDocSustento")?.value }}
+      </h5>
     </mat-panel-description>
   </mat-expansion-panel-header>
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-      <div class="form-group">
-        <label for="codDocSustento">Documento Sustento:</label>
-        <select
-          id="codDocSustento"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Documento Sustento:</mat-label>
+        <mat-select
+          id="codDocSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="codDocSustento"
-          (change)="selectSustento(indexDoc())"
+          (selectionChange)="selectSustento(indexDoc())"
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (doc of documentosSustento(); track $index) {
-            <option [value]="doc.codDocSustento">
+            <mat-option [value]="doc.codDocSustento">
               {{ doc.codDocSustento }} -
               {{ doc.descripcion }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-      <div class="form-group">
-        <label for="codSustento">Sustento Tributario:</label>
-        <select
-          id="codSustento"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Sustento Tributario:</mat-label>
+        <mat-select
+          id="codSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="codSustento"
           [disabled]="sustentosFiltered().length === 0"
         >
-          <option value="0">::seleccione::</option>
+          <mat-option [value]="0">::seleccione::</mat-option>
           @for (sustento of sustentosFiltered(); track $index) {
-            <option [value]="sustento.codSustento">
+            <mat-option [value]="sustento.codSustento">
               {{ sustento.codSustento }} - {{ sustento.descripcion }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <div class="form-group">
-        <label for="numDocSustento">N° Doc. Sustento:</label>
+      <mat-form-field class="w-100">
+        <mat-label>N° Doc. Sustento:</mat-label>
         <input
+          matInput
           #numDocSustento
           type="text"
-          class="form-control"
-          id="numDocSustento"
+          id="numDocSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           (click)="numDocSustento.select()"
           formControlName="numDocSustento"
           maxlength="15"
         />
-      </div>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
-      <div class="form-group">
-        <label for="fechaEmisionDocSustento"
-          >Fecha Emisión Doc. Sustento:</label
-        >
+      <mat-form-field class="w-100">
+        <mat-label>Fecha Emisión Doc. Sustento:</mat-label>
         <input
+          matInput
           type="date"
-          id="fechaEmisionDocSustento"
-          class="form-control"
+          id="fechaEmisionDocSustento-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
           formControlName="fechaEmisionDocSustento"
         />
-      </div>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
-      <div class="form-group">
-        <label for="fechaRegistroContable">Fecha Registro Contable:</label>
+      <mat-form-field class="w-100">
+        <mat-label>Fecha Registro Contable:</mat-label>
         <input
+          matInput
           type="date"
           id="fechaRegistroContable"
-          class="form-control"
           formControlName="fechaRegistroContable"
         />
-      </div>
+      </mat-form-field>
     </div>
   </div>
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <div class="form-group">
-        <label for="numAutDocSustento">N° Autorización:</label>
+      <mat-form-field class="w-100">
+        <mat-label>N° Autorización:</mat-label>
         <input
+          matInput
           #numAutDocSustento
           type="text"
           name="numAutDocSustento"
-          id="numAutDocSustento"
-          class="form-control"
+          id="numAutDocSustento-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
           (click)="numAutDocSustento.select()"
           formControlName="numAutDocSustento"
           maxlength="49"
         />
-      </div>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
-      <div class="form-group">
-        <label for="pagoLocExt">Pago Local Exterior:</label>
-        <select
-          id="pagoLocExt"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Pago Local Exterior:</mat-label>
+        <mat-select
+          id="pagoLocExt-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="pagoLocExt"
-          (change)="pagoLocExtSelect()"
+          (selectionChange)="pagoLocExtSelect()"
           required
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (tipoPago of tiposPago(); track $index) {
-            <option [value]="tipoPago.pagoLocExt">
+            <mat-option [value]="tipoPago.pagoLocExt">
               {{ tipoPago.pagoLocExt }} -
               {{ tipoPago.descripcion }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
-      <div class="form-group">
-        <label for="tipoRegi">Regimen Fiscal:</label>
-        <select
-          id="tipoRegi"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Regimen Fiscal:</mat-label>
+        <mat-select
+          id="tipoRegi-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="tipoRegi"
-          (change)="getCountries()"
+          (selectionChange)="getCountries()"
           [disabled]="isPagoResidente"
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (tipoRegimen of tiposRegimenFe(); track $index) {
-            <option [value]="tipoRegimen.tipoRegi">
+            <mat-option [value]="tipoRegimen.tipoRegi">
               {{ tipoRegimen.tipoRegi }} -
               {{ tipoRegimen.descripcion }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-      <div class="form-group">
-        <label for="paisEfecPago">Pais Efec. Pago:</label>
-        <select
-          id="paisEfecPago"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Pais Efec. Pago:</mat-label>
+        <mat-select
+          id="paisEfecPago-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="paisEfecPago"
           [disabled]="isPagoResidente"
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (country of countries(); track $index) {
-            <option [value]="country.codigo">
+            <mat-option [value]="country.codigo">
               {{ country.codigo }} -
               {{ country.descripcion }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-      <div class="form-group">
-        <label for="aplicConvDobTrib">Convenio Doble Tributación:</label>
-        <select
-          id="aplicConvDobTrib"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Convenio Doble Tributación:</mat-label>
+        <mat-select
+          id="aplicConvDobTrib-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
           formControlName="aplicConvDobTrib"
           [disabled]="isPagoResidente"
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (cdt of generic(); track $index) {
-            <option [value]="cdt.code">
+            <mat-option [value]="cdt.code">
               {{ cdt.code }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-      <div class="form-group">
-        <label for="pagExtSujRetNorLeg"
-          >Pago al Exterior Sujeto a Retención:</label
-        >
+      <mat-form-field class="w-100">
+        <mat-label>Pago al Exterior Sujeto a Retención:</mat-label>
         <!--                  disabled =  isPagoResidente || docSustento.aplicConvDobTrib === 'SI'-->
-        <select
-          id="pagExtSujRetNorLeg"
-          class="form-select"
+        <mat-select
+          id="pagExtSujRetNorLeg-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
           formControlName="pagExtSujRetNorLeg"
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (pagoExt of generic(); track $index) {
-            <option [value]="pagoExt.code">
+            <mat-option [value]="pagoExt.code">
               {{ pagoExt.code }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-      <div class="form-group">
-        <label for="pagoRegFis">Pago Regimen Fiscal:</label>
-        <select
-          id="pagoRegFis"
-          class="form-select"
+      <mat-form-field class="w-100">
+        <mat-label>Pago Regimen Fiscal:</mat-label>
+        <mat-select
+          id="pagoRegFis-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="pagoRegFis"
           [disabled]="isPagoResidente"
         >
-          <option>::seleccione::</option>
+          <mat-option>::seleccione::</mat-option>
           @for (pagoRegFis of generic(); track $index) {
-            <option [value]="pagoRegFis.code">
+            <mat-option [value]="pagoRegFis.code">
               {{ pagoRegFis.code }}
-            </option>
+            </mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
   <div class="row mb-3">
@@ -276,6 +274,34 @@
       />
     }
   </div>
+  @if (docSustentoArray().length > 0) {
+    <div class="row mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+        <app-theme-button
+          text="Añadir Pagos"
+          icon="add"
+          (handleClick)="addPayment(indexDoc())"
+        ></app-theme-button>
+      </div>
+    </div>
+  }
+
+  <div class="row g-3 align-items-center mb-3" formArrayName="payments">
+    @for (
+      payment of getPaymentsArray(indexDoc()).controls;
+      let i = $index;
+      track i
+    ) {
+      <app-doc-sustento-payment
+        [docSustentoArray]="docSustentoArray()"
+        [paymentGroup]="payment"
+        [formasPago]="formasPago()"
+        [indexDoc]="indexDoc()"
+        [indexPayment]="i"
+      />
+    }
+  </div>
+
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
       <app-theme-button

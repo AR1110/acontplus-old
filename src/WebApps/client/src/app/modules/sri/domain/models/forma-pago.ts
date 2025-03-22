@@ -1,6 +1,6 @@
 export interface FormaPago {
   idFormaPago: number;
-  codigo: '01' | '15' | '16' | '17' | '18' | '19' | '20' | '21';
+  formaPago: '01' | '15' | '16' | '17' | '18' | '19' | '20' | '21';
   descripcion: string;
   estado: boolean;
 }

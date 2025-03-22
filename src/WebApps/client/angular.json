@@ -50,10 +50,7 @@
               "browser": ""
             },
             "index": "src/index.html",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -66,12 +63,12 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/quill/dist/quill.bubble.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/sweetalert2/src/sweetalert2.scss",
-              "node_modules/icheck-bootstrap/icheck-bootstrap.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/template/css/style.css",
               "src/styles.scss",
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],
@@ -166,18 +163,13 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/template/css/style.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -186,10 +178,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
@@ -197,8 +186,6 @@
   },
   "cli": {
     "analytics": "883d12a0-ec4d-4ac6-a51b-8f728138c4ac",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   }
 }

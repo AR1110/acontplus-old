@@ -168,13 +168,16 @@ export class DocSustentoRetencionComponent {
     });
   }
 
-  removeRetencion(indexDoc: number, indexRet: number) {
+  removeRetencion() {
     const taxesArray = this.docSustentoArray()
-      .at(indexDoc)
+      .at(this.indexDoc())
       .get('retenciones') as FormArray;
 
-    if (indexRet >= 0 && indexRet < taxesArray.length) {
-      taxesArray.removeAt(indexRet);
+    if (
+      this.indexRetencion() >= 0 &&
+      this.indexRetencion() < taxesArray.length
+    ) {
+      taxesArray.removeAt(this.indexRetencion());
     }
   }
 }

@@ -16,7 +16,7 @@ public class EstablecimientoLogoController : BaseApiController
     public async Task<IActionResult> Get(int establecimientoId)
     {
         var response = await _establecimientoLogoService.GetAsync(establecimientoId);
-        if (response == null) { return BadRequest($"No logo found: {establecimientoId}"); }
+        if (response == null) { return NoContent(); }
 
         return Ok(response);
     }
