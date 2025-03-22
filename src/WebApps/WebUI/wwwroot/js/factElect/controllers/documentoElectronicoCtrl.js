@@ -424,18 +424,18 @@
                     
                     showLoader();
                     await Promise.all(updatePromises).then((response) => {
-                        if(Array.isArray(response)){
-                            let dataResponse = response.find(item=>item.code==="0");
-                            if(dataResponse){
-                                Swal.fire({
-                                    icon: 'warning',
-                                    html: dataResponse.message,
-                                    timer: 1000
-                                }) 
-                                return 
-                            }
+                        // if(Array.isArray(response)){
+                        //     let dataResponse = response.find(item=>item.code==="0");
+                        //     if(dataResponse){
+                        //         Swal.fire({
+                        //             icon: 'warning',
+                        //             html: dataResponse.message,
+                        //             timer: 1000
+                        //         }) 
+                        //         return 
+                        //     }
 
-                        }
+                        // }
                          
                         // Vaciar el array selectedComprobantes después de la actualización
                         Swal.fire({
