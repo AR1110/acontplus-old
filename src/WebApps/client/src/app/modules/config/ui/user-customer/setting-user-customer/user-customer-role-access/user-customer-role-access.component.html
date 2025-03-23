@@ -1,11 +1,17 @@
 
 <div class="d-flex flex-row gap-1">
-  <button class="btn btn-success" (click)="onSave()">
-    <fa-icon [icon]="'save'"></fa-icon> Guardar
-  </button>
-  <button class="btn btn-danger" (click)="onDelete()">
-    <fa-icon [icon]="'trash-can'"></fa-icon> Eliminar acceso
-  </button>
+  <app-theme-button
+    [variant]="'success'"
+    [icon]="'save'"
+    [text]="'Guardar'"
+    (handleClick)="onSave()"
+  />
+  <app-theme-button
+    [variant]="'danger'"
+    [icon]="'delete'"
+    [text]="'Guardar'"
+    (handleClick)="onDelete()"
+  />
 </div>
 
 <hr>

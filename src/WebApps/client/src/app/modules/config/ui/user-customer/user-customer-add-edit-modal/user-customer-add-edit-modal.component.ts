@@ -10,7 +10,6 @@ import {
 } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
 import { Role } from '@modules/config/domain/models/role.model';
-import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -68,7 +67,6 @@ export class UserCustomerAddEditModalComponent {
   dataForm!: FormGroup;
   roles: Role[] = [];
   protected tS = inject(ToasterService);
-  private userCustomerSvc = inject(UserCustomerService);
 
 
   constructor(private fb: FormBuilder) {}

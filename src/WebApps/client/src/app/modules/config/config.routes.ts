@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { GeneralConfigComponent } from './pages/general-config/general-config.component';
 import { DocConfigPageComponent } from './pages/doc-config/doc-config.component';
-import { UserCustomerPageComponent } from './pages/user-customer-page/user-customer-page.component';
 import { SolicitudUsuarioComponent } from '@modules/config/ui/solicitud-usuario/solicitud-usuario.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { EstablishmentPageComponent } from './pages/establishment-page/establishment-page.component';

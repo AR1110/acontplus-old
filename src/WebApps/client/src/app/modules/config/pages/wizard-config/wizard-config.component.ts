@@ -32,7 +32,6 @@ import {
 } from '@angular/forms';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
@@ -52,6 +51,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 import {UserData} from "@modules/auth/domain/models/user-data.model";
+import {UpdateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/update-user-customer.use-case";
 
 @Component({
     selector: 'app-wizard-config',
@@ -158,7 +158,7 @@ export class WizardConfigComponent {
   private _tokenUseCase = inject(TokenUseCase)
 
   #toasterService = inject(ToasterService);
-  #userService = inject(UserCustomerService);
+  private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase)
   #estabService = inject(EstablishmentService);
   #fb = inject(FormBuilder);
   estabForm = this.#fb.group({
@@ -384,13 +384,17 @@ export class WizardConfigComponent {
   }
 
   saveUser(): void {
-    const userData = {
-      ...this.userForm.value,
+    const data = {
+      ...structuredClone(this.userForm.value),
       email: this.user.email,
       username: this.user.username,
       demoStepId: this.demoSteps.find((step) => step.code === 'IV')?.id,
+    }
+    const userData = {
+      data,
+      id: this.user.userId
     };
-    this.#userService.put(this.user.userId, userData).subscribe((response) => {
+    this.$updateUserCustomerUseCase.execute(userData).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code === '0' && this.stepper) {
           this.stepper.previous();

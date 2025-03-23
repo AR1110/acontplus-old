@@ -17,6 +17,9 @@ import {MatIcon} from "@angular/material/icon";
 import {
   UserCustomerPermissionComponent
 } from "@modules/config/ui/user-customer/setting-user-customer/user-customer-permission/user-customer-permission.component";
+import {
+  UserCustomerRoleAccessComponent
+} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-role-access/user-customer-role-access.component";
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -28,7 +31,8 @@ import {
     ListAsignacionEstabComponent,
     MatIconButton,
     MatIcon,
-    UserCustomerPermissionComponent
+    UserCustomerPermissionComponent,
+    UserCustomerRoleAccessComponent
   ],
   templateUrl: './setting-user-customer.component.html',
   styles: ``

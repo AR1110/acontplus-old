@@ -5,17 +5,22 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 
 import {AccesoMenu} from "@modules/config/domain/models/menu.model";
-import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
-import {UserCustomerRoleService} from "@modules/config/services/user-customer/user-customer-role.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {ToasterService} from "@core/services/toaster.service";
 import Swal from "sweetalert2";
 import {isApiResponse} from "@core/models/api-response";
 import { FormsModule } from '@angular/forms';
+import {
+  ListAccessUserCustomerRoleUseCase
+} from "@modules/config/domain/use-cases/user-customer-role/list-access-user-customer-role.use-case";
+import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+import {
+  UpdateAccessUserCustomerRoleUseCase
+} from "@modules/config/domain/use-cases/user-customer-role/update-access-user-customer-role.use-case";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 interface MenuNode {
   name: string;
@@ -45,26 +50,26 @@ interface MenuFlatNode {
 
 @Component({
     selector: 'app-user-customer-role-access',
-    imports: [
-        MatTreeModule,
-        MatButtonModule,
-        MatIconModule,
-        MatCheckboxModule,
-        FormsModule,
-        FontAwesomeModule,
-        NgbPopoverModule,
-        MatSlideToggleModule
-    ],
+  imports: [
+    MatTreeModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCheckboxModule,
+    FormsModule,
+    NgbPopoverModule,
+    MatSlideToggleModule,
+    ThemeButtonComponent
+  ],
     templateUrl: './user-customer-role-access.component.html',
     styles: ``
 })
 export class UserCustomerRoleAccessComponent {
 
-  tS = inject(ToasterService)
-  state = inject(UserCustomerRoleStateService)
-  userRoleId = this.state.select("userRoleId")
+  private $listAccessUseCase = inject(ListAccessUserCustomerRoleUseCase)
+  private $updateAccessUseCase = inject(UpdateAccessUserCustomerRoleUseCase)
+  private $userCustomerStore = inject(UserCustomerStore);
 
-  userCustomerRoleSvc = inject(UserCustomerRoleService)
+  tS = inject(ToasterService)
 
   accesoMenus:AccesoMenu[]=[]
 
@@ -100,7 +105,9 @@ export class UserCustomerRoleAccessComponent {
   checklistSelection = new SelectionModel<MenuFlatNode>(true /* multiple */);
 
   getAccesses(){
-    this.userCustomerRoleSvc.getAccesses(this.userRoleId()).subscribe(response=>{
+    this.$listAccessUseCase.execute({
+      userRoleId: this.$userCustomerStore.userRoleId()
+    }).subscribe(response=>{
 
       this.accesoMenus = response.menus;
 
@@ -283,15 +290,16 @@ export class UserCustomerRoleAccessComponent {
   successResponse = (response:any)=>{
     if (isApiResponse(response)) {
       if (response.code === "0") {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message
+        Swal.fire({
+          icon: 'warning',
+          html: response.message
         })
       }
       if (response.code === "1") {
-        this.tS.toastr({
-          type: 'success',
-          message: response.message
+        Swal.fire({
+          icon: 'success',
+          html: response.message,
+          timer: 1000
         })
         this.getAccesses()
       }
@@ -301,8 +309,6 @@ export class UserCustomerRoleAccessComponent {
   onSave(){
     const checklistSelection = this.checklistSelection.selected;
 
-    console.log(this.checklistSelection.selected)
-
 
     const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(ck=>ck.level===2);//Nivel submenus
     const filteredCheckedsLevel3 = checklistSelection.filter(ck=>ck.level===3);//Nivel acciones
@@ -310,7 +316,7 @@ export class UserCustomerRoleAccessComponent {
     const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce((acc:any, curr:any)=>{
 
       let subMenuId = filteredCheckedsLevel2.find(l2=>l2.unique===curr.unique)?.subMenuId
-      console.log(subMenuId)
+
       let existingNode  = acc.find((m:any)=>m.subMenuId===subMenuId);
       let action = this.actions.find(a=>a.codeAction===curr.codeAction)
       let {codeAction, ...restAction} =action;
@@ -330,7 +336,6 @@ export class UserCustomerRoleAccessComponent {
       return acc;
 
     }, [])
-    console.log(mergeDuplicateLevel3)
 
     let mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
       subMenuId: acc.subMenuId,
@@ -360,19 +365,21 @@ export class UserCustomerRoleAccessComponent {
       text: '¿Está seguro de actualizar los accesos de manera personalizada para el usuario seleccionado?',
       showCancelButton: true,
       showConfirmButton : true,
-      cancelButtonText: 'No!',
-      confirmButtonText: 'Si!'
+      cancelButtonText: 'No',
+      confirmButtonText: 'Si'
     }).then(result=>{
 
         if(result.isConfirmed) {
-
-
           let data =   {
             accesses: JSON.stringify(mappedLevel3)
           }
 
+          const params = {
+            data,
+            userRoleId: this.$userCustomerStore.userRoleId()
+          }
 
-          this.userCustomerRoleSvc.updateAcceses(this.userRoleId(), data).subscribe(this.successResponse)
+          this.$updateAccessUseCase.execute(params).subscribe(this.successResponse)
         }
 
 
@@ -388,8 +395,8 @@ export class UserCustomerRoleAccessComponent {
       html: '¿Está seguro de quitar los accesos personalizados? Esto restablecerá los permisos predeterminados.',
       showCancelButton: true,
       showConfirmButton: true,
-      cancelButtonText: 'No!',
-      confirmButtonText: 'Si!'
+      cancelButtonText: 'No',
+      confirmButtonText: 'Si'
     })
 
     if(!isConfirmed) return
@@ -397,7 +404,12 @@ export class UserCustomerRoleAccessComponent {
     let data =   {
       accesses: null
     }
-    this.userCustomerRoleSvc.updateAcceses(this.userRoleId(), data).subscribe(this.successResponse)
+    const params = {
+      data,
+      userRoleId: this.$userCustomerStore.userRoleId()
+    }
+
+    this.$updateAccessUseCase.execute(params).subscribe(this.successResponse)
 
   }
 

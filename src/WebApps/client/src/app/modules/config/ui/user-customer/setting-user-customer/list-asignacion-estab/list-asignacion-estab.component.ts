@@ -25,17 +25,16 @@ import {
   AsignacionBodegaPuntoEmisionDialogComponent
 } from "@modules/config/ui/user-customer/setting-user-customer/asignacion-bodega-punto-emision-dialog/asignacion-bodega-punto-emision-dialog.component";
 
+
 @Component({
   selector: 'app-list-asignacion-estab',
-  imports: [
-    MatSlideToggleModule,
-    FormsModule,
-    MatDynamicTableComponent,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem
-  ],
+    imports: [
+        MatSlideToggleModule,
+        FormsModule,
+        MatDynamicTableComponent,
+        MatIcon,
+        MatIconButton,
+    ],
   templateUrl: './list-asignacion-estab.component.html',
   styles: ``
 })

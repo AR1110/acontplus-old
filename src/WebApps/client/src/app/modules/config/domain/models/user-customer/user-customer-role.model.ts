@@ -1,4 +1,5 @@
 export interface UserCustomerRole {
+  userRoleId?: number
   idUsuarioRol: number,
   idUsuario: number
   idEntidad: number
@@ -13,4 +14,9 @@ export interface UserCustomerRole {
 
 export interface UserCustomerRoleResponse {
   data: UserCustomerRole[]
+}
+
+export interface UserCustomerRoleAccessResponse {
+  menus:any
+  actions:any
 }
