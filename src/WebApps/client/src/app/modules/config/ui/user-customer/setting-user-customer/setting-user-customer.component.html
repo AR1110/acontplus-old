@@ -10,10 +10,10 @@
     <mat-list-item>
       <div class="d-flex justify-content-between">
         <div><span class="text-muted">Usuario:</span> {{params.nombreCompleto}}</div>
-        <div>
-            <mat-icon class="cursor-pointer" (click)="expandHeader.set(!expandHeader())">keyboard_arrow_down</mat-icon>
+        <button mat-icon-button  (click)="expandHeader.set(!expandHeader())">
+            <mat-icon  >keyboard_arrow_down</mat-icon>
 
-        </div>
+        </button>
       </div>
 
     </mat-list-item>
@@ -45,7 +45,9 @@
 
     </mat-tab>
     <mat-tab label="Permisos">
-      <ng-template matTabContent></ng-template>
+      <ng-template matTabContent>
+        <app-user-customer-permission/>
+      </ng-template>
     </mat-tab>
     <mat-tab label="Accessos">
       <ng-template matTabContent></ng-template>

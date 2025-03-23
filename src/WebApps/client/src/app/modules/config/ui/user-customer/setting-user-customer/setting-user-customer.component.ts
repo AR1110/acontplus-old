@@ -14,6 +14,9 @@ import {MatListModule} from "@angular/material/list";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import {
+  UserCustomerPermissionComponent
+} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-permission/user-customer-permission.component";
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -24,7 +27,8 @@ import {MatIcon} from "@angular/material/icon";
     MatDynamicCardComponent,
     ListAsignacionEstabComponent,
     MatIconButton,
-    MatIcon
+    MatIcon,
+    UserCustomerPermissionComponent
   ],
   templateUrl: './setting-user-customer.component.html',
   styles: ``
@@ -41,7 +45,7 @@ export class SettingUserCustomerComponent {
   private $listUserCustomerRoleUseCase = inject(ListUserCustomerRoleUseCase)
   private $userCustomerStore = inject(UserCustomerStore);
 
-  expandHeader = signal(true)
+  expandHeader = signal(false)
 
   ngOnInit(){
     this.$listUserCustomerRoleUseCase.execute({

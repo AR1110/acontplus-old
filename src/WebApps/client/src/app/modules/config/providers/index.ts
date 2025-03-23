@@ -2,7 +2,7 @@ import { printerProvider } from '@modules/config/providers/printer.provider';
 import {solicitudUsuarioProvider} from "@modules/config/providers/solicitud-usuario.provider";
 import {
   asignacionBodegaProvider,
-  asignacionEstablecimientoProvider, asignacionPuntoEmisionProvider,
+  asignacionEstablecimientoProvider, asignacionPuntoEmisionProvider, userCustomerPermissionProvider,
   userCustomerProvider,
   userCustomerRoleProvider
 } from "@modules/config/providers/user-customer.provider";
@@ -14,5 +14,6 @@ export const configProvider = [
   userCustomerRoleProvider,
   asignacionEstablecimientoProvider,
   asignacionPuntoEmisionProvider,
-  asignacionBodegaProvider
+  asignacionBodegaProvider,
+  userCustomerPermissionProvider
 ];

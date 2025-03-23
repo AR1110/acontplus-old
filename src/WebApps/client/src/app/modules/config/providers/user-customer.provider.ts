@@ -15,6 +15,12 @@ import {
 } from "@modules/config/data/asignacion-punto-emision/asignacion-punto-emision-repository-impl";
 import {AsignacionBodegaRepository} from "@modules/config/domain/repositories/asignacion-bodega.repository";
 import {AsignacionBodegaRepositoryImpl} from "@modules/config/data/asignacion-bodega/asignacion-bodega-repository-impl";
+import {
+  UserCustomerPermissionRepository
+} from "@modules/config/domain/repositories/user-customer-permission.repository";
+import {
+  UserCustomerPermissionRepositoryImpl
+} from "@modules/config/data/user-customer-permission/user-customer-permission-repository-impl";
 
 export const userCustomerProvider: ClassProvider = {
   provide: UserCustomerRepository,
@@ -40,4 +46,9 @@ export const asignacionPuntoEmisionProvider = {
 export const asignacionBodegaProvider = {
   provide: AsignacionBodegaRepository,
   useClass: AsignacionBodegaRepositoryImpl
+}
+
+export const userCustomerPermissionProvider = {
+  provide: UserCustomerPermissionRepository,
+  useClass: UserCustomerPermissionRepositoryImpl
 }
