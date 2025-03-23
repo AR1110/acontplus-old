@@ -1,6 +1,5 @@
 USE Acontplus
-GO
---DROP VIEW IF EXISTS Config.UserCustomerPermissionSale
+GO 
 
 CREATE OR ALTER VIEW Config.v_User_Permission_CashAccounting
 AS(
