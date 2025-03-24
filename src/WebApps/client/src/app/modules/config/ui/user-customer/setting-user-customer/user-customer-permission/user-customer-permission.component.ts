@@ -72,6 +72,7 @@ export class UserCustomerPermissionComponent {
       id: node.id,
       enabled: node.enabled,
       requiresKey: node.requiresKey,
+      users: node.users    || []
     };
   }
 
@@ -102,6 +103,10 @@ export class UserCustomerPermissionComponent {
       this.usersCustomerAdmin = response.usersCustomerAdmin;
 
 
+      this.dataSource.data.forEach(row => {
+        row.users = new FormControl(row.users || []);
+      });
+
     })
   }
   ngOnInit(){
@@ -129,6 +134,14 @@ export class UserCustomerPermissionComponent {
 
   save(){
    const permissionsFiltered =  this.treeControl.dataNodes.filter(item=>item.level===1 && item.enabled)
+
+    if (permissionsFiltered.some(({ securityType, users }) => securityType === 2 && (!users || users.length === 0))) {
+      Swal.fire({
+        icon: 'warning',
+        html: `<small>Hay una acción que requiere la selección de al menos un usuario aprobador antes de continuar.</small>`
+      });
+      return;
+    }
 
    const permissionsData = permissionsFiltered.map((item:any)=>{
       return {

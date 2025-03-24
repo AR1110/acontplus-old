@@ -1,6 +1,6 @@
 import {Component, inject, input, signal} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component"; 
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
