@@ -1,7 +1,10 @@
 ﻿using System.Runtime.InteropServices;
+using Common.Logging;
 using WebUI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAdvancedLogging(builder.Configuration);
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
