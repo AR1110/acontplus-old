@@ -295,7 +295,7 @@
                   <Width>1.19071in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.98425in</Width>
+                  <Width>2.47383in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1518,7 +1518,7 @@
             <Top>3.05623in</Top>
             <Left>0.13994in</Left>
             <Height>0.5in</Height>
-            <Width>11.07134in</Width>
+            <Width>12.56092in</Width>
             <ToolTip>DetalleCaja</ToolTip>
             <Style>
               <Border>
@@ -5440,7 +5440,7 @@
         <Height>14.08738cm</Height>
         <Style />
       </Body>
-      <Width>29.13811cm</Width>
+      <Width>32.26019cm</Width>
       <Page>
         <PageHeader>
           <Height>3.6759cm</Height>
@@ -6005,7 +6005,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox4</rd:DefaultName>
               <Top>0.75237cm</Top>
-              <Left>6.82186cm</Left>
+              <Left>8.72686cm</Left>
               <Height>0.6cm</Height>
               <Width>10.13267cm</Width>
               <Style>
@@ -6089,7 +6089,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox14</rd:DefaultName>
               <Top>0.75237cm</Top>
-              <Left>18.9602cm</Left>
+              <Left>24.6752cm</Left>
               <Height>0.6cm</Height>
               <Width>7.15214cm</Width>
               <ZIndex>2</ZIndex>
@@ -6107,7 +6107,7 @@
               <Top>0.39931cm</Top>
               <Left>0.33641cm</Left>
               <Height>0cm</Height>
-              <Width>25.72213cm</Width>
+              <Width>31.6592cm</Width>
               <ZIndex>3</ZIndex>
               <Style>
                 <Border>
@@ -6123,7 +6123,7 @@
           </Style>
         </PageFooter>
         <PageHeight>21.59cm</PageHeight>
-        <PageWidth>27cm</PageWidth>
+        <PageWidth>33cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>
