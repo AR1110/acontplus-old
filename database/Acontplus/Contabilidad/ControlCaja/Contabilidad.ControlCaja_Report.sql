@@ -104,7 +104,7 @@ BEGIN
                   ,an.valor                                                                                  as abono
                   ,sf.descripcion                                                                            as pay
                   ,sf.idEntidadFinanciera
-                  ,ci.observacion
+                  ,an.observaciones
             FROM dbo.Anticipo                   an WITH (NOLOCK)
             INNER JOIN dbo.ComprobanteIngreso   ci WITH (NOLOCK) ON ci.idComprobanteIngreso   = an.idComprobanteIngreso
             INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
@@ -256,7 +256,7 @@ BEGIN
 		          ,abono = CAST(abono AS numeric(15,2))
 		          ,saldo = CAST(saldo AS numeric(15,2))
 		          ,pay =   pay
-                  ,observacion
+                  ,observacion as obs
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
 	         ORDER BY nroComprobante,secuencial,tipDoc,nroDoc ASC 

@@ -39,6 +39,16 @@ BEGIN
 				RETURN
 			END
 
+        IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND DATEDIFF(DAY, fechaEmision, GETDATE()) > 4)
+            BEGIN 
+                SELECT '0'code,'El documento se encuentra fuera de la fecha permitida por el sri' as 'message'
+				RETURN
+            END
+         ELSE 
+            BEGIN 
+                SELECT '0'code,'Este mensaje es temporal, factura autorizada fail' as 'message'
+				RETURN
+            END
 
 		BEGIN TRAN 
 
@@ -69,7 +79,6 @@ BEGIN
 
 		COMMIT TRAN 
 		SELECT @codeResponse , @message 'message'
-		RETURN
 	END TRY
 	
 	BEGIN CATCH
