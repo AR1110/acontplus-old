@@ -14,22 +14,31 @@
     />
   </div>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <table   mat-table [dataSource]="dataSource"    class="mat-elevation-z8"  >
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>
         <span [style.paddingLeft.px]="40"> Modulo </span>
       </th>
       <td mat-cell *matCellDef="let data">
-        <button mat-icon-button
-                [style.visibility]="!data.expandable ? 'hidden' : ''"
-                [style.marginLeft.px]="data.level * 32"
-                (click)="treeControl.toggle(data)">
-          <mat-icon class="mat-icon-rtl-mirror">
-            {{treeControl.isExpanded(data) ? 'expand_more' : 'chevron_right'}}
-          </mat-icon>
-        </button>
+<!--        <button mat-icon-button-->
+<!--                [style.visibility]="!data.expandable ? 'hidden' : ''"-->
+<!--                [style.marginLeft.px]="data.level * 32"-->
+<!--                (click)="treeControl.toggle(data)">-->
+<!--          <mat-icon class="mat-icon-rtl-mirror">-->
+<!--            {{treeControl.isExpanded(data) ? 'expand_more' : 'chevron_right'}}-->
+<!--          </mat-icon>-->
+<!--        </button>-->
 
-        {{data.name}}
+<!--        {{data.name}}-->
+        <button
+          mat-icon-button
+          [style.marginLeft.px]="data.index! * 20"
+          (click)="toggleExpand(data)"
+          *ngIf="data.children"
+        >
+          <mat-icon>{{ data.enabled ? 'expand_more' : 'chevron_right' }}</mat-icon>
+        </button>
+        {{ data.name }}
       </td>
     </ng-container>
 
@@ -69,10 +78,11 @@
 
 
           @if(data.enabled && data.securityType===2){
+            {{data.users}}
             <div class="my-2">
               <mat-form-field  >
                 <mat-label>Administradores:</mat-label>
-                <mat-select  [formControl]="data.users" multiple    >
+                <mat-select  [(ngModel)]="data.users" multiple    >
                   @for (item of usersCustomerAdmin; track $index) {
                     <mat-option [value]="item.idUsuarioRol">{{item.nombreCompleto}}</mat-option>
                   }

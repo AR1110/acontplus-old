@@ -29,7 +29,7 @@ export class ListUserCustomerPermissionMapper {
     function transformMenuData(data: any[]): any[] {
       const menuMap = new Map<string, any>();
 
-      data.forEach(({id,   nomMenu, nomSubMenu,   descAction, securityType, enabled, requiresKey,  }) => {
+      data.forEach(({id,   nomMenu, nomSubMenu,   descAction, securityType, enabled, requiresKey, users }) => {
         const fullName = nomSubMenu ? `${nomMenu} - ${nomSubMenu}` : nomMenu;
 
         if (!menuMap.has(fullName)) {
@@ -43,7 +43,8 @@ export class ListUserCustomerPermissionMapper {
           securityType ,
           enabled,
           requiresKey,
-          hasStatus: true
+          hasStatus: true,
+          users: users || []
         });
       });
 

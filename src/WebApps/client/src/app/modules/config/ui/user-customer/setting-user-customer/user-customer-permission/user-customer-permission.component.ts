@@ -5,12 +5,11 @@ import {
 import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
 import {  MatTableModule
 } from "@angular/material/table";
-import {FlatTreeControl} from "@angular/cdk/tree";
-import {MatTreeFlatDataSource, MatTreeFlattener} from "@angular/material/tree";
+import {  MatTreeModule} from "@angular/material/tree";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {FormControl, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {
   CreateUserCustomerPermissionUseCase
@@ -21,11 +20,11 @@ import {UserCustomerPermission} from "@modules/config/domain/models/user-custome
 import {
   UpdateUserCustomerPermissionUseCase
 } from "@modules/config/domain/use-cases/user-customer-permission/update-user-customer-permission.use-case";
-import {getValidId} from "@core/utils/utils";
 import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
+import {getValidId} from "@core/utils/utils";
 
 
 @Component({
@@ -40,7 +39,8 @@ import {MatInputModule} from "@angular/material/input";
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTreeModule
   ],
   templateUrl: './user-customer-permission.component.html',
   styles: `
@@ -58,7 +58,6 @@ export class UserCustomerPermissionComponent {
 
   userPermissionData = {} as UserCustomerPermission;
   usersCustomerAdmin: UserCustomerRole[] = [];
-  userCustomerAdminSelected = new FormControl([]);
   displayedColumns: string[] = ['index','name', 'status', 'securityType'];
 
   private transformer = (node: any, level: number) => {
@@ -72,22 +71,19 @@ export class UserCustomerPermissionComponent {
       id: node.id,
       enabled: node.enabled,
       requiresKey: node.requiresKey,
-      users: node.users    || []
+      users: node.users
     };
   }
 
-  treeControl = new FlatTreeControl<any>(
-    node => node.level, node => node.expandable);
 
-  treeFlattener = new MatTreeFlattener(
-    this.transformer, node => node.level,
-    node => node.expandable, node => node.children);
-
-  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+  dataSource =[] as any[];
 
 
+  childrenAccessor = (node: any) => node.children ?? [];
 
-  hasChild = (_: number, node: any) => node.expandable;
+  hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
+
+
 
     refresh(){
     this.getList()
@@ -98,19 +94,30 @@ export class UserCustomerPermissionComponent {
       userRoleId: this.$userCustomerStore.userRoleId()
     }).subscribe(response=>{
       console.log(response)
-      this.dataSource.data = response.userCustomPermissions;
+    //  this.dataSource.data = response.userCustomPermissions
       this.userPermissionData = response.userPermissionData;
       this.usersCustomerAdmin = response.usersCustomerAdmin;
-
-
-      this.dataSource.data.forEach(row => {
-        row.users = new FormControl(row.users || []);
-      });
-
+      this.assignIndexes(this.dataSource, 1);
     })
   }
-  ngOnInit(){
-    this.getList()
+
+
+  toggleExpand(node: any) {
+    node.enabled = !node.enabled; // Simulación de expansión
+  }
+
+  ngOnInit(): void {
+
+  }
+
+  private assignIndexes(nodes: any[], index: number): number {
+    for (const node of nodes) {
+      node.index = index++;
+      if (node.children) {
+        index = this.assignIndexes(node.children, index);
+      }
+    }
+    return index;
   }
 
 
@@ -133,9 +140,10 @@ export class UserCustomerPermissionComponent {
   }
 
   save(){
-   const permissionsFiltered =  this.treeControl.dataNodes.filter(item=>item.level===1 && item.enabled)
+   const permissionsFiltered =  [] as any
 
-    if (permissionsFiltered.some(({ securityType, users }) => securityType === 2 && (!users || users.length === 0))) {
+    console.log(permissionsFiltered)
+    if (permissionsFiltered.some(({ securityType, users }:any) => securityType === 2 && (!users || users.length === 0))) {
       Swal.fire({
         icon: 'warning',
         html: `<small>Hay una acción que requiere la selección de al menos un usuario aprobador antes de continuar.</small>`
