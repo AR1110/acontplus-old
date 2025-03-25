@@ -961,43 +961,24 @@ BEGIN
 
             SET @nombreReporte = 'Deudores'
 
-            SELECT @idCliente    = idCliente  
-                  ,@ckFecha      = ckFecha
-                  ,@fechaInicio  = fechaInicio
-                  ,@fechaFin     = fechaFin
-                  ,@codEstab     = codEstab
-                  ,@codEstado    = codEstado
-                  ,@ckCxcVencida = ckCxcVencida
-                  ,@ckCuotas     = ckCuotas
-                  ,@codDoc       = codDoc
-                  ,@idEmpresa    = idEmpresa
+            SELECT @codEstab           = codEstab
                   ,@dirViviendaCliente = dirViviendaCliente
-                  ,@idCiudad = idCiudad
-                  ,@idUsuario = userId
+                  ,@idCiudad           = idCiudad
             FROM OPENJSON(@json) WITH 
             (
-                idCliente    INT         '$.idCliente'
-               ,ckFecha      BIT         '$.ckFecha'
-               ,fechaInicio  DATETIME2   '$.fechaInicio'
-               ,fechaFin     DATETIME2   '$.fechaFin'
-               ,codEstab     VARCHAR(25) '$.codEstab'
-               ,codEstado    VARCHAR(15) '$.codEstado'
-               ,ckCxcVencida BIT         '$.ckCxcVencida'
-               ,ckCuotas     BIT         '$.ckCuotas'
-               ,codDoc       VARCHAR(10) '$.codDoc'
-               ,idEmpresa    INT         '$.idEmpresa'
+                codEstab           VARCHAR(25) 
                ,dirViviendaCliente VARCHAR(150) 
-               ,idCiudad    INT
-               ,userId      INT
+               ,idCiudad           INT
             )
 
-            SET @sql = 'SELECT cu.BusinessName as razonSocial 
-	                          ,cu.IdCard	   as identificacion
+            SET @sql = 'SELECT cu.BusinessName                                  as razonSocial 
+	                          ,cu.IdCard	                                    as identificacion
 	                          ,cl.direccion
+                              ,JSON_VALUE(cl.infoCrediticia,''$.refDomicilio'') as refDomicilio
 	                          ,cl.telefono
-	                          ,cc.importeTotal
-	                          ,cc.abono
-	                          ,cc.saldo
+	                          ,CAST(cc.importeTotal as numeric(18,2))           as importeTotal
+	                          ,CAST(cc.abono as numeric(18,2))                  as abono
+	                          ,CAST(cc.saldo as numeric(18,2))                  as saldo
 	                          ,(
 			                        SELECT DATEDIFF(day,MIN(cx.fechaVencimiento),GETDATE()) 
 			                        FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
@@ -1012,56 +993,25 @@ BEGIN
                         INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id			       = cl.CustomerId
                         WHERE es.idEntidad = @idEntidad '
 
-            SET @params = '@idCliente         INT
-                          ,@codEstab  VARCHAR(25)
-                          ,@fechaInicio  DATETIME
-                          ,@fechaFin     DATETIME
-                          ,@codEstado VARCHAR(15)
-                          ,@codDoc    VARCHAR(10)
-                          ,@idEmpresa        INT
-                          ,@idEntidad        INT
-                          ,@idCiudad INT 
-                          ,@idUsuario INT '
+            SET @params = '@codEstab  VARCHAR(25)
+                          ,@idEntidad INT
+                          ,@idCiudad  INT'
                           
-
-
-             
             IF @codEstab IS NOT NULL 
                 BEGIN
-                    SET @sql = @sql + 'AND cc.codEstab = @codEstab '
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END
 
-            IF @ckFecha = 1
-                BEGIN
-                    SET @sql = @sql + 'AND CAST(cc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-                END 
-
-            IF @idCliente > 0 
-                BEGIN
-                    SET @sql = @sql + 'AND cc.idCliente = @idCliente '
-                END
 
             IF @dirViviendaCliente IS NOT NULL 
                 BEGIN 
                     SET @sql = @sql + ' AND EXISTS (SELECT 1 FROM Cliente cl WHERE cl.idCliente = cc.idCliente AND JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'') LIKE ''%' + @dirViviendaCliente + '%'') '
                 END
 
-            IF @idEmpresa > 0
-                BEGIN
-                    SET @sql = @sql + 'AND cc.idEmpresa = @idEmpresa '
-                END
-
             IF @idCiudad > 0
                 BEGIN
-                    SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
                     SET @sql = @sql + 'AND idCiudad = @idCiudad '
                 END
-
-            IF @idUsuario > 0 
-                BEGIN
-                    SET @sql = @sql + 'AND idUsuario = @idUsuario '
-                END 
-
 
             SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ASC '
 
@@ -1070,25 +1020,17 @@ BEGIN
                   ,en.ruc
                   ,es.telefono
                   ,es.dirEstablecimiento
-                  ,@usuario             as usuario 
-                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFechas
-                  ,@nombreReporte as nombreReporte
+                  ,@usuario             as usuario
+                  ,@nombreReporte       as nombreReporte
             FROM Sri.Establecimiento es WITH (NOLOCK)
             INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.idEntidad = es.idEntidad
-            WHERE codEstab = @codEstab
+            WHERE es.codEstab = @codEstab
 
             EXEC sp_executesql @sql
 						      ,@params 
-                              ,@codEstab    = @codEstab
-                              ,@idCliente   = @idCliente
-                              ,@fechaInicio = @fechaInicio
-                              ,@fechaFin    = @fechaFin
-                              ,@codEstado   = @codEstado
-                              ,@codDoc      = @codDoc
-                              ,@idEmpresa   = @idEmpresa
-                              ,@idEntidad   = @idEntidad
-                              ,@idCiudad    = @idCiudad
-                              ,@idUsuario   = @idUsuario
+                              ,@codEstab  = @codEstab
+                              ,@idEntidad = @idEntidad
+                              ,@idCiudad  = @idCiudad
 
             RETURN 
         END 

@@ -223,6 +223,25 @@
             }
           </div>
       </div>
+
+      <mat-card-actions>
+        <div class="d-flex flex-row gap-1">
+          <!-- In your parent component template -->
+          <app-file-buttons
+            fileType="pdf"
+            text="Ver PDF"
+            (downloadFile)="handleFileDownload($event,1)"
+          >
+          </app-file-buttons>
+      
+          <app-file-buttons
+            fileType="excel"
+            text="Descargar Excel"
+            (downloadFile)="handleFileDownload($event,1)"
+          >
+          </app-file-buttons>
+        </div>
+      </mat-card-actions>
     </mat-tab>
 
     <!-- Pestaña Deudores -->
@@ -295,9 +314,27 @@
             </div>
           </div>
       </div>
+
+      <mat-card-actions>
+        <div class="d-flex flex-row gap-1">
+          <!-- In your parent component template -->
+          <app-file-buttons
+            fileType="pdf"
+            text="Ver PDF"
+            (downloadFile)="handleFileDownload($event,2)"
+          >
+          </app-file-buttons>
+      
+          <app-file-buttons
+            fileType="excel"
+            text="Descargar Excel"
+            (downloadFile)="handleFileDownload($event,2)"
+          >
+          </app-file-buttons>
+        </div>
+      </mat-card-actions>
+
     </mat-tab>
-
-
 
   </mat-tab-group>
 

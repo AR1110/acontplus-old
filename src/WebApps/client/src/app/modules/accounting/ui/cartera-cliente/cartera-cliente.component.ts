@@ -24,8 +24,6 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOptgroup, MatOption } from '@angular/material/autocomplete';
 import { MatSelect } from '@angular/material/select';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
-import { MatButton } from '@angular/material/button';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {
   MatCard,
   MatCardActions,
@@ -34,6 +32,7 @@ import {
 import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @Component({
@@ -54,7 +53,8 @@ import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-d
     MatCardActions,
     MatTabsModule,
     FileButtonsComponent,
-    MatDynamicCardComponent
+    MatDynamicCardComponent,
+    MatFormFieldModule
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
@@ -183,14 +183,32 @@ export class CarteraClienteComponent {
     this.dataSearch.userId = data.idUsuario;
   }
 
-  getReportPdf() {
+  getReportPdf(tipo : number) {
     this.format = FORMAT_REPORT.PDF;
-    this.getReport();
+    if (tipo == 1)
+    {
+      this.getReport();
+    }
+
+    if (tipo == 2)
+    {
+      this.getReportDeudores()
+    }
+
   }
 
-  getReportExcel() {
+  getReportExcel(tipo : number) {
     this.format = FORMAT_REPORT.EXCEL;
     this.getReport();
+    if (tipo == 1)
+    {
+      this.getReport();
+    }
+
+    if (tipo == 2)
+    {
+      this.getReportDeudores()
+    }
   }
 
   private getTipoDoc() {
@@ -200,6 +218,7 @@ export class CarteraClienteComponent {
     return this.dataSearch.codDoc;
   }
 
+  // Cartera Cliente
   private getReport() {
     if (this.dataSearch.checkboxCompanyCustomer) {
       if (!(this.dataSearch.companyCustomerId > 0)) {
@@ -262,12 +281,47 @@ export class CarteraClienteComponent {
     });
   }
 
-  handleFileDownload($event: { type: 'pdf' | 'excel' }) {
+  // Deudores
+  private getReportDeudores() {
+    let dirViviendaCliente = this.dataSearch.checkBoxDirViviendaCliente
+      ? isValidField(this.dataSearch.dirViviendaCliente)
+      : null;
+
+    let dataParams = {
+      tipo: 7,
+      codEstab: this.dataSearch.codEstab,
+      ckCxcVencida: this.dataSearch.ckCxcVencida,
+      dirViviendaCliente,
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+      idCiudad: this.dataSearch.idCiudad,
+    };
+
+    let reportParams = JSON.stringify({
+      // hasParams: false,
+      codigo: 'RDEU',
+      format: this.format,
+      aditionalParams: [],
+    });
+
+    const parameters = {
+      // hasIdUsuarioRol: true,
+      reportParams,
+      dataParams: JSON.stringify(dataParams),
+      hasService: true,
+    };
+
+    this.sharedSvc.getReport({
+      data: parameters,
+      format: this.format,
+    });
+  }
+
+  handleFileDownload($event: { type: 'pdf' | 'excel' },tipo: number) {
     if ($event.type === 'pdf') {
-      this.getReportPdf();
+      this.getReportPdf(tipo);
     }
     if ($event.type === 'excel') {
-      this.getReportExcel();
+      this.getReportExcel(tipo);
     }
   }
 }
