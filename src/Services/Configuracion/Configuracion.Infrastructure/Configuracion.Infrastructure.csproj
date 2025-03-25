@@ -24,7 +24,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\Configuracion.Domain\Configuracion.Domain.csproj" />
   </ItemGroup>
 

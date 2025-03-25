@@ -24,9 +24,6 @@
     <PackageReference Include="Scrutor" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common.AppSettings\Common.AppSettings.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
 </Project>
