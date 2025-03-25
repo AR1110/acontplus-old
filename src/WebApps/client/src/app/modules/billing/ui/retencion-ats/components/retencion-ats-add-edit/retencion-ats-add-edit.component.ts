@@ -2,9 +2,11 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatIcon } from '@angular/material/icon';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { GroupedEstab } from '@core/models/estab.model';
+import {
+  GroupedEstab,
+  GroupedEstabPuntoEmision,
+} from '@core/models/estab.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
 import {
   MatCard,
@@ -22,7 +24,6 @@ import { DatePipe } from '@angular/common';
 import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
-import { PuntoEmision } from '@core/models/punto-emision.model';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
 import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
 import { Pais } from '@sri/domain/models/pais';
@@ -39,20 +40,19 @@ import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
-import { MatIconButton } from '@angular/material/button';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { RetAtsInfoAdicional } from '@billing/domain/models/retencion-ats/retencion-ats.model';
-import {
-  RetencionAtsInfoAdicionalAddEditComponent
-} from "@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component";
+import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { PuntoEmisionRead } from '@core/models/punto-emision.model';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
   imports: [
     MatCustomDialogComponent,
     ReactiveFormsModule,
-    MatIcon,
     MatCard,
     MatCardContent,
     MatCardFooter,
@@ -64,8 +64,8 @@ import {
     MatFormField,
     MatSelectModule,
     MatInput,
-    MatIconButton,
     RetencionAtsInfoAdicionalAddEditComponent,
+    MatCheckbox,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
@@ -82,7 +82,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
-    idPuntoEmision: [0],
+    idEstablecimiento: [0],
+    idPuntoEmision: [0, [Validators.required]],
     contribuyenteEspecial: [''],
     obligadoContabilidad: [''],
     tipoIdentificacionSujetoRetenido: [''],
@@ -100,7 +101,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   isVisibleInfoComprobante = true;
   idDocumentoElectronico = 0;
   estabs: GroupedEstab[] = [];
-  puntosEmision: PuntoEmision[] = [];
+  puntosEmision: GroupedEstabPuntoEmision[] | undefined = [];
   subContribuyente = '';
   tiposIdentificacion: TipoIdentificacion[] = [];
   tiposSujRetenido: SujetoRetenido[] = [];
@@ -213,7 +214,21 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   initialLoad() {
     this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
-      this.estabs = response.estabs;
+      this.estabs = groupEstabUtil({
+        estabs: response.estabs,
+        isGroupPuntoEmision: true,
+      });
+
+      console.log(this.estabs);
+      const idEstablecimiento =
+        this.estabs.find((x) => x.defaultEstab)?.idEstablecimiento || 0;
+      this.retencionAtsForm
+        .get('idEstablecimiento')
+        ?.setValue(idEstablecimiento);
+
+      if (idEstablecimiento > 0) {
+        this.onSelectEstablecimiento();
+      }
       this.tiposIdentificacion = response.tiposIdentificacion;
       this.tiposSujRetenido = response.sujetoRetenido;
       this.documentosSustento = response.documentoSustento;
@@ -247,11 +262,30 @@ export class RetencionAtsAddEditComponent implements OnInit {
     this.isVisibleInfoComprobante = !this.isVisibleInfoComprobante;
   }
 
-  onChangeEstablecimiento(): void {
-    // Implementation
+  onSelectEstablecimiento(): void {
+    const idEstablecimiento =
+      this.retencionAtsForm.get('idEstablecimiento')?.value;
+
+    if (idEstablecimiento) {
+      const estab = this.estabs.find(
+        (x) => x.idEstablecimiento == idEstablecimiento,
+      );
+
+      this.puntosEmision = estab?.puntosEmision;
+
+      if (this.puntosEmision && this.puntosEmision.length > 0) {
+        const idPuntoEmision = this.puntosEmision.find(
+          (x) => x.defaultPtoEmi,
+        )?.idPuntoEmision;
+
+        if (idPuntoEmision) {
+          this.retencionAtsForm.get('idPuntoEmision')?.setValue(idPuntoEmision);
+        }
+      }
+    }
   }
 
-  onChangePtoEmi(): void {
+  onSelectPuntoEmision(): void {
     // Implementation
   }
 
