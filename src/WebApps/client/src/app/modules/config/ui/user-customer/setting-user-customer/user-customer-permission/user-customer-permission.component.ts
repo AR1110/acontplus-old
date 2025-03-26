@@ -5,7 +5,8 @@ import {
 import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
 import {  MatTableModule
 } from "@angular/material/table";
-import {  MatTreeModule} from "@angular/material/tree";
+import {FlatTreeControl} from "@angular/cdk/tree";
+import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from "@angular/material/tree";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
@@ -25,6 +26,20 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
 import {getValidId} from "@core/utils/utils";
+
+interface ModuleNode {
+  name: string;
+  children?: ModuleNode[];
+  index?: number;
+  expandable?: boolean;
+  level?: number;
+  hasStatus?: boolean;
+  enabled?: boolean;
+  securityType?: number;
+  requiresKey?: boolean;
+  users: any[];
+  expanded?: boolean;
+}
 
 
 @Component({
@@ -75,17 +90,18 @@ export class UserCustomerPermissionComponent {
     };
   }
 
+  treeControl = new FlatTreeControl<any>(
+    node => node.level, node => node.expandable);
 
-  dataSource =[] as any[];
+  treeFlattener = new MatTreeFlattener(
+    this.transformer, node => node.level,
+    node => node.expandable, node => node.children);
+
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
 
-  childrenAccessor = (node: any) => node.children ?? [];
 
-  hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
-
-
-
-    refresh(){
+  refresh(){
     this.getList()
   }
 
@@ -93,31 +109,17 @@ export class UserCustomerPermissionComponent {
     this.$listUseCase.execute({
       userRoleId: this.$userCustomerStore.userRoleId()
     }).subscribe(response=>{
-      console.log(response)
-    //  this.dataSource.data = response.userCustomPermissions
+      this.dataSource.data = response.userCustomPermissions
       this.userPermissionData = response.userPermissionData;
       this.usersCustomerAdmin = response.usersCustomerAdmin;
-      this.assignIndexes(this.dataSource, 1);
+
     })
   }
 
 
-  toggleExpand(node: any) {
-    node.enabled = !node.enabled; // Simulación de expansión
-  }
 
   ngOnInit(): void {
-
-  }
-
-  private assignIndexes(nodes: any[], index: number): number {
-    for (const node of nodes) {
-      node.index = index++;
-      if (node.children) {
-        index = this.assignIndexes(node.children, index);
-      }
-    }
-    return index;
+    this.getList()
   }
 
 
@@ -140,10 +142,10 @@ export class UserCustomerPermissionComponent {
   }
 
   save(){
-   const permissionsFiltered =  [] as any
+   const permissionsFiltered =  this.treeControl.dataNodes.filter(item=>item.level===1 && item.enabled)
 
-    console.log(permissionsFiltered)
-    if (permissionsFiltered.some(({ securityType, users }:any) => securityType === 2 && (!users || users.length === 0))) {
+
+    if (permissionsFiltered.some(({ securityType, users }) => securityType === 2 && (!users || users.length === 0))) {
       Swal.fire({
         icon: 'warning',
         html: `<small>Hay una acción que requiere la selección de al menos un usuario aprobador antes de continuar.</small>`
@@ -156,7 +158,7 @@ export class UserCustomerPermissionComponent {
         userCustomPermissionId: item.id,
         enabled: item.enabled,
         requiresKey: item.requiresKey,
-
+        users: item.users || []
       }
     })
     // if(permissionsData.length===0){

@@ -5,6 +5,7 @@ import {
 import {
   UserCustomerPermissionParams
 } from "@modules/config/data/user-customer-permission/user-customer-permission.entity";
+import {isValidJSON} from "@core/utils/utils";
 export class ListUserCustomerPermissionMapper {
 
   static toJson (parameters:any): UserCustomerPermissionParams{
@@ -44,7 +45,7 @@ export class ListUserCustomerPermissionMapper {
           enabled,
           requiresKey,
           hasStatus: true,
-          users: users || []
+          users: isValidJSON(users)? JSON.parse(users) :  []
         });
       });
 
