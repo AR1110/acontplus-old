@@ -228,9 +228,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Acontplus.Common.ApiDocumentation" />
     <PackageReference Include="Acontplus.Common.Barcode" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />

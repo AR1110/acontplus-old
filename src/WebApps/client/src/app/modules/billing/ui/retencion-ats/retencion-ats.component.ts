@@ -27,7 +27,6 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
         MatMenu,
         MatDynamicTableComponent,
         MatPaginator,
-        MatButton,
         ThemeButtonComponent,
     ],
   templateUrl: './retencion-ats.component.html',

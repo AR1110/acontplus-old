@@ -12,46 +12,44 @@
       <mat-card-content>
         <h5 class="card-title">
           Info Comprobante Retención
-          <button
-            mat-icon-button
-            (click)="onClickVisibleInfoComprobante()"
-            type="button"
+          <mat-checkbox
+            (change)="onClickVisibleInfoComprobante()"
+            [checked]="isVisibleInfoComprobante"
           >
-            <mat-icon>check</mat-icon>
-          </button>
+          </mat-checkbox>
         </h5>
         <div>
           <div class="row mb-3">
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
               <mat-form-field class="w-100">
                 <mat-label
                   >Establecimiento:
                   <span class="text-danger">*</span></mat-label
                 >
                 <mat-select
-                  id="establecimiento"
-                  (selectionChange)="onChangeEstablecimiento()"
+                  id="idEstablecimiento"
+                  formControlName="idEstablecimiento"
+                  (selectionChange)="onSelectEstablecimiento()"
                   [disabled]="idDocumentoElectronico > 0"
                 >
                   @for (item of estabs; track $index) {
-                    <mat-option [value]="item.codEstab">
+                    <mat-option [value]="item.idEstablecimiento">
                       {{ item.nombreComercial }}
                     </mat-option>
                   }
                 </mat-select>
               </mat-form-field>
             </div>
-            @if (retencionAtsForm.get("codEstab")?.value) {
-              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+            @if (retencionAtsForm.get("idEstablecimiento")?.value) {
+              <div
+                class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"
+              >
                 <mat-form-field class="w-100">
-                  <mat-label
-                    >Punto Emisión:
-                    <span class="text-danger">*</span></mat-label
-                  >
+                  <mat-label>Punto Emisión: </mat-label>
                   <mat-select
-                    id="puntoEmision"
+                    id="idPuntoEmision"
                     formControlName="idPuntoEmision"
-                    (selectionChange)="onChangePtoEmi()"
+                    (selectionChange)="onSelectPuntoEmision()"
                     [disabled]="idDocumentoElectronico > 0"
                   >
                     @for (item of puntosEmision; track $index) {

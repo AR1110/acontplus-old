@@ -1,4 +1,4 @@
-﻿namespace Common.AppSettings;
+﻿namespace Configuracion.Domain.Models;
 
 public class LegacyApiResponse
 {
