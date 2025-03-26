@@ -3,7 +3,6 @@ import {
   RetencionAts,
   RetencionAtsList,
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
-import { GroupedEstab } from '@core/models/estab.model';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
@@ -19,13 +18,14 @@ import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
 import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
+import { PuntoEmisionEstablecimiento } from '@core/models/punto-emision.model';
 
 export abstract class RetencionAtsRepository {
   abstract getDataForm(parameters: unknown): Observable<{
     codigosRetencion: CodigoRetencion[];
     countries: Pais[];
     documentoSustento: DocumentoSustento[];
-    estabs: GroupedEstab[];
+    estabs: PuntoEmisionEstablecimiento[];
     formasPago: FormaPago[];
     impuestosRetencion: ImpuestoRetencion[];
     infoAdicional?: unknown[];

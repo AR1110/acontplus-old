@@ -22,7 +22,6 @@
     <PackageReference Include="Scrutor" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
     <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj" />
   </ItemGroup>
 </Project>

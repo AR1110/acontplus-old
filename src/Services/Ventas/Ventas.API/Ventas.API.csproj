@@ -22,9 +22,6 @@
     <PackageReference Include="Scrutor" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.AppSettings\Common.AppSettings.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="Entities\" />
   </ItemGroup>
