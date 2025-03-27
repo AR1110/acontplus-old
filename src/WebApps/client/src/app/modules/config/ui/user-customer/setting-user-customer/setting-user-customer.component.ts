@@ -20,6 +20,9 @@ import {
 import {
   UserCustomerRoleAccessComponent
 } from "@modules/config/ui/user-customer/setting-user-customer/user-customer-role-access/user-customer-role-access.component";
+import {
+  UserCustomerRolePermissionComponent
+} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-role-permission/user-customer-role-permission.component";
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -32,7 +35,8 @@ import {
     MatIconButton,
     MatIcon,
     UserCustomerPermissionComponent,
-    UserCustomerRoleAccessComponent
+    UserCustomerRoleAccessComponent,
+    UserCustomerRolePermissionComponent
   ],
   templateUrl: './setting-user-customer.component.html',
   styles: ``

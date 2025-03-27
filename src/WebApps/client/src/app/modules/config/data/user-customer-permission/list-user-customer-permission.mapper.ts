@@ -59,10 +59,21 @@ export class ListUserCustomerPermissionMapper {
     const userCustomPermissions = transformMenuData(userCustomPermissionsMerged)
 
 
+    const [permissionsSale, permissionsProduct, permissionsCashBox] = response.permissions;
+
+    permissionsSale.permission = JSON.parse(permissionsSale.permission);
+    permissionsProduct.permission = JSON.parse(permissionsProduct.permission);
+    permissionsCashBox.permission = JSON.parse(permissionsCashBox.permission)
+
+    console.log(permissionsSale)
+
     return {
       userCustomPermissions ,
       userPermissionData,
-      usersCustomerAdmin
+      usersCustomerAdmin,
+      permissionsSale,
+      permissionsProduct,
+      permissionsCashBox
     };
   }
 }

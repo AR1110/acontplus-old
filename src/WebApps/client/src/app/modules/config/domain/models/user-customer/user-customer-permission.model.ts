@@ -12,4 +12,7 @@ export interface UserCustomerPermissionResponse {
   userCustomPermissions: any[]
   userPermissionData:UserCustomerPermission
   usersCustomerAdmin: UserCustomerRole[]
+  permissionsSale: any[]
+  permissionsProduct:any[],
+  permissionsCashBox: any[]
 }
