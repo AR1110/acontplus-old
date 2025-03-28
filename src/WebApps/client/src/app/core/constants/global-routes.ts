@@ -8,7 +8,7 @@ export enum GlobalRoutes {
   ConfigGeneralConfig = 'config/general-config-page',
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer',
-  ConfigUserCustomerRequest = 'config/solicitud-usuario',
+  ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
 
   //Configuration End
 

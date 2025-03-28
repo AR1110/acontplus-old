@@ -29,9 +29,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
+import {
+  ListSolicitudAutorizacionUseCase
+} from "@modules/config/domain/use-cases/solicitud-autorizacion/list-solicitud-autorizacion.use-case";
+import {
+  FilterSolicitudAutorizacionUseCase
+} from "@modules/config/domain/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case";
+import {SolicitudAutorizacionList} from "@modules/config/domain/models/solicitud-autorizacion.model";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-  selector: 'app-solicitud-usuario',
+  selector: 'app-solicitud-autorizacion',
   imports: [
     FormsModule,
     NgbTooltipModule,
@@ -44,16 +52,19 @@ import { MatButtonModule } from '@angular/material/button';
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
+    ThemeButtonComponent,
   ],
-  templateUrl: './solicitud-usuario.component.html',
+  templateUrl: './solicitud-autorizacion.component.html',
 })
-export class SolicitudUsuarioComponent {
+export class SolicitudAutorizacionComponent {
   private readonly $solicitudUsuarioUseCase = inject(SolicitudUsuarioUseCase);
+  private readonly $filterUseCase = inject(FilterSolicitudAutorizacionUseCase);
+  private readonly $listUseCase = inject(ListSolicitudAutorizacionUseCase);
   private readonly tS = inject(ToasterService);
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   establecimientos: Array<GroupedEstab> = [];
-  dataSource: UserCustomerRequest[] = [];
+  dataSource: SolicitudAutorizacionList[] = [];
   usersRole: UserCustomerRole[] = [];
 
   tiposDoc = [
@@ -65,6 +76,7 @@ export class SolicitudUsuarioComponent {
   estadosDoc = [
     { code: 'P', description: 'Pendiente' },
     { code: 'A', description: 'Aprobada' },
+    { code: 'R', description: 'Rechazada' },
     { code: 'F', description: 'Finalizada' },
   ];
 
@@ -80,14 +92,14 @@ export class SolicitudUsuarioComponent {
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'tipoDoc', label: 'Tipo Doc.', type: 'string' },
+    { key: 'nombreModulo', label: 'Tipo Doc.', type: 'string' },
     { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
     { key: 'usuarioSolicitante', label: 'Solicitante', type: 'string' },
     { key: 'usuarioAprobante', label: 'Autorizador', type: 'string' },
-    { key: 'accionDescripcion', label: 'Acción', type: 'string' },
-    { key: 'observacion', label: 'Motivo', type: 'string' },
+    { key: 'nombreAccion', label: 'Acción', type: 'string' },
+    { key: 'obs', label: 'Motivo', type: 'string' },
     { key: 'fechaRegistro', label: 'Fecha Registro', type: 'string' },
-    { key: 'fechaAprobacion', label: 'Fecha Aprobación', type: 'string' },
+    { key: 'fechaRespuesta', label: 'Fecha Aprobación', type: 'string' },
     { key: 'estado', label: 'Estado', type: 'template' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
@@ -97,9 +109,9 @@ export class SolicitudUsuarioComponent {
   loading = false;
 
   fetchDataFilter() {
-    this.$solicitudUsuarioUseCase.getFilter().subscribe({
-      next: (response) => {
-        this.establecimientos = response.establecimientos;
+    this.$filterUseCase.execute().subscribe( (response) => {
+      console.log(response)
+        this.establecimientos = response.estabs;
         this.usersRole = response.usersRole;
 
         let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
@@ -107,10 +119,6 @@ export class SolicitudUsuarioComponent {
           this.dataSearch.codEstab = dataEstab.codEstab;
           this.fetchAllData();
         }
-      },
-      error(err) {
-        console.log(err);
-      },
     });
   }
   fetchAllData() {
@@ -127,8 +135,14 @@ export class SolicitudUsuarioComponent {
     };
 
     this.dataSource = [];
-    this.$solicitudUsuarioUseCase.getAll(params).subscribe((response) => {
+    this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource = response.data;
+      this.pagination.update(e=>{
+        return {
+          ...e,
+          totalRecords: response.totalRecords
+        }
+      })
     });
   }
   refresh() {

@@ -25,9 +25,12 @@
         modalSvc = $injector.get("modalService");
         let nombreModalContabilidad = $injector.get("nombreModalContabilidad");
         nombreModalVenta = $injector.get("nombreModalVenta");
+
         let userCustomerPermissionSvc = $injector.get(
             "userCustomerPermissionService"
         );
+        const nombreModalCommon = $injector.get('nombreModalCommon');
+        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
 
         let DOC_TYPE = $injector.get("DOC_TYPE");
         const CODE_REPORT = $injector.get("CODE_REPORT");
@@ -358,22 +361,40 @@
         };
 
         function getParamsPermission(item, codigoAccion) {
-            let paramsPermission = {
-                idDocumento: item.idDocumento,
-                codDoc: item.codDoc,
-                codigoAccion,
-                tipoDoc: "Factura Electrónica",
-                serieComprobante: item.serieComprobante,
-                jsonData: JSON.stringify({
-                    idDocumento: item.idDocumento,
-                    codDoc: item.codDoc,
-                    codEstab: item.codEstab,
-                    tipoDoc: "Factura Electrónica",
+            return {
+                idDocumento: item.idDocumento, 
+                codigoModulo: item.codDoc,
+                codigoAccion,    
+                infoExtraJson: {
                     serieComprobante: item.serieComprobante,
-                }),
-            };
-            return paramsPermission;
+                    codEstab: item.codEstab,
+                    idPuntoEmision: item.idPuntoEmision,
+                    nombreModulo: 'Factura Electrónica'
+                }
+            }; 
         }
+
+        async function openModalRegistrarSolicitudAuth(data){
+            let fileCtrl = nombreModalCommon.SOLICITUD_AUTORIZACION.fileCtrl;
+            let ctrl = nombreModalCommon.SOLICITUD_AUTORIZACION.controller;
+            let template = nombreModalCommon.SOLICITUD_AUTORIZACION.template;
+            let controller = (await import(fileCtrl))[ctrl];
+
+            const {vendedores, config} = mainDataForm;
+
+            let modalRef = modalSvc.open({
+                controller,
+                template,
+                size: 'lg',
+                params: {
+                    vendedores,
+                    esMultipleVendedor: config.multipleVendedor,
+                    data,
+                } , 
+            }) 
+
+        }
+
         $scope.openModalInvoiceEdit = async (item) => {
             try {
                 if (item.disabledActionUpdate) {
@@ -382,14 +403,16 @@
                 }
 
                 let paramsPermission = getParamsPermission(item, "E");
-                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(
-                    paramsPermission
-                );
 
-                if (!response) return;
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(
+                //     paramsPermission
+                // ); 
+
+                if (responseCheck && responseCheck.code === "2") {
+                    openModalRegistrarSolicitudAuth(paramsPermission)
+                    // userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return;
                 }
 

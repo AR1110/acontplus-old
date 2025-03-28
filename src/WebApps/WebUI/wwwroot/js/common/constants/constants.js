@@ -49,6 +49,11 @@ app.constant('nombreModalCommon', {
         fileCtrl: '/js/common/modals/modalInfoAdicionalTipoDocCtrl.min.js',
         template: '~/Pages/Common/Shared/_ModalInfoAdicionalTipoDoc.cshtml',
         controller: 'InfoAdicionalTipoDocCtrl'
+    },
+    SOLICITUD_AUTORIZACION: {
+        fileCtrl: '/js/common/modals/modalRegistrarSolicitudAutorizacionCtrl.min.js',
+        template: '~/Pages/Common/Shared/_ModalRegistrarSolicitudAutorizacion.cshtml',
+        controller: 'modalResgitrarSolicitudAutorizacionCtrl'
     }
 })
 

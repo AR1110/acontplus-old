@@ -6,6 +6,7 @@ import {
   userCustomerProvider,
   userCustomerRoleProvider
 } from "@modules/config/providers/user-customer.provider";
+import {solicitudAutorizacionProvider} from "@modules/config/providers/solicitud-autorizacion.provider";
 
 export const configProvider = [
   printerProvider,
@@ -15,5 +16,6 @@ export const configProvider = [
   asignacionEstablecimientoProvider,
   asignacionPuntoEmisionProvider,
   asignacionBodegaProvider,
-  userCustomerPermissionProvider
+  userCustomerPermissionProvider,
+  solicitudAutorizacionProvider
 ];
