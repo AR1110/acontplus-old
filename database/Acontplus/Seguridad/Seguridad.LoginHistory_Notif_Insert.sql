@@ -39,15 +39,15 @@ BEGIN
     DECLARE @priorityId INT;
     DECLARE @statusId INT;
 
-	DECLARE @receptor VARCHAR(200)
-	DECLARE @codigo VARCHAR(5)
-	DECLARE @jsonConfig AS VARCHAR(MAX)
-	DECLARE @id INT 
+	DECLARE @receptor VARCHAR(200);
+    DECLARE @userEmail VARCHAR(100);
+	DECLARE @codigo VARCHAR(5);
+	DECLARE @jsonConfig AS VARCHAR(MAX);
+	DECLARE @id INT;
 
 	--Email 
 	DECLARE @body VARCHAR(MAX);
 	DECLARE @cliente VARCHAR(100);
-	DECLARE @documento VARCHAR(30);
 	DECLARE @template VARCHAR(50);
 	DECLARE @subject VARCHAR(100);
 
@@ -60,6 +60,7 @@ BEGIN
     DECLARE @requesting_user VARCHAR(300)
         ,@username VARCHAR(100)
         ,@company VARCHAR(300)
+        ,@userCodeRole VARCHAR(10)
         ,@role VARCHAR(25);
 
     BEGIN TRY
@@ -131,19 +132,37 @@ BEGIN
             END
 
         SELECT @company = IIF(en.nombreComercial IS NULL, en.razonSocial, en.nombreComercial)
+                                        ,@userCodeRole = ro.Code
                                         ,@role = ro.[Name]
                                         ,@username = us.nombreUsuario
                                         ,@requesting_user = UPPER(cu.BusinessName)
+                                        ,@userEmail = us.correo
         FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
         INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
         INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
         INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
-        INNER JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
+        LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
         WHERE ur.idUsuarioRol = @userRoleId
 
         INSERT INTO @userToSendEmail(body, params, receptor)
 		SELECT  (SELECT @requesting_user requesting_user
-                                                ,approving_user = UPPER(cu.BusinessName)
+                                                ,@browser browser
+                                                ,@os os
+                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
+                                                ,ISNULL(@ipAddress, '') ipAddress
+                                                ,@username username
+                                                ,@company company
+                                                ,@role AS 'role'  FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+							   ),
+                               (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+                               @userEmail
+
+        
+        IF (@userCodeRole <> 'ADM')
+            BEGIN
+                INSERT INTO @userToSendEmail(body, params, receptor)
+                		SELECT  (SELECT @requesting_user requesting_user
+                                                ,approving_user = UPPER(ISNULL(cu.BusinessName, us.nombreUsuario))
                                                 ,@browser browser
                                                 ,@os os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
@@ -154,9 +173,15 @@ BEGIN
 							   ),
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                        us.correo
-						FROM Acontplus.dbo.Usuario us WITH (NOLOCK)
-                           INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = us.customerId
-                           WHERE us.idUsuario = @userId
+						        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK)
+                                INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+                                INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+                                LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
+                                WHERE ur.idEntidad = @idEntidad 
+                                    AND ro.Code = 'ADM'
+                                    AND ur.estado = 1
+            END
+        
         BEGIN TRAN;
            
         DECLARE cursorUser CURSOR LOCAL FOR
