@@ -3,12 +3,17 @@ import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { isApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRole } from "@modules/config/domain/models/user-customer/user-customer-role.model";
-import { UserCustomerPermissionService } from "@modules/config/data/user-customer-permission/user-customer-permission.service";
-import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
+import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+import {
+  ListUserCustomerPermissionUseCase
+} from "@modules/config/domain/use-cases/user-customer-permission/list-user-customer-permission.use-case";
+import {
+  UpdateUserCustomerPermissionUseCase
+} from "@modules/config/domain/use-cases/user-customer-permission/update-user-customer-permission.use-case";
+import Swal from "sweetalert2";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 
 @Component({
@@ -19,18 +24,16 @@ import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/
         FormsModule,
         MatFormFieldModule,
         MatSelectModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        ThemeButtonComponent
     ],
     templateUrl: './user-customer-role-permission.component.html',
     styleUrl: 'user-customer-role-permission.component.scss'
 })
 export class UserCustomerRolePermissionComponent {
-
-  state = inject(UserCustomerRoleStateService)
-  userRoleId = this.state.select("userRoleId");
-
-  private readonly userCustomerPermissionSvc = inject(UserCustomerPermissionService);
-  private readonly tS = inject(ToasterService);
+  private $listUseCase = inject(ListUserCustomerPermissionUseCase)
+  private $updateUseCase = inject(UpdateUserCustomerPermissionUseCase)
+  private $userCustomerStore =inject(UserCustomerStore)
 
   usersCustomerAdmin: UserCustomerRole[] = [];
   userCustomerAdminSelected = new FormControl([]);
@@ -60,9 +63,9 @@ export class UserCustomerRolePermissionComponent {
 
   getUserPermissions(){
     let params = {
-      idUsuarioRol: this.userRoleId()
+      userRoleId: this.$userCustomerStore.userRoleId()
     }
-    this.userCustomerPermissionSvc.getAll(params).subscribe((response:any)=> {
+    this.$listUseCase.execute(params).subscribe((response:any)=> {
         this.usersCustomerAdmin = response.usersCustomerAdmin;
         this.mainPermission = response;
         this.setDataPermissionSale();
@@ -220,9 +223,9 @@ export class UserCustomerRolePermissionComponent {
 
       if (this.mainPermission?.permissionsSale?.permission?.additional?.keyRequest.enabled){
         if (!this.userCustomerAdminSelected.value ||this.userCustomerAdminSelected.value?.length===0){
-          this.tS.toastr({
-            type: 'warning',
-            message: 'Seleccione al menos un usuario administrador, a quien se le enviará la solicitud correspondiente'
+          Swal.fire({
+            icon: 'warning',
+            html: 'Seleccione al menos un usuario administrador, a quien se le enviará la solicitud correspondiente'
           })
           return
         }else{
@@ -247,22 +250,21 @@ export class UserCustomerRolePermissionComponent {
         dataPermissions
       }
 
-      this.userCustomerPermissionSvc.put(data).subscribe( (response)=> {
-            if(isApiResponse(response)){
+      this.$updateUseCase.execute(data).subscribe( (response)=> {
               if(response.code==='0'){
-                this.tS.toastr({
-                  type: 'warning',
-                  message: response.message
+                Swal.fire({
+                  icon: 'warning',
+                  html: response.message
                 })
               }
               if (response.code === '1') {
-                this.tS.toastr({
-                  type: 'success',
-                  message: response.message
+                Swal.fire({
+                  icon: 'success',
+                  html: response.message,
+                  timer: 1000
                 })
                 this.getUserPermissions()
               }
-            }
       })
     } catch (error) {
       console.log(error)

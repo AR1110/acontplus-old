@@ -71,7 +71,7 @@ BEGIN
                   ,@idEmpresa    = idEmpresa
                   ,@dirViviendaCliente = dirViviendaCliente
                   ,@idCiudad = idCiudad
-                  ,@idUsuario = userId
+                  ,@idUsuario = userId 
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         '$.idCliente'

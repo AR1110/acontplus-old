@@ -5,6 +5,7 @@ import {
 import {
   UserCustomerPermissionParams
 } from "@modules/config/data/user-customer-permission/user-customer-permission.entity";
+import {isValidJSON} from "@core/utils/utils";
 export class ListUserCustomerPermissionMapper {
 
   static toJson (parameters:any): UserCustomerPermissionParams{
@@ -29,7 +30,7 @@ export class ListUserCustomerPermissionMapper {
     function transformMenuData(data: any[]): any[] {
       const menuMap = new Map<string, any>();
 
-      data.forEach(({id,   nomMenu, nomSubMenu,   descAction, securityType, enabled, requiresKey,  }) => {
+      data.forEach(({id,   nomMenu, nomSubMenu,   descAction, securityType, enabled, requiresKey, users }) => {
         const fullName = nomSubMenu ? `${nomMenu} - ${nomSubMenu}` : nomMenu;
 
         if (!menuMap.has(fullName)) {
@@ -43,7 +44,8 @@ export class ListUserCustomerPermissionMapper {
           securityType ,
           enabled,
           requiresKey,
-          hasStatus: true
+          hasStatus: true,
+          users: isValidJSON(users)? JSON.parse(users) :  []
         });
       });
 
@@ -57,10 +59,21 @@ export class ListUserCustomerPermissionMapper {
     const userCustomPermissions = transformMenuData(userCustomPermissionsMerged)
 
 
+    const [permissionsSale, permissionsProduct, permissionsCashBox] = response.permissions;
+
+    permissionsSale.permission = JSON.parse(permissionsSale.permission);
+    permissionsProduct.permission = JSON.parse(permissionsProduct.permission);
+    permissionsCashBox.permission = JSON.parse(permissionsCashBox.permission)
+
+    console.log(permissionsSale)
+
     return {
       userCustomPermissions ,
       userPermissionData,
-      usersCustomerAdmin
+      usersCustomerAdmin,
+      permissionsSale,
+      permissionsProduct,
+      permissionsCashBox
     };
   }
 }
