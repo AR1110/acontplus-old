@@ -61,7 +61,7 @@ BEGIN
             DECLARE @params NVARCHAR(MAX) = '@userRoleId  INT
 						  ,@codEstab VARCHAR(150)
 						  ,@codigoModulo  VARCHAR(5)
-						  ,@codEstado  VARCHAR(5)
+						  ,@codigoEstado  VARCHAR(5)
                           ,@dateFrom DATETIME2
                           ,@dateTo DATETIME2
                           ,@pageIndex INT
@@ -244,5 +244,26 @@ BEGIN
             INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
 			WHERE ur.idEntidad = @idEntidad AND ur.idUsuarioRol !=@userRoleId 
         END
+
+    IF @tipo = 4
+        BEGIN 
+            SET @tableNames='list'
+            DECLARE @id INT
+
+            SELECT 
+                @id = id
+            FROM OPENJSON(@json)
+            WITH(
+                id INT
+            )
+
+             SELECT 
+                Nombre,
+                Valor,
+                NuevoValor,
+                Obs
+             FROM Config.SolicitudAutorizacionDetalle WHERE IdSolicitudAutorizacion = @id
+        END
+	
 	
 END 

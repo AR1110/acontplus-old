@@ -31,3 +31,16 @@ export interface SolicitudAutorizacionFilterResponse {
   estabs: GroupedEstab[]
   usersRole: UserCustomerRole[]
 }
+
+export interface SolicitudAutorizacionDetalle {
+  index: number;
+  nombre: string;
+  valor: string;
+  nuevoValor: string;
+  obs: string
+}
+
+
+export interface SolicitudAutorizacionUpdateParams extends Pick<SolicitudAutorizacionList,"idSolicitudAutorizacion" |    "rowguid">{
+  tipo: number
+}

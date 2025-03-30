@@ -26,13 +26,12 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest data)
+    [HttpPut ]
+    public async Task<IActionResult> Put(  ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, 
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await _svc.UpdateAsync(parameters);

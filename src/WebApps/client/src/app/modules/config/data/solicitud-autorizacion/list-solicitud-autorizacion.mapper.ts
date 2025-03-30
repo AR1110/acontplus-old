@@ -16,6 +16,7 @@ export class ListSolicitudAutorizacionMapper {
 
     const data = requests.map((item:any, index:number)=>{
       return {
+        index: index+1,
         rowguid: item.rowguid,
         idSolicitudAutorizacion: item.idSolicitudAutorizacion,
         usuarioAprobante: item.usuarioAprobante,

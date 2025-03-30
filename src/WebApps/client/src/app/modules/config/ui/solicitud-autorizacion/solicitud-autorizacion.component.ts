@@ -37,6 +37,13 @@ import {
 } from "@modules/config/domain/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case";
 import {SolicitudAutorizacionList} from "@modules/config/domain/models/solicitud-autorizacion.model";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {DialogService} from "@core/services/dialog.service";
+import {
+  SolicitudAutorizacionDetalleComponent
+} from "@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion-detalle/solicitud-autorizacion-detalle.component";
+import {
+  UpdateSolicitudAutorizacionUseCase
+} from "@modules/config/domain/use-cases/solicitud-autorizacion/update-solicitud-autorizacion.use-case";
 
 @Component({
   selector: 'app-solicitud-autorizacion',
@@ -60,6 +67,8 @@ export class SolicitudAutorizacionComponent {
   private readonly $solicitudUsuarioUseCase = inject(SolicitudUsuarioUseCase);
   private readonly $filterUseCase = inject(FilterSolicitudAutorizacionUseCase);
   private readonly $listUseCase = inject(ListSolicitudAutorizacionUseCase);
+  private readonly $updateUseCase = inject(UpdateSolicitudAutorizacionUseCase)
+  private _dialogSvc = inject(DialogService)
   private readonly tS = inject(ToasterService);
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
@@ -99,7 +108,7 @@ export class SolicitudAutorizacionComponent {
     { key: 'nombreAccion', label: 'Acción', type: 'string' },
     { key: 'obs', label: 'Motivo', type: 'string' },
     { key: 'fechaRegistro', label: 'Fecha Registro', type: 'string' },
-    { key: 'fechaRespuesta', label: 'Fecha Aprobación', type: 'string' },
+    { key: 'fechaRespuesta', label: 'Fecha Respuesta', type: 'string' },
     { key: 'estado', label: 'Estado', type: 'template' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
@@ -110,7 +119,7 @@ export class SolicitudAutorizacionComponent {
 
   fetchDataFilter() {
     this.$filterUseCase.execute().subscribe( (response) => {
-      console.log(response)
+
         this.establecimientos = response.estabs;
         this.usersRole = response.usersRole;
 
@@ -137,6 +146,7 @@ export class SolicitudAutorizacionComponent {
     this.dataSource = [];
     this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource = response.data;
+
       this.pagination.update(e=>{
         return {
           ...e,
@@ -166,11 +176,10 @@ export class SolicitudAutorizacionComponent {
     this.fetchAllData();
   }
 
-  askToApprobe(data: UserCustomerRequest) {
+  askToApprobe(data: SolicitudAutorizacionList) {
     try {
       Swal.fire({
-        title: 'Aprobar Solicitud de Clave de Autorización',
-        text: `Se está dando permiso al usuario para ${data.codigoAccion === 'E' ? 'editar' : 'anular'} el documento de venta!`,
+        title: 'Aprobar Solicitud de Autorización',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -182,21 +191,16 @@ export class SolicitudAutorizacionComponent {
           try {
             let params = {
               tipo: 1,
-              id: data.idSolicitud,
+              idSolicitudAutorizacion: data.idSolicitudAutorizacion,
               rowguid: data.rowguid,
             };
-            this.$solicitudUsuarioUseCase.put(params).subscribe((response) => {
-              if (response.code === '0') {
-                this.tS.toastr({
-                  type: 'warning',
-                  message: response.message,
-                });
-              }
+            this.$updateUseCase.execute(params).subscribe((response) => {
+              let icon = response.code==="1"? 'success' : 'warning';
+              Swal.fire({
+                icon: icon as any,
+                html: response.message
+              })
               if (response.code === '1') {
-                this.tS.toastr({
-                  type: 'success',
-                  message: response.message,
-                });
                 this.fetchAllData();
               }
             });
@@ -209,6 +213,53 @@ export class SolicitudAutorizacionComponent {
       console.log(error);
     }
   }
+
+
+  rechazar(data: SolicitudAutorizacionList) {
+    try {
+      Swal.fire({
+        title: 'Rechazar Solicitud de Autorización',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Rechazar!',
+        cancelButtonText: 'Cancelar!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            let params = {
+              tipo: 3,
+              idSolicitudAutorizacion: data.idSolicitudAutorizacion,
+              rowguid: data.rowguid,
+            };
+            this.$updateUseCase.execute(params).subscribe((response) => {
+              let icon = response.code==="1"? 'success' : 'warning';
+              Swal.fire({
+                icon: icon as any,
+                html: response.message
+              })
+              if (response.code === '1') {
+                this.fetchAllData();
+              }
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  openDetalle(data:SolicitudAutorizacionList){
+    this._dialogSvc.open(SolicitudAutorizacionDetalleComponent, {
+      size: 'md',
+      data
+    })
+  }
+
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
