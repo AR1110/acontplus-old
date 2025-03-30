@@ -18,6 +18,8 @@ import { configProvider } from '@modules/config/providers';
 import { saleProvider } from '@sale/providers';
 import { billingProviders } from '@modules/billing/providers';
 import { DatePipe } from '@angular/common';
+import { importProvidersFrom } from '@angular/core';
+import { MatNativeDateModule } from '@angular/material/core';
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -37,6 +39,7 @@ export const uiProviders = [
     positionClass: 'toast-bottom-center',
     progressBar: true,
   }),
+  importProvidersFrom(MatNativeDateModule),
   {
     provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
     useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },

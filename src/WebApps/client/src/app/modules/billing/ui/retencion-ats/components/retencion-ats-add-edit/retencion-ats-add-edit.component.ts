@@ -46,7 +46,9 @@ import { RetAtsInfoAdicional } from '@billing/domain/models/retencion-ats/retenc
 import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { PuntoEmisionRead } from '@core/models/punto-emision.model';
+import {
+  MatDatepickerModule,
+} from "@angular/material/datepicker";
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -66,6 +68,7 @@ import { PuntoEmisionRead } from '@core/models/punto-emision.model';
     MatInput,
     RetencionAtsInfoAdicionalAddEditComponent,
     MatCheckbox,
+    MatDatepickerModule
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
   styles: ``,
@@ -84,8 +87,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
     idRetencionAts: [0],
     idEstablecimiento: [0],
     idPuntoEmision: [0, [Validators.required]],
-    contribuyenteEspecial: [''],
-    obligadoContabilidad: [''],
     tipoIdentificacionSujetoRetenido: [''],
     tipoSujetoRetenido: [''],
     parteRel: [''],
