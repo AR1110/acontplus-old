@@ -139,9 +139,16 @@ BEGIN
                     SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
                 END 
 
-            IF @ckRetencion = 1
+            IF @ckRetencion IN (1,0)
                 BEGIN
-                    SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
+                    IF @ckRetencion  = 1
+                        BEGIN 
+                            SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
+                        END 
+                    ELSE 
+                        BEGIN
+                            SET @sql = @sql + 'AND dr.idDocRelacionado IS NULL '
+                        END 
                 END 
 
             SET @sql = @sql + 'GROUP BY f.idFactura
