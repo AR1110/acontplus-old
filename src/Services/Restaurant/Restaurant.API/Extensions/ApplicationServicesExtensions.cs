@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿using Common.Logging;
+using Newtonsoft.Json.Serialization;
 using Scrutor;
 
 namespace Restaurant.API.Extensions;
@@ -8,6 +9,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {

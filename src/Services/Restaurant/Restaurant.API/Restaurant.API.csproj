@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Acontplus.Common.S3Application" />
     <PackageReference Include="Acontplus.Common.Services" />
     
