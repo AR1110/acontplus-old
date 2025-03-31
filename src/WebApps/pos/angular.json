@@ -19,7 +19,7 @@
           "options": {
             "allowedCommonJsDependencies": ["sweetalert2", "file-saver"],
             "outputPath": {
-              "base": "dist/pos",
+              "base": "dist",
               "browser": ""
             },
             "index": "src/index.html",
