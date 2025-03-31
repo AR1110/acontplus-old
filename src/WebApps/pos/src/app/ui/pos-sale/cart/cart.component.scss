@@ -9,8 +9,8 @@
 .img-cart {
   background: rgba(0, 0, 0, 0.2);
   width: 100%; /* Make image responsive to the container */
-  max-width: 100px; /* Limit the maximum size of the image */
-  height: 100px; /* Maintain aspect ratio */
+  max-width: 80px; /* Limit the maximum size of the image */
+  height: 80px; /* Maintain aspect ratio */
   border-radius: 50%; /* Make the image circular */
   object-fit: cover; /* Cover the container while preserving aspect ratio */
 }
