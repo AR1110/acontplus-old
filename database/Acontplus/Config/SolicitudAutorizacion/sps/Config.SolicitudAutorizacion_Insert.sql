@@ -115,7 +115,7 @@ BEGIN
              SELECT @idSolicitudAutorizacion, nombre, valor, nuevoValor, obs 
              FROM @tbDetalles
 
-            EXEC Config.UserCustomerRequest_SendMail @userRoleId, @idSolicitudAutorizacion
+            EXEC Config.SolicitudAutorizacion_SendMail @userRoleId, @idSolicitudAutorizacion
 
 		COMMIT TRAN  
         SELECT '1' code,'Registrado Correctamente' as 'message'	  
