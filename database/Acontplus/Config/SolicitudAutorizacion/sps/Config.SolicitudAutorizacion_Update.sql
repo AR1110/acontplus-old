@@ -74,7 +74,7 @@ BEGIN
 						BEGIN
 							UPDATE Config.SolicitudAutorizacion SET codigoEstado='F' WHERE rowguid= @rowguid
                              EXEC Config.UserCustomerRequest_SendMail @userRoleId, @id
-							SELECT '1'code,'Solictud para editar o anular finalizado' as [message]
+							SELECT '1'code,'Completado la solictud de autorización' as [message]
 						END 
 				END 
 
@@ -93,7 +93,7 @@ BEGIN
 		END
 		INSERT INTO ErroresSistema WITH (ROWLOCK)
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/SolicitudAutorizacion/Put',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@userRoleId
+		SELECT NEWID(),'/SolicitudAutorizacion/Put',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@userId
 
         SELECT '0' code,'Info: Error en el procedimiento ' as 'message' 		
 

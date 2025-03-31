@@ -25,13 +25,13 @@ function modalResgitrarSolicitudAutorizacionCtrl($scope, $uibModalInstance,  fS,
         columnDefs: [
             {
                 name: 'Op.',
-                headerCellTemplate: `<button type="button" ng-click="grid.appScope.addRow()"  ng-disabled="grid.appScope.params.isView" class="btn btn-secondary btn-xs">
+                headerCellTemplate: `<button type="button" ng-click="grid.appScope.addRow()"   class="btn btn-secondary btn-xs">
                                         <i class="fa fa-plus-circle"></i>
                                     </button>`,
                 enableCellEdit: false,
                 width: '4%',
                 minWidth: '10',
-                cellTemplate: `<button type="button" ng-click="grid.appScope.deleteRow(row)" style="cursor:pointer;"  ng-disabled="grid.appScope.params.isView" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
+                cellTemplate: `<button type="button" ng-click="grid.appScope.deleteRow(row)" style="cursor:pointer;"   class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
                                     <i class="fa fa-trash"></i>
                                 </button>`,
             },
@@ -43,7 +43,7 @@ function modalResgitrarSolicitudAutorizacionCtrl($scope, $uibModalInstance,  fS,
                 width: '25%', maxWidth: 50, minWidth: 50
             },
             {
-                name: 'Campo Modificar',
+                name: 'Campo',
                 field: 'nombre',
                 enableCellEdit: true,
                 allowCellFocus: true,
@@ -104,12 +104,10 @@ function modalResgitrarSolicitudAutorizacionCtrl($scope, $uibModalInstance,  fS,
         setEnumeracion();
     }
 
-
-    console.log(params)
+ 
 
     init();
-    function init(){
-        console.log(params)
+    function init(){ 
         $scope.vendedores = params.vendedores;
         $scope.esMultipleVendedor = params.esMultipleVendedor;
         if ($scope.vendedores.length > 0) {

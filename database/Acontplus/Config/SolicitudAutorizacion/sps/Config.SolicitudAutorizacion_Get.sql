@@ -137,7 +137,7 @@ BEGIN
 		BEGIN 
 
             SET @tableNames='response'
-			DECLARE @keyRequest BIT 
+			DECLARE @keyRequest BIT =1
             DECLARE @idDocumento INT
             DECLARE @codigoDoc VARCHAR(5)  
 
@@ -153,7 +153,7 @@ BEGIN
 				codigoAccion VARCHAR(5)
 			)
 
-		--	SELECT  @keyRequest = keyRequest FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId   
+		SELECT  @keyRequest = keyRequest FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId   
 	
 			-- Obtener el código de acción desde el JSON
 			SELECT @codigoAccion = codigoAccion 
@@ -170,10 +170,10 @@ BEGIN
 			END
 
 			-- Determinar si el usuario tiene permiso para editar o anular
-			IF @codigoAccion = 'E' AND EXISTS (SELECT 1 FROM Config.vw_User_Permissions WHERE userRoleId = @userRoleId AND menuCode = 'GV' AND [name] = 'editar')
-				SET @keyRequest = 1
-			IF @codigoAccion = 'A' AND EXISTS (SELECT 1 FROM Config.vw_User_Permissions WHERE userRoleId = @userRoleId AND menuCode = 'GV' AND [name] = 'anular')
-				SET @keyRequest = 1
+			--IF @codigoAccion = 'E' AND EXISTS (SELECT 1 FROM Config.vw_User_Permissions WHERE userRoleId = @userRoleId AND menuCode = 'GV' AND [name] = 'editar')
+			--	SET @keyRequest = 1
+			--IF @codigoAccion = 'A' AND EXISTS (SELECT 1 FROM Config.vw_User_Permissions WHERE userRoleId = @userRoleId AND menuCode = 'GV' AND [name] = 'anular')
+			--	SET @keyRequest = 1
 
 			-- Insertar parámetros de la solicitud en la tabla temporal
 			INSERT INTO @tbRequestParams (idDocumento, codDoc, codEstado)

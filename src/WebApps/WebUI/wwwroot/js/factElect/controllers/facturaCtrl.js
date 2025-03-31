@@ -437,7 +437,8 @@
                                     typeof $scope.permisoEditarDoc === "object" &&
                                     $scope.permisoEditarDoc.requiereClave
                                 ) {
-                                    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                                    $solicitudAutorizacionSvc.update(paramsPermission)
+                                    // userCustomerPermissionSvc.updateRequestKey(paramsPermission);
                                 }
 
                                 $scope.getFacturas();
@@ -512,17 +513,25 @@
                     return;
                 }
 
-                let paramsPermission = getParamsPermission(item, "A");
-                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(
-                    paramsPermission
-                );
+                let paramsPermission = getParamsPermission(item, "A"); 
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);  
 
-                if (!response) return;
-
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                if (responseCheck && responseCheck.code === "2") {
+                    openModalRegistrarSolicitudAuth(paramsPermission) 
                     return;
                 }
+
+
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(
+                //     paramsPermission
+                // );
+
+                // if (!response) return;
+
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return;
+                // }
 
                 let modalRef = modalSvc.openWithComponent({
                     component: 'modalEliminarComponent',
@@ -537,7 +546,8 @@
                     if (result && typeof result === 'object' && result.esAnulado) {
 
                         if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
-                            userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                        //    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                        $solicitudAutorizacionSvc.update(paramsPermission)
                         }
                         $scope.getFacturas();
                     }

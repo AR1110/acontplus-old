@@ -126,6 +126,9 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
+        INSERT INTO ErroresSistema WITH (ROWLOCK)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/SolicitudAutorizacion/Post',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@userId
 		SELECT '0' code ,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as 'message'
 	END CATCH 
 

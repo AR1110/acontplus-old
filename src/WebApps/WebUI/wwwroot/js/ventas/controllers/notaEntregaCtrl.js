@@ -32,6 +32,9 @@
         nombreModalVenta = $injector.get('nombreModalVenta');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
+        const nombreModalCommon = $injector.get('nombreModalCommon');
+        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
+
         $scope.dataUserSearch = {
             name: ''
         }
@@ -349,24 +352,43 @@
                 console.log(error)
             }
         }
+ 
 
         function getParamsPermission(item, codigoAccion) {
-            let paramsPermission = {
-                idDocumento: item.idDocumento,
-                codDoc: item.codDoc,
-                codigoAccion,
-                tipoDoc: 'Nota Entrega',
-                serieComprobante: item.serieComprobante,
-                jsonData: JSON.stringify({
-                    idDocumento: item.idDocumento,
-                    codDoc: item.codDoc,
-                    tipoDoc: 'Nota Entrega',
+            return {
+                idDocumento: item.idDocumento, 
+                codigoModulo: item.codDoc,
+                codigoAccion,    
+                infoExtraJson: {
+                    serieComprobante: item.serieComprobante,
                     codEstab: item.codEstab,
-                    serieComprobante: item.serieComprobante
-                })
-            }
-            return paramsPermission;
+                    idPuntoEmision: item.idPuntoEmision,
+                    nombreModulo: 'Nota Entrega'
+                }
+            }; 
         }
+
+        async function openModalRegistrarSolicitudAuth(data){
+            let fileCtrl = nombreModalCommon.SOLICITUD_AUTORIZACION.fileCtrl;
+            let ctrl = nombreModalCommon.SOLICITUD_AUTORIZACION.controller;
+            let template = nombreModalCommon.SOLICITUD_AUTORIZACION.template;
+            let controller = (await import(fileCtrl))[ctrl];
+
+            const {vendedores, config} = mainDataForm;
+
+            let modalRef = modalSvc.open({
+                controller,
+                template,
+                size: 'lg',
+                params: {
+                    vendedores,
+                    esMultipleVendedor: config.multipleVendedor,
+                    data,
+                } , 
+            }) 
+
+        }
+
 
         async function openModalEdit(item) {
             try {
@@ -375,15 +397,31 @@
                     return
                 }
 
-                let paramsPermission = getParamsPermission(item, 'E');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+                // let paramsPermission = getParamsPermission(item, 'E');
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
 
-                if (!response) return
+                // if (!response) return
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return
+                // }
+
+
+                let paramsPermission = getParamsPermission(item, "E");
+
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);
+
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(
+                //     paramsPermission
+                // ); 
+
+                if (responseCheck && responseCheck.code === "2") {
+                    openModalRegistrarSolicitudAuth(paramsPermission)
+                    // userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                    return;
                 }
+
 
                 showLoader();
                 notaEntregaSvc.getId(item.idDocumento).then(response => {
@@ -402,7 +440,8 @@
                         if (typeof result === 'object') {
                             getNotaEntregas();
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                                // userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                                $solicitudAutorizacionSvc.update(paramsPermission)
 
                             }
 
@@ -478,15 +517,25 @@
                     return
                 }
 
-                let paramsPermission = getParamsPermission(item, 'A');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+                // let paramsPermission = getParamsPermission(item, 'A');
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
 
-                if (!response) return
+                // if (!response) return
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return
+                // }
+
+
+                let paramsPermission = getParamsPermission(item, "A"); 
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);  
+
+                if (responseCheck && responseCheck.code === "2") {
+                    openModalRegistrarSolicitudAuth(paramsPermission) 
+                    return;
                 }
+
 
                 let modalRef = modalSvc.openWithComponent({
                     component: 'modalEliminarComponent',
@@ -500,7 +549,8 @@
                     if (result && typeof result === 'object' && result.esAnulado) {
 
                         if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
-                            userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                            // userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                            $solicitudAutorizacionSvc.update(paramsPermission)
                         }
                         getNotaEntregas();
                     }

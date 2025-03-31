@@ -17,9 +17,16 @@
         }
 
 
-        function update(){
-
-
+        function update(){ 
+            let data = {
+                idDocumento: params.idDocumento,
+                codigoModulo: params.codigoModulo,
+                codigoAccion: params.codigoAccion,
+                tipo: 2
+            }
+            mS.getData('put', `${url}`, { data }).then(response => {
+                console.log(response)
+            })
         }
 
         function verifyUserPermission(obj){
@@ -31,12 +38,21 @@
             })
             return $mS.getData('get', `${url}/?json=${json}`).then(response=>{
                 let resultResponse = {};
+
+               
                 if(response.code==="1"){
                     const parseData = JSON.parse(response.payload);
 
                     resultResponse = parseData.response[0] || {}
                 }
-                console.log(resultResponse)
+
+                if(resultResponse.code==="0"){
+                    Swal.fire({
+                        icon: 'warning',
+                        html: `${resultResponse.message}`
+                    })
+                     throw new Error(resultResponse.message)
+                } 
                 return resultResponse;
             })
         }
