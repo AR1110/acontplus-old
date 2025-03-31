@@ -1,9 +1,9 @@
-import { Component, computed, inject, signal, Pipe } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { finalize, forkJoin } from 'rxjs';
 import { ItemService } from '@data/repositories/item/item.service';
 import { Pagination } from '@domain/models/pagination.model';
 import { ItemRead } from '@domain/models/item.model';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import {  PageEvent } from '@angular/material/paginator';
 import { SubCategory } from '@domain/models/inventory/subcategory.model';
 import { MatCardModule } from '@angular/material/card';
 import {
@@ -16,7 +16,6 @@ import { SUB_CATEGORY_CODE } from '@domain/enums/main.enum';
 import { FormsModule } from '@angular/forms';
 import { getValidId, isValidField } from '@domain/utils/utils';
 import { Order } from '@domain/models/order.model';
-import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,8 +52,6 @@ export class PosSaleComponent {
   private itemSvc = inject(ItemService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
-
-  selectedSubCategoryIndex = 0;
 
   private establecimientoId = this.mainStore.select('establecimientoId');
   private codEstab = this.mainStore.select('codEstab');
@@ -204,11 +201,11 @@ export class PosSaleComponent {
 
   ngOnInit() {
     let orderId = this.posStoreSvc.state().order?.orderId || 0;
-    if (!(orderId > 0)) {
-      this.dialog.open(TableModalComponent, {
-        size: 'xl',
-      });
-    }
+    // if (!(orderId > 0)) {
+    //   this.dialog.open(TableModalComponent, {
+    //     size: 'xl',
+    //   });
+    // }
     if (this.posStoreSvc.state().isLoading) return;
 
     this.setLoading(true);

@@ -13,7 +13,7 @@ export class CompanyCustomerSearchMapper  {
         razonSocialComprador: item.nombreFiscal,
         identificacionComprador: item.numeroIdentificacion,
         nombreComercial: item.nombreComercial,
-        name: item.nombreComercial,
+        name: item.nombreFiscal,
         codigoSri: item.codigoSri
       }
     })
