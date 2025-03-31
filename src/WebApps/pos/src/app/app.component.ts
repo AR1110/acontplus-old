@@ -7,7 +7,9 @@ import {
   Router,
   RouterOutlet,
 } from '@angular/router';
-import { ThemeService } from './ui/store/theme.service';
+import { ThemeService } from '@ui/store/theme.service';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +22,11 @@ export class AppComponent {
 
   isLoading = false;
 
-  constructor(private router: Router, public themeService: ThemeService) {
+  constructor(
+    private router: Router,
+    public themeService: ThemeService,
+    iconLibrary: FaIconLibrary,
+  ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.isLoading = true;
@@ -32,10 +38,11 @@ export class AppComponent {
       }
     });
 
-
+    // Add your icons here
+    iconLibrary.addIconPacks(fab);
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.themeService.loadMode();
   }
 }

@@ -1,16 +1,96 @@
-<div class="border-bottom shadow-sm">
-  <nav class="py-2 navbar navbar-light">
-    <div class="justify-content-center justify-content-lg-between container">
-      <a class="d-inline-block align-text-top navbar-brand" href="/"
-        ><img
-          src="/img/logo-nobackground.png"
-          alt="Logo AontPlus"
-          class="login-logo"
-          style="max-width: 150px" /></a
-      ><span class="navbar-text"> </span>
-    </div>
-  </nav>
-</div>
+<!--<div class="border-bottom shadow-sm">-->
+<!--  <nav class="py-2 navbar navbar-light">-->
+<!--    <div class="justify-content-center justify-content-lg-between container">-->
+<!--      <a class="d-inline-block align-text-top navbar-brand" href="/"-->
+<!--        ><img-->
+<!--          src="/img/logo-nobackground.png"-->
+<!--          alt="Logo AontPlus"-->
+<!--          class="login-logo"-->
+<!--          style="max-width: 150px" /></a-->
+<!--      ><span class="navbar-text"> </span>-->
+<!--    </div>-->
+<!--    <app-theme-toggle></app-theme-toggle>-->
+<!--  </nav>-->
+<!--</div>-->
+
+<mat-toolbar color="primary" role="banner">
+  <!--  <span class="app-title">{{ title() }}</span>-->
+    <div>
+        <a class="d-inline-block align-text-top navbar-brand" href="/"
+          ><img
+            src="/img/logo-nobackground.png"
+            alt="Logo AontPlus"
+            class="logo"
+            style="max-width: 150px" /></a
+        ><span class="navbar-text"> </span>
+      </div>
+  <span class="flex-spacer"></span>
+
+  <app-theme-toggle></app-theme-toggle>
+</mat-toolbar>
+
 <main>
   <router-outlet />
 </main>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="copyright">
+      <span> Copyright © 2024</span>
+      <a class="company-link" href="https://acontplus.com.ec" target="_blank"
+        >Acontplus</a
+      >
+    </div>
+    <ul class="social-links">
+      <li>
+        <a
+          href="https://api.whatsapp.com/send?phone=593986669930"
+          target="_blank"
+          class="social-icon whatsapp"
+          title="Si requiere ayuda personalizada comuniquese al siguiente número!"
+        >
+          <fa-icon [icon]="faWhatsapp"></fa-icon>
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://www.youtube.com/@acontplusweb/playlists"
+          target="_blank"
+          class="social-icon youtube"
+          title="Visítanos en nuestro canal Youtube"
+        >
+          <fa-icon [icon]="faYoutube"></fa-icon>
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://www.facebook.com/acontplus.ec"
+          target="_blank"
+          class="social-icon facebook"
+          title="Visítanos en nuestra página de Facebook"
+        >
+          <fa-icon [icon]="faFacebook"></fa-icon>
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://play.google.com/store/apps/details?id=com.acontplus_facturacion&hl=es_EC"
+          target="_blank"
+          class="social-icon google-play"
+          title="Descargar desde Google Play"
+        >
+          <fa-icon [icon]="faGooglePlay"></fa-icon>
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://acontplus.com.ec/politicas-de-privacidad-y-proteccion-de-datos-personales/"
+          target="_blank"
+          class="privacy-link"
+          title="Políticas de Privacidad"
+        >
+          Políticas de Privacidad
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>
