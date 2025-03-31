@@ -82,7 +82,7 @@ export class AuthComponent {
     this._tokenUseCase.setUserData(dataLogin);
     this._tokenUseCase.setDataEstab(dataEstab);
 
-    this.router.navigateByUrl('/dashboard').then();
+    this.router.navigateByUrl('/pos').then();
   }
 
   onLogin() {

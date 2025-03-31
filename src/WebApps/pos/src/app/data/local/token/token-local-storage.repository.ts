@@ -1,27 +1,28 @@
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { TokenRepository } from "@domain/repositories/token.repository";
-import { TokenModel } from "@domain/models/token.model";
-import { UserData } from "@domain/models/user-data.model";
+import { TokenRepository } from '@domain/repositories/token.repository';
+import { TokenModel } from '@domain/models/token.model';
+import { UserData } from '@domain/models/user-data.model';
+import { environment } from '@/env/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenLocalStorageRepository implements TokenRepository {
-  private readonly TOKEN_KEY = 'access_token';
   private readonly USER_DATA_KEY = 'user_data';
   private readonly DATA_ESTAB_KEY = 'data_estab';
+  private readonly storageKey = environment.storageKey;
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.storageKey);
   }
 
   setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.storageKey, token);
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.storageKey);
   }
 
   parseJwt(): TokenModel['decodedToken'] | null {
@@ -47,7 +48,7 @@ export class TokenLocalStorageRepository implements TokenRepository {
   getUserRoleId(): number {
     const decodedToken = this.parseJwt();
     if (!decodedToken?.userRoleId) {
-      throw new Error("Not found userRoleId");
+      throw new Error('Not found userRoleId');
     }
     return decodedToken.userRoleId;
   }
@@ -82,19 +83,17 @@ export class TokenLocalStorageRepository implements TokenRepository {
   private getDataFromLocalStorage<T>(key: string): T | null {
     const data = localStorage.getItem(key);
     try {
-      return (typeof data === 'string') ? JSON.parse(data) : null;
+      return typeof data === 'string' ? JSON.parse(data) : null;
     } catch (e) {
       return null;
     }
   }
 
-  removeAllStorage(){
-  Object.keys(localStorage).forEach(function (key) {
-    if(key !=='theme'){
-    localStorage.removeItem(key);
-    }
-  });
-
+  removeAllStorage() {
+    Object.keys(localStorage).forEach(function (key) {
+      if (key !== 'theme') {
+        localStorage.removeItem(key);
+      }
+    });
   }
-
 }

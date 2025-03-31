@@ -10,8 +10,8 @@ import {
 } from '@domain/models/inventory/product.model';
 import { ApiResponse } from '@domain/models/api-response';
 import { MedidaProducto } from '@domain/models/inventory/medida.model';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ProductAdapter } from './product.adapter';
+import { withoutSpinner } from 'acontplus-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class ProductService {
 
     return this.http
       .get<ApiResponse>(`${this.url}Search?json=${json}`, {
-        context: getNoLoader(),
+        context: withoutSpinner(),
       })
       .pipe(
         map((response) => {
@@ -39,7 +39,7 @@ export class ProductService {
             results = ProductAdapter.fromApiSearch(productsFound);
           }
           return results;
-        })
+        }),
       );
   }
 
@@ -63,7 +63,7 @@ export class ProductService {
           results = ProductAdapter.fromApiGetSale(repositoryData);
         }
         return results;
-      })
+      }),
     );
   }
 
@@ -83,7 +83,7 @@ export class ProductService {
           throw response;
         }
         return ProductAdapter.fromApiCheckStockNotificacion(response);
-      })
+      }),
     );
   }
 }

@@ -25,6 +25,7 @@
     "@angular/router": "^19.2.4",
     "@formkit/tempo": "^0.1.2",
     "@ngrx/signals": "^19.0.1",
+    "acontplus-utils": "^0.0.14",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.8",
     "decimal.js": "^10.5.0",

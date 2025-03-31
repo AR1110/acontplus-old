@@ -6,7 +6,6 @@ import { map } from 'rxjs';
 import { ItemRead } from '@domain/models/item.model';
 import { ItemAdapter } from '@data/repositories/item/item.adapter';
 import { ApiResponse } from '@domain/models/api-response';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 @Injectable({
   providedIn: 'root',
 })
@@ -30,7 +29,7 @@ export class ItemService {
           result.items = this.itemAdapter.getAllFrom(mainData.items);
         }
         return result;
-      })
+      }),
     );
   }
 
@@ -49,7 +48,7 @@ export class ItemService {
           result.items = this.itemAdapter.getAllFrom(mainData.items);
         }
         return result;
-      })
+      }),
     );
   }
 
