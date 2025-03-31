@@ -1,0 +1,51 @@
+<div class="modal-header bg-info text-white">
+    <h4 class="modal-title"><i class="mdi mdi-key"></i> Registrar Solicitud de Autorización</h4>
+    <button type="button" class="close" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label for="usuario">Usuario Solicitante: </label>
+                <select name="usuario" id="usuario" ng-disabled="!esMultipleVendedor" class="form-control border-select"
+                    ng-model="data.idUsuario">
+                    <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
+                        {{item.nombreCompleto}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border">
+                <div class="card-header">
+                    Detalles de modificación
+                </div>
+                <div class="card-body">
+                    <div ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+                        ui-grid-validate class="grid">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="form-group">
+                <label for="observaciones">Observaciones: <span class="text-danger">*</span></label>
+                <textarea class="form-control border-select" ng-model="data.obs" id="observaciones" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" type="button" ng-click="save()">
+        <i class="mdi mdi-save"></i> Guardar
+    </button>
+    <button class="btn btn-dark" type="button" ng-click="close()">
+        &times; Cerrar
+    </button>
+</div>

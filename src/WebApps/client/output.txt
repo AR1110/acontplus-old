@@ -385,8 +385,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  ├── components
 |  |  |  |  |  |  ├── user-customer-page.component.html
 |  |  |  |  |  ├── user-customer-request-page
-|  |  |  |  |  |  ├── solicitud-usuario.component.html
-|  |  |  |  |  |  └── solicitud-usuario.component.ts
+|  |  |  |  |  |  ├── solicitud-autorizacion.component.html
+|  |  |  |  |  |  └── solicitud-autorizacion.component.ts
 |  |  |  |  |  ├── user-profile-page
 |  |  |  |  |  |  ├── user-profile-page.component.html
 |  |  |  |  |  |  └── user-profile-page.component.ts
