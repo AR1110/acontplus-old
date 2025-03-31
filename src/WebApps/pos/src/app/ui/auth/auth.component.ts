@@ -36,18 +36,30 @@ export class AuthComponent {
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService);
 
-  loading = false;
+  isLoading = signal(false);
 
-  hide = signal(true);
+  hidePassword = signal(true);
 
-  form = new FormGroup({
+  loginForm = new FormGroup({
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
 
+  get formControls() {
+    return this.loginForm.controls as {
+      username: FormControl;
+      password: FormControl;
+      rememberMe: FormControl;
+    };
+  }
+
   clickEvent(event: MouseEvent) {
-    this.hide.set(!this.hide());
+    this.hidePassword.set(!this.hidePassword());
     event.stopPropagation();
+  }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword.update((value) => !value);
   }
 
   private openMultipleEstabs(dataEstab: any) {
@@ -73,18 +85,18 @@ export class AuthComponent {
     this.router.navigateByUrl('/dashboard').then();
   }
 
-  login() {
-    if (this.form.invalid) return;
+  onLogin() {
+    if (this.loginForm.invalid) return;
 
-    if (this.loading) return;
+    if (this.isLoading()) return;
 
-    this.loading = true;
+    this.isLoading.set(true);
     this._authUseCase
       .login({
-        username: this.form.value.username!,
-        password: this.form.value.password!,
+        username: this.loginForm.value.username!,
+        password: this.loginForm.value.password!,
       })
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((response) => {
         if (response.code === '0') {
           this.tS.toastr({
@@ -96,7 +108,7 @@ export class AuthComponent {
 
         let dataPayload = JSON.parse(response.payload as string);
         const establecimientos = dataPayload.flatMap(
-          (userRole: any) => userRole.establecimientos
+          (userRole: any) => userRole.establecimientos,
         );
 
         if (establecimientos.length > 1) {
