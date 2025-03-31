@@ -1,75 +1,119 @@
-import { Component, inject, Input, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, inject, input, output } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   catchError,
   distinctUntilChanged,
-  Observable,
   of,
-  OperatorFunction,
   switchMap,
   tap,
+  startWith,
+  filter,
+  Observable,
 } from 'rxjs';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
+import { AsyncPipe } from '@angular/common';
+import { MatError, MatFormField } from '@angular/material/form-field';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import {
+  MatAutocomplete,
+  MatAutocompleteTrigger,
+  MatOption,
+} from '@angular/material/autocomplete';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-supplier-search',
-  imports: [FormsModule, NgbTypeaheadModule],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    AsyncPipe,
+    MatFormField,
+    MatInput,
+    MatAutocomplete,
+    MatOption,
+    MatProgressBar,
+    MatAutocompleteTrigger,
+    MatError,
+    MatInputModule,
+  ],
   templateUrl: './supplier-search.component.html',
-  styles: ``,
+  styles: [
+    `
+      .w-100 {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class SupplierSearchComponent {
   supplierSelected = output<SupplierSearch>();
   clearEmpty = output();
   isSearchSimple = input(true);
-  @Input() textSearch = '';
+  textSearch = input<string>();
+  textSearchControl = new FormControl<string>('', { nonNullable: true });
+  filteredSuppliers: Observable<SupplierSearch[]>;
+
   searching = false;
-
-  //textSearch = ''
   searchFailed = false;
-  private readonly _supplierUseCase = inject(SupplierUseCase);
 
-  search: OperatorFunction<string, SupplierSearch[]> = (
-    text$: Observable<string>,
-  ) =>
-    text$.pipe(
+  private readonly supplierUseCase = inject(SupplierUseCase);
+
+  constructor() {
+    this.textSearchControl.setValue(this.textSearch() ?? '');
+
+    this.filteredSuppliers = this.textSearchControl.valueChanges.pipe(
+      startWith(''),
+      filter((value): value is string => value !== null && value !== undefined),
       distinctUntilChanged(),
-      tap(() => (this.searching = true)),
+      tap(() => {
+        this.searching = true;
+        this.searchFailed = false;
+      }),
       switchMap((term) => {
-        if (!term || term.length < 2) {
+        // If term too short, return empty array
+        if (term.length < 2) {
+          this.searching = false;
           return of([]);
         }
-        return this._supplierUseCase.search({ textSearch: term }).pipe(
-          tap(() => (this.searchFailed = false)),
+
+        // Call supplier search use case
+        return this.supplierUseCase.search({ textSearch: term }).pipe(
+          tap({
+            next: () => {
+              this.searching = false;
+              this.searchFailed = false;
+            },
+            error: () => {
+              this.searching = false;
+              this.searchFailed = true;
+            },
+          }),
           catchError((error) => {
-            console.log(error);
-            this.searchFailed = true;
+            console.error(error);
             return of([]);
           }),
         );
       }),
-      tap(() => (this.searching = false)),
     );
+  }
 
-  formatter = (x: { razonSocialComprador: string }) => {
-    if (x && typeof x === 'object') {
-      return x.razonSocialComprador;
+  formatter(supplier: SupplierSearch): string {
+    return supplier?.razonSocialComprador || '';
+  }
+
+  onSelect(supplier: SupplierSearch) {
+    if (supplier) {
+      this.supplierSelected.emit({
+        ...supplier,
+        razonSocialComprador: supplier.razonSocialComprador,
+        identificacionComprador: supplier.identificacionComprador,
+      });
     }
-    return x;
-  };
-
-  onSelect($event: unknown) {
-    const customer = $event as SupplierSearch;
-    this.supplierSelected.emit({
-      ...customer,
-      razonSocialComprador: customer.razonSocialComprador,
-      identificacionComprador: customer.identificacionComprador,
-    });
   }
 
   onKeyupSearch() {
-    if (!this.textSearch) {
+    if (!this.textSearchControl.value) {
       this.clearEmpty.emit();
     }
   }

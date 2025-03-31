@@ -1129,6 +1129,7 @@
 
                         facturaSvc.getForCreditNote(json).then(response => {
                            $scope.facturas = response.facturas || [];
+                           $scope.dataSearch.totalRecords = $scope.facturas.length>0 ? $scope.facturas[0].totalRecords: 0
                         }).catch(error => {
                             console.log(error)
                         })
@@ -1138,7 +1139,7 @@
                         getFacturas()
                     }
 
-                    $scope.pagechanged = function () {
+                    $scope.pageChanged = function () {
                         $scope.refresh();
                     };
 

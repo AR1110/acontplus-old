@@ -1,32 +1,31 @@
 @if (isSearchSimple()) {
-  <input
-    id="typeahead-supplier"
-    type="text"
-    class="form-control"
-    [(ngModel)]="textSearch"
-    [ngbTypeahead]="search"
-    [resultTemplate]="rtSuppliers"
-    [class.is-invalid]="searchFailed"
-    (selectItem)="onSelect($event.item)"
-    onclick="select();"
-    (keyup)="onKeyupSearch()"
-    [inputFormatter]="formatter"
-    [resultFormatter]="formatter"
-    placeholder="Ej. Jorge"
-  />
-  @if (searching) {
-    <small class="form-text text-muted">Buscando...</small>
-  }
-  @if (searchFailed) {
-    <div class="invalid-feedback">
-      Lo sentimos, no se han podido cargar las sugerencias.
-    </div>
-  }
+  <mat-form-field class="w-100">
+    <mat-label>Proveedor:</mat-label>
+    <input
+      matInput
+      [formControl]="textSearchControl"
+      [matAutocomplete]="auto"
+      placeholder="Buscar proveedor"
+      (keyup)="onKeyupSearch()"
+    />
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="onSelect($event.option.value)"
+      [displayWith]="formatter"
+    >
+      @for (supplier of filteredSuppliers | async; track $index) {
+        <mat-option [value]="supplier">
+          {{ supplier.identificacionComprador }} -
+          {{ supplier.razonSocialComprador }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
 }
 
-<ng-template #rtSuppliers let-r="result" let-t="term">
-  <ngb-highlight
-    [result]="r.identificacionComprador + ' - ' + r.name"
-    [term]="t"
-  />
-</ng-template>
+@if (searching) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+@if (searchFailed) {
+  <mat-error> Lo sentimos, no se han podido cargar las sugerencias. </mat-error>
+}

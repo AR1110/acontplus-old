@@ -6,7 +6,6 @@
           src="/img/overview-sale.svg"
           alt=""
           class="img-fluid d-none d-md-block"
-
         />
 
         <section class="down-section">
@@ -47,24 +46,13 @@
         </section>
       </div>
       <div class="col-lg-4 col-md-6 col-12 order-lg-2 offset-lg-1 order-1">
-        <div class="mb-lg-9 mb-5">
-          <h3 class="mb-1 h3 fw-bold">Inicie sesión en AcontPlus POS</h3>
-          <p>
-            ¡Bienvenido de nuevo a AcontPlus POS!
-          </p>
+        <div class="mb-lg-9">
+          <h3 class="mb-1 h3 fw-bold">AcontPlus Restaurante</h3>
+          <p>¡Bienvenido!</p>
         </div>
         <div class="g-2 row">
-          <form [formGroup]="form" (ngSubmit)="login()">
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
             <div class="col-12">
-              <!-- <label class="visually-hidden form-label" for="formSigninEmail"
-                >Email address</label
-              ><input
-                placeholder="Email"
-                id="formSigninEmail"
-                class="form-control"
-                type="email"
-                name="email"
-              /> -->
               <mat-form-field class="w-100">
                 <mat-label>Usuario</mat-label>
                 <input
@@ -78,7 +66,7 @@
               <mat-form-field class="w-100">
                 <mat-label>Contraseña</mat-label>
                 <input
-                  [type]="hide() ? 'password' : 'text'"
+                  [type]="hidePassword() ? 'password' : 'text'"
                   matInput
                   formControlName="password"
                   placeholder="Contraseña"
@@ -91,7 +79,7 @@
                   [attr.aria-label]="'Hide password'"
                 >
                   <mat-icon>{{
-                    hide() ? "visibility_off" : "visibility"
+                    hidePassword() ? "visibility_off" : "visibility"
                   }}</mat-icon>
                 </button>
               </mat-form-field>
@@ -116,7 +104,7 @@
               <button
                 type="submit"
                 mat-flat-button
-                [disabled]="loading"
+                [disabled]="isLoading()"
                 style="height: 45px"
                 class="btn-lg w-100 text-uppercase btn-rounded cursor-pointer"
               >
@@ -131,64 +119,3 @@
     </div>
   </div>
 </section>
-<!-- <form [formGroup]="form" (ngSubmit)="login()" class="text-center">
-  <a href="javascript:void(0)">
-    <img
-      src="./img/logo-icon.jpg"
-      class="img-responsive"
-      alt="Home"
-      height="100"
-      width="100"
-    />
-  </a>
-  <div class="center">
-    <h5>AcontPlus POS</h5>
-  </div>
-  <div class="center">
-    <h6>Iniciar de Sesión</h6>
-  </div>
-  <div class="form-group mt-4">
-    <div class="col-xs-12">
-      <mat-form-field class="m3-input-full-width">
-        <mat-label>Usuario</mat-label>
-        <input matInput placeholder="Usuario" formControlName="username" />
-      </mat-form-field>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-xs-12">
-      <mat-form-field class="m3-input-full-width">
-        <mat-label>Contraseña</mat-label>
-        <input
-          [type]="hide() ? 'password' : 'text'"
-          matInput
-          formControlName="password"
-          placeholder="Contraseña"
-        />
-        <button
-          type="button"
-          mat-icon-button
-          matSuffix
-          (click)="clickEvent($event)"
-          [attr.aria-label]="'Hide password'"
-        >
-          <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-  </div>
-
-  <div class="form-group text-center m-t-20">
-    <div class="col-xs-12">
-      <button
-        type="submit"
-        mat-flat-button
-        style="height: 50px"
-        class="btn-lg w-100 text-uppercase btn-rounded"
-      >
-        Ingresar
-        <mat-icon>exit_to_app</mat-icon>
-      </button>
-    </div>
-  </div>
-</form> -->

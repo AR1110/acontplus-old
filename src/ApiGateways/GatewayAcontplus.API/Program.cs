@@ -1,9 +1,8 @@
 ﻿using System.Runtime.InteropServices;
+using Common.Logging;
 using Common.Services.Configuration;
 using Common.Services.Extensions;
 using Common.Services.Middleware;
-//using GatewayAcontplus.API.Middleware;
-//using GatewayAcontplus.API.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -13,6 +12,8 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAdvancedLogging(builder.Configuration);
+
 // Environment and Configuration Setup
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -20,33 +21,17 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
+const string corsPolicy = "AllowAll";
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
 builder.Configuration.AddConfiguration(configuration);
 
 // Secure Environment Variable Retrieval (consider secret management for sensitive data)
-var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",")
-                   ?? throw new ArgumentException("SafeOrigins configuration is missing.");
-
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//        options.UseSqlServer(builder.Configuration.GetConnectionString("OcelotGateway")));
-
-//builder.Services.AddSingleton<IMessageQueueService, RabbitMQService>();
-//builder.Services.AddHostedService<RequestConsumerService>();
+var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",");
 
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
 builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-
-//builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
-//{
-//    // Register the ReportHeaderDelegatingHandler
-//    builder.RegisterType<ConnectionStringHeaderDelegatingHandler>()
-//        .InstancePerLifetimeScope();
-
-//    // Register any other dependencies here
-//});
-//builder.Services.AddOcelot().AddDelegatingHandler<ConnectionStringHeaderDelegatingHandler>();
 
 builder.Services.AddOcelot();
 
@@ -56,7 +41,7 @@ builder.Services.AddIdentityService(builder.Configuration);
 // CORS Configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy(corsPolicy, policy =>
     {
         policy.WithOrigins(safeOrigins)
             .SetIsOriginAllowed(isOriginAllowed: _ => true)
@@ -112,7 +97,7 @@ else
 }
 
 // Improved CORS Configuration
-app.UseCors("AllowAll"); // Use the configured policy
+app.UseCors(corsPolicy);
 
 // Authentication and Authorization (adapt to your specific needs)
 app.UseAuthentication();

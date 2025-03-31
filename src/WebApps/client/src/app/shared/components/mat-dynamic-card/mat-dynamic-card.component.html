@@ -17,8 +17,8 @@
     <ng-content></ng-content>
   </mat-card-content>
 
-  <mat-card-actions>
     @if (showActions()) {
+  <mat-card-actions>
     <ng-container>
       <button mat-button>
         {{ primaryActionLabel() }}
@@ -28,6 +28,6 @@
       </button>
     </ng-container>
 
-    }
   </mat-card-actions>
+    }
 </mat-card>

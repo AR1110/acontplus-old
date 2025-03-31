@@ -70,7 +70,7 @@ export class DocumentReceivedComponent {
     { key: 'fechaAutorizacion', label: 'F. Aut.', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-
+textSearch: string = '';
   dataSearch = {
     codDoc: '',
     codEstab: '',

@@ -111,7 +111,7 @@ export class FraccProductListComponent implements OnInit {
     }
     let ref = this.dialogSvc.open(AddEditFractionalProductComponent, {
       data,
-      size: 'lg'
+      size: 'xl'
     })
 
     ref.subscribe(result=>{

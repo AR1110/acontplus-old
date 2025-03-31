@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
 import { ToasterService } from './toaster.service';
-import { getCustomUrlContext } from '@core/interceptors/inject-session.interceptor';
+import {customUrl} from "acontplus-utils";
 
 type ParamsPrint = {
   id: number;
@@ -72,7 +72,7 @@ export class SharedService {
   print(urlPrinter: string, paramsToPrint: ParamsPrint) {
     this.http
       .post<ApiResponse>(`${urlPrinter}/Print`, paramsToPrint, {
-        context: getCustomUrlContext(),
+        context: customUrl(),
       })
       .subscribe({
         next: (response) => {

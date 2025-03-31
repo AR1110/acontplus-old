@@ -1,5 +1,4 @@
 ﻿global using System.Data;
-global using Common.AppSettings;
 global using Common.Core.Data;
 global using Common.Core.Format;
 global using Common.Core.Models;

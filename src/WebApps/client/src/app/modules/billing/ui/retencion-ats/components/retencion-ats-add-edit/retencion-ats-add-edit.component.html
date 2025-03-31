@@ -12,214 +12,165 @@
       <mat-card-content>
         <h5 class="card-title">
           Info Comprobante Retención
-          <button (click)="onClickVisibleInfoComprobante()" type="button">
-            <mat-icon>eye</mat-icon>
-          </button>
+          <mat-checkbox
+            (change)="onClickVisibleInfoComprobante()"
+            [checked]="isVisibleInfoComprobante"
+          >
+          </mat-checkbox>
         </h5>
         <div>
-          <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-              <div class="form-group">
-                <label for="establecimiento"
-                  >Establecimiento: <span class="text-danger">*</span></label
+          <div class="row mb-3">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label
+                  >Establecimiento:
+                  <span class="text-danger">*</span></mat-label
                 >
-                <select
-                  id="establecimiento"
-                  class="form-select"
-                  (change)="onChangeEstablecimiento()"
+                <mat-select
+                  id="idEstablecimiento"
+                  formControlName="idEstablecimiento"
+                  (selectionChange)="onSelectEstablecimiento()"
                   [disabled]="idDocumentoElectronico > 0"
                 >
                   @for (item of estabs; track $index) {
-                    <option [value]="item.codEstab">
+                    <mat-option [value]="item.idEstablecimiento">
                       {{ item.nombreComercial }}
-                    </option>
+                    </mat-option>
                   }
-                </select>
-              </div>
+                </mat-select>
+              </mat-form-field>
             </div>
-            @if (retencionAtsForm.get("codEstab")?.value) {
-              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-                <div class="form-group">
-                  <label for="puntoEmision"
-                    >Punto Emisión: <span class="text-danger">*</span></label
-                  >
-                  <select
-                    id="puntoEmision"
-                    class="form-control border-select"
+            @if (retencionAtsForm.get("idEstablecimiento")?.value) {
+              <div
+                class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"
+              >
+                <mat-form-field class="w-100">
+                  <mat-label>Punto Emisión: </mat-label>
+                  <mat-select
+                    id="idPuntoEmision"
                     formControlName="idPuntoEmision"
-                    (change)="onChangePtoEmi()"
+                    (selectionChange)="onSelectPuntoEmision()"
                     [disabled]="idDocumentoElectronico > 0"
                   >
                     @for (item of puntosEmision; track $index) {
-                      <option [value]="item.idPuntoEmision">
+                      <mat-option [value]="item.idPuntoEmision">
                         {{ item.ptoEmi }}
-                      </option>
+                      </mat-option>
                     }
-                  </select>
-                </div>
+                  </mat-select>
+                </mat-form-field>
               </div>
             }
-          </div>
-
-          <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
-              <div class="form-group">
-                <label for="fechaEmision">Fecha Emisión Retención:</label>
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Fecha Emisión Retención:</mat-label>
                 <input
-                  type="date"
+                  matInput
                   id="fechaEmision"
-                  class="form-control"
-                  (change)="getPeriod()"
+                  [matDatepicker]="picker"
+                  (dateChange)="getPeriod()"
                   formControlName="fechaEmision"
                   required
                 />
-              </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-              <div class="form-group">
-                <label for="dirEstablecimiento">Dir. Estab:</label>
-                <input
-                  readonly
-                  type="text"
-                  id="dirEstablecimiento"
-                  class="form-control"
-                  maxlength="300"
-                />
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
-              <div class="form-group">
-                <label for="contribuyenteEspecial"
-                  >Contribuyente Especial:</label
-                >
-                <input
-                  type="text"
-                  id="contribuyenteEspecial"
-                  class="form-control"
-                  formControlName="contribuyenteEspecial"
-                  min="3"
-                  maxlength="13"
-                  readonly
-                />
-              </div>
+                <mat-hint>DD/MM/YYYY</mat-hint>
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
             </div>
           </div>
-          <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-              <div class="form-group">
-                <label for="obligadoContabilidad">Obligado Contabilidad:</label>
-                <input
-                  type="text"
-                  id="obligadoContabilidad"
-                  class="form-control"
-                  formControlName="obligadoContabilidad"
-                  readonly
-                />
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-              <div class="form-group">
-                <label for="tipoIdentificacionSujetoRetenido"
-                  >Tipo Identificación Sujeto Retenido:</label
-                >
-                <select
-                  id="tipoIdentificacionSujetoRetenido"
-                  class="form-select"
-                  (change)="showTipoSujetoRetenido()"
-                  formControlName="tipoIdentificacionSujetoRetenido"
-                >
-                  @for (item of tiposIdentificacion; track $index) {
-                    <option [value]="item.codigoSri">
-                      {{ item.codigoSri }} -
-                      {{ item.descripcion }}
-                    </option>
-                  }
-                </select>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-              <div class="form-group">
-                <label for="tipoSujetoRetenido">Tipo Sujeto Retenido:</label>
-                <select
-                  id="tipoSujetoRetenido"
-                  class="form-select"
-                  formControlName="tipoSujetoRetenido"
-                  [disabled]="isNotForeign"
-                >
-                  @for (item of tiposSujRetenido; track $index) {
-                    <option [value]="item.codigo">
-                      {{ item.codigo }} -
-                      {{ item.descripcion }}
-                    </option>
-                  }
-                </select>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-              <div class="form-group">
-                <label for="parteRel">Parte Relacionada:</label>
-                <select
-                  id="parteRel"
-                  class="form-select"
-                  formControlName="parteRel"
-                  required
-                >
-                  @for (item of generic; track $index) {
-                    <option [value]="item.code">
-                      {{ item.code }}
-                    </option>
-                  }
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
+
+          <div class="row mb-3">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <span style="font-weight: 405"
-                  >Razón Social Sujeto Retenido:</span
-                >
-                <app-supplier-search
-                  [isSearchSimple]="true"
-                  (supplierSelected)="onSupplierSelected($event)"
-                  (clearEmpty)="supplierResultEmptyInput()"
-                ></app-supplier-search>
-              </div>
+              <app-supplier-search
+                [isSearchSimple]="true"
+                (supplierSelected)="onSupplierSelected($event)"
+                (clearEmpty)="supplierResultEmptyInput()"
+              ></app-supplier-search>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
-              <div class="form-group">
-                <label for="identificacionSujetoRetenido"
-                  >Identificación Sujeto Retenido:</label
-                >
+              <mat-form-field class="w-100">
+                <mat-label>Identificación Sujeto Retenido:</mat-label>
                 <input
+                  matInput
                   type="text"
                   id="identificacionSujetoRetenido"
-                  class="form-control border-select"
                   formControlName="identificacionSujetoRetenido"
                   required
                   maxlength="13"
                   readonly
                 />
-              </div>
+              </mat-form-field>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Tipo Identificación Sujeto Retenido:</mat-label>
+                <mat-select
+                  id="tipoIdentificacionSujetoRetenido"
+                  (selectionChange)="showTipoSujetoRetenido()"
+                  formControlName="tipoIdentificacionSujetoRetenido"
+                >
+                  @for (item of tiposIdentificacion; track $index) {
+                    <mat-option [value]="item.codigoSri">
+                      {{ item.codigoSri }} -
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Tipo Sujeto Retenido:</mat-label>
+                <mat-select
+                  id="tipoSujetoRetenido"
+                  formControlName="tipoSujetoRetenido"
+                  [disabled]="isNotForeign"
+                >
+                  @for (item of tiposSujRetenido; track $index) {
+                    <mat-option [value]="item.codigo">
+                      {{ item.codigo }} -
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Parte Relacionada:</mat-label>
+                <mat-select id="parteRel" formControlName="parteRel" required>
+                  @for (item of generic; track $index) {
+                    <mat-option [value]="item.code">
+                      {{ item.code }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-12">
-              <div class="form-group">
-                <label for="periodoFiscal">Periodo Fiscal:</label>
+              <mat-form-field class="w-100">
+                <mat-label>Periodo Fiscal:</mat-label>
                 <input
+                  matInput
                   type="text"
                   id="periodoFiscal"
-                  class="form-control"
                   formControlName="periodoFiscal"
                   readonly
                 />
-              </div>
+              </mat-form-field>
             </div>
           </div>
 
           @if (retencionAtsForm.get("identificacionSujetoRetenido")?.value) {
-            <div class="row">
+            <div class="row mb-3">
               <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="form-group">
+                <div class="w-100">
                   <h5>Subcontribuyente:</h5>
                   <h5>{{ subContribuyente }}</h5>
                 </div>
@@ -248,6 +199,7 @@
           [indexDoc]="$index"
           [docSustentoGroup]="item"
           [docSustentoArray]="docSustentoArray"
+          [uniqueIdDoc]="item.get('uniqueIdDoc')?.value"
           [documentosSustento]="documentosSustento"
           [sustentosTributarios]="sustentosTributarios"
           [tiposPago]="tiposPago"
@@ -259,13 +211,32 @@
           [impuestosRetencion]="impuestosRetencion"
           [codigosRetencion]="codigosRetencion"
           [porcentajesRetIva]="porcentajesRetIva"
+          [formasPago]="formasPago"
         />
       } @empty {
         <p>Aun no se han añadido documentos!</p>
       }
     </mat-accordion>
-    <!-- Info Adicional Component -->
-    <!-- <app-info-adicional [infoAdicional]="infoAdicional" (onAddInfo)="addInfoAdicional($event)"></app-info-adicional> -->
+    <div class="row mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+        <app-theme-button
+          text="Añadir Información Adicional"
+          icon="add"
+          (handleClick)="addInfoAdicional()"
+        ></app-theme-button>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col" formArrayName="infoAdicional">
+        @for (ia of infoAdicionalArray.controls; track $index) {
+          <app-retencion-ats-info-adicional-add-edit
+            [indexInfoAdicional]="$index"
+            [infoAdicionalGroup]="ia"
+            [infoAdicionalArray]="infoAdicionalArray"
+          ></app-retencion-ats-info-adicional-add-edit>
+        }
+      </div>
+    </div>
   </ng-template>
   <ng-template #actionsTemplate>
     <app-theme-button

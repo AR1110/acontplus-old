@@ -25,7 +25,7 @@ public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserC
         return Results.Ok(await docSustentoService.DeleteAsync(parameters));
     }
 
-    public async Task<IResult> GetDocSustentoById(int id)
+    public Task<IResult> GetDocSustentoById(int id)
     {
         throw new NotImplementedException();
     }

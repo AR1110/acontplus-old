@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using Common.AppSettings;
 using Configuracion.Domain.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;

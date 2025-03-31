@@ -5,6 +5,7 @@ AS(
     SELECT  
         rowguid
         ,rucEmpresa = e.ruc
+        ,s.idEntidad
         ,razonSocial = e.razonSocial
         ,s_e.codEstab 
         ,establecimiento = s_e.nombreComercial

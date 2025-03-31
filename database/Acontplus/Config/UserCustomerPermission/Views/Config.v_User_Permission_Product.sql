@@ -1,7 +1,7 @@
  USE Acontplus
  GO
  
-CREATE OR ALTER VIEW Config.v_User_Permission_Product WITH SCHEMABINDING
+CREATE OR ALTER VIEW Config.v_User_Permission_Product  
 AS(
     SELECT  
 	    idUserPermission

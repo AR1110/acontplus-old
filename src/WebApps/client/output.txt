@@ -348,9 +348,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── tiempo-credito.model.ts
 |  |  |  |  |  ├── user-customer
 |  |  |  |  |  |  ├── user-customer-request.model.ts
-|  |  |  |  |  |  ├── user-customer-role-bodega.model.ts
-|  |  |  |  |  |  ├── user-customer-role-estab.model.ts
-|  |  |  |  |  |  ├── user-customer-role-punto-emision.model.ts
+|  |  |  |  |  |  ├── asignacion-bodega.model.ts
+|  |  |  |  |  |  ├── asignacion-punto-emision.model.ts
 |  |  |  |  |  |  ├── user-customer-role.model.ts
 |  |  |  |  |  |  └── user-customer.model.ts
 |  |  |  |  |  └── wizard-config
@@ -385,10 +384,9 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── user-customer-page
 |  |  |  |  |  |  ├── components
 |  |  |  |  |  |  ├── user-customer-page.component.html
-|  |  |  |  |  |  └── user-customer-page.component.ts
 |  |  |  |  |  ├── user-customer-request-page
-|  |  |  |  |  |  ├── solicitud-usuario.component.html
-|  |  |  |  |  |  └── solicitud-usuario.component.ts
+|  |  |  |  |  |  ├── solicitud-autorizacion.component.html
+|  |  |  |  |  |  └── solicitud-autorizacion.component.ts
 |  |  |  |  |  ├── user-profile-page
 |  |  |  |  |  |  ├── user-profile-page.component.html
 |  |  |  |  |  |  └── user-profile-page.component.ts
@@ -409,11 +407,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── user-customer
 |  |  |  |  |  |  ├── user-customer-permission.service.ts
 |  |  |  |  |  |  ├── user-customer-request.service.ts
-|  |  |  |  |  |  ├── user-customer-role-bodega.service.ts
-|  |  |  |  |  |  ├── user-customer-role-estab.service.ts
-|  |  |  |  |  |  ├── user-customer-role-punto-emision.service.ts
-|  |  |  |  |  |  ├── user-customer-role.service.ts
-|  |  |  |  |  |  ├── user-customer.service.ts
 |  |  |  |  |  |  └── user-permission.service.ts
 |  |  |  |  |  ├── user-profile.service.ts
 |  |  |  |  |  └── wizard-config

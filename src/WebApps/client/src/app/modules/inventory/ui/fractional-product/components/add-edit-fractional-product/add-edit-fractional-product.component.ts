@@ -1,7 +1,6 @@
 import {Component, inject, input, signal} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {ProductSearchComponent} from "@inventory/ui/product/components/product-search/product-search.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -30,6 +29,8 @@ import {
   FractionalProductGetIdUseCase
 } from "@inventory/domain/usecases/fractional-product/fractional-product-get-id.use-case";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatListModule} from "@angular/material/list";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-add-edit-fractional-product',
@@ -42,8 +43,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MatButtonModule,
     MatSlideToggleModule,
     MatTooltipModule,
+    MatListModule,
     MatCustomDialogComponent,
-    ProductSearchComponent,
     ThemeButtonComponent,
     MeasureAddEditDirective,
     TabulatorComponent
@@ -424,7 +425,8 @@ private decimal = {
   }
 
 
-   recalculatePercentage(){
+   async recalculatePercentage($event:MouseEvent){
+    $event.stopPropagation();
     if(!getValidId(this.data.precioCostoFraccionado)){
       this.tS.toastr({
         type: 'warning',
@@ -432,6 +434,18 @@ private decimal = {
       })
       return
     }
+
+    let {isConfirmed} = await Swal.fire({
+      icon: 'warning',
+      html: 'Calcula los precios tomando el valor de porcentaje utilidad del pvp de articulo principal',
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: 'Calcular',
+      cancelButtonText: 'Cancelar',
+    })
+
+     if(!isConfirmed) return
+
     let precioCosto = Number(this.data.precioCostoFraccionado);
 
 

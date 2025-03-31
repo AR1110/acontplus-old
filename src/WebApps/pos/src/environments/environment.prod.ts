@@ -1,4 +1,6 @@
 export const environment = {
-  production: true,
-  API_URL: 'https://acontplus.com',
+  isProduction: true,
+  apiBaseUrl: 'https://acontplus.com/gateway/',
+  storageKey: 'app_restaurant_token',
+  clientId: 'acontplus-restaurant-client',
 };

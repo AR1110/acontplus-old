@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 import { GeneralConfigComponent } from './pages/general-config/general-config.component';
 import { DocConfigPageComponent } from './pages/doc-config/doc-config.component';
-import { UserCustomerPageComponent } from './pages/user-customer-page/user-customer-page.component';
-import { SolicitudUsuarioComponent } from '@modules/config/ui/solicitud-usuario/solicitud-usuario.component';
+import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { EstablishmentPageComponent } from './pages/establishment-page/establishment-page.component';
 import { CompanyPageComponent } from '@modules/config/pages/company-page/company-page.component';
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
 import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
+import {UserCustomerComponent} from "@modules/config/ui/user-customer/user-customer.component";
 
 export const routes: Routes = [
   {
@@ -28,17 +28,17 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'user-customer-page',
+    path: 'user-customer',
     title: 'Usuario',
-    component: UserCustomerPageComponent,
+    component: UserCustomerComponent,
     data: {
       breadcrumb: 'Usuario',
     },
   },
   {
-    path: 'solicitud-usuario',
+    path: 'solicitud-autorizacion',
     title: 'Solicitudes de Usuario',
-    component: SolicitudUsuarioComponent,
+    component: SolicitudAutorizacionComponent,
     data: {
       breadcrumb: 'Solicitudes de Usuario',
     },

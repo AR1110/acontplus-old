@@ -17,13 +17,15 @@
                 <table resize master md-table>
                     <thead md-head md-trim-column-names>
                         <tr md-row>
-                            <th md-column></th>
+                            <th md-column>#</th>
+                            <th md-column>Op.</th>
                             <th md-column>Serie Comprobante</th>
                             <th md-column>Fecha Emision</th>
                         </tr>
                     </thead>
                     <tbody md-body>
                         <tr md-row ng-repeat="item in facturas">
+                            <td md-cell>{{$index+1}}</td>
                             <td md-cell>
                                 <div class="d-flex">
                                     <button type="button" class="btn btn-success btn-xs" title="Seleccionar la factura"
@@ -40,7 +42,7 @@
                             <td md-cell>{{item.fechaEmision}}</td>
                         </tr>
                         <tr class="text-center" ng-if="facturas.length===0">
-                            <td colspan="3">No hay registros</td>
+                            <td colspan="4">No hay registros</td>
                         </tr>
                     </tbody>
 

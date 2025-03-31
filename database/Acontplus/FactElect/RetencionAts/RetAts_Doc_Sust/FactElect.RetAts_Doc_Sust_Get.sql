@@ -55,7 +55,7 @@ BEGIN
 				)
 
 				DECLARE @tblPagos AS TABLE(
-					formaPago varchar(2),
+					formaPago VARCHAR(2),
                     total NUMERIC (18,2)
 				)
 
@@ -129,7 +129,12 @@ BEGIN
 			    LEFT JOIN Sri.TarifaImpuesto ti ON fci.codigo = ti.codImpuesto AND fci.codigoPorcentaje = ti.codigo
 			    WHERE fci.baseImponible > 0
 
-                SELECT * FROM @tblPagos
+                SELECT fp.idFormaPago
+                    ,fp.formaPago
+                    ,fp.descripcion
+                    ,p.total
+                FROM @tblPagos p 
+                    INNER JOIN Sri.FormaPago fp WITH (NOLOCK) ON p.formaPago = fp.formaPago
 			END
 	END TRY
     BEGIN CATCH

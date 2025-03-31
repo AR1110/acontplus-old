@@ -23,6 +23,7 @@ BEGIN
 	    ,@jsonData NVARCHAR(MAX)
 	    ,@codEstab VARCHAR(50)
         ,@idEstablecimiento INT
+        ,@code VARCHAR
         ,@message VARCHAR(500);
 
 	DECLARE @tblMain AS TABLE (jsonData NVARCHAR(3000))
@@ -46,14 +47,26 @@ BEGIN
 			FROM Recepcion.DocumentoRecibido dr WITH(ROWLOCK)
 			JOIN (SELECT idDocumento FROM @tbl) as t ON dr.idDocumento = t.idDocumento
 			WHERE dr.complete = 0
+            AND dr.codDoc <> '07'
+
+            UPDATE dr SET dr.idEstablecimiento = @idEstablecimiento
+			FROM Recepcion.DocumentoRecibido dr WITH(ROWLOCK)
+			JOIN (SELECT idDocumento FROM @tbl) as t ON dr.idDocumento = t.idDocumento
+			WHERE dr.codDoc = '07'
 
             IF (@@ROWCOUNT > 0)
-                SET @message = 'Migración Exitosa: ' + ISNULL(@codEstab, 'NADA') 
-            ELSE
-                SET @message = 'Ningun registro se migro!'
+                BEGIN
+                    SET @code = '0'
+                    SET @message = 'Migración Exitosa: ' + ISNULL(@codEstab, 'NADA') 
+                END
+            ELSE    
+                BEGIN
+                    SET @code = '1'
+                    SET @message = 'Ningun registro se migro!'
+                END
 
 		COMMIT TRAN
-        SELECT '1' code, @message as 'message'
+        SELECT @code code, @message as 'message'
 	END TRY
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
