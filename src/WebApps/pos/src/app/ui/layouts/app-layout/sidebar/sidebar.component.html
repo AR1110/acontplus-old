@@ -71,9 +71,9 @@
     </svg>
 
     @if (!sideNavCollapsed()) {
-    <div class="header-text">
-      <h2>{{ userName() }}</h2>
-    </div>
+      <div class="header-text">
+        <h2>{{ userName() }}</h2>
+      </div>
     }
 
     <button
@@ -87,37 +87,26 @@
 
   <mat-nav-list>
     @for (item of menuItems(); track $index) {
-
-    <a
-      mat-list-item
-      [routerLink]="item.path"
-      #link="routerLinkActive"
-      class="nav-item"
-      routerLinkActive
-      [class.active]="link.isActive"
-      [activated]="link.isActive"
-    >
-      <mat-icon
-        [fontSet]="link.isActive ? 'material-icons' : 'material-icons-outlined'"
-        matListItemIcon
-        >{{ item.icon }}</mat-icon
+      <a
+        mat-list-item
+        [routerLink]="item.path"
+        #link="routerLinkActive"
+        class="nav-item"
+        routerLinkActive
+        [class.active]="link.isActive"
+        [activated]="link.isActive"
       >
-      @if(!sideNavCollapsed()){
-      <span matListItemTitle>{{ item.title }} </span>
-      }
-    </a>
+        <mat-icon
+          [fontSet]="
+            link.isActive ? 'material-icons' : 'material-icons-outlined'
+          "
+          matListItemIcon
+          >{{ item.icon }}</mat-icon
+        >
+        @if (!sideNavCollapsed()) {
+          <span matListItemTitle>{{ item.title }} </span>
+        }
+      </a>
     }
   </mat-nav-list>
-  <div class="sidenav-footer">
-    <a
-      mat-list-item
-      class="nav-item"
-      (click)="toggleTheme()"
-      style="cursor: pointer"
-    >
-      <mat-icon>{{
-        themeService.isDarkMode$ ? "light_mode" : "dark_mode"
-      }}</mat-icon>
-    </a>
-  </div>
 </div>

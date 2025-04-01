@@ -20,22 +20,24 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { HeaderComponent } from './header/header.component';
+import {FooterComponent} from "@core/components/footer/footer.component";
 @Component({
   selector: 'app-app-layout',
-  imports: [
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatTooltipModule,
-    AsyncPipe,
-    SidebarComponent,
-    RouterModule,
-    MatBadgeModule,
-    HeaderComponent,
-  ],
+    imports: [
+        MatSidenavModule,
+        MatListModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatTooltipModule,
+        AsyncPipe,
+        SidebarComponent,
+        RouterModule,
+        MatBadgeModule,
+        HeaderComponent,
+        FooterComponent,
+    ],
   templateUrl: './app-layout.component.html',
   styleUrl: './app-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

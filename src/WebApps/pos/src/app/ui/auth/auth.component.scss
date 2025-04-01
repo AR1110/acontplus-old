@@ -5,7 +5,6 @@
   align-items: center;
   min-height: 75vh;
 }
-
 .login-card {
   padding: 24px;
   border-radius: 12px;
@@ -14,35 +13,27 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
 }
-
 mat-card-header {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 mat-card-title {
   font-size: 1.5rem;
   font-weight: 700;
 }
-
 mat-card-subtitle {
   color: #666;
   .dark-theme & {
     color: #bbb;
   }
 }
-
-
-
 mat-form-field {
   transition: all 0.3s ease;
 }
-
 mat-form-field:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
 @keyframes fadeInDown {
   from {
     opacity: 0;
@@ -53,11 +44,9 @@ mat-form-field:hover {
     transform: translateY(0);
   }
 }
-
-.animate__fadeInDown {
+.fade-in-down {
   animation: fadeInDown 0.5s ease-in-out;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -66,7 +55,6 @@ mat-form-field:hover {
     opacity: 1;
   }
 }
-
-.animate__fadeIn {
+.fade-in {
   animation: fadeIn 0.8s ease-in-out;
 }
