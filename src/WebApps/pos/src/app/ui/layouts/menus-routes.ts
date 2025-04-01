@@ -16,7 +16,7 @@ export const menusRoutes: MenusRoute[] = [
   },
   {
     path: 'pos',
-    title: 'POS',
+    title: 'Punto de Venta',
     icon: 'shopping_cart',
 
   },

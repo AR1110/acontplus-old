@@ -1,8 +1,10 @@
 .info-company {
+  font-family: var(--mdc-text-button-label-text-font, var(--mat-sys-label-large-font));
   font-weight: var(
                   --mdc-text-button-label-text-weight,
                   var(--mat-sys-label-large-weight)
   );
+  font-size: var(--mdc-text-button-label-text-size, var(--mat-sys-label-large-size));
   padding: 10px;
   border-radius: var(--border-radius);
   cursor: pointer;

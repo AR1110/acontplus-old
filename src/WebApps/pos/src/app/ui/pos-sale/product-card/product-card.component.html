@@ -41,27 +41,24 @@
   </div>
 </div>
 
+
 <ng-template
-  cdkConnectedOverlay
-  [cdkConnectedOverlayOrigin]="trigger"
-  [cdkConnectedOverlayOpen]="infoProductCard()"
-  class="info-product-card"
-  hasBackdrop="true"
-  cdkConnectedOverlay
+
+  cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="infoProductCard()"
+
+
   cdkConnectedOverlayPush="true"
   (overlayOutsideClick)="overlayOutsideClick($event)"
 >
-  <div class="info-product-card">
+  <div class="z-50   text-base   rounded divide-y divide-gray-100 shadow  info-product-card">
     <div class="row">
       <div class="col-12 text-start">
-        <!-- Primera columna -->
         <div class="d-flex flex-column small">
           <div><span>Código:</span> {{ product.codigo }}</div>
           <div><span>Nombre:</span> {{ product.descripcion }}</div>
         </div>
       </div>
       <div class="col-12 text-start">
-        <!-- Segunda columna -->
         <div class="d-flex flex-column small">
           <div><span>Iva:</span> {{ product.tipoIva }}</div>
           <div><span>Descripcion:</span> {{ product.summary }}</div>

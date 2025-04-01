@@ -75,7 +75,7 @@ export class AppLayoutComponent {
   // }
   collapsed = signal(false);
   sidenavWidth = computed(() => {
-    return this.collapsed() ? '70px' : '250px';
+    return this.collapsed() ? '70px' : '230px';
   });
 
   toggleSidenav() {

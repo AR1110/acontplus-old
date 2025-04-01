@@ -125,9 +125,9 @@
     z-index: 999; /* Lower than the mat-toolbar to scroll underneath */
     transition: transform 0.2s ease, background-color 0.3s;
 
-    &:hover {
-      background-color: var(--pink);
-    }
+    //&:hover {
+    //  background-color: var(--pink);
+    //}
 
     &:active {
       transform: scale(0.9);
@@ -152,8 +152,9 @@
   text-align: center;
   padding: 10px;
   margin: 0;
-  z-index: 2000; /* Ensure the overlay is above everything */
-  position: absolute;
+  //z-index: 2000;
+  //position: absolute;
+
 }
 
 @media (min-width: 960px) {
