@@ -271,6 +271,10 @@
                     const totalIce = item.cantidad * item.ice;
 
                     acc.totalIce += totalIce;
+
+                    // acc.totalPrecioTotalSinImpuesto = pricingUtils.decPlus(acc.totalPrecioTotalSinImpuesto, fS.roundNumber(item.precioTotalSinImpuesto, pricingUtils.precisionMaxima), pricingUtils.precisionMaxima);
+
+
                     acc.totalPrecioTotalSinImpuesto = pricingUtils.decPlus(acc.totalPrecioTotalSinImpuesto, fS.roundNumber(item.precioTotalSinImpuesto, pricingUtils.max_dos), pricingUtils.precisionMaxima);
 
                     acc.totalDescuento = pricingUtils.decPlus(acc.totalDescuento, item.valorDescuento, pricingUtils.precisionMaxima);
@@ -285,6 +289,10 @@
                 const filteredItems = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
                 return filteredItems.reduce((acc, item) => {
                     acc.totalNetoIva = pricingUtils.decPlus(acc.totalNetoIva, fS.roundNumber(item.precioTotalSinImpuesto, pricingUtils.max_dos), pricingUtils.precisionMaxima);
+
+                    // acc.totalNetoIva = pricingUtils.decPlus(acc.totalNetoIva, fS.roundNumber(item.precioTotalSinImpuesto, pricingUtils.precisionMaxima), pricingUtils.precisionMaxima);
+
+
                     return acc;
                 }, { totalNetoIva: 0 });
             }
