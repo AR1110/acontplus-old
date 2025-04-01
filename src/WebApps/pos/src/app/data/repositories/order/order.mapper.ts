@@ -24,7 +24,7 @@ export class OrderMapper {
 
         taxId: item.taxId,
         taxPercentId: item.taxPercentId,
-        descripcion: item.descripcion,
+        description: item.descripcion,
         taxValue: item.taxValue,
         quantity: item.quantity,
         cost: item.cost,
@@ -42,7 +42,8 @@ export class OrderMapper {
         medidaId: item.medidaId,
         cantidadTransaccion,
         llevaInventario: item.llevaInventario,
-        taxPercent: item.taxPercent
+        taxPercent: item.taxPercent,
+        productId: item.productId
       }
     })
     return results;
