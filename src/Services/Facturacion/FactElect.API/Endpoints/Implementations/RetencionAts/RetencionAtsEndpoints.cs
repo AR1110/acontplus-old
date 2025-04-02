@@ -5,11 +5,13 @@ namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUserContext userContext)
     : IRetencionAtsEndpoints
 {
+    private const string UserRoleId = "userRoleId";
+
     public async Task<IResult> GetRetencionAtsAsync(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleId) },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Results.Ok(await retencionAtsService.GetAsync(parameters));
@@ -24,7 +26,7 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleId) },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(apiRequest.Data)) }
         };
 
@@ -35,7 +37,7 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleId) },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(apiRequest.Data)) }
         };
@@ -47,7 +49,7 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
     {
         var parameters = new Dictionary<string, object>
         {
-            { "id", id }, { "userRoleId", userContext.GetClaimValue<int>("userRoleId") }
+            { "id", id }, { "userRoleId", userContext.GetClaimValue<int>(UserRoleId) }
         };
         return Results.Ok(await retencionAtsService.CancelAsync(parameters));
     }
@@ -56,7 +58,7 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
     {
         var parameters = new Dictionary<string, object>
         {
-            { "id", id }, { "userRoleId", userContext.GetClaimValue<int>("userRoleId") }
+            { "id", id }, { "userRoleId", userContext.GetClaimValue<int>(UserRoleId) }
         };
         return Results.Ok(await retencionAtsService.DeleteAsync(parameters));
     }
