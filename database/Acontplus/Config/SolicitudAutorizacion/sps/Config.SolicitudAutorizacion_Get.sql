@@ -93,7 +93,7 @@ BEGIN
                 totalRecords = COUNT(*) OVER()
             FROM Config.vw_Solicitud_Autorizacion s
             INNER JOIN Config.vw_Solicitud_Auth_Admin_Role r ON s.idSolicitudAutorizacion = r.idSolicitudAutorizacion
-            WHERE r.idUsuarioRol = @userRoleId;
+            WHERE r.idUsuarioRol = @userRoleId
             '
 
             IF @codEstab IS NOT NULL
@@ -191,7 +191,7 @@ BEGIN
 				CodigoModulo,
 				CodigoEstado
 			FROM
-				 Config.vw_SolicitudAutorizacion WITH(NOLOCK)
+				 Config.vw_Solicitud_Autorizacion WITH(NOLOCK)
 			WHERE
 				IdDocumento  = JSON_VALUE(@json, '$.idDocumento')
 				AND CodigoModulo = JSON_VALUE(@json, '$.codigoModulo')
@@ -222,7 +222,7 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				SELECT '2' AS code, 'Puede Editar o Anular' AS message
+				SELECT '1' AS code, 'Puede Editar o Anular' AS message
 				RETURN
 			END
 			

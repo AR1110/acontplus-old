@@ -1,4 +1,4 @@
-USE Acontplus 
+USE Acontplus  
  
 CREATE   TABLE Config.SolicitudAutorizacion (
     Id INT IDENTITY(1,1) PRIMARY KEY,
