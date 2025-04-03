@@ -68,24 +68,33 @@ BEGIN
                           ,@pageSize INT
                           ,@usuarioSolicitanteId INT'
 
-            DECLARE @sql NVARCHAR(MAX) = ' SELECT 
-                                                rowguid
-                                               ,idSolicitudAutorizacion
-			                                   ,usuarioAprobante
-                                               ,usuarioSolicitante
-                                               ,codigoAccion
-                                               ,codigoEstado
-                                               ,nombreAccion
-                                               ,nombreEstado
-                                               ,obs
-                                               ,fechaRegistro  = FORMAT(s.fechaRegistro, ''dd/MM/yyyy HH:mm'')
-                                               ,fechaRespuesta  = FORMAT(s.fechaRespuesta, ''dd/MM/yyyy HH:mm'')
-                                               ,codigoModulo  
-                                               ,nombreModulo
-                                               ,serieComprobante   
-                                               ,totalRecords = count(*)     over()
-			                              FROM Config.vw_SolicitudAutorizacion  s  
-			                              WHERE s.idUsuarioRolAprobante = @userRoleId  '
+            DECLARE @sql NVARCHAR(MAX) = '
+            SELECT 
+                s.rowguid,
+                s.idSolicitudAutorizacion,
+                s.usuarioAprobante,
+                s.usuarioSolicitante,
+                s.codigoAccion,
+                s.codigoEstado,
+                s.nombreAccion,
+                s.nombreEstado,
+                s.obs,
+                fechaRegistro = FORMAT(s.fechaRegistro, ''dd/MM/yyyy HH:mm''),
+                fechaRespuesta = FORMAT(s.fechaRespuesta, ''dd/MM/yyyy HH:mm''),
+                s.codigoModulo,
+                s.nombreModulo,
+                s.serieComprobante,
+                nomAdminRoles = (
+                    SELECT STRING_AGG(apr.BusinessName, '', '')  
+                    FROM Config.vw_Solicitud_Auth_Admin_Role apr
+                    WHERE apr.idSolicitudAutorizacion = s.idSolicitudAutorizacion   
+                    GROUP BY apr.idSolicitudAutorizacion
+                ),
+                totalRecords = COUNT(*) OVER()
+            FROM Config.vw_Solicitud_Autorizacion s
+            INNER JOIN Config.vw_Solicitud_Auth_Admin_Role r ON s.idSolicitudAutorizacion = r.idSolicitudAutorizacion
+            WHERE r.idUsuarioRol = @userRoleId;
+            '
 
             IF @codEstab IS NOT NULL
 				BEGIN

@@ -37,6 +37,7 @@ BEGIN
 	DECLARE @idEntidad INT 
 	DECLARE @userIdFrontEnd INT 
     DECLARE @userId INT  
+    DECLARE @adminRolesJson VARCHAR(400)
 
 	DECLARE @tbUsersAdmin as Table (
 		idUsuarioRolAprobante INT NOT NULL UNIQUE
@@ -70,6 +71,8 @@ BEGIN
 
     SELECT top 1 @idEntidad = idEntidad, @userId = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 	SELECT TOP 1 @idUsuarioRolSolicitante = idUsuarioRol FROM v_usuario WHERE idEntidad = idEntidad AND idUsuario = @userIdFrontEnd
+
+    SELECT @adminRolesJson = usersAdmin FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId 
 
 	INSERT INTO @tbUsersAdmin (idUsuarioRolAprobante)
     SELECT 
@@ -105,9 +108,9 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN 	 
 
-			INSERT INTO Config.SolicitudAutorizacion(IdUsuarioRolSolicitante,IdUsuarioRolAprobante,IdEntidad,CodigoModulo,IdDocumentoRef,CodigoAccion,FechaRegistro,obs,infoExtraJson,RowGuid)
-			SELECT  @idUsuarioRolSolicitante,idUsuarioRolAprobante, @idEntidad, @codigoModulo, @idDocumentoRef, @codigoAccion, dbo.ufnGetDateEcuador(), @obs, @infoExtraJson, @rowguid
-			FROM @tbUsersAdmin
+			INSERT INTO Config.SolicitudAutorizacion(IdUsuarioRolSolicitante,IdEntidad,CodigoModulo,IdDocumentoRef,CodigoAccion,FechaRegistro,obs,AdminRolesJson, infoExtraJson,RowGuid)
+			SELECT  @idUsuarioRolSolicitante, @idEntidad, @codigoModulo, @idDocumentoRef, @codigoAccion, dbo.ufnGetDateEcuador(), @obs, @adminRolesJson, @infoExtraJson, @rowguid
+		--	FROM @tbUsersAdmin
 			 
              SET  @idSolicitudAutorizacion = @@IDENTITY
 

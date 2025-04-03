@@ -108,7 +108,7 @@ export class DateRangeSelectionComponent {
 
     //const valorInput = this.dateRangeInput.nativeElement;
       const valorInput = document.getElementById(`${this.uniqueId}`) as any;
-      console.log(valorInput);
+
 
 
     (function (DateRangePicker) {

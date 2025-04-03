@@ -10,6 +10,7 @@ export interface SolicitudAutorizacionList extends SolicitudAutorizacion{
   idSolicitudAutorizacion: number
   usuarioAprobante: string
   usuarioSolicitante: string
+  nomAdminRoles: string
   codigoAccion:string
   codigoEstado: "A" | "P" | "F" | "R"
   nombreAccion: string

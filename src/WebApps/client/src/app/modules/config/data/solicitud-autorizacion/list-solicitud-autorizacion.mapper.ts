@@ -31,7 +31,8 @@ export class ListSolicitudAutorizacionMapper {
         codigoModulo: item.codigoModulo,
         nombreModulo: item.nombreModulo,
         serieComprobante: item.serieComprobante,
-        totalRecords: item.serieComprobante
+        totalRecords: item.serieComprobante,
+        nomAdminRoles: item.nomAdminRoles
       }
     })
     const totalRecords = data.length>0 ? data[0].totalRecords: 0
