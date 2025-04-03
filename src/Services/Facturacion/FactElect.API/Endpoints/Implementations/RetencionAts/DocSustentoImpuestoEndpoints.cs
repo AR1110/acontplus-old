@@ -2,7 +2,7 @@
 
 namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
-public class DocSustentoImpuestoEndpoints(IDocSustentoImpuestoService docSustentoImpuestoService, UserContext userContext)
+public class DocSustentoImpuestoEndpoints(IDocSustentoImpuestoService docSustentoImpuestoService, IUserContext userContext)
     : IDocSustentoImpuestoEndpoints
 {
     private const string UserRoleClaimType = "userRoleId";

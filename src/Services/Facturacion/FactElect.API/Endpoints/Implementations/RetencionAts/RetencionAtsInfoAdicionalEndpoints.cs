@@ -4,7 +4,7 @@ namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class RetencionAtsInfoAdicionalEndpoints(
     IRetencionAtsInfoAdicionalService retencionAtsInfoAdicionalService,
-    UserContext userContext) : IRetencionAtsInfoAdicionalEndpoints
+    IUserContext userContext) : IRetencionAtsInfoAdicionalEndpoints
 {
     private const string UserRoleClaimType = "userRoleId";
 
