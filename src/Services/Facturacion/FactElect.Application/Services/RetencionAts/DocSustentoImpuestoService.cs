@@ -1,6 +1,6 @@
 ﻿namespace FactElect.Application.Services.RetencionAts;
 
-public class DocSustImpuestoService(IAdoRepository adoRepository) : IDocSustImpuestoService
+public class DocSustentoImpuestoService(IAdoRepository adoRepository) : IDocSustentoImpuestoService
 {
     private const string ModuleName = "FactElect.RetAts_Doc_Sust_Imp_";
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

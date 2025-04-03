@@ -1,6 +1,6 @@
 ﻿namespace FactElect.Application.Services.RetencionAts;
 
-public class RetAtsInfoAdicionalService(IAdoRepository adoRepository) : IRetAtsInfoAdicionalService
+public class RetencionAtsInfoAdicionalService(IAdoRepository adoRepository) : IRetencionAtsInfoAdicionalService
 {
     private const string ModuleName = "FactElect.RetAts_InfoAdicional_";
 

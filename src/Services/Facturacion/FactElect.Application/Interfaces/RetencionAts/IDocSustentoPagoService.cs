@@ -1,5 +1,5 @@
 ﻿namespace FactElect.Application.Interfaces.RetencionAts;
-public interface IDocSustImpuestoService
+public interface IDocSustentoPagoService
 {
     Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
     Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
