@@ -105,6 +105,7 @@ export class AuthComponent {
       })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((response) => {
+        console.log(response)
         if (response.code === '0') {
           this.tS.toastr({
             type: 'warning',
