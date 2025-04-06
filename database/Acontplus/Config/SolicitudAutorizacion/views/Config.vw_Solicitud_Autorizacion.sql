@@ -1,6 +1,6 @@
 USE Acontplus
 GO
-CREATE OR ALTER VIEW Config.vw_SolicitudAutorizacion
+CREATE OR ALTER VIEW Config.vw_Solicitud_Autorizacion
 AS
 SELECT  
     s.rowguid,
@@ -41,9 +41,11 @@ FROM
         codEstab VARCHAR(150) 
     ) AS jsonData
     INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = s.idEntidad
-    INNER JOIN App.UsuarioRol ura WITH(NOLOCK) ON ura.idUsuarioRol = s.idUsuarioRolAprobante
-    INNER JOIN Usuario u_aprob WITH(NOLOCK) ON u_aprob.idUsuario = ura.idUsuario
-    INNER JOIN Customer.Customer cc_aprob WITH(NOLOCK) ON cc_aprob.Id = u_aprob.customerId
+    --Usuario que aprueba
+    LEFT JOIN App.UsuarioRol ura WITH(NOLOCK) ON ura.idUsuarioRol = s.idUsuarioRolAprobante
+    LEFT JOIN Usuario u_aprob WITH(NOLOCK) ON u_aprob.idUsuario = ura.idUsuario
+    LEFT JOIN Customer.Customer cc_aprob WITH(NOLOCK) ON cc_aprob.Id = u_aprob.customerId
+    --Usuario que solicita
     INNER JOIN App.UsuarioRol urs WITH(NOLOCK) ON urs.idUsuarioRol = s.idUsuarioRolSolicitante
     INNER JOIN Usuario u_soli WITH(NOLOCK) ON u_soli.idUsuario = urs.idUsuario
     INNER JOIN Customer.Customer cc_soli WITH(NOLOCK) ON cc_soli.Id = u_soli.customerId

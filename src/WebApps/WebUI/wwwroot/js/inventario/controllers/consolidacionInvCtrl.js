@@ -37,13 +37,21 @@
 
         $scope.btnEditDisabled = false;
         $scope.dataSearch = {
-            pageSize: 25,
+            pageSize: 10,
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
-            ckFecha: true
+            ckFecha: true,
+            tipoDocId: 0,
+            // fechaInicio: fS.formatDateMoment(new Date()),
+            // fechaFin: fS.formatDateMoment(new Date()),
+
         }
-        $scope.recordsQuantity = [5, 25, 50, 100];
+        $scope.recordsQuantity = [5,10, 25, 50, 100];
+
+        $scope.tiposDoc = []
+
+        $scope.refresh = refresh;
 
         $scope.openModalNew = function () {
             try {
@@ -67,19 +75,48 @@
             }
         }
 
+        function refresh(){
+            getList()
+        }
 
-        $scope.getConsolidaciones = () => {
+       
+        function getList(){
             try {
-                $scope.consolidaciones = []
+
+                if ( $scope.dataSearch.nroSecuencial) {
+                    if (
+                        !fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    ) {
+                        $scope.dataSearch.ckFecha = true;
+                        tS.toastr({
+                            type: "warning",
+                            message:
+                                "Define correctamente el número de secuencial o el rango de número secuencial!",
+                        });
+                        return;
+                    }
+                    $scope.dataSearch.ckFecha = false;
+                    tS.toastr({
+                        type: "info",
+                        message: "Buscando por número secuencial",
+                    });
+                }
 
                 showLoader();
                 let params = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     ckFecha: $scope.dataSearch.ckFecha,
-                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    fechaInicio:fS.formatDateMoment( $scope.dataSearch.fechaInicio),
+                    fechaFin:  fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    nroSecuencial: fS.validAndFormatedRangeSequential(
+                        $scope.dataSearch.nroSecuencial
+                    ),
+                    tipoDocId: fS.getValidId($scope.dataSearch.tipoDocId),
+                    textSearch: fS.isValidField($scope.dataSearch.textSearch)
                 }
+                
+                $scope.consolidaciones = []; 
                 consolidacionInvSvc.getAll(params).then(response => {
                     $scope.consolidaciones = response;
                     $scope.dataSearch.totalRecords = $scope.consolidaciones.length > 0 ? $scope.consolidaciones[0].totalRecords : 0;
@@ -96,22 +133,24 @@
                 console.log(error)
             }
         }
+ 
 
 
         initLoad();
-        function initLoad() {
+        function initLoad() { 
             try {
                 showLoader();
                 consolidacionInvSvc.getDataForm().then(response => {
                     mainDataForm = response;
-                    let { estabs } = response;
+                    let { estabs } = response; 
+                    $scope.tiposDoc = response.tipoDocumento;
                     establecimientos = estabs;
 
                     if (establecimientos.length > 0) {
                         let dataEstab = establecimientos.find(estab => (estab.defaultEstab));
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
                     }
-                    $scope.getConsolidaciones();
+                    getList()
                 })
                     .catch(error => {
                         console.log(error)
@@ -126,16 +165,16 @@
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate;
             $scope.dataSearch.fechaFin = item.endDate
-            $scope.getConsolidaciones();
+             getList()
         }
 
         $scope.pagechanged = function () {
-            $scope.getConsolidaciones();
+            getList()
         };
 
         $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getConsolidaciones();
+            getList()
         };
 
         $scope.getListaFilter = () => {
@@ -288,7 +327,7 @@
                         }
                         if (response.code === "1") {
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            $scope.getConsolidaciones();
+                            getList()
                         }
                     }).catch(error => {
                         console.log(error)

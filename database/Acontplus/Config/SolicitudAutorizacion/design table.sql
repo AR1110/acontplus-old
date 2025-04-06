@@ -1,8 +1,9 @@
-USE Acontplus
+USE Acontplus  
+ 
 CREATE   TABLE Config.SolicitudAutorizacion (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     IdUsuarioRolSolicitante INT NOT NULL,
-	IdUsuarioRolAprobante INT NOT NULL,
+	IdUsuarioRolAprobante INT NULL,
 	IdEntidad INT NOT NULL,
 	CodigoModulo VARCHAR(5),
 	IdDocumentoRef INT ,
@@ -12,7 +13,8 @@ CREATE   TABLE Config.SolicitudAutorizacion (
     FechaRespuesta DATETIME NULL,
    
     obs VARCHAR(200),
-    infoExtraJson  NVARCHAR(MAX) NULL,  -- Columna para guardar JSON
+    AdminRolesJson NVARCHAR(MAX) NOT NULL,
+    infoExtraJson  NVARCHAR(MAX) NOT NULL,  
 	RowGuid UNIQUEIDENTIFIER NOT NULL
     
     FOREIGN KEY (IdUsuarioRolSolicitante) REFERENCES App.UsuarioRol(idUsuarioRol), 

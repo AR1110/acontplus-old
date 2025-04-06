@@ -1,10 +1,9 @@
-﻿ 
-@page
+﻿@page
 @model WebUI.Pages.Inventario.Consolidacion.IndexModel
 
 @{
     ViewData["Title"] = "Index";
-    
+
 }
 <div ng-controller="consolidacionInvCtrl">
 
@@ -25,58 +24,80 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-12">
-
-                            <div class="d-flex flex-row">
-                                <div class="p-2">
-                                    <select class="form-control border-select" ng-model="dataSearch.pageSize"
-                                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
-                                    </select>
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="row">
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label for="tipoDoc">Tipo Documento: </label>
+                                        <select name="tipoDoc" id="tipoDoc" ng-model="dataSearch.tipoDocId"
+                                            class="form-control border-select" ng-change="refresh()">
+                                            <option ng-value="0">Todos</option>
+                                            <option ng-value="item.idTipoDocumento" ng-repeat="item in tiposDoc">
+                                                {{item.descripcion}}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="p-2">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <div class="custom-control custom-checkbox mr-sm-2">
-                                                    <input type="checkbox" ng-model="dataSearch.ckFecha" 
-                                                        class="custom-control-input" id="checkBoxFecha">
-                                                    <label class="custom-control-label" for="checkBoxFecha"></label>
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label for="">Rango fecha</label>
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <div class="custom-control custom-checkbox mr-sm-2">
+                                                        <input type="checkbox" ng-model="dataSearch.ckFecha"
+                                                            class="custom-control-input" id="checkBoxFecha"
+                                                            ng-change="refresh()">
+                                                        <label class="custom-control-label" for="checkBoxFecha"></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <date-range-filter current-date="dataSearch.fechaInicio"
-                                            start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                            result-range-date="resultRangeFilter(result)"></date-range-filter>
-                                    </div>
-                                </div> 
-                            </div>
-                            
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-12">
-                            <div class="d-flex flex-row-reverse">
-                                <form class="form-material">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" ng-keyup="getListaFilter()"
-                                            ng-model="dataSearch.bySearch" placeholder="Buscar" />
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-info btn-xs"
-                                                ng-click="getConsolidaciones()">
-                                                <i class="fas fa-redo fa-xs"></i>
-                                            </button>
+                                            <date-range-filter current-date="dataSearch.fechaInicio"
+                                                start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                result-range-date="resultRangeFilter(result)"></date-range-filter>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="row">
+                                <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="nroDoc">Número documento</label>
+                                        <input type="text" class="form-control border-select"
+                                            ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123 o 1-30">
+                                    </div>
+                                </div>
+                                <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="observacion">Observación</label>
+                                        <input type="text" class="form-control border-select"
+                                            ng-model="dataSearch.textSearch" placeholder="...">
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12 d-flex align-items-center ">
+                                    <button type="button" class="btn btn-success btn-sm" ng-click="refresh()">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                     
+
+
+
                     <md-table-container style="max-height: 350px;">
                         <table md-table>
                             <thead fix-head md-head>
                                 <tr md-row>
-                                    <th md-column></th>
-                                    <th md-column>N°</th>
+                                    <th md-column>#</th>
+                                    <th md-column>Op.</th>
                                     <th md-column>Documento</th>
                                     <th md-column>N°. Documento</th>
                                     <th md-column>Fecha Emisión</th>
@@ -109,7 +130,7 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                 <md-menu-item ng-if="accion.crear" >
+                                                <md-menu-item ng-if="accion.crear">
                                                     <md-button ng-click="openModalDuplicar(item)"
                                                         ng-disabled="item.anulada">
                                                         <span md-menu-align-target><i class="ti-file"></i>
@@ -141,12 +162,12 @@
                                     <td md-cell>${{item.total}}</td>
                                 </tr>
                                 <tr class="text-center" ng-show="consolidaciones.length===0">
-                                    <td colspan="7">No hay registros en esta Tabla</td>
+                                    <td colspan="8">No hay registros en esta Tabla</td>
                                 </tr>
                             </tbody>
                             <tfoot md-foot>
                                 <tr md-row>
-                                    <td md-cell colspan="6"><strong>Total:</strong></td>
+                                    <td md-cell colspan="7"><strong>Total:</strong></td>
                                     <td md-cell>{{total}}</td>
                                 </tr>
                             </tfoot>
@@ -154,16 +175,23 @@
                     </md-table-container>
                 </div>
                 <div class="card-body">
-                    <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
-                        ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
-                        class="pagination" boundary-links="true" rotate="false"></ul>
+                    <div class="d-flex justify-content-between">
+                        <div class="p-2">
+                            <select class="form-control border-select" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            </select>
+                        </div>
+                        <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                            class="pagination" boundary-links="true" rotate="false"></ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
-@section Scripts { 
-     <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script> 
+@section Scripts {
+    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
     <script src="~/js/inventario/controllers/consolidacionInvCtrl.min.js" asp-append-version="true"></script>
 }

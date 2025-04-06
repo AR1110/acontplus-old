@@ -75,3 +75,13 @@ export const truncateText = function (text: string | undefined, maxLength: numbe
     ? `${text.substring(0, maxLength)}...`
     : text;
 }
+
+
+export const  isValidJSON = function (texto: string): boolean {
+  try {
+    JSON.parse(texto);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}

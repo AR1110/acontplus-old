@@ -31,6 +31,7 @@
         $scope.recordsQuantity = [25, 50, 75, 100];
 
         $scope.dataSearch = {
+            ckFecha: true,
             pageIndex: 1,
             pageSize: 25,
             totalRecords: 0,
@@ -48,7 +49,7 @@
                 })
                 modalRef.result.then(result => {
                     if (typeof result === 'object') {
-                        $scope.getTransferenciasBodega();
+                        getList()
                     }
                 })
             } catch (error) {
@@ -56,25 +57,53 @@
             }
         }
 
+        $scope.refresh = function(){
+            getList()
+        }
 
         $scope.resultDateRange = function (item) {
             $scope.dataSearch.checkBoxFecha = true;
             $scope.dataSearch.startDate = item.startDate;
             $scope.dataSearch.endDate = item.endDate;
 
-            $scope.getTransferenciasBodega();
+            getList()
         }
 
-        $scope.getTransferenciasBodega = function () {
+         function getList () {
 
             try {
+
+                if ( $scope.dataSearch.nroSecuencial) {
+                    if (
+                        !fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    ) {
+                        $scope.dataSearch.ckFecha = true;
+                        tS.toastr({
+                            type: "warning",
+                            message:
+                                "Define correctamente el número de secuencial o el rango de número secuencial!",
+                        });
+                        return;
+                    }
+                    $scope.dataSearch.ckFecha = false;
+                    tS.toastr({
+                        type: "info",
+                        message: "Buscando por número secuencial",
+                    });
+                }
+
+
                 let query = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                    ckFecha: $scope.dataSearch.ckFecha,
                     startDate: fS.formatDateMoment($scope.dataSearch.startDate),
                     endDate: fS.formatDateMoment($scope.dataSearch.endDate),
+                    nroSecuencial: fS.validAndFormatedRangeSequential(
+                        $scope.dataSearch.nroSecuencial
+                    ),
                 }
                 $scope.transferenciasBodegas = [];
                 showLoader();
@@ -115,7 +144,7 @@
                         if (dataPuntoEmision) {
                             $scope.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                         }
-                        $scope.getTransferenciasBodega();
+                        getList()
                     }
                 })
                     .catch(error => {
@@ -133,12 +162,12 @@
         }
 
         $scope.pagechanged = function () {
-            $scope.getTransferenciasBodega();
+            getList()
         };
 
         $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getTransferenciasBodega();
+            getList()
         };
 
 
@@ -164,7 +193,7 @@
                     })
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
-                            $scope.getTransferenciasBodega();
+                            getList()
                         }
                     })
                 }).catch(error => {
@@ -196,7 +225,7 @@
                 })
                 modalRef.result.then(result => {
                     if (typeof result === 'object') {
-                        $scope.getTransferenciasBodega();
+                        getList()
                     }
                 })
 
@@ -232,7 +261,7 @@
                     if (response.code === "1") {
 
                         fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                        $scope.getTransferenciasBodega();
+                        getList()
                     }
                 }).catch(error => {
                     hideLoader();
@@ -326,7 +355,7 @@
             if ($scope.gridApi) {
                 $timeout(() => {
                     $scope.gridApi.core.handleWindowResize();
-                    $scope.gridApi.grid.refresh();
+                    $scope.gridApi.grid.getList();
                 }, 5);
             }
 
