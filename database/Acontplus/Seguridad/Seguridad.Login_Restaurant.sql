@@ -59,6 +59,77 @@ BEGIN
 			                    ,businessName     = e.nombreComercial 
 			                    ,IDCardCompany    = e.ruc
 				                ,companyId        = e.idEntidad
+
+                                ,menus =    (
+                                                SELECT  m.id
+                                                        ,m.code
+	                                                    ,m.[url]
+	                                                    ,isnull(m.icon, '') icon
+	                                                    ,m.[name]
+	                                                    ,m.submenu
+                                                    FROM AcontplusAdmin.Seguridad.LicenciaAccesoDetalle lad WITH (NOLOCK)
+	                                                INNER JOIN AcontplusAdmin.Config.Submenu             sm WITH (NOLOCK) ON lad.SubmenuId = sm.Id
+	                                                INNER JOIN AcontplusAdmin.Config.Menu                 m WITH (NOLOCK) ON sm.MenuId = m.Id
+	                                                INNER JOIN AcontplusAdmin.Config.Aplicacion         a WITH (NOLOCK) ON m.AplicacionId = a.Id 
+                                                    INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[Enabled] = 1
+	                                                INNER JOIN AcontplusAdmin.Config.LicenciaDetalle   ld WITH (NOLOCK) ON a.Id = ld.AplicacionId  AND ld.LicenciaId = la.LicenciaId
+	                                                INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[Enabled] = 1
+	                                                INNER JOIN AcontplusAdmin.Sales.Suscripcion         s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[Enabled] = 1
+	                                                INNER JOIN AcontplusAdmin.Config.Company           cc WITH (NOLOCK) ON s.CompanyId = cc.Id
+	                                                INNER JOIN Acontplus.dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
+	                                                INNER JOIN Acontplus.App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
+                                                    WHERE urr.idUsuarioRol = r.idUsuarioRol
+                                                    AND a.Code='AR' AND a.[Enabled] = 1
+	                                                AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) 
+                                                                                            INNER JOIN AcontplusAdmin.Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
+                                                                                            INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
+                                                                                            WHERE enn.idEntidad = r.idEntidad
+                                                                                            AND s.[Enabled] = 1
+							                                                ORDER BY s.Id DESC
+							                                                )
+                                                        GROUP BY m.Id 
+                                                            ,m.Code
+	                                                        ,m.[Url]
+	                                                        ,m.Icon
+	                                                        ,m.[Name]
+	                                                        ,m.Submenu 
+                                                            ,m.[Order]
+                                                        ORDER BY m.[Order]     
+                                                        FOR JSON PATH
+                                
+                                
+                                )
+                                ,submenus = (SELECT sm.code
+	                                                ,sm.[url]
+	                                                ,isnull(sm.icon, '') icon
+	                                                ,sm.[name]
+	                                                ,sm.[order]
+	                                                ,sm.menuId
+                                                    ,isnull(lad.actions, '[]') actions
+                                            FROM AcontplusAdmin.Seguridad.LicenciaAccesoDetalle lad WITH (NOLOCK)
+	                                        INNER JOIN AcontplusAdmin.Config.Submenu sm WITH (NOLOCK) ON lad.SubmenuId = sm.Id
+	                                        INNER JOIN AcontplusAdmin.Config.Menu m WITH (NOLOCK) ON sm.MenuId = m.Id
+	                                        INNER JOIN AcontplusAdmin.Config.Aplicacion a WITH (NOLOCK) ON m.AplicacionId = a.Id
+                                            INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[Enabled] = 1
+	                                        INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld WITH (NOLOCK) ON a.Id = ld.AplicacionId  AND ld.LicenciaId = la.LicenciaId
+	                                        INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[Enabled] = 1
+	                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[Enabled] = 1
+	                                        INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON s.CompanyId = cc.Id
+	                                        INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON cc.Uuid = en.Uuid
+	                                        INNER JOIN Acontplus.App.UsuarioRol urr WITH (NOLOCK) ON la.RoleId = urr.RoleId
+                                            AND urr.idEntidad = en.idEntidad
+                                            WHERE urr.idUsuarioRol = r.idUsuarioRol
+                                            AND a.Code='AR' AND a.[Enabled] = 1
+	                                        AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) 
+                                                                                INNER JOIN AcontplusAdmin.Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
+                                                                                INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
+                                                                                WHERE enn.idEntidad = r.idEntidad
+                                                                                    AND s.[Enabled] = 1
+							                                        ORDER BY s.Id DESC
+							                                        )
+                                            ORDER BY m.[Order]      
+                                            ,[sm].[Order] 
+                                            FOR JSON PATH)
                                 ,establecimientos = (
                                                         SELECT  v_eai.*
                                                                ,v_ui.idEntidad
