@@ -64,7 +64,7 @@ BEGIN
 				
 			IF @tipo = 2  
 				BEGIN 
-                    SELECT top 1 @id=idSolicitudAutorizacion,@rowguid = rowguid FROM Config.vw_Solicitud_Autorizacion WHERE idUsuarioRolSolicitante = @userRoleId 
+                    SELECT top 1 @id=idSolicitudAutorizacion,@rowguid = rowguid FROM Config.vw_Solicitud_Autorizacion WHERE userRoleIdLogged = @userRoleId 
                                                                                 AND idDocumento = @idDocumento 
                                                                                 AND codigoModulo      = @codigoModulo
                                                                                AND codigoAccion = @codigoAccion 

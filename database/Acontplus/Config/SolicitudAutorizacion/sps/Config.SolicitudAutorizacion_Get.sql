@@ -196,7 +196,7 @@ BEGIN
 				IdDocumento  = JSON_VALUE(@json, '$.idDocumento')
 				AND CodigoModulo = JSON_VALUE(@json, '$.codigoModulo')
 				AND CodigoAccion = JSON_VALUE(@json, '$.codigoAccion')
-				AND IdUsuarioRolSolicitante = @userRoleId
+				AND userRoleIdLogged = @userRoleId
 				AND CodigoEstado NOT IN ('F', 'R')
 
 			-- Validar la solicitud y enviar la respuesta correspondiente

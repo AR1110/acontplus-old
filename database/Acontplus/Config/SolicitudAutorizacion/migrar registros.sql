@@ -2,7 +2,7 @@ USE Acontplus
 
 INSERT INTO Config.SolicitudAutorizacion (
     IdUsuarioRolSolicitante, IdUsuarioRolAprobante, IdEntidad, obs, CodigoModulo, IdDocumentoRef,
-    CodigoAccion, CodigoEstado, FechaRegistro, FechaRespuesta, RowGuid, AdminRolesJson, infoExtraJson
+    CodigoAccion, CodigoEstado, FechaRegistro, FechaRespuesta, RowGuid, AdminRolesJson, infoExtraJson, userRoleIdLogged
 )
 SELECT 
     idUsuarioRolSolicitante, idUsuarioRolAprobante, idEntidad, observacion, codDoc,idDocumento,
@@ -14,7 +14,8 @@ SELECT
         '"serieComprobante": "',  serieComprobante, '",',
 		'"codEstab": "',  codEstab, '"',
         '}'
-    )
+    ),
+    idUsuarioRolSolicitante
 FROM Config.v_User_Request
 
 SELECT   * FROM Config.vw_Solicitud_Autorizacion

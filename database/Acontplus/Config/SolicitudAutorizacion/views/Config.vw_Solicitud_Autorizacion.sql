@@ -3,6 +3,7 @@ GO
 CREATE OR ALTER VIEW Config.vw_Solicitud_Autorizacion
 AS
 SELECT  
+    s.id,
     s.rowguid,
     e.ruc AS rucEmpresa,
     e.razonSocial,
@@ -11,6 +12,7 @@ SELECT
     s.Id AS idSolicitudAutorizacion,
     s.idUsuarioRolAprobante,
     s.idUsuarioRolSolicitante,
+    s.userRoleIdLogged,
     cc_aprob.BusinessName AS usuarioAprobante,
     cc_soli.BusinessName AS usuarioSolicitante,
     s.codigoAccion,
@@ -31,7 +33,8 @@ SELECT
     s.IdDocumentoRef AS idDocumento,
     s.codigoModulo,
     jsonData.nombreModulo,
-    jsonData.serieComprobante
+    jsonData.serieComprobante 
+
 FROM 
     Config.SolicitudAutorizacion s
     OUTER APPLY OPENJSON(s.infoExtraJson)

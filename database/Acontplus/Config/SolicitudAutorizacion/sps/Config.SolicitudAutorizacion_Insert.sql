@@ -108,8 +108,8 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN 	 
 
-			INSERT INTO Config.SolicitudAutorizacion(IdUsuarioRolSolicitante,IdEntidad,CodigoModulo,IdDocumentoRef,CodigoAccion,FechaRegistro,obs,AdminRolesJson, infoExtraJson,RowGuid)
-			SELECT  @idUsuarioRolSolicitante, @idEntidad, @codigoModulo, @idDocumentoRef, @codigoAccion, dbo.ufnGetDateEcuador(), @obs, @adminRolesJson, @infoExtraJson, @rowguid
+			INSERT INTO Config.SolicitudAutorizacion(IdUsuarioRolSolicitante,IdEntidad,CodigoModulo,IdDocumentoRef,CodigoAccion,FechaRegistro,obs,AdminRolesJson, infoExtraJson,RowGuid, userRoleIdLogged)
+			SELECT  @idUsuarioRolSolicitante, @idEntidad, @codigoModulo, @idDocumentoRef, @codigoAccion, dbo.ufnGetDateEcuador(), @obs, @adminRolesJson, @infoExtraJson, @rowguid, @userRoleId
 		--	FROM @tbUsersAdmin
 			 
              SET  @idSolicitudAutorizacion = @@IDENTITY

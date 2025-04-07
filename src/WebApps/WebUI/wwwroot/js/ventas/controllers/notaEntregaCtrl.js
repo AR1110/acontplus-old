@@ -441,6 +441,7 @@
                             getNotaEntregas();
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
                                 // userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                                console.log('update')
                                 $solicitudAutorizacionSvc.update(paramsPermission)
 
                             }

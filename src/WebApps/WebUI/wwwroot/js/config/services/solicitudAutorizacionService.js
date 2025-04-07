@@ -17,14 +17,14 @@
         }
 
 
-        function update(){ 
+        function update(params){ 
             let data = {
                 idDocumento: params.idDocumento,
                 codigoModulo: params.codigoModulo,
                 codigoAccion: params.codigoAccion,
                 tipo: 2
             }
-            mS.getData('put', `${url}`, { data }).then(response => {
+            $mS.getData('put', `${url}`, { data }).then(response => {
                 console.log(response)
             })
         }
