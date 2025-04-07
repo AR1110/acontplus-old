@@ -20,9 +20,12 @@ export class MenuLocalStorageRepositoryImpl implements MenuRepository {
 
 
   getMenus(): Observable<MenuItem[]> {
-    const {menus=[], submenus=[]} = this.$tokenUseCase.getUserData() as any;
-    console.log(menus)
-    console.log(submenus)
+    const userData = this.$tokenUseCase.getUserData() as any;
+    if(!userData) return of([])
+
+    const menus = userData.menus || [];
+    const submenus = userData.submenus || [];
+
 
     const submenusResult = submenus.map((sm:any)=>{
       let actions = {}
@@ -41,15 +44,13 @@ export class MenuLocalStorageRepositoryImpl implements MenuRepository {
       }
     })
 
-    const result = menus.map((m:any)=>{
-        m.children = submenusResult.filter((sm: any)=>sm.menuId===m.id && ["POS", "OR"].includes(sm.code))
+    const result = menus.filter((m:any)=>m.code==='POS').map((m:any)=>{
+        m.children = submenusResult.filter((sm: any)=>sm.menuId===m.id)
 
       return m;
     })
 
-    console.log(result)
-    //  const menus = this.storageService.get<MenuItem[]>(this.MENU_KEY) || [];
-    return of(menus);
+    return of(result);
   }
 
   getSubmenusByParentId(parentId: string): Observable<SubMenuItem[]> {

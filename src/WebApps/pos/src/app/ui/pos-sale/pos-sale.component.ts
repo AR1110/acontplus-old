@@ -27,6 +27,8 @@ import { DialogService } from '@/domain/services/dialog.service';
 import { ProductsComponent } from './products/products.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { CartOverlayService } from '../store/cart-overlay.service';
+import {Router} from "@angular/router";
+import {PermissionStore} from "@ui/store/permission.store";
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -52,6 +54,8 @@ export class PosSaleComponent {
   private itemSvc = inject(ItemService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
+  private $permissionStore = inject(PermissionStore)
+
 
   private establecimientoId = this.mainStore.select('establecimientoId');
   private codEstab = this.mainStore.select('codEstab');
@@ -201,11 +205,6 @@ export class PosSaleComponent {
 
   ngOnInit() {
     let orderId = this.posStoreSvc.state().order?.orderId || 0;
-    // if (!(orderId > 0)) {
-    //   this.dialog.open(TableModalComponent, {
-    //     size: 'xl',
-    //   });
-    // }
     if (this.posStoreSvc.state().isLoading) return;
 
     this.setLoading(true);
@@ -246,6 +245,9 @@ export class PosSaleComponent {
         this.items.set(dataItem.items);
         this.setTotalRecords();
       });
+
+
+    this.$permissionStore.loadActions("pos")
   }
 
   ngAfterViewInit() {

@@ -25,26 +25,40 @@
   <button type="button" class="btn-pos btn-clean" (click)="clean()">
     Limpiar
   </button>
-  <button type="button" class="btn-pos btn-save" (click)="saveOrder()">
-    Actualizar
-  </button>
+
+    @if($permissionStore.actions().editar){
+      <button type="button" class="btn-pos btn-save" (click)="saveOrder()">
+        Actualizar
+      </button>
+
+    }
   } @else {
   <button type="button" class="btn-pos btn-clean" (click)="clean()">
     Limpiar
   </button>
 
-  <button type="button" class="btn-pos btn-save" (click)="saveOrder()">
-    Pedido
-  </button>
-  <button type="button" class="btn-pos btn-invoice" (click)="saveInvoice()">
-    Factura
-  </button>
-  <button
-    type="button"
-    class="btn-pos btn-delivery-note"
-    (click)="saveNotaEntrega()"
-  >
-    Nota de Entrega
-  </button>
+    @if($permissionStore.actions().crear){
+      <button type="button" class="btn-pos btn-save" (click)="saveOrder()">
+        Pedido
+      </button>
+    }
+
+    @if($permissionStore.actions().create_invoice){
+        <button type="button" class="btn-pos btn-invoice" (click)="saveInvoice()">
+        Factura
+      </button>
+
+
+    }
+
+    @if($permissionStore.actions().create_ne){
+      <button
+        type="button"
+        class="btn-pos btn-delivery-note"
+        (click)="saveNotaEntrega()"
+      >
+        Nota de Entrega
+      </button>
+    }
   }
 </div>

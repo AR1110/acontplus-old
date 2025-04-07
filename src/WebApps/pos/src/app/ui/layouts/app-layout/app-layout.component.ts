@@ -21,6 +21,7 @@ import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { HeaderComponent } from './header/header.component';
 import {FooterComponent} from "@core/components/footer/footer.component";
+import {PermissionStore} from "@ui/store/permission.store";
 @Component({
   selector: 'app-app-layout',
     imports: [
@@ -44,7 +45,7 @@ import {FooterComponent} from "@core/components/footer/footer.component";
 })
 export class AppLayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
-
+  $permissionStore = inject(PermissionStore)
   private breakpointObserver = inject(BreakpointObserver);
 
   isHandset$: Observable<boolean> = this.breakpointObserver

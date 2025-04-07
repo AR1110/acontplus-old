@@ -1,0 +1,39 @@
+<!-- forbidden.component.html -->
+
+  <mat-card  >
+    <mat-card-header>
+      <div mat-card-avatar class="forbidden-icon">
+        <mat-icon color="warn" class="large-icon">block</mat-icon>
+      </div>
+      <mat-card-title>Acceso Denegado</mat-card-title>
+      <mat-card-subtitle>No tienes permisos para acceder a esta página</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="forbidden-image">
+         <img src="/img/forbidden.svg" alt="Acceso Denegado">
+
+      </div>
+
+      <p class="forbidden-message">
+        Lo sentimos, pero no tienes los permisos necesarios para acceder a esta sección.
+        Si crees que esto es un error, contacta al administrador del sistema.
+      </p>
+
+      <mat-divider></mat-divider>
+
+      <div class="error-code">
+        <span>Error 403</span>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Regresar
+      </button>
+      <button mat-raised-button color="primary" (click)="goHome()">
+        <mat-icon>home</mat-icon> Ir al Inicio
+      </button>
+    </mat-card-actions>
+  </mat-card>
+

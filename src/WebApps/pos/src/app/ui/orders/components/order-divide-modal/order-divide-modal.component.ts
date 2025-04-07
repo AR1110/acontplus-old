@@ -39,6 +39,7 @@ import { OrderData, OrderDivideItem } from '@domain/models/order.model';
 import {TokenUseCase} from "@domain/use-cases/token.use-case";
 import {OrderUseCase} from "@domain/use-cases/order.use-case";
 import {ConfigUseCase} from "@domain/use-cases/config.use-case";
+import {PermissionStore} from "@ui/store/permission.store";
 
 
 @Component({
@@ -74,6 +75,9 @@ export class OrderDivideModalComponent {
   private dialogSvc = inject(DialogService)
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService)
+
+  $permissionStore = inject(PermissionStore)
+
   private codDoc: any;
 
   orderData: OrderData = {

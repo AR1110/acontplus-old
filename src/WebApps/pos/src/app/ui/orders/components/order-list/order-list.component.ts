@@ -51,6 +51,7 @@ import { OrderRead } from '@domain/models/order.model';
 import { MatCardModule } from '@angular/material/card';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
+import {PermissionStore} from "@ui/store/permission.store";
 
 @Component({
   selector: 'app-order-list',
@@ -103,6 +104,7 @@ export class OrderListComponent {
   private posStoreSvc = inject(PosStoreService);
   private router = inject(Router);
   private $cartOverlaySvc = inject(CartOverlayService);
+  $permissionStore = inject(PermissionStore)
 
   displayedColumns: string[] = [
     'index',

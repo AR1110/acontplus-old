@@ -1,5 +1,13 @@
-export type ActionName = 'crear' | 'editar' | 'eliminar';
-
+// export type ActionName = 'crear' | 'editar' | 'eliminar';
+export class ActionName{
+  crear = false
+  editar = false
+  create_invoice = false
+  create_ne =false;
+  eliminar = false
+  anular = false
+  reporte = false;
+}
 export interface Action {
   code: string;
   name: ActionName;
@@ -24,5 +32,5 @@ export interface SubMenuItem {
   name: string
   order: number
   menuId: number
-  actions: Record<ActionName, boolean>;
+  actions: ActionName;
 }

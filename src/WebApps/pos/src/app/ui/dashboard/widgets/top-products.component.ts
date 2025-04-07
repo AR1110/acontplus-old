@@ -75,8 +75,7 @@ export class TopProductsComponent {
       //   data: {
       //     labels
       //   }
-      // })
-      console.log('kjhjkhk');
+      // }) s
     });
   }
 }

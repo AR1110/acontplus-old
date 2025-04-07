@@ -16,6 +16,7 @@ import { menusRoutes } from '../../menus-routes';
 import { MainStoreService } from '@/domain/services/main-store.service';
 import {GetMenusUseCase} from "@domain/use-cases/menu/get-menus.use-case";
 import {SubMenuItem} from "@domain/models/menu.model";
+import {PermissionStore} from "@ui/store/permission.store";
 
 @Component({
   selector: 'app-sidebar',
@@ -32,7 +33,7 @@ import {SubMenuItem} from "@domain/models/menu.model";
 })
 export class SidebarComponent {
   mainStore = inject(MainStoreService);
-  private $getMenusUseCase = inject(GetMenusUseCase);
+   $permissionStore = inject(PermissionStore)
 
   userName = computed(() => this.mainStore.state().userName);
 
@@ -42,23 +43,11 @@ export class SidebarComponent {
     this.sideNavCollapsed.set(val);
   }
 
-  menuItems = signal<any[]>(menusRoutes);
-//   menuItems = signal<SubMenuItem[]>([]);
+  // menuItems = signal<any[]>(menusRoutes);
 
   profilePickSize = computed(() => (this.sideNavCollapsed() ? '32' : '50'));
 
 
-  // ngOnInit(){
-  //   this.$getMenusUseCase.execute().subscribe(response=>{
-  //     let submenus = response.flatMap(m=>{
-  //       return m.children && m.children.length>0 ? m.children: []
-  //     })
-  //     console.log(submenus)
-  //     if(submenus && submenus.length>0){
-  //       this.menuItems.set(submenus)
-  //     }
-  //   })
-  // }
 
 
 }

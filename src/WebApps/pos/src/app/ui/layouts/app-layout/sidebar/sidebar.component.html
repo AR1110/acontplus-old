@@ -107,10 +107,10 @@
 <!--      }-->
 <!--    </a>-->
 
-    @for (item of menuItems(); track $index) {
+    @for (item of $permissionStore.submenus(); track $index) {
       <a
         mat-list-item
-        [routerLink]="item.path"
+        [routerLink]="item.url"
         #link="routerLinkActive"
         class="nav-item"
         routerLinkActive
@@ -125,7 +125,7 @@
           >{{ item.icon }}</mat-icon
         >
         @if (!sideNavCollapsed()) {
-          <span matListItemTitle>{{ item.title }} </span>
+          <span matListItemTitle>{{ item.name }} </span>
         }
       </a>
     }

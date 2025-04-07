@@ -117,7 +117,6 @@ export class SaleChartComponent {
 
       this.lineChartData = lineChartData;
 
-      console.log('kjhkjhkj sales');
     });
   }
 }
