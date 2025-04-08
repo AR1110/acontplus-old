@@ -38,7 +38,6 @@ import {ToasterService} from "@domain/services/toaster.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableModalComponent {
-  readonly panelOpenState = signal(false);
 
   constructor(public dialogRef: DialogRef<TableModalComponent>) {}
 
@@ -98,7 +97,7 @@ export class TableModalComponent {
   }
 
   ngOnInit() {
-    this.getDataForm();
+   this.getDataForm();
   }
 
   selectOption(value: any, roomName: string) {

@@ -60,6 +60,7 @@ export const truncateNumber = function (number: number, decimals = 2) {
 
 
 export const imgDefault:string = 'product-default.png'
+export const imgDefault1:string = 'defecto.jpg'
 
 
 export const consumirFinalSuperaElValorPermitido = function (codTipoIdentificacion: string, valor: number): boolean {
