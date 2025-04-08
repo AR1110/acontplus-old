@@ -3,6 +3,7 @@ import { OrderListModalComponent } from '@ui/orders/components/order-list-modal/
 import { DialogService } from '@domain/services/dialog.service';
 import { Directive, HostListener, inject, input,   output } from '@angular/core';
 import {PermissionStore} from "@ui/store/permission.store";
+import {ROUTES_PATH} from "@domain/enums/main.enum";
 
 @Directive({
     selector: '[appActionOrderDialog]',
@@ -19,7 +20,7 @@ export class ActionOrderDialogDirective {
         let data = {
             tableId: this.tableId()
         }
-      this.$permissionStore.loadActions("order")
+      this.$permissionStore.loadActions(ROUTES_PATH.ORDER)
 
        const dialogRef =  this.dialogSvc.open(OrderListModalComponent, {
             data,
@@ -28,7 +29,7 @@ export class ActionOrderDialogDirective {
         })
 
         dialogRef.subscribe(result => {
-          this.$permissionStore.loadActions("pos")
+          this.$permissionStore.loadActions(ROUTES_PATH.POS)
         })
     }
 

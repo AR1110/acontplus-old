@@ -12,7 +12,7 @@ import {
 } from '@ui/store/pos-store.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MainStoreService } from '@domain/services/main-store.service';
-import { SUB_CATEGORY_CODE } from '@domain/enums/main.enum';
+import {ROUTES_PATH, SUB_CATEGORY_CODE} from '@domain/enums/main.enum';
 import { FormsModule } from '@angular/forms';
 import { getValidId, isValidField } from '@domain/utils/utils';
 import { Order } from '@domain/models/order.model';
@@ -247,7 +247,7 @@ export class PosSaleComponent {
       });
 
 
-    this.$permissionStore.loadActions("pos")
+    this.$permissionStore.loadActions(ROUTES_PATH.POS)
   }
 
   ngAfterViewInit() {

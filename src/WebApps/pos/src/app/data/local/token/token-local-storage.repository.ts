@@ -3,26 +3,29 @@ import { jwtDecode } from 'jwt-decode';
 import { TokenRepository } from '@domain/repositories/token.repository';
 import { TokenModel } from '@domain/models/token.model';
 import { UserData } from '@domain/models/user-data.model';
-import { environment } from '@/env/environment';
+import {envConfig} from "@/config/env.config";
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenLocalStorageRepository implements TokenRepository {
-  private readonly USER_DATA_KEY = 'user_data';
-  private readonly DATA_ESTAB_KEY = 'data_estab';
-  private readonly storageKey = environment.storageKey;
+
+ // private tokenKey = `${envConfig.appVersion}-${envConfig.TOKEN_KEY}`;
+  private tokenKey = `${envConfig.storageKey}`;
+  private userDataKey = `${envConfig.appVersion}-${envConfig.USERDATA_KEY}`;
+  private estabKey = `${envConfig.appVersion}-${envConfig.ESTAB_KEY}`;
+
 
   getToken(): string | null {
-    return localStorage.getItem(this.storageKey);
+    return localStorage.getItem(this.tokenKey);
   }
 
   setToken(token: string): void {
-    localStorage.setItem(this.storageKey, token);
+    localStorage.setItem(this.tokenKey, token);
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.storageKey);
+    localStorage.removeItem(this.tokenKey);
   }
 
   parseJwt(): TokenModel['decodedToken'] | null {
@@ -65,19 +68,19 @@ export class TokenLocalStorageRepository implements TokenRepository {
   }
 
   setUserData(userData: any) {
-    localStorage.setItem(this.USER_DATA_KEY, JSON.stringify(userData));
+    localStorage.setItem(this.userDataKey, JSON.stringify(userData));
   }
 
   getUserData(): UserData | null {
-    return this.getDataFromLocalStorage<UserData>(this.USER_DATA_KEY);
+    return this.getDataFromLocalStorage<UserData>(this.userDataKey);
   }
 
   setDataEstab<T>(dataEstab: T) {
-    localStorage.setItem(this.DATA_ESTAB_KEY, JSON.stringify(dataEstab));
+    localStorage.setItem(this.estabKey, JSON.stringify(dataEstab));
   }
 
   getDataEstab() {
-    return this.getDataFromLocalStorage<any>(this.DATA_ESTAB_KEY);
+    return this.getDataFromLocalStorage<any>(this.estabKey);
   }
 
   private getDataFromLocalStorage<T>(key: string): T | null {

@@ -110,3 +110,11 @@ export const STATUS_ORDER = {
   FINALIZADO: 'F',
   ANULADO: 'A',
 }
+
+export const ROUTES_PATH = {
+  AUTH: 'auth',
+  DASHBOARD : 'dashboard',
+  POS: 'pos',
+  CUSTOMER: 'customer',
+  ORDER: 'order'
+}
