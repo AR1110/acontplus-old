@@ -24,22 +24,23 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
 
     public async Task<IResult> CreateRetencionAtsAsync(ApiRequest apiRequest)
     {
+        var dataSerialized = DataConverters.SerializeDictionary(apiRequest.Data);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(apiRequest.Data)) }
+            { "json", SqlStringParam.Sanitize(dataSerialized) }
         };
 
         return Results.Ok(await retencionAtsService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateRetencionAtsAsync(int id, ApiRequest apiRequest)
+    public async Task<IResult> UpdateRetencionAtsAsync(int id, string json)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(apiRequest.Data)) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
 
         return Results.Ok(await retencionAtsService.UpdateAsync(parameters));

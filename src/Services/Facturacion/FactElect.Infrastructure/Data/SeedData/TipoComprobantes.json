@@ -1,0 +1,202 @@
+﻿[
+  {
+    "Codigo": "01",
+    "Descripcion": "Factura",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "02",
+    "Descripcion": "Nota o boleta de venta",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "03",
+    "Descripcion": "Liquidación de compra de Bienes o Prestación de servicios",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "04",
+    "Descripcion": "Nota de crédito",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "05",
+    "Descripcion": "Nota de débito",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "06",
+    "Descripcion": "Guías de Remisión",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "07",
+    "Descripcion": "Comprobante de Retención",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "08",
+    "Descripcion": "Boletos o entradas a espectáculos públicos",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "09",
+    "Descripcion": "Tiquetes o vales emitidos por máquinas registradoras",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "11",
+    "Descripcion": "Pasajes expedidos por empresas de aviación",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "12",
+    "Descripcion": "Documentos emitidos por instituciones financieras",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "15",
+    "Descripcion": "Comprobante de venta emitido en el Exterior",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "16",
+    "Descripcion": "Formulario Único de Exportación (FUE) o Declaración Aduanera Única (DAU) o Declaración Andina de Valor (DAV)",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "18",
+    "Descripcion": "Documentos autorizados utilizados en ventas excepto N/C N/D",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "19",
+    "Descripcion": "Comprobantes de Pago de Cuotas o Aportes",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "20",
+    "Descripcion": "Documentos por Servicios Administrativos emitidos por inst. del Estado",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "21",
+    "Descripcion": "Carta de Porte Aéreo",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "22",
+    "Descripcion": "RECAP",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "23",
+    "Descripcion": "Nota de Crédito TC",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "25",
+    "Descripcion": "Nota de Débito TC",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "41",
+    "Descripcion": "Comprobante de venta emitido por reembolso",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "42",
+    "Descripcion": "Documento retención presuntiva y retención emitida por agente de retención",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "43",
+    "Descripcion": "Liquidación para Explotación y Exploracion de Hidrocarburos",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "44",
+    "Descripcion": "Comprobante de Contribuciones y Aportes",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "45",
+    "Descripcion": "Liquidación por reclamos de aseguradoras",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "47",
+    "Descripcion": "Nota de Crédito por Reembolso Emitida por Intermediario",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "48",
+    "Descripcion": "Nota de Débito por Reembolso Emitida por Intermediario",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "49",
+    "Descripcion": "Proveedor Directo de Exportador Bajo Régimen Especial",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "50",
+    "Descripcion": "A Inst. Estado y Empr. Públicas que percibe ingreso exento de Imp. Renta",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "51",
+    "Descripcion": "N/C A Inst. Estado y Empr. Públicas que percibe ingreso exento de Imp. Renta",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "52",
+    "Descripcion": "N/D A Inst. Estado y Empr. Públicas que percibe ingreso exento de Imp. Renta",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "294",
+    "Descripcion": "Liquidación de compra de Bienes Muebles Usados",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "344",
+    "Descripcion": "Liquidación de compra de vehículos usados",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "364",
+    "Descripcion": "Acta Entrega/Recepción PET",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "370",
+    "Descripcion": "Factura operadora transporte / FEEP",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "371",
+    "Descripcion": "Comprobante socio o operadora de transporte",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "372",
+    "Descripcion": "Nota de crédito operadora transporte",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "373",
+    "Descripcion": "Nota de débito operadora transporte",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "374",
+    "Descripcion": "Nota de débito operadora transporte (Otros)",
+    "FechaVigencia": null
+  },
+  {
+    "Codigo": "375",
+    "Descripcion": "Liquidación de compra RISE de Bienes",
+    "FechaVigencia": null
+  }
+]

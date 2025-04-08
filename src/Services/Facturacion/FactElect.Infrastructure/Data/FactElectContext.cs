@@ -1,14 +1,23 @@
 ﻿using System.Reflection;
+using FactElect.Domain.Entities.Sri;
 
 namespace FactElect.Infrastructure.Data;
 
-public class FactElectContext : BaseContext
+public class FactElectContext(DbContextOptions<FactElectContext> options) : BaseContext(options)
 {
-    public FactElectContext(DbContextOptions<FactElectContext> options) : base(options)
-    {
-    }
-
+    public DbSet<ConceptoRetencionAir> ConceptoRetencionAirs { get; set; }
     public DbSet<AppCustomer> Customers { get; set; }
+    public DbSet<FormaPago> FormasPago { get; set; }
+    public DbSet<ImpuestoRetencion> ImpuestosRetencion { get; set; }
+    public DbSet<Pais> Paises { get; set; }
+    public DbSet<ParaisoFiscal> ParaisosFiscales { get; set; }
+    public DbSet<PorcentajeRetencionAir> PorcentajeRetencionAirs { get; set; }
+    public DbSet<PorcentajeRetencionIva> PorcentajesRetencionIva { get; set; }
+    public DbSet<SustentoTributario> SustentosTributarios { get; set; }
+    public DbSet<TipoComprobante> TipoComprobantes { get; set; }
+    public DbSet<TipoIdentificacionProveedor> TiposIdentificacionProveedor { get; set; }
+    public DbSet<TipoPago> TipoPagos { get; set; }
+    public DbSet<TipoRegimenFiscalExterior> TiposRegimenFiscalExterior { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

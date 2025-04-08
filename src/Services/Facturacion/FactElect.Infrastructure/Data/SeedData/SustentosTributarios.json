@@ -1,0 +1,98 @@
+﻿[
+  {
+    "codigo": "01",
+    "descripcion": "Crédito Tributario para declaración de IVA (servicios y bienes distintos de inventarios y activos fijos)",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "02",
+    "descripcion": "Costo o Gasto para declaración de IR (servicios y bienes distintos de inventarios y activos fijos)",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "03",
+    "descripcion": "Activo Fijo - Crédito Tributario para declaración de IVA",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "04",
+    "descripcion": "Activo Fijo - Costo o Gasto para declaración de IR",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "05",
+    "descripcion": "Liquidación Gastos de Viaje, hospedaje y alimentación Gastos IR (a nombre de empleados y no de la empresa)",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "06",
+    "descripcion": "Inventario - Crédito Tributario para declaración de IVA",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "07",
+    "descripcion": "Inventario - Costo o Gasto para declaración de IR",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "08",
+    "descripcion": "Valor pagado para solicitar Reembolso de Gasto (intermediario)",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "09",
+    "descripcion": "Reembolso por Siniestros",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "10",
+    "descripcion": "Distribución de Dividendos, Beneficios o Utilidades",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "11",
+    "descripcion": "Convenios de débito o recaudación para IFI's",
+    "fechaInicio": "01/03/2015",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "12",
+    "descripcion": "Impuestos y retenciones presuntivos",
+    "fechaInicio": "01/03/2015",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "13",
+    "descripcion": "Valores reconocidos por entidades del sector público a favor de sujetos pasivos",
+    "fechaInicio": "01/03/2015",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "14",
+    "descripcion": "Valores facturados por socios a operadores de transporte (que no constituyen gasto de dicho operador)",
+    "fechaInicio": "01/01/2018",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "15",
+    "descripcion": "Pagos efectuados por consumos propios y de terceros de servicios digitales",
+    "fechaInicio": "01/06/2020",
+    "fechaFin": ""
+  },
+  {
+    "codigo": "00",
+    "descripcion": "Casos especiales cuyo sustento no aplica en las opciones anteriores",
+    "fechaInicio": "01/01/2000",
+    "fechaFin": "28/02/2015"
+  }
+]

@@ -1,0 +1,10 @@
+﻿[
+  {
+    "Codigo": "01",
+    "Descripcion": "Pago a residente / Establecimiento permanente"
+  },
+  {
+    "Codigo": "02",
+    "Descripcion": "Pago a no residente"
+  }
+]

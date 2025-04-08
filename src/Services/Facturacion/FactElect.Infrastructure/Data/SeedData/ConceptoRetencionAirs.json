@@ -1,0 +1,686 @@
+﻿[
+  {
+    "TipoPagoId": 1,
+    "Codigo": "303",
+    "Descripcion": "Honorarios profesionales y demás pagos por servicios relacionados con el título profesional",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "303A",
+    "Descripcion": "Servicios profesionales prestados por sociedades residentes",
+    "Porcentaje": 3
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "304",
+    "Descripcion": "Servicios profesionales prestados por sociedades residentes",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "304A",
+    "Descripcion": "Comisiones y demás pagos por servicios predomina intelecto no relacionados con el título profesional",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "304B",
+    "Descripcion": "Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "304C",
+    "Descripcion": "Pagos a deportistas, entrenadores, árbitros, miembros del cuerpo técnico por sus actividades ejercidas como tales",
+    "Porcentaje": 8
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "304D",
+    "Descripcion": "Pagos a artistas por sus actividades ejercidas como tales",
+    "Porcentaje": 8
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "304E",
+    "Descripcion": "Honorarios y demás pagos por servicios de docencia",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "307",
+    "Descripcion": "Servicios predomina la mano de obra",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "308",
+    "Descripcion": "Utilización o aprovechamiento de la imagen o renombre (personas naturales, sociedades, \"influencers\")",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "309",
+    "Descripcion": "Servicios prestados por medios de comunicación y agencias de publicidad",
+    "Porcentaje": 2.75
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "310",
+    "Descripcion": "Servicio de transporte privado de pasajeros o transporte público o privado de carga",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "311",
+    "Descripcion": "Pagos a través de liquidación de compra (nivel cultural o rusticidad)",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "312",
+    "Descripcion": "Transferencia de bienes muebles de naturaleza corporal",
+    "Porcentaje": 1.75
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "312A",
+    "Descripcion": "COMPRAS AL PRODUCTOR: de bienes de origen bioacuático, forestal y los descritos en el art 27.1 de LRTI",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "312C",
+    "Descripcion": "COMPRAS AL COMERCIALIZADOR: de bienes de origen bioacuático, forestal y los descritos en el art 27.1 de LRTI",
+    "Porcentaje": 1.75
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "314A",
+    "Descripcion": "Regalías por concepto de franquicias de acuerdo al Código INGENIOS (COESCCI) - pago a personas naturales",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "314B",
+    "Descripcion": "Cánones, derechos de autor, marcas, patentes y similares de acuerdo al Código INGENIOS (COESCCI) – pago a personas naturales",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "314C",
+    "Descripcion": "Regalías por concepto de franquicias de acuerdo al Código INGENIOS (COESCCI) - pago a sociedades",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "314D",
+    "Descripcion": "Cánones, derechos de autor, marcas, patentes y similares de acuerdo al Código INGENIOS (COESCCI)",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "319",
+    "Descripcion": "Cuotas de arrendamiento mercantil (prestado por sociedades), inclusive la de opción de compra",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "320",
+    "Descripcion": "Arrendamiento bienes inmuebles",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "322",
+    "Descripcion": "Seguros y reaseguros (primas y cesiones)",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323",
+    "Descripcion": "Rendimientos financieros pagados a naturales y sociedades (No a IFIs)",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323A",
+    "Descripcion": "Rendimientos financieros depósitos Cta. Corriente",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323B1",
+    "Descripcion": "Rendimientos financieros depósitos Cta. Ahorros Sociedades",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323E",
+    "Descripcion": "Rendimientos financieros depósito a plazo fijo gravados",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323E2",
+    "Descripcion": "Rendimientos financieros depósito a plazo fijo exentos",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323F",
+    "Descripcion": "Rendimientos financieros operaciones de reporto - repos",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323G",
+    "Descripcion": "Inversiones (captaciones) rendimientos distintos de aquellos pagados a IFIs",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323H",
+    "Descripcion": "Rendimientos financieros obligaciones",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323I",
+    "Descripcion": "Rendimientos financieros bonos convertibles en acciones",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323M",
+    "Descripcion": "Rendimientos financieros: Inversiones en títulos valores en renta fija gravados",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323N",
+    "Descripcion": "Rendimientos financieros Inversiones en títulos valores en renta fija exentos",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323O",
+    "Descripcion": "Intereses y demás rendimientos financieros pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economía Popular y Solidaria",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323P",
+    "Descripcion": "Intereses pagados por entidades del sector público a favor de sujetos pasivos",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323Q",
+    "Descripcion": "Otros intereses y rendimientos financieros gravados",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323R",
+    "Descripcion": "Otros intereses y rendimientos financieros exentos",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323S",
+    "Descripcion": "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323T",
+    "Descripcion": "Rendimientos financieros originados en la deuda pública ecuatoriana",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "323U",
+    "Descripcion": "Rendimientos financieros originados en títulos valores de obligaciones de 360 días o más para el financiamiento de proyectos públicos en asociación público-privada",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "324A",
+    "Descripcion": "Intereses en operaciones de crédito entre instituciones del sistema financiero y entidades economía popular y solidaria",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "324B",
+    "Descripcion": "Inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "324C",
+    "Descripcion": "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras instituciones del sistema financiero",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "325",
+    "Descripcion": "Anticipo dividendos",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "325A",
+    "Descripcion": "Préstamos accionistas, beneficiarios o partícipes residentes o establecidos en Ecuador",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "326",
+    "Descripcion": "Dividendos distribuidos que correspondan al impuesto a la renta único establecido en el art. 27 de la LRTI.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "327",
+    "Descripcion": "Dividendos distribuidos a personas naturales residentes.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "328",
+    "Descripcion": "Dividendos distribuidos a sociedades residentes.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "329",
+    "Descripcion": "dividendos distribuidos a fideicomisos residentes.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "331",
+    "Descripcion": "Dividendos en acciones (capitalización de utilidades).",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332",
+    "Descripcion": "Otras compras de bienes y servicios no sujetas a retención (incluye régimen RIMPE - Negocios Populares, para este caso aplica en cualquier forma de pago inclusive los pagos que deban realizar las tarjetas de crédito/débito).",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332B",
+    "Descripcion": "Compra de bienes inmuebles.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332C",
+    "Descripcion": "Transporte público de pasajeros.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332D",
+    "Descripcion": "Pagos en el país por transporte de pasajeros o transporte internacional de carga, a compañías nacionales o extranjeras de aviación o marítimas.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332E",
+    "Descripcion": "Valores entregados por las cooperativas de transporte a sus socios.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332F",
+    "Descripcion": "Compraventa de divisas distintas al dólar de los Estados Unidos de América.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332G",
+    "Descripcion": "Pagos con tarjeta de crédito.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332H",
+    "Descripcion": "Pago al exterior por tarjeta de crédito reportada por la Emisora de tarjeta de crédito, solo recap.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "332I",
+    "Descripcion": "Pago a través de convenio de débito (Clientes IFI's).",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "333",
+    "Descripcion": "Ganancia en la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, que se coticen en bolsa de valores del Ecuador.",
+    "Porcentaje": 10
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "334",
+    "Descripcion": "Contraprestación producida por la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, no cotizados en bolsa de valores del Ecuador.",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "335",
+    "Descripcion": "Loterías, rifas, pronósticos deportivos, apuestas y similares",
+    "Porcentaje": 15
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "336",
+    "Descripcion": "Venta de combustibles a comercializadoras.",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "337",
+    "Descripcion": "Venta de combustibles a distribuidores.",
+    "Porcentaje": 3
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "338",
+    "Descripcion": "Producido o no venta local del producto o no por el mismo sujeto pasivo.",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "343",
+    "Descripcion": "Otras retenciones aplicables al 1% (incluye régimen RIMPE - Emprendedores, para este caso aplica con cualquier forma de pago inclusive los pagos que deban realizar las tarjetas de crédito/débito).",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "343A",
+    "Descripcion": "Energía eléctrica.",
+    "Porcentaje": 1
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "343B",
+    "Descripcion": "Actividades de construcción de obra material inmueble, urbanización, lotización o actividades similares.",
+    "Porcentaje": 1.75
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "343C",
+    "Descripcion": "Recepción de botellas plásticas no retornables de PET",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "344D",
+    "Descripcion": "Otras retenciones aplicables al 2.75%.",
+    "Porcentaje": 2.75
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "344A",
+    "Descripcion": "Pago local tarjeta de crédito /débito reportada por la Emisora de tarjeta de crédito / entidades del sistema financiero.",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "344B",
+    "Descripcion": "Adquisición de sustancias minerales dentro del territorio nacional.",
+    "Porcentaje": 2
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "346",
+    "Descripcion": "Otras retenciones aplicables a otros porcentajes.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "346A",
+    "Descripcion": "Otras ganancias de capital distintas de enajenación de derechos representativos de capital.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "346B",
+    "Descripcion": "Donaciones en dinero - Impuesto a las donaciones.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "346C",
+    "Descripcion": "Retención a cargo del propio sujeto pasivo por la producción y/o comercialización de minerales y otros bienes",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "346D",
+    "Descripcion": "Retención a cargo del propio sujeto pasivo por la comercialización de productos forestales.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "350",
+    "Descripcion": "Otras autorretenciones (inciso 1 y 2 Art.92.1 LRTI)",
+    "Porcentaje": 1.5
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "3481",
+    "Descripcion": "Autorretenciones Sociedades Grandes Contribuyentes",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 1,
+    "Codigo": "3482",
+    "Descripcion": "Comisiones a sociedades, nacionales o extranjeras residentes y establecimientos permanentes domiciliados en el país",
+    "Porcentaje": 3
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "500",
+    "Descripcion": "Pago a no residentes - Rentas inmobiliarias.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "501",
+    "Descripcion": "Pago a no residentes - Beneficios/Servicios empresariales.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "501A",
+    "Descripcion": "Pago a no residentes - Servicios técnicos, administrativos o de consultoría y regalías.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "503",
+    "Descripcion": "Pago a no residentes- Navegación marítima y/o aérea.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504",
+    "Descripcion": "Pago a no residentes- Dividendos distribuidos a personas naturales (domiciliados o no en paraíso fiscal) o a sociedades sin beneficiario efectivo persona natural residente en Ecuador.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504A",
+    "Descripcion": "Dividendos a sociedades con beneficiario efectivo persona natural no residente en Ecuador.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504B",
+    "Descripcion": "Dividendos a no residentes incumpliendo el deber de informar la composición societaria.",
+    "Porcentaje": 37
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504C",
+    "Descripcion": "Dividendos a residentes o establecidos en paraísos fiscales o regímenes de menor imposición (con beneficiario Persona Natural en Ecuador).",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504D",
+    "Descripcion": "Dividendos a fideicomisos o establecidos en paraísos fiscales o regímenes de menor imposición (con beneficiario Persona Natural en Ecuador).",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504E",
+    "Descripcion": "Pago a no residentes - Anticipo dividendos (no domiciliada en paraísos fiscales o regímenes de menor imposición).",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504F",
+    "Descripcion": "Pago a no residentes - Anticipo dividendos (domiciliadas en paraísos fiscales o regímenes de menor imposición).",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504G",
+    "Descripcion": "Pago a no residentes - Préstamos accionistas, beneficiarios o partícipes (no domiciliadas en paraísos fiscales o regímenes de menor imposición).",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": "2",
+    "Codigo": "504H",
+    "Descripcion": "Pago a no residentes - Préstamos accionistas, beneficiarios o partícipes (domiciliadas en paraísos fiscales o regímenes de menor imposición).",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504I",
+    "Descripcion": "Pago a no residentes - Préstamos no comerciales a partes relacionadas (no domiciliadas en paraísos fiscales o regímenes de menor imposición).",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "504J",
+    "Descripcion": "Pago a no residentes - Préstamos no comerciales a partes relacionadas (domiciliadas en paraísos fiscales o regímenes de menor imposición).",
+    "Porcentaje": 22
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "505",
+    "Descripcion": "Pago a no residentes - Rendimientos financieros.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "505A",
+    "Descripcion": "Pago a no residentes - Intereses de créditos de Instituciones Financieras del exterior.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "505B",
+    "Descripcion": "Pago a no residentes - Intereses de créditos de gobierno a gobierno.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "505C",
+    "Descripcion": "Pago a no residentes - Intereses de créditos de organismos multilaterales.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "505D",
+    "Descripcion": "Pago a no residentes - Intereses por financiamiento de proveedores externos.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "505E",
+    "Descripcion": "Pago a no residentes - Intereses de otros créditos externos.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "512",
+    "Descripcion": "Pago a no residentes - Servicios profesionales dependientes.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "513A",
+    "Descripcion": "Pago a no residentes – Deportistas.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "514",
+    "Descripcion": "Pago a no residentes - Participación de consejeros.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "515",
+    "Descripcion": "Pago a no residentes- Artistas y relacionados a organización, producción y espectáculos artísticos y culturales en Ecuador",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "516",
+    "Descripcion": "Pago a no residentes – Pensiones.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "517",
+    "Descripcion": "Pago a no residentes- Reembolso de gastos.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "518",
+    "Descripcion": "Pago a no residentes- Funciones públicas.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "519",
+    "Descripcion": "Pago a no residentes – Estudiantes.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "520A",
+    "Descripcion": "Pago a no residentes - Pago a proveedores de servicios hoteleros y turísticos en el exterior.",
+    "Porcentaje": 25
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "520B",
+    "Descripcion": "Pago a no residentes - Arrendamientos mercantil internacional.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "520D",
+    "Descripcion": "Pago a no residentes - Comisiones por exportaciones y por promoción de turismo receptivo.",
+    "Porcentaje": 0
+  },
+  {
+    "TipoPagoId": 2,
+    "Codigo": "520E",
+    "Descripcion": "Pago a no residentes - Por las empresas de transporte marítimo o aéreo y por empresas pesqueras de alta mar",
+    "Porcentaje": 0
+  }
+]

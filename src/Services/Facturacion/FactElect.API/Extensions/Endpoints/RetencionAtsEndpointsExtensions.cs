@@ -23,8 +23,8 @@ public static class RetencionAtsEndpointsExtensions
             await retencionAtsEndpoints.CreateRetencionAtsAsync(apiRequest));
 
         retencionAtsGroup.MapPut("/{id}",
-            async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, ApiRequest apiRequest) =>
-                await retencionAtsEndpoints.UpdateRetencionAtsAsync(id, apiRequest));
+            async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, string json) =>
+                await retencionAtsEndpoints.UpdateRetencionAtsAsync(id, json));
 
         retencionAtsGroup.MapDelete("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.DeleteRetencionAtsAsync(id));
