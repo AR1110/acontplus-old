@@ -5,5 +5,5 @@ public class TipoRegimenFiscalExterior : BaseEntity
 {
     [Required, MaxLength(5)] public string Codigo { get; set; }
 
-    [Required, MaxLength(300)] public string Descripcion { get; set; }
+    [Required, MaxLength(100)] public string Descripcion { get; set; }
 }

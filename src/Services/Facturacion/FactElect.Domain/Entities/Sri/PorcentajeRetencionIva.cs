@@ -5,7 +5,7 @@ public class PorcentajeRetencionIva : BaseEntity
 {
     [Required, MaxLength(5)] public string Codigo { get; set; }
 
-    [Required, MaxLength(300)] public string Descripcion { get; set; }
+    [Required, MaxLength(50)] public string Descripcion { get; set; }
 
     [Column(TypeName = "numeric(6,2), null")]
     public Decimal Porcentaje { get; set; }

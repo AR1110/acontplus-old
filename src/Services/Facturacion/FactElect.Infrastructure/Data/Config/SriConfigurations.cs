@@ -48,24 +48,17 @@ public class DocumentoSustentoTributarioConfiguration : BaseEntityTypeConfigurat
     {
         base.Configure(builder);
 
-        // Configure relationships
         builder
             .HasOne(dst => dst.TipoComprobante)
-            .WithMany()
+            .WithMany(tc=>tc.DocumentosSustentoTributario)
             .HasForeignKey(dst => dst.TipoComprobanteId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(dst => dst.SustentoTributario)
-            .WithMany()
+            .WithMany(st => st.DocumentosSustentoTributario)
             .HasForeignKey(dst => dst.SustentoTributarioId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // Create a composite unique index on both foreign keys
-        builder
-            .HasIndex(dst => new { dst.TipoComprobanteId, dst.SustentoTributarioId })
-            .HasDatabaseName("UX_DocumentoSustentoTributario_TipoComprobante_SustentoTributario")
-            .IsUnique();
     }
 }
 
@@ -81,9 +74,11 @@ public class PaisConfiguration : BaseEntityTypeConfiguration<Pais>
             .IsUnique();
 
         builder
-            .HasMany<ParaisoFiscal>()
+            .HasMany(x => x.ParaisosFiscales)
             .WithOne(x => x.Pais)
-            .HasForeignKey(x => x.PaisId);
+            .HasForeignKey(x => x.PaisId)
+            .HasPrincipalKey(x => x.Id)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
@@ -138,9 +133,11 @@ public class TipoPagoConfiguration : BaseEntityTypeConfiguration<TipoPago>
             .IsUnique();
 
         builder
-            .HasMany<ConceptoRetencionAir>()
+            .HasMany(x => x.ConceptoRetenciones)
             .WithOne(x => x.TipoPago)
-            .HasForeignKey(x => x.TipoPagoId);
+            .HasForeignKey(x => x.TipoPagoId)
+            .HasPrincipalKey(x => x.Id)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 
@@ -156,9 +153,11 @@ public class ConceptoRetencionAirConfiguration : BaseEntityTypeConfiguration<Con
             .IsUnique();
 
         builder
-            .HasMany<PorcentajeRetencionAir>()
+            .HasMany(x => x.PorcentajeRetencionAirs)
             .WithOne(x => x.ConceptoRetencionAir)
-            .HasForeignKey(x => x.ConceptoRetencionAirId);
+            .HasForeignKey(x => x.ConceptoRetencionAirId)
+            .HasPrincipalKey(x => x.Id)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
