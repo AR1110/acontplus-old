@@ -54,13 +54,6 @@ public abstract class FactElectContextSeed
             context.TipoPagos.AddRange(tipoPagos);
         }
 
-        if (!context.ConceptoRetencionAirs.Any())
-        {
-            var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/ConceptoRetencionAirs.json");
-            var conceptos =
-                JsonConvert.DeserializeObject<List<ConceptoRetencionAir>>(jsonList);
-            context.ConceptoRetencionAirs.AddRange(conceptos);
-        }
         if (!context.TiposRegimenFiscalExterior.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/TiposRegimenFiscalExterior.json");

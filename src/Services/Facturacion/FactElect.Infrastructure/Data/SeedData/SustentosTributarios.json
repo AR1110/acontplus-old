@@ -1,98 +1,83 @@
 ﻿[
   {
-    "codigo": "01",
-    "descripcion": "Crédito Tributario para declaración de IVA (servicios y bienes distintos de inventarios y activos fijos)",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "01",
+    "Descripcion": "Crédito Tributario para declaración de IVA (servicios y bienes distintos de inventarios y activos fijos)",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "02",
-    "descripcion": "Costo o Gasto para declaración de IR (servicios y bienes distintos de inventarios y activos fijos)",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "02",
+    "Descripcion": "Costo o Gasto para declaración de IR (servicios y bienes distintos de inventarios y activos fijos)",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "03",
-    "descripcion": "Activo Fijo - Crédito Tributario para declaración de IVA",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "03",
+    "Descripcion": "Activo Fijo - Crédito Tributario para declaración de IVA",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "04",
-    "descripcion": "Activo Fijo - Costo o Gasto para declaración de IR",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "04",
+    "Descripcion": "Activo Fijo - Costo o Gasto para declaración de IR",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "05",
-    "descripcion": "Liquidación Gastos de Viaje, hospedaje y alimentación Gastos IR (a nombre de empleados y no de la empresa)",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "05",
+    "Descripcion": "Liquidación Gastos de Viaje, hospedaje y alimentación Gastos IR (a nombre de empleados y no de la empresa)",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "06",
-    "descripcion": "Inventario - Crédito Tributario para declaración de IVA",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "06",
+    "Descripcion": "Inventario - Crédito Tributario para declaración de IVA",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "07",
-    "descripcion": "Inventario - Costo o Gasto para declaración de IR",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "07",
+    "Descripcion": "Inventario - Costo o Gasto para declaración de IR",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "08",
-    "descripcion": "Valor pagado para solicitar Reembolso de Gasto (intermediario)",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "08",
+    "Descripcion": "Valor pagado para solicitar Reembolso de Gasto (intermediario)",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "09",
-    "descripcion": "Reembolso por Siniestros",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "09",
+    "Descripcion": "Reembolso por Siniestros",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "10",
-    "descripcion": "Distribución de Dividendos, Beneficios o Utilidades",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": ""
+    "Codigo": "10",
+    "Descripcion": "Distribución de Dividendos, Beneficios o Utilidades",
+    "FechaInicio": "2000-01-01"
   },
   {
-    "codigo": "11",
-    "descripcion": "Convenios de débito o recaudación para IFI's",
-    "fechaInicio": "01/03/2015",
-    "fechaFin": ""
+    "Codigo": "11",
+    "Descripcion": "Convenios de débito o recaudación para IFI's",
+    "FechaInicio": "2015-03-01"
   },
   {
-    "codigo": "12",
-    "descripcion": "Impuestos y retenciones presuntivos",
-    "fechaInicio": "01/03/2015",
-    "fechaFin": ""
+    "Codigo": "12",
+    "Descripcion": "Impuestos y retenciones presuntivos",
+    "FechaInicio": "2015-03-01"
   },
   {
-    "codigo": "13",
-    "descripcion": "Valores reconocidos por entidades del sector público a favor de sujetos pasivos",
-    "fechaInicio": "01/03/2015",
-    "fechaFin": ""
+    "Codigo": "13",
+    "Descripcion": "Valores reconocidos por entidades del sector público a favor de sujetos pasivos",
+    "FechaInicio": "2015-03-01"
   },
   {
-    "codigo": "14",
-    "descripcion": "Valores facturados por socios a operadores de transporte (que no constituyen gasto de dicho operador)",
-    "fechaInicio": "01/01/2018",
-    "fechaFin": ""
+    "Codigo": "14",
+    "Descripcion": "Valores facturados por socios a operadores de transporte (que no constituyen gasto de dicho operador)",
+    "FechaInicio": "2018-01-01"
   },
   {
-    "codigo": "15",
-    "descripcion": "Pagos efectuados por consumos propios y de terceros de servicios digitales",
-    "fechaInicio": "01/06/2020",
-    "fechaFin": ""
+    "Codigo": "15",
+    "Descripcion": "Pagos efectuados por consumos propios y de terceros de servicios digitales",
+    "FechaInicio": "2020-06-01"
   },
   {
-    "codigo": "00",
-    "descripcion": "Casos especiales cuyo sustento no aplica en las opciones anteriores",
-    "fechaInicio": "01/01/2000",
-    "fechaFin": "28/02/2015"
+    "Codigo": "00",
+    "Descripcion": "Casos especiales cuyo sustento no aplica en las opciones anteriores",
+    "FechaInicio": "2000-01-01",
+    "FechaFin": "2015-02-28"
   }
 ]
