@@ -1,0 +1,162 @@
+﻿[
+  {
+    "Codigo": "01",
+    "Descripcion": "Factura"
+  },
+  {
+    "Codigo": "02",
+    "Descripcion": "Nota o boleta de venta"
+  },
+  {
+    "Codigo": "03",
+    "Descripcion": "Liquidación de compra de Bienes o Prestación de servicios"
+  },
+  {
+    "Codigo": "04",
+    "Descripcion": "Nota de crédito"
+  },
+  {
+    "Codigo": "05",
+    "Descripcion": "Nota de débito"
+  },
+  {
+    "Codigo": "06",
+    "Descripcion": "Guías de Remisión"
+  },
+  {
+    "Codigo": "07",
+    "Descripcion": "Comprobante de Retención"
+  },
+  {
+    "Codigo": "08",
+    "Descripcion": "Boletos o entradas a espectáculos públicos"
+  },
+  {
+    "Codigo": "09",
+    "Descripcion": "Tiquetes o vales emitidos por máquinas registradoras"
+  },
+  {
+    "Codigo": "11",
+    "Descripcion": "Pasajes expedidos por empresas de aviación"
+  },
+  {
+    "Codigo": "12",
+    "Descripcion": "Documentos emitidos por instituciones financieras"
+  },
+  {
+    "Codigo": "15",
+    "Descripcion": "Comprobante de venta emitido en el Exterior"
+  },
+  {
+    "Codigo": "16",
+    "Descripcion": "Formulario Único de Exportación (FUE) o Declaración Aduanera Única (DAU) o Declaración Andina de Valor (DAV)"
+  },
+  {
+    "Codigo": "18",
+    "Descripcion": "Documentos autorizados utilizados en ventas excepto N/C N/D"
+  },
+  {
+    "Codigo": "19",
+    "Descripcion": "Comprobantes de Pago de Cuotas o Aportes"
+  },
+  {
+    "Codigo": "20",
+    "Descripcion": "Documentos por Servicios Administrativos emitidos por inst. del Estado"
+  },
+  {
+    "Codigo": "21",
+    "Descripcion": "Carta de Porte Aéreo"
+  },
+  {
+    "Codigo": "22",
+    "Descripcion": "RECAP"
+  },
+  {
+    "Codigo": "23",
+    "Descripcion": "Nota de Crédito TC"
+  },
+  {
+    "Codigo": "25",
+    "Descripcion": "Nota de Débito TC"
+  },
+  {
+    "Codigo": "41",
+    "Descripcion": "Comprobante de venta emitido por reembolso"
+  },
+  {
+    "Codigo": "42",
+    "Descripcion": "Documento retención presuntiva y retención emitida por agente de retención"
+  },
+  {
+    "Codigo": "43",
+    "Descripcion": "Liquidación para Explotación y Exploracion de Hidrocarburos"
+  },
+  {
+    "Codigo": "44",
+    "Descripcion": "Comprobante de Contribuciones y Aportes"
+  },
+  {
+    "Codigo": "45",
+    "Descripcion": "Liquidación por reclamos de aseguradoras"
+  },
+  {
+    "Codigo": "47",
+    "Descripcion": "Nota de Crédito por Reembolso Emitida por Intermediario"
+  },
+  {
+    "Codigo": "48",
+    "Descripcion": "Nota de Débito por Reembolso Emitida por Intermediario"
+  },
+  {
+    "Codigo": "49",
+    "Descripcion": "Proveedor Directo de Exportador Bajo Régimen Especial"
+  },
+  {
+    "Codigo": "50",
+    "Descripcion": "A Inst. Estado y Empr. Públicas que percibe ingreso exento de Imp. Renta"
+  },
+  {
+    "Codigo": "51",
+    "Descripcion": "N/C A Inst. Estado y Empr. Públicas que percibe ingreso exento de Imp. Renta"
+  },
+  {
+    "Codigo": "52",
+    "Descripcion": "N/D A Inst. Estado y Empr. Públicas que percibe ingreso exento de Imp. Renta"
+  },
+  {
+    "Codigo": "294",
+    "Descripcion": "Liquidación de compra de Bienes Muebles Usados"
+  },
+  {
+    "Codigo": "344",
+    "Descripcion": "Liquidación de compra de vehículos usados"
+  },
+  {
+    "Codigo": "364",
+    "Descripcion": "Acta Entrega/Recepción PET"
+  },
+  {
+    "Codigo": "370",
+    "Descripcion": "Factura operadora transporte / FEEP"
+  },
+  {
+    "Codigo": "371",
+    "Descripcion": "Comprobante socio o operadora de transporte"
+  },
+  {
+    "Codigo": "372",
+    "Descripcion": "Nota de crédito operadora transporte"
+  },
+  {
+    "Codigo": "373",
+    "Descripcion": "Nota de débito operadora transporte"
+  },
+  {
+    "Codigo": "374",
+    "Descripcion": "Nota de débito operadora transporte (Otros)"
+  },
+  {
+    "Codigo": "375",
+    "Descripcion": "Liquidación de compra RISE de Bienes"
+  }
+]
