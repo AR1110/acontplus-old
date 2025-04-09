@@ -4,13 +4,13 @@
       <mat-form-field class="w-100">
         <mat-label>Forma Pago</mat-label>
         <mat-select
-          id="idFormaPago-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
-          formControlName="idFormaPago"
+          id="formaPagoId-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
+          formControlName="formaPagoId"
         >
           <mat-option>-- Seleccione una forma de pago --</mat-option>
-          @for (item of formasPago(); track item.idFormaPago) {
-            <mat-option [value]="item.idFormaPago">
-              {{ item.formaPago }} -
+          @for (item of formasPago(); track item.id) {
+            <mat-option [value]="item.id">
+              {{ item.codigo }} -
               {{ item.descripcion }}
             </mat-option>
           }

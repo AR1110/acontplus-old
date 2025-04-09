@@ -22,7 +22,7 @@ namespace FactElect.Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Codigo = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
-                    Descripcion = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    Descripcion = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
                     FechaInicio = table.Column<DateOnly>(type: "date", nullable: true),
                     FechaFin = table.Column<DateOnly>(type: "date", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -286,7 +286,7 @@ namespace FactElect.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TipoPagoId = table.Column<int>(type: "int", nullable: false),
                     Codigo = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
-                    Descripcion = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    Descripcion = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     Porcentaje = table.Column<decimal>(type: "numeric(6,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),

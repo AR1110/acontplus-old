@@ -19,14 +19,16 @@
       <mat-form-field class="w-100">
         <mat-label>Documento Sustento:</mat-label>
         <mat-select
-          id="codDocSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
-          formControlName="codDocSustento"
+          id="tipoComprobanteId-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
+          formControlName="tipoComprobanteId"
           (selectionChange)="selectSustento(indexDoc())"
         >
           <mat-option>::seleccione::</mat-option>
-          @for (doc of documentosSustento(); track $index) {
-            <mat-option [value]="doc.codDocSustento">
-              {{ doc.codDocSustento }} -
+          @for (doc of tiposComprobante(); track $index) {
+            <mat-option [value]="doc.id">
+              {{ doc.codigo }} -
               {{ doc.descripcion }}
             </mat-option>
           }
@@ -37,14 +39,16 @@
       <mat-form-field class="w-100">
         <mat-label>Sustento Tributario:</mat-label>
         <mat-select
-          id="codSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
-          formControlName="codSustento"
+          id="documentoSustentoTributarioId-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
+          formControlName="documentoSustentoTributarioId"
           [disabled]="sustentosFiltered().length === 0"
         >
           <mat-option [value]="0">::seleccione::</mat-option>
           @for (sustento of sustentosFiltered(); track $index) {
-            <mat-option [value]="sustento.codSustento">
-              {{ sustento.codSustento }} - {{ sustento.descripcion }}
+            <mat-option [value]="sustento.documentoSustentoTributarioId">
+              {{ sustento.codigo }} - {{ sustento.descripcion }}
             </mat-option>
           }
         </mat-select>
@@ -121,8 +125,8 @@
         >
           <mat-option>::seleccione::</mat-option>
           @for (tipoPago of tiposPago(); track $index) {
-            <mat-option [value]="tipoPago.pagoLocExt">
-              {{ tipoPago.pagoLocExt }} -
+            <mat-option [value]="tipoPago.codigo">
+              {{ tipoPago.codigo }} -
               {{ tipoPago.descripcion }}
             </mat-option>
           }
@@ -133,15 +137,17 @@
       <mat-form-field class="w-100">
         <mat-label>Regimen Fiscal:</mat-label>
         <mat-select
-          id="tipoRegi-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
-          formControlName="tipoRegi"
+          id="tipoRegimenFiscalExteriorId-{{
+            docSustentoGroup().get('uniqueIdDoc')?.value
+          }}"
+          formControlName="tipoRegimenFiscalExteriorId"
           (selectionChange)="getCountries()"
           [disabled]="isPagoResidente"
         >
           <mat-option>::seleccione::</mat-option>
-          @for (tipoRegimen of tiposRegimenFe(); track $index) {
-            <mat-option [value]="tipoRegimen.tipoRegi">
-              {{ tipoRegimen.tipoRegi }} -
+          @for (tipoRegimen of tiposRegimen(); track $index) {
+            <mat-option [value]="tipoRegimen.id">
+              {{ tipoRegimen.codigo }} -
               {{ tipoRegimen.descripcion }}
             </mat-option>
           }
@@ -268,7 +274,7 @@
         [docSustentoArray]="docSustentoArray()"
         [retencionGroup]="retencion"
         [impuestosRetencion]="impuestosRetencion()"
-        [codigosRetencion]="codigosRetencion()"
+        [codigosRetencion]="conceptosRetencionAir()"
         [porcentajesRetIva]="porcentajesRetIva()"
         [indexDoc]="indexDoc()"
         [indexRetencion]="i"

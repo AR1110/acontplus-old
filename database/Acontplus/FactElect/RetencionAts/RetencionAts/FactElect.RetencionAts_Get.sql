@@ -35,39 +35,39 @@ BEGIN
 	    --> DataForm
 	    IF @tipo = 2
 		    BEGIN
-                SET @tableNames = 'tiposIdentificacion,sujetoRetenido,documentoSustento,sustentoTributario,tiposPago,tiposRegimen,countries,paraisosFiscales,taxes,tarifaImpuestos,impuestosRetencion,porcentajesRetIva,codigosRetencion,formasPago,estabs,infoAdicional';
+                SET @tableNames = 'tiposIdentificacion,tiposIdentificacionProveedor,tiposComprobante,sustentosTributarios,tiposPago,tiposRegimen,countries,paraisosFiscales,taxes,tarifaImpuestos,impuestosRetencion,porcentajesRetIva,conceptosRetencionAir,formasPago,estabs,infoAdicional';
 			    
-                SELECT * FROM TipoIdentificacion WITH (NOLOCK) WHERE estado = 1 
+                SELECT idTipoIdentificacion, codigo, codigoSri, descripcion FROM TipoIdentificacion WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.SujetoRetenido WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.TipoIdentificacionProveedor WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.DocumentoSustento WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.TipoComprobante WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT dst.codDocSustento, st.codSustento, st.descripcion  
+			    SELECT dst.Id, dst.TipoComprobanteId, st.Codigo, st.Descripcion
                 FROM Sri.SustentoTributario st  WITH (NOLOCK)
-			    INNER JOIN Sri.DocumentoSustentoTrib dst  WITH (NOLOCK) ON st.codSustento = dst.codSustento
-			    WHERE st.estado = 1
+			    INNER JOIN Sri.DocumentoSustentoTributario dst  WITH (NOLOCK) ON st.Id = dst.SustentoTributarioId
+			    WHERE st.[Enabled] = CAST(1 AS BIT)
 
-                SELECT * FROM Sri.TipoPago WITH (NOLOCK) WHERE estado = 1 
+                SELECT Id, Codigo, Descripcion FROM Sri.TipoPago WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.TipoRegimenFE WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.TipoRegimenFiscalExterior WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.Pais WITH (NOLOCK) WHERE estado = 1  
+			    SELECT Id, Codigo, Descripcion FROM Sri.Pais WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT)   
 
-			    SELECT * FROM Sri.ParaisoFiscal WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.ParaisoFiscal WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
 			    SELECT * FROM Sri.Impuesto WITH (NOLOCK) WHERE estado = 1 
 
 			    SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
 
-			    SELECT * FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE estado = 1
+			    SELECT Id, Codigo, Descripcion FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.PorcentajeRetIva  WITH (NOLOCK) WHERE estado = 1
+			    SELECT Id, Codigo, Descripcion, Porcentaje FROM Sri.PorcentajeRetencionIva  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado
-                FROM Sri.CodigoRetencion  WITH (NOLOCK) WHERE estado = 1
+			    SELECT Id, Codigo, Descripcion, Porcentaje
+                FROM Sri.ConceptoRetencionAir  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT)
 			
-                SELECT * FROM Sri.FormaPago WITH (NOLOCK) WHERE estado = 1 
+                SELECT Id, Codigo, Descripcion FROM Sri.FormaPago WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
 			    SELECT idEstablecimiento
                       ,nombreComercial
@@ -164,7 +164,7 @@ BEGIN
 
             DECLARE @docsFounded AS TABLE(
 				idDocumento INT NOT NULL,
-                codDocSustento VARCHAR(2) NOT NULL,
+                tipoComprobanteId INT NOT NULL,
                 documentName VARCHAR(100),
                 numDocSustento VARCHAR(50) NOT NULL,
 				fechaEmisionDocSustento VARCHAR(25),
@@ -173,9 +173,9 @@ BEGIN
 				isAutomatic BIT
 			);
 
-			INSERT INTO @docsFounded(idDocumento, codDocSustento, documentName, numDocSustento,
+			INSERT INTO @docsFounded(idDocumento, tipoComprobanteId, documentName, numDocSustento,
             fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
-			SELECT fc.idFacturaCompra, '01' ,'Factura Física',(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9))
+			SELECT fc.idFacturaCompra, (SELECT Id FROM Sri.TipoComprobante WHERE codigo = '01'),'Factura Física',(fc.puntoEmision + '-' +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9))
             ,CONVERT(VARCHAR, fc.fechaEmision, 23),fc.nroAutorizacion,fc.total,CAST(0 AS BIT)
 			FROM dbo.FacturaCompra       fc WITH (NOLOCK)
 			INNER JOIN dbo.Proveedor     pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
@@ -201,16 +201,11 @@ BEGIN
 			    ) 
             
 
-			INSERT INTO @docsFounded(idDocumento, codDocSustento, documentName, numDocSustento, fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
+			INSERT INTO @docsFounded(idDocumento, tipoComprobanteId, documentName, numDocSustento, fechaEmisionDocSustento, numAutDocSustento, importeTotal, isAutomatic)
 			SELECT 
             dr.idDocumento,
-            dr.codDoc,
-            CASE 
-                WHEN dr.codDoc = '01' THEN 'Factura'
-                WHEN dr.codDoc = '04' THEN 'Nota de Crédito'
-                WHEN dr.codDoc = '06' THEN 'Guía de Remisión'
-                WHEN dr.codDoc = '07' THEN 'Comprobante de Retención'
-            END,
+            tc.Id,
+            tc.Descripcion,
             dr.serieComprobante,
             FORMAT(CAST(dr.fechaEmision AS DATE), 'yyyy-MM-dd'),
             dr.claveAcceso,
@@ -220,11 +215,12 @@ BEGIN
                 Recepcion.DocumentoRecibido dr WITH (NOLOCK)
                 INNER JOIN Sri.Establecimiento e WITH (NOLOCK)
                     ON e.idEstablecimiento = dr.idEstablecimiento
+                INNER JOIN Sri.TipoComprobante tc WITH (NOLOCK) 
+                    ON dr.codDoc = tc.Codigo
             WHERE 
                 e.idEntidad = @idEntidad
-                AND dr.estado = 1
+                AND dr.estado = CAST(1 AS BIT)
                 AND dr.rucEmisor = @idCard
-                AND dr.codDoc = '01'
                 AND MONTH(CAST(dr.fechaEmision AS DATE)) = MONTH(GETDATE())
                 AND YEAR(CAST(dr.fechaEmision AS DATE)) = YEAR(GETDATE())
                 AND NOT EXISTS (

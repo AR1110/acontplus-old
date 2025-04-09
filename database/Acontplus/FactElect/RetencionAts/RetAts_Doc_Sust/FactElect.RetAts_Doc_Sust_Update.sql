@@ -46,14 +46,13 @@ BEGIN
 
 			--INSERT INTO @tblDocs(uniqueIdDoc, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
 			
-			UPDATE rds SET rds.codSustento = t.codSustento
-			,rds.codDocSustento = t.codDocSustento
+			UPDATE rds SET rds.documentoSustentoTributarioId = t.documentoSustentoTributarioId 
 			,rds.numDocSustento = t.numDocSustento
 			,rds.fechaEmisionDocSustento = t.fechaEmisionDocSustento
 			,rds.fechaRegistroContable = t.fechaRegistroContable
 			,rds.numAutDocSustento = t.numAutDocSustento
 			,rds.pagoLocExt = t.pagoLocExt
-			,rds.tipoRegi = t.tipoRegi
+			,rds.tipoRegimenFiscalExteriorId = t.tipoRegimenFiscalExteriorId
 			,rds.paisEfecPago = t.paisEfecPago
 			,rds.aplicConvDobTrib = t.aplicConvDobTrib
 			,rds.pagExtSujRetNorLeg = t.pagExtSujRetNorLeg
@@ -65,15 +64,14 @@ BEGIN
 			--,rds.importeTotal = t.importeTotal
 			 
 			FROM FactElect.RetAtsDocSustento rds
-			JOIN (SELECT @id idRetAtsDocSustento, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis--, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
-			FROM OPENJSON(@json) WITH( codSustento VARCHAR(2) '$.codSustento'
-				,codDocSustento VARCHAR(2) '$.codDocSustento'
+			JOIN (SELECT @id idRetAtsDocSustento, documentoSustentoTributarioId, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis--, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
+			FROM OPENJSON(@json) WITH(documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
 				,numDocSustento VARCHAR(15) '$.numDocSustento'
 				,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
 				,fechaRegistroContable DATETIME '$.fechaRegistroContable'
 				,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
 				,pagoLocExt VARCHAR(2) '$.pagoLocExt'
-				,tipoRegi VARCHAR(2) '$.tipoRegi'
+				,tipoRegimenFiscalExteriorId INT '$.tipoRegi'
 				,paisEfecPago VARCHAR(3) '$.paisEfecPago'
 				,aplicConvDobTrib VARCHAR(2) '$.aplicConvDobTrib'
 				,pagExtSujRetNorLeg VARCHAR(2) '$.pagExtSujRetNorLeg'

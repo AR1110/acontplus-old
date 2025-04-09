@@ -1,7 +1,7 @@
-export interface PorcentajeRetIva {
-  idPorcentajeRetIva: number;
+export interface PorcentajeRetencionIva {
+  id: number;
   codigo: '7' | '8' | '9' | '10' | '1' | '11' | '2' | '3';
   descripcion: string;
   porcentaje: number;
-  estado: boolean;
+  enabled?: boolean;
 }

@@ -21,22 +21,21 @@ import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 import { DatePipe } from '@angular/common';
-import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
+import { TipoComprobante } from '@sri/domain/models/tipo-comprobante';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
-import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
+import { TipoRegimenFiscalExterior } from '@sri/domain/models/tipo-regimen-fiscal-exterior';
 import { TipoIdentificacion } from '@core/models/tipo-identificacion';
-import { SujetoRetenido } from '@sri/domain/models/sujeto-retenido';
+import { TipoIdentificacionProveedor } from '@sri/domain/models/tipo-identificacion-proveedor';
 import { Pais } from '@sri/domain/models/pais';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { GenericModel } from '@core/models/generic.model';
-import { ambienteSriOptions } from '@shared/models/ambiente-sri';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
 import { DocSustentoAddEditComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
-import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
-import { PorcentajeRetIva } from '@sri/domain/models/porcentaje-ret-iva';
+import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
+import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
@@ -44,9 +43,9 @@ import { FormaPago } from '@sri/domain/models/forma-pago';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { RetAtsInfoAdicional } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -65,7 +64,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSelectModule,
     MatInput,
     RetencionAtsInfoAdicionalAddEditComponent,
-    MatCheckbox,
     MatDatepickerModule,
   ],
   templateUrl: './retencion-ats-add-edit.component.html',
@@ -80,6 +78,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _dialogService = inject(DialogService);
+  private readonly _tS = inject(ToasterService);
 
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
@@ -102,20 +101,20 @@ export class RetencionAtsAddEditComponent implements OnInit {
   puntosEmision: GroupedEstabPuntoEmision[] | undefined = [];
   subContribuyente = '';
   tiposIdentificacion: TipoIdentificacion[] = [];
-  tiposSujRetenido: SujetoRetenido[] = [];
+  tiposIdentificacionProveedor: TipoIdentificacionProveedor[] = [];
   isNotForeign = true;
   generic: GenericModel[] = [{ code: 'SI' }, { code: 'NO' }];
   retAtsDocSustentos: RetAtsDocSustento[] = [];
-  documentosSustento: DocumentoSustento[] = [];
+  tiposComprobante: TipoComprobante[] = [];
   sustentosTributarios: SustentoTributario[] = [];
   tiposPago: TipoPago[] = [];
-  tiposRegimenFe: TipoRegimenFe[] = [];
+  tiposRegimen: TipoRegimenFiscalExterior[] = [];
   countries: Pais[] = [];
   taxes: Impuesto[] = [];
   tarifaImpuestos: TarifaImpuesto[] = [];
   impuestosRetencion: ImpuestoRetencion[] = [];
-  codigosRetencion: CodigoRetencion[] = [];
-  porcentajesRetIva: PorcentajeRetIva[] = [];
+  conceptosRetencionAir: ConceptoRetencionAir[] = [];
+  porcentajesRetIva: PorcentajeRetencionIva[] = [];
   formasPago: FormaPago[] = [];
   // Pagination
   currentPage = 1;
@@ -147,14 +146,14 @@ export class RetencionAtsAddEditComponent implements OnInit {
       idRetAtsDocSustento: [0],
       idDocumento: [0],
       uniqueIdDoc: [generateUuidv4(), [Validators.required]],
-      codSustento: [''],
-      codDocSustento: [''],
+      documentoSustentoTributarioId: [0],
+      tipoComprobanteId: [0],
       numDocSustento: [''],
       fechaEmisionDocSustento: [''],
       fechaRegistroContable: [''],
       numAutDocSustento: [''],
       pagoLocExt: [''],
-      tipoRegi: [''],
+      tipoRegimenFiscalExteriorId: [''],
       paisEfecPago: [''],
       aplicConvDobTrib: [''],
       pagExtSujRetNorLeg: [''],
@@ -186,6 +185,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   // Add a docSustento with predefined values
   addDocSustento(doc: RetAtsDocSustento) {
+    console.log(doc);
     const docGroup = this.createDocSustentoGroup();
 
     let formattedFecha = '';
@@ -228,15 +228,15 @@ export class RetencionAtsAddEditComponent implements OnInit {
         this.onSelectEstablecimiento();
       }
       this.tiposIdentificacion = response.tiposIdentificacion;
-      this.tiposSujRetenido = response.sujetoRetenido;
-      this.documentosSustento = response.documentoSustento;
-      this.sustentosTributarios = response.sustentoTributario;
+      this.tiposIdentificacionProveedor = response.tiposIdentificacionProveedor;
+      this.tiposComprobante = response.tiposComprobante;
+      this.sustentosTributarios = response.sustentosTributarios;
       this.tiposPago = response.tiposPago;
-      this.tiposRegimenFe = response.tiposRegimen;
+      this.tiposRegimen = response.tiposRegimen;
       this.taxes = response.taxes;
       this.tarifaImpuestos = response.tarifaImpuestos;
       this.impuestosRetencion = response.impuestosRetencion;
-      this.codigosRetencion = response.codigosRetencion;
+      this.conceptosRetencionAir = response.conceptosRetencionAir;
       this.porcentajesRetIva = response.porcentajesRetIva;
       this.formasPago = response.formasPago;
     });
@@ -256,7 +256,17 @@ export class RetencionAtsAddEditComponent implements OnInit {
   onSave() {
     console.log(this.retencionAtsForm.value);
 
-
+    this._retencionAtsUseCase
+      .create(this.retencionAtsForm.value)
+      .subscribe((response) => {
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code === '1') {
+          this.dialogRef.close(true);
+        }
+      });
   }
 
   onSelectEstablecimiento(): void {
