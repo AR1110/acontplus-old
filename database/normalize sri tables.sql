@@ -1,7 +1,53 @@
---use acontplus
---go
+USE Acontplus
+GO
 
-use Acontplus
+ALTER TABLE FactElect.RetencionAts DROP COLUMN IF EXISTS idCliente
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_NAME = 'fk_retencion_ats_usuario'
+        AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+        AND TABLE_NAME = 'FactElect.RetencionAts'
+)
+BEGIN
+    ALTER TABLE FactElect.RetencionAts
+    ADD CONSTRAINT fk_retencion_ats_usuario
+    FOREIGN KEY (idUsuario)
+    REFERENCES dbo.Usuario(idUsuario)
+END
+GO
+
+ALTER TABLE FactElect.RetencionAts ALTER COLUMN idUsuario INT NOT NULL;
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'documentoSustentoTributarioId'
+        AND Object_ID = Object_ID(N'FactElect.RetAtsDocSustento')
+)
+BEGIN
+	ALTER TABLE FactElect.RetAtsDocSustento 
+	ADD documentoSustentoTributarioId INT
+	CONSTRAINT fk_doc_sustento_doc_sustento_tributario
+	FOREIGN KEY (documentoSustentoTributarioId) REFERENCES Sri.DocumentoSustentoTributario(Id)
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'tipoRegimenFiscalExteriorId'
+        AND Object_ID = Object_ID(N'FactElect.RetAtsDocSustento')
+)
+BEGIN
+	ALTER TABLE FactElect.RetAtsDocSustento 
+	ADD tipoRegimenFiscalExteriorId INT
+	CONSTRAINT fk_doc_sustento_tipo_fiscal_regimen_exterior
+	FOREIGN KEY (tipoRegimenFiscalExteriorId) REFERENCES Sri.TipoRegimenFiscalExterior(Id)
+END
 GO
 
 IF NOT EXISTS (
@@ -24,6 +70,48 @@ FROM Sri.TarifaImpuesto ti
 GO
 
 ALTER TABLE Sri.TarifaImpuesto ALTER COLUMN idImpuesto INT NOT NULL;
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'formaPagoId'
+        AND Object_ID = Object_ID(N'FactElect.RetencionAtsPago')
+)
+BEGIN
+	ALTER TABLE FactElect.RetencionAtsPago 
+	ADD formaPagoId INT
+	CONSTRAINT fk_ret_ats_payment_method 
+	FOREIGN KEY (formaPagoId) REFERENCES Sri.FormaPago(Id)
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'impuestoRetencionId'
+        AND Object_ID = Object_ID(N'FactElect.RetencionAtsRet')
+)
+BEGIN
+	ALTER TABLE FactElect.RetencionAtsRet 
+	ADD impuestoRetencionId INT
+	CONSTRAINT fk_ret_ats_ret_retencion_tax
+	FOREIGN KEY (impuestoRetencionId) REFERENCES Sri.ImpuestoRetencion(Id)
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'idTarifaImpuesto'
+        AND Object_ID = Object_ID(N'FactElect.RetAtsImpDocSustento')
+)
+BEGIN
+	ALTER TABLE FactElect.RetAtsImpDocSustento 
+	ADD idTarifaImpuesto INT
+	CONSTRAINT fk_ret_ats_imp_doc_sust_tax_fee
+	FOREIGN KEY (idTarifaImpuesto) REFERENCES Sri.TarifaImpuesto(idTarifaImpuesto)
+END
+GO
 
 
 --IF NOT EXISTS (

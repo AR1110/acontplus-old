@@ -35,39 +35,39 @@ BEGIN
 	    --> DataForm
 	    IF @tipo = 2
 		    BEGIN
-                SET @tableNames = 'tiposIdentificacion,sujetoRetenido,documentoSustento,sustentoTributario,tiposPago,tiposRegimen,countries,paraisosFiscales,taxes,tarifaImpuestos,impuestosRetencion,porcentajesRetIva,codigosRetencion,formasPago,estabs,infoAdicional';
+                SET @tableNames = 'tiposIdentificacion,tiposIdentificacionProveedor,tiposComprobante,sustentosTributarios,tiposPago,tiposRegimen,countries,paraisosFiscales,taxes,tarifaImpuestos,impuestosRetencion,porcentajesRetIva,conceptosRetencionAir,formasPago,estabs,infoAdicional';
 			    
-                SELECT * FROM TipoIdentificacion WITH (NOLOCK) WHERE estado = 1 
+                SELECT idTipoIdentificacion, codigo, codigoSri, descripcion FROM TipoIdentificacion WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.SujetoRetenido WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.TipoIdentificacionProveedor WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.DocumentoSustento WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.TipoComprobante WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT dst.codDocSustento, st.codSustento, st.descripcion  
+			    SELECT dst.Id, dst.TipoComprobanteId, st.Codigo, st.Descripcion
                 FROM Sri.SustentoTributario st  WITH (NOLOCK)
-			    INNER JOIN Sri.DocumentoSustentoTrib dst  WITH (NOLOCK) ON st.codSustento = dst.codSustento
-			    WHERE st.estado = 1
+			    INNER JOIN Sri.DocumentoSustentoTributario dst  WITH (NOLOCK) ON st.Id = dst.SustentoTributarioId
+			    WHERE st.[Enabled] = CAST(1 AS BIT)
 
-                SELECT * FROM Sri.TipoPago WITH (NOLOCK) WHERE estado = 1 
+                SELECT Id, Codigo, Descripcion FROM Sri.TipoPago WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.TipoRegimenFE WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.TipoRegimenFiscalExterior WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.Pais WITH (NOLOCK) WHERE estado = 1  
+			    SELECT Id, Codigo, Descripcion FROM Sri.Pais WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT)   
 
-			    SELECT * FROM Sri.ParaisoFiscal WITH (NOLOCK) WHERE estado = 1 
+			    SELECT Id, Codigo, Descripcion FROM Sri.ParaisoFiscal WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
 			    SELECT * FROM Sri.Impuesto WITH (NOLOCK) WHERE estado = 1 
 
 			    SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
 
-			    SELECT * FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE estado = 1
+			    SELECT Id, Codigo, Descripcion FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.PorcentajeRetIva  WITH (NOLOCK) WHERE estado = 1
+			    SELECT Id, Codigo, Descripcion, Porcentaje FROM Sri.PorcentajeRetencionIva  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT idCodigoRetencion, codigo, concepto descripcion, porcentajeMin porcentaje, estado
-                FROM Sri.CodigoRetencion  WITH (NOLOCK) WHERE estado = 1
+			    SELECT Id, Codigo, Descripcion, Porcentaje
+                FROM Sri.ConceptoRetencionAir  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT)
 			
-                SELECT * FROM Sri.FormaPago WITH (NOLOCK) WHERE estado = 1 
+                SELECT Id, Codigo, Descripcion FROM Sri.FormaPago WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
 			    SELECT idEstablecimiento
                       ,nombreComercial

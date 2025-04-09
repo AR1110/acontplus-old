@@ -126,15 +126,15 @@ BEGIN
 				,valorImpuesto = fci.valor
 			    FROM @taxes fci
 			    LEFT JOIN Sri.Impuesto i ON fci.codigo = i.codigo
-			    LEFT JOIN Sri.TarifaImpuesto ti ON fci.codigo = ti.codImpuesto AND fci.codigoPorcentaje = ti.codigo
+			    LEFT JOIN Sri.TarifaImpuesto ti ON i.idImpuesto = ti.idImpuesto AND fci.codigoPorcentaje = ti.codigo
 			    WHERE fci.baseImponible > 0
 
-                SELECT fp.idFormaPago
-                    ,fp.formaPago
-                    ,fp.descripcion
+                SELECT fp.Id
+                    ,fp.Codigo
+                    ,fp.Descripcion
                     ,p.total
                 FROM @tblPagos p 
-                    INNER JOIN Sri.FormaPago fp WITH (NOLOCK) ON p.formaPago = fp.formaPago
+                    INNER JOIN Sri.FormaPago fp WITH (NOLOCK) ON p.formaPago = fp.Codigo
 			END
 	END TRY
     BEGIN CATCH
