@@ -129,7 +129,7 @@ BEGIN
 			    LEFT JOIN Sri.TarifaImpuesto ti ON i.idImpuesto = ti.idImpuesto AND fci.codigoPorcentaje = ti.codigo
 			    WHERE fci.baseImponible > 0
 
-                SELECT fp.Id
+                SELECT fp.Id formaPagoId
                     ,fp.Codigo
                     ,fp.Descripcion
                     ,p.total
