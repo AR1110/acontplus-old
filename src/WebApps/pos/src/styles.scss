@@ -1,12 +1,7 @@
 @use "@angular/material" as mat;
-@use "./m3-theme";
-// @use "app/ui/layouts/layout-component.theme";
-//@import "bootstrap/dist/css/bootstrap.css";
-//@import "bootstrap/scss/bootstrap-grid";
-@import "ngx-toastr/toastr";
+@use "theme-colors" as acontplus-theme;
+@use "ngx-toastr/toastr";
 @import "overlayscrollbars/overlayscrollbars.css";
-
-// Variables
 
 // Color Palette - Light Mode
 $light-bg: #ffffff;
@@ -22,20 +17,38 @@ $dark-border: #444444;
 $dark-text: #e0e0e0;
 $dark-active-text: #81c784;
 
-// Light theme
-// Un comment below to use theme created by ng add @angular-material
-// $theme: $angular-material-3-light-theme;
+// Define light and dark themes with correct structure
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: acontplus-theme.$primary-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+    ),
+  )
+);
 
-// Light Theme created by ng generate @angular-material:m3-theme
-$theme: m3-theme.$light-theme;
-
-// Dark theme
-// Un-comment below to use dark theme using @angular/material
-// $dark-theme: $angular-material-3-dark-theme;
-
-// Dark Theme created by ng generate @angular-material:m3-theme
-$dark-theme: m3-theme.$dark-theme;
-
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: acontplus-theme.$primary-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+    ),
+  )
+);
 $compact-theme: mat.define-theme(
   (
     density: (
@@ -44,23 +57,12 @@ $compact-theme: mat.define-theme(
   )
 );
 
-.mat-mdc-form-field-subscript-wrapper {
-  min-height: 10px;
-}
-.mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-subscript-dynamic-size {
-  height: auto;
-  transition: height 0.3s ease;
-}
-
 :root {
-  @include mat.all-component-themes($theme);
+  @include mat.all-component-themes($light-theme);
   @include mat.form-field-density($compact-theme);
 
-  // Components themes
-  // @include layout-component.theme($theme);
-
   // Add backwards compatibility styles for color variants
-  @include mat.color-variants-backwards-compatibility($theme);
+  @include mat.color-variants-backwards-compatibility($light-theme);
 
   --theme-primary-bg: #1a3450; /* Color de fondo principal */
   --theme-primary-border: #3b82f6; /* Borde principal */
@@ -111,15 +113,23 @@ $compact-theme: mat.define-theme(
   --product-card-bg: var(--pink);
   --card-border: rgba(0, 0, 0, 0.1);
   --card-spacing: 16px;
-  --transition-speed: 0.3s;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// Apply the light theme by default
+//.light-theme {
+//  @include mat.all-component-themes($light-theme);
+//  @include mat.form-field-density($compact-theme);
+//}
 
 // Variables tema oscuro
 .dark-theme {
   @include mat.all-component-colors($dark-theme);
-
-  // Components themes
-  // @include layout-component.theme($dark-theme);
 
   @include mat.color-variants-backwards-compatibility($dark-theme);
 
@@ -158,24 +168,24 @@ $compact-theme: mat.define-theme(
   --category-bg: var(--pink);
 }
 
+// Default to light theme
+//body {
+//  @extend .light-theme;
+//}
+
 // Estilos globales
 body {
-  margin: 0;
   font-family: "Inter", sans-serif;
   background-color: var(--background-color);
   color: var(--text-primary);
   transition: background-color 0.3s ease;
-}
-
-.mat-mdc-card {
-  border-radius: 16px !important;
-  box-shadow: var(--card-shadow) !important;
-  // background-color: var(--card-bg) !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .swal2-shown {
   overflow: unset !important;
-  padding-right: 0px !important;
+  padding-right: 0 !important;
 }
 
 .full-screen-dialog .mat-dialog-container {
@@ -187,4 +197,16 @@ body {
   max-width: 100vw;
   max-height: 100vh;
   overflow: hidden;
+}
+.mat-mdc-card {
+  border-radius: 16px !important;
+  box-shadow: var(--card-shadow) !important;
+  // background-color: var(--card-bg) !important;
+}
+.mat-mdc-form-field-subscript-wrapper {
+  min-height: 10px;
+}
+.mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-subscript-dynamic-size {
+  height: auto;
+  transition: height 0.3s ease;
 }

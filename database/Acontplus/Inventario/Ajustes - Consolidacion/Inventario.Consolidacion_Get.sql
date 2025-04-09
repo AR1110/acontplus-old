@@ -48,12 +48,18 @@ BEGIN
 		BEGIN
             
             SET @tableNames = 'consolidaciones'
+            DECLARE @secuencial VARCHAR(40)
+            DECLARE @tipoDocId INT 
+            DECLARE @textSearch VARCHAR(50)
 
             SELECT @pageIndex   = pageIndex  
                   ,@pageSize    = pageSize
                   ,@ckFecha     = ckFecha
                   ,@fechaInicio = fechaInicio
                   ,@fechaFin    = fechaFin
+                  ,@secuencial = LTRIM(RTRIM(nroSecuencial)) 
+                  ,@tipoDocId     = tipoDocId
+                  ,@textSearch    = LTRIM(RTRIM(textSearch)) 
             FROM OPENJSON(@json) WITH 
             (
                 pageIndex   INT
@@ -61,6 +67,9 @@ BEGIN
                ,ckFecha     BIT 
                ,fechaInicio DATETIME2
                ,fechaFin    DATETIME2
+               ,nroSecuencial VARCHAR(40)
+               ,tipoDocId INT 
+               ,textSearch VARCHAR(50)
             )
 			
             SET @sql = 'SELECT ci.idConsolidacionInventario
@@ -86,11 +95,30 @@ BEGIN
                           ,@fechaInicio DATETIME2
                           ,@fechaFin    DATETIME2
                           ,@pageIndex   INT
-                          ,@pageSize    INT'
+                          ,@pageSize    INT
+                          ,@secuencial VARCHAR(40)
+                          ,@tipoDocId INT 
+                          ,@textSearch VARCHAR(50)'
+
+            IF @tipoDocId >0
+                BEGIN
+                      SET @sql = @sql + ' AND ci.idTipoDocumento = @tipoDocId '
+                END
+
+            IF @secuencial IS NOT NULL
+				BEGIN
+					SET @sql = @sql + ' AND ci.nroDoc BETWEEN ' + REPLACE(@secuencial,'-',' AND ')
+				END 
+
+            IF @textSearch IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + '   AND ci.observacion LIKE ''%''+ @textSearch + ''%'' '
+                    
+                END 
 
             IF @ckFecha = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(ci.fechaEmision as DATE) BETWEEN CAST(@fechaInicio as DATE) AND CAST(@fechaFin as DATE) '
+                    SET @sql = @sql + ' AND CAST(ci.fechaEmision as DATE) BETWEEN CAST(@fechaInicio as DATE) AND CAST(@fechaFin as DATE) '
                 END 
 
             SET @sql = @sql + 'ORDER BY ci.idConsolidacionInventario DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
@@ -101,6 +129,9 @@ BEGIN
 								   ,@fechaFin        = @fechaFin
 								   ,@pageIndex       = @pageIndex
 								   ,@pageSize        = @pageSize
+                                   ,@secuencial   = @secuencial
+                                   ,@tipoDocId       = @tipoDocId
+                                   ,@textSearch      = @textSearch
 
             RETURN
 		END

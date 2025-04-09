@@ -1,14 +1,17 @@
-import { Component } from '@angular/core';
-import {RouterOutlet} from "@angular/router";
+import {Component, signal} from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import {ThemeToggleComponent} from "@core/components/theme/theme-toggle/theme-toggle.component";
+import {MatToolbar} from "@angular/material/toolbar";
+import {FooterComponent} from "@core/components/footer/footer.component";
 
 @Component({
-    selector: 'app-auth-layout',
-    imports: [
-        RouterOutlet
-    ],
-    templateUrl: './auth-layout.component.html',
-    styleUrl: './auth-layout.component.scss'
+  selector: 'app-auth-layout',
+  imports: [RouterOutlet,  ThemeToggleComponent, MatToolbar, FooterComponent],
+  templateUrl: './auth-layout.component.html',
+  styleUrl: './auth-layout.component.scss',
 })
 export class AuthLayoutComponent {
+  title = signal<string>('Acontplus Restaurant');
 
 }

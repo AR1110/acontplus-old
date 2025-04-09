@@ -20,29 +20,32 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { HeaderComponent } from './header/header.component';
+import {FooterComponent} from "@core/components/footer/footer.component";
+import {PermissionStore} from "@ui/store/permission.store";
 @Component({
   selector: 'app-app-layout',
-  imports: [
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatTooltipModule,
-    AsyncPipe,
-    SidebarComponent,
-    RouterModule,
-    MatBadgeModule,
-    HeaderComponent,
-  ],
+    imports: [
+        MatSidenavModule,
+        MatListModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatTooltipModule,
+        AsyncPipe,
+        SidebarComponent,
+        RouterModule,
+        MatBadgeModule,
+        HeaderComponent,
+        FooterComponent,
+    ],
   templateUrl: './app-layout.component.html',
   styleUrl: './app-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppLayoutComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
-
+  $permissionStore = inject(PermissionStore)
   private breakpointObserver = inject(BreakpointObserver);
 
   isHandset$: Observable<boolean> = this.breakpointObserver
@@ -75,7 +78,7 @@ export class AppLayoutComponent {
   // }
   collapsed = signal(false);
   sidenavWidth = computed(() => {
-    return this.collapsed() ? '70px' : '250px';
+    return this.collapsed() ? '70px' : '230px';
   });
 
   toggleSidenav() {

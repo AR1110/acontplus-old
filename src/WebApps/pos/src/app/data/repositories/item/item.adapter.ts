@@ -2,6 +2,7 @@ import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
 import {ITEM_TYPE_CODE} from '@domain/enums/main.enum';
 import {ItemPvp, ItemRead} from '@domain/models/item.model';
 import {Injectable} from '@angular/core';
+import {imgDefault1} from "@domain/utils/utils";
 
 
 @Injectable({
@@ -27,7 +28,7 @@ export class ItemAdapter {
         summary: item.summary,
         productId: item.productId,
         descripcion: item.descripcion,
-        img: item.s3ObjectUrl || 'product-default.png',
+        img: item.s3ObjectUrl || imgDefault1,
         stock: item.stock,
         codigo: item.codigo,
         medida: item.medida,

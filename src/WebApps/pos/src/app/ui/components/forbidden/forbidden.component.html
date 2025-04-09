@@ -1,0 +1,25 @@
+<!-- forbidden.component.html -->
+
+  <mat-card  >
+
+
+    <mat-card-content class="forbidden-container">
+      <div class="d-flex flex-column justify-content-center align-items-center gap-4">
+        <div>
+          <svg  xmlns="http://www.w3.org/2000/svg"  width="100"  height="100"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-shield-lock"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /><path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12l0 2.5" /></svg>
+        </div>
+        <h3>El acceso a esta página está restringido</h3>
+      </div>
+
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Regresar
+      </button>
+      <button mat-raised-button color="primary" (click)="goHome()">
+        <mat-icon>home</mat-icon> Ir al Inicio
+      </button>
+    </mat-card-actions>
+  </mat-card>
+

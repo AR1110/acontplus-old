@@ -46,7 +46,6 @@ type Props = {
         ToUpperCaseDirective
     ],
     templateUrl: './order-custom-item.component.html',
-    styleUrl: './order-custom-item.component.scss'
 })
 export class OrderCustomItemComponent {
   readonly dialogRef = inject(MatDialogRef<OrderCustomItemComponent>);
@@ -229,7 +228,12 @@ export class OrderCustomItemComponent {
         codDoc: DOC_TYPE.FV,
         quickSale: true,
         items: [],
-        customDetail,
+        customDetail: customDetail.map(item=>{
+          return {
+            ...item,
+            envioSri: true
+          }
+        }),
         taxes
       }
 

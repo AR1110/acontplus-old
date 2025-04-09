@@ -1,0 +1,38 @@
+﻿[
+  {
+    "Codigo": "9",
+    "Descripcion": "10 %",
+    "Porcentaje": 10,
+    "FechaInicio": "2015-06-01"
+  },
+  {
+    "Codigo": "10",
+    "Descripcion": "20 %",
+    "Porcentaje": 20,
+    "FechaInicio": "2015-06-01"
+  },
+  {
+    "Codigo": "1",
+    "Descripcion": "30 %",
+    "Porcentaje": 30,
+    "FechaInicio": "2002-01-01"
+  },
+  {
+    "Codigo": "11",
+    "Descripcion": "50 %",
+    "Porcentaje": 50,
+    "FechaInicio": "2016-01-01"
+  },
+  {
+    "Codigo": "2",
+    "Descripcion": "70 %",
+    "Porcentaje": 70,
+    "FechaInicio": "2002-01-01"
+  },
+  {
+    "Codigo": "3",
+    "Descripcion": "100 %",
+    "Porcentaje": 100,
+    "FechaInicio": "2002-01-01"
+  }
+]

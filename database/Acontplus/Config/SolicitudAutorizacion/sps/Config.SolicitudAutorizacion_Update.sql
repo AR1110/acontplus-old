@@ -57,14 +57,14 @@ BEGIN
 		BEGIN TRAN 
 			IF @tipo = 1
 				BEGIN 	 
-					UPDATE Config.SolicitudAutorizacion SET codigoEstado='A', fechaRespuesta = dbo.ufnGetDateEcuador() WHERE rowguid = @rowguid
+					UPDATE Config.SolicitudAutorizacion SET codigoEstado='A', IdUsuarioRolAprobante = @userRoleId, fechaRespuesta = dbo.ufnGetDateEcuador() WHERE rowguid = @rowguid
 					SELECT  '1'code,'Concedido la autorización Correctamente'  as [message]
-                    EXEC Config.UserCustomerRequest_SendMail @userRoleId, @id
+                    EXEC  Config.SolicitudAutorizacion_SendMail @userRoleId, @id
 				END 
 				
 			IF @tipo = 2  
 				BEGIN 
-                    SELECT top 1 @id=idSolicitudAutorizacion,@rowguid = rowguid FROM Config.vw_SolicitudAutorizacion WHERE idUsuarioRolSolicitante = @userRoleId 
+                    SELECT top 1 @id=idSolicitudAutorizacion,@rowguid = rowguid FROM Config.vw_Solicitud_Autorizacion WHERE userRoleIdLogged = @userRoleId 
                                                                                 AND idDocumento = @idDocumento 
                                                                                 AND codigoModulo      = @codigoModulo
                                                                                AND codigoAccion = @codigoAccion 
@@ -73,7 +73,7 @@ BEGIN
 					IF @id > 0
 						BEGIN
 							UPDATE Config.SolicitudAutorizacion SET codigoEstado='F' WHERE rowguid= @rowguid
-                             EXEC Config.UserCustomerRequest_SendMail @userRoleId, @id
+                             EXEC  Config.SolicitudAutorizacion_SendMail @userRoleId, @id
 							SELECT '1'code,'Completado la solictud de autorización' as [message]
 						END 
 				END 

@@ -60,6 +60,7 @@ export const truncateNumber = function (number: number, decimals = 2) {
 
 
 export const imgDefault:string = 'product-default.png'
+export const imgDefault1:string = 'defecto.jpg'
 
 
 export const consumirFinalSuperaElValorPermitido = function (codTipoIdentificacion: string, valor: number): boolean {
@@ -74,4 +75,14 @@ export const truncateText = function (text: string | undefined, maxLength: numbe
   return text.length > maxLength
     ? `${text.substring(0, maxLength)}...`
     : text;
+}
+
+
+export const  isValidJSON = function (texto: string): boolean {
+  try {
+    JSON.parse(texto);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }

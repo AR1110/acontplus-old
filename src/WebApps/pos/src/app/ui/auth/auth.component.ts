@@ -16,6 +16,12 @@ import { MultipleEstabsComponent } from '@ui/auth/multiple-estabs/multiple-estab
 import { AuthUseCase } from '@domain/use-cases/auth.use-case';
 import { TokenUseCase } from '@domain/use-cases/token.use-case';
 import { finalize } from 'rxjs';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardModule,
+} from '@angular/material/card';
 
 @Component({
   selector: 'app-auth',
@@ -25,6 +31,7 @@ import { finalize } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     ReactiveFormsModule,
+    MatCardModule,
   ],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
@@ -98,6 +105,7 @@ export class AuthComponent {
       })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((response) => {
+
         if (response.code === '0') {
           this.tS.toastr({
             type: 'warning',

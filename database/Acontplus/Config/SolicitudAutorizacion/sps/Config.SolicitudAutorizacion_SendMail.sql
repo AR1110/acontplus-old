@@ -80,23 +80,26 @@ BEGIN
 	---------------Body -------------
 	DECLARE @nombreAccion VARCHAR(50) 
 	DECLARE @nombreModulo VARCHAR(50)
+
+ 
+
 	SELECT top 1 @nombreAccion = nombreAccion , 
 				 @nombreModulo = nombreModulo,
                  @isCompleted  = IIF(codigoEstado='F', 1, 0), 
                  @isApproved   = IIF(codigoEstado='A', 1, 0)  
-    FROM Config.vw_SolicitudAutorizacion 
+    FROM Config.vw_Solicitud_Autorizacion 
     WHERE idSolicitudAutorizacion  = @idSolicitudAutorizacion
 
     
     IF @isApproved = 1
         BEGIN 
             SELECT top 1 @custom_content = 'El administrador <b>' + v_ur.usuarioAprobante + '</b> ' + ' ha aprobado tu solicitud para ' + v_ur.nombreAccion + ' el documento ' + v_ur.nombreModulo + ' Nro.: <strong>' + v_ur.serieComprobante + '</strong>.<br />'
-            FROM Config.vw_SolicitudAutorizacion  v_ur
+            FROM Config.vw_Solicitud_Autorizacion  v_ur
             WHERE v_ur.idSolicitudAutorizacion = @idSolicitudAutorizacion
 
             INSERT INTO @tbUserRole (userRoleId)
             SELECT idUsuarioRolSolicitante
-            FROM Config.vw_SolicitudAutorizacion v_ur
+            FROM Config.vw_Solicitud_Autorizacion v_ur
             WHERE v_ur.idSolicitudAutorizacion = @idSolicitudAutorizacion
                  
 
@@ -113,7 +116,7 @@ BEGIN
                             ELSE 'solicita <strong>' + v_ur.nombreAccion + '</strong>'
                         END +
                         ' el documento ' + v_ur.nombreModulo + ' Nro.: <strong>' + v_ur.serieComprobante + '</strong>.<br />'
-            FROM Config.vw_SolicitudAutorizacion v_ur
+            FROM Config.vw_Solicitud_Autorizacion v_ur
             WHERE v_ur.idSolicitudAutorizacion = @idSolicitudAutorizacion
 
 
@@ -131,21 +134,19 @@ BEGIN
     --Enviar por correo la notificacion 
     INSERT INTO @userToSendEmail(body, params, receptor)
 		SELECT   (SELECT 
-                                    approverUser = v_ur.usuarioAprobante
+                                    approverUser = ua.BusinessName
                                     ,requestDate   = CONVERT(NVARCHAR,FORMAT(dbo.ufnGetDateEcuador() , 'dd/MM/yyyy HH:mm')) 
                                     ,v_ur.razonSocial
                                     ,v_ur.establecimiento  
                                     ,custom_content= @custom_content
-							FROM Config.vw_SolicitudAutorizacion  v_ur
+							FROM Config.vw_Solicitud_Autorizacion  v_ur
 							WHERE v_ur.idSolicitudAutorizacion = @idSolicitudAutorizacion
                             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
                             ),
             (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
-            LTRIM(RTRIM(u.correo))
-        FROM @tbUserRole ua
-        INNER JOIN dbo.Usuario u 
-        WITH(NOLOCK) ON u.idUsuario = (SELECT TOP 1 idUsuario FROM v_usuario v_ur WHERE v_ur.idUsuarioRol =ua.userRoleId )
-        WHERE LEN(ISNULL(LTRIM(RTRIM(u.correo)), '')) > 1
+            LTRIM(RTRIM(ua.correo))
+        FROM Config.vw_Solicitud_Auth_Admin_Role ua 
+        WHERE idSolicitudAutorizacion = @idSolicitudAutorizacion AND LEN(ISNULL(LTRIM(RTRIM(ua.correo)), '')) > 1
 
         DECLARE cursorUser CURSOR LOCAL FOR
         SELECT body, params, receptor

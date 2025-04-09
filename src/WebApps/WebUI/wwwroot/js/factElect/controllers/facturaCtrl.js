@@ -404,15 +404,10 @@
 
                 let paramsPermission = getParamsPermission(item, "E");
 
-                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);
-
-                // let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(
-                //     paramsPermission
-                // ); 
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission); 
 
                 if (responseCheck && responseCheck.code === "2") {
-                    openModalRegistrarSolicitudAuth(paramsPermission)
-                    // userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                    openModalRegistrarSolicitudAuth(paramsPermission) 
                     return;
                 }
 

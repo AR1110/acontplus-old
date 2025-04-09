@@ -1,4 +1,3 @@
-import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 import { CustomTableContainerComponent } from '@ui/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
 import { getValidId } from '@domain/utils/utils';
@@ -51,6 +50,7 @@ import { OrderRead } from '@domain/models/order.model';
 import { MatCardModule } from '@angular/material/card';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
+import {PermissionStore} from "@ui/store/permission.store";
 
 @Component({
   selector: 'app-order-list',
@@ -103,6 +103,7 @@ export class OrderListComponent {
   private posStoreSvc = inject(PosStoreService);
   private router = inject(Router);
   private $cartOverlaySvc = inject(CartOverlayService);
+  $permissionStore = inject(PermissionStore)
 
   displayedColumns: string[] = [
     'index',

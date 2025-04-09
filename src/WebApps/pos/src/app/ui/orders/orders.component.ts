@@ -5,7 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { OrderListComponent } from '@ui/orders/components/order-list/order-list.component';
 import { Router } from '@angular/router';
 import { formatDateToString } from '@domain/utils/date.util';
-import { STATUS_ORDER } from '@domain/enums/main.enum';
+import {ROUTES_PATH, STATUS_ORDER} from '@domain/enums/main.enum';
+import {PermissionStore} from "@ui/store/permission.store";
 
 @Component({
     selector: 'app-orders',
@@ -20,6 +21,7 @@ import { STATUS_ORDER } from '@domain/enums/main.enum';
 })
 export class OrdersComponent {
   private router = inject(Router)
+  $permissionStore = inject(PermissionStore)
 
   dataSearch = {
     userId: 0,
@@ -32,6 +34,10 @@ export class OrdersComponent {
   }
 
   navigateToPos() {
-    this.router.navigateByUrl('/pos')
+    this.router.navigateByUrl(ROUTES_PATH.POS).then()
+  }
+
+  ngOnInit(){
+    this.$permissionStore.loadActions(ROUTES_PATH.ORDER)
   }
 }

@@ -24,7 +24,6 @@ import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-c
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { DocSustentoTaxComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-tax/doc-sustento-tax.component';
-import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { DocSustentoRetencionComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-retencion/doc-sustento-retencion.component';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
@@ -143,10 +142,10 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       impuesto: [''],
       idImpuestoRetencion: [0, [Validators.required]],
       codigoDescripcion: [''],
-      codigoRetencion: ['', [Validators.required]],
+      codigoRetencion: [''],
       baseImponible: [0, [Validators.required]],
-      porcentajeRetener: [0, [Validators.required]],
-      valorRetenido: [0, [Validators.required]],
+      porcentajeRetener: [0],
+      valorRetenido: [0],
     });
   }
 

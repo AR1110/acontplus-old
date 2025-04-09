@@ -146,22 +146,25 @@
         </div>
 
         <mat-menu #menu="matMenu">
-          @if(isPending()){
+          @if($permissionStore.actions().editar && isPending()){
           <button mat-menu-item (click)="onEdit(row)">
             <mat-icon>edit</mat-icon>
             <span>Editar</span>
           </button>
-          } @if(isPending()){
+          } @if($permissionStore.actions().anular && isPending()){
           <button mat-menu-item (click)="askToAnul(row)">
             <mat-icon>delete</mat-icon>
             <span>Anular</span>
           </button>
           }
 
-          <button mat-menu-item (click)="getReport(row)">
-            <mat-icon>get_app</mat-icon>
-            <span>PDF</span>
-          </button>
+          @if($permissionStore.actions().reporte){
+            <button mat-menu-item (click)="getReport(row)">
+              <mat-icon>get_app</mat-icon>
+              <span>PDF</span>
+            </button>
+          }
+
 
           <button mat-menu-item appActionWhatsappSend [params]="row">
             <mat-icon>share</mat-icon>

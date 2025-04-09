@@ -26,9 +26,9 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
-                        <span for="establecimiento">Establecimiento</span>
+                        <label for="establecimiento">Establecimiento</label>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            class="form-control  border-select" ng-change="refresh()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -37,28 +37,46 @@
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
-                        <span for="puntosEmision">Punto Emisión</span>
+                        <label for="puntosEmision">Punto Emisión</label>
                         <select name="puntosEmision" id="puntosEmision" ng-model="dataSearch.idPuntoEmision"
-                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            class="form-control  border-select" ng-change="refresh()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="">Rango de Fechas</span>
-                        @* <div class="input-group"> *@
-                        <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
-                            end-date="dataSearch.endDate"
-                            result-range-date="resultDateRange(result)"></date-range-filter>
+                        <label for="">Rango fecha</label>
+                        <div class="input-group">
 
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <div class="custom-control custom-checkbox mr-sm-2">
+                                        <input type="checkbox" ng-model="dataSearch.ckFecha"
+                                            class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
+                                        <label class="custom-control-label" for="checkBoxFecha"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
+                                end-date="dataSearch.endDate"
+                                result-range-date="resultDateRange(result)"></date-range-filter>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="nroDoc">Número documento</label>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123 o 1-30">
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                        ng-click="getTransferenciasBodega()">
+                        ng-click="refresh()">
                         <i class="fas fa-redo"></i>
                     </button>
                 </div>

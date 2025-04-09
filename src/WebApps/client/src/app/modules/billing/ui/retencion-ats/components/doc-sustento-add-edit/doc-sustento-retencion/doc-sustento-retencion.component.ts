@@ -36,12 +36,8 @@ export class DocSustentoRetencionComponent {
 
   codImpuestoRetencionSelected = signal<string>('');
 
-  selectedRetencionCode = '';
-  selectCodigoRetencion(codigo: any) {
+  selectCodigoRetencion(codigo: string) {
     setTimeout(() => {
-      console.log('Selected value:', codigo);
-      // this.selectedRetencionCode = value;
-
       this.retencionGroup().get('codigoRetencion').setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
@@ -96,7 +92,7 @@ export class DocSustentoRetencionComponent {
     });
   }
 
-  selectImpuestoRetencion(idImpuestoRetencion: number, uniqueIdDoc: string) {
+  selectImpuestoRetencion(idImpuestoRetencion: number) {
     // Logic to set porcentajes based on codigo
     const codigo = this.impuestosRetencion().filter(
       (x) => x.idImpuestoRetencion === idImpuestoRetencion,

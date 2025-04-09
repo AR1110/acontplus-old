@@ -21,21 +21,23 @@ import {
 import { PosStoreService } from '@/ui/store/pos-store.service';
 import { CartPopupComponent } from '@/ui/pos-sale/cart-popup/cart-popup.component';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
+import {ThemeToggleComponent} from "@core/components/theme/theme-toggle/theme-toggle.component";
 
 @Component({
   selector: 'app-header',
-  imports: [
-    MatToolbarModule,
-    MatIconModule,
-    MatBadgeModule,
-    MatButtonModule,
-    OverlayModule,
-    NavUserInfoToggleComponent,
-    NavUserToggleComponent,
-    CartPopupComponent,
+    imports: [
+        MatToolbarModule,
+        MatIconModule,
+        MatBadgeModule,
+        MatButtonModule,
+        OverlayModule,
+        NavUserInfoToggleComponent,
+        NavUserToggleComponent,
+        CartPopupComponent,
 
-    ActionOrderDialogDirective,
-  ],
+        ActionOrderDialogDirective,
+        ThemeToggleComponent,
+    ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

@@ -10,10 +10,10 @@
           }}"
           (selectionChange)="
             selectImpuestoRetencion(
-              retencionGroup().get('idImpuestoRetencion')?.value,
-              retencionGroup().get('uniqueIdDoc')?.value
+              retencionGroup().get('idImpuestoRetencion')?.value
             )
           "
+          required
         >
           <mat-option [value]="">Seleccione un impuesto</mat-option>
           @for (impuesto of impuestosRetencion(); track $index) {
@@ -41,6 +41,7 @@
           id="baseImponible-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
           step="any"
           min="0"
+          required
           (blur)="calcularRetencion()"
         />
       </mat-form-field>
@@ -50,13 +51,14 @@
         <mat-label>Porcentaje:</mat-label>
         <input
           matInput
-          type="text"
+          type="number"
           formControlName="porcentajeRetener"
           id="porcentajeRetener-{{
             retencionGroup().get('uniqueIdDoc')?.value
           }}"
           step="any"
           min="0"
+          required
           (blur)="setPorcentajeRet()"
         />
       </mat-form-field>
@@ -68,7 +70,7 @@
         <mat-label>Valor Retenido:</mat-label>
         <input
           matInput
-          type="text"
+          type="number"
           formControlName="valorRetenido"
           id="valorRetenido-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
           step="any"

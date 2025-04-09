@@ -1,13 +1,8 @@
-/* src/app/components/product-card/product-card.component.scss */
-:host {
-  display: block;
-}
 
-/* Tarjeta de producto */
 .pos-product-card {
   background-color: var(--card-bg);
   border-radius: var(--card-radius);
-  overflow: hidden;
+  overflow: visible; /* Ensure absolutely positioned children aren’t clipped */
   box-shadow: var(--shadow);
   transition: transform var(--transition-speed);
   position: relative;
@@ -22,12 +17,10 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
-  /* Contenedor de imagen */
   &__image-container {
     position: relative;
     width: 100%;
-    padding-bottom: 100%; /* Aspect ratio 1:1 (cuadrado) */
-    //  background-color: var(--pink); /* Fondo crema claro como en la imagen */
+    padding-bottom: 100%;
     overflow: hidden;
   }
 
@@ -42,7 +35,6 @@
     border-radius: 50%;
   }
 
-  /* Información del producto */
   &__info {
     padding: 10px;
     text-align: center;
@@ -55,10 +47,9 @@
     margin: 0 0 10px;
     font-size: 10px;
     font-weight: 700;
-    color: var(--text-color);
+    //color: var(--text-color);
   }
 
-  /* Contenedor de precios */
   &__price-container {
     display: flex;
     justify-content: center;
@@ -69,11 +60,10 @@
 
   &__price {
     font-size: 14px;
-    color: var(--price-color);
+    //color: var(--price-color);
     display: flex;
     align-items: center;
 
-    /* Círculo para tamaño/variante */
     &-size {
       display: inline-block;
       width: 14px;
@@ -85,11 +75,10 @@
     }
   }
 
-  /* Etiquetas (popular, oferta) */
   &__tag {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 20px;
+    left: 15px;
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 12px;
@@ -108,7 +97,6 @@
       background-color: var(--tag-bg-offer);
     }
 
-    /* Icono para etiquetas */
     &-icon {
       width: 12px;
       height: 12px;
@@ -123,7 +111,6 @@
     }
   }
 
-  /* Botón de agregar al carrito */
   &__info-btn {
     position: absolute;
     bottom: 10px;
@@ -131,25 +118,16 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    // background-color: var(--pink);
-    // border: 1px solid #ddd;
-    // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 2;
+    z-index: 999; /* Lower than the mat-toolbar to scroll underneath */
     transition: transform 0.2s ease, background-color 0.3s;
 
-    &::before {
-      // content: "ℹ️";
-      // font-size: 16px;
-      // color: var(--white);
-    }
-
-    &:hover {
-      // background-color: darken(var(--pink), 10%);
-    }
+    //&:hover {
+    //  background-color: var(--pink);
+    //}
 
     &:active {
       transform: scale(0.9);
@@ -167,38 +145,6 @@
   }
 }
 
-:host-context(.dark-theme) {
-  .pos-product-card {
-    --card-bg: #222;
-    --text-color: #e0e0e0;
-    --price-color: #bbb;
-    --card-border: rgba(255, 255, 255, 0.1);
-    --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-
-    &__image-container {
-      background-color: #333;
-    }
-
-    &__price-size {
-      background-color: #444;
-      border-color: #555;
-    }
-
-    &__add-btn {
-      background-color: #3b82f6;
-      border-color: #1a3450;
-
-      &::before {
-        color: #e0e0e0;
-      }
-
-      &:hover {
-        background-color: #3b82f6;
-      }
-    }
-  }
-}
-
 .info-product-card {
   border: solid 1px #ccc;
   border-radius: 5px;
@@ -206,4 +152,47 @@
   text-align: center;
   padding: 10px;
   margin: 0;
+  //z-index: 2000;
+  //position: absolute;
+
+}
+
+@media (min-width: 960px) {
+  mat-toolbar {
+    height: 64px;
+  }
+
+  .product-list {
+    padding-top: 64px;
+  }
+
+  .pos-product-card__tag {
+    top: 20px;
+    left: 20px;
+  }
+}
+
+@media (max-width: 959px) {
+  mat-toolbar {
+    height: 56px;
+  }
+
+  .product-list {
+    padding-top: 56px;
+  }
+
+  .pos-product-card__tag {
+    top: 10px;
+    left: 10px;
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+
+  .pos-product-card__info-btn {
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
 }

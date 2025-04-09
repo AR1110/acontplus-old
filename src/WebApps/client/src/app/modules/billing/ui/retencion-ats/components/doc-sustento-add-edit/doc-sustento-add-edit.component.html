@@ -62,7 +62,8 @@
           id="numDocSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           (click)="numDocSustento.select()"
           formControlName="numDocSustento"
-          maxlength="15"
+          required
+          readonly
         />
       </mat-form-field>
     </div>

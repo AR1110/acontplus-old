@@ -173,19 +173,25 @@
 </ng-template>
 
 <ng-template #actionsTemplate>
-  @if(numSelected>0 && !isHandset()){ @if( rowCount === numSelected &&
-  isQuantityUnchanged()){
-  <button mat-flat-button color="primary" (click)="openCustomOrderItemModal()">
-    <mat-icon>edit_note</mat-icon> Personalizado
-  </button>
-  }
-  <button mat-flat-button color="accent" (click)="saveInvoice()">
-    <mat-icon>save</mat-icon> Factura
-  </button>
+  @if(numSelected>0 && !isHandset()){
 
-  <button mat-flat-button color="accent" (click)="saveNotaEntrega()">
-    <mat-icon>save</mat-icon> Nota Entrega
-  </button>
+    @if($permissionStore.actions().create_invoice &&  rowCount === numSelected && isQuantityUnchanged()){
+      <button mat-flat-button color="primary" (click)="openCustomOrderItemModal()">
+        <mat-icon>edit_note</mat-icon> Personalizado
+      </button>
+    }
+
+    @if($permissionStore.actions().create_invoice){
+      <button mat-flat-button color="accent" (click)="saveInvoice()">
+        <mat-icon>save</mat-icon> Factura
+      </button>
+    }
+
+    @if($permissionStore.actions().create_ne){
+      <button mat-flat-button color="accent" (click)="saveNotaEntrega()">
+        <mat-icon>save</mat-icon> Nota Entrega
+      </button>
+    }
   }@else if (numSelected>0 && isHandset()) {
   <button
     mat-icon-button
@@ -196,20 +202,25 @@
     <mat-icon>more_vert</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    @if( rowCount === numSelected && isQuantityUnchanged()){
+    @if( rowCount === numSelected && isQuantityUnchanged() && $permissionStore.actions().create_invoice){
     <button mat-menu-item (click)="openCustomOrderItemModal()">
       <mat-icon>edit_note</mat-icon>
       <span>Personalizado</span>
     </button>
     }
+
+    @if($permissionStore.actions().create_invoice){
     <button mat-menu-item (click)="saveInvoice()">
       <mat-icon>save</mat-icon>
       <span>Factura</span>
     </button>
-    <button mat-menu-item (click)="saveNotaEntrega()">
-      <mat-icon>save</mat-icon>
-      <span>Nota Entrega</span>
-    </button>
+    }
+    @if($permissionStore.actions().create_ne){
+      <button mat-menu-item (click)="saveNotaEntrega()">
+        <mat-icon>save</mat-icon>
+        <span>Nota Entrega</span>
+      </button>
+    }
   </mat-menu>
 
   }

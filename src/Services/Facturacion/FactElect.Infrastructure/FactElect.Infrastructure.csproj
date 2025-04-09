@@ -7,6 +7,43 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\SeedData\FormasPago.json" />
+    <None Remove="Data\SeedData\PorcentajesRetencionIva.json" />
+    <None Remove="Data\SeedData\SustentosTributarios.json" />
+    <None Remove="Data\SeedData\TipoComprobantes.json" />
+    <None Remove="Data\SeedData\TipoPagos.json" />
+    <None Remove="Data\SeedData\TiposIdentificacionProveedor.json" />
+    <None Remove="Data\SeedData\TiposRegimenFiscalExterior.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\SeedData\FormasPago.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\ImpuestosRetencion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\PorcentajesRetencionIva.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\SustentosTributarios.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\TipoComprobantes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\TipoPagos.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\TiposIdentificacionProveedor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SeedData\TiposRegimenFiscalExterior.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">

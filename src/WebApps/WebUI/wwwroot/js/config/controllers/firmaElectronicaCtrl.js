@@ -115,7 +115,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
         }
         let query = {
             idFirmaElectronica: $scope.firma.idFirmaElectronica,
-            contrasenia: $scope.firma.contrasenia,
+            contrasenia: encodeURIComponent($scope.firma.contrasenia),
             fechaCaducidad: $scope.firma.fechaCaducidad,
             estado: $scope.firma.estado
         }

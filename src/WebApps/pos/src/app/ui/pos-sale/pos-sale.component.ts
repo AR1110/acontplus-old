@@ -1,9 +1,9 @@
-import { Component, computed, inject, signal, Pipe } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { finalize, forkJoin } from 'rxjs';
 import { ItemService } from '@data/repositories/item/item.service';
 import { Pagination } from '@domain/models/pagination.model';
 import { ItemRead } from '@domain/models/item.model';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import {  PageEvent } from '@angular/material/paginator';
 import { SubCategory } from '@domain/models/inventory/subcategory.model';
 import { MatCardModule } from '@angular/material/card';
 import {
@@ -12,11 +12,10 @@ import {
 } from '@ui/store/pos-store.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MainStoreService } from '@domain/services/main-store.service';
-import { SUB_CATEGORY_CODE } from '@domain/enums/main.enum';
+import {ROUTES_PATH, SUB_CATEGORY_CODE} from '@domain/enums/main.enum';
 import { FormsModule } from '@angular/forms';
 import { getValidId, isValidField } from '@domain/utils/utils';
 import { Order } from '@domain/models/order.model';
-import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +27,8 @@ import { DialogService } from '@/domain/services/dialog.service';
 import { ProductsComponent } from './products/products.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { CartOverlayService } from '../store/cart-overlay.service';
+import {Router} from "@angular/router";
+import {PermissionStore} from "@ui/store/permission.store";
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -53,8 +54,8 @@ export class PosSaleComponent {
   private itemSvc = inject(ItemService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
+  private $permissionStore = inject(PermissionStore)
 
-  selectedSubCategoryIndex = 0;
 
   private establecimientoId = this.mainStore.select('establecimientoId');
   private codEstab = this.mainStore.select('codEstab');
@@ -204,11 +205,6 @@ export class PosSaleComponent {
 
   ngOnInit() {
     let orderId = this.posStoreSvc.state().order?.orderId || 0;
-    if (!(orderId > 0)) {
-      this.dialog.open(TableModalComponent, {
-        size: 'xl',
-      });
-    }
     if (this.posStoreSvc.state().isLoading) return;
 
     this.setLoading(true);
@@ -249,6 +245,9 @@ export class PosSaleComponent {
         this.items.set(dataItem.items);
         this.setTotalRecords();
       });
+
+
+    this.$permissionStore.loadActions(ROUTES_PATH.POS)
   }
 
   ngAfterViewInit() {

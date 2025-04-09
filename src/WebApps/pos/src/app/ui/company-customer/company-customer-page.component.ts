@@ -17,6 +17,8 @@ import { ColumnDefinition } from '../models/mat-table-models/column-definition.m
 import { MatDynamicTableComponent } from '../components/mat-dynamic-table/mat-dynamic-table.component';
 import {CompanyCustomerGetAllUseCase} from "@domain/use-cases/company-customer/company-customer-get-all.use-case";
 import {MatDynamicCardComponent} from "@ui/components/mat-dynamic-card/mat-dynamic-card.component";
+import {PermissionStore} from "@ui/store/permission.store";
+import {ROUTES_PATH} from "@domain/enums/main.enum";
 
 @Component({
   selector: 'app-company-customer',
@@ -32,6 +34,7 @@ import {MatDynamicCardComponent} from "@ui/components/mat-dynamic-card/mat-dynam
 })
 export class CompanyCustomerPageComponent {
   private $companyCustomerGetAllUseCase = inject(CompanyCustomerGetAllUseCase)
+    $permissionStore = inject(PermissionStore);
 
 
   data: CompanyCustomerRead[] = [];
@@ -81,6 +84,7 @@ export class CompanyCustomerPageComponent {
 
   ngOnInit() {
     this.getCompanyCustomers();
+    this.$permissionStore.loadActions(ROUTES_PATH.CUSTOMER)
   }
 
   ngAfterViewInit(): void {

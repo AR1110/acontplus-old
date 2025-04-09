@@ -1,48 +1,49 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
   <button mat-icon-button (click)="toggleSidenav.emit()">
     <mat-icon>menu</mat-icon>
   </button>
 
+  <app-nav-user-info-toggle />
+
   <span class="toolbar-spacer"></span>
 
+  <app-theme-toggle />
+
   <div class="d-flex gap-1">
-    <app-nav-user-info-toggle />
+    @if (posStoreSvc.state().isModulePos) {
+      <button
+        mat-icon-button
+        aria-label="pedidos"
+        appActionOrderDialog
+        matTooltip="Pedidos Recientes"
+        [matBadge]="posStoreSvc.state().pendingOrders"
+      >
+        <mat-icon>av_timer</mat-icon>
+      </button>
 
-    @if(posStoreSvc.state().isModulePos){
+      <button
+        [matBadge]="totalOrderItems()"
+        mat-icon-button
+        aria-label="total"
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        (click)="$cartOverlaySvc.toggleCart()"
+        id="cart-button-id"
+      >
+        <mat-icon>add_shopping_cart</mat-icon>
+      </button>
 
-    <button
-      mat-icon-button
-      aria-label="pedidos"
-      appActionOrderDialog
-      matTooltip="Pedidos Recientes"
-      [matBadge]="posStoreSvc.state().pendingOrders"
-    >
-      <mat-icon>av_timer</mat-icon>
-    </button>
-
-    <button
-      [matBadge]="totalOrderItems()"
-      mat-icon-button
-      aria-label="total"
-      cdkOverlayOrigin
-      #trigger="cdkOverlayOrigin"
-      (click)="$cartOverlaySvc.toggleCart()"
-      id="cart-button-id"
-    >
-      <mat-icon>add_shopping_cart</mat-icon>
-    </button>
-
-    <ng-template
-      cdkConnectedOverlay
-      [cdkConnectedOverlayOrigin]="trigger"
-      [cdkConnectedOverlayOpen]="$cartOverlaySvc.overlayState()"
-      hasBackdrop="true"
-      cdkConnectedOverlay
-      cdkConnectedOverlayPush="true"
-    >
-      <app-cart-popup (toggleCart)="$cartOverlaySvc.toggleCart()" />
-    </ng-template>
-    }
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="trigger"
+        [cdkConnectedOverlayOpen]="$cartOverlaySvc.overlayState()"
+        hasBackdrop="true"
+        cdkConnectedOverlay
+        cdkConnectedOverlayPush="true"
+      >
+        <app-cart-popup (toggleCart)="$cartOverlaySvc.toggleCart()" />
+      </ng-template>
+   }
 
     <app-nav-user-toggle />
   </div>

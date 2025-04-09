@@ -25,6 +25,7 @@ import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.compo
 import { MatInputModule } from '@angular/material/input';
 import { OrderUseCase } from '@domain/use-cases/order.use-case';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
+import {PermissionStore} from "@ui/store/permission.store";
 
 const messageSave: { [key: string]: string } = {
   [DOC_TYPE.FV]: `
@@ -51,6 +52,7 @@ export class CartFooterComponent {
   private dialogSvc = inject(DialogService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
+    $permissionStore = inject(PermissionStore)
 
   private subtotalSinImpuestos = 0;
   private tax = 0;
@@ -213,16 +215,22 @@ export class CartFooterComponent {
     this.save(DOC_TYPE.NE);
   }
 
-  openTableModal() {
+  openTableModal(codDoc: string, fn:(codDoc: string)=>void) {
     // this.dialogSvc.open(TableModalComponent, {
     //   size: 'md'
     // })
-    this.dialog.open(TableModalComponent, {
+    const ref = this.dialog.open(TableModalComponent, {
       size: 'xl',
     });
+    ref.subscribe(result => {
+      let order = structuredClone(this.posStore.state().order);
+      if(order.tableId > 0){
+        fn(codDoc)
+      }
+    })
   }
 
-  async save(codDoc: string) {
+   save = async (codDoc: string)=> {
     try {
       const { orderItems } = this.posStore.state();
       let order = structuredClone(this.posStore.state().order);
@@ -237,7 +245,7 @@ export class CartFooterComponent {
           type: 'warning',
           message: `Seleccione la Mesa`,
         });
-        this.openTableModal();
+        this.openTableModal(codDoc, this.save);
         return;
       }
 
