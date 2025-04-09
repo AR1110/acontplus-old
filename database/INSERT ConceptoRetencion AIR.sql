@@ -1,6 +1,8 @@
 USE Acontplus
 GO
 
+IF NOT EXISTS (SELECT 1 FROM Sri.ConceptoRetencionAir)
+BEGIN
 -- Insertar datos
 INSERT INTO Sri.ConceptoRetencionAir (TipoPagoId, Codigo, Descripcion, Porcentaje)
 VALUES
@@ -126,3 +128,10 @@ VALUES
 (2, '521', 'Pago a no residentes - Enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades.', 5),
 (2, '523A', 'Pago a no residentes - Seguros y reaseguros (primas y cesiones).', 0),
 (2, '525', 'Pago a no residentes- Donaciones en dinero -Impuesto a las donaciones.', 0);
+
+END
+
+IF EXISTS (SELECT 1 FROM Sri.ConceptoRetencionAir)
+    BEGIN 
+        DROP TABLE IF EXISTS Sri.CodigoRetencion
+    END

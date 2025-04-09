@@ -1,33 +1,56 @@
 --use acontplus
 --go
-----select * from dbo.SustentoTributario
-----select * from sri.SustentoTributario
+
+use Acontplus
+GO
 
 IF NOT EXISTS (
     SELECT 1
     FROM sys.columns
-    WHERE Name = N'codSustentoTributario'
-        AND Object_ID = Object_ID(N'dbo.FacturaCompra')
+    WHERE Name = N'idImpuesto'
+        AND Object_ID = Object_ID(N'Sri.TarifaImpuesto')
 )
 BEGIN
-    ALTER TABLE dbo.FacturaCompra ADD codSustentoTributario VARCHAR(2) NULL
-END;
+	ALTER TABLE Sri.TarifaImpuesto 
+	ADD idImpuesto INT
+	CONSTRAINT fk_impuesto_tarifa 
+	FOREIGN KEY (idImpuesto) REFERENCES Sri.Impuesto(idImpuesto)
+END
 GO
 
-DECLARE @TableName NVARCHAR(128) = 'SustentoTributario';
+UPDATE ti SET ti.idImpuesto = i.idImpuesto
+FROM Sri.TarifaImpuesto ti
+	INNER JOIN Sri.Impuesto i ON ti.codImpuesto = i.codigo
+GO
 
--- To actually execute the drop statements automatically, you could use:
- DECLARE @sql NVARCHAR(MAX);
+ALTER TABLE Sri.TarifaImpuesto ALTER COLUMN idImpuesto INT NOT NULL;
+
+
+--IF NOT EXISTS (
+--    SELECT 1
+--    FROM sys.columns
+--    WHERE Name = N'codSustentoTributario'
+--        AND Object_ID = Object_ID(N'dbo.FacturaCompra')
+--)
+--BEGIN
+--    ALTER TABLE dbo.FacturaCompra ADD codSustentoTributario VARCHAR(2) NULL
+--END;
+--GO
+
+--DECLARE @TableName NVARCHAR(128) = 'SustentoTributario';
+
+---- To actually execute the drop statements automatically, you could use:
+-- DECLARE @sql NVARCHAR(MAX);
  
- SELECT @sql = STRING_AGG(
-     'ALTER TABLE [' + SCHEMA_NAME(fk.schema_id) + '].[' + OBJECT_NAME(fk.parent_object_id) + '] ' +
-     'DROP CONSTRAINT [' + fk.name + '];', CHAR(13) + CHAR(10))
- FROM 
-     sys.foreign_keys AS fk
- WHERE 
-     OBJECT_NAME(fk.referenced_object_id) = @TableName;
+-- SELECT @sql = STRING_AGG(
+--     'ALTER TABLE [' + SCHEMA_NAME(fk.schema_id) + '].[' + OBJECT_NAME(fk.parent_object_id) + '] ' +
+--     'DROP CONSTRAINT [' + fk.name + '];', CHAR(13) + CHAR(10))
+-- FROM 
+--     sys.foreign_keys AS fk
+-- WHERE 
+--     OBJECT_NAME(fk.referenced_object_id) = @TableName;
  
- EXEC sp_executesql @sql;
+-- EXEC sp_executesql @sql;
 
 --UPDATE fc SET fc.codSustentoTributario = st.codigo
 
@@ -77,3 +100,9 @@ DECLARE @TableName NVARCHAR(128) = 'SustentoTributario';
 --DROP TABLE IF EXISTS Sri.TipoRegimenFE;
 --GO
 --DROP TABLE IF EXISTS Sri.TipoRegimenFiscalExterior
+--GO 
+--DROP TABLE IF EXISTS Sri.TipoComprobante;
+--GO
+--DROP TABLE IF EXISTS Sri.TipoIdentificacionProveedor;
+--GO
+--DELETE FROM Acontplus.dbo.__EFMigrationsHistory WHERE MigrationId = '20250408220329_SriTables'
