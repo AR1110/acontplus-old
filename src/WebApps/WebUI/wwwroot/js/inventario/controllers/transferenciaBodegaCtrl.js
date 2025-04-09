@@ -104,6 +104,7 @@
                     nroSecuencial: fS.validAndFormatedRangeSequential(
                         $scope.dataSearch.nroSecuencial
                     ),
+                    textSearch: fS.isValidField($scope.dataSearch.textSearch)
                 }
                 $scope.transferenciasBodegas = [];
                 showLoader();
