@@ -8,7 +8,7 @@ public class ConceptoRetencionAir : BaseEntity
 
     [Required, MaxLength(5)] public string Codigo { get; set; }
 
-    [Required, MaxLength(100)] public string Descripcion { get; set; }
+    [Required, MaxLength(300)] public string Descripcion { get; set; }
 
     [Column(TypeName = "numeric(6,2), null")]
     public decimal Porcentaje { get; set; }

@@ -123,9 +123,9 @@ namespace FactElect.API.Data.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(300)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<bool?>("Enabled")
                         .ValueGeneratedOnAdd()
@@ -225,9 +225,9 @@ namespace FactElect.API.Data.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(150)
+                        .HasMaxLength(200)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<bool?>("Enabled")
                         .HasColumnType("bit");
