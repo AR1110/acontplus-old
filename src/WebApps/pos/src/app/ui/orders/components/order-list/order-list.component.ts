@@ -1,4 +1,3 @@
-import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 import { CustomTableContainerComponent } from '@ui/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
 import { getValidId } from '@domain/utils/utils';

@@ -41,17 +41,17 @@
 }
 
 .pos-table {
-  flex: 0 0 auto;
+  //flex: 0 0 auto;
   width: var(--button-size);
   height: var(--button-size);
   border-radius: var(--border-radius);
   transition: all var(--transition-speed) ease;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 8px;
+  //display: flex;
+  //flex-direction: column;
+  //align-items: center;
+  //justify-content: center;
+  //padding: 16px 8px;
   box-sizing: border-box;
 
   // Light Mode Styles (default)
@@ -89,6 +89,8 @@
     text-overflow: ellipsis; // Add ellipsis for overflowing text
     white-space: nowrap; // Prevent wrapping to new line
   }
+
+
 
   &:hover:not(.pos-table--disabled) {
     transform: translateY(-2px);
@@ -133,4 +135,13 @@
       font-size: 12px;
     }
   }
+}
+
+
+.button-order-view {
+  position: relative;
+  top: 0;
+  right: -80px;
+ // background: #ff6b6b;
+  z-index: 10;
 }

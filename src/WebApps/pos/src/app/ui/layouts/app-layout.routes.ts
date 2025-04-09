@@ -5,8 +5,9 @@ import { CompanyCustomerPageComponent } from '../company-customer/company-custom
 import { PosSaleComponent } from '../pos-sale/pos-sale.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
-import {sessionGuard} from "@core/guards/session.guard";
 import {ForbiddenComponent} from "@ui/components/forbidden/forbidden.component";
+import {permissionGuard} from "@core/guards/permission.guard";
+import {ROUTES_PATH} from "@domain/enums/main.enum";
 
 export const routes: Routes = [
   {
@@ -14,42 +15,42 @@ export const routes: Routes = [
     component: AppLayoutComponent,
     children: [
       {
-        path: 'dashboard',
+        path: ROUTES_PATH.DASHBOARD,
         title: 'Dashboad',
         component: DashboardComponent,
       },
       {
-        path: 'order',
+        path: ROUTES_PATH.ORDER,
         title: 'Order',
-        canActivate: [sessionGuard],
+        canActivate: [permissionGuard],
         component: OrdersComponent,
         data: {
           permissions: {
-            resource: 'dashboard',
+            resource: ROUTES_PATH.ORDER,
 
           }
         }
       },
       {
-        path: 'customer',
+        path: ROUTES_PATH.CUSTOMER,
         title: 'Clientes',
-        canActivate: [sessionGuard],
+        canActivate: [permissionGuard],
         component: CompanyCustomerPageComponent,
         data: {
           permissions: {
-            resource: 'customer',
+            resource: ROUTES_PATH.CUSTOMER,
 
           }
         }
       },
       {
-        path: 'pos',
+        path: ROUTES_PATH.POS,
         title: 'POS',
-        canActivate: [sessionGuard],
+        canActivate: [permissionGuard],
         component: PosSaleComponent,
         data: {
           permissions: {
-            resource: 'pos',
+            resource: ROUTES_PATH.POS,
 
           }
         }
@@ -58,7 +59,7 @@ export const routes: Routes = [
         path: 'forbidden',
         component: ForbiddenComponent
       },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: ROUTES_PATH.DASHBOARD, pathMatch: 'full' },
     ],
   },
 ];

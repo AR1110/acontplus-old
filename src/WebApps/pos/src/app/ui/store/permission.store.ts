@@ -2,6 +2,7 @@ import {patchState, signalStore, withComputed, withHooks, withMethods, withState
 import {ActionName, SubMenuItem} from "@domain/models/menu.model";
 import {inject} from "@angular/core";
 import {GetMenusUseCase} from "@domain/use-cases/menu/get-menus.use-case";
+import {ROUTES_PATH} from "@domain/enums/main.enum";
 
 
 
@@ -21,11 +22,6 @@ const initialPermissionState = new PermissionState()
 export const PermissionStore = signalStore(
   {providedIn: 'root'},
   withState(initialPermissionState),
-  withComputed(store=>({
-
-
-  })),
-
 
   withMethods((store)=>({
     loadActions(route: string){
@@ -50,7 +46,7 @@ export const PermissionStore = signalStore(
         })
         if(submenus && submenus.length>0){
           let dashboard:any = {
-            url: 'dashboard',
+            url: ROUTES_PATH.DASHBOARD,
             name: 'Dashboard',
             icon: 'home',
           }
@@ -60,7 +56,6 @@ export const PermissionStore = signalStore(
         }
       })
     },
-    onDestroy(store) {},
   })
 
 )

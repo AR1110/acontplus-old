@@ -2,19 +2,15 @@
 import {inject, Injectable} from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {MenuRepository} from "@domain/repositories/menu.repository";
-import {StorageRepository} from "@domain/repositories/storage.repository";
 import {MenuItem, SubMenuItem} from "@domain/models/menu.model";
 import {TokenUseCase} from "@domain/use-cases/token.use-case";
-import {LocalStorageRepositoryImpl} from "@data/local/storage/local-storage.repository.impl";
 import {isValidJSON} from "@domain/utils/utils";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuLocalStorageRepositoryImpl implements MenuRepository {
-  private readonly MENU_KEY = 'app_menus';
   private $tokenUseCase = inject(TokenUseCase)
-  private storageService = inject(LocalStorageRepositoryImpl)
 
 
 
@@ -56,7 +52,7 @@ export class MenuLocalStorageRepositoryImpl implements MenuRepository {
   getSubmenusByParentId(parentId: string): Observable<SubMenuItem[]> {
     // const menus = this.storageService.get<MenuItem[]>(this.MENU_KEY) || [];
     //
-    // // Función recursiva para buscar el menú padre por ID
+    // //
     // const findParentMenu = (items: MenuItem[], id: string): MenuItem | null => {
     //   for (const item of items) {
     //     if (item.id === id) {

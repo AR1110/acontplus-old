@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
+import {AuthComponent} from "@ui/auth/auth.component";
 export const routes: Routes = [
   {
     path: '',
@@ -7,7 +8,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent:()=> import('@ui/auth/auth.component').then(c=>c.AuthComponent)
+        component: AuthComponent
       }
     ]
   }
