@@ -76,7 +76,7 @@ export class CompanyCustomerSearchMatComponent {
 
   ngOnInit() {
     this.filteredCustomers = this.control.valueChanges.pipe(
-      distinctUntilChanged(),
+
       switchMap((val) => {
         this.isLoadingResults = false;
         if (val && val.length > 2) {

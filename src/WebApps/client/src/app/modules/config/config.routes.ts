@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { GeneralConfigComponent } from './pages/general-config/general-config.component';
 import { DocConfigPageComponent } from './pages/doc-config/doc-config.component';
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
@@ -9,10 +8,11 @@ import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
 import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
 import {UserCustomerComponent} from "@modules/config/ui/user-customer/user-customer.component";
+import {GeneralConfigComponent} from "@modules/config/ui/general-config/general-config.component";
 
 export const routes: Routes = [
   {
-    path: 'general-config-page',
+    path: 'general-config',
     title: 'Config. General',
     component: GeneralConfigComponent,
     data: {

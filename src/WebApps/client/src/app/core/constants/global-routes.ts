@@ -5,11 +5,10 @@ export enum GlobalRoutes {
   //Configuration Start
   ConfigDocConfig = 'config/doc-config-page',
   ConfigEstablishment = 'config/establishment',
-  ConfigGeneralConfig = 'config/general-config-page',
+  ConfigGeneralConfig = 'config/general-config',
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer',
   ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
-
   //Configuration End
 
   //Facturación start
