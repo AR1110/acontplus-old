@@ -60,9 +60,9 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private getDefaultData() {
     return {
       tiposIdentificacion: [],
-      sujetoRetenido: [],
-      documentoSustento: [],
-      sustentoTributario: [],
+      tiposIdentificacionProveedor: [],
+      tiposComprobante: [],
+      sustentosTributarios: [],
       tiposPago: [],
       tiposRegimen: [],
       countries: [],
@@ -71,7 +71,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       tarifaImpuestos: [],
       impuestosRetencion: [],
       porcentajesRetIva: [],
-      codigosRetencion: [],
+      conceptosRetencionAir: [],
       formasPago: [],
       estabs: [],
       infoAdicional: [],
@@ -80,8 +80,11 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   getById(id: number): Observable<RetencionAts> {
     throw new Error('Method not implemented.');
   }
-  create(data: any): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+  create<T>(data: T): Observable<ApiResponse> {
+    console.log(data);
+    return this._http
+      .post<ApiResponse>(`${this._url}`, { data })
+      .pipe(map((response) => response));
   }
   update(data: any): Observable<RetencionAts> {
     throw new Error('Method not implemented.');

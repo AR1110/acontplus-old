@@ -18,4 +18,8 @@ export class RetencionAtsUseCase {
   getDocs(parameters: unknown) {
     return this._retencionAtsRepository.getDocs(parameters);
   }
+
+  create<T>(data: T) {
+    return this._retencionAtsRepository.create(data);
+  }
 }
