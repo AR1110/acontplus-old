@@ -5,6 +5,7 @@ import {configProvider} from "@/config/providers/config.provider";
 import {apiGreenProvider} from "@/config/providers/api-green.provider";
 import {companyCustomerProvider} from "@/config/providers/company-customer.provider";
 import {menuProvider} from "@/config/providers/menu.provider";
+import {whatsappProvider} from "@/config/providers/whatsapp.provider";
 
 export const featureProviders = [
   authProvider,
@@ -13,5 +14,6 @@ export const featureProviders = [
   configProvider,
   apiGreenProvider,
   companyCustomerProvider,
-  menuProvider
+  menuProvider,
+  whatsappProvider
 ];

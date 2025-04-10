@@ -6,4 +6,5 @@ export const envConfig = {
   ESTAB_KEY: environment.ESTAB_KEY,
   appVersion: environment.appVersion,
   storageKey: environment.storageKey,
+  greenApi: environment.greenApi,
 }

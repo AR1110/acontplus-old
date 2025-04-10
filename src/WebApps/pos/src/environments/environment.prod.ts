@@ -7,4 +7,9 @@ export const environment = {
   apiBaseUrl: 'https://acontplus.com/gateway/',
   storageKey: 'tokenf649fc9a5f55',
   clientId: 'acontplus-restaurant-client',
+  greenApi: {
+    url: '',
+    idInstance: '',
+    apiTokenInstance: ''
+  }
 };
