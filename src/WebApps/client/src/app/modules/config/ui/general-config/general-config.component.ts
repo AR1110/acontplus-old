@@ -192,8 +192,9 @@ export class GeneralConfigComponent {
   }
 
   selectedCustomer($event:any){
+    // console.log($event)
     this.configVenta.idCliente = $event.idCliente;
-    this.configVenta.razonSocialComprador = $event.razonSocialComprador;
+    this.configVenta.razonSocialComprador = $event.name;
   }
 
   resultEmptyInputCustomer() {
