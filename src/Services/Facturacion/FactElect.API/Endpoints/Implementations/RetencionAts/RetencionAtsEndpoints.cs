@@ -1,4 +1,5 @@
 ﻿using FactElect.API.Endpoints.Interfaces.RetencionAts;
+using FactElect.Application.DTOs.RetencionAts;
 
 namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
@@ -22,9 +23,9 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         throw new NotImplementedException();
     }
 
-    public async Task<IResult> CreateRetencionAtsAsync(ApiRequest apiRequest)
+    public async Task<IResult> CreateRetencionAtsAsync(RetencionAtsRetDto retencionAtsRetDto)
     {
-        var dataSerialized = DataConverters.SerializeDictionary(apiRequest.Data);
+        var dataSerialized = DataConverters.SerializeObjectCustom<RetencionAtsRetDto>(retencionAtsRetDto);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
@@ -34,13 +35,16 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         return Results.Ok(await retencionAtsService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateRetencionAtsAsync(int id, string json)
+    public async Task<IResult> UpdateRetencionAtsAsync(int id, RetencionAtsRetDto retencionAtsRetDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(json) }
+            {
+                "json",
+                SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<RetencionAtsRetDto>(retencionAtsRetDto))
+            }
         };
 
         return Results.Ok(await retencionAtsService.UpdateAsync(parameters));
