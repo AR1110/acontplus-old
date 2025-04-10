@@ -9,36 +9,41 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for insert tax sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Pago_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Insert
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Insert @idUsuarioRol INT  
-,@idDocSust INT
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Insert @userRoleId INT  
 ,@json VARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON
+	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT
 	,@idRetencionAts INT
 	,@totalOld NUMERIC (18,2)
+    ,@idRetAtsDocSustento INT;
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 
 	BEGIN TRY
-		BEGIN TRAN
-			SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idDocSust)
+
+            SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+
+            SET @idRetAtsDocSustento = (SELECT TOP 1 idRetAtsDocSustento FROM OPENJSON(@json) WITH (idRetAtsDocSustento INT))
+
+			SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idRetAtsDocSustento)
 
 			IF EXISTS(SELECT 1 FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @idRetencionAts)
 				BEGIN
 					SET @totalOld = (SELECT SUM(importeTotal) FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @idRetencionAts)
 				END
 
-			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, formaPago, total)
-			SELECT @idRetencionAts, @idDocSust, uniqueIdDoc,  formaPago, total--, codigoPorcentaje, baseImponible, tarifa, valorImpuesto
+		BEGIN TRAN
+
+			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total)
+			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total
 			FROM OPENJSON(@json)
 			WITH	( 
-							uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
-				formaPago VARCHAR(4) '$.formaPago', 
+				uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
+				formaPagoId INT '$.formaPagoId', 
 				total  NUMERIC(18,5) '$.total'
 			)
 

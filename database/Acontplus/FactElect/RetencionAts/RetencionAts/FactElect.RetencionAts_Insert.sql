@@ -9,14 +9,8 @@ GO
 -- Create date: 2022-12-15
 -- Description: sp for insert retencion ats
 -- =============================================
-CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Insert @idRol INT
-,@infoCompRet VARCHAR(MAX)
-,@docsSust VARCHAR(MAX)
-,@impuestos VARCHAR(MAX)
-,@retenciones VARCHAR(MAX)
-,@reembolsos VARCHAR(MAX) = NULL
-,@payments VARCHAR(MAX)
-,@infoAdicional VARCHAR(MAX) = NULL
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Insert @userRoleId INT
+,@json NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,7 +18,20 @@ BEGIN
     SET XACT_ABORT ON;
 
     --> GLOBAL
-	DECLARE @idUsuario INT,@idEntidad INT
+	DECLARE @idUsuario INT,@idEntidad INT,@infoCompRet VARCHAR(MAX)
+        ,@documentosSustentos VARCHAR(MAX)
+        ,@taxes VARCHAR(MAX)
+        ,@retenciones VARCHAR(MAX)
+        ,@payments VARCHAR(MAX)
+        ,@infoAdicional VARCHAR(MAX);
+
+    SELECT @infoCompRet = infoCompRet, @documentosSustentos = documentosSustentos, @infoAdicional = infoAdicional
+    FROM OPENJSON(@json) WITH (infoCompRet VARCHAR(MAX), documentosSustentos VARCHAR(MAX), infoAdicional VARCHAR(MAX))
+
+    SELECT @taxes = taxes
+        ,@retenciones = retenciones
+        ,@payments = payments
+    FROM OPENJSON (@documentosSustentos) WITH (taxes VARCHAR(MAX), retenciones VARCHAR(MAX), payments VARCHAR(MAX));
 
     --> Contabilidad
     DECLARE @importeTotal NUMERIC(18,5) ,@idEstablecimiento INT ,@idEstadoPago INT ,@serieComprobante VARCHAR(20) 
@@ -50,7 +57,6 @@ BEGIN
         ,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
 		,tipoSujetoRetenido VARCHAR(2) NULL
 		,parteRel VARCHAR(2) NOT NULL
-		,idCliente INT NULL
 		,razonSocialSujetoRetenido VARCHAR(300) NULL
 		,identificacionSujetoRetenido VARCHAR(13) NULL
 		,periodoFiscal VARCHAR(8) NULL
@@ -58,14 +64,13 @@ BEGIN
 
 	DECLARE @tblDocs AS TABLE(
 		 uniqueIdDoc UNIQUEIDENTIFIER NOT NULL
-		,codSustento VARCHAR(2) NULL
-		,codDocSustento VARCHAR(2) NULL
+		,documentoSustentoTributarioId INT NULL
 		,numDocSustento VARCHAR(15) NULL
 		,fechaEmisionDocSustento DATETIME NOT NULL
 		,fechaRegistroContable DATETIME NULL
 		,numAutDocSustento VARCHAR(49) NULL
 		,pagoLocExt VARCHAR(2) NULL
-		,tipoRegi VARCHAR(2) NULL
+		,tipoRegimenFiscalExteriorId INT
 		,paisEfecPago VARCHAR(3) NULL
 		,aplicConvDobTrib VARCHAR(2) NULL
 		,pagExtSujRetNorLeg VARCHAR(2) NULL
@@ -79,31 +84,23 @@ BEGIN
 
 	DECLARE @tblTaxes AS TABLE(
 		uniqueIdDoc UNIQUEIDENTIFIER NOT NULL,
-		codImpuestoDocSustento TINYINT NOT NULL,
-		codigoPorcentaje VARCHAR(4) NOT NULL,
 		baseImponible  NUMERIC(18,5),
-		tarifa NUMERIC(18,5) NULL,
+		idTarifaImpuesto INT,
 		valorImpuesto  NUMERIC(18,5)
 	)
 
 	DECLARE @tblRetenciones AS TABLE(
 		 uniqueIdDoc UNIQUEIDENTIFIER NOT NULL 
-		,codigo TINYINT NOT NULL
+		,impuestoRetencionId INT NOT NULL
 		,codigoRetencion VARCHAR(5) NOT NULL
 		,baseImponible NUMERIC(18,5) NULL
 		,porcentajeRetener NUMERIC(18,5) NULL
-		,valorRetenido NUMERIC(18,5) NULL
-		,fechaPagoDiv DATE NULL
-		,imRentaSoc NUMERIC(18,5) NULL
-		,ejerFisUtDiv INT NULL
-		,numCajBan INT NULL
-		,precCajBan NUMERIC(18,5) NULL
-		
+		,valorRetenido NUMERIC(18,5) NULL	
 	)
 
 	DECLARE @tblPayments AS TABLE(
 	     uniqueIdDoc UNIQUEIDENTIFIER NOT NULL 
-		,formaPago VARCHAR(2) NOT NULL
+		,formaPagoId INT NOT NULL
 		,total NUMERIC(18,5) NOT NULL
 	)
 
@@ -116,12 +113,12 @@ BEGIN
 	BEGIN TRY
         
         --> Informacion General
-        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
+		SELECT idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@infoCompRet) WITH
         (
              idPuntoEmision                   INT
@@ -131,26 +128,24 @@ BEGIN
             ,tipoIdentificacionSujetoRetenido VARCHAR(2)
             ,tipoSujetoRetenido               VARCHAR(2)
             ,parteRel                         VARCHAR(2)
-            ,idCliente                        INT 
             ,razonSocialSujetoRetenido        VARCHAR(300)
             ,identificacionSujetoRetenido     VARCHAR(13) 
             ,periodoFiscal                    VARCHAR(8) 
 		)
 
         INSERT INTO @tblDocs
-              (uniqueIdDoc,codSustento,codDocSustento,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegi,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal)
-	    SELECT uniqueIdDoc,codSustento,codDocSustento,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegi,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal
-	    FROM OPENJSON(@docsSust) WITH
+              (uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal)
+	    SELECT uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal
+	    FROM OPENJSON(@documentosSustentos) WITH
         (
 		     uniqueIdDoc                 UNIQUEIDENTIFIER 
-	        ,codSustento                 VARCHAR(2) 
-	        ,codDocSustento              VARCHAR(2) 
+	        ,documentoSustentoTributarioId                INT
 	        ,numDocSustento              VARCHAR(15) 
 	        ,fechaEmisionDocSustento     DATETIME 
 	        ,fechaRegistroContable       DATETIME 
 	        ,numAutDocSustento           VARCHAR(49) 
 	        ,pagoLocExt                  VARCHAR(2) 
-	        ,tipoRegi                    VARCHAR(2) 
+	        ,tipoRegimenFiscalExteriorId                    VARCHAR(2) 
 	        ,paisEfecPago                VARCHAR(3) 
 	        ,aplicConvDobTrib            VARCHAR(2) 
 	        ,pagExtSujRetNorLeg          VARCHAR(2) 
@@ -163,44 +158,37 @@ BEGIN
 		)
 
         INSERT INTO @tblTaxes
-              (uniqueIdDoc,codImpuestoDocSustento,codigoPorcentaje,baseImponible,tarifa,valorImpuesto)
-	    SELECT uniqueIdDoc,codImpuestoDocSustento,codigoPorcentaje,baseImponible,tarifa,valorImpuesto
-	    FROM OPENJSON(@impuestos)WITH
+              (uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto)
+	    SELECT uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto
+	    FROM OPENJSON(@taxes)WITH
         (
 		    uniqueIdDoc            UNIQUEIDENTIFIER 
-		   ,codImpuestoDocSustento TINYINT
-		   ,codigoPorcentaje       VARCHAR(4) 
-		   ,baseImponible          NUMERIC(18,5) 
-		   ,tarifa                 NUMERIC(18,5) 
+		   ,idTarifaImpuesto INT
+		   ,baseImponible          NUMERIC(18,5)
 		   ,valorImpuesto          NUMERIC(18,5) 
 		)
 
         INSERT INTO @tblRetenciones
-              (uniqueIdDoc,codigo,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido,fechaPagoDiv,imRentaSoc,ejerFisUtDiv,numCajBan,precCajBan)
-	    SELECT uniqueIdDoc,codigo,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido,fechaPagoDiv,imRentaSoc,ejerFisUtDiv,numCajBan,precCajBan
+              (uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido)
+	    SELECT uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido
 	    FROM OPENJSON(@retenciones) WITH
         (
              uniqueIdDoc       UNIQUEIDENTIFIER 
-            ,codigo            TINYINT 
+            ,impuestoRetencionId            INT 
             ,codigoRetencion   VARCHAR(5) 
             ,baseImponible     NUMERIC(18,5) 
             ,porcentajeRetener NUMERIC(18,5) 
-            ,valorRetenido     NUMERIC(18,5) 
-            ,fechaPagoDiv      DATE
-            ,imRentaSoc        NUMERIC(18,5) 
-            ,ejerFisUtDiv      INT 
-            ,numCajBan         INT
-            ,precCajBan        NUMERIC(18,5)
+            ,valorRetenido     NUMERIC(18,5)
 		)
 
 
         INSERT INTO @tblPayments
-              (uniqueIdDoc,formaPago,total) 
-	    SELECT uniqueIdDoc,formaPago,total
+              (uniqueIdDoc,formaPagoId,total) 
+	    SELECT uniqueIdDoc,formaPagoId,total
 		FROM OPENJSON(@payments) WITH
         (
              uniqueIdDoc UNIQUEIDENTIFIER 
-            ,formaPago   VARCHAR(2) 
+            ,formaPagoId   INT
             ,total       NUMERIC(18,5) 
 		)
 
@@ -351,35 +339,35 @@ BEGIN
 
             --> InfoComprobanteRetencion
 			INSERT INTO FactElect.RetencionAts
-                  (tipoSujetoRetenido,parteRel,idCliente,periodoFiscal, tipoEmision,fechaRegistro,idUsuario,idProveedor,idDocumentoElectronico)
-			SELECT tipoSujetoRetenido,parteRel,idCliente,periodoFiscal,@tipoEmision,dbo.ufnGetDateEcuador(),@idUsuario, @idProveedor,@idDocumentoElectronico
+                  (tipoSujetoRetenido,parteRel,periodoFiscal, tipoEmision,fechaRegistro,idUsuario,idProveedor,idDocumentoElectronico)
+			SELECT tipoSujetoRetenido,parteRel,periodoFiscal,@tipoEmision,dbo.ufnGetDateEcuador(),@idUsuario, @idProveedor,@idDocumentoElectronico
 			FROM @tblInfoCompRet
 
 			SET @idRetencionAts = SCOPE_IDENTITY()
 
 			--> Documentos de Sustento
 			INSERT INTO FactElect.RetAtsDocSustento
-                   (idRetencionAts,uniqueIdDoc,codSustento,codDocSustento,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegi,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal)
-			SELECT @idRetencionAts,uniqueIdDoc,codSustento,codDocSustento,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegi,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal
+                   (idRetencionAts,uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal)
+			SELECT @idRetencionAts,uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal
 			FROM @tblDocs
 
 			--> Impuestos
 			INSERT INTO FactElect.RetAtsImpDocSustento
-                   (idRetencionAts,uniqueIdDoc,codImpuestoDocSustento,codigoPorcentaje,baseImponible,tarifa,valorImpuesto)
-			SELECT @idRetencionAts,uniqueIdDoc,codImpuestoDocSustento,codigoPorcentaje,baseImponible,tarifa,valorImpuesto
+                   (idRetencionAts,uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto)
+			SELECT @idRetencionAts,uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto
 			FROM @tblTaxes
 
             --> Retenciones
 			INSERT INTO FactElect.RetencionAtsRet
-                   (idRetencionAts,uniqueIdDoc,codigo,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido,fechaPagoDiv,imRentaSoc,ejerFisUtDiv,numCajBan,precCajBan)
-			SELECT @idRetencionAts,uniqueIdDoc,codigo,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido,fechaPagoDiv,imRentaSoc,ejerFisUtDiv,numCajBan,precCajBan
+                   (idRetencionAts,uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido)
+			SELECT @idRetencionAts,uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido
 			FROM @tblRetenciones
 
 
             --> Pagos
 			INSERT INTO FactElect.RetencionAtsPago 
-                   (idRetencionAts,uniqueIdDoc,formapago,total)
-			SELECT @idRetencionAts,uniqueIdDoc,formapago,total
+                   (idRetencionAts,uniqueIdDoc,formaPagoId,total)
+			SELECT @idRetencionAts,uniqueIdDoc,formaPagoId,total
 			FROM @tblPayments
 
             --> Informacion adicional
@@ -393,8 +381,8 @@ BEGIN
 
             --> CONTABILIDAD 
 			INSERT INTO Contabilidad.CuentaPorPagar
-			      (codDoc,fechaEmision, idEstablecimiento, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idEntidad, idUsuario,idDocumento)
-		    SELECT codDoc,fechaEmision,@idEstablecimiento,@idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idEntidad,@idUsuario,@idRetencionAts
+			      (codDoc,fechaEmision, idEstablecimiento, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento)
+		    SELECT codDoc,fechaEmision,@idEstablecimiento,@idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts
             FROM @tblInfoCompRet
 
 			UPDATE tax SET tax.idRetAtsDocSustento = ds.idRetAtsDocSustento

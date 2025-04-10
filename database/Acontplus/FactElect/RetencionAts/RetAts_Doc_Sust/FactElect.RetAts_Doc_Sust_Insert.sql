@@ -9,10 +9,8 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for insert sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Insert
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Insert @idUsuarioRol INT  
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Insert @userRoleId INT  
 ,@idRetencionAts INT
 ,@json VARCHAR(MAX)
 AS
@@ -20,8 +18,10 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+
+
 		BEGIN TRAN 
 			
 			INSERT INTO FactElect.RetAtsDocSustento(idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId

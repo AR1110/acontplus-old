@@ -10,21 +10,24 @@ GO
 -- Description: sp for update tax sustentos
 -- =============================================
 
-CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Update @idUsuarioRol INT 
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Update @userRoleId INT 
 ,@id INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
 	,@idRetAtsDocSustento INT
 	,@totalSinImpuestos NUMERIC(18,2) = 0
 	,@totalImpuestos NUMERIC(18,2) = 0
 	,@importeTotal NUMERIC (18,2) = 0
 
-
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
+        
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+
 		BEGIN TRAN  
 
 			UPDATE rid SET rid.idTarifaImpuesto = t.idTarifaImpuesto

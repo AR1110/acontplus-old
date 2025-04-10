@@ -15,20 +15,22 @@ CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Insert @userRoleId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT
 	,@idRetencionAts INT 
 	,@totalSinImpuestos NUMERIC(18,2) = 0
 	,@totalImpuestos NUMERIC(18,2) = 0
 	,@importeTotal NUMERIC (18,2) = 0
+    ,@idRetAtsDocSustento INT;
 
-    DECLARE @idRetAtsDocSustento INT;
+    BEGIN TRY
+                
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+        SET @idRetAtsDocSustento = (SELECT TOP 1 idRetAtsDocSustento FROM OPENJSON (@json) WITH(idRetAtsDocSustento INT))
+	    SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idRetAtsDocSustento)
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
-	BEGIN TRY
 		BEGIN TRAN
-        
-         SET @idRetAtsDocSustento = (SELECT idRetAtsDocSustento FROM OPENJSON (@json) WITH(idRetAtsDocSustento INT))
-			SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idRetAtsDocSustento)
 
 			INSERT INTO FactElect.RetAtsImpDocSustento(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, idTarifaImpuesto
 			, baseImponible, valorImpuesto)
@@ -41,9 +43,6 @@ BEGIN
 				baseImponible  NUMERIC(18,5) '$.baseImponible',
 				valorImpuesto  NUMERIC(18,5) '$.valorImpuesto' 
 			)
-
-           
-		
 
 			SELECT @totalSinImpuestos = SUM(baseImponible), @totalImpuestos = SUM(valorImpuesto) FROM FactElect.RetAtsImpDocSustento WITH(NOLOCK)
 																				WHERE idRetAtsDocSustento = @idRetAtsDocSustento

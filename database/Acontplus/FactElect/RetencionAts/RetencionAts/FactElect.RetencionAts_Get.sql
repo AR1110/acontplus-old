@@ -56,9 +56,9 @@ BEGIN
 
 			    SELECT Id, Codigo, Descripcion FROM Sri.ParaisoFiscal WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT * FROM Sri.Impuesto WITH (NOLOCK) WHERE estado = 1 
+			    SELECT idImpuesto, codigo, Descripcion FROM Sri.Impuesto WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
+			    SELECT idImpuesto, idTarifaImpuesto, Codigo, Descripcion FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
 
 			    SELECT Id, Codigo, Descripcion FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
