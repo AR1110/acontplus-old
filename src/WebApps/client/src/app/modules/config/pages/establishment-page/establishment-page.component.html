@@ -109,14 +109,17 @@
                             />
 
                             <div class="d-flex flex-row gap-1 p-1">
-                              <app-theme-button
-                                variant="success"
-                                type="button"
-                                icon="upload"
-                                text="Subir"
-                                (handleClick)="uploadImage()"
-                              >
-                              </app-theme-button>
+                              @if (newEstablishmentImgUploaded()) {
+                                <app-theme-button
+                                  variant="success"
+                                  type="button"
+                                  icon="upload"
+                                  text="Subir"
+                                  (handleClick)="uploadImage()"
+                                >
+                                </app-theme-button>
+                              }
+
                               <app-theme-button
                                 variant="danger"
                                 type="button"

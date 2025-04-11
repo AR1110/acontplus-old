@@ -4,6 +4,7 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -61,11 +62,13 @@ export class EstablishmentPageComponent implements OnInit {
   dataLogo: any = {};
   panelOpenState = -1;
 
+  newEstablishmentImgUploaded = signal(false);
+
   private readonly _estabService = inject(EstablishmentService);
-  private ptoEmisionSvc = inject(PuntoEmisionService);
-  private estabLogoSvc = inject(EstablishmentLogoService);
-  private modalSvc = inject(ModalService);
-  private tS = inject(ToasterService);
+  private readonly _puntoEmisionService = inject(PuntoEmisionService);
+  private readonly _estabLogService = inject(EstablishmentLogoService);
+  private readonly _modalService = inject(ModalService);
+  private readonly _tS = inject(ToasterService);
   private readonly _cdr = inject(ChangeDetectorRef);
 
   setPanelOpen(index: number) {
@@ -102,6 +105,7 @@ export class EstablishmentPageComponent implements OnInit {
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
           this.imageUrl = e.target.result;
+          this.newEstablishmentImgUploaded.set(true);
           this._cdr.detectChanges();
         }
       };
@@ -111,7 +115,7 @@ export class EstablishmentPageComponent implements OnInit {
 
   commonResponse = (response: any) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this._tS.toastr({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });
@@ -119,6 +123,7 @@ export class EstablishmentPageComponent implements OnInit {
         this.dataLogo = {};
         this.imageUrl = null;
         this.selectedFile = null;
+        this.newEstablishmentImgUploaded.set(false);
         this.getDataLogo(this.data.idEstablecimiento);
       }
     }
@@ -127,11 +132,11 @@ export class EstablishmentPageComponent implements OnInit {
   uploadImage(): void {
     if (this.selectedFile) {
       if (this.dataLogo.id > 0) {
-        this.estabLogoSvc
+        this._estabLogService
           .put(this.dataLogo.id, this.selectedFile)
           .subscribe(this.commonResponse);
       } else {
-        this.estabLogoSvc
+        this._estabLogService
           .post(this.data.idEstablecimiento, this.selectedFile)
           .subscribe(this.commonResponse);
       }
@@ -154,9 +159,12 @@ export class EstablishmentPageComponent implements OnInit {
   }
 
   openModalAddEdit(id?: number) {
-    const modalRef = this.modalSvc.openModalCustom(EstabAddEditModalComponent, {
-      size: 'lg',
-    });
+    const modalRef = this._modalService.openModalCustom(
+      EstabAddEditModalComponent,
+      {
+        size: 'lg',
+      },
+    );
     modalRef.componentInstance.params = {
       id: id,
     };
@@ -189,17 +197,11 @@ export class EstablishmentPageComponent implements OnInit {
     if (isConfirmed) {
       this._estabService.closeEstab(id).subscribe((response) => {
         if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
           if (response.code == '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
             this.getEstabs();
           }
         }
@@ -222,10 +224,10 @@ export class EstablishmentPageComponent implements OnInit {
   }
 
   getDataLogo(id: number) {
-    this.estabLogoSvc.getDataLogo(id).subscribe((response) => {
+    this._estabLogService.getDataLogo(id).subscribe((response) => {
       this.dataLogo = response;
       if (!this.dataLogo.isCompressed) {
-        this.tS.toastr({
+        this._tS.toastr({
           type: 'warning',
           message:
             'Por favor actualize nuevamente el logo del establecimiento, gracias!',
@@ -246,7 +248,7 @@ export class EstablishmentPageComponent implements OnInit {
     data: EstablishmentRead,
     dataPuntoEmision?: PuntoEmisionRead,
   ) {
-    const modalRef = this.modalSvc.openModalCustom(
+    const modalRef = this._modalService.openModalCustom(
       PuntoEmisionAddEditModalComponent,
       {
         size: 'sm',
@@ -294,20 +296,22 @@ export class EstablishmentPageComponent implements OnInit {
     });
 
     if (isConfirmed) {
-      this.estabLogoSvc.removeImage(this.dataLogo.id).subscribe((response) => {
-        if (isApiResponse(response)) {
-          this.tS.toastr({
-            type: response.code === '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-          if (response.code == '1') {
-            this.dataLogo = {};
-            this.imageUrl = null;
-            this.selectedFile = null;
-            this.getDataLogo(this.data.idEstablecimiento);
+      this._estabLogService
+        .removeImage(this.dataLogo.id)
+        .subscribe((response) => {
+          if (isApiResponse(response)) {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code == '1') {
+              this.dataLogo = {};
+              this.imageUrl = null;
+              this.selectedFile = null;
+              this.getDataLogo(this.data.idEstablecimiento);
+            }
           }
-        }
-      });
+        });
     }
   }
 
@@ -332,9 +336,9 @@ export class EstablishmentPageComponent implements OnInit {
     });
 
     if (isConfirmed) {
-      this.ptoEmisionSvc.annul(id).subscribe((response) => {
+      this._puntoEmisionService.annul(id).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this._tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -351,7 +355,7 @@ export class EstablishmentPageComponent implements OnInit {
       .putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth)
       .subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this._tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
