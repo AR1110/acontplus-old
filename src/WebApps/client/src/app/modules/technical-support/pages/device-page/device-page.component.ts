@@ -4,10 +4,11 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DeviceModalComponent } from './device-modal/device-modal.component';
 import { ModalService } from '@core/services/modal.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-device-page',
-    imports: [BreadcrumbComponent, DeviceListComponent, FontAwesomeModule],
+    imports: [BreadcrumbComponent, DeviceListComponent, FontAwesomeModule, MatCard, MatCardContent],
     templateUrl: './device-page.component.html',
     styles: ``
 })

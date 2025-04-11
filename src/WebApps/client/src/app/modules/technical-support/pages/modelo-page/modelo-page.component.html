@@ -1,13 +1,9 @@
-<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
+<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row mb-3">
       <div class="col-md-2 col-12">
-        <button
-          (click)="onModalOpen()"
-          class="btn btn-primary"
-          type="button"
-        >
+        <button (click)="onModalOpen()" class="btn btn-primary" type="button">
           <fa-icon [icon]="'plus'"></fa-icon>
           Nuevo
         </button>
@@ -16,13 +12,13 @@
     <div class="table-responsive">
       <table class="table">
         <thead>
-        <tr>
-          <th class="text-center">#</th>
-          <th>Marca</th>
-          <th>Código</th>
-          <th>Nombre</th>
-          <th>Opciones</th>
-        </tr>
+          <tr>
+            <th class="text-center">#</th>
+            <th>Marca</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Opciones</th>
+          </tr>
         </thead>
         <tbody>
           @for (item of modelos; track $index) {
@@ -48,5 +44,5 @@
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

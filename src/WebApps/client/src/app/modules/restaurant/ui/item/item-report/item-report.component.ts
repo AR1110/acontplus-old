@@ -21,19 +21,22 @@ import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-item-report',
     templateUrl: './item-report.component.html',
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BreadcrumbComponent,
-        MatAutocompleteModule,
-        AsyncPipe,
-    ]
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BreadcrumbComponent,
+    MatAutocompleteModule,
+    AsyncPipe,
+    MatCard,
+    MatCardContent,
+  ]
 })
 export class ItemReportComponent {
   checkedSubCategorias = new FormControl('');

@@ -52,28 +52,31 @@ import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 import {UserData} from "@modules/auth/domain/models/user-data.model";
 import {UpdateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/update-user-customer.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-wizard-config',
-    imports: [
-        MatStepper,
-        MatStep,
-        BreadcrumbComponent,
-        ReactiveFormsModule,
-        MatStepLabel,
-        MatButton,
-        MatStepperNext,
-        MatStepperPrevious,
-        FaIconComponent,
-        MatRadioButton,
-        NgbTooltip,
-        MatChipGrid,
-        MatChipRow,
-        MatChipInput,
-        MatRadioGroup,
-        ToUpperCaseDirective,
-        TabulatorSemanticUiComponent,
-    ],
+  imports: [
+    MatStepper,
+    MatStep,
+    BreadcrumbComponent,
+    ReactiveFormsModule,
+    MatStepLabel,
+    MatButton,
+    MatStepperNext,
+    MatStepperPrevious,
+    FaIconComponent,
+    MatRadioButton,
+    NgbTooltip,
+    MatChipGrid,
+    MatChipRow,
+    MatChipInput,
+    MatRadioGroup,
+    ToUpperCaseDirective,
+    TabulatorSemanticUiComponent,
+    MatCardContent,
+    MatCard,
+  ],
     templateUrl: './wizard-config.component.html',
     styles: []
 })

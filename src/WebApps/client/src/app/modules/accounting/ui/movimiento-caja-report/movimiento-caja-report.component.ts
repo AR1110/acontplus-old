@@ -13,16 +13,19 @@ import {ToasterService} from "@core/services/toaster.service";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
 import {UserSearchComponent} from "@core/components/user-search/user-search.component";
 import { formatDateToString } from '@core/utils/date.util';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-movimiento-caja-report',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-        UserSearchComponent
-    ],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    CompanyCustomerSearchComponent,
+    UserSearchComponent,
+    MatCardContent,
+    MatCard
+  ],
     templateUrl: './movimiento-caja-report.component.html',
     styles: ``
 })

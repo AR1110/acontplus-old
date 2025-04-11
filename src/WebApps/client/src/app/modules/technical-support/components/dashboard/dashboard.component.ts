@@ -6,11 +6,12 @@ import { OrderListComponent } from '@modules/technical-support/pages/order-page/
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { StatsService } from '@modules/technical-support/services/stats.service';
 import { Chart, registerables } from 'chart.js';
+import {MatCard, MatCardContent} from "@angular/material/card";
 Chart.register(...registerables);
 
 @Component({
     selector: 'app-dashboard',
-    imports: [FontAwesomeModule, OrderListComponent],
+  imports: [FontAwesomeModule, OrderListComponent, MatCard, MatCardContent],
     templateUrl: './dashboard.component.html',
     styles: ``
 })

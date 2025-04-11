@@ -5,10 +5,11 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { CompanyAddEditModalComponent } from '@modules/config/pages/company-page/components/company-add-edit-modal/company-add-edit-modal.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-company-page',
-    imports: [BreadcrumbComponent, PrimaryStatusPipe, FontAwesomeModule],
+  imports: [BreadcrumbComponent, PrimaryStatusPipe, FontAwesomeModule, MatCardContent, MatCard],
     templateUrl: './company-page.component.html',
     styles: ``
 })

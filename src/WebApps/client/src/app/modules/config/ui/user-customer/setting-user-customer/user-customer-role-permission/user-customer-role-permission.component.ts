@@ -14,19 +14,23 @@ import {
 } from "@modules/config/domain/use-cases/user-customer-permission/update-user-customer-permission.use-case";
 import Swal from "sweetalert2";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCard, MatCardContent, MatCardHeader} from "@angular/material/card";
 
 
 @Component({
     selector: 'app-user-customer-role-permission',
-    imports: [
-        FontAwesomeModule,
-        MatCheckboxModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        ReactiveFormsModule,
-        ThemeButtonComponent
-    ],
+  imports: [
+    FontAwesomeModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    MatCard,
+    MatCardContent,
+    MatCardHeader
+  ],
     templateUrl: './user-customer-role-permission.component.html',
     styleUrl: 'user-customer-role-permission.component.scss'
 })

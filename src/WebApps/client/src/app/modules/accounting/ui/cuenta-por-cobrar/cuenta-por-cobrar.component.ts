@@ -15,19 +15,22 @@ import { Pagination } from '@shared/models/pagination.model';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
 import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 
 
 @Component({
     selector: 'app-cuenta-por-cobrar',
-    imports: [
-        MatTableModule,
-        MatCheckboxModule,
-        FormsModule,
-        FontAwesomeModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent
-    ],
+  imports: [
+    MatTableModule,
+    MatCheckboxModule,
+    FormsModule,
+    FontAwesomeModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard
+  ],
     templateUrl: './cuenta-por-cobrar.component.html',
     styles: ``
 })

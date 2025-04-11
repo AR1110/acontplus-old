@@ -27,15 +27,18 @@ import { ToasterService } from '@core/services/toaster.service';
 import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-medical-history-modal',
-    imports: [
-        FaIconComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        PetSearchComponent,
-    ],
+  imports: [
+    FaIconComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    PetSearchComponent,
+    MatCard,
+    MatCardContent,
+  ],
     templateUrl: './medical-history-modal.component.html',
     styles: ``
 })

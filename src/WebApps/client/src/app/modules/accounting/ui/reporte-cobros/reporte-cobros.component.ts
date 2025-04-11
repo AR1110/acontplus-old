@@ -22,17 +22,20 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';
 import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-reporte-cobros',
     templateUrl: './reporte-cobros.component.html',
     styles: ``,
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-    ]
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    CompanyCustomerSearchComponent,
+    MatCardContent,
+    MatCard,
+  ]
 })
 export class ReporteCobrosComponent implements OnInit {
   http = inject(HttpClient);

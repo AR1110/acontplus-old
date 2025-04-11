@@ -8,6 +8,7 @@ import { SupportPageComponent } from '@mechanical/ui/pages/support-page/support-
 import { SupportWebRepository } from '@mechanical/data/support/support-web.repository';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import {SupportUseCase} from "@mechanical/domain/use-cases/support.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-mechanical-layout',
@@ -17,7 +18,9 @@ import {SupportUseCase} from "@mechanical/domain/use-cases/support.use-case";
         BreadcrumbComponent,
         MechanicalDashboardComponent,
         SupportPageComponent,
-        InspectionPageComponent
+        InspectionPageComponent,
+        MatCardContent,
+        MatCard
     ],
     templateUrl: './mechanical-layout.component.html',
     styleUrl: './mechanical-layout.component.scss'

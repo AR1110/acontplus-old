@@ -1,14 +1,17 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <div class="row">
   <div class="col-6 offset-lg-3 offset-md-3 offset-sm-3 offset-3">
-    <div class="card">
-      <div class="card-body">
+    <mat-card appearance="outlined">
+      <mat-card-content>
         <h4 class="card-title">Anexo Transaccional Simplificado - ATS</h4>
         <div class="form-group">
           <label>Rango Fechas</label>
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" [from]="dataSearch.fromDate"
-                                    [to]="dataSearch.toDate"/>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+            [from]="dataSearch.fromDate"
+            [to]="dataSearch.toDate"
+          />
         </div>
         <!-- <div class="form-group">
             <label for="year">Año:</label>
@@ -33,7 +36,7 @@
         <button (click)="getAts()" class="btn btn-success" type="button">
           <i class="ti-download"></i> Descargar
         </button>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

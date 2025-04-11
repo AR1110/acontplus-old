@@ -23,9 +23,9 @@
                   formControlName="idTipoIdentificacion"
                 >
                   @for (item of tiposIdentificacion; track $index) {
-                  <option [ngValue]="item.idTipoIdentificacion">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idTipoIdentificacion">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -198,9 +198,9 @@
                   id="idSubContribuyente"
                 >
                   @for (item of tipoContribuyentes; track $index) {
-                  <option [ngValue]="item.idSubContribuyente">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idSubContribuyente">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -216,9 +216,9 @@
                     id="idTiempoCredito"
                   >
                     @for (item of tiemposCredito; track $index) {
-                    <option [ngValue]="item.idTiempoCredito">
-                      {{ item.descripcion }}
-                    </option>
+                      <option [ngValue]="item.idTiempoCredito">
+                        {{ item.descripcion }}
+                      </option>
                     }
                   </select>
                   <button
@@ -256,9 +256,9 @@
                   id="idTipoClienteProveedor"
                 >
                   @for (item of tiposCliente; track $index) {
-                  <option [ngValue]="item.idTipoClienteProveedor">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idTipoClienteProveedor">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -275,9 +275,9 @@
                     ng-model="data.idEmpresa"
                   >
                     @for (item of empresas; track $index) {
-                    <option [ngValue]="item.idEmpresa">
-                      {{ item.razonSocial }}
-                    </option>
+                      <option [ngValue]="item.idEmpresa">
+                        {{ item.razonSocial }}
+                      </option>
                     }
                   </select>
                   <button
@@ -353,9 +353,9 @@
                     id="idCargo"
                   >
                     @for (item of cargos; track $index) {
-                    <option [ngValue]="item.idCargo">
-                      {{ item.descripcion }}
-                    </option>
+                      <option [ngValue]="item.idCargo">
+                        {{ item.descripcion }}
+                      </option>
                     }
                   </select>
                   <button
@@ -421,12 +421,12 @@
                 </button>
                 <img alt="" src="" style="display: none" />
               </div>
-              <div
-                class="card border border-success"
+              <mat-card
+                appearance="outlined"
                 id="cardBusiness"
                 style="max-width: 18rem"
               >
-                <div class="card-body">
+                <mat-card-content>
                   <h5 class="card-title text-center">
                     {{ customerForm.get("nombreFiscal")?.value }}
                   </h5>
@@ -443,8 +443,8 @@
                       <h6><small>&copy; Acontplus</small></h6>
                     </div>
                   </div>
-                </div>
-              </div>
+                </mat-card-content>
+              </mat-card>
               <button
                 class="btn btn-success btn-sm"
                 ng-click="exportTpvCard(data.numeroIdentificacion)"

@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgOptimizedImage } from '@angular/common';
 import { IngredientAddEditModalComponent } from '@restaurant/ui/ingredient/ingredient-add-edit-modal/ingredient-add-edit-modal.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-ingredient-list',
@@ -17,6 +18,8 @@ import { IngredientAddEditModalComponent } from '@restaurant/ui/ingredient/ingre
         FormsModule,
         FaIconComponent,
         NgOptimizedImage,
+        MatCardContent,
+        MatCard,
     ],
     templateUrl: './ingredient-list.component.html',
     styles: ``

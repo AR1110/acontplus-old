@@ -6,15 +6,18 @@ import { SupportPageComponent } from '../support-page/support-page.component';
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import {SupportUseCase} from "@mechanical/domain/use-cases/support.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 Chart.register(...registerables);
 @Component({
     selector: 'app-mechanical-dashboard',
-    imports: [
-        CommonModule,
-        FontAwesomeModule,
-        MatDynamicCardComponent,
-        SupportPageComponent
-    ],
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    MatDynamicCardComponent,
+    SupportPageComponent,
+    MatCard,
+    MatCardContent
+  ],
     templateUrl: './mechanical-dashboard.component.html'
 })
 export class MechanicalDashboardComponent   {

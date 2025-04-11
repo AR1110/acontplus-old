@@ -9,14 +9,17 @@ import {SharedService} from "@core/services/shared.service";
 import {getValidId} from "@core/utils/utils";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
 import {ResumenContableUseCase} from "@accounting/core/use-cases/resumen-contable.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-resumen-contable',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent
-    ],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard
+  ],
     templateUrl: './resumen-contable.component.html',
     styles: ``
 })

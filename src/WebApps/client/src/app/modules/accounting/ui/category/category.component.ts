@@ -7,6 +7,7 @@ import { Category } from '@accounting/core/domain/category';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-category',
@@ -15,6 +16,8 @@ import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
         FontAwesomeModule,
         NgbDropdownModule,
         SecondaryStatusPipe,
+        MatCardContent,
+        MatCard,
     ],
     templateUrl: './category.component.html',
     styles: ``

@@ -29,20 +29,23 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-add-edit-modal',
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        NgbNavModule,
-        FontAwesomeModule,
-        NgbTooltipModule,
-        MatChipGrid,
-        MatChipRow,
-        MatIcon,
-        MatChipInput,
-    ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgbNavModule,
+    FontAwesomeModule,
+    NgbTooltipModule,
+    MatChipGrid,
+    MatChipRow,
+    MatIcon,
+    MatChipInput,
+    MatCard,
+    MatCardContent,
+  ],
     templateUrl: './add-edit-modal.component.html',
     styles: ``
 })

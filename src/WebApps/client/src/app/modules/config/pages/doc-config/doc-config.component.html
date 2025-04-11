@@ -1,15 +1,22 @@
 <app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="establecimiento">Establecimiento: </label>
-          <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="dataSearch.codEstab"
-            (change)="onChangeEstab()">
+          <select
+            name="establecimiento"
+            id="establecimiento"
+            class="form-select"
+            [(ngModel)]="dataSearch.codEstab"
+            (change)="onChangeEstab()"
+          >
             @for (item of establecimientos; track $index) {
-            <option [ngValue]="item.codEstab">{{item.nombreComercial}}</option>
+              <option [ngValue]="item.codEstab">
+                {{ item.nombreComercial }}
+              </option>
             }
           </select>
         </div>
@@ -17,10 +24,15 @@
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="puntoEmision">Puntos Emisión: </label>
-          <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="dataSearch.idPuntoEmision"
-            (change)="getDocs()">
+          <select
+            name="puntoEmision"
+            id="puntoEmision"
+            class="form-select"
+            [(ngModel)]="dataSearch.idPuntoEmision"
+            (change)="getDocs()"
+          >
             @for (item of puntosEmision; track $index) {
-            <option [ngValue]="item.idPuntoEmision">{{item.ptoEmi}}</option>
+              <option [ngValue]="item.idPuntoEmision">{{ item.ptoEmi }}</option>
             }
           </select>
         </div>
@@ -40,38 +52,55 @@
         </thead>
         <tbody>
           @for (item of docs; track $index) {
-          <tr>
-            <td>{{$index+1}}</td>
-            <td>{{item.descripcion}}</td>
-            <td>
-              <div class="icheck-primary">
-                <input type="checkbox" [name]="item.descripcion + $index" [id]="item.descripcion + $index"
-                  [(ngModel)]="item.estado">
-                <label [for]="item.descripcion + $index"></label>
-              </div>
-            </td>
-            <td>
-              <div class="form-group">
-                <input type="number" class="form-control" [(ngModel)]="item.ultimaSecuencia" onclick="this.select()"
-                  min="1">
-              </div>
-            </td>
-            <td class="d-flex gap-2">
-              <button type="button" class="btn btn-success btn-sm" [disabled]="!item.ultimaSecuencia"
-                (click)="saveConfig(item)">
-                <fa-icon [icon]="'save'"></fa-icon>
-              </button>
-              @if (item.infoAdicional) {
-              <button type="button" class="btn btn-primary btn-sm" [disabled]="!item.ultimaSecuencia"
-                (click)="openModalInfoAdicional(item)">
-                <fa-icon [icon]="'tags'"></fa-icon>
-              </button>
-              }
-            </td>
-          </tr>
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ item.descripcion }}</td>
+              <td>
+                <div class="icheck-primary">
+                  <input
+                    type="checkbox"
+                    [name]="item.descripcion + $index"
+                    [id]="item.descripcion + $index"
+                    [(ngModel)]="item.estado"
+                  />
+                  <label [for]="item.descripcion + $index"></label>
+                </div>
+              </td>
+              <td>
+                <div class="form-group">
+                  <input
+                    type="number"
+                    class="form-control"
+                    [(ngModel)]="item.ultimaSecuencia"
+                    onclick="this.select()"
+                    min="1"
+                  />
+                </div>
+              </td>
+              <td class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn btn-success btn-sm"
+                  [disabled]="!item.ultimaSecuencia"
+                  (click)="saveConfig(item)"
+                >
+                  <fa-icon [icon]="'save'"></fa-icon>
+                </button>
+                @if (item.infoAdicional) {
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    [disabled]="!item.ultimaSecuencia"
+                    (click)="openModalInfoAdicional(item)"
+                  >
+                    <fa-icon [icon]="'tags'"></fa-icon>
+                  </button>
+                }
+              </td>
+            </tr>
           }
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

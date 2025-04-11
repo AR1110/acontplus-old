@@ -21,19 +21,22 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { formatDateToString } from '@core/utils/date.util';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-rentabilidad-page',
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BreadcrumbComponent,
-        ProductSearchComponent,
-        UserSearchComponent,
-        DateRangeSelectionComponent,
-    ],
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BreadcrumbComponent,
+    ProductSearchComponent,
+    UserSearchComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard,
+  ],
     templateUrl: './rentabilidad-page.component.html'
 })
 export class RentabilidadPageComponent {

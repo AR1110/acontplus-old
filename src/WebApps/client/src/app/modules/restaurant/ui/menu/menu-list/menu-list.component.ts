@@ -6,10 +6,11 @@ import { Pagination } from '@shared/models/pagination.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { MenuAddEditModalComponent } from '@restaurant/ui/menu/menu-add-edit-modal/menu-add-edit-modal.component';
+import {MatCard, MatCardContent, MatCardFooter, MatCardHeader} from "@angular/material/card";
 
 @Component({
     selector: 'app-menu-list',
-    imports: [FaIconComponent ],
+  imports: [FaIconComponent, MatCardContent, MatCard, MatCardHeader, MatCardFooter],
     templateUrl: './menu-list.component.html',
     styles: ``
 })

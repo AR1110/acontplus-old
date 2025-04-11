@@ -33,29 +33,32 @@ import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-medical-history-page',
-    imports: [
-        BreadcrumbComponent,
-        FaIconComponent,
-        FormsModule,
-        MatTable,
-        MatSort,
-        MatColumnDef,
-        MatHeaderCell,
-        MatCellDef,
-        MatHeaderCellDef,
-        MatCell,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        MatRowDef,
-        MatNoDataRow,
-        MatPaginator,
-        MatRow,
-        MatInput,
-        NgbDropdownModule,
-    ],
+  imports: [
+    BreadcrumbComponent,
+    FaIconComponent,
+    FormsModule,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatHeaderCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatNoDataRow,
+    MatPaginator,
+    MatRow,
+    MatInput,
+    NgbDropdownModule,
+    MatCardContent,
+    MatCard,
+  ],
     templateUrl: './medical-history-page.component.html',
     styles: ``
 })

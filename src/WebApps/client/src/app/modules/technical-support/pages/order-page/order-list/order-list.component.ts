@@ -24,18 +24,21 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { FormsModule } from '@angular/forms';
 import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-order-list',
-    imports: [
-        DateRangeSelectionComponent,
-        FontAwesomeModule,
-        FormsModule,
-        MatTableModule,
-        NgbDropdownModule,
-        NgbPaginationModule,
-        PrimaryStatusPipe,
-    ],
+  imports: [
+    DateRangeSelectionComponent,
+    FontAwesomeModule,
+    FormsModule,
+    MatTableModule,
+    NgbDropdownModule,
+    NgbPaginationModule,
+    PrimaryStatusPipe,
+    MatCardContent,
+    MatCard,
+  ],
     templateUrl: './order-list.component.html',
     styles: `
     .row {

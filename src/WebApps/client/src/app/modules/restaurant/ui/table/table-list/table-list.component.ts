@@ -25,6 +25,7 @@ import {
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DialogService } from '@core/services/dialog.service';
 import Swal from 'sweetalert2';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 interface TableNode {
   index?: string;
@@ -51,6 +52,8 @@ interface TableNode {
     MatTreeModule,
     MatIconModule,
     MatSlideToggleModule,
+    MatCard,
+    MatCardContent,
   ],
   templateUrl: './table-list.component.html',
   styles: ``,
