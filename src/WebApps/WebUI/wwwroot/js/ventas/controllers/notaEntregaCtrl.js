@@ -2573,6 +2573,16 @@
                 return
             }
 
+            if($scope.infoAdicionalDocumento.length>0){
+                if($scope.infoAdicionalDocumento.some(item=>!fS.isValidField(item.nombre) || !fS.isValidField(item.valor))){
+                    tS.toastr(
+                        "warning",
+                        "En información adicional del documento algunos campos estan vaciós"
+                    );
+                    return;
+                }
+            }
+
             return true;
         }
 

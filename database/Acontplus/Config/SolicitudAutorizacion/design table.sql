@@ -15,8 +15,8 @@ CREATE   TABLE Config.SolicitudAutorizacion (
     obs VARCHAR(200),
     AdminRolesJson NVARCHAR(MAX) NOT NULL,
     infoExtraJson  NVARCHAR(MAX) NOT NULL,  
-	RowGuid UNIQUEIDENTIFIER NOT NULL
-    userRoleIdLogged INT NOT NULL
+	RowGuid UNIQUEIDENTIFIER NOT NULL,
+    userRoleIdLogged INT NOT NULL,
     
     FOREIGN KEY (IdUsuarioRolSolicitante) REFERENCES App.UsuarioRol(idUsuarioRol), 
     FOREIGN KEY (IdUsuarioRolAprobante) REFERENCES App.UsuarioRol(idUsuarioRol), 
