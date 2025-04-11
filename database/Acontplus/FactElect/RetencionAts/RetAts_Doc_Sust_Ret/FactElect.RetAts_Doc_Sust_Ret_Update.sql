@@ -9,53 +9,41 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for update retencion sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Ret_Update', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Update
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Update @idUsuarioRol INT 
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Update @userRoleId INT 
 ,@id INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
            ,@idRetencionAts INT
 
 	
 	BEGIN TRY
         
-        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 
         SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id)
 
 		BEGIN TRAN 
 
-			UPDATE rr SET rr.codigo = t.codigo
+			UPDATE rr SET rr.impuestoRetencionId = t.impuestoRetencionId
 			,rr.codigoRetencion = t.codigoRetencion
 			,rr.baseImponible = t.baseImponible
 			,rr.porcentajeRetener = t.porcentajeRetener
 			,rr.valorRetenido = t.valorRetenido
-			,rr.fechaPagoDiv = t.fechaPagoDiv
-			,rr.imRentaSoc = t.imRentaSoc
-			,rr.ejerFisUtDiv = t.ejerFisUtDiv
-			,rr.numCajBan = t.numCajBan
-			,rr.precCajBan = t.precCajBan
 			FROM FactElect.RetencionAtsRet rr WITH (ROWLOCK)
-			JOIN (SELECT idRetencionAtsRet, codigo, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido
-			, fechaPagoDiv, imRentaSoc, ejerFisUtDiv, numCajBan, precCajBan
+			JOIN (SELECT idRetencionAtsRet, impuestoRetencionId, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido
 			FROM OPENJSON(@json) 
 			WITH(
 				idRetencionAtsRet INT '$.idRetencionAtsRet'
-				,codigo TINYINT '$.codigo'
+				,impuestoRetencionId INT '$.impuestoRetencionId'
 				,codigoRetencion VARCHAR(5) '$.codigoRetencion'
 				,baseImponible NUMERIC(18,5) '$.baseImponible'
 				,porcentajeRetener NUMERIC(18,5) '$.porcentajeRetener'
 				,valorRetenido NUMERIC(18,5) '$.valorRetenido'
-				,fechaPagoDiv DATE '$.fechaPagoDiv'
-				,imRentaSoc NUMERIC(18,5) '$.imRentaSoc'
-				,ejerFisUtDiv INT '$.ejerFisUtDiv'
-				,numCajBan INT '$.numCajBan'
-				,precCajBan NUMERIC(18,5) '$.precCajBan'
 			)) as t ON t.idRetencionAtsRet = rr.idRetencionAtsRet
 			WHERE rr.idRetencionAtsRet = @id
 

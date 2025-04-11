@@ -8,6 +8,6 @@ public class RetencionAtsDto
     public int IdProveedor { get; set; }
     public string TipoSujetoRetenido { get; set; }
     public DateTime FechaEmision { get; set; }
-    public List<DocumentoSustentoDto> Documentos { get; set; }
+    public List<RetAtsDocSustentoDto> Documentos { get; set; }
     public InfoAdicionalDto InfoAdicional { get; set; }
 }

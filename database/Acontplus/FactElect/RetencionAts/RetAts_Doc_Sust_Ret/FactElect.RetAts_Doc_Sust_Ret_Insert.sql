@@ -9,40 +9,37 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for insert tax sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Ret_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Insert
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Insert @idUsuarioRol INT  
-,@idDocSust INT
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Insert @idUsuarioRol INT  
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
 		,@idRetencionAts INT
+        ,@idRetAtsDocSustento INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
-		BEGIN TRAN 
-			SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idDocSust)
+        	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+            
+            SET @idRetAtsDocSustento = (SELECT TOP 1 idRetAtsDocSustento FROM OPENJSON(@json) WITH(idRetAtsDocSustento INT))
+			SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idRetAtsDocSustento)
 
-			INSERT INTO FactElect.RetencionAtsRet(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, codigo, codigoRetencion
-			, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv
-			, numCajBan, precCajBan)
-			SELECT @idRetencionAts, @idDocSust, uniqueIdDoc, codigo, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv, numCajBan, precCajBan
+		BEGIN TRAN
+
+			INSERT INTO FactElect.RetencionAtsRet(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, impuestoRetencionId, codigoRetencion
+			, baseImponible, porcentajeRetener, valorRetenido)
+			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, impuestoRetencionId, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido
 			FROM OPENJSON(@json) 
 			WITH(
 				uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
-				codigo VARCHAR(1) '$.codigo'
+				impuestoRetencionId INT '$.impuestoRetencionId'
 				,codigoRetencion VARCHAR(5) '$.codigoRetencion'
 				,baseImponible NUMERIC(18,5) '$.baseImponible'
 				,porcentajeRetener NUMERIC(18,5) '$.porcentajeRetener'
 				,valorRetenido NUMERIC(18,5) '$.valorRetenido'
-				,fechaPagoDiv DATE '$.fechaPagoDiv'
-				,imRentaSoc NUMERIC(18,5) '$.imRentaSoc'
-				,ejerFisUtDiv INT '$.ejerFisUtDiv'
-				,numCajBan INT '$.numCajBan'
-				,precCajBan NUMERIC(18,5) '$.precCajBan'
 			)
 
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)

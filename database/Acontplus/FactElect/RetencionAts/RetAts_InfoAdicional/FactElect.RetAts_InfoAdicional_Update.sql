@@ -9,17 +9,17 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for update pagos del sustento
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_InfoAdicional_Update', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_InfoAdicional_Update
-GO
-CREATE PROCEDURE FactElect.RetAts_InfoAdicional_Update @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_InfoAdicional_Update @userRoleId INT 
 ,@id INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	BEGIN TRY
 		BEGIN TRAN 
 			

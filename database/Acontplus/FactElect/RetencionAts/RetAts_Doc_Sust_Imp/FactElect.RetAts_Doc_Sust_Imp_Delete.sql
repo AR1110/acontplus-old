@@ -9,16 +9,16 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for delete tax sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Imp_Delete', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Delete
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Delete @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Delete @userRoleId INT 
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	BEGIN TRY
 		BEGIN TRAN 
 			

@@ -174,7 +174,6 @@ BEGIN
 			UPDATE ret WITH (ROWLOCK)
                SET ret.tipoSujetoRetenido = t.tipoSujetoRetenido 
 			      ,ret.parteRel           = t.parteRel
-			      ,ret.idCliente          = t.idCliente
 			      ,ret.periodoFiscal      = t.periodoFiscal
 			      ,ret.idUsuario          = @idUsuario
 			      ,ret.idProveedor        = @idProveedor
