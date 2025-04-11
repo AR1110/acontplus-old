@@ -103,48 +103,50 @@
                           element == expandedElement ? 'expanded' : 'collapsed'
                         "
                       >
-                        <div class="card-body shadow p-3 mb-5 bg-body rounded">
-                          <table class="table table-condensed table-sm">
-                            <thead>
-                              <tr>
-                                <th>Op.</th>
-                                <th>Nro.Cuota</th>
-                                <th>Cuota</th>
-                                <th>Mora</th>
-                                <th>Diás Mora</th>
-                                <th>Abono</th>
-                                <!-- <th>Saldo Cta</th> -->
-                                <th>Saldo</th>
-                                <th>Estado</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              @for (cuota of element.cuotas; track $index) {
+                        <mat-card appearance="outlined">
+                          <mat-card-content>
+                            <table class="table table-condensed table-sm">
+                              <thead>
                                 <tr>
-                                  <td>
-                                    @if (cuota.esCuotaAfectada) {
-                                      <button
-                                        class="btn btn-primary btn-sm"
-                                        type="button"
-                                        (click)="showCobroDetalle(cuota)"
-                                      >
-                                        <fa-icon [icon]="'eye'"></fa-icon>
-                                      </button>
-                                    }
-                                  </td>
-                                  <td>{{ cuota.nroCuota }}</td>
-                                  <td>{{ cuota.cuota }}</td>
-                                  <td>{{ cuota.mora }}</td>
-                                  <td>{{ cuota.diasMora }}</td>
-                                  <td>{{ cuota.abono }}</td>
-                                  <!-- <td>{{cuota.saldoCta}}</td> -->
-                                  <td>{{ cuota.saldo }}</td>
-                                  <td>{{ cuota.estado }}</td>
+                                  <th>Op.</th>
+                                  <th>Nro.Cuota</th>
+                                  <th>Cuota</th>
+                                  <th>Mora</th>
+                                  <th>Diás Mora</th>
+                                  <th>Abono</th>
+                                  <!-- <th>Saldo Cta</th> -->
+                                  <th>Saldo</th>
+                                  <th>Estado</th>
                                 </tr>
-                              }
-                            </tbody>
-                          </table>
-                        </div>
+                              </thead>
+                              <tbody>
+                                @for (cuota of element.cuotas; track $index) {
+                                  <tr>
+                                    <td>
+                                      @if (cuota.esCuotaAfectada) {
+                                        <button
+                                          class="btn btn-primary btn-sm"
+                                          type="button"
+                                          (click)="showCobroDetalle(cuota)"
+                                        >
+                                          <fa-icon [icon]="'eye'"></fa-icon>
+                                        </button>
+                                      }
+                                    </td>
+                                    <td>{{ cuota.nroCuota }}</td>
+                                    <td>{{ cuota.cuota }}</td>
+                                    <td>{{ cuota.mora }}</td>
+                                    <td>{{ cuota.diasMora }}</td>
+                                    <td>{{ cuota.abono }}</td>
+                                    <!-- <td>{{cuota.saldoCta}}</td> -->
+                                    <td>{{ cuota.saldo }}</td>
+                                    <td>{{ cuota.estado }}</td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </mat-card-content>
+                        </mat-card>
                       </div>
                     </td>
                   </ng-container>
