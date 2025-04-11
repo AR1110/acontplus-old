@@ -10,7 +10,9 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('@modules/dashboard/dashboard-page/dashboard-page.component').then((x) => x.DashboardPageComponent),
+          import(
+            '@modules/dashboard/dashboard-page/dashboard-page.component'
+          ).then((x) => x.DashboardPageComponent),
       },
       {
         path: 'purchase',

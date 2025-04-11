@@ -1,23 +1,34 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row mb-3">
       <div class="col-md-2 col-12">
-        <button (click)="openModalAddEdit()" class="btn btn-info  m-l-15 text-white" type="button">
-          <fa-icon [icon]="'plus'"></fa-icon>
+        <button (click)="openModalAddEdit()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
           Nuevo
         </button>
       </div>
     </div>
-    <div [closeOthers]="true" ngbAccordion>
-      @for (item of establishments; track item) {
-        <div ngbAccordionItem #first="ngbAccordionItem" (shown)="onEstabShow(item.idEstablecimiento)"
-             (hidden)="onEstabHide()">
-          <div ngbAccordionHeader class="accordion-button custom-header d-flex justify-content-between">
+
+    <div class="row">
+      <div class="col"></div>
+    </div>
+    <mat-accordion multi>
+      @for (item of establishments; track $index) {
+        <mat-expansion-panel
+          [expanded]="panelOpenState === $index"
+          (opened)="setPanelOpen($index)"
+          (closed)="setPanelOpen(-1)"
+        >
+          <mat-expansion-panel-header
+            class="accordion-button custom-header d-flex justify-content-between"
+          >
             <div class="d-flex justify-content-start">
               <div class="d-flex flex-row">
-                <div class="p-1"><span class="font-weight-bold">{{ item.estab }}</span> -</div>
+                <div class="p-1">
+                  <span class="font-weight-bold">{{ item.estab }}</span> -
+                </div>
                 <div class="p-1">{{ item.nombreComercial }}</div>
                 <div class="p-1">
                   @if (item.estado) {
@@ -26,172 +37,206 @@
                     <span class="badge bg-danger">CERRADO</span>
                   }
                 </div>
-
               </div>
             </div>
-            <div class="d-flex justify-content-end">
+          </mat-expansion-panel-header>
+          <div class="row mt-1">
+            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
               <div class="d-grid gap-2 d-md-flex">
-                <button type="button" class="btn btn-outline-info btn-sm"
-                        (click)="openModalAddEdit(item.idEstablecimiento)">
-                  <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                </button>
-
-
-                <button ngbAccordionToggle class="btn btn-outline-warning btn-sm ">
-                  <fa-icon [icon]="'eye'"></fa-icon>
-                </button>
+                <app-theme-button
+                  type="button"
+                  matStyle="icon"
+                  icon="edit"
+                  variant="warning"
+                  (handleClick)="openModalAddEdit(item.idEstablecimiento)"
+                >
+                </app-theme-button>
 
                 @if (item.estado) {
-                  <button type="button" class="btn btn-outline-danger btn-sm" placement="top"
-                          ngbTooltip="Cerrar Establecimiento"
-                          (click)="askToCloseEstab(item.idEstablecimiento)">
-                    <fa-icon [icon]="'close'"></fa-icon>
-                  </button>
+                  <app-theme-button
+                    variant="danger"
+                    type="button"
+                    matStyle="icon"
+                    icon="delete"
+                    (handleClick)="askToCloseEstab(item.idEstablecimiento)"
+                  >
+                  </app-theme-button>
                 }
               </div>
             </div>
           </div>
-          <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
-              <ng-template>
-                <div class="row">
-                  <div class="col-xl-5 col-lg-5 col-md-12 col-12">
-                    <div class="card shadow">
+          <div class="row mt-3">
+            <div class="col-xl-5 col-lg-5 col-md-12 col-12">
+              <mat-card appearance="outlined" class="mb-3">
+                <mat-card-content>
+                  <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                      <div class="mb-3">
+                        <label for="imageUpload" class="form-label"
+                          >Elige una imagen:</label
+                        >
+                        <input
+                          type="file"
+                          class="form-control"
+                          id="imageUpload"
+                          (change)="onFileSelected($event)"
+                          accept="image/*"
+                        />
+                        <small class="text-warning">Tamaño máximo 500kb</small>
 
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                            <div class="mb-3">
+                        @if (fileError) {
+                          <div class="text-danger">
+                            @if (fileError && fileError?.type === "size") {
+                              <p>Archivo muy grande: max 500kb</p>
+                            }
 
-                              <label for="imageUpload" class="form-label">Elige una imagen:</label>
-                              <input type="file" class="form-control" id="imageUpload" (change)="onFileSelected($event)"
-                                     accept="image/*">
-                              <small class="text-warning">Tamaño máximo 500kb</small>
-
-                              @if (fileError) {
-                                <div class="text-danger">
-                                  @if (fileError && fileError?.type === "size") {
-                                    <p>Archivo muy grande: max 500kb</p>
-                                  }
-
-                                  @if (fileError && fileError?.type === "type") {
-                                    <p>Formato de archivo no aceptado</p>
-                                  }
-
-                                </div>
-                              }
-
-                            </div>
-                            @if (imageUrl) {
-                              <div class=" mt-3">
-                                <h6>Vista previa:</h6>
-
-                                <div class="d-flex flex-column">
-                                  <img [src]="imageUrl" alt="Image preview" class="img-thumbnail"
-                                       style="max-height: 300px;">
-
-
-                                  <div class="d-flex flex-row gap-1 p-1">
-                                    <button class="btn btn-primary btn-block" (click)="uploadImage()">
-                                      <fa-icon [icon]="'upload'"></fa-icon>
-                                      Subir
-                                    </button>
-                                    <button class="btn btn-danger btn-block" (click)="clearImage()">Eliminar</button>
-                                  </div>
-
-                                </div>
-
-                              </div>
+                            @if (fileError && fileError?.type === "type") {
+                              <p>Formato de archivo no aceptado</p>
                             }
                           </div>
+                        }
+                      </div>
+                      @if (imageUrl) {
+                        <div class="mt-3">
+                          <h6>Vista previa:</h6>
 
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card shadow">
-                      <div class="card-header">
-                        <span class="card-title">Autorización Comprobante</span>
-                      </div>
-                      <div class="card-body">
-                        <div class="icheck-primary">
-                          <input type="radio" id="esManual" (change)="configSaveFactElect()"
-                                 [(ngModel)]="data.autoSriAuth" [value]="false" name="authorizeComprobante"/>
-                          <label for="esManual">Manual</label>
-                        </div>
-                        <div class="icheck-primary">
-                          <input type="radio" id="esAutomatica" (change)="configSaveFactElect()"
-                                 [(ngModel)]="data.autoSriAuth" [value]="true" name="authorizeComprobante"/>
-                          <label for="esAutomatica">Automática</label>
-                        </div>
+                          <div class="d-flex flex-column">
+                            <img
+                              [src]="imageUrl"
+                              alt="Image preview"
+                              class="img-thumbnail"
+                              style="max-height: 300px"
+                            />
 
-                        <div class="alert alert-info" role="alert">
-                          En caso de que sea "Automática", los documentos electrónicos, una vez creados, no se podrán
-                          editar más y se autorizarán automáticamente.
+                            <div class="d-flex flex-row gap-1 p-1">
+                              <app-theme-button
+                                variant="success"
+                                type="button"
+                                icon="upload"
+                                text="Subir"
+                                (handleClick)="uploadImage()"
+                              >
+                              </app-theme-button>
+                              <app-theme-button
+                                variant="danger"
+                                type="button"
+                                icon="delete"
+                                text="Eliminar"
+                                (click)="clearImage()"
+                              >
+                              </app-theme-button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-
-                    </div>
-                  </div>
-                  <div class="col-xl-7 col-lg-7 col-md-12 col-12">
-                    <div class="card shadow border-1">
-                      <div class="card-header d-flex flex-row justify-content-between align-content-center h-25">
-                        <span class="card-title ">Puntos de Emisión</span>
-                        <button type="button" class="btn btn-info btn-sm" (click)="modalAddEditPuntoEmision(item)">
-                          Nuevo
-                        </button>
-                      </div>
-                      <div class="card-body ">
-                        <div class="table-responsive ">
-                          <table class="table table-condensed">
-                            <thead>
-                            <tr>
-                              <th>Op.</th>
-                              <th>N°</th>
-                              <th>Punto de Emisión</th>
-                              <th>Ambiente</th>
-                              <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                              @for (ptoEmi of puntosEmision; track $index) {
-                                <tr>
-                                  <td>
-                                    <div class="d-flex flex-row gap-1 justify-content-center">
-                                      <button type="button" (click)="modalAddEditPuntoEmision(item, ptoEmi)"
-                                              class="btn btn-outline-info btn-xs">
-                                        <fa-icon [icon]="'pencil'"></fa-icon>
-                                      </button>
-                                      <button type="button" (click)="askToDeletePtoEmision(ptoEmi.idPuntoEmision)"
-                                              class="btn btn-outline-danger btn-xs">
-                                        <fa-icon [icon]="'trash'"></fa-icon>
-                                      </button>
-                                    </div>
-                                  </td>
-                                  <td>{{ $index + 1 }}</td>
-                                  <td>{{ ptoEmi.ptoEmi }}</td>
-                                  <td>{{ ptoEmi.descripcion }}</td>
-                                  <td>
-
-                                    <div [innerHTML]="ptoEmi.estado | primaryStatus"></div>
-                                  </td>
-                                </tr>
-                              } @empty {
-                                <tr class="text-center">
-                                  <td colspan="5">No hay registros</td>
-                                </tr>
-                              }
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
+                      }
                     </div>
                   </div>
-                </div>
-              </ng-template>
+                </mat-card-content>
+              </mat-card>
+              <mat-card appearance="outlined">
+                <mat-card-header>
+                  <span class="card-title">Autorización Comprobante</span>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-radio-group
+                    [(ngModel)]="data.autoSriAuth"
+                    (change)="configSaveFactElect()"
+                  >
+                    <mat-radio-button [value]="false">
+                      Manual
+                    </mat-radio-button>
+                    <mat-radio-button [value]="true">
+                      Automática
+                    </mat-radio-button>
+                  </mat-radio-group>
+
+                  <div class="alert alert-info" role="alert">
+                    En caso de que sea "Automática", los documentos
+                    electrónicos, una vez creados, no se podrán editar más y se
+                    autorizarán automáticamente.
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-xl-7 col-lg-7 col-md-12 col-12">
+              <mat-card appearance="outlined">
+                <mat-card-header
+                  class="d-flex flex-row justify-content-between align-content-center h-25"
+                >
+                  <span class="card-title">Puntos de Emisión</span>
+                  <button
+                    type="button"
+                    mat-raised-button
+                    (click)="modalAddEditPuntoEmision(item)"
+                  >
+                    <mat-icon>add</mat-icon>
+                    Nuevo
+                  </button>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="table-responsive">
+                    <table class="table table-condensed">
+                      <thead>
+                        <tr>
+                          <th>Op.</th>
+                          <th>N°</th>
+                          <th>Punto de Emisión</th>
+                          <th>Ambiente</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (ptoEmi of puntosEmision; track $index) {
+                          <tr>
+                            <td>
+                              <div
+                                class="d-flex flex-row gap-1 justify-content-center"
+                              >
+                                <app-theme-button
+                                  variant="warning"
+                                  type="button"
+                                  icon="edit"
+                                  matStyle="icon"
+                                  (handleClick)="
+                                    modalAddEditPuntoEmision(item, ptoEmi)
+                                  "
+                                >
+                                </app-theme-button>
+                                <app-theme-button
+                                  type="button"
+                                  variant="danger"
+                                  icon="delete"
+                                  matStyle="icon"
+                                  (handleClick)="
+                                    askToDeletePtoEmision(ptoEmi.idPuntoEmision)
+                                  "
+                                >
+                                </app-theme-button>
+                              </div>
+                            </td>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ ptoEmi.ptoEmi }}</td>
+                            <td>{{ ptoEmi.descripcion }}</td>
+                            <td>
+                              <div
+                                [innerHTML]="ptoEmi.estado | primaryStatus"
+                              ></div>
+                            </td>
+                          </tr>
+                        } @empty {
+                          <tr class="text-center">
+                            <td colspan="5">No hay registros</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </mat-card-content>
+              </mat-card>
             </div>
           </div>
-        </div>
+        </mat-expansion-panel>
       }
-    </div>
-  </div>
-</div>
+    </mat-accordion>
+  </mat-card-content>
+</mat-card>

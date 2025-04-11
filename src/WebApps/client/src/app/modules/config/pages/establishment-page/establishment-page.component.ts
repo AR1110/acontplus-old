@@ -1,41 +1,53 @@
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { PuntoEmisionAddEditModalComponent } from '@modules/config/pages/establishment-page/components/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
-import {
-  NgbAccordionModule,
-  NgbTooltipModule,
-} from '@ng-bootstrap/ng-bootstrap';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-
 import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/estab-add-edit-modal.component';
 import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.service';
 import { FormsModule } from '@angular/forms';
 import { EstablishmentLogoService } from '@modules/config/services/sri/establishment-logo.service';
-import { CommonModule } from '@angular/common';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-establishment-page',
-    imports: [
-        CommonModule,
-        FontAwesomeModule,
-        NgbAccordionModule,
-        NgbTooltipModule,
-        BreadcrumbComponent,
-        PrimaryStatusPipe,
-        FormsModule,
-    ],
-    templateUrl: './establishment-page.component.html',
-    styleUrl: './establishment-page.component.scss'
+  selector: 'app-establishment-page',
+  imports: [
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    FormsModule,
+    MatCard,
+    MatCardContent,
+    MatAccordion,
+    MatExpansionModule,
+    MatButton,
+    MatIcon,
+    MatCardHeader,
+    MatRadioGroup,
+    MatRadioButton,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './establishment-page.component.html',
+  styleUrl: './establishment-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EstablishmentPageComponent {
+export class EstablishmentPageComponent implements OnInit {
   establishments: EstablishmentRead[] = [];
   puntosEmision: PuntoEmisionRead[] = [];
   fileError: any = null;
@@ -47,11 +59,26 @@ export class EstablishmentPageComponent {
   selectedFile: File | null = null;
   data: any = {};
   dataLogo: any = {};
-  private estabSvc = inject(EstablishmentService);
+  panelOpenState = -1;
+
+  private readonly _estabService = inject(EstablishmentService);
   private ptoEmisionSvc = inject(PuntoEmisionService);
   private estabLogoSvc = inject(EstablishmentLogoService);
   private modalSvc = inject(ModalService);
   private tS = inject(ToasterService);
+  private readonly _cdr = inject(ChangeDetectorRef);
+
+  setPanelOpen(index: number) {
+    this.panelOpenState = index;
+    // Only load data when opening a panel (not when closing)
+    if (index >= 0 && index < this.establishments.length) {
+      const estab = this.establishments[index];
+      this.onEstabShow(estab.idEstablecimiento);
+    } else {
+      // Handle panel closing if needed (index will be -1)
+      this.onEstabHide();
+    }
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -75,26 +102,20 @@ export class EstablishmentPageComponent {
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
           this.imageUrl = e.target.result;
+          this._cdr.detectChanges();
         }
       };
       reader.readAsDataURL(this.selectedFile);
     }
   }
 
-  successResponseLogo = (response: any) => {
+  commonResponse = (response: any) => {
     if (isApiResponse(response)) {
-      if (response.code == '0') {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message,
-        });
-      }
+      this.tS.toastr({
+        type: response.code === '1' ? 'success' : 'warning',
+        message: response.message,
+      });
       if (response.code == '1') {
-        this.tS.toastr({
-          type: 'success',
-          message: response.message,
-        });
-
         this.dataLogo = {};
         this.imageUrl = null;
         this.selectedFile = null;
@@ -108,22 +129,23 @@ export class EstablishmentPageComponent {
       if (this.dataLogo.id > 0) {
         this.estabLogoSvc
           .put(this.dataLogo.id, this.selectedFile)
-          .subscribe(this.successResponseLogo);
+          .subscribe(this.commonResponse);
       } else {
         this.estabLogoSvc
           .post(this.data.idEstablecimiento, this.selectedFile)
-          .subscribe(this.successResponseLogo);
+          .subscribe(this.commonResponse);
       }
     }
   }
 
   getEstabs() {
-    let params = {
+    const params = {
       pageIndex: this.dataSeach.pageIndex,
       pageSize: this.dataSeach.pageSize,
     };
-    this.estabSvc.getAll(params).subscribe((response) => {
+    this._estabService.getAll(params).subscribe((response) => {
       this.establishments = response;
+      this._cdr.detectChanges(); // Force change detection
     });
   }
 
@@ -165,7 +187,7 @@ export class EstablishmentPageComponent {
     });
 
     if (isConfirmed) {
-      this.estabSvc.closeEstab(id).subscribe((response) => {
+      this._estabService.closeEstab(id).subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
             this.tS.toastr({
@@ -190,9 +212,10 @@ export class EstablishmentPageComponent {
     this.fileError = null;
     this.imageUrl = null;
 
-    this.estabSvc.getId(id).subscribe((response) => {
+    this._estabService.getId(id).subscribe((response) => {
       this.puntosEmision = response.puntosEmision;
       this.data = response.data;
+      this._cdr.detectChanges();
     });
 
     this.getDataLogo(id);
@@ -210,6 +233,7 @@ export class EstablishmentPageComponent {
         });
       }
       this.imageUrl = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`;
+      this._cdr.detectChanges();
     });
   }
 
@@ -258,7 +282,7 @@ export class EstablishmentPageComponent {
       buttonsStyling: false,
     });
 
-    let { isConfirmed } = await swal.fire({
+    const { isConfirmed } = await swal.fire({
       title: '<small>Eliminar Logo</small>',
       html: '<small>Esta seguro de eliminar logo?</small>',
       icon: 'warning',
@@ -272,17 +296,11 @@ export class EstablishmentPageComponent {
     if (isConfirmed) {
       this.estabLogoSvc.removeImage(this.dataLogo.id).subscribe((response) => {
         if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
+          this.tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
           if (response.code == '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: 'Eliminado Correctamente',
-            });
             this.dataLogo = {};
             this.imageUrl = null;
             this.selectedFile = null;
@@ -316,17 +334,11 @@ export class EstablishmentPageComponent {
     if (isConfirmed) {
       this.ptoEmisionSvc.annul(id).subscribe((response) => {
         if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
+          this.tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
           if (response.code == '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
             this.getEstabs();
           }
         }
@@ -335,21 +347,15 @@ export class EstablishmentPageComponent {
   }
 
   configSaveFactElect() {
-    this.estabSvc
+    this._estabService
       .putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth)
       .subscribe((response) => {
         if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
+          this.tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
           if (response.code == '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
             this.getEstabs();
           }
         }
