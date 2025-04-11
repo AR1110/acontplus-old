@@ -131,7 +131,7 @@ export class EstablishmentPageComponent implements OnInit {
 
   uploadImage(): void {
     if (this.selectedFile) {
-      if (this.dataLogo.id > 0) {
+      if (this.dataLogo && this.dataLogo.id > 0) {
         this._estabLogService
           .put(this.dataLogo.id, this.selectedFile)
           .subscribe(this.commonResponse);
@@ -226,7 +226,8 @@ export class EstablishmentPageComponent implements OnInit {
   getDataLogo(id: number) {
     this._estabLogService.getDataLogo(id).subscribe((response) => {
       this.dataLogo = response;
-      if (!this.dataLogo.isCompressed) {
+
+      if (this.dataLogo && !this.dataLogo.isCompressed) {
         this._tS.toastr({
           type: 'warning',
           message:
@@ -234,7 +235,10 @@ export class EstablishmentPageComponent implements OnInit {
           title: 'Aviso!',
         });
       }
-      this.imageUrl = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`;
+      if (this.dataLogo) {
+        this.imageUrl = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`;
+      }
+
       this._cdr.detectChanges();
     });
   }
