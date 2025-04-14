@@ -21,43 +21,35 @@ BEGIN
     --> Gestion General
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
 
-    --> Get
-	IF @tipo = 1
-		BEGIN 
-            
+    IF @tipo = 1
+        BEGIN 
+        
             DECLARE @idPuntoEmision INT 
-
             SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH(idPuntoEmision INT)
-
             SET @tableNames = 'docs'
-
-			SELECT idConfiguracionDocumento = ISNULL(cd.idConfiguracionDocumento,0)
-				  ,idTipoDocumento = ISNULL(td.idTipoDocumento, 0)
-				  ,ultimaSecuencia = ISNULL(cd.ultimaSecuencia,0)
-				  ,descripcion = ISNULL(td.descripcion, '')
-                  ,td.estado
+            SELECT idConfiguracionDocumento = ISNULL(cd.idConfiguracionDocumento,0)
+                  ,idTipoDocumento = ISNULL(td.idTipoDocumento, 0)
+                  ,ultimaSecuencia = ISNULL(cd.ultimaSecuencia,0)
+                  ,descripcion = ISNULL(td.descripcion, '')
+                  ,estado = ISNULL(cd.estado, CAST(0 as bit))
                   ,td.infoAdicional
-			FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
-			INNER JOIN TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
-			WHERE cd.idPuntoEmision = @idPuntoEmision
-
-			UNION ALL 
-
-			SELECT 0
-				  ,idTipoDocumento
-				  ,0
-				  ,descripcion
+            FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK)
+            INNER JOIN TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
+            WHERE cd.idPuntoEmision = @idPuntoEmision
+            UNION ALL 
+            SELECT 0
+                  ,idTipoDocumento
+                  ,0
+                  ,descripcion
                   ,CAST(0 as bit) as estado
                   ,infoAdicional
-			FROM TipoDocumento 
-			WHERE secuencial = 1
-              AND idTipoDocumento NOT IN  (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
-			
-
+            FROM TipoDocumento 
+            WHERE secuencial = 1
+              AND idTipoDocumento NOT IN (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
+        
             ORDER BY idConfiguracionDocumento ASC
-
             RETURN 
-		END 
+        END
 
     --> DataForm
 	IF @tipo = 2

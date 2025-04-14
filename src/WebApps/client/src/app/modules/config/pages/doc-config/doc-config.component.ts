@@ -1,4 +1,10 @@
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -9,26 +15,44 @@ import {
 import { ToasterService } from '@core/services/toaster.service';
 
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
 import { ModalService } from '@core/services/modal.service';
 import { DocConfigInfoAdicionalComponent } from './components/doc-config-info-adicional/doc-config-info-adicional.component';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatFormField, MatInput } from '@angular/material/input';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatLabel } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-doc-config-page',
-  imports: [FormsModule, FontAwesomeModule, BreadcrumbComponent, MatCardContent, MatCard],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    MatCardContent,
+    MatCard,
+    MatInput,
+    MatFormField,
+    MatCheckbox,
+    ThemeButtonComponent,
+    MatSelect,
+    MatOption,
+    MatLabel,
+  ],
   templateUrl: './doc-config.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocConfigPageComponent {
-  private docConfigSvc = inject(DocConfigService);
-  private tS = inject(ToasterService);
-  private modalSvc = inject(ModalService);
+export class DocConfigPageComponent implements OnInit {
+  private readonly _docConfigService = inject(DocConfigService);
+  private readonly _tS = inject(ToasterService);
+  private readonly _modalService = inject(ModalService);
+  private readonly _cdr = inject(ChangeDetectorRef);
 
-  establecimientos: Array<GroupedEstab> = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  docs: Array<DocConfig> = [];
+  establecimientos: GroupedEstab[] = [];
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
+  docs: DocConfig[] = [];
 
   dataSearch = {
     idPuntoEmision: 0,
@@ -36,47 +60,41 @@ export class DocConfigPageComponent {
   };
 
   getDocs() {
-    this.docConfigSvc.getAll(this.dataSearch.idPuntoEmision).subscribe({
-      next: (response) => {
+    this._docConfigService
+      .getAll(this.dataSearch.idPuntoEmision)
+      .subscribe((response) => {
         this.docs = response;
-      },
-      error(err) {
-        console.log(err);
-      },
-    });
+        console.log(this.docs);
+        this._cdr.detectChanges();
+      });
   }
 
   ngOnInit() {
-    this.docConfigSvc.getDataForm().subscribe({
-      next: (response) => {
-        this.establecimientos = response.establecimientos;
-        let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
-        if (dataEstab) {
-          this.puntosEmision = dataEstab?.puntosEmision;
-          let dataPuntoEmision = this.puntosEmision.find(
-            (p) => p.defaultPtoEmi,
-          );
-          if (dataPuntoEmision) {
-            this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-            this.getDocs();
-          }
-          this.dataSearch.codEstab = dataEstab?.codEstab;
+    this._docConfigService.getDataForm().subscribe((response) => {
+      this.establecimientos = response.establecimientos;
+      const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
+      if (dataEstab) {
+        this.puntosEmision = dataEstab?.puntosEmision;
+        const dataPuntoEmision = this.puntosEmision.find(
+          (p) => p.defaultPtoEmi,
+        );
+        if (dataPuntoEmision) {
+          this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+          this.getDocs();
         }
-      },
-      error(err) {
-        console.log(err);
-        ;
-      },
+        this.dataSearch.codEstab = dataEstab?.codEstab;
+      }
+      this._cdr.detectChanges();
     });
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos.find(
+    const dataEstab = this.establecimientos.find(
       (e) => e.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
       this.puntosEmision = dataEstab.puntosEmision;
-      let dataPuntoEmision = this.puntosEmision.find((e) => e.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision.find((e) => e.defaultPtoEmi);
       if (dataPuntoEmision) {
         this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision;
         this.getDocs();
@@ -88,14 +106,14 @@ export class DocConfigPageComponent {
 
   saveConfig(item: DocConfig) {
     if (!(this.dataSearch.idPuntoEmision > 0)) {
-      this.tS.toastr({
+      this._tS.toastr({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
       });
       return;
     }
     if (!isValidField(item.ultimaSecuencia)) {
-      this.tS.toastr({
+      this._tS.toastr({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
       });
@@ -110,37 +128,25 @@ export class DocConfigPageComponent {
       ultimaSecuencia: item.ultimaSecuencia,
     };
 
-    this.docConfigSvc.post(data).subscribe({
-      next: (response) => {
-        ;
-        if (isApiResponse(response)) {
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
-          if (response.code === '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
-            this.getDocs();
-          }
+    this._docConfigService.post(data).subscribe((response) => {
+      if (isApiResponse(response)) {
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code === '1') {
+          this.getDocs();
         }
-      },
-      error(err) {
-        console.log(err);
-      },
+      }
     });
   }
 
   openModalInfoAdicional(data: DocConfig) {
-    let modalRef = this.modalSvc.open(DocConfigInfoAdicionalComponent, {
+    const modalRef = this._modalService.open(DocConfigInfoAdicionalComponent, {
       size: 'lg',
     });
 
-    let params = {
+    const params = {
       ...structuredClone(data),
       idPuntoEmision: this.dataSearch.idPuntoEmision,
     };

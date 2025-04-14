@@ -4,43 +4,43 @@
   <mat-card-content>
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="establecimiento">Establecimiento: </label>
-          <select
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento: </mat-label>
+          <mat-select
             name="establecimiento"
             id="establecimiento"
-            class="form-select"
             [(ngModel)]="dataSearch.codEstab"
             (change)="onChangeEstab()"
           >
             @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.codEstab">
+              <mat-option [value]="item.codEstab">
                 {{ item.nombreComercial }}
-              </option>
+              </mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="puntoEmision">Puntos Emisión: </label>
-          <select
+        <mat-form-field>
+          <mat-label>Puntos Emisión: </mat-label>
+          <mat-select
             name="puntoEmision"
             id="puntoEmision"
-            class="form-select"
             [(ngModel)]="dataSearch.idPuntoEmision"
             (change)="getDocs()"
           >
             @for (item of puntosEmision; track $index) {
-              <option [ngValue]="item.idPuntoEmision">{{ item.ptoEmi }}</option>
+              <mat-option [value]="item.idPuntoEmision">{{
+                item.ptoEmi
+              }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
     </div>
 
     <div class="table-responsive">
-      <table class="table">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th>Nro.</th>
@@ -52,49 +52,44 @@
         </thead>
         <tbody>
           @for (item of docs; track $index) {
-            <tr>
+            <tr style="vertical-align: middle">
               <td>{{ $index + 1 }}</td>
               <td>{{ item.descripcion }}</td>
               <td>
-                <div class="icheck-primary">
-                  <input
-                    type="checkbox"
-                    [name]="item.descripcion + $index"
-                    [id]="item.descripcion + $index"
-                    [(ngModel)]="item.estado"
-                  />
-                  <label [for]="item.descripcion + $index"></label>
-                </div>
+                <mat-checkbox
+                  type="checkbox"
+                  [name]="item.descripcion + $index"
+                  [id]="item.descripcion + $index"
+                  [(ngModel)]="item.estado"
+                >
+                </mat-checkbox>
               </td>
               <td>
-                <div class="form-group">
+                <mat-form-field>
                   <input
+                    matInput
                     type="number"
-                    class="form-control"
                     [(ngModel)]="item.ultimaSecuencia"
                     onclick="this.select()"
                     min="1"
                   />
-                </div>
+                </mat-form-field>
               </td>
               <td class="d-flex gap-2">
-                <button
-                  type="button"
-                  class="btn btn-success btn-sm"
+                <app-theme-button
+                  variant="success"
+                  icon="save"
+                  matStyle="icon"
                   [disabled]="!item.ultimaSecuencia"
-                  (click)="saveConfig(item)"
-                >
-                  <fa-icon [icon]="'save'"></fa-icon>
-                </button>
+                  (handleClick)="saveConfig(item)"
+                />
                 @if (item.infoAdicional) {
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-sm"
+                  <app-theme-button
+                    icon="sell"
+                    matStyle="icon"
                     [disabled]="!item.ultimaSecuencia"
-                    (click)="openModalInfoAdicional(item)"
-                  >
-                    <fa-icon [icon]="'tags'"></fa-icon>
-                  </button>
+                    (handleClick)="openModalInfoAdicional(item)"
+                  />
                 }
               </td>
             </tr>
