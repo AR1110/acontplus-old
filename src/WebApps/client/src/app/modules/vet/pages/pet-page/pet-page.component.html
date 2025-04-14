@@ -1,13 +1,9 @@
-<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
+<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-md-2 col-12">
-        <button
-          (click)="onModalOpen()"
-          class="btn btn-primary"
-          type="button"
-        >
+        <button (click)="onModalOpen()" class="btn btn-primary" type="button">
           <fa-icon [icon]="'plus-circle'"></fa-icon>
           Nueva
         </button>
@@ -22,7 +18,7 @@
         />
       </div>
     </div>
-    <br/>
+    <br />
     <div class="mat-elevation-z8">
       <section class="section-container-table" tabindex="0">
         <table [dataSource]="dataSource" mat-table matSort>
@@ -31,7 +27,11 @@
             <th *matHeaderCellDef mat-header-cell>Op.</th>
             <td *matCellDef="let element" mat-cell>
               <div container="body" ngbDropdown>
-                <button class="btn btn-outline-primary btn-sm" ngbDropdownToggle type="button">
+                <button
+                  class="btn btn-outline-primary btn-sm"
+                  ngbDropdownToggle
+                  type="button"
+                >
                   <fa-icon [icon]="'list'"></fa-icon>
                 </button>
                 <div ngbDropdownMenu>
@@ -45,7 +45,6 @@
                   </button>
                 </div>
               </div>
-
             </td>
           </ng-container>
 
@@ -81,9 +80,7 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="age">
-            <th *matHeaderCellDef mat-header-cell>
-              Edad
-            </th>
+            <th *matHeaderCellDef mat-header-cell>Edad</th>
             <td *matCellDef="let element" mat-cell>
               {{ element.age }}
             </td>
@@ -137,5 +134,5 @@
       >
       </mat-paginator>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

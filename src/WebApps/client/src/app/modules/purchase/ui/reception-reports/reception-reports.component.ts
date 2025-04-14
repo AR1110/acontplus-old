@@ -18,6 +18,7 @@ import { Subcategory } from '@accounting/core/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
 
 @Component({
   selector: 'app-reception-reports',
@@ -27,6 +28,9 @@ import { SupplierSearch } from '@customer/core/domain/supplier.interface';
     DateRangeSelectionComponent,
     UserSearchComponent,
     BreadcrumbComponent,
+    MatCardContent,
+    MatCard,
+    MatCardFooter,
   ],
   templateUrl: './reception-reports.component.html',
   styles: ``,

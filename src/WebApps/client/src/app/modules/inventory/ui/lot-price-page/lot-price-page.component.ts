@@ -25,6 +25,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -49,6 +50,8 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     SubCategorySelectMultipleComponent,
     ProductSearchComponent,
     SupplierSearchComponent,
+    MatCardContent,
+    MatCard,
   ],
   templateUrl: './lot-price-page.component.html',
 })

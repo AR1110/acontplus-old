@@ -24,6 +24,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
   selector: 'app-floor-list',
@@ -36,6 +37,8 @@ import { finalize } from 'rxjs/operators';
     MatButtonModule,
     FormsModule,
     MatDynamicTableComponent,
+    MatCard,
+    MatCardContent,
   ],
   templateUrl: './floor-list.component.html',
   styles: ``,

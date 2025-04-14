@@ -27,15 +27,18 @@ import { BrandModalComponent } from '../../brand-page/brand-modal/brand-modal.co
 import { ModeloModalComponent } from '../../modelo-page/modelo-modal/modelo-modal.component';
 import { CategoryModalComponent } from '../../category-page/category-modal/category-modal.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-device-modal',
-    imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        FontAwesomeModule,
-        NgbAccordionModule
-    ],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    FontAwesomeModule,
+    NgbAccordionModule,
+    MatCard,
+    MatCardContent
+  ],
     templateUrl: './device-modal.component.html',
     styles: ``
 })

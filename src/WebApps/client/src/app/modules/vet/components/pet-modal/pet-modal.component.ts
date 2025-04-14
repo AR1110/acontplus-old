@@ -17,15 +17,18 @@ import { PetService } from '@modules/vet/services/pet.service';
 import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-pet-modal',
-    imports: [
-        FaIconComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        CompanyCustomerSearchComponent,
-    ],
+  imports: [
+    FaIconComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    CompanyCustomerSearchComponent,
+    MatCard,
+    MatCardContent,
+  ],
     templateUrl: './pet-modal.component.html',
     styles: ``
 })

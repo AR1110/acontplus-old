@@ -7,10 +7,11 @@ import { Modelo } from '@modules/technical-support/models/modelo';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-modelo-page',
-    imports: [BreadcrumbComponent, FontAwesomeModule],
+  imports: [BreadcrumbComponent, FontAwesomeModule, MatCard, MatCardContent],
     templateUrl: './modelo-page.component.html',
     styles: ``
 })

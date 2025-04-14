@@ -7,10 +7,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { CategoryModalComponent } from './category-modal/category-modal.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-category',
-    imports: [BreadcrumbComponent, FontAwesomeModule],
+  imports: [BreadcrumbComponent, FontAwesomeModule, MatCard, MatCardContent],
     templateUrl: './category-page.component.html',
     styles: ``
 })

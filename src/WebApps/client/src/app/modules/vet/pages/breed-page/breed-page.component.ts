@@ -10,6 +10,7 @@ import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-breed-page',
@@ -18,6 +19,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
         FontAwesomeModule,
         SecondaryStatusPipe,
         NgbDropdownModule,
+        MatCard,
+        MatCardContent,
     ],
     templateUrl: './breed-page.component.html',
     styles: ``

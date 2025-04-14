@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
   selector: 'app-room-list',
@@ -30,6 +31,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     MatButtonModule,
     TabulatorSemanticUiComponent,
+    MatCardContent,
+    MatCard,
   ],
   templateUrl: './room-list.component.html',
   styles: ``,

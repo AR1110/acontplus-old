@@ -3,10 +3,11 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { StatsService } from '@modules/vet/services/stats.service';
 import { isApiResponse } from '@core/models/api-response';
 import { Chart } from 'chart.js';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-stats-page',
-    imports: [BreadcrumbComponent ],
+  imports: [BreadcrumbComponent, MatCard, MatCardContent],
     templateUrl: './stats-page.component.html',
     styles: ``
 })

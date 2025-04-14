@@ -14,10 +14,11 @@ import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
 import { ModalService } from '@core/services/modal.service';
 import { DocConfigInfoAdicionalComponent } from './components/doc-config-info-adicional/doc-config-info-adicional.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
   selector: 'app-doc-config-page',
-  imports: [FormsModule, FontAwesomeModule, BreadcrumbComponent],
+  imports: [FormsModule, FontAwesomeModule, BreadcrumbComponent, MatCardContent, MatCard],
   templateUrl: './doc-config.component.html',
 })
 export class DocConfigPageComponent {

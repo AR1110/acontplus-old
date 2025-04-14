@@ -1,6 +1,6 @@
-<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
+<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row my-3">
       <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <mat-stepper #stepper [linear]="isLinear">
@@ -86,7 +86,7 @@
                 >
                   <div class="form-group">
                     <label for="nombreComercial"
-                    >Nombre Comercial:
+                      >Nombre Comercial:
                       <span class="text-danger">*</span></label
                     >
                     <input
@@ -103,7 +103,7 @@
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                   <div class="form-group">
                     <label for="actividad"
-                    >Actividad: <span class="text-danger">*</span>
+                      >Actividad: <span class="text-danger">*</span>
                     </label>
                     <div class="input-group">
                       <select
@@ -150,7 +150,7 @@
                 >
                   <div class="form-group">
                     <label for="contribuyente"
-                    >Tipo Contribuyente: <span class="text-danger">*</span>
+                      >Tipo Contribuyente: <span class="text-danger">*</span>
                     </label>
                     <div class="input-group">
                       <select
@@ -201,7 +201,7 @@
                 >
                   <div class="form-group">
                     <label for="contribuyenteEspecial"
-                    >Contribuyente Especial:
+                      >Contribuyente Especial:
                     </label>
                     <input
                       [maxlength]="3"
@@ -222,7 +222,7 @@
                 <div class="col">
                   <div class="form-group">
                     <label for="obligadoContabilidad"
-                    >Lleva Contabilidad:
+                      >Lleva Contabilidad:
                     </label>
                     <section>
                       <mat-radio-group
@@ -242,7 +242,7 @@
                 <div class="col">
                   <div class="form-group">
                     <label
-                    >Email:
+                      >Email:
                       <span
                         ngbTooltip="Haz doble 'Click' sobre el correo para editar"
                         tooltip-placement="top"
@@ -282,7 +282,7 @@
                 <div class="col">
                   <div class="form-group">
                     <label
-                    >Telefono:
+                      >Telefono:
                       <span
                         ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar"
                         tooltip-placement="top"
@@ -327,7 +327,7 @@
                 <div class="col">
                   <div class="form-group">
                     <label for="canton"
-                    >Cantón: <span class="text-danger">*</span>
+                      >Cantón: <span class="text-danger">*</span>
                     </label>
                     <select
                       class="form-select"
@@ -348,7 +348,7 @@
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                   <div class="form-group">
                     <label for="dirEstablecimiento"
-                    >Dirección <span class="text-danger">*</span>
+                      >Dirección <span class="text-danger">*</span>
                     </label>
                     <textarea
                       appToUpperCase
@@ -433,9 +433,9 @@
                   class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12"
                 >
                   <label
-                  >Bodegas
+                    >Bodegas
                     <small class="text-info"
-                    >(Si requiere controlar productos con inventario)</small
+                      >(Si requiere controlar productos con inventario)</small
                     >
                     :</label
                   >
@@ -647,14 +647,24 @@
           </mat-step>
           <mat-step>
             <ng-template matStepLabel>Fin</ng-template>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-2 row-cols-xl-2">
+            <div
+              class="row row-cols-1 row-cols-md-2 row-cols-xxl-2 row-cols-xl-2"
+            >
               <div class="col">
-                <p class="text-start">Usted ha finalizado correctamente la configuración inicial, si requiere ayuda
-                  adicional revise los
-                  siguientes tutoriales <a href="https://www.youtube.com/@acontplusweb/playlists" target="_blank">
+                <p class="text-start">
+                  Usted ha finalizado correctamente la configuración inicial, si
+                  requiere ayuda adicional revise los siguientes tutoriales
+                  <a
+                    href="https://www.youtube.com/@acontplusweb/playlists"
+                    target="_blank"
+                  >
                     <fa-icon [icon]="faYoutube"></fa-icon>
                     Acontplus Ec
-                  </a> o comuniquese con el equipo de soporte <a href="https://api.whatsapp.com/send?phone=593986669930">+593 98 666 9930</a>
+                  </a>
+                  o comuniquese con el equipo de soporte
+                  <a href="https://api.whatsapp.com/send?phone=593986669930"
+                    >+593 98 666 9930</a
+                  >
                 </p>
               </div>
             </div>
@@ -662,5 +672,5 @@
         </mat-stepper>
       </div>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

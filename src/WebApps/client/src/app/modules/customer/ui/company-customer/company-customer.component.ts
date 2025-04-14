@@ -14,20 +14,23 @@ import { Pagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-company-customer',
-    imports: [
-        CommonModule,
-        FormsModule,
-        FontAwesomeModule,
-        MatTableModule,
-        FontAwesomeModule,
-        MatPaginatorModule,
-        BreadcrumbComponent,
-        CompanyCustomerAddEditDirective,
-        PrimaryStatusPipe,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    FontAwesomeModule,
+    MatTableModule,
+    FontAwesomeModule,
+    MatPaginatorModule,
+    BreadcrumbComponent,
+    CompanyCustomerAddEditDirective,
+    PrimaryStatusPipe,
+    MatCardContent,
+    MatCard,
+  ],
     templateUrl: './company-customer.component.html'
 })
 export class CompanyCustomerComponent {

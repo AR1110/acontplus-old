@@ -15,16 +15,19 @@ import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
 import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
 import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-comprobante-ingreso-lote-modal',
-    imports: [
-        DatePipe,
-        MatTableModule,
-        MatIconModule,
-        FontAwesomeModule,
-        NgbAccordionModule,
-    ],
+  imports: [
+    DatePipe,
+    MatTableModule,
+    MatIconModule,
+    FontAwesomeModule,
+    NgbAccordionModule,
+    MatCard,
+    MatCardContent,
+  ],
     templateUrl: './comprobante-ingreso-lote-modal.component.html',
     styleUrl: './comprobante-ingreso-lote-modal.component.scss',
     animations: [

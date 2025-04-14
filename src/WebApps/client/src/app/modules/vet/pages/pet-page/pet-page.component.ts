@@ -34,32 +34,35 @@ import { Pet } from '@modules/vet/models/pet.model';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Chart, registerables } from 'chart.js';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 Chart.register(...registerables);
 
 @Component({
     selector: 'app-pet-page',
-    imports: [
-        BreadcrumbComponent,
-        FormsModule,
-        MatPaginator,
-        MatSlideToggle,
-        MatTable,
-        MatHeaderCellDef,
-        MatCellDef,
-        MatColumnDef,
-        MatHeaderCell,
-        MatCell,
-        MatRowDef,
-        MatNoDataRow,
-        MatRow,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        MatInput,
-        MatSort,
-        FaIconComponent,
-        NgbDropdownModule,
-    ],
+  imports: [
+    BreadcrumbComponent,
+    FormsModule,
+    MatPaginator,
+    MatSlideToggle,
+    MatTable,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatColumnDef,
+    MatHeaderCell,
+    MatCell,
+    MatRowDef,
+    MatNoDataRow,
+    MatRow,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatInput,
+    MatSort,
+    FaIconComponent,
+    NgbDropdownModule,
+    MatCardContent,
+    MatCard,
+  ],
     templateUrl: './pet-page.component.html',
     styles: ``
 })

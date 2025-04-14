@@ -1,21 +1,21 @@
 <div class="row mt-2">
-  @if (orderStatusCode == 2) {
-  <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
-    <div class="form-group">
-      <button
-        type="button"
-        class="btn btn-outline-primary"
-        (click)="onModalOpen()"
-      >
-        <fa-icon [icon]="'plus'"></fa-icon>
-        Nueva
-      </button>
+  @if (orderStatusCode === 2) {
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+      <div class="form-group">
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          (click)="onModalOpen()"
+        >
+          <fa-icon [icon]="'plus'"></fa-icon>
+          Nueva
+        </button>
+      </div>
     </div>
-  </div>
   }
   <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
     <div class="form-group">
-      <label for="dateRangeSelection">Rango de Fechas: </label>
+      <span>Rango de Fechas: </span>
       <app-date-range-selection
         (onChangeDateRange)="onDateRangeSelection($event)"
       />
@@ -33,7 +33,7 @@
       >
         <option [ngValue]="0" selected>Todos</option>
         @for (item of users; track $index) {
-        <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+          <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
         }
       </select>
     </div>
@@ -73,26 +73,28 @@
             <fa-icon [icon]="'bars'"></fa-icon>
           </button>
           <div ngbDropdownMenu>
-            @if (orderStatusCode==2 || orderStatusCode == 3) {
-            <button
-              ngbDropdownItem
-              (click)="openModalMaintenance(element)"
-              title="Iniciar Reparaciones"
-            >
-              <fa-icon [icon]="'cogs'"></fa-icon> Mantenimiento
-            </button>
-            } @if (orderStatusCode==2 || orderStatusCode == 3) {
-            <button ngbDropdownItem (click)="onEdit(element)" title="Editar">
-              <fa-icon [icon]="'edit'"></fa-icon> Editar
-            </button>
-            } @if (orderStatusCode==2) {
-            <button
-              ngbDropdownItem
-              (click)="askToCancel(element)"
-              title="Anular"
-            >
-              <fa-icon [icon]="'lock'"></fa-icon> Anular
-            </button>
+            @if (orderStatusCode == 2 || orderStatusCode == 3) {
+              <button
+                ngbDropdownItem
+                (click)="openModalMaintenance(element)"
+                title="Iniciar Reparaciones"
+              >
+                <fa-icon [icon]="'cogs'"></fa-icon> Mantenimiento
+              </button>
+            }
+            @if (orderStatusCode == 2 || orderStatusCode == 3) {
+              <button ngbDropdownItem (click)="onEdit(element)" title="Editar">
+                <fa-icon [icon]="'edit'"></fa-icon> Editar
+              </button>
+            }
+            @if (orderStatusCode == 2) {
+              <button
+                ngbDropdownItem
+                (click)="askToCancel(element)"
+                title="Anular"
+              >
+                <fa-icon [icon]="'lock'"></fa-icon> Anular
+              </button>
             }
             <button
               ngbDropdownItem
@@ -102,22 +104,23 @@
               <fa-icon [icon]="'file-pdf'"></fa-icon> Reporte
             </button>
 
-            @if (orderStatusCode == 4 ) {
-            <button
-              ngbDropdownItem
-              (click)="askToDelivery(element)"
-              title="Entregar"
-            >
-              <fa-icon [icon]="'sign-out'"></fa-icon> Entregar
-            </button>
-            } @if(orderStatusCode == 4 || orderStatusCode == 5) {
-            <button
-              ngbDropdownItem
-              (click)="onOpenDocument(element)"
-              title="Documento"
-            >
-              <fa-icon [icon]="'cogs'"></fa-icon> Documento vinculado
-            </button>
+            @if (orderStatusCode == 4) {
+              <button
+                ngbDropdownItem
+                (click)="askToDelivery(element)"
+                title="Entregar"
+              >
+                <fa-icon [icon]="'sign-out'"></fa-icon> Entregar
+              </button>
+            }
+            @if (orderStatusCode == 4 || orderStatusCode == 5) {
+              <button
+                ngbDropdownItem
+                (click)="onOpenDocument(element)"
+                title="Documento"
+              >
+                <fa-icon [icon]="'cogs'"></fa-icon> Documento vinculado
+              </button>
             }
           </div>
         </div>
@@ -182,15 +185,16 @@
     </tr>
   </table>
 </section>
-
-<div class="card-body">
-  <ngb-pagination
-    [collectionSize]="pagination.totalRecords"
-    [(page)]="pagination.pageIndex"
-    [maxSize]="pagination.maxSize"
-    [pageSize]="pagination.pageSize"
-    [rotate]="true"
-    (pageChange)="onPageChanged()"
-    [boundaryLinks]="true"
-  />
-</div>
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <ngb-pagination
+      [collectionSize]="pagination.totalRecords"
+      [(page)]="pagination.pageIndex"
+      [maxSize]="pagination.maxSize"
+      [pageSize]="pagination.pageSize"
+      [rotate]="true"
+      (pageChange)="onPageChanged()"
+      [boundaryLinks]="true"
+    />
+  </mat-card-content>
+</mat-card>

@@ -1,7 +1,7 @@
 <app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
@@ -54,17 +54,17 @@
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
         <div class="form-group">
-          <label>Establecimiento: </label>
+          <span>Establecimiento: </span>
           <select
             class="form-select form-control-border"
             [(ngModel)]="dataSearch.codEstab"
             (change)="onChangeEstab()"
           >
             <option value="">Todos</option>
-            @for(estab of establecimientos; track $index ){
-            <option [ngValue]="estab.codEstab">
-              {{ estab.nombreComercial }}
-            </option>
+            @for (estab of establecimientos; track $index) {
+              <option [ngValue]="estab.codEstab">
+                {{ estab.nombreComercial }}
+              </option>
             }
           </select>
         </div>
@@ -72,16 +72,16 @@
 
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label>Punto emisión: </label>
+          <span>Punto emisión: </span>
           <select
             class="form-select form-control-border"
             [(ngModel)]="dataSearch.idPuntoEmision"
           >
             <option [ngValue]="0">Todos</option>
-            @for(ptoEmi of puntosEmision; track $index ){
-            <option [ngValue]="ptoEmi.idPuntoEmision">
-              {{ ptoEmi.ptoEmi }}
-            </option>
+            @for (ptoEmi of puntosEmision; track $index) {
+              <option [ngValue]="ptoEmi.idPuntoEmision">
+                {{ ptoEmi.ptoEmi }}
+              </option>
             }
           </select>
         </div>
@@ -89,7 +89,7 @@
 
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label>Rango Fechas</label>
+          <span>Rango Fechas</span>
 
           <app-date-range-selection
             (onChangeDateRange)="onDateRangeSelection($event)"
@@ -108,7 +108,7 @@
           >
             <option value="">Todos</option>
             @for (item of estadosDoc; track $index) {
-            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+              <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -127,7 +127,7 @@
           >
             <option value="">Todos</option>
             @for (item of tiposDoc; track $index) {
-            <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
+              <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -135,7 +135,7 @@
 
       <div class="col-xl-6 col-lg-6 col-md-12 col-12">
         <div class="form-group">
-          <label>Proveedor</label>
+          <span>Proveedor</span>
           <app-supplier-search
             [isSearchSimple]="isSearchSupplierSimple"
             (supplierSelected)="onSupplierSelected($event)"
@@ -145,8 +145,8 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="card-body">
+  </mat-card-content>
+  <mat-card-footer>
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
       <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
         PDF
@@ -159,5 +159,5 @@
         EXCEL
       </button>
     </div>
-  </div>
-</div>
+  </mat-card-footer>
+</mat-card>

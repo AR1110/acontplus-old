@@ -6,13 +6,16 @@ import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-promotion-list',
-    imports: [
-        FontAwesomeModule,
-        NgbPaginationModule
-    ],
+  imports: [
+    FontAwesomeModule,
+    NgbPaginationModule,
+    MatCard,
+    MatCardContent
+  ],
     templateUrl: './promotion-list.component.html',
     styles: ``
 })

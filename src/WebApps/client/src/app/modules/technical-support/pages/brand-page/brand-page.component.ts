@@ -7,10 +7,11 @@ import { BrandService } from '@modules/technical-support/services/brand.service'
 import { BrandModalComponent } from './brand-modal/brand-modal.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-brand-page',
-    imports: [BreadcrumbComponent, FontAwesomeModule],
+  imports: [BreadcrumbComponent, FontAwesomeModule, MatCard, MatCardContent],
     templateUrl: './brand-page.component.html',
     styles: ``
 })

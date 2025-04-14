@@ -22,15 +22,19 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { Subcategory } from '@accounting/core/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
+import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
 
 @Component({
     selector: 'app-reports',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        SupplierSearchComponent,
-        DateRangeSelectionComponent,
-    ],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard,
+    MatCardFooter,
+  ],
     templateUrl: './reports.component.html',
     styles: ``
 })

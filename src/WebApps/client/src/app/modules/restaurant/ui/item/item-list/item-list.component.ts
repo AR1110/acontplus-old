@@ -12,15 +12,18 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent } from '@angular/material/paginator';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-item-list',
-    imports: [
-        FaIconComponent,
-        FormsModule,
-        CustomTableContainerComponent,
-        MatDynamicTableComponent
-    ],
+  imports: [
+    FaIconComponent,
+    FormsModule,
+    CustomTableContainerComponent,
+    MatDynamicTableComponent,
+    MatCard,
+    MatCardContent
+  ],
     templateUrl: './item-list.component.html',
     styles: ``
 })

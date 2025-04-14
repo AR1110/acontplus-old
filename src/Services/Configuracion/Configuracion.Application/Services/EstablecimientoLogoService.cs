@@ -22,11 +22,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
     {
         var logo = await _context.EstablecimientoLogos.FindAsync(id);
         if (logo == null) { return null; }
-
-        ;
-        logo.Enabled = false;
-        logo.Deleted = false;
-        _context.Update(logo);
+        _context.Remove(logo);
         await _context.SaveChangesAsync();
         return new { code = "1", message = "Eliminado Exitosamente" };
     }

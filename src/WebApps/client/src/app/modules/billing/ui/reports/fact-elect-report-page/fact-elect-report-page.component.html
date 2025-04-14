@@ -1,56 +1,64 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="icheck-primary">
-          <input type="checkbox" id="checkBoxCustomer" [(ngModel)]="dataSearch.checkBoxCustomer" name="checkBoxCustomerName" />
+          <input
+            type="checkbox"
+            id="checkBoxCustomer"
+            [(ngModel)]="dataSearch.checkBoxCustomer"
+            name="checkBoxCustomerName"
+          />
           <label for="checkBoxCustomer">Cliente</label>
         </div>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="icheck-primary">
-          <input type="checkbox" id="checkBoxUser" [(ngModel)]="dataSearch.checkBoxUser" name="checkBoxUser" />
+          <input
+            type="checkbox"
+            id="checkBoxUser"
+            [(ngModel)]="dataSearch.checkBoxUser"
+            name="checkBoxUser"
+          />
           <label for="checkBoxUser">Usuario</label>
         </div>
       </div>
-
     </div>
-    <hr>
+    <hr />
 
     <div class="row">
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="form-group">
           <label>Tipo Documento: </label>
-          <select class="form-select"
-                  [(ngModel)]="dataSearch.idTipoDocumento"
-                  (change)="onChangeTipoDoc()"
+          <select
+            class="form-select"
+            [(ngModel)]="dataSearch.idTipoDocumento"
+            (change)="onChangeTipoDoc()"
           >
-            @for(item of tiposDoc;track $index){
-              <option [ngValue]="item.idTipoDocumento"  >
-                {{item.descripcion}}
+            @for (item of tiposDoc; track $index) {
+              <option [ngValue]="item.idTipoDocumento">
+                {{ item.descripcion }}
               </option>
             }
-
           </select>
         </div>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="form-group">
           <label>Establecimiento:</label>
-          <select class="form-select"
-                  [(ngModel)]="dataSearch.idEstablecimiento"
-                  (change)="onChangeEstab()"
+          <select
+            class="form-select"
+            [(ngModel)]="dataSearch.idEstablecimiento"
+            (change)="onChangeEstab()"
           >
             <option [ngValue]="0">Todos</option>
-            @for (item of establecimientos;track $index){
+            @for (item of establecimientos; track $index) {
               <option [ngValue]="item.idEstablecimiento">
-                {{item.nombreComercial}}
+                {{ item.nombreComercial }}
               </option>
             }
-
           </select>
         </div>
       </div>
@@ -59,82 +67,78 @@
           <label>Punto Emisión</label>
           <select class="form-select" [(ngModel)]="dataSearch.idPuntoEmision">
             <option [ngValue]="0">Todos</option>
-            @for(item of puntosEmision;track $index){
-              <option [ngValue]="item.idPuntoEmision" >
-                {{item.ptoEmi}}
+            @for (item of puntosEmision; track $index) {
+              <option [ngValue]="item.idPuntoEmision">
+                {{ item.ptoEmi }}
               </option>
             }
-
           </select>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <label  >Rango Fechas: </label>
-        <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)"/>
+        <label>Rango Fechas: </label>
+        <app-date-range-selection
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="form-group">
           <label>Estado</label>
           <select class="form-select" [(ngModel)]="dataSearch.codEstado">
             <option [ngValue]="0">Todos</option>
-            @for(item of estadosDoc;track $index){
-              <option [ngValue]="item.codEstado" >
-                {{item.descripcion}}
+            @for (item of estadosDoc; track $index) {
+              <option [ngValue]="item.codEstado">
+                {{ item.descripcion }}
               </option>
             }
-
           </select>
         </div>
       </div>
 
-      @if (showField){
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12"  >
-        <div class="form-group">
-          <label>Retencion</label>
-          <select class="form-select" [(ngModel)]="dataSearch.codeRetencion">
-            @for (item of retenciones;track $index){
-              <option [ngValue]="item.code" >
-                {{item.descripcion}}
-              </option>
-            }
-
-          </select>
+      @if (showField) {
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+          <div class="form-group">
+            <label>Retencion</label>
+            <select class="form-select" [(ngModel)]="dataSearch.codeRetencion">
+              @for (item of retenciones; track $index) {
+                <option [ngValue]="item.code">
+                  {{ item.descripcion }}
+                </option>
+              }
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12" >
-        <div class="form-group">
-          <label>Devolución</label>
-          <select class="form-select" [(ngModel)]="dataSearch.codeDevolucion">
-            @for (item of devoluciones;track $index){
-              <option [ngValue]="item.code"  >
-                {{item.descripcion}}
-              </option>
-            }
-
-          </select>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+          <div class="form-group">
+            <label>Devolución</label>
+            <select class="form-select" [(ngModel)]="dataSearch.codeDevolucion">
+              @for (item of devoluciones; track $index) {
+                <option [ngValue]="item.code">
+                  {{ item.descripcion }}
+                </option>
+              }
+            </select>
+          </div>
         </div>
-      </div>
       }
     </div>
 
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="form-group">
-          <label >Cliente</label>
+          <label>Cliente</label>
           <app-company-customer-search
             [isSearchSimple]="true"
             (resultEmptyInput)="resultEmptyInputCustomer()"
             (onCustomerSelected)="onCustomerSelected($event)"
-
           />
         </div>
-
       </div>
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
         <div class="form-group">
-          <label >Usuario: </label>
+          <label>Usuario: </label>
           <app-user-search
             (emptyInput)="emptyInputUser()"
             (onUserSelected)="onUserSelected($event)"
@@ -144,15 +148,13 @@
       </div>
     </div>
 
-
-
     <div class="d-flex flex-row gap-1">
-      <button type="button" class="btn btn-success" (click)="getReportPdf()">PDF</button>
-      <button type="button" class="btn btn-info" (click)="getReportExcel()">EXCEL</button>
+      <button type="button" class="btn btn-success" (click)="getReportPdf()">
+        PDF
+      </button>
+      <button type="button" class="btn btn-info" (click)="getReportExcel()">
+        EXCEL
+      </button>
     </div>
-
-
-
-
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

@@ -12,6 +12,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PrinterUseCase } from '@modules/config/domain/use-cases/printer.use-case';
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
   selector: 'app-printer-page',
@@ -23,6 +24,8 @@ import {MatIcon} from "@angular/material/icon";
     MatButton,
     MatIconButton,
     MatIcon,
+    MatCardContent,
+    MatCard,
   ],
   templateUrl: './printer.component.html',
   styles: ``,

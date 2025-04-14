@@ -7,8 +7,8 @@ import { CompanyPageComponent } from '@modules/config/pages/company-page/company
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
 import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
-import {UserCustomerComponent} from "@modules/config/ui/user-customer/user-customer.component";
-import {GeneralConfigComponent} from "@modules/config/ui/general-config/general-config.component";
+import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
+import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
 
 export const routes: Routes = [
   {

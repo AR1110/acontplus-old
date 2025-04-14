@@ -6,6 +6,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
     selector: 'app-user-profile-page',
@@ -15,7 +16,9 @@ import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.compon
         MatTabsModule,
         ReactiveFormsModule,
         MatCheckboxModule,
-        BreadcrumbComponent
+        BreadcrumbComponent,
+        MatCardContent,
+        MatCard
     ]
 })
 export class UserProfilePageComponent {
