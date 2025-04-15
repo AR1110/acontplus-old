@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { PrinterRead } from '@modules/config/domain/models/printing/printer.model';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -8,11 +8,11 @@ import { PrinterAddEditModalComponent } from '@modules/config/ui/printer/compone
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PrinterUseCase } from '@modules/config/domain/use-cases/printer.use-case';
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-printer-page',
@@ -20,25 +20,26 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     FormsModule,
     MatSlideToggleModule,
     BreadcrumbComponent,
-    FontAwesomeModule,
     MatButton,
     MatIconButton,
     MatIcon,
     MatCardContent,
     MatCard,
+    ThemeButtonComponent,
   ],
   templateUrl: './printer.component.html',
   styles: ``,
 })
-export class PrinterComponent {
+export class PrinterComponent implements OnInit {
   private readonly _printerUseCase = inject(PrinterUseCase);
   private readonly _modalService = inject(ModalService);
   private readonly _tS = inject(ToasterService);
+  private readonly _cdr = inject(ChangeDetectorRef);
 
   printers: PrinterRead[] = [];
 
   openModalNewOrEdit(item?: PrinterRead) {
-    let modalRef = this._modalService.open(PrinterAddEditModalComponent, {
+    const modalRef = this._modalService.open(PrinterAddEditModalComponent, {
       backdrop: 'static',
       size: 'xl',
     });
@@ -62,6 +63,7 @@ export class PrinterComponent {
     this.printers = [];
     this._printerUseCase.getPrinters().subscribe((response) => {
       this.printers = response.printers;
+      this._cdr.detectChanges();
     });
   }
 
@@ -69,25 +71,17 @@ export class PrinterComponent {
     this.getPrinters();
   }
 
-  successResponse = (response: unknown) => {
+  commonResponse = (response: unknown) => {
     this.getPrinters();
     if (isApiResponse(response)) {
-      if (response.code === '0') {
-        this._tS.toastr({
-          type: 'warning',
-          message: response.message,
-        });
-      }
-      if (response.code === '1') {
-        this._tS.toastr({
-          type: 'success',
-          message: response.message,
-        });
-      }
+      this._tS.toastr({
+        type: response.code === '1' ? 'success' : 'warning',
+        message: response.message,
+      });
     }
   };
   async askToDelete(item: PrinterRead) {
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: '¿Está seguro de eliminar esta impresora?',
       text: '¡No podrás revertir esto!',
       icon: 'warning',
@@ -101,13 +95,13 @@ export class PrinterComponent {
     if (isConfirmed) {
       this._printerUseCase
         .removePrinter(item.id)
-        .subscribe(this.successResponse);
+        .subscribe(this.commonResponse);
     }
   }
 
   updateStatus(item: PrinterRead) {
     this._printerUseCase
       .updateStatus(item.id, item)
-      .subscribe(this.successResponse);
+      .subscribe(this.commonResponse);
   }
 }
