@@ -23,6 +23,7 @@ import {
 import {
   UserCustomerRolePermissionComponent
 } from "@modules/config/ui/user-customer/setting-user-customer/user-customer-role-permission/user-customer-role-permission.component";
+import {TestTreeComponent} from "@modules/config/ui/user-customer/setting-user-customer/test-tree/test-tree.component";
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -36,7 +37,8 @@ import {
     MatIcon,
     UserCustomerPermissionComponent,
     UserCustomerRoleAccessComponent,
-    UserCustomerRolePermissionComponent
+    UserCustomerRolePermissionComponent,
+    TestTreeComponent
   ],
   templateUrl: './setting-user-customer.component.html',
   styles: ``
