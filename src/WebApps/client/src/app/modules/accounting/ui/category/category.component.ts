@@ -1,31 +1,35 @@
 ﻿import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
 import { Category } from '@accounting/core/domain/category';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { CategoryUseCase } from '@accounting/core/use-cases/category.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-category',
-    imports: [
-        BreadcrumbComponent,
-        FontAwesomeModule,
-        NgbDropdownModule,
-        SecondaryStatusPipe,
-        MatCardContent,
-        MatCard,
-    ],
-    templateUrl: './category.component.html',
-    styles: ``
+  selector: 'app-category',
+  imports: [
+    BreadcrumbComponent,
+    SecondaryStatusPipe,
+    MatCardContent,
+    MatCard,
+    MatButton,
+    MatIcon,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
+  ],
+  templateUrl: './category.component.html',
+  styles: ``,
 })
 export class CategoryComponent {
   categories: Category[] = [];
   data: Category = {} as Category;
-  private _categoryUseCase = inject(CategoryUseCase)
+  private _categoryUseCase = inject(CategoryUseCase);
   private readonly modalService = inject(ModalService);
 
   edit(item: Category) {
@@ -35,7 +39,7 @@ export class CategoryComponent {
 
   get() {
     this._categoryUseCase.get({ tipo: 1 }).subscribe((response) => {
-      if ( response.code == '1') {
+      if (response.code == '1') {
         const { categories } = JSON.parse(response.payload as string);
         this.categories = categories;
       }

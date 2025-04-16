@@ -2,18 +2,18 @@ import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
-
 import { Modelo } from '@modules/technical-support/models/modelo';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-modelo-page',
-  imports: [BreadcrumbComponent, FontAwesomeModule, MatCard, MatCardContent],
-    templateUrl: './modelo-page.component.html',
-    styles: ``
+  selector: 'app-modelo-page',
+  imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon],
+  templateUrl: './modelo-page.component.html',
+  styles: ``,
 })
 export class ModeloPageComponent {
   private modeloService = inject(ModeloService);
@@ -35,7 +35,6 @@ export class ModeloPageComponent {
     this.onModalOpen();
   }
   onGet() {
-    
     this.modeloService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -45,12 +44,9 @@ export class ModeloPageComponent {
         }
       },
       error(err) {
-        
         console.error(err);
       },
-      complete() {
-        
-      },
+      complete() {},
     });
   }
   onModalOpen() {

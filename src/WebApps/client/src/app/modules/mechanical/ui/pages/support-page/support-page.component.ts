@@ -1,6 +1,13 @@
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, signal, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  signal,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
@@ -14,10 +21,7 @@ import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
 } from '@mechanical/domain/enums/mechanical.enum';
-import {
-  NgbDropdownModule,
-  NgbPopoverModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -37,20 +41,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
-import {
-  CompanyCustomerSearchMatComponent
-} from "@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
-import {
-  ConvertDocDialogComponent
-} from "@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component";
+import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
 
 @Component({
-    selector: 'app-support-page',
-    imports: [
+  selector: 'app-support-page',
+  imports: [
     CommonModule,
     FormsModule,
     FontAwesomeModule,
-    NgbDropdownModule,
     MatTableModule,
     MatCheckboxModule,
     NgbPopoverModule,
@@ -63,19 +62,18 @@ import {
     MatSelectModule,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
-    CompanyCustomerSearchMatComponent
-],
-    templateUrl: './support-page.component.html'
+    CompanyCustomerSearchMatComponent,
+  ],
+  templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent {
-
-    @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   @Input() valueStatus: MECHANICAL_STATUS | null = null;
   @Input() supportStatus: any[] = [];
 
   modalSvc = inject(ModalService);
-  dialogSvc = inject(DialogService)
+  dialogSvc = inject(DialogService);
   supportUseCase = inject(SupportUseCase);
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
@@ -103,9 +101,7 @@ export class SupportPageComponent {
     supportStatusId: null as number | null,
   };
 
-
-   columnsDefs: ColumnDefinition[] = [
-
+  columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'status', label: 'Estado', type: 'string' },
     { key: 'sequence', label: 'Nro. Doc', type: 'string' },
@@ -115,9 +111,14 @@ export class SupportPageComponent {
     { key: 'licensePlate', label: 'Placa', type: 'string' },
     { key: 'userAssigned', label: 'Encargado', type: 'string' },
     { key: 'obs', label: 'Obs.', type: 'string' },
-    { key: 'entregar', label: 'Entregar', type: 'template', templateOutlet: null },
+    {
+      key: 'entregar',
+      label: 'Entregar',
+      type: 'template',
+      templateOutlet: null,
+    },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -127,8 +128,8 @@ export class SupportPageComponent {
     const modalRef = this.dialogSvc.open(SupportAddEditModalComponent, {
       size: 'xl',
       data: {
-        id
-      }
+        id,
+      },
     });
     modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
@@ -159,8 +160,8 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  refresh(){
-    this.getSupports()
+  refresh() {
+    this.getSupports();
   }
 
   getSupports() {
@@ -181,16 +182,15 @@ export class SupportPageComponent {
       };
       this.dataSource = [];
       this.isLoadingResults = true;
-      this.supportUseCase.getAll(params)
-      .pipe(
-        finalize(()=>this.isLoadingResults=false)
-      )
-      .subscribe(  (response) => {
+      this.supportUseCase
+        .getAll(params)
+        .pipe(finalize(() => (this.isLoadingResults = false)))
+        .subscribe((response) => {
           this.dataSource = response;
           if (this.dataSource.length > 0) {
             this.pagination().totalRecords = this.dataSource[0].totalRecords;
           }
-        } );
+        });
     } catch (error) {
       console.log(error);
     }
@@ -256,7 +256,6 @@ export class SupportPageComponent {
         col.templateOutlet = this.statusTemplate;
       }
     });
-
   }
 
   pageChanged(): void {
@@ -281,22 +280,21 @@ export class SupportPageComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportUseCase.remove(id).subscribe(  (response) => {
-
-                if (response.code === '0') {
-                  this.tS.toastr({
-                    type: 'warning',
-                    message: response.message,
-                  });
-                }
-                if (response.code === '1') {
-                  this.tS.toastr({
-                    type: 'success',
-                    message: response.message,
-                  });
-                  this.getSupports();
-                }
-            } );
+          this.supportUseCase.remove(id).subscribe((response) => {
+            if (response.code === '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code === '1') {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+              this.getSupports();
+            }
+          });
         }
       });
     } catch (error) {
@@ -314,7 +312,7 @@ export class SupportPageComponent {
       id,
     };
     modalRef.result.then((result) => {
-      if (result   && typeof result === 'object') {
+      if (result && typeof result === 'object') {
         this.getSupports();
       }
     });
@@ -328,27 +326,26 @@ export class SupportPageComponent {
       supportId: id,
     };
 
-    modalRef.result.then(result=>{
-      if(result && typeof result==='object'){
-        this.getSupports()
+    modalRef.result.then((result) => {
+      if (result && typeof result === 'object') {
+        this.getSupports();
       }
-    })
+    });
   }
 
   askToConvertToDoc(id: number) {
     this.supportUseCase.getConvertToAprobDoc(id).subscribe({
       next: (response) => {
-
         let dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
           size: 'lg',
-          data: response
-        })
+          data: response,
+        });
 
-        dialogRef.subscribe(result=>{
-          if(result && typeof  result==='object'){
-            this.getSupports()
+        dialogRef.subscribe((result) => {
+          if (result && typeof result === 'object') {
+            this.getSupports();
           }
-        })
+        });
       },
     });
   }
@@ -397,23 +394,23 @@ export class SupportPageComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportUseCase.putState(id, supportStatusId).subscribe(  (response) => {
-
-                if (response.code === '0') {
-                  this.tS.toastr({
-                    type: 'warning',
-                    message: response.message,
-                  });
-                }
-                if (response.code === '1') {
-                  this.tS.toastr({
-                    type: 'success',
-                    message: response.message,
-                  });
-                  this.getSupports();
-                }
+          this.supportUseCase
+            .putState(id, supportStatusId)
+            .subscribe((response) => {
+              if (response.code === '0') {
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message,
+                });
               }
-           );
+              if (response.code === '1') {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message,
+                });
+                this.getSupports();
+              }
+            });
         } else {
           this.getSupports();
         }
@@ -422,7 +419,6 @@ export class SupportPageComponent {
       console.log(error);
     }
   }
-
 
   getDocView(id: number) {
     try {
@@ -444,8 +440,6 @@ export class SupportPageComponent {
     }
   }
 
-
-
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
       return {
@@ -457,5 +451,4 @@ export class SupportPageComponent {
     });
     this.refresh();
   }
-
 }

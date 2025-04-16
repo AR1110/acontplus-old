@@ -1,6 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
@@ -32,14 +31,15 @@ import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 
 @Component({
-    selector: 'app-medical-history-page',
+  selector: 'app-medical-history-page',
   imports: [
     BreadcrumbComponent,
-    FaIconComponent,
     FormsModule,
     MatTable,
     MatSort,
@@ -55,12 +55,16 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     MatPaginator,
     MatRow,
     MatInput,
-    NgbDropdownModule,
     MatCardContent,
     MatCard,
+    MatButton,
+    MatIcon,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
   ],
-    templateUrl: './medical-history-page.component.html',
-    styles: ``
+  templateUrl: './medical-history-page.component.html',
+  styles: ``,
 })
 export class MedicalHistoryPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
