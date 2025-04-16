@@ -112,7 +112,7 @@ function modalResgitrarSolicitudAutorizacionCtrl($scope, $uibModalInstance,  fS,
         $scope.esMultipleVendedor = params.esMultipleVendedor;
         if ($scope.vendedores.length > 0) {
             let dataUsuario = $scope.vendedores.find(item=>item.predeterminado);
-            if(dataUsuario){
+            if(dataUsuario && !$scope.esMultipleVendedor){
                 $scope.data.idUsuario = dataUsuario.idUsuario;
             } 
         } 
