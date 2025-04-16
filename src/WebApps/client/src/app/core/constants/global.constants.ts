@@ -15,6 +15,7 @@ export const enum PATHS_API {
   BILLING = 'FactElect/',
   MECHANICAL = 'Mechanical/',
   VET = 'Vet/',
+  BARBER_SHOP = 'BarberShop'
 }
 
 export const enum PATHS {

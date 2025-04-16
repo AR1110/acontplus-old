@@ -41,7 +41,8 @@
       "@mechanical/*": ["src/app/modules/mechanical/*"],
       "@customer/*": ["src/app/modules/customer/*"],
       "@shared/*": ["src/app/shared/*"],
-      "@sri/*": ["src/app/modules/sri/*"]
+      "@sri/*": ["src/app/modules/sri/*"],
+      "@barber-shop/*": ["src/app/modules/barber-shop/*"]
     }
   },
   "angularCompilerOptions": {
