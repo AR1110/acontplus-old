@@ -10,7 +10,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { SubCategorySelectHtmlOnly } from '@accounting/core/domain/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/core/models/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';

@@ -6,14 +6,14 @@ import { ApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { CuentaPorPagarMapper } from './cuenta-por-pagar.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ComprobanteEgresoLista } from '@accounting/core/domain/comprobante-egreso.interface';
-import { HistorialPagoLista } from '@accounting/core/domain/historial-pago.model';
+import { ComprobanteEgresoLista } from '@accounting/core/models/comprobante-egreso.model';
+import { HistorialPagoLista } from '@accounting/core/models/historial-pago.model';
 import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import {
   CuentaPorPagarCuotaConfig,
   CuentaPorPagarLista,
-} from '../../core/domain/cuenta-por-pagar.model';
-import { TiempoCreditoSelectHtmlOnly } from '@accounting/core/domain/tiempo-credito.interface';
+} from '../../core/models/cuenta-por-pagar.model';
+import { TiempoCreditoSelectHtmlOnly } from '@accounting/core/models/tiempo-credito.interface';
 import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por-pagar.repository";
 
 @Injectable({

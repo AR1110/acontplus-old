@@ -12,8 +12,8 @@ import { isValidField } from '@core/utils/utils';
 import {
   PaymentSubType,
   PaymentType,
-} from '@accounting/core/domain/payment-type.model';
-import { PaymentData } from '@accounting/core/domain/comprobante-ingreso';
+} from '@accounting/core/models/payment-type.model';
+import { PaymentData } from '@accounting/core/models/comprobante-ingreso';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { map, Observable, startWith } from 'rxjs';

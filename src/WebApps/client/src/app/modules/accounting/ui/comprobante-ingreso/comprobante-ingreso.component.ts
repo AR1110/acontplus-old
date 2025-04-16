@@ -10,7 +10,7 @@ import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
 import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
-import {ComprobanteIngreso} from "@accounting/core/domain/comp-ingreso.model";
+import {ComprobanteIngreso} from "@accounting/core/models/comp-ingreso.model";
 import {formatDateToString} from "@core/utils/date.util";
 import {SharedService} from "@core/services/shared.service";
 import {ToasterService} from "@core/services/toaster.service";

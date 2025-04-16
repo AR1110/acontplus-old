@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
-import { Category } from '@accounting/core/domain/category';
+import { Category } from '@accounting/core/models/category';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";

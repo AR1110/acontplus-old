@@ -1,13 +1,13 @@
-import { ComprobanteEgresoLista } from '@accounting/core/domain/comprobante-egreso.interface';
-import { PagoDetalle } from '@accounting/core/domain/pago-detalle.model';
-import { HistorialPagoLista } from '@accounting/core/domain/historial-pago.model';
+import { ComprobanteEgresoLista } from '@accounting/core/models/comprobante-egreso.model';
+import { PagoDetalle } from '@accounting/core/models/pago-detalle.model';
+import { HistorialPagoLista } from '@accounting/core/models/historial-pago.model';
 import { ApiResponse } from '@core/models/api-response';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDate } from '@core/utils/date.util';
 import {
   CuentaPorPagarCuotaConfig,
   CuentaPorPagarLista,
-} from '../../core/domain/cuenta-por-pagar.model';
+} from '../../core/models/cuenta-por-pagar.model';
 
 export class CuentaPorPagarMapper {
   static fromApiDataFilter(response: ApiResponse) {

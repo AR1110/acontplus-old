@@ -6,10 +6,10 @@ import { pagoCuotaSinAbonoUtil } from "./pago-cuota-sin-abono.util";
 import { pagoCuotaConAbonoUtil } from "./pago-cuota-con-abono.util";
 
 import { minus } from "@core/utils/decimal.util";
-import { CuentaPorPagarCuota, CuentaPorPagarHistorial } from "../../core/domain/comprobante-egreso.interface";
-import { PagoDetalle } from "@accounting/core/domain/pago-detalle.model";
-import { EstadoPago } from "@accounting/core/domain/estado-pago.interface";
-import { CuotaPorPagarLista } from "@accounting/core/domain/cuota-por-pagar.interface";
+import { CuentaPorPagarCuota, CuentaPorPagarHistorial } from "../../core/models/comprobante-egreso.model";
+import { PagoDetalle } from "@accounting/core/models/pago-detalle.model";
+import { EstadoPago } from "@accounting/core/models/estado-pago.interface";
+import { CuotaPorPagarLista } from "@accounting/core/models/cuota-por-pagar.interface";
 import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
 
 export class ComprobanteEgresoUtil {

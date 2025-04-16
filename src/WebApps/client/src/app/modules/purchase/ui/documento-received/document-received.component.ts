@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/core/models/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';

@@ -1,5 +1,5 @@
-import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/core/domain/subentidad-financiera.interface';
-import { BancoSelectOnly } from '@accounting/core/domain/banco.interface';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/core/models/subentidad-financiera.interface';
+import { BancoSelectOnly } from '@accounting/core/models/banco.interface';
 import { ProvinciaCiudad } from '@shared/models/ciudad.interface';
 import {
   patchState,
@@ -8,14 +8,14 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { EntidadFinanciera } from '@accounting/core/domain/entidad-financiera.interface';
+import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
 import { computed, inject } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { PaymentTypeCode } from '@accounting/core/enums/accounting.constants';
-import { CuentaPorPagarLista } from '@accounting/core/domain/cuenta-por-pagar.model';
-import { PagoDetalle } from '../core/domain/pago-detalle.model';
-import { EstadoPago } from '../core/domain/estado-pago.interface';
-import {CuentaPorPagarCuota, CuentaPorPagarHistorial, FormaPago} from '../core/domain/comprobante-egreso.interface';
+import { CuentaPorPagarLista } from '@accounting/core/models/cuenta-por-pagar.model';
+import { PagoDetalle } from '../core/models/pago-detalle.model';
+import { EstadoPago } from '../core/models/estado-pago.interface';
+import {CuentaPorPagarCuota, CuentaPorPagarHistorial, FormaPago} from '../core/models/comprobante-egreso.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';

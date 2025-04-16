@@ -1,18 +1,23 @@
-import {ComprobanteEgresoResponse} from "@accounting/core/models/comprobante-egreso.model";
+import {
+  ComprobanteEgresoFilterResponse,
+} from "@accounting/core/models/comprobante-egreso.model";
+import {groupEstabUtil} from "@core/utils/group-estab.util";
 
-export class ListComprobanteEgresoMapper {
-  static toJson(response:any){
+export class DataFilterComprobanteEgresoMapper {
+  static toJson( ){
     return JSON.stringify({
-      pageIndex: 1,
-      pageSize: response.pageSize || 10,
+      tipo: 2
     });
   }
 
-  static fromJson(response:any): ComprobanteEgresoResponse{
-    console.log(response)
+  static fromJson(response:any): ComprobanteEgresoFilterResponse{
+
+    const estabs = groupEstabUtil({
+      estabs: response.estabs || [],
+      isGroupPuntoEmision: true
+    })
     return {
-      data: [],
-      totalRecords: 0
+      estabs
     }
   }
 }

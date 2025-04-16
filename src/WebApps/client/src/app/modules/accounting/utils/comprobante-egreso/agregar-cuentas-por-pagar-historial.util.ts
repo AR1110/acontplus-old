@@ -1,4 +1,4 @@
-import { CuentaPorPagarCuota } from "../../core/domain/comprobante-egreso.interface";
+import { CuentaPorPagarCuota } from "../../core/models/comprobante-egreso.model";
 
 interface Props {
   secuencial: number

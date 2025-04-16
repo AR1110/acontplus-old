@@ -9,7 +9,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { roundNumber } from '@core/utils/round-number.utils';
 import ComprobanteIngresoUtil, { getPaymentSubTotales } from '@accounting/utils/comprobante-ingreso.util';
-import { MultiplesPaymentType, PaymentData, PaymentDetail, PaymentHistory } from '@accounting/core/domain/comprobante-ingreso';
+import { MultiplesPaymentType, PaymentData, PaymentDetail, PaymentHistory } from '@accounting/core/models/comprobante-ingreso';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';

@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subcategory } from '@accounting/core/domain/subcategory';
-import { Category } from '@accounting/core/domain/category';
+import { Subcategory } from '@accounting/core/models/subcategory';
+import { Category } from '@accounting/core/models/category';
 import { isApiResponse } from '@core/models/api-response';
 import {
   FormControl,

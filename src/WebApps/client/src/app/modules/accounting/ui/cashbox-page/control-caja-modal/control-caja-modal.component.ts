@@ -11,7 +11,7 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { ControlCaja } from '@accounting/core/domain/cashbox.model';
+import { ControlCaja } from '@accounting/core/models/cashbox.model';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import {
   NgbActiveModal,

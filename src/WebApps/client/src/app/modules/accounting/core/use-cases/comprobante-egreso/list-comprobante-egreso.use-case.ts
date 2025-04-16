@@ -1,28 +1,19 @@
 import {Injectable} from "@angular/core";
 import {ComprobanteEgresoRepository} from "@accounting/core/repositories/comprobante-egreso.repository";
+import {BaseUseCase} from "@core/base-use-case";
+import {ComprobanteEgresoResponse} from "@accounting/core/models/comprobante-egreso.model";
+import { Observable } from "rxjs";
 
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class ComprobanteEgresoUseCase {
+export class ListComprobanteEgresoUseCase implements BaseUseCase<ComprobanteEgresoResponse, any> {
   constructor(private repo: ComprobanteEgresoRepository) {
   }
 
-  getCuotasByIdCuentaPorPagar(idCuentaPorPagar: number) {
-    return this.repo.getCuotasByIdCuentaPorPagar(idCuentaPorPagar);
-  };
-
-  getDataFormPago(idProveedor: number) {
-    return this.repo.getDataFormPago(idProveedor);
-  }
-
-  getDataFilter() {
-    return this.repo.getDataFilter();
-  }
-
-  post<T>(obj: T) {
-    return this.repo.post<T>(obj);
-  }
+  execute(params: any): Observable<ComprobanteEgresoResponse> {
+        return this.repo.list(params)
+    }
 }

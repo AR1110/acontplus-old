@@ -1,6 +1,6 @@
 
 import {PaymentTypeCode} from "@accounting/core/enums/accounting.constants";
-import {SubEntidadFinanciera} from "@accounting/core/domain/subentidad-financiera.interface";
+import {SubEntidadFinanciera} from "@accounting/core/models/subentidad-financiera.interface";
 
 export interface EntidadFinanciera {
   idEntidadFinanciera: number,

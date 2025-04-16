@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/core/models/subcategory';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ModalService } from '@core/services/modal.service';
 import { SubcategoryModalComponent } from '@accounting/ui/subcategory/subcategory-modal/subcategory-modal.component';

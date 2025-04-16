@@ -15,13 +15,13 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { finalize } from 'rxjs';
-import { CuentaPorPagarLista } from '@accounting/core/domain/cuenta-por-pagar.model';
+import { CuentaPorPagarLista } from '@accounting/core/models/cuenta-por-pagar.model';
 import { MatCardModule } from '@angular/material/card';
-import { HistorialPagoLista } from '@accounting/core/domain/historial-pago.model';
+import { HistorialPagoLista } from '@accounting/core/models/historial-pago.model';
 import { MatDivider } from '@angular/material/divider';
 import { DialogService } from '@core/services/dialog.service';
 import { PagoDetalleModalComponent } from '@accounting/ui/cuenta-por-pagar/components/pago-detalle-modal/pago-detalle-modal.component';
-import { ComprobanteEgresoLista } from '@accounting/core/domain/comprobante-egreso.interface';
+import { ComprobanteEgresoLista } from '@accounting/core/models/comprobante-egreso.model';
 import { MatTooltip } from '@angular/material/tooltip';
 import {CuentaPorPagarUseCase} from "@accounting/core/use-cases/cuenta-por-pagar.use-case";
 

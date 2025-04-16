@@ -13,7 +13,7 @@ import {
   NgbActiveModal,
   NgbTimepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
+import {EntidadFinanciera} from "@accounting/core/models/entidad-financiera.interface";
 import { formatDateToString } from '@core/utils/date.util';
 import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 
@@ -68,7 +68,7 @@ export class FiltroDetalleCajaReportModal {
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
-          
+
           let { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
@@ -77,7 +77,7 @@ export class FiltroDetalleCajaReportModal {
           this.tipoDocumentos = tipoDocumento;
         },
         error(err) {
-          
+
           console.log(err);
         },
       });

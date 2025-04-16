@@ -1,10 +1,11 @@
 import { CuentaPorPagar } from './cuenta-por-pagar.model';
 
-import { CuentaPorPagarLista } from "@accounting/core/domain/cuenta-por-pagar.model";
-import { CuotaPorPagarLista } from "@accounting/core/domain/cuota-por-pagar.interface";
+import { CuentaPorPagarLista } from "@accounting/core/models/cuenta-por-pagar.model";
+import { CuotaPorPagarLista } from "@accounting/core/models/cuota-por-pagar.interface";
 import {PaymentTypeCode} from "@accounting/core/enums/accounting.constants";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {DECIMALS} from "@core/constants/global.constants";
+import {GroupedEstab} from "@core/models/estab.model";
 
 interface ComprobanteEgreso {
   idComprobanteEgreso: number
@@ -15,6 +16,19 @@ interface ComprobanteEgreso {
   estado: boolean
   codEstab: string
 }
+
+export interface ComprobanteEgresoList {
+
+}
+export interface ComprobanteEgresoResponse {
+  data: ComprobanteEgresoList[]
+  totalRecords: number
+}
+
+export interface ComprobanteEgresoFilterResponse {
+  estabs: GroupedEstab[]
+}
+
 
 export interface ComprobanteEgresoLista extends ComprobanteEgreso {
   index: number

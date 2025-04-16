@@ -1,9 +1,9 @@
-import { PagoDetalle } from "@accounting/core/domain/pago-detalle.model";
-import {CuentaPorPagarEstado, CuentaPorPagarHistorial} from "../../core/domain/comprobante-egreso.interface";
+import { PagoDetalle } from "@accounting/core/models/pago-detalle.model";
+import {CuentaPorPagarEstado, CuentaPorPagarHistorial} from "../../core/models/comprobante-egreso.model";
 import { minus } from "@core/utils/decimal.util";
 import { DECIMALS } from "@core/constants/global.constants";
 import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
-import { EstadoPago } from "@accounting/core/domain/estado-pago.interface";
+import { EstadoPago } from "@accounting/core/models/estado-pago.interface";
 import { roundNumber } from "@core/utils/round-number.utils";
 
 

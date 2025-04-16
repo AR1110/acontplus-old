@@ -1,7 +1,9 @@
 import {Injectable} from "@angular/core";
 import {ComprobanteEgresoRepository} from "@accounting/core/repositories/comprobante-egreso.repository";
 import {BaseUseCase} from "@core/base-use-case";
-import {ComprobanteEgresoResponse} from "@accounting/core/models/comprobante-egreso.model";
+import {
+  ComprobanteEgresoFilterResponse,
+} from "@accounting/core/models/comprobante-egreso.model";
 import { Observable } from "rxjs";
 
 
@@ -9,11 +11,11 @@ import { Observable } from "rxjs";
   providedIn: 'root'
 })
 
-export class ListComprobanteEgresoUseCase implements BaseUseCase<ComprobanteEgresoResponse, any> {
+export class DataFilterComprobanteEgresoUseCase implements BaseUseCase<ComprobanteEgresoFilterResponse, any> {
   constructor(private repo: ComprobanteEgresoRepository) {
   }
 
-  execute(params: any): Observable<ComprobanteEgresoResponse> {
-        return this.repo.list(params)
+  execute(): Observable<ComprobanteEgresoFilterResponse> {
+        return this.repo.dataFilter()
     }
 }
