@@ -104,6 +104,21 @@ BEGIN
 			    RETURN 
 		    END 
 
+          IF EXISTS (
+            SELECT 1
+            FROM Cliente cl
+            INNER JOIN Customer.Customer cc ON cc.Id = cl.CustomerId
+            WHERE EXISTS (
+                SELECT 1 FROM @tblCliente t WHERE t.IdTypeId = cc.IdTypeId
+            )
+            AND cl.idEntidad = @idEntidad  AND cc.IdCard = '9999999999999'
+        )
+        BEGIN
+            SELECT '0' AS code, 'Consumidor Final ya esta registrado' AS [message];
+            RETURN;
+        END
+ 
+
 		BEGIN TRAN
 
 			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IdCard = @numeroIdentificacion)
