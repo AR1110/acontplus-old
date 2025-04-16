@@ -1,23 +1,19 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-    selector: 'app-breadcrumb',
-    imports: [CommonModule, FontAwesomeModule],
-    templateUrl: './breadcrumb.component.html',
-    styles: ``
+  selector: 'app-breadcrumb',
+  imports: [],
+  templateUrl: './breadcrumb.component.html',
+  styles: ``,
 })
-export class BreadcrumbComponent {
-  parentData: any;
+export class BreadcrumbComponent implements OnInit {
+  parentData:  any;
   childData: any;
-  #route = inject(ActivatedRoute);
+  private readonly _activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
-    this.parentData = this.#route.parent?.snapshot.data;
-    this.childData = this.#route.snapshot.data;
-    // console.log(this.parentData);
-    // console.log(this.childData);
+    this.parentData = this._activatedRoute.parent?.snapshot.data;
+    this.childData = this._activatedRoute.snapshot.data;
   }
 }
