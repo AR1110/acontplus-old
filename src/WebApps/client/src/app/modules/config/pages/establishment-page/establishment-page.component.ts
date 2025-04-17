@@ -49,7 +49,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EstablishmentPageComponent implements OnInit {
-  establishments: EstablishmentRead[] = [];
+  establishments = signal<EstablishmentRead[]>([]);
   puntosEmision: PuntoEmisionRead[] = [];
   fileError: any = null;
   dataSeach = {
@@ -69,13 +69,12 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _estabLogService = inject(EstablishmentLogoService);
   private readonly _modalService = inject(ModalService);
   private readonly _tS = inject(ToasterService);
-  private readonly _cdr = inject(ChangeDetectorRef);
-
+  private readonly _cdr = inject(ChangeDetectorRef)
   setPanelOpen(index: number) {
     this.panelOpenState = index;
     // Only load data when opening a panel (not when closing)
-    if (index >= 0 && index < this.establishments.length) {
-      const estab = this.establishments[index];
+    if (index >= 0 && index < this.establishments().length) {
+      const estab = this.establishments()[index];
       this.onEstabShow(estab.idEstablecimiento);
     } else {
       // Handle panel closing if needed (index will be -1)
@@ -106,7 +105,6 @@ export class EstablishmentPageComponent implements OnInit {
         if (e.target) {
           this.imageUrl = e.target.result;
           this.newEstablishmentImgUploaded.set(true);
-          this._cdr.detectChanges();
         }
       };
       reader.readAsDataURL(this.selectedFile);
@@ -149,8 +147,7 @@ export class EstablishmentPageComponent implements OnInit {
       pageSize: this.dataSeach.pageSize,
     };
     this._estabService.getAll(params).subscribe((response) => {
-      this.establishments = response;
-      this._cdr.detectChanges(); // Force change detection
+      this.establishments.set(response);
     });
   }
 

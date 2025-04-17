@@ -15,7 +15,7 @@
       <div class="col"></div>
     </div>
     <mat-accordion multi>
-      @for (item of establishments; track $index) {
+      @for (item of establishments(); track $index) {
         <mat-expansion-panel
           [expanded]="panelOpenState === $index"
           (opened)="setPanelOpen($index)"
