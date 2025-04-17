@@ -33,6 +33,13 @@ import {
 } from "@customer/ui/supplier/components/supplier-search-mat/supplier-search-mat.component";
 import {UserSearchComponent} from "@core/components/user-search/user-search.component";
 import {MatUserSearchComponent} from "@shared/components/mat-user-search/mat-user-search.component";
+import {
+  ActionComprobanteEgresoReportDirective
+} from "@accounting/ui/directives/action-comprobante-egreso-report.directive";
+import {
+  ActionComprobanteEgresoAnularDirective
+} from "@accounting/ui/directives/action-comprobante-egreso-anular.directive";
+import {SendMailModalDirective} from "@shared/directives/send-mail-modal.directive";
 
 @Component({
   selector: 'app-comprobante-egreso',
@@ -57,7 +64,12 @@ import {MatUserSearchComponent} from "@shared/components/mat-user-search/mat-use
     MatMenuItem,
     SupplierSearchMatComponent,
     UserSearchComponent,
-    MatUserSearchComponent
+    MatUserSearchComponent,
+
+    //Directives
+    ActionComprobanteEgresoReportDirective,
+    ActionComprobanteEgresoAnularDirective,
+    SendMailModalDirective
   ],
   templateUrl: './comprobante-egreso.component.html',
   styles: ``

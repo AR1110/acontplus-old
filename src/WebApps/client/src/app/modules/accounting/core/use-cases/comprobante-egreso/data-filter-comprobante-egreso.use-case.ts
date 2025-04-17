@@ -16,6 +16,6 @@ export class DataFilterComprobanteEgresoUseCase implements BaseUseCase<Comproban
   }
 
   execute(): Observable<ComprobanteEgresoFilterResponse> {
-        return this.repo.dataFilter()
+        return this.repo.getFilterData()
     }
 }

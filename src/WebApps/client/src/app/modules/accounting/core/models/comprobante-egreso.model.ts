@@ -29,6 +29,17 @@ export interface ComprobanteEgresoFilterResponse {
   estabs: GroupedEstab[]
 }
 
+export interface ComprobanteEgresoDeleteResponse {
+  cuentas: any[]
+  cuotas: any[]
+  estadosPago: any[]
+}
+
+export interface ComprobanteEgresoDeleteParams {
+  id: number
+  data: unknown
+}
+
 
 export interface ComprobanteEgresoLista extends ComprobanteEgreso {
   index: number
