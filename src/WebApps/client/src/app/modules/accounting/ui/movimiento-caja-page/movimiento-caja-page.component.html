@@ -3,14 +3,19 @@
 <app-mat-dynamic-card>
 <mat-tab-group animationDuration="0ms">
   <mat-tab label="EGRESOS/INGRESOS CAJA">
-    <div class="d-grid gap-2 m-2 p-1">
-      <app-egreso-ingreso-caja />
-    </div>
+    <ng-template matTabContent>
+      <div class="d-grid gap-2 m-2 p-1">
+        <app-egreso-ingreso-caja />
+      </div>
+
+    </ng-template>
   </mat-tab>
   <mat-tab label="ANTICIPO">
-    <div class="d-grid gap-2 m-2 p-1">
-    <app-anticipo />
-    </div>
+    <ng-template matTabContent>
+      <div class="d-grid gap-2 m-2 p-1">
+        <app-anticipo />
+      </div>
+    </ng-template>
   </mat-tab>
 </mat-tab-group>
 

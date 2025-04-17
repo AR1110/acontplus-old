@@ -2,8 +2,11 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row gap-2">
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 col-12">
+
+    <div
+      class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2"
+    >
+      <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
           <mat-select [(ngModel)]="dataSearch().codEstab">
@@ -13,7 +16,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 col-12">
+      <div class="col">
         <app-date-range-selection
           [showInputMaterial]="true"
           [showMatSuffix]="true"
@@ -22,7 +25,7 @@
           (onChangeDateRange)="onChangeDateRange($event)"
         />
       </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 col-12">
+      <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Estado</mat-label>
           <mat-select [(ngModel)]="dataSearch().byEstado" (selectionChange)="refresh()">
@@ -31,9 +34,8 @@
             <mat-option [value]="2">Anulado</mat-option>
           </mat-select>
         </mat-form-field>
-
       </div>
-      <div class="col-xxl-2 col-xl-2 col-lg-2 col-sm-6 col-12 d-flex justify-content-end">
+      <div class="col d-flex justify-content-end">
         <div class="hstack gap-2">
           <button mat-icon-button  (click)="refresh()">
             <mat-icon>refresh</mat-icon>
@@ -43,6 +45,7 @@
           </button>
         </div>
       </div>
+
     </div>
 
     @if(advancedFilter()){
@@ -91,25 +94,25 @@
 
     <mat-menu #menu="matMenu">
 
-      <button mat-menu-item   >
-        <mat-icon>details</mat-icon>
-        <span>Historial</span>
-      </button>
-      <button mat-menu-item   >
+<!--      <button mat-menu-item   >-->
+<!--        <mat-icon>details</mat-icon>-->
+<!--        <span>Historial</span>-->
+<!--      </button>-->
+      <button mat-menu-item  appActionComprobanteEgresoAnular [id]="item.idComprobanteEgreso" >
         <mat-icon>clear</mat-icon>
         <span>Anular</span>
       </button>
 
-      <button mat-menu-item   >
+      <button mat-menu-item  appActionComprobanteEgresoReport [id]="item.idComprobanteEgreso" [codEstab]="item.codEstab">
         <mat-icon>download</mat-icon>
         <span>Reporte</span>
       </button>
 
 
-      <button mat-menu-item   >
-        <mat-icon>email</mat-icon>
-        <span>Enviar correo</span>
-      </button>
+<!--      <button mat-menu-item   appSendMailModal>-->
+<!--        <mat-icon>email</mat-icon>-->
+<!--        <span>Enviar correo</span>-->
+<!--      </button>-->
 
 
     </mat-menu>

@@ -16,19 +16,34 @@ import {ApiResponse} from "@core/models/api-response";
 import {ComprobanteEgresoMapper} from "@accounting/data/comprobante-egreso/comprobante-egreso.mapper";
 import {GroupedEstab} from "@core/models/estab.model";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {ComprobanteEgresoFilterResponse,
+import {
+  ComprobanteEgresoDeleteParams, ComprobanteEgresoFilterResponse,
   ComprobanteEgresoResponse
 } from '@modules/accounting/core/models/comprobante-egreso.model';
 import {ListComprobanteEgresoMapper} from "@accounting/data/comprobante-egreso/list-comprobante-egreso.mapper";
 import {
   DataFilterComprobanteEgresoMapper
 } from "@accounting/data/comprobante-egreso/data-filter-comprobante-egreso.mapper";
+import {
+  GetComprobanteEgresoForDeletionMapper
+} from "@accounting/data/comprobante-egreso/get-comprobante-egreso-for-deletion.mapper";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComprobanteEgresoWebRepository implements ComprobanteEgresoRepository {
-  dataFilter(): Observable<ComprobanteEgresoFilterResponse> {
+  anular(comprobante: ComprobanteEgresoDeleteParams): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this._url}${comprobante.id}`, {data: comprobante.data})
+  }
+  getDataForDeletion(id: number) {
+    const json = GetComprobanteEgresoForDeletionMapper.toJson({id});
+    return this.http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+      map(response=>GetComprobanteEgresoForDeletionMapper.fromJson(response))
+    )
+  }
+
+
+  getFilterData(): Observable<ComprobanteEgresoFilterResponse> {
     const json = DataFilterComprobanteEgresoMapper.toJson();
     return this.http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
       map(response=>DataFilterComprobanteEgresoMapper.fromJson(response))
@@ -43,7 +58,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_EGRESO}`
   private http = inject(HttpClient)
 
-  getCuotasByIdCuentaPorPagar(idCuentaPorPagar: number) {
+  getCuotasByCuentaPorPagarId(idCuentaPorPagar: number) {
     let json = JSON.stringify({
       tipo: 4,
       idCuentaPorPagar,
@@ -64,7 +79,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
   }
 
 
-  getDataFormPago(idProveedor: number) {
+  getFormaPagoData(idProveedor: number) {
 
     let json = JSON.stringify({
       tipo: 3,
@@ -120,7 +135,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
     )
   }
 
-  post(obj:any){
+  create(obj:any){
     let params = ComprobanteEgresoMapper.toApiPost(obj);
 
     return this.http.post<ApiResponse>(`${this._url}`, params)
