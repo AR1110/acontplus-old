@@ -92,7 +92,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     idProveedor: [0],
     periodoFiscal: [''],
     fechaEmision: [''],
-    docSustento: this._fb.array([]),
+    documentosSustento: this._fb.array([]),
     infoAdicional: this._fb.array([]),
   });
 
@@ -133,7 +133,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   get docSustentoArray(): FormArray {
-    return this.retencionAtsForm.get('docSustento') as FormArray;
+    return this.retencionAtsForm.get('documentosSustento') as FormArray;
   }
 
   get infoAdicionalArray(): FormArray {
@@ -153,17 +153,17 @@ export class RetencionAtsAddEditComponent implements OnInit {
       fechaRegistroContable: [''],
       numAutDocSustento: [''],
       pagoLocExt: [''],
-      tipoRegimenFiscalExteriorId: [''],
+      tipoRegimenFiscalExteriorId: [0],
       paisEfecPago: [''],
       aplicConvDobTrib: [''],
       pagExtSujRetNorLeg: [''],
       pagoRegFis: [''],
-      totalComprobantesReembolsos: [0],
+      totalComprobantesReembolso: [0],
       totalBaseImponibleReembolso: [0],
       totalImpuestoReembolso: [0],
       totalSinImpuestos: [0],
       importeTotal: [0],
-      impuestos: this._fb.array([]),
+      taxes: this._fb.array([]),
       retenciones: this._fb.array([]),
       reembolsos: this._fb.group({
         id: [0],
@@ -216,8 +216,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
         estabs: response.estabs,
         isGroupPuntoEmision: true,
       });
-
-      console.log(this.estabs);
       const idEstablecimiento =
         this.estabs.find((x) => x.defaultEstab)?.idEstablecimiento || 0;
       this.retencionAtsForm

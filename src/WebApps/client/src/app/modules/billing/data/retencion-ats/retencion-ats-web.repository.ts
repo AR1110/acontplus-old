@@ -43,7 +43,10 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           if (!isApiResponse(response)) return defaultData;
 
           try {
+
             const payload = JSON.parse(response.payload as string);
+
+            console.log(payload);
             return {
               ...defaultData,
               ...payload,
@@ -83,7 +86,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   create<T>(data: T): Observable<ApiResponse> {
     console.log(data);
     return this._http
-      .post<ApiResponse>(`${this._url}`, { data })
+      .post<ApiResponse>(`${this._url}`, data)
       .pipe(map((response) => response));
   }
   update(data: any): Observable<RetencionAts> {

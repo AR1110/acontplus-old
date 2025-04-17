@@ -190,7 +190,7 @@
       }
     </mat-card>
 
-    <mat-accordion multi formArrayName="docSustento">
+    <mat-accordion multi formArrayName="documentosSustento">
       @for (item of docSustentoArray.controls; track $index) {
         <app-doc-sustento-add-edit
           [indexDoc]="$index"
@@ -200,7 +200,7 @@
           [tiposComprobante]="tiposComprobante"
           [sustentosTributarios]="sustentosTributarios"
           [tiposPago]="tiposPago"
-          [tiposRegimen]="tiposRegimen"
+          [tiposRegimenFiscalExterior]="tiposRegimen"
           [countries]="countries"
           [generic]="generic"
           [taxes]="taxes"

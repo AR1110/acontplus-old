@@ -62,7 +62,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   tiposComprobante = input.required<TipoComprobante[]>();
   sustentosTributarios = input.required<SustentoTributario[]>();
   tiposPago = input.required<TipoPago[]>();
-  tiposRegimen = input.required<TipoRegimenFiscalExterior[]>();
+  tiposRegimenFiscalExterior = input.required<TipoRegimenFiscalExterior[]>();
   countries = input.required<Pais[]>();
   generic = input.required<GenericModel[]>();
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
@@ -105,7 +105,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   }
 
   getTaxesArray(indexDoc: number): FormArray {
-    return this.docSustentoArray().at(indexDoc).get('impuestos') as FormArray;
+    return this.docSustentoArray().at(indexDoc).get('taxes') as FormArray;
   }
 
   getRetencionesArray(indexDoc: number): FormArray {
@@ -121,27 +121,26 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
 
   createTaxGroup(): FormGroup {
     return this._fb.group({
+      idRetAtsImpDocSustento: [0],
+      idRetAtsDocSustento: [0],
       idRetencionAts: [0],
-      impuesto: [''],
-      porcentaje: [''],
+      uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       idImpuesto: [0],
       idTarifaImpuesto: [0],
-      baseImponible: [0, Validators.required],
+      porcentaje: [''],
       tarifa: [0],
+      baseImponible: [0, Validators.required],
       valorImpuesto: [0],
-      uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
     });
   }
 
   createRetencionGroup(): FormGroup {
     return this._fb.group({
       idRetencionAtsRet: [0],
-      idRetencionAts: [0],
       idRetencionAtsDocSustento: [0],
+      idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
-      impuesto: [''],
       impuestoRetencionId: [0, [Validators.required]],
-      codigoDescripcion: [''],
       codigoRetencion: [''],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
@@ -152,11 +151,10 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   createPaymentGroup(): FormGroup {
     return this._fb.group({
       idRetencionAtsPago: [0],
-      idRetencionAts: [0],
       idRetencionAtsDocSustento: [0],
+      idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       formaPagoId: [0, [Validators.required]],
-      codigo: [''],
       total: [0, [Validators.required, Validators.min(0)]],
     });
   }

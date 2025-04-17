@@ -45,7 +45,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   removeTax(): void {
     const taxesArray = this.docSustentoArray()
       .at(this.indexDoc())
-      .get('impuestos') as FormArray;
+      .get('taxes') as FormArray;
 
     if (this.indexTax() >= 0 && this.indexTax() < taxesArray.length) {
       taxesArray.removeAt(this.indexTax());

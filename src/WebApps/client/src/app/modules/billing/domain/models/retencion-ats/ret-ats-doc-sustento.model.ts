@@ -11,7 +11,8 @@ export interface RetAtsDocSustento {
   fechaRegistroContable?: string;
   numAutDocSustento?: string;
   pagoLocExt?: string;
-  tipoRegi?: string;
+  TipoRegimenFiscalExteriorId?: number;
+  DocumentoSustentoTributarioId: number;
   paisEfecPago?: string;
   aplicConvDobTrib?: string;
   pagExtSujRetNorLeg?: string;

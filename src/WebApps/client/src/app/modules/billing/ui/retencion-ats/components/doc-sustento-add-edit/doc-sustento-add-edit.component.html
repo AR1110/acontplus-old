@@ -145,7 +145,7 @@
           [disabled]="isPagoResidente"
         >
           <mat-option>::seleccione::</mat-option>
-          @for (tipoRegimen of tiposRegimen(); track $index) {
+          @for (tipoRegimen of tiposRegimenFiscalExterior(); track $index) {
             <mat-option [value]="tipoRegimen.id">
               {{ tipoRegimen.codigo }} -
               {{ tipoRegimen.descripcion }}
@@ -239,7 +239,7 @@
       ></app-theme-button>
     </div>
   </div>
-  <div class="row g-3 align-items-center mb-3" formArrayName="impuestos">
+  <div class="row g-3 align-items-center mb-3" formArrayName="taxes">
     @for (tax of getTaxesArray(indexDoc()).controls; let i = $index; track i) {
       <app-doc-sustento-tax
         [docSustentoArray]="docSustentoArray()"
