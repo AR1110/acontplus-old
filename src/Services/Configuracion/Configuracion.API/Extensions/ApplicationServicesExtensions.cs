@@ -23,7 +23,7 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddAutoMapper(typeof(MappingProfiles));
+        
 
         // Services that should be scoped (have dependencies on ConfigContext)
         string[] scopedNamespaces =

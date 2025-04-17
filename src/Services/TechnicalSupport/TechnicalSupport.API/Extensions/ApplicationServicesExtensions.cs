@@ -28,14 +28,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IOrderDetailService, OrderDetailService>();
         services.AddScoped<IOrderMaintenanceService, OrderMaintenanceService>();
         services.AddScoped<ISerieService, SerieService>();
-        services.AddScoped<IStatsService, StatsService>();
-        //var config = new AutoMapper.MapperConfiguration(cfg =>
-        //{
-        //    cfg.AddProfile(new MappingProfiles());
-        //});
-        //var mapper = config.CreateMapper();
-        //services.AddSingleton(mapper);
-        services.AddAutoMapper(typeof(MappingProfiles));
+        services.AddScoped<IStatsService, StatsService>(); 
+
         return services;
     }
 }

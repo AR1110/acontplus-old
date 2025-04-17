@@ -1,5 +1,4 @@
-﻿global using AutoMapper;
-global using Common.Core.Data;
+﻿global using Common.Core.Data;
 global using Common.Core.IO;
 global using Common.Core.Models;
 global using Common.Services.Configuration;
