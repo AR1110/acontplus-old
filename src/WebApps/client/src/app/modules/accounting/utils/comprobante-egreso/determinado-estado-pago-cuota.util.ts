@@ -1,5 +1,5 @@
 import { CodigoEstadoPago } from "@accounting/core/enums/codigo-estado-pago.enum"
-import { EstadoPago } from "@accounting/core/domain/estado-pago.interface"
+import { EstadoPago } from "@accounting/core/models/estado-pago.interface"
 
 
  type Props = {

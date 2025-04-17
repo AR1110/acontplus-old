@@ -4,7 +4,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Turno } from '@accounting/core/domain/turno.model';
+import { Turno } from '@accounting/core/models/turno.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {CajaUseCase} from "@accounting/core/use-cases/caja.use-case";

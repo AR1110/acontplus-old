@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormaPagoSri } from '@shared/models/forma-pago-sri';
-import { TiempoCredito } from '@accounting/core/domain/tiempo-credito.interface';
+import { TiempoCredito } from '@accounting/core/models/tiempo-credito.interface';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { InvoiceService } from '@billing/services/invoice.service';
 import { ToasterService } from '@core/services/toaster.service';

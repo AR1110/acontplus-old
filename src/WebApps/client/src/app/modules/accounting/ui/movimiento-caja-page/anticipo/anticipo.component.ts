@@ -2,7 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 import { AnticipoModalComponent } from '@accounting/ui/movimiento-caja-page/anticipo/anticipo-modal/anticipo-modal.component';
 
-import { AnticipoRead } from '@accounting/core/domain/anticipo.model';
+import { AnticipoRead } from '@accounting/core/models/anticipo.model';
 import { SharedService } from '@core/services/shared.service';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';

@@ -4,7 +4,7 @@ import {FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule} fr
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
+import {EntidadFinanciera} from "@accounting/core/models/entidad-financiera.interface";
 import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
 
 @Component({

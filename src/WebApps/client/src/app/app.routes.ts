@@ -20,7 +20,7 @@ export const routes: Routes = [
 
   {
     path: '',
-    canActivate: [sessionGuard],
+    //canActivate: [sessionGuard],
     loadChildren: () =>
       import(`./layouts/main-layout/main-layout.routes`).then((m) => m.routes),
     // data: {

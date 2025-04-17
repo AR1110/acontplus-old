@@ -71,6 +71,7 @@ export class AppComponent implements OnInit {
       const { token, route, permission: dataPermission, userRoleData } = params;
 
 
+      console.log(route)
       if (dataPermission) {
         localStorage.setItem('permisos', dataPermission);
         localStorage.setItem('userRoleData', userRoleData);

@@ -16,6 +16,7 @@ import {
 } from "@accounting/ui/resumen-contable/resumen-contable.component";
 import {CarteraClienteComponent} from "@accounting/ui/cartera-cliente/cartera-cliente.component";
 import {ComprobanteIngresoComponent} from "@accounting/ui/comprobante-ingreso/comprobante-ingreso.component";
+import {ComprobanteEgresoComponent} from "@accounting/ui/comprobante-egreso/comprobante-egreso.component";
 
 export const routes: Routes = [
   {
@@ -129,6 +130,14 @@ export const routes: Routes = [
     component: CuentaPorCobrarComponent,
     data: {
       breadcrumb: 'Cuenta por cobrar',
+    },
+  },
+  {
+    path: 'comprobante-egreso',
+    title: 'Comprobante Egreso',
+    component: ComprobanteEgresoComponent,
+    data: {
+      breadcrumb: 'Comprobante Egreso',
     },
   }
 ];

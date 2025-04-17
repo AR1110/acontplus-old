@@ -5,7 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
 import {ResumenContableRepository} from "@accounting/core/repositories/resumen-contable.repository";
-import {SubCategorySelectHtmlOnly} from "@accounting/core/domain/subcategory";
+import {SubCategorySelectHtmlOnly} from "@accounting/core/models/subcategory";
 import {CategoryRepository} from "@accounting/core/repositories/category.repository";
 
 

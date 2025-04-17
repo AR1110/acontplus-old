@@ -1,6 +1,6 @@
 
 import { roundNumber } from "@core/utils/round-number.utils";
-import { TiempoCredito } from "../core/domain/tiempo-credito.interface";
+import { TiempoCredito } from "../core/models/tiempo-credito.interface";
 import { formatDateToString } from "@core/utils/date.util";
 
 // Función para calcular detalles de cuotas basadas en términos de crédito

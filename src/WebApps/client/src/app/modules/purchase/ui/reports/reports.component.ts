@@ -19,7 +19,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";

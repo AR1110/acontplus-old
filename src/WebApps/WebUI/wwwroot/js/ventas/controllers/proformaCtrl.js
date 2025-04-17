@@ -324,15 +324,15 @@
         $scope.openModalEdit = async (item) => {
             try {
 
-                let paramsPermission = getParamsPermission(item, 'E');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+                // let paramsPermission = getParamsPermission(item, 'E');
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
 
-                if (!response) return
+                // if (!response) return
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
-                }
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return
+                // }
 
                 showLoader();
                 proformaSvc.getId(item.idDocumento).then(response => {
@@ -350,9 +350,9 @@
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
                             $scope.getProformas();
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
-                            }
+                            // if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                            //     userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                            // }
 
                         }
                     })
@@ -407,15 +407,15 @@
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
-                let paramsPermission = getParamsPermission(item, 'A');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+                // let paramsPermission = getParamsPermission(item, 'A');
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
 
-                if (!response) return
+                // if (!response) return
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
-                }
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return
+                // }
 
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
@@ -448,9 +448,9 @@
 
 
                             //Una vez actualizado el documento  
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
-                            }
+                            // if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                            //     userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                            // }
 
                             $scope.getProformas();
                         }

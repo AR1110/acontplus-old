@@ -82,7 +82,7 @@ export enum GlobalRoutes {
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
   ContabilidadAccountingSummary = 'accounting/resumen-contable',
   ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja-report',
-
+  ContabilidadComprobanteEgreso = 'accounting/comprobante-egreso',
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',
 

@@ -1,6 +1,6 @@
 import { roundNumber } from "@core/utils/round-number.utils";
-import { MultiplesPaymentType, PaymentDetail, PaymentHistory } from "../core/domain/comprobante-ingreso";
-import { CuentaPorCobrar, CuentaPorCobrarComprobante, Cuota } from "../core/domain/cuenta-por-cobrar.model";
+import { MultiplesPaymentType, PaymentDetail, PaymentHistory } from "../core/models/comprobante-ingreso";
+import { CuentaPorCobrar, CuentaPorCobrarComprobante, Cuota } from "../core/models/cuenta-por-cobrar.model";
 
 type CuotaExtend = Cuota & {
   abonoPosfechado: number

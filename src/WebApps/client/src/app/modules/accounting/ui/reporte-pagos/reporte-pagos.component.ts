@@ -8,8 +8,8 @@ import {
 import {HttpClient} from "@angular/common/http";
 import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {TipoDoc} from "@core/models/tipo-doc.model";
-import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/core/domain/subentidad-financiera.model";
-import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
+import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/core/models/subentidad-financiera.model";
+import {BancoSelectOnly} from "@accounting/core/models/banco.interface";
 import {formatDateToString} from "@core/utils/date.util";
 import {ToasterService} from "@core/services/toaster.service";
 import {SharedService} from "@core/services/shared.service";

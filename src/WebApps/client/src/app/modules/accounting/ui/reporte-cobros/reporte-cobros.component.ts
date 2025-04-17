@@ -13,13 +13,13 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
 import {
   SubEntidadFinancieraSelectHtmlOnly,
-} from '@accounting/core/domain/subentidad-financiera.model';
+} from '@accounting/core/models/subentidad-financiera.model';
 import { SharedService } from '@core/services/shared.service';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import {BancoSelectOnly} from "@accounting/core/domain/banco.interface";
+import {BancoSelectOnly} from "@accounting/core/models/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';
 import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
 import {MatCard, MatCardContent} from "@angular/material/card";

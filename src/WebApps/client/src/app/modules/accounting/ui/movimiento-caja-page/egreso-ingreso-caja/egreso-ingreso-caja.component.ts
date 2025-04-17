@@ -5,7 +5,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { MovimientoCajaRead } from '@accounting/core/domain/movimiento-caja.model';
+import { MovimientoCajaRead } from '@accounting/core/models/movimiento-caja.model';
 import Swal from 'sweetalert2';
 import { ModalEgresoIngresoComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/modal-egreso-ingreso/modal-egreso-ingreso.component';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';

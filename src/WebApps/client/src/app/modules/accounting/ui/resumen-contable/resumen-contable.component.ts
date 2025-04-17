@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import { SubCategorySelectHtmlOnly } from '@accounting/core/domain/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/core/models/subcategory';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
