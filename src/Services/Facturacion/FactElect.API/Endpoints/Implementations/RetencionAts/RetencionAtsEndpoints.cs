@@ -23,9 +23,9 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         throw new NotImplementedException();
     }
 
-    public async Task<IResult> CreateRetencionAtsAsync(RetencionAtsRetDto retencionAtsRetDto)
+    public async Task<IResult> CreateRetencionAtsAsync(RetencionAtsDto retencionAtsDto)
     {
-        var dataSerialized = DataConverters.SerializeObjectCustom<RetencionAtsRetDto>(retencionAtsRetDto);
+        var dataSerialized = DataConverters.SerializeObjectCustom<RetencionAtsDto>(retencionAtsDto);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
@@ -35,7 +35,7 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         return Results.Ok(await retencionAtsService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateRetencionAtsAsync(int id, RetencionAtsRetDto retencionAtsRetDto)
+    public async Task<IResult> UpdateRetencionAtsAsync(int id, RetencionAtsDto RetencionAtsDto)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -43,7 +43,7 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
             { "id", id },
             {
                 "json",
-                SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<RetencionAtsRetDto>(retencionAtsRetDto))
+                SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<RetencionAtsDto>(RetencionAtsDto))
             }
         };
 

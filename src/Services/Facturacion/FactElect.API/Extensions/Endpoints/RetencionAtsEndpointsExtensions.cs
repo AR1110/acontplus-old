@@ -20,12 +20,12 @@ public static class RetencionAtsEndpointsExtensions
         retencionAtsGroup.MapGet("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.GetRetencionAtsByIdAsync(id));
 
-        retencionAtsGroup.MapPost("/", async (IRetencionAtsEndpoints retencionAtsEndpoints, RetencionAtsRetDto retencionAtsRetDto) =>
-            await retencionAtsEndpoints.CreateRetencionAtsAsync(retencionAtsRetDto));
+        retencionAtsGroup.MapPost("/", async (IRetencionAtsEndpoints retencionAtsEndpoints, RetencionAtsDto retencionAtsDto) =>
+            await retencionAtsEndpoints.CreateRetencionAtsAsync(retencionAtsDto));
 
         retencionAtsGroup.MapPut("/{id}",
-            async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, RetencionAtsRetDto retencionAtsRetDto) =>
-                await retencionAtsEndpoints.UpdateRetencionAtsAsync(id, retencionAtsRetDto));
+            async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, RetencionAtsDto retencionAtsDto) =>
+                await retencionAtsEndpoints.UpdateRetencionAtsAsync(id, retencionAtsDto));
 
         retencionAtsGroup.MapDelete("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.DeleteRetencionAtsAsync(id));
