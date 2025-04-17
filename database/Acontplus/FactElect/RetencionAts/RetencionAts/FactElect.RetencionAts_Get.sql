@@ -43,7 +43,7 @@ BEGIN
 
 			    SELECT Id, Codigo, Descripcion FROM Sri.TipoComprobante WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 
-			    SELECT dst.Id, dst.TipoComprobanteId, st.Codigo, st.Descripcion
+			    SELECT dst.Id, dst.TipoComprobanteId, st.Codigo, st.Descripcion, dst.Id DocumentoSustentoTributarioId
                 FROM Sri.SustentoTributario st  WITH (NOLOCK)
 			    INNER JOIN Sri.DocumentoSustentoTributario dst  WITH (NOLOCK) ON st.Id = dst.SustentoTributarioId
 			    WHERE st.[Enabled] = CAST(1 AS BIT)
