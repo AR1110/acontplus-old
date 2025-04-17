@@ -5,6 +5,3 @@ export interface ConceptoRetencionAir {
   porcentaje: number;
   enabled?: boolean;
 }
-
-export interface CodigoRetencionMixed
-  extends Pick<ConceptoRetencionAir, "codigo" | "descripcion" | "porcentaje"> {}

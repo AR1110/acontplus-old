@@ -34,6 +34,7 @@ import { MatInput } from '@angular/material/input';
 import { DocSustentoPaymentComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-payment/doc-sustento-payment.component';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { RetencionAtsDocPayment } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -51,6 +52,9 @@ import { RetencionAtsDocPayment } from '@billing/domain/models/retencion-ats/ret
     MatSelectModule,
     MatInput,
     DocSustentoPaymentComponent,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatDatepickerInput,
   ],
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,

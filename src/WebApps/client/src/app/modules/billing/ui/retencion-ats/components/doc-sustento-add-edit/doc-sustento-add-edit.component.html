@@ -81,6 +81,7 @@
             docSustentoGroup().get('uniqueIdDoc')?.value
           }}"
           formControlName="fechaEmisionDocSustento"
+          readonly
         />
       </mat-form-field>
     </div>
@@ -89,10 +90,16 @@
         <mat-label>Fecha Registro Contable:</mat-label>
         <input
           matInput
-          type="date"
           id="fechaRegistroContable"
+          [matDatepicker]="picker"
           formControlName="fechaRegistroContable"
         />
+        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
     </div>
   </div>

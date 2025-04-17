@@ -38,6 +38,7 @@ export class DocSustentoRetencionComponent {
 
   selectCodigoRetencion(codigo: string) {
     setTimeout(() => {
+      console.log(codigo)
       this.retencionGroup().get('codigoRetencion').setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {

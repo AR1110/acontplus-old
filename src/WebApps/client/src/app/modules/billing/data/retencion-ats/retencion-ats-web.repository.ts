@@ -43,10 +43,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           if (!isApiResponse(response)) return defaultData;
 
           try {
-
             const payload = JSON.parse(response.payload as string);
-
-            console.log(payload);
             return {
               ...defaultData,
               ...payload,
