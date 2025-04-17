@@ -27,7 +27,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
+                await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
             }
 
             var parameters = new Dictionary<string, object>
@@ -44,7 +44,7 @@ public class PromotionController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storage.UploadAsync(s3ObjectCustom);
-                s3ObjectCustom.Dispose();
+                
             }
 
             return Ok(response);
@@ -53,7 +53,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                s3ObjectCustom.Dispose();
+                
             }
 
             return BadRequest("Error on put: " + ex.Message);
@@ -67,7 +67,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
+                await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
             }
 
             var parameters = new Dictionary<string, object>
@@ -85,7 +85,7 @@ public class PromotionController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storage.UploadAsync(s3ObjectCustom);
-                s3ObjectCustom.Dispose();
+                
             }
 
             return Ok(response);
@@ -94,7 +94,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                s3ObjectCustom.Dispose();
+                
             }
 
             return BadRequest(ex.Message);

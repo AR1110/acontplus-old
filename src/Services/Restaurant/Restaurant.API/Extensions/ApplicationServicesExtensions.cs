@@ -49,7 +49,7 @@ public static class ApplicationServicesExtensions
             .WithTransientLifetime()
         );
 
-        services.AddSingleton<S3ObjectCustom>();
+        services.AddTransient<S3ObjectCustom>();
         return services;
     }
 }

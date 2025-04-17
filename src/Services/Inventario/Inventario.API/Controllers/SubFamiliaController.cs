@@ -6,6 +6,8 @@ public class SubFamiliaController(
     ISubFamiliaService service)
     : BaseApiController
 {
+    private const string BucketDirectory = "/subcategorias/";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -22,7 +24,7 @@ public class SubFamiliaController(
     {
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetClaimValue<string>("idCardCompany")}/subfamilias/", file);
+            await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
         }
 
         var parameters = new Dictionary<string, object>
@@ -42,7 +44,7 @@ public class SubFamiliaController(
 
         if (file != null)
         {
-            s3ObjectCustom.Dispose();
+            
         }
 
         ;
@@ -84,30 +86,4 @@ public class SubFamiliaController(
         var response = await service.DeleteAsync(parameters);
         return Ok(response);
     }
-
-
-    //[HttpGet("ListForSelect")]
-    //public async Task<IActionResult> ListForSelect(string json)
-    //{
-    //    ApiResponse _response = new ApiResponse();
-    //    DbAccess _db = new DbAccess(_configuration);
-    //    try
-    //    {
-    //        await _db.SPExecute("Almacen.SubFamilia_For_Select");
-    //        _db.AddDynamicParam("idUsuarioRol", User.GetClaimValue<int>("userRoleId"));
-    //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-    //        _response = await _db.GetDataTableAsync();
-    //    }
-    //    catch (Exception ex)
-    //    {
-
-    //        _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
-    //        _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
-    //    }
-    //    finally
-    //    {
-    //        _db.Close();
-    //    }
-    //    return Ok(_response);
-    //}
 }

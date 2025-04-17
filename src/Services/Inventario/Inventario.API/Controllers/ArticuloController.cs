@@ -6,6 +6,8 @@ public class ArticuloController(
     IArticuloService articuloService)
     : BaseApiController
 {
+    private const string BucketDirectory = "/articulos/";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -35,7 +37,7 @@ public class ArticuloController(
 
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetClaimValue<string>("idCardCompany")}/articulos/", file);
+            await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
         }
 
         var parameters = new Dictionary<string, object>
@@ -52,7 +54,7 @@ public class ArticuloController(
             case "1" when file != null:
                 {
                     var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-                    s3ObjectCustom.Dispose();
+                    
                     break;
                 }
         }
