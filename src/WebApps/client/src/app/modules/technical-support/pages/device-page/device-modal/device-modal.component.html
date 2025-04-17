@@ -5,7 +5,8 @@
 >
   <div class="modal-header">
     <h4 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+      <mat-icon>{{ modalIcon }}</mat-icon
+      >{{ modalTitle }}
     </h4>
     <button
       type="button"
@@ -36,12 +37,12 @@
               }
             </select>
             <button
-              class="btn btn-outline-primary"
+              mat-raised-button
               type="button"
               title="Añadir Categoría"
               (click)="addCategory()"
             >
-              <fa-icon [icon]="'plus'"></fa-icon>
+              <mat-icon>add</mat-icon>
             </button>
           </div>
         </div>
@@ -65,13 +66,13 @@
               }
             </select>
             <button
-              class="btn btn-outline-primary"
+              mat-raised-button
               type="button"
               title="Añadir Marca"
               [disabled]="unselectedCategory"
               (click)="addBrand()"
             >
-              <fa-icon [icon]="'plus'"></fa-icon>
+              <mat-icon>add</mat-icon>
             </button>
           </div>
         </div>
@@ -94,13 +95,13 @@
               }
             </select>
             <button
-              class="btn btn-outline-primary"
+              mat-raised-button
               type="button"
               title="Añadir Modelo"
               [disabled]="unseletedBrand"
               (click)="addModelo()"
             >
-              <fa-icon [icon]="'plus'"></fa-icon>
+              <mat-icon>add</mat-icon>
             </button>
           </div>
         </div>
@@ -161,7 +162,7 @@
                           class="btn btn-success btn-sm"
                           (click)="addSpecTypeDevice()"
                         >
-                          <fa-icon [icon]="'plus'"></fa-icon>
+                          <mat-icon>add</mat-icon>
                         </button>
                       </div>
                     </div>
@@ -191,9 +192,7 @@
                                   class="btn btn-outline-danger btn-sm"
                                   (click)="removeSpecCategory(item.uuid)"
                                 >
-                                  <fa-icon [icon]="'trash'"></fa-icon> Eliminar
-                                  Categoría
-                                  <fa-icon [icon]="'angle-up'"></fa-icon>
+                                  <mat-icon>delete</mat-icon> Eliminar Categoría
                                 </button>
                               </div>
                             </div>
@@ -229,7 +228,7 @@
                                       (click)="addSpecsDevice(item.uuid)"
                                       [disabled]="!specForm.valid"
                                     >
-                                      <fa-icon [icon]="'plus'"></fa-icon>
+                                      <mat-icon>add</mat-icon>
                                     </button>
                                   </div>
                                 </div>
@@ -263,9 +262,7 @@
                                                   removeSpec($index, item.uuid)
                                                 "
                                               >
-                                                <fa-icon
-                                                  [icon]="'trash'"
-                                                ></fa-icon>
+                                                <mat-icon>delete</mat-icon>
                                               </button>
                                             </th>
                                           </tr>
@@ -295,7 +292,7 @@
       class="btn btn-outline-success btn-lg"
       [disabled]="deviceForm.invalid"
     >
-      <fa-icon [icon]="'save'"></fa-icon> Guardar
+      <mat-icon>save</mat-icon> Guardar
     </button>
     <button
       type="button"

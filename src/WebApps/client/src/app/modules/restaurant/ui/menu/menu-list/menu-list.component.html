@@ -15,12 +15,8 @@
           />
         </mat-card-content>
         <mat-card-footer>
-          <button
-            type="button"
-            class="btn btn-outline-primary"
-            (click)="onEdit(item)"
-          >
-            <fa-icon [icon]="'cogs'"></fa-icon>
+          <button type="button" mat-raised-button (click)="onEdit(item)">
+            <mat-icon>settings</mat-icon>
             Administrar
           </button>
         </mat-card-footer>

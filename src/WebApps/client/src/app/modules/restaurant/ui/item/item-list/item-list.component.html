@@ -13,12 +13,8 @@
               type="text"
             />
             <div class="input-group-append">
-              <button
-                class="btn btn-outline-primary"
-                type="button"
-                (click)="refresh()"
-              >
-                <fa-icon [icon]="'sync'"></fa-icon>
+              <button mat-raised-button type="button" (click)="refresh()">
+                <mat-icon>refresh</mat-icon>
               </button>
             </div>
           </div>
@@ -49,7 +45,7 @@
         type="button"
         title="Editar"
       >
-        <fa-icon [icon]="'edit'"></fa-icon>
+        <mat-icon>edit</mat-icon>
       </button>
     </ng-template>
   </mat-card-content>
