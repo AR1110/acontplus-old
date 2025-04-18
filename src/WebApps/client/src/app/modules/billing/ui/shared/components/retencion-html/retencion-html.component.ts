@@ -34,4 +34,8 @@ export class RetencionHtmlComponent {
   getReport() {
     // Handle report generation
   }
+
+    download() {
+
+    }
 }

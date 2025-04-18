@@ -23,6 +23,7 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-rentabilidad-page',
@@ -38,6 +39,7 @@ import { MatButton } from '@angular/material/button';
     MatCardContent,
     MatCard,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './rentabilidad-page.component.html',
 })

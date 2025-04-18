@@ -24,19 +24,21 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-reports',
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    SupplierSearchComponent,
-    DateRangeSelectionComponent,
-    MatCardContent,
-    MatCard,
-    MatCardFooter,
-    MatButton,
-  ],
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        SupplierSearchComponent,
+        DateRangeSelectionComponent,
+        MatCardContent,
+        MatCard,
+        MatCardFooter,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './reports.component.html',
   styles: ``,
 })

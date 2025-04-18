@@ -149,10 +149,14 @@
     </div>
 
     <div class="d-flex flex-row gap-1">
-      <button type="button" mat-raised-button (click)="getReportPdf()">
-        PDF
-      </button>
       <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="PDF"
+        (handleClick)="getReportPdf()"
+      >
+      </app-theme-button
+      ><app-theme-button
         variant="success"
         icon="download"
         text="EXCEL"

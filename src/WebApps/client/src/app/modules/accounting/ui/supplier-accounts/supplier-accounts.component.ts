@@ -24,6 +24,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-supplier-accounts',
@@ -36,6 +37,7 @@ import { MatButton } from '@angular/material/button';
     MatCard,
     MatCardFooter,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './supplier-accounts.component.html',
   styles: ``,

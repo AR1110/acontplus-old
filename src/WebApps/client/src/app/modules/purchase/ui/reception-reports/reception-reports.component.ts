@@ -19,19 +19,21 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-reception-reports',
-  imports: [
-    FormsModule,
-    SupplierSearchComponent,
-    DateRangeSelectionComponent,
-    UserSearchComponent,
-    BreadcrumbComponent,
-    MatCardContent,
-    MatCard,
-    MatCardFooter,
-  ],
+    imports: [
+        FormsModule,
+        SupplierSearchComponent,
+        DateRangeSelectionComponent,
+        UserSearchComponent,
+        BreadcrumbComponent,
+        MatCardContent,
+        MatCard,
+        MatCardFooter,
+        ThemeButtonComponent,
+    ],
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })

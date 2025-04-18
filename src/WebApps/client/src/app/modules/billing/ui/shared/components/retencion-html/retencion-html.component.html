@@ -137,9 +137,13 @@
 
   <!-- Modal Footer -->
   <div class="modal-footer">
-    <button (click)="getReport()" class="btn btn-danger" type="button">
-      <i class="ti-download"></i> Descargar Ride
-    </button>
+    <app-theme-button
+      variant="success"
+      icon="download"
+      text="Descargar Ride"
+      (handleClick)="download()"
+    >
+    </app-theme-button>
     <app-theme-button
       variant="dark"
       icon="close"

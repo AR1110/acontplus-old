@@ -135,10 +135,18 @@
   </mat-card-content>
   <mat-card-footer>
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button (click)="pdf()" class="btn btn-danger" type="button">PDF</button>
-      <button (click)="excel()" mat-raised-button type="button">
-        EXCEL
-      </button>
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="pdf()"
+      ></app-theme-button>
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="excel()"
+      ></app-theme-button>
     </div>
   </mat-card-footer>
 </mat-card>
