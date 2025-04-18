@@ -100,7 +100,7 @@
                       <div
                         class="example-element-detail"
                         [@detailExpand]="
-                          element == expandedElement ? 'expanded' : 'collapsed'
+                          element === expandedElement ? 'expanded' : 'collapsed'
                         "
                       >
                         <mat-card appearance="outlined">
@@ -129,7 +129,7 @@
                                           type="button"
                                           (click)="showCobroDetalle(cuota)"
                                         >
-                                          <fa-icon [icon]="'eye'"></fa-icon>
+                                          <mat-icon>visibility</mat-icon>
                                         </button>
                                       }
                                     </td>
@@ -202,14 +202,14 @@
                           type="button"
                           (click)="removePaymentType(element.secuencial)"
                         >
-                          <fa-icon [icon]="'trash'"></fa-icon>
+                          <mat-icon>delete</mat-icon>
                         </button>
                         <button
                           class="btn btn-primary btn-sm"
                           type="button"
                           (click)="showInfo(element)"
                         >
-                          <fa-icon [icon]="'eye'"></fa-icon>
+                          <mat-icon>visibility</mat-icon>
                         </button>
                       </div>
                     </td>
@@ -348,7 +348,7 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-success" (click)="save()">
+  <button type="button" mat-raised-button (click)="save()">
     Guardar
   </button>
   <button

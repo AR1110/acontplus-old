@@ -5,39 +5,51 @@
     class="btn-close"
     aria-label="Close"
     (click)="modal.close()"
-  >
-  </button>
+  ></button>
 </div>
 <div class="modal-body">
   <div class="form-group">
-    <label>
-      Ingrese el o los correos destinatarios
-    </label>
-    @for (item of emails;track $index){
+    <label> Ingrese el o los correos destinatarios </label>
+    @for (item of emails; track $index) {
       <div class="input-group mb-3">
-        <input type="email" [id]="'email'+$index" [name]="'email'+$index" class="form-control" autocomplete="off" [(ngModel)]="emails[$index]" placeholder="Ingrese un email">
+        <input
+          type="email"
+          [id]="'email' + $index"
+          [name]="'email' + $index"
+          class="form-control"
+          autocomplete="off"
+          [(ngModel)]="emails[$index]"
+          placeholder="Ingrese un email"
+        />
 
-        @if(emails.length!==1){
-          <button class="btn btn-danger btn-sm" type="button" (click)="removeEmail($index)" >
-            <fa-icon [icon]="['fas', 'trash-alt']" ></fa-icon>
+        @if (emails.length !== 1) {
+          <button
+            class="btn btn-danger btn-sm"
+            type="button"
+            (click)="removeEmail($index)"
+          >
+            <mat-icon>delete</mat-icon>
           </button>
         }
 
-        @if(lastIndex===$index){
-        <button class="btn btn-primary btn-sm" type="button" (click)="addEmail()">
-          <fa-icon [icon]="['fas', 'plus']" ></fa-icon>
-        </button>
+        @if (lastIndex === $index) {
+          <button
+            class="btn btn-primary btn-sm"
+            type="button"
+            (click)="addEmail()"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
         }
       </div>
     }
   </div>
-
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" type="button" (click)="send()">
-    <i class="mdi mdi-send"></i> Enviar
+  <button mat-raised-button type="button" (click)="send()">
+    <mat-icon>email</mat-icon> Enviar
   </button>
   <button class="btn btn-dark" type="button" (click)="modal.close()">
-    Cerrar
+    &times; Cerrar
   </button>
 </div>

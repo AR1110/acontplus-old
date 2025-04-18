@@ -2,16 +2,23 @@ import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CompanyService } from '@modules/config/services/company.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { ModalService } from '@core/services/modal.service';
 import { CompanyAddEditModalComponent } from '@modules/config/pages/company-page/components/company-add-edit-modal/company-add-edit-modal.component';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-company-page',
-  imports: [BreadcrumbComponent, PrimaryStatusPipe, FontAwesomeModule, MatCardContent, MatCard],
-    templateUrl: './company-page.component.html',
-    styles: ``
+  selector: 'app-company-page',
+  imports: [
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatCardContent,
+    MatCard,
+    MatIcon,
+  ],
+  templateUrl: './company-page.component.html',
+  styles: ``,
 })
 export class CompanyPageComponent {
   companySvc = inject(CompanyService);

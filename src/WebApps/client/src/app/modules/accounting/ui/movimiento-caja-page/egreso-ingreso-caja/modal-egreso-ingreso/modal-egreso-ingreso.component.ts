@@ -17,7 +17,9 @@ import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
-import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.use-case";
+import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
@@ -25,6 +27,8 @@ import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.
     ReactiveFormsModule,
     NgbTypeaheadModule,
     CompanyCustomerSearchComponent,
+    MatIcon,
+    MatButton,
   ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
@@ -66,7 +70,7 @@ export class ModalEgresoIngresoComponent {
     customerName: new FormControl(''),
   });
   private activeModal = inject(NgbActiveModal);
-  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase)
+  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
 
   private employeeSvc = inject(EmployeeService);
   private tS = inject(ToasterService);
@@ -182,20 +186,19 @@ export class ModalEgresoIngresoComponent {
       }
 
       this._movimientoCajaUseCase.create(params).subscribe((response) => {
-
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
-          if (response.code === '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
-            this.activeModal.close(response);
-          }
+        if (response.code === '0') {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message,
+          });
+        }
+        if (response.code === '1') {
+          this.tS.toastr({
+            type: 'success',
+            message: response.message,
+          });
+          this.activeModal.close(response);
+        }
       });
     } catch (error) {
       console.log(error);

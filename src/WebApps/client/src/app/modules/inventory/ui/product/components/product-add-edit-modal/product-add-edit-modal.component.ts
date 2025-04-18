@@ -1,5 +1,4 @@
-
-import { Component,  inject, Input, signal } from '@angular/core'
+import { Component, inject, Input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
@@ -9,62 +8,61 @@ import { ToasterService } from '@core/services/toaster.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive'
+
+import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { TipoIvaSelectHtmlOnly } from '@inventory/domain/models/tipo-iva.model';
-import { NgbActiveModal,  NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
 import { FraccProductListComponent } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component';
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { MatButton } from '@angular/material/button';
 
 interface ProductTarifa {
-  tipoIva: string
-  tarifa: string
-  precioVenta: number
-  precioConIva: number
-  porcentajeUtilidad: number
-  porcentajeIva: number
-  utilidad: number
+  tipoIva: string;
+  tarifa: string;
+  precioVenta: number;
+  precioConIva: number;
+  porcentajeUtilidad: number;
+  porcentajeIva: number;
+  utilidad: number;
 }
 @Component({
-    selector: 'app-product-add-edit-modal',
-    imports: [
-        //Modules
-        FormsModule,
-        ReactiveFormsModule,
-        NgbNavModule,
-        FontAwesomeModule,
-        MatAutocompleteModule,
-        ToUpperCaseDirective,
-        //Components
-        TabulatorComponent,
-        FraccProductListComponent,
-        //Directivas
-        SubCategoryModalDirective,
-        MeasureAddEditDirective,
-        TagsAddEditModalDirective
-    ],
-    templateUrl: './product-add-edit-modal.component.html'
-})
+  selector: 'app-product-add-edit-modal',
+  imports: [
+    //Modules
+    FormsModule,
+    ReactiveFormsModule,
+    NgbNavModule,
 
+    MatAutocompleteModule,
+    ToUpperCaseDirective,
+    //Components
+    TabulatorComponent,
+    FraccProductListComponent,
+    //Directivas
+    SubCategoryModalDirective,
+    MeasureAddEditDirective,
+    TagsAddEditModalDirective,
+    MatButton,
+  ],
+  templateUrl: './product-add-edit-modal.component.html',
+})
 export class ProductAddEditModalComponent {
-  @Input() params: any = {}
+  @Input() params: any = {};
 
   //Inject Services
   private activeModal = inject(NgbActiveModal);
 
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
 
-  private tS = inject(ToasterService)
-  private userRoleStateSvc = inject(UserRoleStateService)
-
-
+  private tS = inject(ToasterService);
+  private userRoleStateSvc = inject(UserRoleStateService);
 
   selectedTab = signal(0);
 
@@ -73,10 +71,9 @@ export class ProductAddEditModalComponent {
   titleModal = 'Nuevo Producto';
   btnText = 'Guardar';
 
-
   categorias = [];
   decimal = {
-    nroPrecio: 6
+    nroPrecio: 6,
   };
   estabs = signal<GroupedEstab[]>([]);
   etiquetas = signal<any[]>([]);
@@ -88,7 +85,7 @@ export class ProductAddEditModalComponent {
   tiposIce = [];
   tiposIva = signal<TipoIvaSelectHtmlOnly[]>([]);
 
-  bodegas: GroupedEstabBodega[] = []
+  bodegas: GroupedEstabBodega[] = [];
 
   data = {
     idArticulo: 0,
@@ -114,89 +111,83 @@ export class ProductAddEditModalComponent {
     datosLote: false,
     lote: null,
     fechaCreacion: null,
-    fechaCaducidadLote: null
-  }
+    fechaCaducidadLote: null,
+  };
 
-
-  subCategories = signal<any[]>([])
-  subCategoriesGroup = signal<any[]>([])
+  subCategories = signal<any[]>([]);
+  subCategoriesGroup = signal<any[]>([]);
 
   columnNames = [
     {
-      title: "Tarifa",
-      field: "tarifa",
-      headerSort: false,
-      resizable: true
-    },
-    {
-      title: "Tipo Iva",
-      field: "tipoIva",
-      headerSort: false,
-      resizable: true
-    },
-    {
-      title: "P. Venta",
-      field: "precioVenta",
+      title: 'Tarifa',
+      field: 'tarifa',
       headerSort: false,
       resizable: true,
-      editor: "input",
-      validator: ["required", "min:0", "numeric"]
     },
     {
-      title: "P. IVA",
-      field: "precioConIva",
+      title: 'Tipo Iva',
+      field: 'tipoIva',
       headerSort: false,
       resizable: true,
-      editor: true,
-      validator: ["required", "min:0", "numeric"]
-
     },
     {
-      title: "% Utilidad",
-      field: "porcentajeUtilidad",
+      title: 'P. Venta',
+      field: 'precioVenta',
+      headerSort: false,
+      resizable: true,
+      editor: 'input',
+      validator: ['required', 'min:0', 'numeric'],
+    },
+    {
+      title: 'P. IVA',
+      field: 'precioConIva',
       headerSort: false,
       resizable: true,
       editor: true,
-      validator: ["required", "min:0", "numeric"]
+      validator: ['required', 'min:0', 'numeric'],
     },
     {
-      title: "Utilidad",
-      field: "utilidad",
+      title: '% Utilidad',
+      field: 'porcentajeUtilidad',
       headerSort: false,
-      resizable: true
-
+      resizable: true,
+      editor: true,
+      validator: ['required', 'min:0', 'numeric'],
     },
     {
-      title: "Estado",
-      field: "estado",
+      title: 'Utilidad',
+      field: 'utilidad',
       headerSort: false,
-      resizable: true
-
+      resizable: true,
     },
-  ]
+    {
+      title: 'Estado',
+      field: 'estado',
+      headerSort: false,
+      resizable: true,
+    },
+  ];
 
   tabulatorOptions = {
     columns: this.columnNames,
-    layout: "fitColumns",
+    layout: 'fitColumns',
     resizableColumnFit: true,
     reactiveData: true,
-    height: null // Elimina la altura fija para que sea auto
-  }
+    height: null, // Elimina la altura fija para que sea auto
+  };
 
-  productTarifa: ProductTarifa[] = []
-
+  productTarifa: ProductTarifa[] = [];
 
   isChangePrecio = false;
 
   private timeoutIdNav: any; // Para almacenar el ID del setTimeout
 
   isUpdate() {
-    return this.params.idArticulo > 0
+    return this.params.idArticulo > 0;
   }
 
   isAdd() {
-    return !(this.params.idArticulo > 0)
-
+    return !(this.params.idArticulo > 0);
   }
 
   // ngOnInit() {
@@ -258,15 +249,10 @@ export class ProductAddEditModalComponent {
   //         }
   //       }
 
-
   //       //editar
   //       if (this.params.idArticulo > 0) {
 
-
-
   //       }
-
-
 
   //     },
   //   })
@@ -283,14 +269,17 @@ export class ProductAddEditModalComponent {
         this.tabulatorOptions.reactiveData = true;
       }, 100);
     }
-    this.selectedTab.set(index)
-
+    this.selectedTab.set(index);
   }
 
   setDataSubCategoria() {
-    if (this.subCategoriesGroup().length === 0 || (this.params && this.params.isImport)) return;
+    if (
+      this.subCategoriesGroup().length === 0 ||
+      (this.params && this.params.isImport)
+    )
+      return;
 
-    const { codigo, idSubFamilia } = this.subCategories()[0]
+    const { codigo, idSubFamilia } = this.subCategories()[0];
 
     this.data.idSubFamilia = idSubFamilia;
     this.setCodigo(codigo);
@@ -298,7 +287,7 @@ export class ProductAddEditModalComponent {
 
   setCodigo(codigo: string) {
     this.data.codigo = codigo;
-    this.data.codigoAuxiliar = "AUX-" + codigo;
+    this.data.codigoAuxiliar = 'AUX-' + codigo;
     this.data.codigoBarra = codigo;
   }
 
@@ -307,7 +296,10 @@ export class ProductAddEditModalComponent {
     this.data.codigoAuxiliar = this.params.codigoAuxiliar;
     this.data.codigoBarra = this.params.codigo;
     this.data.descripcion = this.params.descripcion;
-    this.data.precioCosto = roundNumber(this.params.precioCosto, this.decimal.nroPrecio);
+    this.data.precioCosto = roundNumber(
+      this.params.precioCosto,
+      this.decimal.nroPrecio,
+    );
     if (this.data.codigoAuxiliar) {
       this.data.codigoAuxiliar = this.params.codigoAuxiliar;
     } else {
@@ -315,9 +307,11 @@ export class ProductAddEditModalComponent {
     }
   }
 
-
   setProductPvpAdd() {
-    let dataTipoIva = this.tiposIva().find((ti: any) => ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIFTEEN_PERCENT)
+    let dataTipoIva = this.tiposIva().find(
+      (ti: any) =>
+        ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIFTEEN_PERCENT,
+    );
     let dataTemp: any = [];
     if (dataTipoIva) {
       this.data.idTipoIva = dataTipoIva.idTipoIva;
@@ -330,57 +324,66 @@ export class ProductAddEditModalComponent {
           precioConIva: 0,
           porcentajeUtilidad: 0,
           utilidad: 0,
-          estado: tarifa.predeterminada ? "Predeterminada" : ""
-        })
+          estado: tarifa.predeterminada ? 'Predeterminada' : '',
+        });
       }
     }
     this.productTarifa = dataTemp;
   }
 
-
   onChangeSubCategoria() {
-    if (this.data.idArticulo > 0 || (this.params.isImport && this.data.codigo && this.data.codigoAuxiliar && this.data.codigoBarra)) {
+    if (
+      this.data.idArticulo > 0 ||
+      (this.params.isImport &&
+        this.data.codigo &&
+        this.data.codigoAuxiliar &&
+        this.data.codigoBarra)
+    ) {
       Swal.fire({
         //title: "Are you sure?",
-        html: "¿Está de acuerdo en reemplazar automáticamente el <b>Código</b>, <b>Código Auxiliar</b> y <b>Código de Barra</b> con los datos generados por el sistema?",
-        icon: "warning",
+        html: '¿Está de acuerdo en reemplazar automáticamente el <b>Código</b>, <b>Código Auxiliar</b> y <b>Código de Barra</b> con los datos generados por el sistema?',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si!",
-        cancelButtonText: 'No'
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si!',
+        cancelButtonText: 'No',
       }).then((result) => {
         if (result.isConfirmed) {
           if (this.subCategories().length > 0) {
-
-            let { codigo } = this.subCategories().find((val) => val.idSubFamilia === this.data.idSubFamilia);
+            let { codigo } = this.subCategories().find(
+              (val) => val.idSubFamilia === this.data.idSubFamilia,
+            );
             this.setCodigo(codigo);
           }
         }
       });
-      return
+      return;
     }
 
     if (!(this.data.idArticulo > 0) && this.subCategories().length > 0) {
-      let { codigo } = this.subCategories().find((val) => val.idSubFamilia === this.data.idSubFamilia);
+      let { codigo } = this.subCategories().find(
+        (val) => val.idSubFamilia === this.data.idSubFamilia,
+      );
       this.setCodigo(codigo);
     }
   }
 
   resultModalSubFamilia(result: any) {
     try {
-      if (result && typeof result !== "object") return;
+      if (result && typeof result !== 'object') return;
 
-      this._productUseCase.getDataForm().subscribe(response => {
+      this._productUseCase.getDataForm().subscribe((response) => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
 
-        const { idSubFamilia } = this.subCategories().at(this.subCategories.length - 1);
+        const { idSubFamilia } = this.subCategories().at(
+          this.subCategories.length - 1,
+        );
         this.data.idSubFamilia = idSubFamilia;
 
-        this.onChangeSubCategoria()
-
-      })
+        this.onChangeSubCategoria();
+      });
     } catch (error) {
       console.log(error);
     }
@@ -388,25 +391,25 @@ export class ProductAddEditModalComponent {
 
   refreshSubFamilia() {
     try {
-      this._productUseCase.getDataForm().subscribe(response => {
+      this._productUseCase.getDataForm().subscribe((response) => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
-
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-
   resultModalMedida(result: any) {
     try {
-      if (result && typeof result !== "object") return;
+      if (result && typeof result !== 'object') return;
 
-      this._productUseCase.getDataForm().subscribe(response => {
+      this._productUseCase.getDataForm().subscribe((response) => {
         this.medidas.set(response.medidas);
-        this.data.idMedida = this.medidas().at(this.medidas().length - 1).idMedida;
-      })
+        this.data.idMedida = this.medidas().at(
+          this.medidas().length - 1,
+        ).idMedida;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -414,9 +417,9 @@ export class ProductAddEditModalComponent {
 
   refreshMedida() {
     try {
-      this._productUseCase.getDataForm().subscribe(response => {
+      this._productUseCase.getDataForm().subscribe((response) => {
         this.medidas.set(response.medidas);
-      })
+      });
     } catch (error) {
       console.log(error);
     }
@@ -424,9 +427,9 @@ export class ProductAddEditModalComponent {
 
   resultModalTag(result: any) {
     try {
-      if (result && typeof result !== "object") return;
+      if (result && typeof result !== 'object') return;
 
-      this.refreshTag()
+      this.refreshTag();
     } catch (error) {
       console.log(error);
     }
@@ -434,9 +437,9 @@ export class ProductAddEditModalComponent {
 
   refreshTag() {
     try {
-      this._productUseCase.getDataForm().subscribe(response => {
+      this._productUseCase.getDataForm().subscribe((response) => {
         this.etiquetas.set(response.etiquetas);
-      })
+      });
     } catch (error) {
       console.log(error);
     }
@@ -446,85 +449,93 @@ export class ProductAddEditModalComponent {
     if (this.isUpdate() && !this.isChangePrecio) {
       this.tS.toastr({
         type: 'warning',
-        message: "No tienes permiso para realizar esta acción"
-      })
-      return
+        message: 'No tienes permiso para realizar esta acción',
+      });
+      return;
     }
     if (!(this.data.precioCosto > 0) || isNaN(this.data.precioCosto)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese un número válido'
-      })
-      return
+        message: 'Ingrese un número válido',
+      });
+      return;
     }
 
     if (this.data.precioCosto === 0) {
       this.tS.toastr({
         type: 'warning',
-        message: "El valor mínimo en el precio de costo es 0.01"
-      })
+        message: 'El valor mínimo en el precio de costo es 0.01',
+      });
       return;
     }
 
-    this.data.precioCosto = roundNumber(this.data.precioCosto, this.decimal.nroPrecio);
+    this.data.precioCosto = roundNumber(
+      this.data.precioCosto,
+      this.decimal.nroPrecio,
+    );
     return true;
   }
 
   onChangeTipoIva() {
-    if (!this.validateCalculateTarifa()) return
+    if (!this.validateCalculateTarifa()) return;
 
-
-
-
-    this.recalculateTarifaAdd()
-
+    this.recalculateTarifaAdd();
   }
 
   private recalculateTarifaAdd() {
-
-    let dataTipoIva = this.tiposIva().find((item) => item.idTipoIva === this.data.idTipoIva);
+    let dataTipoIva = this.tiposIva().find(
+      (item) => item.idTipoIva === this.data.idTipoIva,
+    );
     if (!dataTipoIva) {
       this.tS.toastr({
         type: 'warning',
-        message: "No se pudo recuperar la data de tipo iva"
-      })
-      return
+        message: 'No se pudo recuperar la data de tipo iva',
+      });
+      return;
     }
     try {
       for (let item of this.productTarifa) {
-
         item.tipoIva = dataTipoIva.descripcion;
         item.porcentajeIva = dataTipoIva.porcentaje;
 
-        let precioVenta = pricingCalculateUtil.calculatePriceSale(item.precioConIva, item.porcentajeIva);
-        let precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, item.porcentajeIva);
+        let precioVenta = pricingCalculateUtil.calculatePriceSale(
+          item.precioConIva,
+          item.porcentajeIva,
+        );
+        let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+          precioVenta,
+          item.porcentajeIva,
+        );
 
-        let porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(precioVenta, this.data.precioCosto)
-        let utilidad = pricingCalculateUtil.getValueUtility(precioVenta, this.data.precioCosto)
+        let porcentajeUtilidad =
+          pricingCalculateUtil.calculateProfitMarginPercentage(
+            precioVenta,
+            this.data.precioCosto,
+          );
+        let utilidad = pricingCalculateUtil.getValueUtility(
+          precioVenta,
+          this.data.precioCosto,
+        );
 
         item.precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
 
-
         item.precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
 
-
         item.porcentajeUtilidad = porcentajeUtilidad;
-        item.utilidad = utilidad
+        item.utilidad = utilidad;
       }
     } catch (error) {
       this.tS.toastr({
         type: 'warning',
-        message: error as string
-      })
+        message: error as string,
+      });
     }
   }
 
   onChangePrecioCosto() {
-    if (!this.validateCalculateTarifa()) return
-    this.recalculateTarifaAdd()
+    if (!this.validateCalculateTarifa()) return;
+    this.recalculateTarifaAdd();
   }
-
-
 
   cellEdited(cell: any) {
     let row = cell.getRow();
@@ -538,62 +549,84 @@ export class ProductAddEditModalComponent {
     let precioConIva = parseFloat(data.precioConIva);
     let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
 
-    console.log(row)
-    console.log(column)
-    console.log(oldValue)
-    console.log(value)
+    console.log(row);
+    console.log(column);
+    console.log(oldValue);
+    console.log(value);
     if (oldValue === value) {
-      return
-    }
-
-    //Validacion de Campos
-    if ([null, undefined, "", 0].includes(this.data.precioCosto) || isNaN(this.data.precioCosto)) {
-      cell.setValue(oldValue);
-      this.tS.toastr({
-        type: 'warning',
-        message: "Ingrese el Precio de Costo"
-      })
       return;
     }
 
-    if (column === "precioVenta" && value > 0) {
+    //Validacion de Campos
+    if (
+      [null, undefined, '', 0].includes(this.data.precioCosto) ||
+      isNaN(this.data.precioCosto)
+    ) {
+      cell.setValue(oldValue);
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese el Precio de Costo',
+      });
+      return;
+    }
+
+    if (column === 'precioVenta' && value > 0) {
       if (value < this.data.precioCosto) {
         cell.setValue(oldValue);
       }
     }
 
-    if (column === "precioConIva" && value > 0) {
+    if (column === 'precioConIva' && value > 0) {
       if (value < this.data.precioCosto) {
         cell.setValue(oldValue);
       }
     }
     //Calculos
     switch (column) {
-      case "precioVenta":
-        precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeIva)
+      case 'precioVenta':
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+          precioVenta,
+          porcentajeIva,
+        );
 
-        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(precioVenta, this.data.precioCosto);
+        porcentajeUtilidad =
+          pricingCalculateUtil.calculateProfitMarginPercentage(
+            precioVenta,
+            this.data.precioCosto,
+          );
 
         break;
 
-      case "precioConIva":
-        precioVenta = pricingCalculateUtil.calculatePriceSale(precioConIva, porcentajeIva);
-        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(precioVenta, this.data.precioCosto);
+      case 'precioConIva':
+        precioVenta = pricingCalculateUtil.calculatePriceSale(
+          precioConIva,
+          porcentajeIva,
+        );
+        porcentajeUtilidad =
+          pricingCalculateUtil.calculateProfitMarginPercentage(
+            precioVenta,
+            this.data.precioCosto,
+          );
 
         break;
-      case "porcentajeUtilidad":
-        precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(this.data.precioCosto, porcentajeUtilidad)
-        precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeIva);
+      case 'porcentajeUtilidad':
+        precioVenta =
+          pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
+            this.data.precioCosto,
+            porcentajeUtilidad,
+          );
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+          precioVenta,
+          porcentajeIva,
+        );
         break;
     }
-
-
 
     let utilidad = pricingCalculateUtil.getValueUtility(
       precioVenta,
       this.data.precioCosto,
     );
-    console.log(utilidad)
+    console.log(utilidad);
 
     precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
     precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
@@ -608,15 +641,13 @@ export class ProductAddEditModalComponent {
       ...row,
       ...obj,
     });
-
   }
-
 
   private isValidForm() {
     const showWarning = (message: string) => {
       this.tS.toastr({
         type: 'warning',
-        message
+        message,
       });
     };
 
@@ -638,60 +669,105 @@ export class ProductAddEditModalComponent {
 
     // Validaciones para agregar un artículo
     if (this.isAdd()) {
-      if (isFieldInvalid(this.data.descripcion, "Ingrese la Descripción del Articulo")) return;
-      if (isFieldInvalid(this.data.codigoBarra, "Ingrese el Código de Barra del Articulo")) return;
-      if (isIdInvalid(this.data.idTipoArticulo, "Seleccione el Tipo Articulo")) return;
-      if (isIdInvalid(this.data.idMedida, "Seleccione la Medida")) return;
+      if (
+        isFieldInvalid(
+          this.data.descripcion,
+          'Ingrese la Descripción del Articulo',
+        )
+      )
+        return;
+      if (
+        isFieldInvalid(
+          this.data.codigoBarra,
+          'Ingrese el Código de Barra del Articulo',
+        )
+      )
+        return;
+      if (isIdInvalid(this.data.idTipoArticulo, 'Seleccione el Tipo Articulo'))
+        return;
+      if (isIdInvalid(this.data.idMedida, 'Seleccione la Medida')) return;
 
-      if (isFieldInvalid(this.data.precioCosto, "Ingrese el precio costo") || isNaN(this.data.precioCosto)) {
-        showWarning("El precio costo tiene que ser un número");
+      if (
+        isFieldInvalid(this.data.precioCosto, 'Ingrese el precio costo') ||
+        isNaN(this.data.precioCosto)
+      ) {
+        showWarning('El precio costo tiene que ser un número');
         return;
       }
 
-      if (this.data.datosAdicionales && isIdInvalid(this.data.idEtiqueta, "Seleccione la Etiqueta")) return;
+      if (
+        this.data.datosAdicionales &&
+        isIdInvalid(this.data.idEtiqueta, 'Seleccione la Etiqueta')
+      )
+        return;
     }
 
     // Validaciones comunes para agregar o actualizar un artículo
     if (this.isAdd() || this.isUpdate()) {
-      if (isFieldInvalid(this.data.descripcion, "Ingrese la Descripción del Articulo")) return;
-      if (isIdInvalid(this.data.idSubFamilia, "Seleccione la Sub Familia del Articulo")) return;
-      if (isFieldInvalid(this.data.codigo, "Ingrese el Código del Articulo")) return;
-      if (isIdInvalid(this.data.idTipoArticulo, "Seleccione el Tipo Articulo")) return;
-      if (isIdInvalid(this.data.idMedida, "Seleccione la Medida")) return;
+      if (
+        isFieldInvalid(
+          this.data.descripcion,
+          'Ingrese la Descripción del Articulo',
+        )
+      )
+        return;
+      if (
+        isIdInvalid(
+          this.data.idSubFamilia,
+          'Seleccione la Sub Familia del Articulo',
+        )
+      )
+        return;
+      if (isFieldInvalid(this.data.codigo, 'Ingrese el Código del Articulo'))
+        return;
+      if (isIdInvalid(this.data.idTipoArticulo, 'Seleccione el Tipo Articulo'))
+        return;
+      if (isIdInvalid(this.data.idMedida, 'Seleccione la Medida')) return;
 
-      if (this.data.caducidad && isFieldInvalid(this.data.fechaCaducidad, "Ingrese la fecha de Caducidad del Articulo")) return;
+      if (
+        this.data.caducidad &&
+        isFieldInvalid(
+          this.data.fechaCaducidad,
+          'Ingrese la fecha de Caducidad del Articulo',
+        )
+      )
+        return;
 
       if (this.data.datosLote) {
-        if (isFieldInvalid(this.data.lote, "Ingrese el Lote")) return;
-        if (isFieldInvalid(this.data.fechaCreacion, "Ingrese la fecha de Creación")) return;
-        if (isFieldInvalid(this.data.fechaCaducidadLote, "Ingrese la fecha de Caducidad del Lote")) return;
+        if (isFieldInvalid(this.data.lote, 'Ingrese el Lote')) return;
+        if (
+          isFieldInvalid(
+            this.data.fechaCreacion,
+            'Ingrese la fecha de Creación',
+          )
+        )
+          return;
+        if (
+          isFieldInvalid(
+            this.data.fechaCaducidadLote,
+            'Ingrese la fecha de Caducidad del Lote',
+          )
+        )
+          return;
       }
     }
 
     // Validaciones finales para el precio
     if (isNaN(this.data.precioCosto)) {
-      showWarning("Ingrese el Precio de Costo del Articulo");
+      showWarning('Ingrese el Precio de Costo del Articulo');
       return;
     }
 
     if (this.data.precioCosto < 0.01) {
-      showWarning("El valor mínimo en el precio de costo es 0.01");
+      showWarning('El valor mínimo en el precio de costo es 0.01');
       return;
     }
     return true;
   }
 
   save() {
-
-    if (!this.isValidForm()) return
-
-
-
-
-
+    if (!this.isValidForm()) return;
   }
-
-
 
   closeModal() {
     this.activeModal.close();

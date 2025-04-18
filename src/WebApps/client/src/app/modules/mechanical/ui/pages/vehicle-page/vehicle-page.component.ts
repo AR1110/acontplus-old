@@ -6,7 +6,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { VehicleRead } from '@mechanical/domain/models/vehicle.model';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -25,7 +25,7 @@ import { finalize } from 'rxjs';
   imports: [
     FormsModule,
     MatTableModule,
-    FontAwesomeModule,
+    
     MatSlideToggleModule,
     MatIconModule,
     MatButtonModule,

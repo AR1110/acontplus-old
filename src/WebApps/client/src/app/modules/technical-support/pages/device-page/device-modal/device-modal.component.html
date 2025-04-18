@@ -159,7 +159,7 @@
                         />
                         <button
                           type="button"
-                          class="btn btn-success btn-sm"
+                          mat-raised-button
                           (click)="addSpecTypeDevice()"
                         >
                           <mat-icon>add</mat-icon>
@@ -224,7 +224,7 @@
                                     />
                                     <button
                                       type="button"
-                                      class="btn btn-success btn-sm"
+                                      mat-raised-button
                                       (click)="addSpecsDevice(item.uuid)"
                                       [disabled]="!specForm.valid"
                                     >
@@ -287,11 +287,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button
-      type="submit"
-      class="btn btn-outline-success btn-lg"
-      [disabled]="deviceForm.invalid"
-    >
+    <button type="submit" mat-raised-button [disabled]="deviceForm.invalid">
       <mat-icon>save</mat-icon> Guardar
     </button>
     <button

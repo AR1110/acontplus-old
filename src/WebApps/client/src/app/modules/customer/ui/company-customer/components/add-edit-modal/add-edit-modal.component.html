@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="customerForm" autocomplete="off">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -100,7 +100,7 @@
                     ngbTooltip="Haz doble 'Click' sobre el correo para editar"
                     tooltip-placement="top"
                   >
-                    <fa-icon [icon]="'info-circle'"></fa-icon>
+                    <mat-icon>info</mat-icon>
                   </span>
                 </label>
                 <mat-chip-grid #chipGridEmail aria-label="Enter emails">
@@ -135,7 +135,7 @@
                     ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar"
                     tooltip-placement="top"
                   >
-                    <fa-icon [icon]="'info-circle'"></fa-icon>
+                    <mat-icon>info</mat-icon>
                   </span>
                 </label>
                 <mat-chip-grid
@@ -226,7 +226,7 @@
                     class="btn btn-outline-secondary btn-sm"
                     type="button"
                   >
-                    <fa-icon [icon]="'sync'"></fa-icon>
+                    <mat-icon>refresh</mat-icon>
                   </button>
                 </div>
               </div>
@@ -287,7 +287,7 @@
                     tabindex="-1"
                     type="button"
                   >
-                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <mat-icon>add</mat-icon>
                   </button>
                 </div>
               </div>
@@ -334,7 +334,7 @@
                     tabindex="-1"
                     type="button"
                   >
-                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <mat-icon>add</mat-icon>
                   </button>
                 </div>
                 <small class="text-danger" ng-show="data.noResults"
@@ -365,7 +365,7 @@
                     tabindex="-1"
                     type="button"
                   >
-                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <mat-icon>add</mat-icon>
                   </button>
                 </div>
               </div>
@@ -395,8 +395,8 @@
                     tooltip-placement="top"
                     uib-tooltip="Haz doble 'Click' sobre el placa para editar"
                   >
-                    <fa-icon [icon]="'info'"></fa-icon
-                  ></span>
+                    <mat-icon>info</mat-icon>
+                  </span>
                 </label>
                 <!-- <md-chips
                   ng-model="placas"
@@ -446,11 +446,11 @@
                 </mat-card-content>
               </mat-card>
               <button
-                class="btn btn-success btn-sm"
+                mat-raised-button
                 ng-click="exportTpvCard(data.numeroIdentificacion)"
                 ng-if="data.barcodeGenerated"
               >
-                <fa-icon [icon]="'share'"></fa-icon>
+                <mat-icon>share</mat-icon>
                 Compartir Tarjeta
               </button>
             </div>
@@ -463,10 +463,10 @@
   <div class="modal-footer">
     <button
       [disabled]="!customerForm.valid"
-      class="btn btn-outline-success"
+      mat-raised-button
       type="submit"
     >
-      <fa-icon [icon]="'save'"></fa-icon>
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
     <button (click)="onModalClose()" class="btn btn-outline-dark" type="button">

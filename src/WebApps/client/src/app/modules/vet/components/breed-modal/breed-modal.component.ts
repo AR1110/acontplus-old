@@ -7,23 +7,23 @@ import {
 } from '@angular/forms';
 import { Breed } from '@modules/vet/models/breed.model';
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-breed-modal',
-    imports: [FontAwesomeModule, ReactiveFormsModule],
-    templateUrl: './breed-modal.component.html',
-    styles: ``
+  selector: 'app-breed-modal',
+  imports: [ReactiveFormsModule, MatIcon, MatButton],
+  templateUrl: './breed-modal.component.html',
+  styles: ``,
 })
 export class BreedModalComponent {
   data = {} as Breed;
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Raza';
   petTypes: PetType[] = [];
   breedForm = new FormGroup({

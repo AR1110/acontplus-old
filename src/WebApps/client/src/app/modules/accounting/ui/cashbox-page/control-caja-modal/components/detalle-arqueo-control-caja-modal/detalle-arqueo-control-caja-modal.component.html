@@ -1,47 +1,56 @@
 <div class="modal-header">
-    <h4 class="modal-title">Detalle Arqueo Caja</h4><br>
-    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <h4 class="modal-title">Detalle Arqueo Caja</h4>
+  <br />
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
 </div>
 <div class="modal-body">
-    <span> fecha Cierre: {{this.params.fechaCierre}}</span>
-    <div class="row">
-        <table class="table">
-            <thead>
-                <tr class="text-center">
-                    <th scope="col">Descripcion</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Valor</th>
-                    <th scope="col">Total</th>
-                </tr>
-            </thead>
+  <span> fecha Cierre: {{ this.params.fechaCierre }}</span>
+  <div class="row">
+    <table class="table">
+      <thead>
+        <tr class="text-center">
+          <th scope="col">Descripcion</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col">Valor</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
 
-            <tbody>
-                @for (item of arqueoCajaDetalle; track $index) {
-                <tr class="text-center">
-                    <td>{{item.descripcion}}</td>
-                    <td>{{item.cantidad}}</td>
-                    <td>{{item.valor}}</td>
-                    <td>{{item.total}}</td>
-                </tr>
-                }
-            </tbody>
+      <tbody>
+        @for (item of arqueoCajaDetalle; track $index) {
+          <tr class="text-center">
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>{{ item.valor }}</td>
+            <td>{{ item.total }}</td>
+          </tr>
+        }
+      </tbody>
 
-            <tfoot>
-                <tr class="text-center">
-                    <td colspan="3">Total</td>
-                    <td>${{total}}</td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+      <tfoot>
+        <tr class="text-center">
+          <td colspan="3">Total</td>
+          <td>${{ total }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-success" (click)="exportData()"> <fa-icon
-            [icon]="['fas', 'file-excel']"></fa-icon>
-        Exportar</button>
+  <button type="button" mat-raised-button (click)="exportData()">
+    <mat-icon>download</mat-icon> Exportar
+  </button>
 
-    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">&times;
-        Cerrar</button>
-
-
+  <button
+    type="button"
+    class="btn btn-outline-dark"
+    (click)="activeModal.close('Close click')"
+  >
+    &times; Cerrar
+  </button>
 </div>

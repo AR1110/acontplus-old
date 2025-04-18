@@ -1,85 +1,85 @@
-import { Component, inject, Input, input, ViewChild } from '@angular/core';
-import { FormsModule } from "@angular/forms";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ToasterService } from "@core/services/toaster.service";
-import { TabulatorComponent } from "@core/components/tabulator/tabulator.component";
-import { icon } from '@fortawesome/fontawesome-svg-core';
-import { faPlusSquare, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { Component, inject, Input, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { ToasterService } from '@core/services/toaster.service';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import Swal from 'sweetalert2';
 import { isValidField } from '@core/utils/utils';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
-
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-doc-config-info-adicional',
-    imports: [FontAwesomeModule, FormsModule, TabulatorComponent],
-    templateUrl: './doc-config-info-adicional.component.html',
-    styles: ``
+  selector: 'app-doc-config-info-adicional',
+  imports: [FormsModule, TabulatorComponent, MatButton],
+  templateUrl: './doc-config-info-adicional.component.html',
+  styles: ``,
 })
 export class DocConfigInfoAdicionalComponent {
   @Input() params = {} as any;
 
   private tS = inject(ToasterService);
   private docConfigSvc = inject(DocConfigService);
-  modal = inject(NgbActiveModal)
+  modal = inject(NgbActiveModal);
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   infoAdicional: any[] = [];
 
-  getInfoAdicional(){
-    this.infoAdicional = []
-    this.docConfigSvc.getInfoAdicional(this.params.idConfiguracionDocumento).subscribe(response=>{
-      this.infoAdicional = response.infoAdicional || [];
-    })
+  getInfoAdicional() {
+    this.infoAdicional = [];
+    this.docConfigSvc
+      .getInfoAdicional(this.params.idConfiguracionDocumento)
+      .subscribe((response) => {
+        this.infoAdicional = response.infoAdicional || [];
+      });
   }
 
-  ngOnInit(){
-    this.getInfoAdicional()
+  ngOnInit() {
+    this.getInfoAdicional();
   }
 
   readonly columns = [
     {
-      title: `${icon(faPlusSquare).html.join('')}`,
+      title: `<i class="material-icons" style="cursor:pointer;">add_box</i>`, // reemplazo de faPlusSquare
       headerHozAlign: 'center',
       headerSort: false,
-      headerClick: () => { this.infoAdicional.push({}); },
+      headerClick: () => {
+        this.infoAdicional.push({});
+      },
       formatter: (cell: any) => {
-
-        //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.innerHTML = `<i class="material-icons" style="font-size:16px;">delete</i>`; // reemplazo de faTrashAlt
         delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           console.log(rowData);
           this.askToDelete(rowData);
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
 
         return buttonHolder;
       },
     },
     {
-      title: "Nombre",
-      field: "nombre",
-      width: "35px",
+      title: 'Nombre',
+      field: 'nombre',
+      width: '35px',
       responsive: 0,
       headerSort: false,
-      editor: true
+      editor: true,
     },
     {
-      title: "Valor",
-      field: "valor",
-      width: "60px",
+      title: 'Valor',
+      field: 'valor',
+      width: '60px',
       headerSort: false,
-      editor: true
+      editor: true,
     },
-  ]
+  ];
 
   askToDelete(data: any) {
     try {
@@ -102,18 +102,19 @@ export class DocConfigInfoAdicionalComponent {
     }
   }
 
-
   save() {
     try {
-
-      if (this.infoAdicional.some(item => !(isValidField(item.nombre) || isValidField(item.valor)))) {
+      if (
+        this.infoAdicional.some(
+          (item) => !(isValidField(item.nombre) || isValidField(item.valor)),
+        )
+      ) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Los campos no pueden estar vacio'
-        })
-        return
+          message: 'Los campos no pueden estar vacio',
+        });
+        return;
       }
-
 
       const data = {
         id: this.params.idConfiguracionDocumento,
@@ -121,39 +122,35 @@ export class DocConfigInfoAdicionalComponent {
         idTipoDocumento: this.params.idTipoDocumento,
         estado: this.params.estado,
         ultimaSecuencia: this.params.ultimaSecuencia,
-        editInfo : true,
-        infoAdicional: this.infoAdicional.length == 0 ? null : JSON.stringify(this.infoAdicional)
+        editInfo: true,
+        infoAdicional:
+          this.infoAdicional.length == 0
+            ? null
+            : JSON.stringify(this.infoAdicional),
       };
 
-      
       this.docConfigSvc.post(data).subscribe({
         next: (response) => {
-          
-
-          if (response.code === "0") {
+          if (response.code === '0') {
             this.tS.toastr({
               type: 'warning',
-              message: response.message
-            })
+              message: response.message,
+            });
           }
-          if (response.code === "1") {
+          if (response.code === '1') {
             this.tS.toastr({
               type: 'success',
-              message: response.message
-            })
+              message: response.message,
+            });
             this.modal.close(response);
           }
         },
         error(err) {
-          
-          console.log(err)
+          console.log(err);
         },
-      })
-
-
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
 }

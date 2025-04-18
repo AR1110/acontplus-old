@@ -8,24 +8,21 @@ import { ToasterService } from '@core/services/toaster.service';
 
 import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import {
   NgbActiveModal,
   NgbTimepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import {EntidadFinanciera} from "@accounting/core/models/entidad-financiera.interface";
+import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
 import { formatDateToString } from '@core/utils/date.util';
-import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
+import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-filtro-detalle-caja-report-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        FontAwesomeModule,
-        NgbTimepickerModule,
-    ],
-    templateUrl: './filtro-detalle-cajar-report-modal.component.html'
+  selector: 'app-filtro-detalle-caja-report-modal',
+  imports: [CommonModule, FormsModule, NgbTimepickerModule, MatIcon, MatButton],
+  templateUrl: './filtro-detalle-cajar-report-modal.component.html',
 })
 export class FiltroDetalleCajaReportModal {
   @Input('params') params = {
@@ -47,7 +44,7 @@ export class FiltroDetalleCajaReportModal {
     timePicker: true,
     format: 'YYYY-MM-DD HH:mm',
   };
-  private _controlCajaUseCase = inject(ControlCajaUseCase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase);
 
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
@@ -68,7 +65,6 @@ export class FiltroDetalleCajaReportModal {
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
-
           let { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
@@ -77,7 +73,6 @@ export class FiltroDetalleCajaReportModal {
           this.tipoDocumentos = tipoDocumento;
         },
         error(err) {
-
           console.log(err);
         },
       });
@@ -126,7 +121,6 @@ export class FiltroDetalleCajaReportModal {
         horaFin: formatDateToString(this.dataSearch.toDate),
         ckHora: this.dataSearch.ckHora,
       };
-
 
       const parameters = {
         hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json

@@ -16,7 +16,7 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
@@ -49,7 +49,7 @@ import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/com
   imports: [
     CommonModule,
     FormsModule,
-    FontAwesomeModule,
+    
     MatTableModule,
     MatCheckboxModule,
     NgbPopoverModule,

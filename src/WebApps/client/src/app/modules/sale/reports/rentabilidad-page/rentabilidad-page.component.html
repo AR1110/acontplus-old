@@ -105,7 +105,6 @@
         <div class="form-group">
           <label for="subFamilias">SubFamilias</label>
           <mat-select
-            matNativeControl
             [formControl]="checkedSubCategorias"
             multiple
             class="form-select"
@@ -236,11 +235,7 @@
       <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
         PDF
       </button>
-      <button
-        class="btn btn-success"
-        type="button"
-        (click)="getReport('excel')"
-      >
+      <button mat-raised-button type="button" (click)="getReport('excel')">
         EXCEL
       </button>
     </div>

@@ -13,10 +13,11 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { QuillEditorComponent } from 'ngx-quill';
 import { templates } from '@modules/common/utils/templates';
 import { EmailQueueUseCase } from '@modules/common/core/use-cases/email-queue-use-case';
+import { MatIcon } from '@angular/material/icon';
 export enum RecipientType {
   USERS = 'U',
   CUSTOMERS = 'C',
@@ -35,7 +36,7 @@ export enum RecipientType {
     MatError,
     MatCardModule,
     BreadcrumbComponent,
-    FaIconComponent,
+    MatIcon,
     QuillEditorComponent,
   ],
   templateUrl: './email-queue.component.html',

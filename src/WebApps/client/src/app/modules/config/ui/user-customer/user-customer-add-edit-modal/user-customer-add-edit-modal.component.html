@@ -95,7 +95,7 @@
 <!--<form (ngSubmit)="onSubmit()" [formGroup]="dataForm" autocomplete="off">-->
 <!--  <div class="modal-header">-->
 <!--    <h4 class="modal-title" id="modal-basic-title">-->
-<!--      <fa-icon [icon]="modalIcon"></fa-icon>-->
+<!--      <mat-icon>{{modalIcon}}</mat-icon>-->
 <!--      {{ titleModal }}-->
 <!--    </h4>-->
 <!--    <button (click)="modal.dismiss('Cross click')" aria-label="Close" class="btn-close" type="button"></button>-->
@@ -151,8 +151,8 @@
 <!--    }-->
 <!--  </div>-->
 <!--  <div class="modal-footer">-->
-<!--    <button [disabled]="dataForm.invalid" class="btn btn-outline-success" type="submit">-->
-<!--      <fa-icon [icon]="'save'"></fa-icon>-->
+<!--    <button [disabled]="dataForm.invalid" mat-raised-button type="submit">-->
+<!--      <mat-icon>save</mat-icon>-->
 <!--      Guardar-->
 <!--    </button>-->
 <!--    <button (click)="modal.close('Save click')" class="btn btn-outline-dark" type="button">-->

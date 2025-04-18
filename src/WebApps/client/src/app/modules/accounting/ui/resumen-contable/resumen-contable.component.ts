@@ -1,61 +1,71 @@
 import { Component, inject } from '@angular/core';
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubCategorySelectHtmlOnly } from '@accounting/core/models/subcategory';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {FORMAT_REPORT, TIPO_TRANSACCION } from '@core/constants/global.constants';
-import {SharedService} from "@core/services/shared.service";
-import {getValidId} from "@core/utils/utils";
-import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
-import {ResumenContableUseCase} from "@accounting/core/use-cases/resumen-contable.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import {
+  FORMAT_REPORT,
+  TIPO_TRANSACCION,
+} from '@core/constants/global.constants';
+import { SharedService } from '@core/services/shared.service';
+import { getValidId } from '@core/utils/utils';
+import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
+import { ResumenContableUseCase } from '@accounting/core/use-cases/resumen-contable.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-resumen-contable',
+  selector: 'app-resumen-contable',
   imports: [
     FormsModule,
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     MatCardContent,
-    MatCard
+    MatCard,
+    MatButton,
   ],
-    templateUrl: './resumen-contable.component.html',
-    styles: ``
+  templateUrl: './resumen-contable.component.html',
+  styles: ``,
 })
 export class ResumenContableComponent {
-  private _resumenContableCaseUse = inject(ResumenContableUseCase)
-  private sharedSvc = inject(SharedService)
-   subcategories: SubCategorySelectHtmlOnly[]=[]
-   transactionTypes:any[]=[];
+  private _resumenContableCaseUse = inject(ResumenContableUseCase);
+  private sharedSvc = inject(SharedService);
+  subcategories: SubCategorySelectHtmlOnly[] = [];
+  transactionTypes: any[] = [];
 
-   isPurchase = false;
+  isPurchase = false;
 
-   private format = '';
+  private format = '';
 
-   dataSearch = {
-     idTipoTransaccion: 0,
-     fromDate: formatDateToString(new Date()) ,
-     toDate: formatDateToString(new Date()) ,
-     idSubcategoria: 0
-   }
-  getDataFilter(){
-    this._resumenContableCaseUse.getDataFilter().subscribe(response=>{
+  dataSearch = {
+    idTipoTransaccion: 0,
+    fromDate: formatDateToString(new Date()),
+    toDate: formatDateToString(new Date()),
+    idSubcategoria: 0,
+  };
+  getDataFilter() {
+    this._resumenContableCaseUse.getDataFilter().subscribe((response) => {
       this.subcategories = response.subCategories;
       this.transactionTypes = response.transactionTypes;
-      let dataTipoTransaccion = this.transactionTypes.find(tt=>tt.codigo===TIPO_TRANSACCION.V);
-      this.dataSearch.idTipoTransaccion = dataTipoTransaccion?.idTipoTransaccion ?? 0;
-    })
+      let dataTipoTransaccion = this.transactionTypes.find(
+        (tt) => tt.codigo === TIPO_TRANSACCION.V,
+      );
+      this.dataSearch.idTipoTransaccion =
+        dataTipoTransaccion?.idTipoTransaccion ?? 0;
+    });
   }
 
-  ngOnInit(){
-    this.getDataFilter()
+  ngOnInit() {
+    this.getDataFilter();
   }
 
-
-  public onChangeTypeTransaccion(){
-    this.isPurchase = this.transactionTypes.some(tt=>tt.idTipoTransaccion===this.dataSearch.idTipoTransaccion && tt.codigo===TIPO_TRANSACCION.C);
-
+  public onChangeTypeTransaccion() {
+    this.isPurchase = this.transactionTypes.some(
+      (tt) =>
+        tt.idTipoTransaccion === this.dataSearch.idTipoTransaccion &&
+        tt.codigo === TIPO_TRANSACCION.C,
+    );
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
@@ -63,49 +73,42 @@ export class ResumenContableComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  reportPdf(){
+  reportPdf() {
     this.format = FORMAT_REPORT.PDF;
-    this.getReport()
+    this.getReport();
   }
 
-  reportExcel(){
+  reportExcel() {
     this.format = FORMAT_REPORT.EXCEL;
-    this.getReport()
+    this.getReport();
   }
 
-
-
-  private getReport(){
-
-
+  private getReport() {
     let dataParams = {
       tipo: 1,
       ckFecha: true,
       tipoTransaccionId: getValidId(this.dataSearch.idTipoTransaccion),
-      subCategoryId : getValidId(this.dataSearch.idSubcategoria),
+      subCategoryId: getValidId(this.dataSearch.idSubcategoria),
       fromDate: this.dataSearch.fromDate,
       toDate: this.dataSearch.toDate,
     };
 
-    let  reportParams = JSON.stringify({
+    let reportParams = JSON.stringify({
       hasParams: false,
       codigo: ACCOUNTING_CODE_REPORT.RAAM,
       format: this.format,
-      aditionalParams: []
-    })
+      aditionalParams: [],
+    });
 
     const parameters = {
       hasIdUsuarioRol: true,
       reportParams,
-      dataParams: JSON.stringify(dataParams)
+      dataParams: JSON.stringify(dataParams),
     };
 
     this.sharedSvc.getReport({
       data: parameters,
       format: this.format,
-
-    })
-
+    });
   }
-
 }

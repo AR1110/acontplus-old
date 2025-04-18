@@ -53,10 +53,7 @@
                 class="btn btn-primary m-l-5"
                 type="button"
               >
-                <fa-icon
-                  [icon]="extraOptionsIcon"
-                  matTooltip="{{ extraOptionsTooltip }}"
-                ></fa-icon>
+                <mat-icon>{{ extraOptionsIcon }}</mat-icon>
               </button>
               <button
                 (click)="loadData()"
@@ -64,7 +61,7 @@
                 matTooltip="Recargar"
                 type="button"
               >
-                <fa-icon [icon]="'refresh'"></fa-icon>
+                <mat-icon>refresh</mat-icon>
               </button>
             </div>
           </div>
@@ -130,7 +127,7 @@
           mat-raised-button
           type="button"
         >
-          <fa-icon [icon]="'download'"></fa-icon>
+          <mat-icon>download</mat-icon>
           Importación Automatica
         </button>
         <button
@@ -139,7 +136,7 @@
           class="m-2"
           type="button"
         >
-          <fa-icon [icon]="'mouse'"></fa-icon>
+          <mat-icon>mouse</mat-icon>
           Importación Manual
         </button>
         <button
@@ -148,11 +145,11 @@
           class="m-2"
           type="button"
         >
-          <fa-icon [icon]="'file-export'"></fa-icon>
+          <<mat-icon>upload_file</mat-icon>
           Migrar Comprobantes
         </button>
         <button (click)="editSubcategory()" mat-raised-button type="button">
-          <fa-icon [icon]="'pencil'"></fa-icon>
+          <mat-icon>edit</mat-icon>
           Modificar Subcategoría
         </button>
       </div>

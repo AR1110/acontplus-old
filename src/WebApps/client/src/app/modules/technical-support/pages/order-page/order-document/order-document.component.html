@@ -1,78 +1,129 @@
 <div class="modal-header">
-    <h4 class="modal-title"><fa-icon [icon]="'cog'"></fa-icon>
-        Documento Vinculado
-    </h4>
-    <button type="button" class="btn-close" (click)="closeModal()"></button>
+  <h4 class="modal-title">
+    <mat-icon>settings</mat-icon>
+    Documento Vinculado
+  </h4>
+  <button type="button" class="btn-close" (click)="closeModal()"></button>
 </div>
 <div class="modal-body">
-    <div class="row">
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Estab:</label>
-                <input [(ngModel)]="documento[0].establecimiento" type="email" class="form-control" disabled>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Cliente:</label>
-                <input [(ngModel)]="documento[0].cliente" type="email" class="form-control" disabled>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Nro Identificación:</label>
-                <input [(ngModel)]="documento[0].numeroIdentificacion" type="email" class="form-control" disabled>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Dirección:</label>
-                <input [(ngModel)]="documento[0].direccion" type="email" class="form-control" disabled>
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Estab:</label>
+        <input
+          [(ngModel)]="documento[0].establecimiento"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Tipo Documento:</label>
-                <input [(ngModel)]="documento[0].descripcion" type="email" class="form-control" disabled>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Serie comprobante:</label>
-                <input [(ngModel)]="documento[0].serie" type="email" class="form-control" disabled>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Fecha Emisión:</label>
-                <input [(ngModel)]="documento[0].fechaEmision" type="email" class="form-control" disabled>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-3 col-md-3 col-12">
-            <div class="mb-3">
-                <label for="" class="form-label">Total:</label>
-                <input [(ngModel)]="documento[0].total" type="number" class="form-control" disabled>
-            </div>
-        </div>
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Cliente:</label>
+        <input
+          [(ngModel)]="documento[0].cliente"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <app-tabulator [columnNames]="columns" [tableData]="documentDetails"></app-tabulator>
-        </div>
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Nro Identificación:</label>
+        <input
+          [(ngModel)]="documento[0].numeroIdentificacion"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
     </div>
-    <div class="row">
-        <div class="col-lg mt-3">
-            <div class="form-floating">
-                <textarea disabled [(ngModel)]="documento[0].obs" class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                <label for="floatingTextarea2">Observación</label>
-              </div>
-        </div>
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Dirección:</label>
+        <input
+          [(ngModel)]="documento[0].direccion"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
     </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Tipo Documento:</label>
+        <input
+          [(ngModel)]="documento[0].descripcion"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
+    </div>
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Serie comprobante:</label>
+        <input
+          [(ngModel)]="documento[0].serie"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
+    </div>
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Fecha Emisión:</label>
+        <input
+          [(ngModel)]="documento[0].fechaEmision"
+          type="email"
+          class="form-control"
+          disabled
+        />
+      </div>
+    </div>
+    <div class="col-sm-12 col-lg-3 col-md-3 col-12">
+      <div class="mb-3">
+        <label for="" class="form-label">Total:</label>
+        <input
+          [(ngModel)]="documento[0].total"
+          type="number"
+          class="form-control"
+          disabled
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <app-tabulator
+        [columnNames]="columns"
+        [tableData]="documentDetails"
+      ></app-tabulator>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg mt-3">
+      <div class="form-floating">
+        <textarea
+          disabled
+          [(ngModel)]="documento[0].obs"
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="floatingTextarea2"
+          style="height: 100px"
+        ></textarea>
+        <label for="floatingTextarea2">Observación</label>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="closeModal()">
-        &times; Cancelar
-    </button>
+  <button type="button" class="btn btn-outline-dark" (click)="closeModal()">
+    &times; Cancelar
+  </button>
 </div>

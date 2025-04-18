@@ -36,7 +36,7 @@
     (onResult)="onResult($event)"
    appCompanyCustomerAddEdit
   >
-    <fa-icon [icon]="'plus'"></fa-icon>
+    <mat-icon>add</mat-icon>
   </button>
 
   @if (id > 0) {
@@ -47,11 +47,11 @@
    appCompanyCustomerAddEdit
    [id]="id"
   >
-    <fa-icon [icon]="'edit'"></fa-icon>
+    <mat-icon>edit</mat-icon>
   </button>
   }
   <button type="button" class="btn btn-outline-secondary btn-sm">
-    <fa-icon [icon]="'search'"></fa-icon>
+    <mat-icon>search</mat-icon>
   </button>
 </div>
 } @if (searching) {

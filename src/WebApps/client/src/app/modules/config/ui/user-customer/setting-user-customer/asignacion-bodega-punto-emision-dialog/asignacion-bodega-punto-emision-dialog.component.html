@@ -6,85 +6,68 @@
 />
 
 <ng-template #body>
- <div class="d-grid gap-2">
-   <app-mat-dynamic-card
-     [showHeader]="true"
-   [subtitle]="'Puntos de Emisión'"
-   >
-     <app-mat-dynamic-table
-       [tableData]="dataSourcePuntoEmision()"
-       [columnDefinitions]="columnsDefsPuntoEmision"
-       [visibleColumns]="columnsPuntoEmision"
-       [templateOp]="templateOpPuntoEmision"
-     >
-     </app-mat-dynamic-table>
+  <div class="d-grid gap-2">
+    <app-mat-dynamic-card [showHeader]="true" [subtitle]="'Puntos de Emisión'">
+      <app-mat-dynamic-table
+        [tableData]="dataSourcePuntoEmision()"
+        [columnDefinitions]="columnsDefsPuntoEmision"
+        [visibleColumns]="columnsPuntoEmision"
+        [templateOp]="templateOpPuntoEmision"
+      >
+      </app-mat-dynamic-table>
 
-     <ng-template #templateOpPuntoEmision let-item="item">
-       @if (item.idPtoEmi_Asig > 0) {
-         <button mat-icon-button
-           (click)="addPuntoEmision(item)"
-         >
-           <mat-icon>delete_outline</mat-icon>
-         </button>
-       } @else {
-         <button mat-icon-button
-           (click)="addPuntoEmision(item)"
-         >
-           <mat-icon>save</mat-icon>
-         </button>
-       }
-     </ng-template>
+      <ng-template #templateOpPuntoEmision let-item="item">
+        @if (item.idPtoEmi_Asig > 0) {
+          <button mat-icon-button (click)="addPuntoEmision(item)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        } @else {
+          <button mat-icon-button (click)="addPuntoEmision(item)">
+            <mat-icon>save</mat-icon>
+          </button>
+        }
+      </ng-template>
 
-     <ng-template #templatePuntoEmisionDefault let-item>
-       @if (item.estado) {
-         <mat-slide-toggle
-           [(ngModel)]="item.defaultPtoEmi"
-           (change)="onChangePuntoEmisionDefault(item)"
-         ></mat-slide-toggle>
-       }
-     </ng-template>
+      <ng-template #templatePuntoEmisionDefault let-item>
+        @if (item.estado) {
+          <mat-slide-toggle
+            [(ngModel)]="item.defaultPtoEmi"
+            (change)="onChangePuntoEmisionDefault(item)"
+          ></mat-slide-toggle>
+        }
+      </ng-template>
+    </app-mat-dynamic-card>
 
-   </app-mat-dynamic-card>
+    <app-mat-dynamic-card [showHeader]="true" [subtitle]="'Bodegas'">
+      <app-mat-dynamic-table
+        [tableData]="dataSourceBodega()"
+        [columnDefinitions]="columnsDefsBodega"
+        [visibleColumns]="columnsBodega"
+        [templateOp]="templateOpBodega"
+      >
+      </app-mat-dynamic-table>
 
-
-   <app-mat-dynamic-card
-     [showHeader]="true"
-     [subtitle]="'Bodegas'"
-   >
-     <app-mat-dynamic-table
-       [tableData]="dataSourceBodega()"
-       [columnDefinitions]="columnsDefsBodega"
-       [visibleColumns]="columnsBodega"
-       [templateOp]="templateOpBodega"
-     >
-     </app-mat-dynamic-table>
-
-     <ng-template #templateOpBodega let-item="item">
-       @if (item.idBodeg_Asig > 0) {
-         <button mat-icon-button (click)="addBodega(item)"
-         >
-           <mat-icon>delete_outline</mat-icon>
-         </button>
-       } @else {
-         <button mat-icon-button  (click)="addBodega(item)"
-         >
-           <mat-icon>save</mat-icon>
-         </button>
-       }
-     </ng-template>
-     <ng-template #templateDefaultBodega let-item>
-       @if (item.estado) {
-         <mat-slide-toggle
-           [(ngModel)]="item.defaultBodga"
-           (change)="onChangeBodegaDefault(item)"
-         ></mat-slide-toggle>
-       }
-     </ng-template>
-   </app-mat-dynamic-card>
-
-
-
- </div>
+      <ng-template #templateOpBodega let-item="item">
+        @if (item.idBodeg_Asig > 0) {
+          <button mat-icon-button (click)="addBodega(item)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        } @else {
+          <button mat-icon-button (click)="addBodega(item)">
+            <mat-icon>save</mat-icon>
+          </button>
+        }
+      </ng-template>
+      <ng-template #templateDefaultBodega let-item>
+        @if (item.estado) {
+          <mat-slide-toggle
+            [(ngModel)]="item.defaultBodga"
+            (change)="onChangeBodegaDefault(item)"
+          ></mat-slide-toggle>
+        }
+      </ng-template>
+    </app-mat-dynamic-card>
+  </div>
 </ng-template>
 <ng-template #footer></ng-template>
 
@@ -144,14 +127,14 @@
 <!--                      class="btn btn-danger btn-sm"-->
 <!--                      (click)="addPuntoEmision(item)"-->
 <!--                    >-->
-<!--                      <fa-icon [icon]="'trash'"></fa-icon>-->
+<!--                      <mat-icon>delete</mat-icon>-->
 <!--                    </button>-->
 <!--                  } @else {-->
 <!--                    <button-->
-<!--                      class="btn btn-success btn-sm"-->
+<!--                      mat-raised-button-->
 <!--                      (click)="addPuntoEmision(item)"-->
 <!--                    >-->
-<!--                      <fa-icon [icon]="'save'"></fa-icon>-->
+<!--                      <mat-icon>save</mat-icon>-->
 <!--                    </button>-->
 <!--                  }-->
 <!--                </td>-->
@@ -210,14 +193,14 @@
 <!--                      class="btn btn-danger btn-sm"-->
 <!--                      (click)="addBodega(item)"-->
 <!--                    >-->
-<!--                      <fa-icon [icon]="'trash'"></fa-icon>-->
+<!--                      <mat-icon>delete</mat-icon>-->
 <!--                    </button>-->
 <!--                  } @else {-->
 <!--                    <button-->
-<!--                      class="btn btn-success btn-sm"-->
+<!--                      mat-raised-button-->
 <!--                      (click)="addBodega(item)"-->
 <!--                    >-->
-<!--                      <fa-icon [icon]="'save'"></fa-icon>-->
+<!--                      <mat-icon>save</mat-icon>-->
 <!--                    </button>-->
 <!--                  }-->
 <!--                </td>-->

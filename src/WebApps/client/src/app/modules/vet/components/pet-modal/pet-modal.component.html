@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="petForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -117,12 +117,8 @@
     </mat-card>
   </div>
   <div class="modal-footer">
-    <button
-      [disabled]="petForm.invalid"
-      class="btn btn-success btn-sm"
-      type="submit"
-    >
-      <i class="ti-save"></i> Guardar
+    <button [disabled]="petForm.invalid" mat-raised-button type="submit">
+      <mat-icon>save</mat-icon>Guardar
     </button>
     <button (click)="onModalClose()" class="btn btn-dark btn-sm" type="button">
       &times; Cancelar

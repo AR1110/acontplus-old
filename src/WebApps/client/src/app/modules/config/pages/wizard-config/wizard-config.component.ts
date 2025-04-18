@@ -31,7 +31,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
@@ -47,15 +47,18 @@ import {
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
-import {UserData} from "@modules/auth/domain/models/user-data.model";
-import {UpdateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/update-user-customer.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { UserData } from '@modules/auth/domain/models/user-data.model';
+import { UpdateUserCustomerUseCase } from '@modules/config/domain/use-cases/user-customer/update-user-customer.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
-    selector: 'app-wizard-config',
+  selector: 'app-wizard-config',
   imports: [
     MatStepper,
     MatStep,
@@ -76,9 +79,10 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     TabulatorSemanticUiComponent,
     MatCardContent,
     MatCard,
+    MatIcon,
   ],
-    templateUrl: './wizard-config.component.html',
-    styles: []
+  templateUrl: './wizard-config.component.html',
+  styles: [],
 })
 export class WizardConfigComponent {
   @ViewChild('stepper') stepper!: MatStepper;
@@ -117,11 +121,11 @@ export class WizardConfigComponent {
     },
   ];
   faYoutube: IconProp = faYoutube;
-  fileError: boolean = false;
+  fileError = false;
   selectedFile: File | null = null;
-  certificateUpdated: boolean = false;
+  certificateUpdated = false;
   docsConfig = [];
-  docsUpdated: boolean = false;
+  docsUpdated = false;
   actividadesEconomica: any[] = [];
   agentesRetencion: any[] = [];
   contribuyentes: any[] = [];
@@ -158,10 +162,10 @@ export class WizardConfigComponent {
   estabRegistered: boolean = false;
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
 
-  private _tokenUseCase = inject(TokenUseCase)
+  private _tokenUseCase = inject(TokenUseCase);
 
   #toasterService = inject(ToasterService);
-  private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase)
+  private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   #estabService = inject(EstablishmentService);
   #fb = inject(FormBuilder);
   estabForm = this.#fb.group({
@@ -392,10 +396,10 @@ export class WizardConfigComponent {
       email: this.user.email,
       username: this.user.username,
       demoStepId: this.demoSteps.find((step) => step.code === 'IV')?.id,
-    }
+    };
     const userData = {
       data,
-      id: this.user.userId
+      id: this.user.userId,
     };
     this.$updateUserCustomerUseCase.execute(userData).subscribe((response) => {
       if (isApiResponse(response)) {

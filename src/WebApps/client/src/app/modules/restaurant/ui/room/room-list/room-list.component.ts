@@ -10,8 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { FloorService } from '@restaurant/data/services/floor.service';
 import { Floor } from '@restaurant/domain/models/floor.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import { icon } from '@fortawesome/fontawesome-svg-core';
-import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
@@ -19,7 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
   selector: 'app-room-list',
@@ -111,7 +110,7 @@ export class RoomListComponent {
           //create edit button
           let editBtn = document.createElement('button');
           editBtn.type = 'button';
-          editBtn.innerHTML = `${icon(faSave).html.join('')}`;
+          editBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">save</i>`;
           editBtn.classList.add('btn', 'btn-success', 'btn-sm');
           editBtn.title = 'Guardar Sala';
           editBtn.addEventListener('click', () => {
@@ -122,7 +121,7 @@ export class RoomListComponent {
           //create delete button
           let delBtn = document.createElement('button');
           delBtn.type = 'button';
-          delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+          delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
           delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
           delBtn.title = 'Eliminar Sala';
           delBtn.addEventListener('click', () => {

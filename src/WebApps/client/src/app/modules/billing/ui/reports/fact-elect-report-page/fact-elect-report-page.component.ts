@@ -15,7 +15,8 @@ import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -27,6 +28,7 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     UserSearchComponent,
     MatCardContent,
     MatCard,
+    MatButton,
   ],
   templateUrl: './fact-elect-report-page.component.html',
   styles: ``,

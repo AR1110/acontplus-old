@@ -4,95 +4,86 @@ import { RestaurantStoreService } from '@restaurant/store/restaurant-store.servi
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { Pagination } from '@shared/models/pagination.model';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-promotion-list',
-  imports: [
-    FontAwesomeModule,
-    NgbPaginationModule,
-    MatCard,
-    MatCardContent
-  ],
-    templateUrl: './promotion-list.component.html',
-    styles: ``
+  selector: 'app-promotion-list',
+  imports: [NgbPaginationModule, MatCard, MatCardContent, MatIcon, MatButton],
+  templateUrl: './promotion-list.component.html',
+  styles: ``,
 })
 export class PromotionListComponent {
   private restaurantStore = inject(RestaurantStoreService);
 
-  private modalSvc = inject(ModalService)
-  private promotionSvc = inject(PromotionService)
-
+  private modalSvc = inject(ModalService);
+  private promotionSvc = inject(PromotionService);
 
   estabs = signal(this.restaurantStore.state().establecimientos);
   estabId = model(this.restaurantStore.state().establecimientoId);
 
+  promotions = signal<any[]>([]);
 
-  promotions = signal<any[]>([])
-
-  pagination = signal(new Pagination())
-  days = signal<any[]>([])
+  pagination = signal(new Pagination());
+  days = signal<any[]>([]);
 
   openModalAddEdit<T>(data?: T) {
-    let modalRef = this.modalSvc.open(PromotionAddEditModalComponent,
-      {
-        size: 'lg',
-        backdrop: "static",
-        keyboard: false,
-      }
-    )
+    let modalRef = this.modalSvc.open(PromotionAddEditModalComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+    });
     modalRef.componentInstance.params = {
       days: this.days(),
-      data: data && structuredClone(data) || {}
-    }
-    modalRef.result.then(result=>{
-      if(result && typeof result==='object'){
-        this.getPromotions()
+      data: (data && structuredClone(data)) || {},
+    };
+    modalRef.result.then((result) => {
+      if (result && typeof result === 'object') {
+        this.getPromotions();
       }
-    })
+    });
   }
 
   private getPromotions() {
     let params = {
       pageIndex: this.pagination().pageIndex,
       pageSize: this.pagination().pageSize,
-      estabId: this.estabId()
-    }
-    this.promotions.set([])
-    this.promotionSvc.getAll(params).subscribe(response => {
-      this.days.set(response.days)
-      this.promotions.set(response.promotions)
+      estabId: this.estabId(),
+    };
+    this.promotions.set([]);
+    this.promotionSvc.getAll(params).subscribe((response) => {
+      this.days.set(response.days);
+      this.promotions.set(response.promotions);
       if (this.promotions().length > 0) {
-        this.pagination.update(e => {
+        this.pagination.update((e) => {
           return {
             ...e,
 
-            totalRecords: this.promotions()[0].totalRecords
-          }
-        })
+            totalRecords: this.promotions()[0].totalRecords,
+          };
+        });
       }
-    })
+    });
   }
 
   ngOnInit() {
-    this.getPromotions()
+    this.getPromotions();
   }
-
 
   refresh() {
-    this.getPromotions()
+    this.getPromotions();
   }
 
-
-  onChangeEstab(){
+  onChangeEstab() {
     this.refresh();
-    this.restaurantStore.state.update(e=>{
+    this.restaurantStore.state.update((e) => {
       return {
         ...e,
-        establecimientoId: this.estabId()
-      }
-    })
+        establecimientoId: this.estabId(),
+      };
+    });
   }
 }

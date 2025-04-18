@@ -1,80 +1,80 @@
 import { CommonModule } from '@angular/common';
-import {  Component, inject, Input } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Component, inject, Input } from '@angular/core';
+
 import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import {SupportUseCase} from "@mechanical/domain/use-cases/support.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { SupportUseCase } from '@mechanical/domain/use-cases/support.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 Chart.register(...registerables);
 @Component({
-    selector: 'app-mechanical-dashboard',
+  selector: 'app-mechanical-dashboard',
   imports: [
     CommonModule,
-    FontAwesomeModule,
+    MatIcon,
     MatDynamicCardComponent,
     SupportPageComponent,
     MatCard,
-    MatCardContent
+    MatCardContent,
   ],
-    templateUrl: './mechanical-dashboard.component.html'
+  templateUrl: './mechanical-dashboard.component.html',
 })
-export class MechanicalDashboardComponent   {
+export class MechanicalDashboardComponent {
   @Input() valueStatus: MECHANICAL_STATUS | null = null;
-  @Input() supportStatus: any[] = []
+  @Input() supportStatus: any[] = [];
 
-  chartSupports:any
+  chartSupports: any;
   data = {
     quantitySupport: 0,
     quantityVehicleCompany: 0,
     quantityInspection: 0,
   };
-  supportUseCase = inject(SupportUseCase)
+  supportUseCase = inject(SupportUseCase);
   ngOnInit(): void {
-    this.supportUseCase.getDashboard().subscribe( (response) =>{
-      console.log(response)
-        this.data = response.data;
-        let labels = response.barchart.map((i: any) => i.status)
-        let data = response.barchart.map((i: any) => i.quantity)
+    this.supportUseCase.getDashboard().subscribe((response) => {
+      console.log(response);
+      this.data = response.data;
+      let labels = response.barchart.map((i: any) => i.status);
+      let data = response.barchart.map((i: any) => i.quantity);
 
-        this.chartSupports = new Chart('chartSupports', {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: 'Cantidad',
-                data: data,
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              y: {
-                ticks: {},
-              },
-              x: {
-                ticks: {
-                  autoSkip: false,
-                },
+      this.chartSupports = new Chart('chartSupports', {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Cantidad',
+              data: data,
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              ticks: {},
+            },
+            x: {
+              ticks: {
+                autoSkip: false,
               },
             },
-            plugins: {
-              title: {
-                display: true,
-                text: 'Total Ordenes',
-                padding: {
-                  top: 10,
-                  bottom: 30,
-                },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Total Ordenes',
+              padding: {
+                top: 10,
+                bottom: 30,
               },
             },
-            responsive: true,
           },
-        });
-      } )
-   }
-
+          responsive: true,
+        },
+      });
+    });
+  }
 }

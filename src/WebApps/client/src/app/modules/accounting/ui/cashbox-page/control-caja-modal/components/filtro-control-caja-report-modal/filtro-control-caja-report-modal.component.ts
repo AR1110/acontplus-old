@@ -9,11 +9,12 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-filtro-control-caja-modal-report-modal',
-  imports: [FormsModule, FontAwesomeModule, NgbTimepickerModule],
+  imports: [FormsModule, NgbTimepickerModule, MatIcon, MatButton],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {

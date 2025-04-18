@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { SubEntidadFinancieraRead } from '@accounting/core/models/subentidad-financiera.model';
 import { SubEntidadFinancieraDialogComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-modal/sub-entidad-financiera-dialog.component';
 import Swal from 'sweetalert2';
@@ -22,7 +22,6 @@ import { DialogService } from '@core/services/dialog.service';
   imports: [
     MatCardModule,
     MatExpansionModule,
-    FontAwesomeModule,
     FormsModule,
     MatIconModule,
     MatButtonModule,

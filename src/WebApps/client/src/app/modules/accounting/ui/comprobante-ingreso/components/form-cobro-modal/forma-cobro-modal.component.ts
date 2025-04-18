@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import Swal from 'sweetalert2';
+import { MatButton } from '@angular/material/button';
 
 export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
@@ -30,21 +31,22 @@ export const _filter = (opt: any[], value: string): string[] => {
 };
 
 @Component({
-    selector: 'app-forma-cobro-modal',
-    imports: [
-        ReactiveFormsModule,
-        NgbAccordionModule,
-        FormsModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        SubEntidadFinancieraComponent,
-        ValorAbonoComponent,
-        FechaEmisionComponent,
-        BancoSelectComponent,
-        AsyncPipe,
-    ],
-    templateUrl: './forma-cobro-modal.component.html',
-    styles: ``
+  selector: 'app-forma-cobro-modal',
+  imports: [
+    ReactiveFormsModule,
+    NgbAccordionModule,
+    FormsModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    SubEntidadFinancieraComponent,
+    ValorAbonoComponent,
+    FechaEmisionComponent,
+    BancoSelectComponent,
+    AsyncPipe,
+    MatButton,
+  ],
+  templateUrl: './forma-cobro-modal.component.html',
+  styles: ``,
 })
 export class FormaCobroModalComponent {
   @Input() params = {

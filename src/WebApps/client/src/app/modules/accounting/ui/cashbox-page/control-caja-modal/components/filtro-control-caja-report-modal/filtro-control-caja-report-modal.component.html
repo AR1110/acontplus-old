@@ -27,11 +27,11 @@
   </div>
   <div class="d-grid gap-2 col-12 mx-auto">
     <button class="btn btn-warning" type="button" (click)="askToReport('pdf')">
-      <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
+      <mat-icon>picture_as_pdf</mat-icon>
       PDF
     </button>
-    <button class="btn btn-success" type="button" (click)="askToReport('excel')">
-      <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
+    <button mat-raised-button type="button" (click)="askToReport('excel')">
+      <mat-icon>download</mat-icon>
       EXCEL
     </button>
   </div>

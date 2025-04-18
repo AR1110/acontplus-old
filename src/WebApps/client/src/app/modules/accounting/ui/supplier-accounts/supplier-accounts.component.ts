@@ -22,7 +22,8 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
-import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
+import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-supplier-accounts',
@@ -34,6 +35,7 @@ import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
     MatCardContent,
     MatCard,
     MatCardFooter,
+    MatButton,
   ],
   templateUrl: './supplier-accounts.component.html',
   styles: ``,

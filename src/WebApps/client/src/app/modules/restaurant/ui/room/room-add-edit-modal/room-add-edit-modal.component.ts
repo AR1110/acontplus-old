@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import {
   FormControl,
   FormGroup,
@@ -7,26 +7,24 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { RoomService } from '@restaurant/data/services/room.service';
 import { FloorService } from '@restaurant/data/services/floor.service';
 import { Floor } from '@restaurant/domain/models/floor.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-room-add-edit-modal',
-    imports: [
-        FontAwesomeModule,
-        FormsModule,
-        ReactiveFormsModule,
-    ],
-    templateUrl: './room-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-room-add-edit-modal',
+  imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton],
+  templateUrl: './room-add-edit-modal.component.html',
+  styles: ``,
 })
 export class RoomAddEditModalComponent {
-  establecimientoId: number = 0;
+  establecimientoId = 0;
   data: any = {};
   floors: Floor[] = [];
   roomForm = new FormGroup({
@@ -45,7 +43,7 @@ export class RoomAddEditModalComponent {
     capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
     enabled: new FormControl(true),
   });
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle: string = 'Registrar Sala';
   #floorService = inject(FloorService);
   #modalRef = inject(NgbActiveModal);

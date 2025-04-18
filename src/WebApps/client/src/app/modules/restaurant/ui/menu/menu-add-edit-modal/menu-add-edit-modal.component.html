@@ -1,10 +1,16 @@
 <form (ngSubmit)="onSave()" [formGroup]="menuForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
-    <button (click)="onModalClose()" aria-hidden="true" class="btn-close" title="Cerrar" type="button"></button>
+    <button
+      (click)="onModalClose()"
+      aria-hidden="true"
+      class="btn-close"
+      title="Cerrar"
+      type="button"
+    ></button>
   </div>
   <div class="modal-body">
     <div class="row">
@@ -24,17 +30,17 @@
       <div class="col-12">
         <div class="form-group">
           <label for="summary"
-          >Descripción -
+            >Descripción -
             <span>
-                <button
-                  (click)="generateDescription()"
-                  class="btn btn-sm btn-outline-info mb-3"
-                  title="Generar la descripción para el combo"
-                  type="button"
-                >
-                  <i class="fa-solid fa-sync"></i> Generar descripción
-                </button>
-              </span>
+              <button
+                (click)="generateDescription()"
+                class="btn btn-sm btn-outline-info mb-3"
+                title="Generar la descripción para el combo"
+                type="button"
+              >
+                <i class="fa-solid fa-sync"></i> Generar descripción
+              </button>
+            </span>
           </label>
           <textarea
             class="form-control"
@@ -57,21 +63,31 @@
       <div class="col-12">
         <div class="form-group">
           <label>Buscar productos</label>
-          <app-item-search (onItemSelected)="onItemSelected($event)"
-                           [textSearch]="itemSearch"></app-item-search>
+          <app-item-search
+            (onItemSelected)="onItemSelected($event)"
+            [textSearch]="itemSearch"
+          ></app-item-search>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <app-tabulator-semantic-ui [columnNames]="productColumns" [options]="{reactiveData:true}"
-                                   [tableData]="productsAdded"></app-tabulator-semantic-ui>
+        <app-tabulator-semantic-ui
+          [columnNames]="productColumns"
+          [options]="{ reactiveData: true }"
+          [tableData]="productsAdded"
+        ></app-tabulator-semantic-ui>
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button [disabled]="menuForm.invalid" class="btn btn-outline-success" title="guardar" type="submit">
-      <fa-icon [icon]="'save'"></fa-icon>
+    <button
+      [disabled]="menuForm.invalid"
+      mat-raised-button
+      title="guardar"
+      type="submit"
+    >
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
     <button
@@ -79,8 +95,8 @@
       class="btn btn-outline-dark"
       title="Cancelar"
       type="button"
-    > &times;
-      Cancelar
+    >
+      &times; Cancelar
     </button>
   </div>
 </form>

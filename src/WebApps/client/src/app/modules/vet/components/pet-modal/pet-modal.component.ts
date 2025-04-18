@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import {
   FormControl,
   FormGroup,
@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
@@ -17,20 +17,23 @@ import { PetService } from '@modules/vet/services/pet.service';
 import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-pet-modal',
+  selector: 'app-pet-modal',
   imports: [
-    FaIconComponent,
+    MatIcon,
     FormsModule,
     ReactiveFormsModule,
     CompanyCustomerSearchComponent,
     MatCard,
     MatCardContent,
+    MatButton,
   ],
-    templateUrl: './pet-modal.component.html',
-    styles: ``
+  templateUrl: './pet-modal.component.html',
+  styles: ``,
 })
 export class PetModalComponent {
   breeds: Breed[] = [];
@@ -38,7 +41,7 @@ export class PetModalComponent {
   customerBusinessName = '';
   data = {} as Pet;
   genders: Gender[] = [];
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Mascota';
   petTypes: PetType[] = [];
   petForm = new FormGroup({

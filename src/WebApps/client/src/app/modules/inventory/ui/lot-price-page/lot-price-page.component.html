@@ -79,7 +79,7 @@
         class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3"
       >
         <button type="button" class="btn btn-info" (click)="toSearch()">
-          <fa-icon [icon]="'search'"></fa-icon> Buscar
+          <mat-icon>search</mat-icon> Buscar
         </button>
       </div>
       <div
@@ -178,7 +178,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-success"
+                  mat-raised-button
                   (click)="calculateManual()"
                 >
                   Modificación Manual
@@ -190,7 +190,7 @@
                   ngbTooltip="Deshacer cambios"
                   (click)="refreshToNestedProducts()"
                 >
-                  <fa-icon [icon]="'undo-alt'"></fa-icon>
+                  <mat-icon>undo</mat-icon>
                 </button>
               </div>
             </div>

@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="medicalHistoryForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{modalIcon}}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button
@@ -241,10 +241,10 @@
   <div class="modal-footer">
     <button
       [disabled]="medicalHistoryForm.invalid"
-      class="btn btn-success"
+      mat-raised-button
       type="submit"
     >
-      <fa-icon [icon]="'save'"></fa-icon>
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
     <button (click)="onClose()" class="btn btn-dark" type="button">

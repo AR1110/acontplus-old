@@ -1,6 +1,6 @@
 ﻿import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { ModalService } from '@core/services/modal.service';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -16,7 +16,7 @@ import {MatMenuModule} from "@angular/material/menu";
     selector: 'app-category',
     imports: [
         BreadcrumbComponent,
-        FontAwesomeModule,
+        
         NgbDropdownModule,
         SecondaryStatusPipe,
         MatCardContent,

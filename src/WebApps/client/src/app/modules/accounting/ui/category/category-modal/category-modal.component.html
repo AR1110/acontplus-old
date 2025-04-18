@@ -1,7 +1,7 @@
 ﻿<form (ngSubmit)="onSave()" [formGroup]="categoryForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -11,7 +11,12 @@
       <div class="col">
         <div class="form-group">
           <label for="tipoId">Tipo:</label>
-          <select class="form-select" formControlName="tipoId" id="tipoId" required>
+          <select
+            class="form-select"
+            formControlName="tipoId"
+            id="tipoId"
+            required
+          >
             <option [value]="0">Seleccione un tipo</option>
             @for (item of tipos; track $index) {
               <option [value]="item.id">{{ item.name }}</option>
@@ -51,17 +56,22 @@
     <div class="row">
       <div class="col">
         <label for="enabled">Estado:</label>
-        <input class="form-check" formControlName="enabled" id="enabled" type="checkbox">
+        <input
+          class="form-check"
+          formControlName="enabled"
+          id="enabled"
+          type="checkbox"
+        />
       </div>
     </div>
   </div>
   <div class="modal-footer">
     <button
       [disabled]="categoryForm.invalid"
-      class="btn btn-outline-success btn-sm"
+      mat-raised-button
       type="submit"
     >
-      <fa-icon [icon]="'save'"></fa-icon>
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
     <button

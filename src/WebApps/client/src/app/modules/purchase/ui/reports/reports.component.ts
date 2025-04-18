@@ -22,10 +22,11 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
+import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-reports',
+  selector: 'app-reports',
   imports: [
     FormsModule,
     BreadcrumbComponent,
@@ -34,9 +35,10 @@ import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
     MatCardContent,
     MatCard,
     MatCardFooter,
+    MatButton,
   ],
-    templateUrl: './reports.component.html',
-    styles: ``
+  templateUrl: './reports.component.html',
+  styles: ``,
 })
 export class ReportsComponent {
   http = inject(HttpClient);
@@ -66,7 +68,7 @@ export class ReportsComponent {
     this.initialed();
   }
 
-  onSupplierSelected  ($event: any) {
+  onSupplierSelected($event: any) {
     this.dataSearch.supplierName = $event.name;
     this.dataSearch.idProveedor = $event.idProveedor;
   }

@@ -1,7 +1,7 @@
 <form [formGroup]="categoryForm" (ngSubmit)="onSave()">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+      <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
     </h5>
     <button type="button" class="btn-close" (click)="onModalClose()"></button>
   </div>
@@ -38,10 +38,10 @@
   <div class="modal-footer">
     <button
       type="submit"
-      class="btn btn-outline-success btn-sm"
+      mat-raised-button
       [disabled]="categoryForm.invalid"
     >
-      <fa-icon [icon]="'save'"></fa-icon> Guardar
+      <mat-icon>save</mat-icon> Guardar
     </button>
     <button
       type="button"

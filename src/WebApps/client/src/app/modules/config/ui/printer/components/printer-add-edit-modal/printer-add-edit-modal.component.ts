@@ -13,12 +13,12 @@ import { isApiResponse } from '@core/models/api-response';
 import { isValidField } from '@core/utils/utils';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { PrinterUseCase } from '@modules/config/domain/use-cases/printer.use-case';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-printer-add-edit-modal',
-  imports: [FormsModule, MatSlideToggleModule, FaIconComponent],
+  imports: [FormsModule, MatSlideToggleModule, MatIcon, MatButton],
   templateUrl: './printer-add-edit-modal.component.html',
   styles: ``,
 })
@@ -33,7 +33,7 @@ export class PrinterAddEditModalComponent {
   private readonly _printerDocService = inject(PrinterDocService);
 
   modalTitle = 'Nueva Impresora';
-  modalIcon: IconProp = 'save';
+  modalIcon = 'save';
 
   localPrinters: any[] = [];
 

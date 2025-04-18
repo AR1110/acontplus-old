@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import {
   FormControl,
   FormGroup,
@@ -10,18 +10,20 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { IngredientType } from '@restaurant/domain/models/ingredient-type';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-ingredient-add-edit-modal',
-    imports: [ReactiveFormsModule, FaIconComponent],
-    templateUrl: './ingredient-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-ingredient-add-edit-modal',
+  imports: [ReactiveFormsModule, MatIcon, MatButton],
+  templateUrl: './ingredient-add-edit-modal.component.html',
+  styles: ``,
 })
 export class IngredientAddEditModalComponent {
   data = {} as Ingredient;
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   ingredientForm = new FormGroup({
     id: new FormControl(0),
     ingredientTypeId: new FormControl(0),

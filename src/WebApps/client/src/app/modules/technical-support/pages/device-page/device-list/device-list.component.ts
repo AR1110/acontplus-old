@@ -6,13 +6,13 @@ import { ModalService } from '@core/services/modal.service';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-device-list',
-    imports: [FontAwesomeModule],
-    templateUrl: './device-list.component.html',
-    styles: ``
+  selector: 'app-device-list',
+  imports: [MatIcon],
+  templateUrl: './device-list.component.html',
+  styles: ``,
 })
 export class DeviceListComponent implements OnInit {
   private modalSvc = inject(ModalService);

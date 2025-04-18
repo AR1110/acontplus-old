@@ -1,7 +1,7 @@
 <form [formGroup]="brandForm" (ngSubmit)="onSave()">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+      <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
     </h5>
     <button type="button" class="btn-close" (click)="onModalClose()"></button>
   </div>
@@ -17,7 +17,7 @@
           >
             <option [value]="0">Seleccione una categoría</option>
             @for (item of categories; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
+              <option [value]="item.id">{{ item.name }}</option>
             }
           </select>
         </div>
@@ -54,13 +54,13 @@
           class="btn btn-outline-primary btn-sm m-b-5"
           (click)="onSerieAdd()"
         >
-          <fa-icon [icon]="'plus'"></fa-icon> Añadir Serie
+          <mat-icon>add</mat-icon> Añadir Serie
         </button>
         @if (this.series.length > 0) {
-        <app-tabulator
-          [columnNames]="columnNames"
-          [tableData]="series"
-        ></app-tabulator>
+          <app-tabulator
+            [columnNames]="columnNames"
+            [tableData]="series"
+          ></app-tabulator>
         }
       </div>
     </div>
@@ -68,10 +68,10 @@
   <div class="modal-footer">
     <button
       type="submit"
-      class="btn btn-outline-success btn-sm"
+      mat-raised-button
       [disabled]="brandForm.invalid"
     >
-      <fa-icon [icon]="'save'"></fa-icon> Guardar
+      <mat-icon>save</mat-icon> Guardar
     </button>
     <button
       type="button"

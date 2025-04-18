@@ -20,12 +20,13 @@ import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-item-report',
-    templateUrl: './item-report.component.html',
+  selector: 'app-item-report',
+  templateUrl: './item-report.component.html',
   imports: [
     MatFormFieldModule,
     MatSelectModule,
@@ -36,7 +37,8 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     AsyncPipe,
     MatCard,
     MatCardContent,
-  ]
+    ThemeButtonComponent,
+  ],
 })
 export class ItemReportComponent {
   checkedSubCategorias = new FormControl('');
@@ -50,13 +52,11 @@ export class ItemReportComponent {
   };
   private sharedSvc = inject(SharedService);
   private itemSvc = inject(ItemService);
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
 
   ngOnInit() {
-    
     this._productUseCase.getDataReport().subscribe({
       next: (response) => {
-        
         const { estabs, subCategorias } = response;
         this.establecimientos = estabs;
         this.subCategorias = subCategorias;
@@ -66,7 +66,6 @@ export class ItemReportComponent {
         }
       },
       error(err) {
-        
         console.log(err);
       },
     });

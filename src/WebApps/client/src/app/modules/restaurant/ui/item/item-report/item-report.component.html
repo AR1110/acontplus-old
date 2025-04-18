@@ -85,16 +85,20 @@
   </mat-card-content>
   <div class="card-footer">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
-        PDF
-      </button>
-      <button
-        class="btn btn-success"
-        type="button"
-        (click)="getReport('excel')"
+      <app-theme-button
+        variant="danger"
+        text="Pdf"
+        icon="picture_as_pdf"
+        (handleClick)="getReport('pdf')"
       >
-        EXCEL
-      </button>
+      </app-theme-button
+      ><app-theme-button
+        variant="success"
+        text="Excel"
+        icon="download"
+        (handleClick)="getReport('excel')"
+      >
+      </app-theme-button>
     </div>
   </div>
 </mat-card>

@@ -24,10 +24,10 @@
       >
         <button
           type="button"
-          class="btn btn-success"
+          mat-raised-button
           (click)="openModalAddEdit()"
         >
-          <fa-icon [icon]="'plus'" />
+          <mat-icon>add</mat-icon>
           Agregar
         </button>
       </div>
@@ -58,7 +58,7 @@
                   title="Editar"
                   (click)="openModalAddEdit(item)"
                 >
-                  <fa-icon [icon]="'edit'"></fa-icon>
+                  <mat-icon>edit</mat-icon>
                 </button>
               </td>
               <td>

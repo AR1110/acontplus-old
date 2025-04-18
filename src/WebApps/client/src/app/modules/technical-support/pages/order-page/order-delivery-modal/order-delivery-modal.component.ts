@@ -1,28 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-order-delivery-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        FontAwesomeModule,
-        MatCheckboxModule,
-        ReactiveFormsModule,
-    ],
-    templateUrl: './order-delivery-modal.component.html',
-    styles: ``
+  selector: 'app-order-delivery-modal',
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIcon,
+    MatCheckboxModule,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './order-delivery-modal.component.html',
+  styles: ``,
 })
 export class OrderDeliveryModalComponent implements OnInit {
-
   private modalRef = inject(NgbActiveModal);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
@@ -35,11 +40,18 @@ export class OrderDeliveryModalComponent implements OnInit {
 
   // * Forms.
   orderDeliveryForm = new FormGroup({
-    receiverGovernmentId: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(13)]),
-    receiver: new FormControl('', [Validators.required, Validators.minLength(5)]),
+    receiverGovernmentId: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(13),
+    ]),
+    receiver: new FormControl('', [
+      Validators.required,
+      Validators.minLength(5),
+    ]),
   });
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   closeModal() {
     this.modalRef.close();
@@ -50,13 +62,11 @@ export class OrderDeliveryModalComponent implements OnInit {
   }
 
   save() {
-    
-
     let dataModified = {
-      isOtherReceiver : this.isOtherReceiver,
+      isOtherReceiver: this.isOtherReceiver,
       receiverGovernmentId: this.orderDeliveryForm.value.receiverGovernmentId,
       receiver: this.orderDeliveryForm.value.receiver,
-    }
+    };
 
     this.orderService.delivery(this.data.id, dataModified).subscribe({
       next: (response) => {
@@ -73,12 +83,8 @@ export class OrderDeliveryModalComponent implements OnInit {
       },
       error(err) {
         console.log(err);
-        
       },
-      complete() {
-        
-      },
+      complete() {},
     });
   }
-
 }

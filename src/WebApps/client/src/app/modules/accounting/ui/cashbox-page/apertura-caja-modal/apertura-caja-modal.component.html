@@ -46,8 +46,8 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-success" [disabled]="!dataForm.valid">
-      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    <button type="submit" mat-raised-button [disabled]="!dataForm.valid">
+      <mat-icon>save</mat-icon> Guardar
     </button>
     <button type="button" class="btn btn-dark" (click)="closeModal()">
       &times; Cerrar

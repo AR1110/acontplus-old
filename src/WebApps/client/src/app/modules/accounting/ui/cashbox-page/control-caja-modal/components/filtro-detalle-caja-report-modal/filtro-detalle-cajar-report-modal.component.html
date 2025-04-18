@@ -1,18 +1,28 @@
 <div class="modal-header">
   <h4 class="modal-title">Reporte Detalle Caja</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
 </div>
 <div class="modal-body">
-
   <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
       <div class="form-group">
         <label for="entidadFinanciera">Entidad Financiera</label>
-        <select name="entidadFinanciera" id="entidadFinanciera" class="form-select"
-          [(ngModel)]="dataSearch.idEntidadFinanciera">
+        <select
+          name="entidadFinanciera"
+          id="entidadFinanciera"
+          class="form-select"
+          [(ngModel)]="dataSearch.idEntidadFinanciera"
+        >
           <option value="">Todos</option>
-          @for(item of entidadesFinanciera; track $index){
-          <option [ngValue]="item.idEntidadFinanciera">{{item.descripcion}}</option>
+          @for (item of entidadesFinanciera; track $index) {
+            <option [ngValue]="item.idEntidadFinanciera">
+              {{ item.descripcion }}
+            </option>
           }
         </select>
       </div>
@@ -21,10 +31,15 @@
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
       <div class="form-group">
         <label for="tipoDocumento">Tipo Documento</label>
-        <select name="tipoDocumento" id="tipoDocumento" class="form-select" [(ngModel)]="dataSearch.codDoc">
+        <select
+          name="tipoDocumento"
+          id="tipoDocumento"
+          class="form-select"
+          [(ngModel)]="dataSearch.codDoc"
+        >
           <option value="">Todos</option>
-          @for(item of tipoDocumentos; track $index){
-          <option [ngValue]="item.codigo">{{item.descripcion}}</option>
+          @for (item of tipoDocumentos; track $index) {
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
           }
         </select>
       </div>
@@ -34,10 +49,19 @@
       <div class="form-group">
         <label for="fromDate" class="form-label">Fecha de inicio</label>
         <div class="input-group">
-          <input type="date" disabled [ngModel]="dataSearch.fromDate | date:'yyyy-MM-dd'" class="form-control">
+          <input
+            type="date"
+            disabled
+            [ngModel]="dataSearch.fromDate | date: 'yyyy-MM-dd'"
+            class="form-control"
+          />
 
-          <input type="time" [value]="dataSearch.fromDate | date:'HH:mm'" class="form-control"
-            (change)="onTimeChange($event, true)">
+          <input
+            type="time"
+            [value]="dataSearch.fromDate | date: 'HH:mm'"
+            class="form-control"
+            (change)="onTimeChange($event, true)"
+          />
         </div>
       </div>
     </div>
@@ -46,14 +70,22 @@
       <div class="form-group">
         <label for="toDate" class="form-label">Fecha de fin</label>
         <div class="input-group">
-          <input type="date" disabled [ngModel]="dataSearch.toDate | date:'yyyy-MM-dd'" class="form-control">
+          <input
+            type="date"
+            disabled
+            [ngModel]="dataSearch.toDate | date: 'yyyy-MM-dd'"
+            class="form-control"
+          />
 
-          <input type="time" [value]="dataSearch.toDate | date:'HH:mm'" class="form-control"
-            (change)="onTimeChange($event, false)">
+          <input
+            type="time"
+            [value]="dataSearch.toDate | date: 'HH:mm'"
+            class="form-control"
+            (change)="onTimeChange($event, false)"
+          />
         </div>
       </div>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -65,15 +97,21 @@
 
   <div class="d-grid gap-2 col-12 mx-auto">
     <button class="btn btn-warning" type="button" (click)="getReport('pdf')">
-      <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
+      <mat-icon>picture_as_pdf</mat-icon>
       PDF
     </button>
-    <button class="btn btn-success" type="button" (click)="getReport('excel')">
-      <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
+    <button mat-raised-button type="button" (click)="getReport('excel')">
+      <mat-icon>download</mat-icon>
       EXCEL
     </button>
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">&times; Cerrar</button>
+  <button
+    type="button"
+    class="btn btn-outline-dark"
+    (click)="activeModal.close('Close click')"
+  >
+    &times; Cerrar
+  </button>
 </div>

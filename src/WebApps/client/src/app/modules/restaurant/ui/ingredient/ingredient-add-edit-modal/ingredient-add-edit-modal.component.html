@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="ingredientForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -66,11 +66,21 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button [disabled]="ingredientForm.invalid" class="btn btn-outline-success" title="Guardar">
-      <fa-icon [icon]="'save'"></fa-icon>
+    <button
+      [disabled]="ingredientForm.invalid"
+      mat-raised-button
+      title="Guardar"
+    >
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
-    <button (click)="onModalClose()" class="btn btn-outline-dark" title="Cancelar" type="button">&times; Cancelar
+    <button
+      (click)="onModalClose()"
+      class="btn btn-outline-dark"
+      title="Cancelar"
+      type="button"
+    >
+      &times; Cancelar
     </button>
   </div>
 </form>

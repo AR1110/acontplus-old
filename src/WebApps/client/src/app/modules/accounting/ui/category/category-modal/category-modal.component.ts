@@ -8,16 +8,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { Category } from '@technical-support/models/category';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {ApiResponse } from '@core/models/api-response';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
+import { ApiResponse } from '@core/models/api-response';
+import { CategoryUseCase } from '@accounting/core/use-cases/category.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-category-modal',
-    imports: [FontAwesomeModule, ReactiveFormsModule],
-    templateUrl: './category-modal.component.html',
-    styles: ``
+  selector: 'app-category-modal',
+  imports: [ReactiveFormsModule, MatIcon, MatButton],
+  templateUrl: './category-modal.component.html',
+  styles: ``,
 })
 export class CategoryModalComponent {
   categoryForm = new FormGroup({
@@ -36,17 +36,17 @@ export class CategoryModalComponent {
     enabled: new FormControl(true),
   });
   data: Category = {} as Category;
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Categoría';
   tipos: any[] = [];
-  private _categoryUseCase = inject(CategoryUseCase)
+  private _categoryUseCase = inject(CategoryUseCase);
 
   private modalRef = inject(NgbActiveModal);
   private tS = inject(ToasterService);
 
   get() {
     this._categoryUseCase.get({ tipo: 2 }).subscribe((response) => {
-      if (  response.code == '1') {
+      if (response.code == '1') {
         const { tipos } = JSON.parse(response.payload as string);
         this.tipos = tipos;
       }
@@ -80,12 +80,12 @@ export class CategoryModalComponent {
   }
 
   successResponse = (response: ApiResponse) => {
-      this.tS.toastr({
-        type: response.code == '1' ? 'success' : 'warning',
-        message: response.message,
-      });
-      if (response.code == '1') {
-        this.modalRef.close(response);
-      }
+    this.tS.toastr({
+      type: response.code == '1' ? 'success' : 'warning',
+      message: response.message,
+    });
+    if (response.code == '1') {
+      this.modalRef.close(response);
+    }
   };
 }

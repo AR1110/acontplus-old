@@ -58,7 +58,7 @@ export class DeviceModalComponent implements OnInit {
   private tS = inject(ToasterService);
   brands: Brand[] = [];
   // --> Variables
-  modalIcon: string = 'add';
+  modalIcon = 'add';
   modalTitle = 'Nuevo Equipo';
   modelos: Modelo[] = [];
   categories: any = [];

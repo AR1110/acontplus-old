@@ -5,9 +5,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Subcategory } from '@accounting/core/models/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -25,7 +23,6 @@ import { RetencionHtmlComponent } from '@billing/ui/shared/components/retencion-
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
-
 import { DialogService } from '@core/services/dialog.service';
 import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
 import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
@@ -43,7 +40,6 @@ import { SupplierSearch } from '@customer/core/domain/supplier.interface';
     SupplierSearchComponent,
     FormsModule,
     MatTooltip,
-    FaIconComponent,
     InputNumberDirective,
     MatPaginator,
     MatIcon,
@@ -70,7 +66,7 @@ export class DocumentReceivedComponent {
     { key: 'fechaAutorizacion', label: 'F. Aut.', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-textSearch: string = '';
+  textSearch = '';
   dataSearch = {
     codDoc: '',
     codEstab: '',
@@ -82,9 +78,9 @@ textSearch: string = '';
     rucProveedor: '',
   };
   documentTypes: TipoDoc[] = [];
-  extraOptionsIcon: IconProp = 'eye';
-  extraOptionsTooltip: string = 'Ver más filtros';
-  moreOptionsFilter: boolean = false;
+  extraOptionsIcon = 'visibility';
+  extraOptionsTooltip = 'Ver más filtros';
+  moreOptionsFilter = false;
   subcategories: Subcategory[] = [];
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   pagination = signal(new MatPagination());

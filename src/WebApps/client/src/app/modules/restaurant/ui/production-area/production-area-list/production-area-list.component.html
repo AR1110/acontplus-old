@@ -4,8 +4,8 @@
       @for (item of establecimientos; track $index) {
         <div ngbAccordionItem #accordionItem="ngbAccordionItem">
           <h2 ngbAccordionHeader>
-            <button ngbAccordionButton (click)="onPanelToggle(item)"> {{ item.estab }}
-              - {{ item.nombreComercial }}
+            <button ngbAccordionButton (click)="onPanelToggle(item)">
+              {{ item.estab }} - {{ item.nombreComercial }}
             </button>
           </h2>
           <div ngbAccordionCollapse>
@@ -13,8 +13,12 @@
               <ng-template>
                 <div class="row mt-2 mb-2">
                   <div class="col-6">
-                    <button (click)="onModalOpen()" mat-raised-button type="button">
-                      <fa-icon [icon]="'plus'"></fa-icon>
+                    <button
+                      (click)="onModalOpen()"
+                      mat-raised-button
+                      type="button"
+                    >
+                      <mat-icon>add</mat-icon>
                       Registrar
                     </button>
                   </div>
@@ -23,39 +27,47 @@
                   <div class="table-responsive">
                     <table class="table table-bordered">
                       <thead>
-                      <tr>
-                        <th>Op.</th>
-                        <th class="text-center">N°</th>
-                        <th class="text-center">Código</th>
-                        <th>Descripcion</th>
-                        <th>Estado</th>
-                      </tr>
+                        <tr>
+                          <th>Op.</th>
+                          <th class="text-center">N°</th>
+                          <th class="text-center">Código</th>
+                          <th>Descripcion</th>
+                          <th>Estado</th>
+                        </tr>
                       </thead>
                       <tbody>
                         @for (item of productionAreas; track $index) {
                           <tr>
                             <td class="text-center">
-                              <button type="button" class="btn btn-warning btn-sm btn-rounded m-r-5" title="editar"
-                                      (click)="onEdit(item)">
-                                <fa-icon [icon]="'edit'"></fa-icon>
-
+                              <button
+                                type="button"
+                                class="btn btn-warning btn-sm btn-rounded m-r-5"
+                                title="editar"
+                                (click)="onEdit(item)"
+                              >
+                                <mat-icon>edit</mat-icon>
                               </button>
-                              <button type="button" class="btn btn-danger btn-sm btn-rounded" title="Eliminar"
-                                      (click)="onDelete(item)">
-                                <fa-icon [icon]="'trash'"></fa-icon>
-
+                              <button
+                                type="button"
+                                class="btn btn-danger btn-sm btn-rounded"
+                                title="Eliminar"
+                                (click)="onDelete(item)"
+                              >
+                                <mat-icon>delete</mat-icon>
                               </button>
                             </td>
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td class="text-center">{{ item.code }}</td>
                             <td>{{ item.description }}</td>
                             <td>
-                <span
-                  [ngClass]="item.enabled ? 'text-success' : 'text-danger'"
-                  class="badge"
-                >
-                  {{ item.enabled ? 'Activo' : 'Inactivo' }}
-                </span>
+                              <span
+                                [ngClass]="
+                                  item.enabled ? 'text-success' : 'text-danger'
+                                "
+                                class="badge"
+                              >
+                                {{ item.enabled ? "Activo" : "Inactivo" }}
+                              </span>
                             </td>
                           </tr>
                         }
@@ -71,5 +83,5 @@
         </div>
       }
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>
