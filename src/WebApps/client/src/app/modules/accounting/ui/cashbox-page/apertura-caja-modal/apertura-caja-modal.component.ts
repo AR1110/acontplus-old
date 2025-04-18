@@ -13,10 +13,11 @@ import { MatIcon } from '@angular/material/icon';
 import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
 import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-apertura-caja-modal',
-  imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton],
+    imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './apertura-caja-modal.component.html',
 })
 export class AperturaCajaModalComponent {
@@ -92,7 +93,7 @@ export class AperturaCajaModalComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

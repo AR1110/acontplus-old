@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="medicalHistoryForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <mat-icon>{{modalIcon}}</mat-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button
@@ -247,8 +247,12 @@
       <mat-icon>save</mat-icon>
       Guardar
     </button>
-    <button (click)="onClose()" class="btn btn-dark" type="button">
-      &times; Cancelar
-    </button>
+    <app-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="onClose()"
+    >
+    </app-theme-button>
   </div>
 </form>

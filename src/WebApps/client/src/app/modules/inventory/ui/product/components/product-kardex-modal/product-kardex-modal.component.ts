@@ -19,18 +19,20 @@ import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { monthEnd, monthStart } from '@formkit/tempo';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-product-kardex-modal',
-  imports: [
-    FormsModule,
-    MatSlideToggleModule,
-    MatChipsModule,
-    ProductSearchComponent,
-    DateRangeSelectionComponent,
-    TabulatorComponent,
-    MatIcon,
-  ],
+    imports: [
+        FormsModule,
+        MatSlideToggleModule,
+        MatChipsModule,
+        ProductSearchComponent,
+        DateRangeSelectionComponent,
+        TabulatorComponent,
+        MatIcon,
+        ThemeButtonComponent,
+    ],
   templateUrl: './product-kardex-modal.component.html',
   styles: ``,
 })

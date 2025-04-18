@@ -15,10 +15,11 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { PrinterUseCase } from '@modules/config/domain/use-cases/printer.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-printer-add-edit-modal',
-  imports: [FormsModule, MatSlideToggleModule, MatIcon, MatButton],
+    imports: [FormsModule, MatSlideToggleModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './printer-add-edit-modal.component.html',
   styles: ``,
 })

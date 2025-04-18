@@ -20,6 +20,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import Swal from 'sweetalert2';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
@@ -44,6 +45,7 @@ export const _filter = (opt: any[], value: string): string[] => {
     BancoSelectComponent,
     AsyncPipe,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './forma-cobro-modal.component.html',
   styles: ``,

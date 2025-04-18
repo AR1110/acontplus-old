@@ -8,10 +8,11 @@ import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-punto-emision-add-edit-modal',
-  imports: [CommonModule, InputNumberDirective, FormsModule, MatButton],
+    imports: [CommonModule, InputNumberDirective, FormsModule, MatButton, ThemeButtonComponent],
   templateUrl: './punto-emision-add-edit-modal.component.html',
   styleUrl: './punto-emision-add-edit-modal.component.scss',
 })

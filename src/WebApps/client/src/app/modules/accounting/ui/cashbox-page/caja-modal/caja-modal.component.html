@@ -5,7 +5,7 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="closeModal()"
+      (click)="onModalClose()"
     ></button>
   </div>
   <div class="modal-body">
@@ -78,8 +78,12 @@
       <mat-icon>{{ btnIcon }}</mat-icon>
       {{ btnText }}
     </button>
-    <button type="button" class="btn btn-dark" (click)="closeModal()">
-      &times; Cerrar
-    </button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
+    >
+    </app-theme-button>
   </div>
 </form>

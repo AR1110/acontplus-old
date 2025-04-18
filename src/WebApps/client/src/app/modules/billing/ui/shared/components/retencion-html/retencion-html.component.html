@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()">
   <div class="modal-header">
     <h5 class="modal-title">Retencion {{ retencion.versionRet }}</h5>
-    <button (click)="closeModal()" class="close">&times;</button>
+    <button (click)="onModalClose()" class="close">&times;</button>
   </div>
 
   <div class="modal-body">
@@ -140,6 +140,11 @@
     <button (click)="getReport()" class="btn btn-danger" type="button">
       <i class="ti-download"></i> Descargar Ride
     </button>
-    <button (click)="closeModal()" class="btn btn-dark">&times; Cerrar</button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (click)="onModalClose()"
+    ></app-theme-button>
   </div>
 </form>

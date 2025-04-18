@@ -1312,7 +1312,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 

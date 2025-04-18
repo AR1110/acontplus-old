@@ -1,7 +1,7 @@
 <app-mat-custom-dialog
 [title]="'Imagenes del Producto ->' + productPhoto.descripcion"
   [containerTemplate]="containerTemplate"
-(close)="closeModal()"
+(close)="onModalClose()"
 />
 
 <ng-template #containerTemplate>

@@ -22,19 +22,21 @@ import { TimeInputFormat24Directive } from '@shared/directives/time-input-format
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-promotion-add-edit-modal',
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIcon,
-    InputDateComponent,
-    ToUpperCaseDirective,
-    TimeInputFormat24Directive,
-    MenuSearchComponent,
-    MatButton,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatIcon,
+        InputDateComponent,
+        ToUpperCaseDirective,
+        TimeInputFormat24Directive,
+        MenuSearchComponent,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './promotion-add-edit-modal.component.html',
   styleUrl: './promotion-add-edit-modal.component.scss',
   styles: ``,

@@ -49,7 +49,11 @@
   <button mat-raised-button type="button" (click)="send()">
     <mat-icon>email</mat-icon> Enviar
   </button>
-  <button class="btn btn-dark" type="button" (click)="modal.close()">
-    &times; Cerrar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  >
+  </app-theme-button>
 </div>

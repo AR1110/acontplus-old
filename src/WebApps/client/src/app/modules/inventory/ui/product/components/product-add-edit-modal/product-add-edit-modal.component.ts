@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
 import { FraccProductListComponent } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 interface ProductTarifa {
   tipoIva: string;
@@ -34,23 +35,24 @@ interface ProductTarifa {
 }
 @Component({
   selector: 'app-product-add-edit-modal',
-  imports: [
-    //Modules
-    FormsModule,
-    ReactiveFormsModule,
-    NgbNavModule,
+    imports: [
+        //Modules
+        FormsModule,
+        ReactiveFormsModule,
+        NgbNavModule,
 
-    MatAutocompleteModule,
-    ToUpperCaseDirective,
-    //Components
-    TabulatorComponent,
-    FraccProductListComponent,
-    //Directivas
-    SubCategoryModalDirective,
-    MeasureAddEditDirective,
-    TagsAddEditModalDirective,
-    MatButton,
-  ],
+        MatAutocompleteModule,
+        ToUpperCaseDirective,
+        //Components
+        TabulatorComponent,
+        FraccProductListComponent,
+        //Directivas
+        SubCategoryModalDirective,
+        MeasureAddEditDirective,
+        TagsAddEditModalDirective,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './product-add-edit-modal.component.html',
 })
 export class ProductAddEditModalComponent {
@@ -769,7 +771,9 @@ export class ProductAddEditModalComponent {
     if (!this.isValidForm()) return;
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
+
+  protected readonly close = close;
 }

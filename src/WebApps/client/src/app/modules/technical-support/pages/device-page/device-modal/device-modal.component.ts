@@ -398,7 +398,7 @@ export class DeviceModalComponent implements OnInit {
     return isValid;
   }
 
-  closeModal() {
+  onModalClose() {
     this.deviceForm.reset();
     this.modalRef.close();
   }

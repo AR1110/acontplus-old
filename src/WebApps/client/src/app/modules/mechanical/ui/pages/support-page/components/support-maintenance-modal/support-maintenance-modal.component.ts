@@ -33,19 +33,21 @@ import { Tarifa } from '@inventory/domain/models/tarifa.model';
 import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
 import { SupportDetailUseCase } from '@modules/mechanical/domain/use-cases/support-detail.use-case';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-support-maintenance-modal',
-  imports: [
-    FormsModule,
-    MatIcon,
-    NgbTooltipModule,
-    NgbPopoverModule,
-    TabulatorComponent,
-    DrawTaxTotalComponent,
-    ProductSearchOverlayComponent,
-    InputDateComponent,
-  ],
+    imports: [
+        FormsModule,
+        MatIcon,
+        NgbTooltipModule,
+        NgbPopoverModule,
+        TabulatorComponent,
+        DrawTaxTotalComponent,
+        ProductSearchOverlayComponent,
+        InputDateComponent,
+        ThemeButtonComponent,
+    ],
   templateUrl: './support-maintenance-modal.component.html',
 })
 export class SupportMaintenanceModalComponent {

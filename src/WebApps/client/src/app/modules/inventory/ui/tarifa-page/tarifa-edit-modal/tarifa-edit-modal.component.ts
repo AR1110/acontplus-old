@@ -7,10 +7,11 @@ import { TarifaService } from '@inventory/services/tarifa.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-tarifa-edit-modal',
-  imports: [FormsModule, ToUpperCaseDirective, MatButton],
+    imports: [FormsModule, ToUpperCaseDirective, MatButton, ThemeButtonComponent],
   templateUrl: './tarifa-edit-modal.component.html',
   styles: ``,
 })

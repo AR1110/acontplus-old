@@ -4,7 +4,7 @@
     type="button"
     class="btn-close"
     aria-hidden="false"
-    (click)="closeModal()"
+    (click)="onModalClose()"
   ></button>
 </div>
 <div class="modal-body">
@@ -29,14 +29,14 @@
                 <td>{{ item.year }}</td>
                 <td>{{ item.deviceWarranty }}</td>
                 <td>
-                  <button
-                    type="button"
-                    class="btn btn-outline-info btn-sm"
-                    title="Seleccionar Equipo"
-                    (click)="select(item)"
+                  <app-theme-button
+                    matStyle="icon"
+                    variant="info"
+                    icon="arrow_forward"
+                    text="Seleccionar Equipo"
+                    (handleClick)="select(item)"
                   >
-                    <mat-icon>arrow_forward</mat-icon>
-                  </button>
+                  </app-theme-button>
                 </td>
               </tr>
             }
@@ -47,11 +47,11 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button
-    type="button"
-    class="btn btn-outline-dark btn-sm"
-    (click)="closeModal()"
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cerrar"
+    (handleClick)="onModalClose()"
   >
-    &times; Cerrar
-  </button>
+  </app-theme-button>
 </div>

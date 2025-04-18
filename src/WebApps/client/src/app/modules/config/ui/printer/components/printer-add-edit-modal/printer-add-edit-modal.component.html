@@ -194,7 +194,11 @@
     <mat-icon>save</mat-icon> Guardar
   </button>
 
-  <button type="button" class="btn btn-dark" (click)="_modalRef.close()">
-    &times; Cerrar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="_modalRef.close()"
+  >
+  </app-theme-button>
 </div>

@@ -12,10 +12,11 @@ import { ApiResponse } from '@core/models/api-response';
 import { CategoryUseCase } from '@accounting/core/use-cases/category.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-category-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton],
+  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })

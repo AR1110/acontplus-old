@@ -27,18 +27,20 @@ import { HealthCheckService } from '@modules/vet/services/health-check.service';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-medical-history-modal',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    PetSearchComponent,
-    MatCard,
-    MatCardContent,
-    MatIcon,
-    MatButton,
-  ],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        PetSearchComponent,
+        MatCard,
+        MatCardContent,
+        MatIcon,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './medical-history-modal.component.html',
   styles: ``,
 })

@@ -66,19 +66,15 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button
-      type="submit"
-      mat-raised-button
-      [disabled]="brandForm.invalid"
-    >
+    <button type="submit" mat-raised-button [disabled]="brandForm.invalid">
       <mat-icon>save</mat-icon> Guardar
     </button>
-    <button
-      type="button"
-      class="btn btn-outline-dark btn-sm"
-      (click)="onModalClose()"
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
     >
-      &times; Cerrar
-    </button>
+    </app-theme-button>
   </div>
 </form>

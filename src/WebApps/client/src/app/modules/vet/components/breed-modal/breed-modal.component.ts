@@ -14,10 +14,11 @@ import { ToasterService } from '@core/services/toaster.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-breed-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton],
+    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './breed-modal.component.html',
   styles: ``,
 })

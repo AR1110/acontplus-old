@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 type Modeda = {
   idMoneda: number;
@@ -19,7 +20,7 @@ type Modeda = {
 
 @Component({
   selector: 'app-cierre-caja-modal',
-  imports: [CommonModule, FormsModule, MatIcon, MatButton],
+    imports: [CommonModule, FormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './cierre-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
@@ -137,7 +138,7 @@ export class CierreCajaModalComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

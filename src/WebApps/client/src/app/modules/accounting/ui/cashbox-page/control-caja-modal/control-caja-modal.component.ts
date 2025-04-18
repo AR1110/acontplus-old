@@ -32,21 +32,23 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-control-caja-modal',
-  imports: [
-    FormsModule,
-    NgbPagination,
+    imports: [
+        FormsModule,
+        NgbPagination,
 
-    DateRangeSelectionComponent,
-    SendMailModalDirective,
-    MatMenu,
-    MatIcon,
-    MatMenuTrigger,
-    MatButton,
-    MatMenuItem,
-  ],
+        DateRangeSelectionComponent,
+        SendMailModalDirective,
+        MatMenu,
+        MatIcon,
+        MatMenuTrigger,
+        MatButton,
+        MatMenuItem,
+        ThemeButtonComponent,
+    ],
   templateUrl: './control-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
@@ -495,7 +497,7 @@ export class ControlCajaModalComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close(this.isReloadCaja);
   }
 }

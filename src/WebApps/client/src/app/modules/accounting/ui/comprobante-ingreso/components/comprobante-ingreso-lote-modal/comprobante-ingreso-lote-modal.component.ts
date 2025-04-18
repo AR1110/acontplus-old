@@ -30,6 +30,7 @@ import { ComprobanteIngresoUseCase } from '@accounting/core/use-cases/comprobant
 import { CuentaPorCobrarUseCase } from '@accounting/core/use-cases/cuenta-por-cobrar.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
@@ -41,6 +42,7 @@ import { MatButton } from '@angular/material/button';
     MatCard,
     MatCardContent,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './comprobante-ingreso-lote-modal.component.html',
   styleUrl: './comprobante-ingreso-lote-modal.component.scss',

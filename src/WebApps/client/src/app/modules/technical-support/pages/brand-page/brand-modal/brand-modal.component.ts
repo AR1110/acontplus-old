@@ -18,10 +18,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-brand-modal',
-  imports: [ReactiveFormsModule, TabulatorComponent, MatIcon, MatButton],
+    imports: [ReactiveFormsModule, TabulatorComponent, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })

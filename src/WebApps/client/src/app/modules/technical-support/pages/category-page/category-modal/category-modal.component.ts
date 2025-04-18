@@ -13,10 +13,11 @@ import { CategoryService } from '@modules/technical-support/services/category.se
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-category-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton],
+    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })

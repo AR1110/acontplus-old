@@ -1,85 +1,144 @@
 <div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">{{titleModal}}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  <h4 class="modal-title" id="modal-basic-title">{{ titleModal }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modal.dismiss('Cross click')"
+  ></button>
 </div>
 <div class="modal-body">
   <div class="row">
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="serieDoc">Serie Doc.</label>
-        <input type="text" name="serieDoc" id="serieDoc" class="form-control" [value]="support.sequence" disabled>
+        <input
+          type="text"
+          name="serieDoc"
+          id="serieDoc"
+          class="form-control"
+          [value]="support.sequence"
+          disabled
+        />
       </div>
     </div>
     <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
       <div class="row">
-
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="type">Tipo</label>
-            <input type="text" name="type" id="type" class="form-control" [value]="support.vehicleType" disabled>
+            <input
+              type="text"
+              name="type"
+              id="type"
+              class="form-control"
+              [value]="support.vehicleType"
+              disabled
+            />
           </div>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="marca">Marca</label>
-            <input type="text" name="marca" id="marca" class="form-control" [value]="support.brand" disabled>
+            <input
+              type="text"
+              name="marca"
+              id="marca"
+              class="form-control"
+              [value]="support.brand"
+              disabled
+            />
           </div>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="modelo">Modelo</label>
-            <input type="text" name="modelo" id="modelo" class="form-control" [value]="support.model" disabled>
+            <input
+              type="text"
+              name="modelo"
+              id="modelo"
+              class="form-control"
+              [value]="support.model"
+              disabled
+            />
           </div>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="color">Color</label>
-            <input type="text" name="color" id="color" class="form-control" [value]="support.color" disabled>
+            <input
+              type="text"
+              name="color"
+              id="color"
+              class="form-control"
+              [value]="support.color"
+              disabled
+            />
           </div>
         </div>
       </div>
     </div>
   </div>
 
-
   <div class="row">
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="motor">Motor</label>
-        <input type="text" name="motor" id="motor" class="form-control" [value]="support.engine" disabled>
+        <input
+          type="text"
+          name="motor"
+          id="motor"
+          class="form-control"
+          [value]="support.engine"
+          disabled
+        />
       </div>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="fecha">Fecha: <span class="text-danger">*</span></label>
-        <app-input-date [(value)]="data.fechaEmision"/>
+        <app-input-date [(value)]="data.fechaEmision" />
       </div>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="form-group">
-        <label for="kilometraje">Kilometraje: <span class="text-danger">*</span></label>
-        <input type="number" name="kilometraje" id="kilometraje" class="form-control" [(ngModel)]="data.mileage"  >
+        <label for="kilometraje"
+          >Kilometraje: <span class="text-danger">*</span></label
+        >
+        <input
+          type="number"
+          name="kilometraje"
+          id="kilometraje"
+          class="form-control"
+          [(ngModel)]="data.mileage"
+        />
       </div>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="form-group">
-        <label for="nivelDeCombustible">Nivel de combustible: <span class="text-danger">*</span></label>
-        <input type="text" name="nivelDeCombustible" id="nivelDeCombustible" class="form-control" [(ngModel)]="data.fuelLevel">
+        <label for="nivelDeCombustible"
+          >Nivel de combustible: <span class="text-danger">*</span></label
+        >
+        <input
+          type="text"
+          name="nivelDeCombustible"
+          id="nivelDeCombustible"
+          class="form-control"
+          [(ngModel)]="data.fuelLevel"
+        />
       </div>
     </div>
   </div>
 
   <div ngbAccordion [closeOthers]="true">
     @for (item of vehiclePartTypeNodes; track $index) {
-    <div ngbAccordionItem  >
-      <h2 ngbAccordionHeader>
-        <button ngbAccordionButton>{{ item.description }}</button>
-      </h2>
-      <div ngbAccordionCollapse>
-        <div ngbAccordionBody>
-
-          <ng-template>
-
+      <div ngbAccordionItem>
+        <h2 ngbAccordionHeader>
+          <button ngbAccordionButton>{{ item.description }}</button>
+        </h2>
+        <div ngbAccordionCollapse>
+          <div ngbAccordionBody>
+            <ng-template>
               <div class="table-responsive">
                 <table class="table table-hover table-sm">
                   <thead class="thead-dark">
@@ -93,37 +152,46 @@
                     </tr>
                   </thead>
                   <tbody>
-
-                    @for (node of item.nodes; track node.id;let i=$index) {
+                    @for (node of item.nodes; track node.id; let i = $index) {
                       <tr>
                         <td width="35%">{{ node.description }}</td>
                         <td width="25%" class="text-center">
                           <div class="d-flex flex-row">
-                              <mat-chip-listbox aria-label="Option selection" [(ngModel)]="node.status">
-                                <mat-chip-option [value]="1" color="primary"> Bueno</mat-chip-option>
-                                <mat-chip-option [value]="2" color="primary">Regular</mat-chip-option>
-                                <mat-chip-option [value]="3" color="primary">Malo</mat-chip-option>
-                              </mat-chip-listbox>
+                            <mat-chip-listbox
+                              aria-label="Option selection"
+                              [(ngModel)]="node.status"
+                            >
+                              <mat-chip-option [value]="1" color="primary">
+                                Bueno</mat-chip-option
+                              >
+                              <mat-chip-option [value]="2" color="primary"
+                                >Regular</mat-chip-option
+                              >
+                              <mat-chip-option [value]="3" color="primary"
+                                >Malo</mat-chip-option
+                              >
+                            </mat-chip-listbox>
                           </div>
                         </td>
 
                         <td width="50%" class="text-center">
                           <div class="form-group">
-                            <input type="text" class="form-control" [(ngModel)]="node.obs" />
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="node.obs"
+                            />
                           </div>
                         </td>
                       </tr>
-
                     }
                   </tbody>
                 </table>
-
-            </div>
-          </ng-template>
-
+              </div>
+            </ng-template>
+          </div>
         </div>
       </div>
-    </div>
     }
   </div>
 
@@ -135,11 +203,16 @@
       </div>
     </div>
   </div>
-
 </div>
 <div class="modal-footer">
   <button type="button" mat-raised-button (click)="save()">
-    {{btnText}}
+    {{ btnText }}
   </button>
-  <button type="button" class="btn btn-dark" (click)="modal.close()">&times;Cerrar</button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  >
+  </app-theme-button>
 </div>

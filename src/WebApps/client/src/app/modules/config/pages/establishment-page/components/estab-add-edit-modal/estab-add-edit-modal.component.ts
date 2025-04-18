@@ -21,18 +21,20 @@ import { isApiResponse } from '@core/models/api-response';
 import { forkJoin, Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-estab-add-edit-modal',
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIcon,
-    MatChipsModule,
-    MatRadioModule,
-    ToUpperCaseDirective,
-    MatButton,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatIcon,
+        MatChipsModule,
+        MatRadioModule,
+        ToUpperCaseDirective,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './estab-add-edit-modal.component.html',
   styles: ``,
 })

@@ -235,7 +235,7 @@ export class OrderModalComponent {
     });
   }
 
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 

@@ -20,16 +20,18 @@ import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.in
 import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
-  imports: [
-    ReactiveFormsModule,
-    NgbTypeaheadModule,
-    CompanyCustomerSearchComponent,
-    MatIcon,
-    MatButton,
-  ],
+    imports: [
+        ReactiveFormsModule,
+        NgbTypeaheadModule,
+        CompanyCustomerSearchComponent,
+        MatIcon,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
 export class ModalEgresoIngresoComponent {
@@ -205,7 +207,7 @@ export class ModalEgresoIngresoComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

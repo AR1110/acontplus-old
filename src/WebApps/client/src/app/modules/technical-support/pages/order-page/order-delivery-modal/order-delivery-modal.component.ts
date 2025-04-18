@@ -53,7 +53,7 @@ export class OrderDeliveryModalComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 

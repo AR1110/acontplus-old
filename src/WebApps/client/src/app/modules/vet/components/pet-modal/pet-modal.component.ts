@@ -20,18 +20,20 @@ import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/co
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-pet-modal',
-  imports: [
-    MatIcon,
-    FormsModule,
-    ReactiveFormsModule,
-    CompanyCustomerSearchComponent,
-    MatCard,
-    MatCardContent,
-    MatButton,
-  ],
+    imports: [
+        MatIcon,
+        FormsModule,
+        ReactiveFormsModule,
+        CompanyCustomerSearchComponent,
+        MatCard,
+        MatCardContent,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './pet-modal.component.html',
   styles: ``,
 })

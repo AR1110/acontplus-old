@@ -4,10 +4,11 @@ import { ToasterService } from '@core/services/toaster.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-device-list-modal',
-  imports: [MatIcon],
+  imports: [MatIcon, ThemeButtonComponent],
   templateUrl: './device-list-modal.component.html',
   styles: ``,
 })
@@ -18,7 +19,7 @@ export class DeviceListModalComponent implements OnInit {
 
   data: any = {};
   devices: any = [];
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 

@@ -75,7 +75,11 @@
   <button type="button" mat-raised-button (click)="save()">
     {{ btnText }}
   </button>
-  <button type="button" class="btn btn-dark" (click)="modal.close()">
-    &times; Cerrar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  >
+  </app-theme-button>
 </div>

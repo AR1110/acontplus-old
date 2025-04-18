@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { AmbienteSriPipe } from '@shared/pipes/ambiente-sri.pipe';
 import { DatePipe } from '@angular/common';
 import {MatCard, MatCardContent} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-retencion-html',
-    imports: [FormsModule, AmbienteSriPipe, DatePipe, MatCard, MatCardContent],
+    imports: [FormsModule, AmbienteSriPipe, DatePipe, MatCard, MatCardContent, ThemeButtonComponent],
     templateUrl: './retencion-html.component.html',
     styles: ``
 })
@@ -26,7 +27,7 @@ export class RetencionHtmlComponent {
     // Handle save logic
   }
 
-  closeModal() {
+  onModalClose() {
     // Handle modal close logic
   }
 

@@ -4,7 +4,7 @@
     type="button"
     class="btn-close"
     aria-label="Close"
-    (click)="closeModal()"
+    (click)="onModalClose()"
   ></button>
 </div>
 <div class="modal-body">
@@ -68,11 +68,7 @@
     </div>
     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
       <div class="d-flex justify-content-end">
-        <button
-          type="button"
-          mat-raised-button
-          (click)="refresh()"
-        >
+        <button type="button" mat-raised-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>
         </button>
         <!-- <form class="form-material">
@@ -224,7 +220,11 @@
   </ng-template>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-dark" (click)="closeModal()">
-    &times; Cerrar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="onModalClose()"
+  >
+  </app-theme-button>
 </div>

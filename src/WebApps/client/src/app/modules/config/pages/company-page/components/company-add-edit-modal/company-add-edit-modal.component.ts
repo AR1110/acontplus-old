@@ -9,17 +9,19 @@ import { CompanyService } from '@modules/config/services/company.service';
 import { isApiResponse } from '@core/models/api-response';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-company-add-edit-modal',
-  imports: [
-    FormsModule,
-    MatIcon,
-    NgbTooltipModule,
-    ToUpperCaseDirective,
-    MatTooltip,
-    MatButton,
-  ],
+    imports: [
+        FormsModule,
+        MatIcon,
+        NgbTooltipModule,
+        ToUpperCaseDirective,
+        MatTooltip,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './company-add-edit-modal.component.html',
   styles: ``,
 })

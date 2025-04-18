@@ -14,10 +14,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import { CajaUseCase } from '@accounting/core/use-cases/caja.use-case';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-caja-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton],
+    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './caja-modal.component.html',
   styleUrl: './caja-modal.component.scss',
 })
@@ -153,7 +154,7 @@ export class CajaModalComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

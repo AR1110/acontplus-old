@@ -20,6 +20,7 @@ import { isValidField } from '@core/utils/utils';
 import { MatChipsModule } from '@angular/material/chips';
 import { InspectionUseCase } from '@mechanical/domain/use-cases/inspection.use-case';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 type VehiclePartNode = VehiclePart & {
   status: number;
@@ -41,6 +42,7 @@ type VehiclePartTypeNode = VehiclePartType & {
     InputDateComponent,
     MatChipsModule,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './inspection-modal.component.html',
 })

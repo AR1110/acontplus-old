@@ -85,7 +85,7 @@ export class OrderDocumentComponent implements OnInit {
     });
   }
 
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 }
