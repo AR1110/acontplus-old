@@ -16,6 +16,8 @@ CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Get @userRoleId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
     SET LANGUAGE SPANISH;
 
     --> Global
@@ -31,6 +33,79 @@ BEGIN
 
         --> Variables Globales 
         SELECT TOP 1 @idEntidad = idEntidad, @userId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+        IF (@tipo = 1)
+            BEGIN
+                
+                SET @tableNames = 'retenciones'
+                -- Declare parameters
+                DECLARE @textSearch VARCHAR(500) = '' -- Example value
+                DECLARE @checkTextSearch BIT = 0 -- Example value
+                DECLARE @pageIndex INT;-- Example value
+                DECLARE @pageSize INT;-- Example value
+                DECLARE @params NVARCHAR(500) = N'@idEntidad INT, @textSearch VARCHAR(500), @pageIndex INT, @pageSize INT'
+                DECLARE @sql NVARCHAR(MAX);
+
+                SELECT @pageSize    = pageSize
+                  ,@pageIndex       = pageIndex 
+                  ,@checkTextSearch = checkTextSearch 
+                  ,@textSearch      = (REPLACE(textSearch,SPACE(1),'%'))
+                FROM OPENJSON(@json) WITH 
+                (
+                     pageIndex       INT 
+                    ,pageSize        INT 
+                    ,checkTextSearch BIT  
+                    ,textSearch      VARCHAR(255)
+                )
+
+                -- Construct the WHERE clause
+                DECLARE @whereClause NVARCHAR(MAX) = ' WHERE de.idEntidad = @idEntidad '
+
+                IF @checkTextSearch = 1
+                    SET @whereClause = @whereClause + 'AND de.rucReceptor + '' '' + de.razonSocial + '' '' + de.claveAcceso LIKE ''%''+@textSearch+''%'' '
+
+                -- Get total count with a separate query
+                DECLARE @countSql NVARCHAR(MAX) = 'SELECT @totalRecords = COUNT(*) 
+                                                   FROM FactElect.RetencionAts r WITH (NOLOCK)
+                                                   INNER JOIN FactElect.v_DocElectronico de WITH (NOLOCK) 
+                                                   ON r.idDocumentoElectronico = de.idDocumentoElectronico ' + @whereClause
+                DECLARE @totalRecords INT
+
+                EXEC sp_executesql @countSql
+                                  ,N'@idEntidad INT, @textSearch VARCHAR(500), @totalRecords INT OUTPUT'
+                                  ,@idEntidad = @idEntidad
+                                  ,@textSearch = @textSearch
+                                  ,@totalRecords = @totalRecords OUTPUT
+
+                -- Main query for the data
+                SET @sql = 'SELECT r.idRetencionAts
+                                  ,r.idDocumentoElectronico
+                                  ,de.isAutomatic
+                                  ,de.codEstado
+                                  ,de.estado
+                                  ,CONVERT(VARCHAR, FORMAT(de.fechaEmision, ''dd/MM/yyyy''), 106) AS fechaEmision
+                                  ,de.serieComprobante
+                                  ,de.rucReceptor
+                                  ,de.razonSocial
+                                  ,de.claveAcceso
+                                  ,CONVERT(VARCHAR, FORMAT(de.fechaAutorizacion, ''dd/MM/yyyy HH:mm:ss'')) AS fechaAutorizacion
+                                  ,de.usuario
+                                  ,(SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet ret WHERE r.idRetencionAts = ret.idRetencionAts) as importeTotal
+                                  ,' + CAST(@totalRecords AS NVARCHAR(20)) + ' as totalRecords
+                            FROM FactElect.RetencionAts r WITH (NOLOCK)
+                            INNER JOIN FactElect.v_DocElectronico de WITH (NOLOCK) 
+                            ON r.idDocumentoElectronico = de.idDocumentoElectronico ' + @whereClause + '
+                            ORDER BY r.idRetencionAts DESC 
+                            OFFSET @pageSize*(@pageIndex-1) ROWS 
+                            FETCH NEXT @pageSize ROWS ONLY'
+
+                EXEC sp_executesql @sql
+                                  ,@params 
+                                  ,@idEntidad  = @idEntidad
+                                  ,@textSearch = @textSearch
+                                  ,@pageIndex  = @pageIndex
+                                  ,@pageSize   = @pageSize
+            END
 
 	    --> DataForm
 	    IF @tipo = 2
@@ -93,64 +168,6 @@ BEGIN
                 WHERE es.idEntidad = @idEntidad
                   AND td.codigoSri = '07'
                   AND cd.infoAdicional IS NOT NULL
-
-			    RETURN
-		    END
-    
-        --> GetById
-	    IF @tipo = 3
-		    BEGIN
-                SET @tableNames = 'retencionAts,documentosSustento,taxes,retenciones,payments,infoAdicional';
-			    DECLARE @idRetencionATS INT ,@idDoc INT 
-
-                SELECT @idDoc = idDoc FROM OPENJSON(@json) WITH(idDoc BIGINT )
-
-			    SELECT TOP 1 @idRetencionATS = idRetencionAts FROM FactElect.RetencionAts WITH (NOLOCK)  WHERE idDocumentoElectronico = @idDoc
-			
-			    --INFO RETENCION
-			    SELECT ra.*
-                      ,pe.idPuntoEmision
-                      ,sb.descripcion    as subContribuyente 
-                      ,es.codEstab 
-                      ,cu.IDCard         as identificacionSujetoRetenido
-                      ,cu.BusinessName   as razonSocialSujetoRetenido
-                      ,ti.codigoSri      as tipoIdentificacionSujetoRetenido
-                FROM FactElect.RetencionAts         ra WITH (NOLOCK) 
-                INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
-                INNER JOIN Proveedor                pr WITH (NOLOCK) ON pr.idProveedor            = ra.idProveedor
-                INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-                INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
-			     LEFT JOIN SubContribuyente         sb WITH (NOLOCK) ON sb.idSubContribuyente     = pr.idSubContribuyente
-                INNER JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = cu.IdTypeId
-			    WHERE idRetencionAts = @idRetencionATS
-			
-			    --DOCUMENTOS DE SUSTENTOS
-			    SELECT rads.*
-			    ,idDocumento =  ISNULL((SELECT TOP 1 idDocumento FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                                                                 WHERE dr.claveAcceso = rads.numAutDocSustento),
-                                       (SELECT TOP 1 fc.idFacturaCompra FROM FacturaCompra fc WITH (NOLOCK)
-																	    WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento))
-			    ,isAutomatic = ISNULL((SELECT TOP 1 fc.isAutomatic FROM FacturaCompra fc WITH (NOLOCK)
-																    WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 
-																    1
-																    )
-			    FROM FactElect.RetAtsDocSustento rads WITH (NOLOCK)
-			    WHERE idRetencionAts = @idRetencionATS
-
-			    --IMPUESTOS DEL DOCUMENTO DE SUSTENTO
-			    SELECT * FROM FactElect.RetAtsImpDocSustento WITH (NOLOCK) WHERE idRetencionAts = @idRetencionATS
-
-			    --RETENCIONES DEL DOCUMENTO DE SUSTENTO
-			    SELECT * FROM FactElect.RetencionAtsRet WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
-
-			    --FORMAS DE PAGO DEL DOCUMENTO DE SUSTENTO
-			    SELECT * FROM FactElect.RetencionAtsPago WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
-
-			    --INFO ADICIONAL DE LA RETENCION
-			    SELECT * FROM FactElect.RetAtsInfoAdicional WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
-
-			    RETURN
 		    END
 
         --> FOR EMIT RETENCION ATS
