@@ -28,27 +28,29 @@ import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-
 import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-documento-received',
-  imports: [
-    MatDynamicTableComponent,
-    BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
-    DateRangeSelectionComponent,
-    SupplierSearchComponent,
-    FormsModule,
-    MatTooltip,
-    InputNumberDirective,
-    MatPaginator,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    MatButton,
-  ],
+    imports: [
+        MatDynamicTableComponent,
+        BreadcrumbComponent,
+        MatCard,
+        MatCardContent,
+        DateRangeSelectionComponent,
+        SupplierSearchComponent,
+        FormsModule,
+        MatTooltip,
+        InputNumberDirective,
+        MatPaginator,
+        MatIcon,
+        MatIconButton,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './document-received.component.html',
   styles: ``,
 })

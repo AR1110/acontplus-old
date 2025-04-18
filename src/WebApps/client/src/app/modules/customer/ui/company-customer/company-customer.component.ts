@@ -17,6 +17,7 @@ import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-company-customer',
@@ -32,6 +33,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     MatCardContent,
     MatCard,
     ThemeButtonComponent,
+    MatButton,
   ],
   templateUrl: './company-customer.component.html',
 })

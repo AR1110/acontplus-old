@@ -55,14 +55,14 @@
               >
                 <mat-icon>{{ extraOptionsIcon }}</mat-icon>
               </button>
-              <button
-                (click)="loadData()"
-                class="btn btn-success m-l-5"
-                matTooltip="Recargar"
-                type="button"
+              <app-theme-button
+                variant="success"
+                icon="refresh"
+                matStyle="icon"
+                (handleClick)="loadData()"
+                title="Recargar"
               >
-                <mat-icon>refresh</mat-icon>
-              </button>
+              </app-theme-button>
             </div>
           </div>
         </div>

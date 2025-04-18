@@ -78,20 +78,24 @@
       <div
         class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3"
       >
-        <button type="button" class="btn btn-info" (click)="toSearch()">
-          <mat-icon>search</mat-icon> Buscar
-        </button>
+        <app-theme-button
+          variant="info"
+          icon="search"
+          text="Buscar"
+          (handleClick)="toSearch()"
+        >
+        </app-theme-button>
       </div>
       <div
         class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end mt-xl-3 mtlg-3 mt-md-3"
       >
-        <button
-          type="button"
-          class="btn btn-success btn-lg"
-          (click)="askToSave()"
+        <app-theme-button
+          variant="success"
+          icon="save"
+          text="Guardar"
+          (handleClick)="askToSave()"
         >
-          Guardar
-        </button>
+        </app-theme-button>
       </div>
     </div>
     <hr />
@@ -169,13 +173,13 @@
                   [(ngModel)]="mainForm.valueToCalculate"
                   class="form-control"
                 />
-                <button
-                  type="button"
-                  class="btn btn-info"
-                  (click)="calculate()"
+                <app-theme-button
+                  variant="info"
+                  icon="info"
+                  text="Calcular"
+                  (handleClick)="calculate()"
                 >
-                  Calcular
-                </button>
+                </app-theme-button>
                 <button
                   type="button"
                   mat-raised-button

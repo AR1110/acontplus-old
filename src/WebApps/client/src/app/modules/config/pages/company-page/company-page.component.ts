@@ -7,16 +7,18 @@ import { ModalService } from '@core/services/modal.service';
 import { CompanyAddEditModalComponent } from '@modules/config/pages/company-page/components/company-add-edit-modal/company-add-edit-modal.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-company-page',
-  imports: [
-    BreadcrumbComponent,
-    PrimaryStatusPipe,
-    MatCardContent,
-    MatCard,
-    MatIcon,
-  ],
+    imports: [
+        BreadcrumbComponent,
+        PrimaryStatusPipe,
+        MatCardContent,
+        MatCard,
+        MatIcon,
+        ThemeButtonComponent,
+    ],
   templateUrl: './company-page.component.html',
   styles: ``,
 })

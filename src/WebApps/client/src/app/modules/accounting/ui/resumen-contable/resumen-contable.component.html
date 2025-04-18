@@ -47,12 +47,14 @@
   </mat-card-content>
   <div class="card-footer">
     <div class="d-flex flex-row gap-1">
-      <button (click)="reportPdf()" mat-raised-button type="button">
-        PDF
-      </button>
-      <button (click)="reportExcel()" class="btn btn-info" type="button">
-        EXCEL
-      </button>
+      <button (click)="reportPdf()" mat-raised-button type="button">PDF</button>
+      <app-theme-button
+        variant="info"
+        icon="download"
+        text="EXCEL"
+        (handleClick)="reportExcel()"
+      >
+      </app-theme-button>
     </div>
   </div>
 </mat-card>

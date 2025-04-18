@@ -28,6 +28,7 @@ import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -40,22 +41,23 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
 
 @Component({
   selector: 'app-lot-price-page',
-  imports: [
-    MatIcon,
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbTooltipModule,
-    BreadcrumbComponent,
-    TabulatorComponent,
-    SubCategorySelectMultipleComponent,
-    ProductSearchComponent,
-    SupplierSearchComponent,
-    MatCardContent,
-    MatCard,
-    MatButton,
-  ],
+    imports: [
+        MatIcon,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbTooltipModule,
+        BreadcrumbComponent,
+        TabulatorComponent,
+        SubCategorySelectMultipleComponent,
+        ProductSearchComponent,
+        SupplierSearchComponent,
+        MatCardContent,
+        MatCard,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './lot-price-page.component.html',
 })
 export class LotPricePageComponent {

@@ -23,19 +23,21 @@ import {BancoSelectOnly} from "@accounting/core/models/banco.interface";
 import { formatDateToString } from '@core/utils/date.util';
 import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
 import {MatCard, MatCardContent} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-reporte-cobros',
     templateUrl: './reporte-cobros.component.html',
     styles: ``,
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    MatCardContent,
-    MatCard,
-  ]
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        MatCardContent,
+        MatCard,
+        ThemeButtonComponent,
+    ]
 })
 export class ReporteCobrosComponent implements OnInit {
   http = inject(HttpClient);

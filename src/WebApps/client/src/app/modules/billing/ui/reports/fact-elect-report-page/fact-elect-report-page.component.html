@@ -152,9 +152,13 @@
       <button type="button" mat-raised-button (click)="getReportPdf()">
         PDF
       </button>
-      <button type="button" class="btn btn-info" (click)="getReportExcel()">
-        EXCEL
-      </button>
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="EXCEL"
+        (handleClick)="getReportExcel()"
+      >
+      </app-theme-button>
     </div>
   </mat-card-content>
 </mat-card>

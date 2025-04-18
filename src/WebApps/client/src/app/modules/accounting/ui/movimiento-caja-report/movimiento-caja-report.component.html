@@ -113,7 +113,12 @@
   <div class="card-footer">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
       <button mat-raised-button (click)="getReportPdf()">PDF</button>
-      <button class="btn btn-info" (click)="getReportExcel()">EXCEL</button>
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="EXCEL"
+        (handleClick)="getReportExcel()"
+      ></app-theme-button>
     </div>
   </div>
 </mat-card>

@@ -14,6 +14,7 @@ import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.consta
 import { ResumenContableUseCase } from '@accounting/core/use-cases/resumen-contable.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-resumen-contable',
@@ -24,6 +25,7 @@ import { MatButton } from '@angular/material/button';
     MatCardContent,
     MatCard,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './resumen-contable.component.html',
   styles: ``,

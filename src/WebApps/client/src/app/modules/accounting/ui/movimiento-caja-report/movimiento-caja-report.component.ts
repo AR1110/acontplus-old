@@ -13,19 +13,21 @@ import { UserSearchComponent } from '@core/components/user-search/user-search.co
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-movimiento-caja-report',
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    UserSearchComponent,
-    MatCardContent,
-    MatCard,
-    MatButton,
-  ],
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        UserSearchComponent,
+        MatCardContent,
+        MatCard,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './movimiento-caja-report.component.html',
   styles: ``,
 })

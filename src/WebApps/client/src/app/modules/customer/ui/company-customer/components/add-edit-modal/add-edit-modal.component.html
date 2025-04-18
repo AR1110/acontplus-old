@@ -412,13 +412,13 @@
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <div class="form-group">
                 <label for="barcode"> Código de Barras:</label>
-                <button
-                  class="btn btn-info btn-sm"
+                <app-theme-button
+                  variant="info"
+                  icon="add"
+                  text="Generar"
                   ng-click="getBarcode(data.numeroIdentificacion)"
-                  type="button"
                 >
-                  <i class="fa fa-barcode"></i> Generar
-                </button>
+                </app-theme-button>
                 <img alt="" src="" style="display: none" />
               </div>
               <mat-card
