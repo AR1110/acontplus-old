@@ -1,4 +1,6 @@
-﻿namespace FactElect.Application.Services.RetencionAts;
+﻿using FactElect.Application.DTOs.RetencionAts;
+
+namespace FactElect.Application.Services.RetencionAts;
 
 public class RetencionAtsService(IAdoRepository adoRepository) : IRetencionAtsService
 {
@@ -25,6 +27,18 @@ public class RetencionAtsService(IAdoRepository adoRepository) : IRetencionAtsSe
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
+    {
+        //var ds = await adoRepository.GetDataSetAsync($"{ModuleName}GetById", parameters);
+        //return !DataValidation.DataSetIsNull(ds, removeEmptyDt: true)
+        //    ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+        //    : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+
+       var response = await adoRepository.SpExecuteAsync<RetencionAtsDto>($"{ModuleName}GetById", parameters);
+        return new ApiResponse { Code = "1", Payload = response};
+
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)

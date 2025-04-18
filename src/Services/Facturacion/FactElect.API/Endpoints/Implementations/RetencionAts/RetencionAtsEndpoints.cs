@@ -18,9 +18,14 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         return Results.Ok(await retencionAtsService.GetAsync(parameters));
     }
 
-    public Task<IResult> GetRetencionAtsByIdAsync(int id)
+    public async Task<IResult> GetRetencionAtsByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
+            { "id", id }
+        };
+        return Results.Ok(await retencionAtsService.GetByIdAsync(parameters));
     }
 
     public async Task<IResult> CreateRetencionAtsAsync(RetencionAtsDto retencionAtsDto)
