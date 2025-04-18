@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';

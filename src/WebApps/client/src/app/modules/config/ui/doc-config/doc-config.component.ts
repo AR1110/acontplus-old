@@ -18,7 +18,7 @@ import { isValidField } from '@core/utils/utils';
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
 import { ModalService } from '@core/services/modal.service';
-import { DocConfigInfoAdicionalComponent } from './components/doc-config-info-adicional/doc-config-info-adicional.component';
+import { DocConfigInfoAdicionalComponent } from '@modules/config/ui/doc-config/doc-config-info-adicional/doc-config-info-adicional.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField, MatInput } from '@angular/material/input';
 import { MatCheckbox } from '@angular/material/checkbox';

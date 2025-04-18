@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { map } from 'rxjs';
 

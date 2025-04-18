@@ -5,7 +5,7 @@ import {ApiResponse, isApiResponse } from "@core/models/api-response";
 import { UserSearch } from "@core/models/user.model";
 import { Observable, map } from "rxjs";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import { CONFIG_PATHS } from "@modules/config/enums/config.enums";
+import { CONFIG_PATHS } from "@modules/config/domain/enums/config.enums";
 
 @Injectable({
   providedIn: 'root'

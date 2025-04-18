@@ -19,5 +19,6 @@ export const enum CONFIG_PATHS {
   PRINTER_DOC = 'PrinterDocument',
   FIRMA_ELECTRONICA = 'FirmaElectronica/',
   TIEMPO_CREDITO = 'TiempoCredito/',
-  SOLICITUD_AUTORIZACION = 'SolicitudAutorizacion'
+  SOLICITUD_AUTORIZACION = 'SolicitudAutorizacion',
+  IMPORTACION = 'Importacion'
 }
