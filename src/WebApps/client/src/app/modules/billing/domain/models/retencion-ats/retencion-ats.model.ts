@@ -1,12 +1,18 @@
 export interface RetencionAts {
-  id: number;
+  idRetencionAts: number;
+  idDocumentoElectronico: number;
 }
 
-export interface RetencionAtsList extends Pick<RetencionAts, 'id'> {
+export interface RetencionAtsList
+  extends Pick<RetencionAts, 'idRetencionAts' | 'idDocumentoElectronico'> {
+  isAutomatic: boolean;
+  codEstado: string;
+  estado: string;
   totalRecords: number;
 }
 
-export interface RetAtsInfoAdicional extends Pick<RetencionAts, 'id'> {
+export interface RetAtsInfoAdicional
+  extends Pick<RetencionAts, 'idRetencionAts'> {
   idRetAtsInfoAdicional: number;
   nombre: string;
   valor: string;

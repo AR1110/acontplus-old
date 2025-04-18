@@ -18,8 +18,13 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private readonly _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.RETENCION_ATS}`;
 
   getAll<T>(parameters: T) {
+    const obj = {
+      ...parameters,
+      tipo: 1,
+    };
+
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(parameters)}`)
+      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`)
       .pipe(
         map((response) => {
           if (response.code !== '1') {
@@ -27,7 +32,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           }
           const { retenciones } = JSON.parse(response.payload as string);
           return {
-            retenciones: retenciones as RetencionAtsList[],
+            retenciones: (retenciones as RetencionAtsList[]) || [],
           };
         }),
       );
@@ -78,7 +83,12 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
     };
   }
   getById(id: number): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+    return this._http.get<ApiResponse>(`${this._url} ${id}`).pipe(
+      map((response) => {
+        console.log(response);
+        return response.payload as RetencionAts;
+      }),
+    );
   }
   create<T>(data: T): Observable<ApiResponse> {
     console.log(data);
