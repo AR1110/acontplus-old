@@ -112,8 +112,13 @@
   </mat-card-content>
   <div class="card-footer">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button mat-raised-button (click)="getReportPdf()">PDF</button>
       <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="getReportPdf()"
+      ></app-theme-button
+      ><app-theme-button
         variant="success"
         icon="download"
         text="EXCEL"
