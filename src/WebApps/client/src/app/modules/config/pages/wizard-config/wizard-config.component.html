@@ -117,13 +117,14 @@
                           </option>
                         }
                       </select>
-                      <button
-                        (click)="showInfoActividadEconomica()"
-                        class="btn btn-secondary btn-sm"
-                        type="button"
+
+                      <app-theme-button
+                        variant="secondary"
+                        icon="info"
+                        matStyle="icon"
+                        (handleClick)="showInfoActividadEconomica()"
                       >
-                        <mat-icon>info</mat-icon>
-                      </button>
+                      </app-theme-button>
                     </div>
                   </div>
                 </div>
@@ -166,13 +167,13 @@
                         }
                       </select>
 
-                      <button
-                        (click)="showInfoTipoContribuyente()"
-                        class="btn btn-secondary btn-sm"
-                        type="button"
+                      <app-theme-button
+                        variant="secondary"
+                        icon="info"
+                        matStyle="icon"
+                        (handleClick)="showInfoTipoContribuyente()"
                       >
-                        <mat-icon>info</mat-icon>
-                      </button>
+                      </app-theme-button>
                     </div>
                   </div>
                 </div>

@@ -16,6 +16,7 @@ import Swal from 'sweetalert2';
 import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-company-customer',
@@ -30,6 +31,7 @@ import { MatIcon } from '@angular/material/icon';
     PrimaryStatusPipe,
     MatCardContent,
     MatCard,
+    ThemeButtonComponent,
   ],
   templateUrl: './company-customer.component.html',
 })

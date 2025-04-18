@@ -257,11 +257,11 @@
             </div>
           </ng-template>
 
-          <button type="button" class="btn btn-secondary btn-sm" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+          <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
             <mat-icon>add</mat-icon>
           </button>
           @if (data.vehicleCompanyId>0) {
-            <button type="button" class="btn btn-secondary btn-sm" appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
+            <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
               <mat-icon>edit</mat-icon>
             </button>
           }

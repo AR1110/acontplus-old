@@ -50,13 +50,14 @@
               placeholder="Buscar"
               type="text"
             />
-            <button
-              (click)="refresh()"
-              class="btn btn-secondary btn-sm"
+            <app-theme-button
+              variant="secondary"
+              icon="refresh"
+              matStyle="icon"
+              (handleClick)="refresh()"
               type="button"
             >
-              <mat-icon>refresh</mat-icon>
-            </button>
+            </app-theme-button>
           </div>
         </div>
       </div>

@@ -56,6 +56,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-wizard-config',
@@ -80,6 +81,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
     MatCardContent,
     MatCard,
     MatIcon,
+    ThemeButtonComponent,
   ],
   templateUrl: './wizard-config.component.html',
   styles: [],
