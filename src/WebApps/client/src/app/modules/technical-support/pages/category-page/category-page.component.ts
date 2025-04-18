@@ -8,10 +8,18 @@ import { CategoryModalComponent } from './category-modal/category-modal.componen
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-category',
-  imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon],
+  imports: [
+    BreadcrumbComponent,
+    MatCard,
+    MatCardContent,
+    MatButton,
+    MatIcon,
+    ThemeButtonComponent,
+  ],
   templateUrl: './category-page.component.html',
   styles: ``,
 })
@@ -61,4 +69,6 @@ export class CategoryPageComponent {
       }
     });
   }
+
+  onDelete(item: Category) {}
 }

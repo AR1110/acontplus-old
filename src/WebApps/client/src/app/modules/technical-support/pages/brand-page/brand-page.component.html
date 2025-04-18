@@ -35,9 +35,13 @@
                 >
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button type="button" class="btn btn-outline-danger btn-sm">
-                  <mat-icon>delete</mat-icon>
-                </button>
+                <app-theme-button
+                  variant="danger"
+                  icon="delete"
+                  matStyle="icon"
+                  (handleClick)="onDelete(item)"
+                >
+                </app-theme-button>
               </td>
             </tr>
           }

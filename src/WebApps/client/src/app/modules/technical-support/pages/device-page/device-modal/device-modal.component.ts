@@ -30,18 +30,20 @@ import { CategoryModalComponent } from '../../category-page/category-modal/categ
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-device-modal',
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    NgbAccordionModule,
-    MatCard,
-    MatCardContent,
-    MatIcon,
-    MatButton,
-  ],
+    imports: [
+        ReactiveFormsModule,
+        FormsModule,
+        NgbAccordionModule,
+        MatCard,
+        MatCardContent,
+        MatIcon,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './device-modal.component.html',
   styles: ``,
 })

@@ -187,13 +187,13 @@
                           <ng-template>
                             <div class="row mb-2">
                               <div class="col-12">
-                                <button
-                                  type="button"
-                                  class="btn btn-outline-danger btn-sm"
-                                  (click)="removeSpecCategory(item.uuid)"
+                                <app-theme-button
+                                  variant="danger"
+                                  icon="delete"
+                                  text="Eliminar Categoría"
+                                  (handleClick)="removeSpecCategory(item.uuid)"
                                 >
-                                  <mat-icon>delete</mat-icon> Eliminar Categoría
-                                </button>
+                                </app-theme-button>
                               </div>
                             </div>
                             <div class="row">
@@ -255,15 +255,15 @@
                                             <td>{{ spec.name }}</td>
                                             <td>{{ spec.value }}</td>
                                             <th>
-                                              <button
-                                                type="button"
-                                                class="btn btn-outline-danger btn-sm"
-                                                (click)="
+                                              <app-theme-button
+                                                variant="danger"
+                                                icon="delete"
+                                                matStyle="icon"
+                                                (handleClick)="
                                                   removeSpec($index, item.uuid)
                                                 "
                                               >
-                                                <mat-icon>delete</mat-icon>
-                                              </button>
+                                              </app-theme-button>
                                             </th>
                                           </tr>
                                         }

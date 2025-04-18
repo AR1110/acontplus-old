@@ -8,10 +8,11 @@ import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-modelo-page',
-  imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon],
+  imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon, ThemeButtonComponent],
   templateUrl: './modelo-page.component.html',
   styles: ``,
 })
@@ -65,5 +66,9 @@ export class ModeloPageComponent {
         this.onGet();
       }
     });
+  }
+
+  onDelete(item: Modelo) {
+    
   }
 }
