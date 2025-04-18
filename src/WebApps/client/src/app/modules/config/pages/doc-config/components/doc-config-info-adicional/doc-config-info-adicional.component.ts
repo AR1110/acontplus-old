@@ -8,10 +8,11 @@ import { isValidField } from '@core/utils/utils';
 import { DocConfigService } from '@modules/config/services/doc-config.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-doc-config-info-adicional',
-  imports: [FormsModule, TabulatorComponent, MatButton],
+    imports: [FormsModule, TabulatorComponent, MatButton, ThemeButtonComponent],
   templateUrl: './doc-config-info-adicional.component.html',
   styles: ``,
 })

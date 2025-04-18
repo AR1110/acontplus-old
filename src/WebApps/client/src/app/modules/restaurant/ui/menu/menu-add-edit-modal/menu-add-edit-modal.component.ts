@@ -12,17 +12,19 @@ import { Item } from '@restaurant/domain/models/item.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-menu-add-edit-modal',
-  imports: [
-    ReactiveFormsModule,
-    MatSlideToggle,
-    ItemSearchComponent,
-    MatIcon,
-    TabulatorSemanticUiComponent,
-    MatButton,
-  ],
+    imports: [
+        ReactiveFormsModule,
+        MatSlideToggle,
+        ItemSearchComponent,
+        MatIcon,
+        TabulatorSemanticUiComponent,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './menu-add-edit-modal.component.html',
   styles: ``,
 })

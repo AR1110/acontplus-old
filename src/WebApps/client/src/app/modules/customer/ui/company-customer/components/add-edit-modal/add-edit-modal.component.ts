@@ -30,6 +30,8 @@ import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-add-edit-modal',
@@ -44,6 +46,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
     MatChipInput,
     MatCard,
     MatCardContent,
+    ThemeButtonComponent,
+    MatButton,
   ],
   templateUrl: './add-edit-modal.component.html',
   styles: ``,

@@ -11,10 +11,11 @@ import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-filtro-control-caja-modal-report-modal',
-  imports: [FormsModule, NgbTimepickerModule, MatIcon, MatButton],
+  imports: [FormsModule, NgbTimepickerModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {

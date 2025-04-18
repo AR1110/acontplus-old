@@ -148,13 +148,13 @@
     >
       <mat-icon>save</mat-icon> Guardar
     </button>
-    <button
-      type="button"
-      class="btn btn-outline-dark"
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
       title="Cancelar Orden"
-      (click)="onModalClose()"
+      (handleClick)="onModalClose()"
     >
-      &times; Cancelar
-    </button>
+    </app-theme-button>
   </div>
 </form>

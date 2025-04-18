@@ -42,6 +42,8 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-order-maintenance-modal',
@@ -55,6 +57,8 @@ import { MatIcon } from '@angular/material/icon';
     ProductSearchOverlayComponent,
     InputDateComponent,
     MatIcon,
+    ThemeButtonComponent,
+    MatButton,
   ],
   templateUrl: './order-maintenance-modal.component.html',
 })

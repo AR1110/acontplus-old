@@ -1,15 +1,25 @@
 <div class="modal-header">
   <h4 class="modal-title">Filtro Control Caja</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
 </div>
 <div class="modal-body">
   <div class="row">
     <div class="col-12">
       <div class="form-group">
         <label for="sortByDefault">Ordenar por defecto:</label>
-        <select name="sortByDefault" id="sortByDefault" class="form-select" [(ngModel)]="dataSearch.sortByDefault">
+        <select
+          name="sortByDefault"
+          id="sortByDefault"
+          class="form-select"
+          [(ngModel)]="dataSearch.sortByDefault"
+        >
           @for (item of sortByDefaults; track $index) {
-          <option [ngValue]="item.id">{{item.description}}</option>
+            <option [ngValue]="item.id">{{ item.description }}</option>
           }
         </select>
       </div>
@@ -17,9 +27,14 @@
     <div class="col-12">
       <div class="form-group">
         <label for="sortOrder">Criterio de clasificación:</label>
-        <select name="sortOrder" id="sortOrder" class="form-select" [(ngModel)]="dataSearch.sortOrder">
+        <select
+          name="sortOrder"
+          id="sortOrder"
+          class="form-select"
+          [(ngModel)]="dataSearch.sortOrder"
+        >
           @for (item of sortOrders; track $index) {
-          <option [ngValue]="item.codigo">{{item.description}}</option>
+            <option [ngValue]="item.codigo">{{ item.description }}</option>
           }
         </select>
       </div>
@@ -37,5 +52,10 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">&times; Cerrar</button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="activeModal.close('Close click')"
+  ></app-theme-button>
 </div>

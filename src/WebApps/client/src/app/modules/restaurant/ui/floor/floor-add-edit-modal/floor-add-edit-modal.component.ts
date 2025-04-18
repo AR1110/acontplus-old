@@ -20,6 +20,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { RoomService } from '@restaurant/data/services/room.service';
 import { FloorUseCase } from '@restaurant/domain/use-cases/floor.use-case';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-floor-add-edit-modal',
@@ -29,6 +30,7 @@ import { MatIcon } from '@angular/material/icon';
     TabulatorSemanticUiComponent,
     MatButton,
     MatSlideToggle,
+    ThemeButtonComponent,
   ],
   templateUrl: './floor-add-edit-modal.component.html',
   styles: ``,

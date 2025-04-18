@@ -35,6 +35,7 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-order-modal',
@@ -48,6 +49,7 @@ import { MatButton } from '@angular/material/button';
     TabulatorComponent,
     MatIcon,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,

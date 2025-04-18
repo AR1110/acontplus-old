@@ -96,16 +96,16 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button
-      [disabled]="floorForm.invalid"
-      mat-raised-button
-      type="submit"
-    >
+    <button [disabled]="floorForm.invalid" mat-raised-button type="submit">
       <mat-icon>save</mat-icon>
       Guardar
     </button>
-    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button">
-      &times; Cancelar
-    </button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
+    >
+    </app-theme-button>
   </div>
 </form>

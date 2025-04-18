@@ -18,10 +18,11 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-filtro-detalle-caja-report-modal',
-  imports: [CommonModule, FormsModule, NgbTimepickerModule, MatIcon, MatButton],
+  imports: [CommonModule, FormsModule, NgbTimepickerModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './filtro-detalle-cajar-report-modal.component.html',
 })
 export class FiltroDetalleCajaReportModal {
@@ -141,4 +142,6 @@ export class FiltroDetalleCajaReportModal {
       console.log(error);
     }
   }
+
+  protected readonly close = close;
 }

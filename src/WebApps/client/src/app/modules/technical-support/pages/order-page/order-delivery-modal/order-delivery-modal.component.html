@@ -61,8 +61,12 @@
       <mat-icon>save</mat-icon> Guardar
     </button>
 
-    <button type="button" class="btn btn-outline-dark" (click)="onModalClose()">
-      &times; Cancelar
-    </button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
+    >
+    </app-theme-button>
   </div>
 </form>

@@ -46,11 +46,11 @@
     <mat-icon>download</mat-icon> Exportar
   </button>
 
-  <button
-    type="button"
-    class="btn btn-outline-dark"
-    (click)="activeModal.close('Close click')"
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="activeModal.close('Close click')"
   >
-    &times; Cerrar
-  </button>
+  </app-theme-button>
 </div>

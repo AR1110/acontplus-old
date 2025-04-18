@@ -5,12 +5,13 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-order-document',
   templateUrl: './order-document.component.html',
   styles: ``,
-  imports: [CommonModule, TabulatorComponent, FormsModule, MatIcon],
+    imports: [CommonModule, TabulatorComponent, FormsModule, MatIcon, ThemeButtonComponent],
 })
 export class OrderDocumentComponent implements OnInit {
   private modalRef = inject(NgbActiveModal);

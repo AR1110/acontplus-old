@@ -18,6 +18,7 @@ import { IngredientService } from '@restaurant/data/services/ingredient.service'
 import { RecipeService } from '@restaurant/data/services/recipe.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-item-add-edit-modal',
@@ -27,6 +28,7 @@ import { MatButton } from '@angular/material/button';
     IngredientSearchComponent,
     MatIcon,
     MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './item-add-edit-modal.component.html',
   styles: ``,

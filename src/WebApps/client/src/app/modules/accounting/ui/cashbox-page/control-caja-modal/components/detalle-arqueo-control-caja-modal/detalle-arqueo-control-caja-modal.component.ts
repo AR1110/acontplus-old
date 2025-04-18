@@ -5,10 +5,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-detalle-arqueo-control-caja-modal-modal',
-  imports: [MatIcon, MatButton],
+  imports: [MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './detalle-arqueo-control-caja-modal.component.html',
 })
 export class DetalleArqueoControlCajaModalComponent {

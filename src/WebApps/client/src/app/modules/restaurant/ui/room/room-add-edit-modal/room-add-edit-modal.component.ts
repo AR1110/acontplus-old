@@ -16,10 +16,11 @@ import { Floor } from '@restaurant/domain/models/floor.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-room-add-edit-modal',
-  imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton],
+    imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './room-add-edit-modal.component.html',
   styles: ``,
 })

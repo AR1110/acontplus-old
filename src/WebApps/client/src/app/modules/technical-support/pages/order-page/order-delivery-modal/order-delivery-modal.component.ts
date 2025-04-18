@@ -14,16 +14,18 @@ import { ToasterService } from '@core/services/toaster.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-order-delivery-modal',
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIcon,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatIcon,
+        MatCheckboxModule,
+        ReactiveFormsModule,
+        ThemeButtonComponent,
+    ],
   templateUrl: './order-delivery-modal.component.html',
   styles: ``,
 })

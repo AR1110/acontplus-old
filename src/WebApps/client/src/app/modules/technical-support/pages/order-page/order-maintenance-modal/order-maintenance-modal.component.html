@@ -166,26 +166,22 @@
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
       <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-        <button
-          type="button"
-          class="btn btn-outline-dark"
-          (click)="saveOptions(factura)"
+        <app-theme-button
+          variant="dark"
+          icon="receipt_long"
+          text="Cancelar"
+          (handleClick)="saveOptions(factura)"
         >
-          <mat-icon>receipt_long</mat-icon> Factura
-        </button>
+        </app-theme-button>
         @if (!detailCustom) {
-          <button
-            type="button"
-            class="btn btn-outline-info"
-            (click)="saveOptions(notaEntrega)"
+          <app-theme-button
+            variant="info"
+            icon="check_circle"
+            text="Nota de Entrega"
+            (handleClick)="saveOptions(notaEntrega)"
           >
-            <mat-icon>check_circle</mat-icon> Nota de Entrega
-          </button>
-          <button
-            type="button"
-            mat-raised-button
-            (click)="saveOptions()"
-          >
+          </app-theme-button>
+          <button type="button" mat-raised-button (click)="saveOptions()">
             <mat-icon>save</mat-icon> Guardar
           </button>
         }
@@ -218,7 +214,11 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="onModalClose()">
-    &times; Cancelar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="onModalClose()"
+  >
+  </app-theme-button>
 </div>
