@@ -4,7 +4,7 @@ import { CompanyService } from '@modules/config/services/company.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 
 import { ModalService } from '@core/services/modal.service';
-import { CompanyAddEditModalComponent } from '@modules/config/pages/company-page/components/company-add-edit-modal/company-add-edit-modal.component';
+import { CompanyAddEditModalComponent } from '@modules/config/ui/company-page/company-add-edit-modal/company-add-edit-modal.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

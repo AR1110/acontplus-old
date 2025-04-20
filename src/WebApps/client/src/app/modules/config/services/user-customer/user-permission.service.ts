@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
 
 import { HttpClient } from "@angular/common/http";
-import { CONFIG_PATHS } from "../../enums/config.enums";
+import { CONFIG_PATHS } from "@modules/config/domain/enums/config.enums";
 
 
 @Injectable({

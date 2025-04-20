@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable} from 'rxjs';
-import {CONFIG_PATHS} from "@modules/config/enums/config.enums";
+import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
 import {SolicitudAutorizacionRepository} from "@modules/config/domain/repositories/solicitud-autorizacion.repository";
 import {
   ListSolicitudAutorizacionMapper
