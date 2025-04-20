@@ -22,11 +22,7 @@
       <div
         class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 d-flex align-items-center justify-content-end"
       >
-        <button
-          type="button"
-          mat-raised-button
-          (click)="openModalAddEdit()"
-        >
+        <button type="button" mat-raised-button (click)="openModalAddEdit()">
           <mat-icon>add</mat-icon>
           Agregar
         </button>
@@ -52,14 +48,13 @@
                 {{ $index + 1 }}
               </td>
               <td class="text-center">
-                <button
-                  class="btn btn-outline-warning btn-rounded btn-sm"
-                  type="button"
+                <app-theme-button
+                  icon="edit"
+                  matStyle="icon"
                   title="Editar"
-                  (click)="openModalAddEdit(item)"
+                  (handleClick)="openModalAddEdit(item)"
                 >
-                  <mat-icon>edit</mat-icon>
-                </button>
+                </app-theme-button>
               </td>
               <td>
                 <img [src]="item.img" width="70" class="rounded" alt="" />

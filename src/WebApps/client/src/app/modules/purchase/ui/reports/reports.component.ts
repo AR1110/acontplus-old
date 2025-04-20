@@ -23,22 +23,20 @@ import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
-import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-reports',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        SupplierSearchComponent,
-        DateRangeSelectionComponent,
-        MatCardContent,
-        MatCard,
-        MatCardFooter,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard,
+    MatCardFooter,
+    ThemeButtonComponent,
+  ],
   templateUrl: './reports.component.html',
   styles: ``,
 })

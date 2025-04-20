@@ -9,10 +9,11 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-promotion-list',
-  imports: [NgbPaginationModule, MatCard, MatCardContent, MatIcon, MatButton],
+    imports: [NgbPaginationModule, MatCard, MatCardContent, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './promotion-list.component.html',
   styles: ``,
 })

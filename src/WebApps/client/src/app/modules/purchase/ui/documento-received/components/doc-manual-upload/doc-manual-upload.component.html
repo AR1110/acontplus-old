@@ -61,14 +61,12 @@
           <div class="row mt-3">
             <div class="col-4">
               <div class="form-group">
-                <button
-                  (click)="addClaveAcceso()"
-                  class="btn btn-primary btn-sm"
-                  type="button"
+                <app-theme-button
+                  icon="add"
+                  text="Añadir"
+                  (handleClick)="addClaveAcceso()"
                 >
-                  <mat-icon>add</mat-icon>
-                  Añadir
-                </button>
+                </app-theme-button>
               </div>
             </div>
           </div>
@@ -108,13 +106,13 @@
     }
   </ng-template>
   <ng-template #actionsTemplate>
-<!--    <button mat-raised-button>-->
-<!--      <mat-icon-->
-<!--        aria-hidden="false"-->
-<!--        aria-label="Save Icon"-->
-<!--        fontIcon="save"-->
-<!--      ></mat-icon>-->
-<!--      Guardar-->
-<!--    </button>-->
+    <!--    <button mat-raised-button>-->
+    <!--      <mat-icon-->
+    <!--        aria-hidden="false"-->
+    <!--        aria-label="Save Icon"-->
+    <!--        fontIcon="save"-->
+    <!--      ></mat-icon>-->
+    <!--      Guardar-->
+    <!--    </button>-->
   </ng-template>
 </form>

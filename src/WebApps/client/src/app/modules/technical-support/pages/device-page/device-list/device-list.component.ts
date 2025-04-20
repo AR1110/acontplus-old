@@ -6,11 +6,11 @@ import { ModalService } from '@core/services/modal.service';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
-import { MatIcon } from '@angular/material/icon';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-device-list',
-  imports: [MatIcon],
+  imports: [ThemeButtonComponent],
   templateUrl: './device-list.component.html',
   styles: ``,
 })

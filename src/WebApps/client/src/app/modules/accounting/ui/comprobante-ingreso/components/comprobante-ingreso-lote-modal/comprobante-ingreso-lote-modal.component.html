@@ -124,13 +124,12 @@
                                   <tr>
                                     <td>
                                       @if (cuota.esCuotaAfectada) {
-                                        <button
-                                          class="btn btn-primary btn-sm"
-                                          type="button"
+                                        <app-theme-button
+                                          icon="visibility"
+                                          matStyle="icon"
                                           (click)="showCobroDetalle(cuota)"
                                         >
-                                          <mat-icon>visibility</mat-icon>
-                                        </button>
+                                        </app-theme-button>
                                       }
                                     </td>
                                     <td>{{ cuota.nroCuota }}</td>
@@ -197,20 +196,19 @@
                     <th mat-header-cell *matHeaderCellDef>Op.</th>
                     <td mat-cell *matCellDef="let element">
                       <div class="btn-group">
-                        <button
-                          class="btn btn-danger btn-sm"
-                          type="button"
-                          (click)="removePaymentType(element.secuencial)"
+                        <app-theme-button
+                          variant="danger"
+                          icon="delete"
+                          matStyle="icon"
+                          (handleClick)="removePaymentType(element.secuencial)"
                         >
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                        <button
-                          class="btn btn-primary btn-sm"
-                          type="button"
-                          (click)="showInfo(element)"
+                        </app-theme-button>
+                        <app-theme-button
+                          icon="visibility"
+                          matStyle="icon"
+                          (handleClick)="showInfo(element)"
                         >
-                          <mat-icon>visibility</mat-icon>
-                        </button>
+                        </app-theme-button>
                       </div>
                     </td>
                   </ng-container>

@@ -200,22 +200,20 @@
 
   <ng-template #popContentReporteTransaccionPendiente>
     <div class="d-grid gap-2 d-md-flex justify-content-center">
-      <button
-        class="btn btn-warning me-md-2"
-        type="button"
-        (click)="getReportTransactionPending('pdf')"
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="getReportTransactionPending('pdf')"
       >
-        <mat-icon>picture_as_pdf</mat-icon>
-        PDF
-      </button>
-      <button
-        mat-raised-button
-        type="button"
-        (click)="getReportTransactionPending('excel')"
+      </app-theme-button>
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="getReportTransactionPending('excel')"
       >
-        <mat-icon>download</mat-icon>
-        EXCEL
-      </button>
+      </app-theme-button>
     </div>
   </ng-template>
 </div>

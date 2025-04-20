@@ -23,33 +23,37 @@
         />
 
         @if (emails.length !== 1) {
-          <button
-            class="btn btn-danger btn-sm"
-            type="button"
+          <app-theme-button
+            variant="danger"
+            icon="delete"
+            matStyle="icon"
             (click)="removeEmail($index)"
           >
-            <mat-icon>delete</mat-icon>
-          </button>
+          </app-theme-button>
         }
 
         @if (lastIndex === $index) {
-          <button
-            class="btn btn-primary btn-sm"
-            type="button"
+          <app-theme-button
+            icon="add"
+            matStyle="icon"
+            text="Añadir Nuevo"
             (click)="addEmail()"
           >
-            <mat-icon>add</mat-icon>
-          </button>
+          </app-theme-button>
         }
       </div>
     }
   </div>
 </div>
 <div class="modal-footer">
-  <button mat-raised-button type="button" (click)="send()">
-    <mat-icon>email</mat-icon> Enviar
-  </button>
   <app-theme-button
+    variant="success"
+    icon="emal"
+    text="Cancelar"
+    (handleClick)="send()"
+  >
+  </app-theme-button
+  ><app-theme-button
     variant="dark"
     icon="close"
     text="Cancelar"

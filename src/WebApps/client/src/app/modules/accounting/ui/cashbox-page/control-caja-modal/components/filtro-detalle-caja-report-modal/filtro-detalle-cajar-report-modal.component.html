@@ -96,14 +96,20 @@
   </div>
 
   <div class="d-grid gap-2 col-12 mx-auto">
-    <button class="btn btn-warning" type="button" (click)="getReport('pdf')">
-      <mat-icon>picture_as_pdf</mat-icon>
-      PDF
-    </button>
-    <button mat-raised-button type="button" (click)="getReport('excel')">
-      <mat-icon>download</mat-icon>
-      EXCEL
-    </button>
+    <app-theme-button
+      variant="danger"
+      icon="picture_as_pdf"
+      text="Pdf"
+      (handleClick)="getReport('pdf')"
+    >
+    </app-theme-button>
+    <app-theme-button
+      variant="success"
+      icon="download"
+      text="Excel"
+      (handleClick)="getReport('excel')"
+    >
+    </app-theme-button>
   </div>
 </div>
 <div class="modal-footer">

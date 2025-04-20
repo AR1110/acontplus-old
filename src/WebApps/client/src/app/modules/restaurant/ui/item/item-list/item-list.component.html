@@ -39,14 +39,13 @@
     </app-custom-table-container>
 
     <ng-template #templateOp let-item="item">
-      <button
-        (click)="onEdit(item)"
-        class="btn btn-outline-warning btn-rounded btn-sm"
-        type="button"
+      <app-theme-button
+        icon="edit"
+        matStyle="icon"
         title="Editar"
+        (handleClick)="onEdit(item)"
       >
-        <mat-icon>edit</mat-icon>
-      </button>
+      </app-theme-button>
     </ng-template>
   </mat-card-content>
 </mat-card>

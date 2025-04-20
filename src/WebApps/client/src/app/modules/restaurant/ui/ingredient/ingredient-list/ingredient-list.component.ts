@@ -9,7 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { IngredientAddEditModalComponent } from '@restaurant/ui/ingredient/ingredient-add-edit-modal/ingredient-add-edit-modal.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-ingredient-list',
@@ -17,10 +17,10 @@ import { MatIcon } from '@angular/material/icon';
     NgbPagination,
     ReactiveFormsModule,
     FormsModule,
-    MatIcon,
     NgOptimizedImage,
     MatCardContent,
     MatCard,
+    ThemeButtonComponent,
   ],
   templateUrl: './ingredient-list.component.html',
   styles: ``,

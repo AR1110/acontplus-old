@@ -14,18 +14,20 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-item-list',
-  imports: [
-    FormsModule,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
-    MatCard,
-    MatCardContent,
-    MatButton,
-    MatIcon,
-  ],
+    imports: [
+        FormsModule,
+        CustomTableContainerComponent,
+        MatDynamicTableComponent,
+        MatCard,
+        MatCardContent,
+        MatButton,
+        MatIcon,
+        ThemeButtonComponent,
+    ],
   templateUrl: './item-list.component.html',
   styles: ``,
 })

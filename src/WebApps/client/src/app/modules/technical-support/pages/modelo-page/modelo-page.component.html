@@ -28,13 +28,13 @@
               <td>{{ item.code }}</td>
               <td>{{ item.name }}</td>
               <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-warning btn-sm m-r-5"
-                  (click)="onEdit(item)"
+                <app-theme-button
+                  variant="warning"
+                  icon="edit"
+                  matStyle="icon"
+                  (handleClick)="onEdit(item)"
                 >
-                  <mat-icon>edit</mat-icon>
-                </button>
+                </app-theme-button>
                 <app-theme-button
                   variant="warning"
                   icon="delete"

@@ -403,14 +403,14 @@
                         <div
                           class="col-xxl-24 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
                         >
-                          <button
-                            (click)="removePtoEmi(i)"
-                            class="btn btn-danger btn-sm"
-                            type="button"
+                          <app-theme-button
+                            (handleClick)="removePtoEmi(i)"
+                            variant="danger"
+                            icon="delete"
+                            matStyle="icon"
                             title="Eliminar punto de emision"
                           >
-                            <mat-icon>delete</mat-icon>
-                          </button>
+                          </app-theme-button>
                         </div>
                       </div>
                     }
@@ -418,14 +418,12 @@
                   <div class="row mt-3">
                     <div class="col-4">
                       <div class="form-group">
-                        <button
-                          (click)="addPtoEmi()"
-                          class="btn btn-primary btn-sm"
-                          type="button"
+                        <app-theme-button
+                          icon="add"
+                          text="Añadir"
+                          (handleClick)="addPtoEmi()"
                         >
-                          <mat-icon>add</mat-icon>
-                          Añadir
-                        </button>
+                        </app-theme-button>
                       </div>
                     </div>
                   </div>
@@ -485,14 +483,14 @@
                         <div
                           class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
                         >
-                          <button
-                            (click)="removeBodega(i)"
-                            class="btn btn-danger btn-sm"
-                            type="button"
+                          <app-theme-button
+                            variant="danger"
+                            icon="delete"
+                            matStyle="icon"
                             title="Eliminar bodega"
+                            (handleClick)="removeBodega(i)"
                           >
-                            <mat-icon>delete</mat-icon>
-                          </button>
+                          </app-theme-button>
                         </div>
                       </div>
                     }
@@ -500,14 +498,12 @@
                   <div class="row mt-3">
                     <div class="col-4">
                       <div class="form-group">
-                        <button
-                          (click)="addBodega()"
-                          class="btn btn-primary btn-sm"
-                          type="button"
+                        <app-theme-button
+                          (handleClick)="addBodega()"
+                          icon="add"
+                          text="Añadir"
                         >
-                          <mat-icon>add</mat-icon>
-                          Añadir
-                        </button>
+                        </app-theme-button>
                       </div>
                     </div>
                   </div>

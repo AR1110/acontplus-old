@@ -19,22 +19,24 @@ import { DocumentReceivedWebRepository } from '@purchase/data/document-received/
 import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-doc-manual-upload',
-  imports: [
-    ReactiveFormsModule,
-    MatCustomDialogComponent,
-    MatButton,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    MatRadioGroup,
-    MatRadioButton,
-    MatIcon,
-    MatIconButton,
-  ],
+    imports: [
+        ReactiveFormsModule,
+        MatCustomDialogComponent,
+        MatButton,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatRadioGroup,
+        MatRadioButton,
+        MatIcon,
+        MatIconButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './doc-manual-upload.component.html',
   styles: ``,
 })

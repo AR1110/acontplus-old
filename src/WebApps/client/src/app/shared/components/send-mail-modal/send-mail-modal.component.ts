@@ -1,5 +1,4 @@
 import { Component, inject, Input } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToasterService } from '@core/services/toaster.service';
@@ -10,11 +9,11 @@ import { NotificacionService } from '@shared/services/notificacion.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { NotificacionTributariaService } from '@billing/services/notificacion-tributaria.service';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-send-mail-modal',
-  imports: [CommonModule, MatIcon, FormsModule, ThemeButtonComponent],
+  imports: [CommonModule, FormsModule, ThemeButtonComponent],
   templateUrl: './send-mail-modal.component.html',
 })
 export class SendMailModalComponent {

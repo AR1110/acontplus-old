@@ -27,13 +27,14 @@
           </span>
 
           <span class="form-group pull-left page-size form-inline">
-            <button
-              (click)="getReport('pdf')"
-              class="btn btn-danger m-l-5"
-              type="button"
+            <app-theme-button
+              variant="danger"
+              icon="picture_as_pdf"
+              text="Pdf"
+              title="Obtener reporte de clientes"
+              (handleClick)="getReport('pdf')"
             >
-              <i class="far fa-file-pdf"></i> PDF
-            </button>
+            </app-theme-button>
           </span>
         </div>
       </div>
@@ -83,9 +84,12 @@
                 <mat-icon>edit</mat-icon>
               </button>
               @if (!element.esConsumidorFinal) {
-                <button type="button" class="btn btn-danger btn-sm ms-2">
-                  <mat-icon>work_history</mat-icon>
-                </button>
+                <app-theme-button
+                  variant="danger"
+                  icon="work_history"
+                  matStyle="icon"
+                >
+                </app-theme-button>
               }
             </div>
           </td>

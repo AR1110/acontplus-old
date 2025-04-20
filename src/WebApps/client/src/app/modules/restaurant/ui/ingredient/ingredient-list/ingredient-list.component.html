@@ -31,14 +31,13 @@
           @for (item of ingredients; track $index) {
             <tr>
               <td class="text-center">
-                <button
+                <app-theme-button
                   (click)="onEdit(item)"
-                  class="btn btn-outline-warning btn-rounded btn-sm"
-                  type="button"
+                  icon="edit"
+                  matStyle="icon"
                   title="Editar"
                 >
-                  <mat-icon>edit</mat-icon>
-                </button>
+                </app-theme-button>
               </td>
               <td class="text-center">{{ $index + 1 }}</td>
               <td>

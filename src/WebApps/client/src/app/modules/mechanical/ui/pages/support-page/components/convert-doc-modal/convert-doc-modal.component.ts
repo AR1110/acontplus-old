@@ -21,12 +21,14 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 import { InvoiceAdapter } from '@billing/data/invoice/mappers/invoice.adapter';
 import { TiempoCredito } from '@accounting/core/models/tiempo-credito.interface';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-convert-doc-modal',
     imports: [
         CommonModule,
         TabulatorComponent,
+        ThemeButtonComponent,
     ],
     templateUrl: './convert-doc-modal.component.html'
 })

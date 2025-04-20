@@ -16,6 +16,7 @@ import {
 import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { NgClass } from '@angular/common';
 import {MatCard, MatCardContent} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-production-area-list',
@@ -27,6 +28,7 @@ import {MatCard, MatCardContent} from "@angular/material/card";
         NgClass,
         MatCardContent,
         MatCard,
+        ThemeButtonComponent,
     ],
     templateUrl: './production-area-list.component.html',
     styles: ``

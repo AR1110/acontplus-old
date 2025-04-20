@@ -113,14 +113,14 @@
                           </mat-checkbox>
                         </section>
 
-                        <button
-                          (click)="confirmUpdate()"
+                        <app-theme-button
+                          variant="success"
+                          icon="save"
+                          text="Actualizar Contraseña"
+                          (handleClick)="confirmUpdate()"
                           [disabled]="!isVerified"
-                          class="btn btn-outline-success btn-lg btn-block mt-3"
-                          type="button"
                         >
-                          Cambiar contraseña
-                        </button>
+                        </app-theme-button>
                       </form>
                     </div>
                   </div>

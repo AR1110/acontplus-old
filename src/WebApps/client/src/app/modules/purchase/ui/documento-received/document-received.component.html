@@ -48,13 +48,13 @@
               }
             </select>
             <div class="input-group-append">
-              <button
-                (click)="onClickBtnMore()"
-                class="btn btn-primary m-l-5"
-                type="button"
+              <app-theme-button
+                [icon]="extraOptionsIcon"
+                matStyle="icon"
+                title="Más Opciones"
+                (handleClick)="onClickBtnMore()"
               >
-                <mat-icon>{{ extraOptionsIcon }}</mat-icon>
-              </button>
+              </app-theme-button>
               <app-theme-button
                 variant="success"
                 icon="refresh"

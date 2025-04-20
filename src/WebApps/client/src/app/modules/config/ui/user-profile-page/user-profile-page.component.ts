@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatCard, MatCardContent} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-user-profile-page',
@@ -18,7 +19,8 @@ import {MatCard, MatCardContent} from "@angular/material/card";
         MatCheckboxModule,
         BreadcrumbComponent,
         MatCardContent,
-        MatCard
+        MatCard,
+        ThemeButtonComponent
     ]
 })
 export class UserProfilePageComponent {

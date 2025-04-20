@@ -32,14 +32,12 @@
           <label for="summary"
             >Descripción -
             <span>
-              <button
-                (click)="generateDescription()"
-                class="btn btn-sm btn-outline-info mb-3"
-                title="Generar la descripción para el combo"
-                type="button"
+              <app-theme-button
+                icon="add"
+                text="Generar la descripción para el combo"
+                (handleClick)="generateDescription()"
               >
-                <i class="fa-solid fa-sync"></i> Generar descripción
-              </button>
+              </app-theme-button>
             </span>
           </label>
           <textarea

@@ -17,30 +17,29 @@
         <tr>
           <td>{{ $index + 1 }}</td>
           <td>
-            <button
-              type="button"
-              class="btn btn-outline-warning btn-sm btn-rounded"
+            <app-theme-button
+              variant="warning"
+              icon="edit"
               title="Editar"
+              matStyle="icon"
               (click)="onEdit(item)"
             >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-danger btn-sm btn-rounded m-lg-1"
+            </app-theme-button>
+            <app-theme-button
+              variant="danger"
+              icon="delete"
               title="Eliminar"
-              (click)="askToDelete(item)"
+              matStyle="icon"
+              (handleClick)="askToDelete(item)"
             >
-              <mat-icon>delete</mat-icon>
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-info btn-sm btn-rounded m-lg-1"
+            </app-theme-button>
+            <app-theme-button
+              icon="group"
+              matStyle="icon"
               title="Clientes"
-              (click)="getCustomers(item.id)"
+              (handleClick)="getCustomers(item.id)"
             >
-              <mat-icon>group</mat-icon>
-            </button>
+            </app-theme-button>
           </td>
           <td>{{ item.name }}</td>
           <td>{{ item.brandName }}</td>

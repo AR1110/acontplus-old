@@ -39,22 +39,22 @@
                         @for (item of productionAreas; track $index) {
                           <tr>
                             <td class="text-center">
-                              <button
-                                type="button"
-                                class="btn btn-warning btn-sm btn-rounded m-r-5"
-                                title="editar"
-                                (click)="onEdit(item)"
+                              <app-theme-button
+                                variant="warning"
+                                icon="edit"
+                                title="Editar"
+                                matStyle="icon"
+                                (handleClick)="onEdit(item)"
                               >
-                                <mat-icon>edit</mat-icon>
-                              </button>
-                              <button
-                                type="button"
-                                class="btn btn-danger btn-sm btn-rounded"
+                              </app-theme-button
+                              ><app-theme-button
+                                variant="danger"
+                                icon="delete"
                                 title="Eliminar"
-                                (click)="onDelete(item)"
+                                matStyle="icon"
+                                (handleClick)="onDelete(item)"
                               >
-                                <mat-icon>delete</mat-icon>
-                              </button>
+                              </app-theme-button>
                             </td>
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td class="text-center">{{ item.code }}</td>
