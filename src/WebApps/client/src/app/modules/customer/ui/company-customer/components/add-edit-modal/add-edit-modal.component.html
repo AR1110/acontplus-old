@@ -221,13 +221,13 @@
                       </option>
                     }
                   </select>
-                  <button
-                    (click)="refreshTiempoCredito()"
-                    class="btn btn-outline-secondary btn-sm"
-                    type="button"
+                  <app-theme-button
+                    variant="secondary"
+                    icon="refresh"
+                    matStyle="icon"
+                    (handleClick)="refreshTiempoCredito()"
                   >
-                    <mat-icon>refresh</mat-icon>
-                  </button>
+                  </app-theme-button>
                 </div>
               </div>
             </div>
@@ -282,7 +282,7 @@
                   </select>
                   <button
                     btn-empresa
-                    class="btn btn-outline-secondary btn-sm"
+                    mat-icon-button
                     result-modal="resultModalEmpresa(result)"
                     tabindex="-1"
                     type="button"
@@ -329,7 +329,7 @@
                   </script>
                   <button
                     btn-empleado
-                    class="btn btn-outline-secondary btn-sm"
+                    app-theme-button
                     result-modal="resultModalEmpleado(result)"
                     tabindex="-1"
                     type="button"
@@ -360,7 +360,7 @@
                   </select>
                   <button
                     btn-cargo
-                    class="btn btn-outline-secondary btn-sm"
+                    mat-icon-button
                     result-modal="resultModalCargo(result)"
                     tabindex="-1"
                     type="button"

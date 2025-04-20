@@ -95,21 +95,21 @@
               </select>
 
               <button
-                class="btn btn-outline-secondary btn-sm"
+                mat-icon-button
                 appSubCategoryModal
                 (onResult)="resultModalSubFamilia($event)"
                 type="button"
                 tabindex="-1"
               >
-                +
+                <mat-icon>add</mat-icon>
               </button>
               <button
-                class="btn btn-outline-secondary btn-sm"
+                mat-icon-button
                 (click)="refreshSubFamilia()"
                 type="button"
                 tabindex="-1"
               >
-                &#8635;
+                <mat-icon>refresh</mat-icon>
               </button>
             </div>
           </div>
@@ -130,20 +130,20 @@
               </select>
 
               <button
-                class="btn btn-outline-secondary btn-sm"
+                mat-icon-button
                 appMeasureAddEdit
                 (onResultModal)="resultModalMedida($event)"
                 tabindex="-1"
               >
-                +
+                <mat-icon>add</mat-icon>
               </button>
               <button
-                class="btn btn-outline-secondary btn-sm"
+                mat-icon-button
                 (click)="refreshMedida()"
                 type="button"
                 tabindex="-1"
               >
-                &#8635;
+                <mat-icon>refresh</mat-icon>
               </button>
             </div>
           </div>
@@ -186,20 +186,20 @@
                 }
               </select>
               <button
-                class="btn btn-outline-secondary btn-sm"
+                mat-icon-button
                 appTagsAddEditModal
                 (onResultModal)="resultModalTag($event)"
                 tabindex="-1"
               >
-                +
+                <mat-icon>add</mat-icon>
               </button>
               <button
-                class="btn btn-outline-secondary btn-sm"
+                mat-icon-button
                 (click)="refreshTag()"
                 type="button"
                 tabindex="-1"
               >
-                &#8635;
+                <mat-icon>refresh</mat-icon>
               </button>
             </div>
           </div>

@@ -152,12 +152,16 @@
           variant="info"
           icon="search"
           text="Buscar"
+          matStyle="icon"
           (handleClick)="searchKardex()"
         >
         </app-theme-button>
-        <button type="button" class="btn btn-secondary" (click)="getReport()">
-          <mat-icon>download</mat-icon> Reporte
-        </button>
+        <app-theme-button
+          variant="secondary"
+          icon="download"
+          (handleClick)="getReport()"
+        >
+        </app-theme-button>
       </div>
     </div>
   </div>

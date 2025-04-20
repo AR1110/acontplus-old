@@ -15,6 +15,7 @@ import {
 import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/company-customer-add-edit.directive';
 import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
 import { MatIcon } from '@angular/material/icon';
+import {MatIconButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-company-customer-search',
@@ -23,6 +24,7 @@ import { MatIcon } from '@angular/material/icon';
     NgbTypeaheadModule,
     MatIcon,
     CompanyCustomerAddEditDirective,
+    MatIconButton,
   ],
   templateUrl: './company-customer-search.component.html',
   styles: ``,

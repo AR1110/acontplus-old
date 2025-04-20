@@ -12,13 +12,13 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-device-search',
-  imports: [FormsModule, NgbTypeaheadModule, MatIcon],
+  imports: [FormsModule, NgbTypeaheadModule, ThemeButtonComponent],
   templateUrl: './device-search.component.html',
   styles: ``,
 })
