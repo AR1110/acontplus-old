@@ -1,31 +1,34 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
+using BarberShop.Application.Interfaces;
 
 namespace BarberShop.API.Endpoints.Implementations;
 
-public class SeatEndpoints : ISeatEndpoints
+public class SeatEndpoints(IUserContext userContext, ISeatService seatService) : ISeatEndpoints
 {
-    public Task<IResult> CreateSeatAsync(SeatDto seatDto)
+    public async Task<IResult> CreateSeatAsync(SeatDto seatDto)
     {
-        throw new NotImplementedException();
+        seatDto.UserId = userContext.GetUserId();
+        return Results.Ok(await seatService.CreateSeatAsync(seatDto));
     }
 
-    public Task<IResult> DeleteSeatAsync(int id)
+    public async Task<IResult> DeleteSeatAsync(int id)
     {
-        throw new NotImplementedException();
+        return Results.Ok(await seatService.DeleteSeatAsync(id));
     }
 
-    public Task<IResult> GetAllSeatsAsync()
+    public async Task<IResult> GetAllSeatsAsync()
     {
-        throw new NotImplementedException();
+        return Results.Ok(await seatService.GetAllSeatsAsync());
     }
 
-    public Task<IResult> GetSeatByIdAsync(int id)
+    public async Task<IResult> GetSeatByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return Results.Ok(await seatService.GetSeatByIdAsync(id));
     }
 
-    public Task<IResult> UpdateSeatAsync(int id, SeatDto seatDto)
+    public async Task<IResult> UpdateSeatAsync(int id, SeatDto seatDto)
     {
-        throw new NotImplementedException();
+        seatDto.UserId = userContext.GetUserId();
+        return Results.Ok(await seatService.UpdateSeatAsync(id, seatDto));
     }
 }

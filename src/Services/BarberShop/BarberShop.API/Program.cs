@@ -1,8 +1,17 @@
+﻿using System.Runtime.InteropServices;
+using BarberShop.API.Extensions;
+using BarberShop.API.Extensions.Endpoints;
+using Common.Services.Configuration;
+using Common.Services.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var configuration = AppConfiguration.Load();
+builder.Configuration.AddConfiguration(configuration);
+
+builder.Services.AddApplicationServices(builder.Configuration);
+
+builder.Services.AddIdentityService(builder.Configuration);
 
 var app = builder.Build();
 
@@ -12,30 +21,21 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionMiddleware>();
 
-var summaries = new[]
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
-app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    app.Urls.Add("http://*:5015"); // Linux Port
 }
+else
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapTicketEndpoints();
+
+await app.RunAsync();
