@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-md-2 col-12">
         <button
-          (onResult)="onResultModal()"
+          (companyCustomerSaved)="onResultModal()"
           appCompanyCustomerAddEdit
           mat-raised-button
           type="button"
@@ -74,7 +74,7 @@
           <td *matCellDef="let element" mat-cell>
             <div class="d-flex align-items-center">
               <button
-                (onResult)="onResultModal()"
+                (companyCustomerSaved)="onResultModal()"
                 [id]="element.idCliente"
                 appCompanyCustomerAddEdit
                 mat-raised-button

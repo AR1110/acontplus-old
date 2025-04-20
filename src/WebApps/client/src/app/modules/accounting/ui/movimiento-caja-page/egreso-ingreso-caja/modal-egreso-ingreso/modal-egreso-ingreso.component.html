@@ -134,7 +134,7 @@
           <label>Cliente: <span class="text-danger">*</span></label>
           <app-company-customer-search
             [isSearchSimple]="true"
-            (onCustomerSelected)="onSelectCustomer($event)"
+            (customerSelected)="onSelectCustomer($event)"
             (resultEmptyInput)="onEmptyCustomer()"
           />
         </div>

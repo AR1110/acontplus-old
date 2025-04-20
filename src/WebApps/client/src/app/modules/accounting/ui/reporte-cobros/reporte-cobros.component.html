@@ -162,7 +162,7 @@
             <label class="form-label">Cliente: </label>
             <app-company-customer-search
               [isSearchSimple]="isCustomerSearchSimple"
-              (onCustomerSelected)="onCustomerSelected($event)"
+              (customerSelected)="onCustomerSelected($event)"
               (resultEmptyInput)="resultCustomerEmptyInput($event)"
             />
           </div>

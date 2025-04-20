@@ -32,7 +32,7 @@
     <button
       type="button"
       mat-icon-button
-      (onResult)="onResult($event)"
+      (companyCustomerSaved)="onResult($event)"
       appCompanyCustomerAddEdit
     >
       <mat-icon>add</mat-icon>
@@ -42,7 +42,7 @@
       <button
         type="button"
         mat-icon-button
-        (onResult)="onResult($event)"
+        (companyCustomerSaved)="onResult($event)"
         appCompanyCustomerAddEdit
         [id]="id"
       >

@@ -15,7 +15,7 @@ import {
 import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/company-customer-add-edit.directive';
 import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
 import { MatIcon } from '@angular/material/icon';
-import {MatIconButton} from "@angular/material/button";
+import { MatIconButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-company-customer-search',
@@ -30,7 +30,7 @@ import {MatIconButton} from "@angular/material/button";
   styles: ``,
 })
 export class CompanyCustomerSearchComponent {
-  @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
+  @Output() customerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
   @Input() isGetId = false;
@@ -105,7 +105,7 @@ export class CompanyCustomerSearchComponent {
         this.onEmitData(response);
       });
     } else {
-      this.onCustomerSelected.emit($event);
+      this.customerSelected.emit($event);
     }
   }
   onEmitData(result: any) {
@@ -115,7 +115,7 @@ export class CompanyCustomerSearchComponent {
       identificacionComprador: result.numeroIdentificacion,
     };
 
-    this.onCustomerSelected.emit({
+    this.customerSelected.emit({
       data,
     });
   }
