@@ -7,7 +7,7 @@ import { Brand } from '@inventory/domain/models/brand.model';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { FORMAT_REPORT } from '@core/constants/global.constants';
+import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
@@ -30,9 +30,9 @@ import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
+import { ReportButtonsComponent } from '@shared/components/file-buttons/report-buttons.component';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
-import {NgTemplateOutlet} from "@angular/common";
+import { NgTemplateOutlet } from '@angular/common';
 
 const imports = [
   NgbNavModule,
@@ -54,14 +54,14 @@ const imports = [
   SupplierSearchComponent,
   MatUserSearchComponent,
   CompanyCustomerSearchMatComponent,
-  FileButtonsComponent,
+  ReportButtonsComponent,
   //Directives
   ActionEnviarCorreoDirective,
 ];
 
 @Component({
   selector: 'app-inventory-report',
-  imports,
+  imports: [imports, ReportButtonsComponent],
   templateUrl: './inventory-report.component.html',
   styles: ``,
 })
@@ -135,7 +135,7 @@ export class InventoryReportComponent {
 
   selected = new FormControl(0);
 
-  private format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL | null = null;
+  private format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL | null = null;
 
   getDatFormReport() {
     this._productUseCase.getDataReport().subscribe((response) => {
@@ -348,12 +348,12 @@ export class InventoryReportComponent {
   }
 
   getReportPDF() {
-    this.format = FORMAT_REPORT.PDF;
+    this.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
 
   getReportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 
@@ -688,7 +688,7 @@ export class InventoryReportComponent {
           codigo: this.dataSearch.checkboxAgruparArticulo
             ? INVENTORY_CODE_REPORT.CDAA
             : INVENTORY_CODE_REPORT.CDA,
-          format: FORMAT_REPORT.PDF,
+          format: REPORT_FORMAT.PDF,
         },
         spParams: this.getDataParamsConsumoDiario(),
         //  withTableNames: true,
@@ -710,4 +710,6 @@ export class InventoryReportComponent {
       }
     });
   }
+
+  protected readonly FORMAT_REPORT = REPORT_FORMAT;
 }

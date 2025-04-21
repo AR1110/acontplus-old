@@ -5,7 +5,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { DOC_TYPE_SRI, FORMAT_REPORT } from '@core/constants/global.constants';
+import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
 import { DocElectService } from '@billing/services/doc-elect.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
@@ -164,11 +164,11 @@ export class FactElectReportPageComponent {
   }
 
   getReportPdf() {
-    this.format = FORMAT_REPORT.PDF;
+    this.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
   getReportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 

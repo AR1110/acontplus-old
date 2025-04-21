@@ -1,5 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import { CODE_REPORT, FORMAT_REPORT } from '@core/constants/global.constants';
+import { CODE_REPORT, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
@@ -38,14 +38,14 @@ export class FiltroControlCajaReportModal {
   ];
   private sharedSvc = inject(SharedService);
   private userPermissionSvc = inject(UserPermissionService);
-  private format = FORMAT_REPORT.PDF;
+  private format = REPORT_FORMAT.PDF;
 
   askToReport(format: string) {
     try {
-      if (format === FORMAT_REPORT.PDF) {
-        this.format = FORMAT_REPORT.PDF;
+      if (format === REPORT_FORMAT.PDF) {
+        this.format = REPORT_FORMAT.PDF;
       } else {
-        this.format = FORMAT_REPORT.EXCEL;
+        this.format = REPORT_FORMAT.EXCEL;
       }
       if (this.params.enterKey) {
         Swal.fire({
