@@ -5,7 +5,7 @@ import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/co
 import { SharedService } from '@core/services/shared.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
-import { FORMAT_REPORT } from '@core/constants/global.constants';
+import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
@@ -104,12 +104,12 @@ export class MovimientoCajaReportComponent {
     this.dataSearch.userId = data.idUsuario;
   }
   getReportPdf() {
-    this.dataSearch.format = FORMAT_REPORT.PDF;
+    this.dataSearch.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
 
   getReportExcel() {
-    this.dataSearch.format = FORMAT_REPORT.EXCEL;
+    this.dataSearch.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 

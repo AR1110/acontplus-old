@@ -3,7 +3,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import {
   CODE_ESTADO,
   CODE_REPORT,
-  FORMAT_REPORT,
+  REPORT_FORMAT,
   FORMAT_TYPE,
 } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
@@ -100,7 +100,7 @@ export class ControlCajaModalComponent {
   private tS = inject(ToasterService);
   private pS = inject(UserRoleStateService);
   private _tokenUseCase = inject(TokenUseCase);
-  private format = FORMAT_REPORT.PDF;
+  private format = REPORT_FORMAT.PDF;
 
   getMovimientosCaja() {
     let dataSearch = {
@@ -328,7 +328,7 @@ export class ControlCajaModalComponent {
     }
   }
 
-  generateReport(idControlCaja: number, format: FORMAT_TYPE) {
+  generateReport(idControlCaja: number, format: REPORT_FORMAT) {
     let dataParms = {
       tipo: 1,
       id: idControlCaja,
@@ -388,10 +388,10 @@ export class ControlCajaModalComponent {
     if (isConfirmed) {
       this.dataMovientoControCaja = data;
       if (value === 'pdf') {
-        this.format = FORMAT_REPORT.PDF;
+        this.format = REPORT_FORMAT.PDF;
       }
       if (value === 'excel') {
-        this.format = FORMAT_REPORT.EXCEL;
+        this.format = REPORT_FORMAT.EXCEL;
       }
 
       if (buttonType === this.BUTTON_TRANSACTION_PENDING) {

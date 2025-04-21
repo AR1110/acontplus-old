@@ -5,7 +5,7 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import {
   CODE_REPORT,
   DOC_TYPE_SRI,
-  FORMAT_REPORT,
+  REPORT_FORMAT,
 } from '@core/constants/global.constants';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
@@ -119,11 +119,11 @@ export class ReceptionReportsComponent {
   }
 
   pdf() {
-    this.getReport(FORMAT_REPORT.PDF);
+    this.getReport(REPORT_FORMAT.PDF);
   }
 
   excel() {
-    this.getReport(FORMAT_REPORT.EXCEL);
+    this.getReport(REPORT_FORMAT.EXCEL);
   }
 
   getDataReport() {
@@ -147,7 +147,7 @@ export class ReceptionReportsComponent {
     this.dataSearch.ckRetencion = null;
   }
 
-  getReport(format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL) {
+  getReport(format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL) {
     if (
       this.dataSearch.supplierChecked &&
       !isValidField(this.dataSearch.numeroIdentificacion)
