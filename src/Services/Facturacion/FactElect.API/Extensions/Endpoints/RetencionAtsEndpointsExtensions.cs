@@ -5,11 +5,9 @@ namespace FactElect.API.Extensions.Endpoints;
 
 public static class RetencionAtsEndpointsExtensions
 {
-    private const string ApiGroup = "/api/";
-
     public static IEndpointRouteBuilder MapRetencionAtsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        var retencionAtsGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}RetencionAts")
+        var retencionAtsGroup = endpointRouteBuilder.MapGroup("/retencionats")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("RetencionAts");
@@ -33,7 +31,7 @@ public static class RetencionAtsEndpointsExtensions
         retencionAtsGroup.MapPost("/cancel/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.CancelRetencionAtsAsync(id));
 
-        var doctSustentoGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}DocSustento")
+        var doctSustentoGroup = endpointRouteBuilder.MapGroup("/docsustento")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("DocSustento");
@@ -54,7 +52,7 @@ public static class RetencionAtsEndpointsExtensions
         doctSustentoGroup.MapDelete("/{id}", async (IDocSustentoEndpoints printerEndpoints, int id) =>
             await printerEndpoints.DeleteDocSustento(id));
 
-        var docSustentoImpuestoGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}DocSustentoImpuesto")
+        var docSustentoImpuestoGroup = endpointRouteBuilder.MapGroup("/docsustentoimpuesto")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("DocSustentoImpuesto");
@@ -79,7 +77,7 @@ public static class RetencionAtsEndpointsExtensions
             async (IDocSustentoImpuestoEndpoints docSustImpuestoEndpoints, int id) =>
                 await docSustImpuestoEndpoints.DeleteDocSustentoImpuestoAsync(id));
 
-        var docSustentoRetencionGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}DocSustentoRetencion")
+        var docSustentoRetencionGroup = endpointRouteBuilder.MapGroup("/docsustentoretencion")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("DocSustentoRetencion");
@@ -104,7 +102,7 @@ public static class RetencionAtsEndpointsExtensions
             async (IDocSustentoRetencionEndpoints docSustentoRetencionEndpoints, int id) =>
                 await docSustentoRetencionEndpoints.DeleteDocSustentoRetencionAsync(id));
 
-        var docSustentoPagoGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}DocSustentoPago")
+        var docSustentoPagoGroup = endpointRouteBuilder.MapGroup("/docsustentopago")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("DocSustentoPago");
@@ -129,7 +127,7 @@ public static class RetencionAtsEndpointsExtensions
             async (IDocSustentoPagoEndpoints docSustentoPagoEndpoints, int id) =>
                 await docSustentoPagoEndpoints.DeleteDocSustentoRetencionAsync(id, string.Empty));
 
-        var retencionAtsInfoAdicionalGroup = endpointRouteBuilder.MapGroup($"{ApiGroup}RetencionAtsInfoAdicional")
+        var retencionAtsInfoAdicionalGroup = endpointRouteBuilder.MapGroup("/retencionatsinfoadicional")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("RetencionAtsInfoAdicional");
