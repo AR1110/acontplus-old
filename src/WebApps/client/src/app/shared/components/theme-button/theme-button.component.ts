@@ -1,4 +1,4 @@
-import { Component, Input, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -33,14 +33,14 @@ export type MaterialButtonStyle =
   styleUrl: './theme-button.component.scss',
 })
 export class ThemeButtonComponent {
-  @Input() variant: ButtonVariant = 'primary';
+  variant = input<ButtonVariant>('primary');
   text = input<string>('');
   icon = input<string>('');
   outlined = input<boolean>(false);
   disabled = input<boolean>(false);
   useThemeColor = input<boolean>(false); // Use theme color based on variant
-  @Input() type: ButtonType = 'button';
-  @Input() matStyle: MaterialButtonStyle = 'raised';
+  type = input<ButtonType>('button');
+  matStyle = input<MaterialButtonStyle>('raised');
 
   // Additional common button properties
   title = input<string>(''); // Tooltip text shown on hover
@@ -55,15 +55,15 @@ export class ThemeButtonComponent {
 
   getButtonClasses(): Record<string, boolean> {
     return {
-      [`btn-${this.variant}`]: true,
-      'btn-outlined': this.outlined() && this.matStyle !== 'stroked', // Stroked buttons are already outlined
+      [`btn-${this.variant()}`]: true,
+      'btn-outlined': this.outlined() && this.matStyle() !== 'stroked', // Stroked buttons are already outlined
     };
   }
 
   getThemeColor(): ThemePalette | null {
     if (!this.useThemeColor) return null;
 
-    switch (this.variant) {
+    switch (this.variant()) {
       case 'primary':
         return 'primary';
       case 'secondary':
