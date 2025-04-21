@@ -2,23 +2,23 @@
   <button
     mat-button
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }
-    @if (text) {
-      <span class="button-text">{{ text }}</span>
+    @if (text()) {
+      <span class="button-text">{{ text() }}</span>
     }
     <ng-content></ng-content>
   </button>
@@ -26,23 +26,23 @@
   <button
     mat-raised-button
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }
-    @if (text) {
-      <span class="button-text">{{ text }}</span>
+    @if (text()) {
+      <span class="button-text">{{ text() }}</span>
     }
     <ng-content></ng-content>
   </button>
@@ -50,23 +50,23 @@
   <button
     mat-flat-button
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }
-    @if (text) {
-      <span class="button-text">{{ text }}</span>
+    @if (text()) {
+      <span class="button-text">{{ text() }}</span>
     }
     <ng-content></ng-content>
   </button>
@@ -74,23 +74,23 @@
   <button
     mat-stroked-button
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }
-    @if (text) {
-      <span class="button-text">{{ text }}</span>
+    @if (text()) {
+      <span class="button-text">{{ text() }}</span>
     }
     <ng-content></ng-content>
   </button>
@@ -98,20 +98,20 @@
   <button
     mat-icon-button
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon>{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
     }
     <ng-content></ng-content>
   </button>
@@ -119,23 +119,23 @@
   <button
     mat-fab
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon>{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
     }
-    @if (text) {
-      <span class="button-text">{{ text }}</span>
+    @if (text()) {
+      <span class="button-text">{{ text() }}</span>
     }
     <ng-content></ng-content>
   </button>
@@ -143,20 +143,20 @@
   <button
     mat-mini-fab
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon>{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
     }
     <ng-content></ng-content>
   </button>
@@ -164,23 +164,23 @@
   <button
     mat-raised-button
     [ngClass]="getButtonClasses()"
-    [disabled]="disabled"
+    [disabled]="disabled()"
     [color]="getThemeColor()"
     [type]="type"
-    [title]="title"
-    [attr.aria-label]="ariaLabel || title"
-    [attr.name]="name"
-    [attr.id]="id"
-    [attr.form]="form"
-    [attr.tabindex]="tabIndex"
-    [attr.data-testid]="testId"
+    [title]="title()"
+    [attr.aria-label]="ariaLabel() || title()"
+    [attr.name]="name()"
+    [attr.id]="id()"
+    [attr.form]="form()"
+    [attr.tabindex]="tabIndex()"
+    [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-    @if (icon) {
-      <mat-icon class="button-icon">{{ icon }}</mat-icon>
+    @if (icon()) {
+      <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }
-    @if (text) {
-      <span class="button-text">{{ text }}</span>
+    @if (text()) {
+      <span class="button-text">{{ text() }}</span>
     }
     <ng-content></ng-content>
   </button>

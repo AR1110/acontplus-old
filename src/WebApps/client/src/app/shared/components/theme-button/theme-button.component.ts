@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,29 +34,29 @@ export type MaterialButtonStyle =
 })
 export class ThemeButtonComponent {
   @Input() variant: ButtonVariant = 'primary';
-  @Input() text: string = '';
-  @Input() icon: string = '';
-  @Input() outlined: boolean = false;
-  @Input() disabled: boolean = false;
-  @Input() useThemeColor: boolean = false;
+  text = input<string>('');
+  icon = input<string>('');
+  outlined = input<boolean>(false);
+  disabled = input<boolean>(false);
+  useThemeColor = input<boolean>(false); // Use theme color based on variant
   @Input() type: ButtonType = 'button';
   @Input() matStyle: MaterialButtonStyle = 'raised';
 
   // Additional common button properties
-  @Input() title: string = ''; // Tooltip text shown on hover
-  @Input() ariaLabel: string = ''; // Accessibility label
-  @Input() name: string = ''; // Name attribute for form submission
-  @Input() id: string = ''; // ID for element reference
-  @Input() form: string = ''; // Associated form ID
-  @Input() tabIndex: number | null = null; // Tab order
-  @Input() testId: string = ''; // For testing purposes
+  title = input<string>(''); // Tooltip text shown on hover
+  ariaLabel = input<string>(''); // Accessibility label
+  name = input<string>(''); // Name attribute for form submission
+  id = input<string>(''); // ID for element reference
+  form = input<string>(''); // Associated form ID
+  tabIndex = input<number>(0); // Tab order
+  testId = input<string>(''); // For testing purposes
 
-  @Output() handleClick = new EventEmitter<unknown>();
+  handleClick = output<unknown>();
 
   getButtonClasses(): Record<string, boolean> {
     return {
       [`btn-${this.variant}`]: true,
-      'btn-outlined': this.outlined && this.matStyle !== 'stroked', // Stroked buttons are already outlined
+      'btn-outlined': this.outlined() && this.matStyle !== 'stroked', // Stroked buttons are already outlined
     };
   }
 
