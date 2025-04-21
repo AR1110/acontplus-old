@@ -13,6 +13,8 @@ function ModalCobroDetalleCtrl($scope, $rootScope, $uibModalInstance, comprobant
 
     let isRefreshPage = false;  
 
+    $scope.codDoc = params.codDoc; 
+
  
     $scope.accion = $rootScope.accion;
     initialLoad();
@@ -49,6 +51,7 @@ function ModalCobroDetalleCtrl($scope, $rootScope, $uibModalInstance, comprobant
                     $scope.comprobante = comprobante;
                     $scope.cobroDetalles = cobroDetalles;
                     $scope.comprobanteIngresos = comprobanteIngresos;
+                    
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader())

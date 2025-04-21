@@ -1977,7 +1977,8 @@
             restrict: 'A',
             scope: {
                 params: '=',
-                onResult: '&'
+                onResult: '&',
+                codDoc:'='
             },
             link: function (scope, element) {
                 element.on('click', async function () {
@@ -1993,6 +1994,7 @@
                         params: {
                             idComprobanteIngreso: scope.params.idComprobanteIngreso,
                             idCuentaPorCobrar: scope.params.idCuentaPorCobrar,
+                            codDoc: scope.codDoc
 
                         },
                         isRenderRazorPartial: true

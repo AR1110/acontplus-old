@@ -27,9 +27,9 @@ export class MassiveTaxPageComponent {
   private readonly _massiveTaxUseCase = inject(MassiveTaxUseCase);
   private _dialogSvc = inject(DialogService);
 
-  dataSource = [];
+  dataSource = signal([]);
 
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -59,12 +59,12 @@ export class MassiveTaxPageComponent {
 
   getAll() {
     try {
-      if (this.isLoadingResults) return;
+      if (this.isLoadingResults()) return;
 
-      this.isLoadingResults = true;
+      this.isLoadingResults.set(true);
       this._massiveTaxUseCase
         .getAll({})
-        .pipe(finalize(() => (this.isLoadingResults = false)))
+        .pipe(finalize(() => (this.isLoadingResults.set(false))))
         .subscribe((response) => {
           this.dataSource = response;
         });
