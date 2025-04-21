@@ -1,6 +1,6 @@
 ﻿namespace BarberShop.Domain.Entities;
 
-public class Barber: BaseEntity
+public class Barber : BaseEntity
 {
-    
+
 }

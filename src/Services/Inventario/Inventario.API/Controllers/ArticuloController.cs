@@ -54,7 +54,7 @@ public class ArticuloController(
             case "1" when file != null:
                 {
                     var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-                    
+
                     break;
                 }
         }

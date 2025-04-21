@@ -41,7 +41,7 @@ public class SubcategoryPhotoController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-                
+
             }
 
             return Ok(response);
@@ -50,7 +50,7 @@ public class SubcategoryPhotoController(
         {
             if (file != null)
             {
-                
+
             }
             return BadRequest(ex.Message);
         }
@@ -74,7 +74,7 @@ public class SubcategoryPhotoController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
-                
+
             }
 
             return Ok(response);
@@ -83,7 +83,7 @@ public class SubcategoryPhotoController(
         {
             if (file != null)
             {
-                
+
             }
             return BadRequest(ex.Message);
         }

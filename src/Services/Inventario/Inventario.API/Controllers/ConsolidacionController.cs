@@ -33,7 +33,7 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     {
         var parameters = new Dictionary<string, object>
             {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, 
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json",SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
 

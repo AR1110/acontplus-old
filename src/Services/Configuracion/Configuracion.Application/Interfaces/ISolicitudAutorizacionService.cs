@@ -1,4 +1,4 @@
-﻿ 
+﻿
 namespace Configuracion.Application.Interfaces;
 
 public interface ISolicitudAutorizacionService

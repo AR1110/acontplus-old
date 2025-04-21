@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Configuracion.Domain.Entities;
+﻿namespace Configuracion.Domain.Entities;
 
 [Table("EstablecimientoLogo", Schema = "Config")]
 public class EstablecimientoLogo : BaseEntity

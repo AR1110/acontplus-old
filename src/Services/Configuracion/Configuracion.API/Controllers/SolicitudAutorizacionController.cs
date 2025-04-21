@@ -1,6 +1,6 @@
 ﻿
 namespace Configuracion.API.Controllers;
-  
+
 public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc) : BaseApiController
 {
     [HttpGet]
@@ -26,18 +26,18 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
         return Ok(response);
     }
 
-    [HttpPut ]
-    public async Task<IActionResult> Put(  ApiRequest data)
+    [HttpPut]
+    public async Task<IActionResult> Put(ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, 
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await _svc.UpdateAsync(parameters);
         return Ok(response);
     }
- 
+
 
     [HttpGet("VerifyUserPermission/{json}")]
     public async Task<IActionResult> VerifyUserPermission(string json)
@@ -49,4 +49,4 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
         return Ok(await _svc.GetAsync(parameters));
     }
 }
- 
+

@@ -1,5 +1,4 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
-using BarberShop.Application.Interfaces;
 
 namespace BarberShop.API.Extensions.Endpoints;
 
