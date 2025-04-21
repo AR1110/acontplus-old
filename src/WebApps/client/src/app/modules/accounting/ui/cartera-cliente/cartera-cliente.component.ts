@@ -29,7 +29,7 @@ import {
   MatCardActions,
   MatCardContent,
 } from '@angular/material/card';
-import { ReportButtonsComponent } from '@shared/components/file-buttons/report-buttons.component';
+import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
