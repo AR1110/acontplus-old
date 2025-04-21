@@ -253,79 +253,75 @@
 
     <!-- Pestaña Deudores -->
     <mat-tab label="Deudores">
+      
+      
       <div class="my-2">
-        <div class="row">
-          <!-- Solo los filtros de Establecimiento, Punto de emisión y Dirección de vivienda -->
-          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-            <div class="form-group">
-              <label for="estabs"
-                >Estab: <span class="text-danger">*</span></label
-              >
-              <select
-                name="estabs"
-                id="estabs"
-                class="form-select"
-                [(ngModel)]="dataSearch.codEstab"
-                (change)="onChangeEstab()"
-              >
-                @for (item of establecimientos; track $index) {
-                  <option [ngValue]="item.codEstab">
-                    {{ item.nombreComercial }}
-                  </option>
-                }
-              </select>
+          <div class="row">
+            <!-- Solo los filtros de Establecimiento, Punto de emisión y Dirección de vivienda -->
+            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="estabs">Estab: <span class="text-danger">*</span></label>
+                <select
+                  name="estabs"
+                  id="estabs"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.codEstab"
+                  (change)="onChangeEstab()"
+                >
+                  @for (item of establecimientos; track $index) {
+                    <option [ngValue]="item.codEstab">
+                      {{ item.nombreComercial }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="punto-emision">Pto. emisión: <span class="text-danger">*</span></label>
+                <select
+                  name="punto-emision"
+                  id="punto-emision"
+                  class="form-select"
+                  [(ngModel)]="dataSearch.idPuntoEmision"
+                >
+                  @for (item of puntosEmision; track $index) {
+                    <option [ngValue]="item.idPuntoEmision">
+                      {{ item.ptoEmi }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Dirección Vivienda: </label>
+                <input
+                  type="text"
+                  [(ngModel)]="dataSearch.dirViviendaCliente"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Ciudad</label>
+                <mat-select
+                  [(ngModel)]="dataSearch.idCiudad"
+                  placeholder="Seleccione Ciudad"
+                >
+                  <mat-option [value]="0">-- Ninguna --</mat-option>
+                  @for (group of provinciasAgrupadas; track $index) {
+                    <mat-optgroup [label]="group.nombre">
+                      @for (sg of group.ciudades; track sg.idCiudad) {
+                        <mat-option [value]="sg.idCiudad">{{ sg.ciudad }}</mat-option>
+                      }
+                    </mat-optgroup>
+                  }
+                </mat-select>
+              </div>
             </div>
           </div>
-          <div class="col-lg-2 col-md-2 col-sm-6 col-12">
-            <div class="form-group">
-              <label for="punto-emision"
-                >Pto. emisión: <span class="text-danger">*</span></label
-              >
-              <select
-                name="punto-emision"
-                id="punto-emision"
-                class="form-select"
-                [(ngModel)]="dataSearch.idPuntoEmision"
-              >
-                @for (item of puntosEmision; track $index) {
-                  <option [ngValue]="item.idPuntoEmision">
-                    {{ item.ptoEmi }}
-                  </option>
-                }
-              </select>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6 col-12">
-            <div class="form-group">
-              <label>Dirección Vivienda: </label>
-              <input
-                type="text"
-                [(ngModel)]="dataSearch.dirViviendaCliente"
-                class="form-control"
-              />
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-            <div class="form-group">
-              <label>Ciudad</label>
-              <mat-select
-                [(ngModel)]="dataSearch.idCiudad"
-                placeholder="Seleccione Ciudad"
-              >
-                <mat-option [value]="0">-- Ninguna --</mat-option>
-                @for (group of provinciasAgrupadas; track $index) {
-                  <mat-optgroup [label]="group.nombre">
-                    @for (sg of group.ciudades; track sg.idCiudad) {
-                      <mat-option [value]="sg.idCiudad">{{
-                        sg.ciudad
-                      }}</mat-option>
-                    }
-                  </mat-optgroup>
-                }
-              </mat-select>
-            </div>
-          </div>
-        </div>
       </div>
 
       <mat-card-actions>

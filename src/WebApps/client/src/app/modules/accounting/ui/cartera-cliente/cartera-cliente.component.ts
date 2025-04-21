@@ -33,6 +33,7 @@ import { ReportButtonsComponent } from '@shared/components/file-buttons/report-b
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -54,6 +55,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ReportButtonsComponent,
     MatDynamicCardComponent,
     MatFormFieldModule,
+    MatCheckboxModule,
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
