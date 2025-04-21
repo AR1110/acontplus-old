@@ -536,10 +536,13 @@
       }
 
       @if (selected.value === 0) {
-        <button mat-flat-button (click)="askToSendMail()" appActionEnviarCorreo>
-          <mat-icon>email</mat-icon>
-          Enviar por correo
-        </button>
+        <app-theme-button
+          icon="email"
+          text="Enviar por correo"
+          (handleClick)="askToSendMail()"
+          appActionEnviarCorreo
+        >
+        </app-theme-button>
       }
     </div>
   </mat-card-actions>

@@ -33,6 +33,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 const imports = [
   NgbNavModule,
@@ -61,7 +62,7 @@ const imports = [
 
 @Component({
   selector: 'app-inventory-report',
-  imports: [imports, ReportButtonsComponent],
+  imports: [imports, ReportButtonsComponent, ThemeButtonComponent],
   templateUrl: './inventory-report.component.html',
   styles: ``,
 })
