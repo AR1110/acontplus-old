@@ -138,7 +138,7 @@ BEGIN
                 END 
 
             IF @rucProveedor IS NOT NULL
-	            BEGIN print 'inside prove'
+	            BEGIN 
 		            SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
 	            END
 
@@ -146,6 +146,10 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
                 END
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND dr.estado = 1 '
+                END 
 
 
             IF @serieComprobante IS NOT NULL

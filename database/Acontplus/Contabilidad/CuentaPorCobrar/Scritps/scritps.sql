@@ -194,8 +194,11 @@ go
 
 
 --> Drop
-DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Insert];
+--DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Insert];
 
-DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Update];
+--DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Update];
 
-DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Update_Status];
+--DROP PROCEDURE IF EXISTS [Contabilidad].[CuentaPorCobrar_Update_Status];
+
+
+--alter table Contabilidad.CuentaPorCobrar add UpdatedAt DATETIME2

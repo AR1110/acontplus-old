@@ -373,6 +373,7 @@ BEGIN
             IF @idCiudad > 0
                 BEGIN
                     SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
+                    
                     SET @sql = @sql + 'AND idCiudad = @idCiudad '
                 END
 
@@ -998,7 +999,7 @@ BEGIN
                             SELECT cu.BusinessName                                  as razonSocial 
 	                              ,cu.IdCard	                                    as identificacion
 	                              ,cl.direccion
-                                  ,JSON_VALUE(cl.infoCrediticia,''$.refDomicilio'') as refDomicilio
+                                  ,JSON_VALUE(cl.infoCrediticia,''$.dirVivienda'') +  '' | '' + JSON_VALUE(cl.infoCrediticia,''$.refDomicilio'') as refDomicilio
 	                              ,cl.telefono
 	                              ,CAST(cc.importeTotal as numeric(18,2))           as importeTotal
 	                              ,CAST(cc.abono as numeric(18,2))                  as abono
@@ -1026,19 +1027,30 @@ BEGIN
 
             IF @dirViviendaCliente IS NOT NULL 
                 BEGIN 
-                    SET @sql = @sql + ' AND EXISTS (SELECT 1 FROM Cliente cl WHERE cl.idCliente = cc.idCliente AND JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'') LIKE ''%' + @dirViviendaCliente + '%'') '
+                    SET @sql = @sql + ' AND (
+                                                   JSON_VALUE(cl.infoCrediticia, ''$.refDomicilio'') LIKE ''%' + @dirViviendaCliente + '%'' 
+                                                OR JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'')  LIKE ''%' + @dirViviendaCliente + '%''
+                                                OR cl.direccion                                      LIKE ''%' + @dirViviendaCliente + '%''
+                                            )
+                                             '
                 END
 
             IF @idCiudad > 0
                 BEGIN
+                    SET @nombreReporte =  @nombreReporte + (SELECT TOP 1 ' - ' + descripcion FROM dbo.Ciudad WITH (NOLOCK) WHERE idCiudad = @idCiudad )
+
                     SET @sql = @sql + 'AND idCiudad = @idCiudad '
                 END
+
+           
 
             SET @sql = @sql + ' ) AS dt GROUP BY dt.razonSocial
                                                 ,dt.identificacion
                                                 ,dt.direccion
                                                 ,dt.telefono
                                                 ,dt.refDomicilio ORDER BY dt.razonSocial ASC '
+            
+            
 
             SELECT en.razonSocial
                   ,es.nombreComercial
