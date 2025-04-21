@@ -4,19 +4,50 @@ namespace Common.API.Extensions;
 
 public static class CommonEndpointsExtensions
 {
-    public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder builder)
     {
-        var commonGroup = endpointRouteBuilder.MapGroup("/api")
+        builder.MapGet("/dashboard", async (ICommonEndpoints commonEndpoints, string json) =>
+           await commonEndpoints.GetDashboardAsync(json))
             .RequireAuthorization()
             .WithOpenApi()
-            .WithTags("Dashbaord;Releases");
+            .WithTags("Dashboard");
 
-        commonGroup.MapGet("/dashboard", async (ICommonEndpoints commonEndpoints, string json) =>
-           await commonEndpoints.GetDashboardAsync(json));
+        builder.MapPost("/emailqueue", async (ICommonEndpoints commonEndpoints, ApiRequest apiRequest) =>
+              await commonEndpoints.CreateEmailQueueAsync(apiRequest))
+                .RequireAuthorization()
+                .WithOpenApi()
+                .WithTags("Email Queue");
 
-        commonGroup.MapGet("/release", async (ICommonEndpoints commonEndpoints) =>
-           await commonEndpoints.GetReleaseAsync());
+        builder.MapPost("/notification", async (ICommonEndpoints commonEndpoints, string json) =>
+              await commonEndpoints.CreateNotificationAsync(json))
+                .RequireAuthorization()
+                .WithOpenApi()
+                .WithTags("Notification");
 
-        return endpointRouteBuilder;
+        builder.MapGet("/release", async (ICommonEndpoints commonEndpoints) =>
+           await commonEndpoints.GetReleaseAsync())
+            .RequireAuthorization()
+            .WithOpenApi()
+            .WithTags("Release");
+
+        builder.MapGet("/usermanual", async (ICommonEndpoints commonEndpoints, string json) =>
+              await commonEndpoints.GetUserManualAsync(json))
+                .RequireAuthorization()
+                .WithOpenApi()
+                .WithTags("User Manual");
+
+        builder.MapPost("/userrelease", async (ICommonEndpoints commonEndpoints, ApiRequest apiRequest) =>
+                await commonEndpoints.CreateUserReleaseReadAsync(apiRequest))
+                    .RequireAuthorization()
+                    .WithOpenApi()
+                    .WithTags("User Release");
+
+        builder.MapPost("/whatsappmessage", async (ICommonEndpoints commonEndpoints, ApiRequest apiRequest) =>
+                await commonEndpoints.CreateWhatsappMessageAsync(apiRequest))
+                    .RequireAuthorization()
+                    .WithOpenApi()
+                    .WithTags("WhatsApp Message");
+
+        return builder;
     }
 }

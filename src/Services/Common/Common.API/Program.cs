@@ -1,8 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 
-using Common.API.Data;
-using Microsoft.EntityFrameworkCore;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
@@ -43,20 +40,18 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers().RequireAuthorization();
-
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-var context = services.GetRequiredService<CommonContext>();
-var logger = services.GetRequiredService<ILogger<Program>>();
-try
-{
-    await context.Database.MigrateAsync();
-    await CommonContextSeed.SeedAsync(context);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "An error occured during migration");
-}
+//using var scope = app.Services.CreateScope();
+//var services = scope.ServiceProvider;
+//var context = services.GetRequiredService<CommonContext>();
+//var logger = services.GetRequiredService<ILogger<Program>>();
+//try
+//{
+//    await context.Database.MigrateAsync();
+//    await CommonContextSeed.SeedAsync(context);
+//}
+//catch (Exception ex)
+//{
+//    logger.LogError(ex, "An error occured during migration");
+//}
 
 await app.RunAsync();
