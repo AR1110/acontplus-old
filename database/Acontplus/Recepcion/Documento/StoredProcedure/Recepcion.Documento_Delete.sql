@@ -40,7 +40,7 @@ BEGIN
 
         IF @codDoc IN ('04','01')
             BEGIN
-                IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento AND codEstado NOT IN ('A'))
+                IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento AND codEstado NOT IN ('PE'))
                     BEGIN
 				        SELECT '0' code, 'Esta Documento tiene un proceso contable no puede ser eliminado' as 'message'
 				        RETURN

@@ -223,7 +223,7 @@ BEGIN
 										   ,fraccionado = IIF(dt.fraccionado = 'SI',CAST(1 AS BIT),CAST(0 AS BIT))
 										   ,ubicacion
 										   ,fechaven 
-										   ,PVP1           
+                                           ,PVP1           
 										   ,PVP2 
 										   ,PVP3  
 										   ,PVP4 

@@ -1,16 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:ap="http://schemas.microsoft.com/sqlserver/reporting/accessibilityproperties" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
-  <am:AuthoringMetadata>
-    <am:CreatedBy>
-      <am:Name>MSRB</am:Name>
-      <am:Version>15.0.20283.0</am:Version>
-    </am:CreatedBy>
-    <am:UpdatedBy>
-      <am:Name>MSRB</am:Name>
-      <am:Version>15.0.20283.0</am:Version>
-    </am:UpdatedBy>
-    <am:LastModifiedTimestamp>2024-09-27T20:04:42.8381098Z</am:LastModifiedTimestamp>
-  </am:AuthoringMetadata>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
     <DataSource Name="mainDs">
@@ -4129,7 +4118,6 @@
                           </Style>
                         </Textbox>
                       </CellContents>
-                      <ap:StructureTypeOverwrite>DataCell</ap:StructureTypeOverwrite>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
@@ -6228,7 +6216,7 @@
           </Style>
         </PageFooter>
         <PageHeight>29.7cm</PageHeight>
-        <PageWidth>22.7cm</PageWidth>
+        <PageWidth>23cm</PageWidth>
         <LeftMargin>0.5cm</LeftMargin>
         <RightMargin>0.5cm</RightMargin>
         <TopMargin>0.5cm</TopMargin>

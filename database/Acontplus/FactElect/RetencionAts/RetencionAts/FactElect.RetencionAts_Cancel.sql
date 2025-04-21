@@ -16,6 +16,7 @@ BEGIN
 	DECLARE @idUsuario INT
 	       ,@idRetencionAts INT
            ,@idEstadoServicio INT
+           ,@idEstadoPago INT
 
 	BEGIN TRY
         
@@ -24,6 +25,8 @@ BEGIN
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
 
         SELECT TOP 1 @idRetencionAts = idRetencionAts FROM FactElect.RetencionAts WITH (NOLOCK) WHERE idDocumentoElectronico = @id
+
+        SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
 
         --> Validacion de Informacion
         IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado != 4)
@@ -43,9 +46,12 @@ BEGIN
             --> ANULA EN DOCUMENTO ELECTRONICO
 			UPDATE DocumentoElectronico SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id
 
-			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
+            UPDATE Contabilidad.CuentaPorPagar SET idEstadoPago = @idEstadoPago WHERE codDoc = '07' AND idDocumento = @idRetencionAts
+			
+            UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
 
 			UPDATE FactElect.RetAtsDocSustento SET estado = 0 WHERE idRetencionAts = @idRetencionAts
+
 
 			--ANULA EN FACTURA
 			UPDATE fc SET fc.retencion = 0

@@ -33,6 +33,7 @@ import { FileButtonsComponent } from '@shared/components/file-buttons/file-butto
 import { MatTabsModule } from '@angular/material/tabs';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 @Component({
@@ -54,7 +55,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatTabsModule,
     FileButtonsComponent,
     MatDynamicCardComponent,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatCheckboxModule
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,

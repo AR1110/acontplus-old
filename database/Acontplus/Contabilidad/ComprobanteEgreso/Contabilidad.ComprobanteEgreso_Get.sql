@@ -202,7 +202,7 @@ BEGIN
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA')
 
-            SELECT   cp.idCuentaPorPagar as idComprobante
+            SELECT cp.idCuentaPorPagar as idComprobante
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
                   ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retenci�n')                                     as tipoDocumento
@@ -215,7 +215,7 @@ BEGIN
             INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
             WHERE cp.codDoc IN ('04','07')
               AND cp.importeTotal > 0
-             AND cp.idProveedor = @idProveedor
+              AND cp.idProveedor = @idProveedor
               AND ep.codigo = 'PE'
 
             RETURN 
