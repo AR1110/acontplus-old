@@ -1,7 +1,4 @@
-﻿using Common.API.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace Common.API.Services;
+﻿namespace Common.API.Services;
 
 public class NotificationService(CommonContext context, IAdoRepository adoRepository) : INotificationService
 {

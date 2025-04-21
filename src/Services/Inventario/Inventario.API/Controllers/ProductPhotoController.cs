@@ -35,7 +35,7 @@ public class ProductPhotoController(
         if (response.Code == "1" && file != null)
         {
             var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-            
+
         }
 
         return Ok(response);
@@ -57,7 +57,7 @@ public class ProductPhotoController(
         if (response.Code == "1" && file != null)
         {
             var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
-            
+
         }
 
         return Ok(response);
@@ -79,7 +79,7 @@ public class ProductPhotoController(
         {
             await s3ObjectCustom.Initialize(response.Payload);
             var s3Response = await storageService.DeleteAsync(s3ObjectCustom);
-            
+
         }
 
         return Ok(response);

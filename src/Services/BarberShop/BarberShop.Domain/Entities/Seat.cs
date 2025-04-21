@@ -3,7 +3,7 @@
 [Table("Seat", Schema = "BarberShop")]
 public class Seat : BaseEntity
 {
-    [Required] [MaxLength(50)] public string Name { get; set; }
+    [Required][MaxLength(50)] public string Name { get; set; }
 
     [MaxLength(300)] public string Description { get; set; }
 

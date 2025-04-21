@@ -2,7 +2,6 @@
 using Common.API.Entities;
 using Common.Infrastructure.Core.Context;
 using Common.Notifications.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Common.API.Data;
 

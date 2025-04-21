@@ -3,12 +3,12 @@
 public class EstablecimientoLogoController : BaseApiController
 {
     private readonly IEstablecimientoLogoService _establecimientoLogoService;
-    
+
 
     public EstablecimientoLogoController(IEstablecimientoLogoService establecimientoLogoService)
     {
         _establecimientoLogoService = establecimientoLogoService;
-        
+
     }
 
     [HttpGet("{establecimientoId}")]

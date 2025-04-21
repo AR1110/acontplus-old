@@ -50,7 +50,7 @@ public class DocumentoSustentoTributarioConfiguration : BaseEntityTypeConfigurat
 
         builder
             .HasOne(dst => dst.TipoComprobante)
-            .WithMany(tc=>tc.DocumentosSustentoTributario)
+            .WithMany(tc => tc.DocumentosSustentoTributario)
             .HasForeignKey(dst => dst.TipoComprobanteId)
             .OnDelete(DeleteBehavior.Restrict);
 

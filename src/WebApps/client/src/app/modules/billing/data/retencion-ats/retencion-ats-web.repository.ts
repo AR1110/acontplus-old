@@ -15,7 +15,7 @@ import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private readonly _http = inject(HttpClient);
-  private readonly _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.RETENCION_ATS}`;
+  private readonly _url = `${PATHS_API.RETENCION_ATS}${BILLING_PATHS.RETENCION_ATS}`;
 
   getAll<T>(parameters: T) {
     const obj = {
