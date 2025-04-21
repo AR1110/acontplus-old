@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import {
   NgbActiveModal,
   NgbNavModule,
@@ -25,26 +25,33 @@ import { ToasterService } from '@core/services/toaster.service';
 import { SriCustomerService } from '@customer/data/sri-customer/sri-customer.service';
 import { forkJoin, Observable } from 'rxjs';
 import { SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.use-case";
+import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatButton, MatIconButton} from "@angular/material/button";
 
 @Component({
-    selector: 'app-add-edit-modal',
+  selector: 'app-add-edit-modal',
     imports: [
         CommonModule,
         ReactiveFormsModule,
         NgbNavModule,
-        FontAwesomeModule,
         NgbTooltipModule,
         MatChipGrid,
         MatChipRow,
         MatIcon,
         MatChipInput,
+        MatCard,
+        MatCardContent,
+        ThemeButtonComponent,
+        MatButton,
+        MatIconButton,
     ],
-    templateUrl: './add-edit-modal.component.html',
-    styles: ``
+  templateUrl: './add-edit-modal.component.html',
+  styles: ``,
 })
 export class AddEditModalComponent {
   @Input() params = {
@@ -74,7 +81,7 @@ export class AddEditModalComponent {
   cargos: any = [];
   emails: string[] = [];
   empresas: any = [];
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Nuevo Cliente';
   numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
     Validators.required,
@@ -108,8 +115,7 @@ export class AddEditModalComponent {
   private sriCustomerService = inject(SriCustomerService);
   private modalRef = inject(NgbActiveModal);
   private tS = inject(ToasterService);
-  private _companyCustomerUseCase = inject(CompanyCustomerUseCase)
-
+  private _companyCustomerUseCase = inject(CompanyCustomerUseCase);
 
   addEmail(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -350,28 +356,28 @@ export class AddEditModalComponent {
       this._companyCustomerUseCase
         .put(this.params.id, dataForm)
         .subscribe((response) => {
-            this.tS.toastr({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-            if (response.code == '1') {
-              this.modalRef.close({
-                id: this.params.id,
-              });
-            }
-        });
-    } else if (!(this.params.id > 0)) {
-      this._companyCustomerUseCase.post(dataForm).subscribe((response) => {
           this.tS.toastr({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
           if (response.code == '1') {
-            let data = {
-              id: (response.payload as any).id,
-            };
-            this.modalRef.close(data);
+            this.modalRef.close({
+              id: this.params.id,
+            });
           }
+        });
+    } else if (!(this.params.id > 0)) {
+      this._companyCustomerUseCase.post(dataForm).subscribe((response) => {
+        this.tS.toastr({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code == '1') {
+          let data = {
+            id: (response.payload as any).id,
+          };
+          this.modalRef.close(data);
+        }
       });
     }
   }

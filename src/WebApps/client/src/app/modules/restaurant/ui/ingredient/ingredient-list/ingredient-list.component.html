@@ -1,11 +1,15 @@
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 col-12">
         <div class="form-group">
-          <select (change)="loadData()" [(ngModel)]="pagination.pageSize" class="form-select">
+          <select
+            (change)="loadData()"
+            [(ngModel)]="pagination.pageSize"
+            class="form-select"
+          >
             @for (page of pagination.pageSizeOptions; track $index) {
-              <option value="{{page}}">{{ page }}</option>
+              <option value="{{ page }}">{{ page }}</option>
             }
           </select>
         </div>
@@ -14,32 +18,36 @@
     <div class="table-responsive">
       <table class="table table-bordered">
         <thead>
-        <tr>
-          <th class="text-center" scope="col"> Op.</th>
-          <th class="text-center" scope="col">#</th>
-          <th scope="col">Ingrediente</th>
-          <th class="text-center" scope="col">Cantidad</th>
-          <th class="text-center" scope="col">Unidad</th>
-          <th scope="col">Contenido</th>
-        </tr>
+          <tr>
+            <th class="text-center" scope="col">Op.</th>
+            <th class="text-center" scope="col">#</th>
+            <th scope="col">Ingrediente</th>
+            <th class="text-center" scope="col">Cantidad</th>
+            <th class="text-center" scope="col">Unidad</th>
+            <th scope="col">Contenido</th>
+          </tr>
         </thead>
         <tbody>
           @for (item of ingredients; track $index) {
             <tr>
               <td class="text-center">
-                <button (click)="onEdit(item)" class="btn btn-outline-warning btn-rounded btn-sm" type="button"
-                        title="Editar">
-                  <fa-icon [icon]="'edit'"></fa-icon>
-                </button>
+                <app-theme-button
+                  (click)="onEdit(item)"
+                  icon="edit"
+                  matStyle="icon"
+                  title="Editar"
+                >
+                </app-theme-button>
               </td>
               <td class="text-center">{{ $index + 1 }}</td>
-              <td><img
-                [ngSrc]="item.s3ObjectUrl || '../assets/images/blank.png'"
-                width="75"
-                height="75"
-                class="img-fluid img-responsive m-r-5"
-                alt="Image Description"
-              />{{ item.summary }}
+              <td>
+                <img
+                  [ngSrc]="item.s3ObjectUrl || '../assets/images/blank.png'"
+                  width="75"
+                  height="75"
+                  class="img-fluid img-responsive m-r-5"
+                  alt="Image Description"
+                />{{ item.summary }}
               </td>
               <td class="text-center">{{ item.quantity }}</td>
               <td class="text-center">{{ item.unit }}</td>
@@ -58,5 +66,5 @@
         [rotate]="true"
       />
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

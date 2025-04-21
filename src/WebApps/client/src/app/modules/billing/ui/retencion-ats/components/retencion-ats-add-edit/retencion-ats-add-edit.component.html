@@ -129,7 +129,7 @@
                   formControlName="tipoSujetoRetenido"
                   [disabled]="isNotForeign"
                 >
-                  @for (item of tiposSujRetenido; track $index) {
+                  @for (item of tiposIdentificacionProveedor; track $index) {
                     <mat-option [value]="item.codigo">
                       {{ item.codigo }} -
                       {{ item.descripcion }}
@@ -190,23 +190,23 @@
       }
     </mat-card>
 
-    <mat-accordion multi formArrayName="docSustento">
+    <mat-accordion multi formArrayName="documentosSustento">
       @for (item of docSustentoArray.controls; track $index) {
         <app-doc-sustento-add-edit
           [indexDoc]="$index"
           [docSustentoGroup]="item"
           [docSustentoArray]="docSustentoArray"
           [uniqueIdDoc]="item.get('uniqueIdDoc')?.value"
-          [documentosSustento]="documentosSustento"
+          [tiposComprobante]="tiposComprobante"
           [sustentosTributarios]="sustentosTributarios"
           [tiposPago]="tiposPago"
-          [tiposRegimenFe]="tiposRegimenFe"
+          [tiposRegimenFiscalExterior]="tiposRegimen"
           [countries]="countries"
           [generic]="generic"
           [taxes]="taxes"
           [tarifaImpuestos]="tarifaImpuestos"
           [impuestosRetencion]="impuestosRetencion"
-          [codigosRetencion]="codigosRetencion"
+          [conceptosRetencionAir]="conceptosRetencionAir"
           [porcentajesRetIva]="porcentajesRetIva"
           [formasPago]="formasPago"
         />

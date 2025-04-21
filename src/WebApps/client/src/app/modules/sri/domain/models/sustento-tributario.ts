@@ -1,7 +1,7 @@
-import { DocumentoSustento } from '@modules/sri/domain/models/documento-sustento';
+import { TipoComprobante } from '@sri/domain/models/tipo-comprobante';
 
-export interface SustentoTributario extends DocumentoSustento {
-  idSustentoTribut: number;
-  codSustento: string;
-  codigo: string;
+export interface SustentoTributario
+  extends Pick<TipoComprobante, 'id' | 'codigo' | 'descripcion'> {
+  tipoComprobanteId: number;
+  documentoSustentoTributarioId: number;
 }

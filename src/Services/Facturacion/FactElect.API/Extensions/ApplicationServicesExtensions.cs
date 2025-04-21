@@ -22,6 +22,18 @@ public static class ApplicationServicesExtensions
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
+            options.SerializerOptions.PropertyNameCaseInsensitive = true;
+            options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        });
+        services.Configure<JsonOptions>(options =>
+        {
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            options.JsonSerializerOptions.Converters.Add(new NullableDateTimeConverter());
+        });
 
         services.AddDbContextPool<FactElectContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),

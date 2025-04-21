@@ -88,10 +88,13 @@ BEGIN
             ORDER BY sf.idSubFamilia DESC  
 
             SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
-	        SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
-            INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto 
+	        --SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
+         --   INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto
+         
+          SELECT i.idImpuesto, ti.idTarifaImpuesto, codImpuesto=i.codigo, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
+          INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.idImpuesto = ti.idImpuesto
           
-
+   
              --CUSTOMER DEFAULT      
 	        SELECT TOP 1 cl.idCliente,
                    cu.IDCard       AS numeroIdentificacion,

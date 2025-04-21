@@ -1,17 +1,22 @@
 <app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="estab">Establecimiento.:</label>
-          <select name="estab" id="estab" class="form-select" [(ngModel)]="dataSearch.codEstab">
+          <select
+            name="estab"
+            id="estab"
+            class="form-select"
+            [(ngModel)]="dataSearch.codEstab"
+          >
             <option value="">Todos</option>
             @for (item of establecimientos; track $index) {
-            <option [ngValue]="item.codEstab">
-              {{ item.nombreComercial }}
-            </option>
+              <option [ngValue]="item.codEstab">
+                {{ item.nombreComercial }}
+              </option>
             }
           </select>
         </div>
@@ -19,53 +24,81 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="subCategorias">SubCategorias</label>
-          <mat-select matNativeControl [formControl]="checkedSubCategorias" multiple class="form-select">
+          <mat-select
+            matNativeControl
+            [formControl]="checkedSubCategorias"
+            multiple
+            class="form-select"
+          >
             @for (item of subCategorias; track $index) {
-            <mat-optgroup [label]="item.familia" style="font-weight: bold;">
-              @for (sf of item.subFamilias; track $index) {
-              <mat-option [value]="sf.idSubFamilia">{{sf.subFamilia}}</mat-option>
-              }
-            </mat-optgroup>
+              <mat-optgroup [label]="item.familia" style="font-weight: bold">
+                @for (sf of item.subFamilias; track $index) {
+                  <mat-option [value]="sf.idSubFamilia">{{
+                    sf.subFamilia
+                  }}</mat-option>
+                }
+              </mat-optgroup>
             }
-
           </mat-select>
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label>Artículo: </label>
-          <input type="text" placeholder="..." [formControl]="control" [matAutocomplete]="autoProductSearchSimple"
-            class="form-control" />
+          <input
+            type="text"
+            placeholder="..."
+            [formControl]="control"
+            [matAutocomplete]="autoProductSearchSimple"
+            class="form-control"
+          />
 
           <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
             @for (state of filteredProducts | async; track state) {
-            <mat-option [value]="state.descripcion" (onSelectionChange)="onSelectionChange(state)">
-              <div class="item-container">
-                <div class="left-column">
-                  <img class="img-fluid img-thumbnail" [src]="state.s3ObjectUrl" alt="" width="30" height="30" />
-                </div>
-                <div class="right-column">
-                  <div class="right-container">
-                    <span class="text-muted">{{ state.codigo }}</span>
-                    <span class="description">{{ state.descripcion }}</span>
+              <mat-option
+                [value]="state.descripcion"
+                (onSelectionChange)="onSelectionChange(state)"
+              >
+                <div class="item-container">
+                  <div class="left-column">
+                    <img
+                      class="img-fluid img-thumbnail"
+                      [src]="state.s3ObjectUrl"
+                      alt=""
+                      width="30"
+                      height="30"
+                    />
+                  </div>
+                  <div class="right-column">
+                    <div class="right-container">
+                      <span class="text-muted">{{ state.codigo }}</span>
+                      <span class="description">{{ state.descripcion }}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </mat-option>
+              </mat-option>
             }
           </mat-autocomplete>
         </div>
       </div>
     </div>
-  </div>
+  </mat-card-content>
   <div class="card-footer">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
-        PDF
-      </button>
-      <button class="btn btn-success" type="button" (click)="getReport('excel')">
-        EXCEL
-      </button>
+      <app-theme-button
+        variant="danger"
+        text="Pdf"
+        icon="picture_as_pdf"
+        (handleClick)="getReport('pdf')"
+      >
+      </app-theme-button
+      ><app-theme-button
+        variant="success"
+        text="Excel"
+        icon="download"
+        (handleClick)="getReport('excel')"
+      >
+      </app-theme-button>
     </div>
   </div>
-</div>
+</mat-card>

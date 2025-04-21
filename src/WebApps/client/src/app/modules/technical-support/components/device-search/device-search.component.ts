@@ -12,22 +12,18 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {FormsModule} from "@angular/forms";
-import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+import { FormsModule } from '@angular/forms';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-device-search',
-    imports: [
-        FontAwesomeModule,
-        FormsModule,
-        NgbTypeaheadModule
-    ],
-    templateUrl: './device-search.component.html',
-    styles: ``
+  selector: 'app-device-search',
+  imports: [FormsModule, NgbTypeaheadModule, ThemeButtonComponent],
+  templateUrl: './device-search.component.html',
+  styles: ``,
 })
 export class DeviceSearchComponent {
-  @Input() clearInput: boolean = false;
+  @Input() clearInput = false;
   @Input() textSearch = '';
   @Output() deviceSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
@@ -41,8 +37,8 @@ export class DeviceSearchComponent {
     color: '',
     id: 0,
   };
-  searching: boolean = false;
-  searchFailed: boolean = false;
+  searching = false;
+  searchFailed = false;
 
   onDeviceSelect($event: any) {
     this.device = $event.item;
@@ -64,8 +60,8 @@ export class DeviceSearchComponent {
       this.setDeviceData(response);
     });
   }
-  search: OperatorFunction<string, Array<DeviceSearch>> = (
-    text$: Observable<string>
+  search: OperatorFunction<string, DeviceSearch[]> = (
+    text$: Observable<string>,
   ) =>
     text$.pipe(
       distinctUntilChanged(),
@@ -80,10 +76,10 @@ export class DeviceSearchComponent {
             console.log(error);
             this.searchFailed = true;
             return of([]);
-          })
+          }),
         );
       }),
-      tap(() => (this.searching = false))
+      tap(() => (this.searching = false)),
     );
   setDeviceData(item: any) {
     this.deviceSelected.emit({

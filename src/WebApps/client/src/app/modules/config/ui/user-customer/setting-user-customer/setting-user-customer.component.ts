@@ -1,28 +1,19 @@
-import {Component, inject, signal} from '@angular/core';
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatTabsModule} from "@angular/material/tabs";
-import {
-  ListAsignacionEstabComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/list-asignacion-estab/list-asignacion-estab.component";
-import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
-import {
-  ListUserCustomerRoleUseCase
-} from "@modules/config/domain/use-cases/user-customer-role/list-user-customer-role.use-case";
-import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
-import {MatListModule} from "@angular/material/list";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {
-  UserCustomerPermissionComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-permission/user-customer-permission.component";
-import {
-  UserCustomerRoleAccessComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-role-access/user-customer-role-access.component";
-import {
-  UserCustomerRolePermissionComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-role-permission/user-customer-role-permission.component";
+import { Component, inject, signal } from '@angular/core';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ListAsignacionEstabComponent } from '@modules/config/ui/user-customer/setting-user-customer/list-asignacion-estab/list-asignacion-estab.component';
+import { UserCustomerStore } from '@modules/config/ui/store/user-customer.store';
+import { ListUserCustomerRoleUseCase } from '@modules/config/domain/use-cases/user-customer-role/list-user-customer-role.use-case';
+import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
+import { MatListModule } from '@angular/material/list';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { UserCustomerPermissionComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-permission/user-customer-permission.component';
+import { UserCustomerRoleAccessComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-role-access/user-customer-role-access.component';
+import { UserCustomerRolePermissionComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-role-permission/user-customer-role-permission.component';
+import { TestTreeComponent } from '@modules/config/ui/user-customer/setting-user-customer/test-tree/test-tree.component';
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -36,39 +27,42 @@ import {
     MatIcon,
     UserCustomerPermissionComponent,
     UserCustomerRoleAccessComponent,
-    UserCustomerRolePermissionComponent
+    UserCustomerRolePermissionComponent,
+    TestTreeComponent,
   ],
   templateUrl: './setting-user-customer.component.html',
-  styles: ``
+  styles: ``,
 })
 export class SettingUserCustomerComponent {
-  private dialogRef = inject(MatDialogRef<SettingUserCustomerComponent>)
+  private dialogRef = inject(MatDialogRef<SettingUserCustomerComponent>);
   readonly params = inject<{
-    idUsuario: number
-    nombreCompleto: string
+    idUsuario: number;
+    nombreCompleto: string;
   }>(MAT_DIALOG_DATA);
 
-  userCustomerRoleData = {} as UserCustomerRole
+  userCustomerRoleData = {} as UserCustomerRole;
 
-  private $listUserCustomerRoleUseCase = inject(ListUserCustomerRoleUseCase)
+  private $listUserCustomerRoleUseCase = inject(ListUserCustomerRoleUseCase);
   private $userCustomerStore = inject(UserCustomerStore);
 
-  expandHeader = signal(false)
+  expandHeader = signal(false);
 
-  ngOnInit(){
-    this.$listUserCustomerRoleUseCase.execute({
-      idUsuario: this.params.idUsuario
-    }).subscribe(response=>{
-      if(response.data.length>0){
-      this.userCustomerRoleData = response.data[0];
-      this.$userCustomerStore.setUserRoleId(this.userCustomerRoleData.idUsuarioRol)
-      }
-    })
+  ngOnInit() {
+    this.$listUserCustomerRoleUseCase
+      .execute({
+        idUsuario: this.params.idUsuario,
+      })
+      .subscribe((response) => {
+        if (response.data.length > 0) {
+          this.userCustomerRoleData = response.data[0];
+          this.$userCustomerStore.setUserRoleId(
+            this.userCustomerRoleData.idUsuarioRol,
+          );
+        }
+      });
   }
 
-
-
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

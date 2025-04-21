@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">
-    <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+    <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
   </h4>
   <button
     type="button"
@@ -190,11 +190,15 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-success" (click)="saveEdit()">
-    <fa-icon [icon]="'save'"></fa-icon> Guardar
+  <button type="button" mat-raised-button (click)="saveEdit()">
+    <mat-icon>save</mat-icon> Guardar
   </button>
 
-  <button type="button" class="btn btn-dark" (click)="_modalRef.close()">
-    &times; Cerrar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="_modalRef.close()"
+  >
+  </app-theme-button>
 </div>

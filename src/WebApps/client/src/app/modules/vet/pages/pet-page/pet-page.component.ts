@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
@@ -31,39 +31,46 @@ import Swal from 'sweetalert2';
 import { ThemePalette } from '@angular/material/core';
 import { MatInput } from '@angular/material/input';
 import { Pet } from '@modules/vet/models/pet.model';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Chart, registerables } from 'chart.js';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatIcon } from '@angular/material/icon';
 
 Chart.register(...registerables);
 
 @Component({
-    selector: 'app-pet-page',
-    imports: [
-        BreadcrumbComponent,
-        FormsModule,
-        MatPaginator,
-        MatSlideToggle,
-        MatTable,
-        MatHeaderCellDef,
-        MatCellDef,
-        MatColumnDef,
-        MatHeaderCell,
-        MatCell,
-        MatRowDef,
-        MatNoDataRow,
-        MatRow,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        MatInput,
-        MatSort,
-        FaIconComponent,
-        NgbDropdownModule,
-    ],
-    templateUrl: './pet-page.component.html',
-    styles: ``
+  selector: 'app-pet-page',
+  imports: [
+    BreadcrumbComponent,
+    FormsModule,
+    MatPaginator,
+    MatSlideToggle,
+    MatTable,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatColumnDef,
+    MatHeaderCell,
+    MatCell,
+    MatRowDef,
+    MatNoDataRow,
+    MatRow,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatInput,
+    MatSort,
+    MatCardContent,
+    MatCard,
+    MatButton,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
+    MatIcon,
+  ],
+  templateUrl: './pet-page.component.html',
+  styles: ``,
 })
-export class PetPageComponent {
+export class PetPageComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   colorToggle: ThemePalette = 'accent';
@@ -83,7 +90,7 @@ export class PetPageComponent {
   dataSource = new MatTableDataSource<Pet>();
   dataSearch = {};
   pagination = new Pagination();
-  searching: boolean = false;
+  searching = false;
 
   private readonly petService = inject(PetService);
   private readonly modalService = inject(ModalService);
@@ -138,11 +145,11 @@ export class PetPageComponent {
 
   loadPets() {
     let petsModified: any[] = [];
-    let params = {
+    const params = {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
     };
-    let clonedParams = Object.assign(params, this.dataSearch);
+    const clonedParams = Object.assign(params, this.dataSearch);
     this.petService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { pets } = JSON.parse(response.payload as string);

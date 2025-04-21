@@ -5,21 +5,25 @@ import { ModalService } from '@core/services/modal.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { NgOptimizedImage } from '@angular/common';
 import { IngredientAddEditModalComponent } from '@restaurant/ui/ingredient/ingredient-add-edit-modal/ingredient-add-edit-modal.component';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-ingredient-list',
-    imports: [
-        NgbPagination,
-        ReactiveFormsModule,
-        FormsModule,
-        FaIconComponent,
-        NgOptimizedImage,
-    ],
-    templateUrl: './ingredient-list.component.html',
-    styles: ``
+  selector: 'app-ingredient-list',
+  imports: [
+    NgbPagination,
+    ReactiveFormsModule,
+    FormsModule,
+    NgOptimizedImage,
+    MatCardContent,
+    MatCard,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './ingredient-list.component.html',
+  styles: ``,
 })
 export class IngredientListComponent {
   ingredients: Ingredient[] = [];

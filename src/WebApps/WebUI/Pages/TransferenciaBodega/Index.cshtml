@@ -24,7 +24,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
                         <label for="establecimiento">Establecimiento</label>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
@@ -46,7 +46,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="">Rango fecha</label>
                         <div class="input-group">
@@ -68,13 +68,6 @@
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <label for="nroDoc">Número documento</label>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                            placeholder="Ej: 123 o 1-30">
-                    </div>
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
                         ng-click="refresh()">
                         <i class="fas fa-redo"></i>
@@ -82,7 +75,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-6 d-flex justify-content-start">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
                             ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
@@ -90,11 +83,23 @@
                     </span>
                 </div>
 
-                <div class="col-6 d-flex justify-content-end">
-                    <!-- <div class="form-group">
-                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                            ng-model="dataSearch.bySearch" placeholder="...">
-                    </div> -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex justify-content-end">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="nroDoc">Número documento</label>
+                                <input type="text" class="form-control border-select"
+                                    ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123 o 1-30">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="nroDoc">Buscar por observación</label>
+                                <input type="text" class="form-control border-select" ng-model="dataSearch.textSearch"
+                                    placeholder="...">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -109,6 +114,7 @@
                             <th md-column>Origen</th>
                             <th md-column>Destino</th>
                             <th md-column>Total</th>
+                            <th md-column>Observación</th>
                             <th md-column>Estado</th>
                         </tr>
                     </thead>
@@ -140,10 +146,11 @@
                             <td md-cell>{{item.bodegaOrigen}}</td>
                             <td md-cell>{{item.bodegaDestino}}</td>
                             <td md-cell>${{item.total}}</td>
+                            <td md-cell>{{item.observacion}}</td>
                             <td md-cell>{{item.estadoDesc}}</td>
                         </tr>
                         <tr ng-if="transferenciasBodegas.length===0" class="text-center">
-                            <td colspan="8">No hay registros en esta tabla</td>
+                            <td colspan="9">No hay registros en esta tabla</td>
                         </tr>
                     </tbody>
                     <tfoot md-foot>

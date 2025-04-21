@@ -15,16 +15,23 @@ import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-fact-elect-report-page',
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    CompanyCustomerSearchComponent,
-    UserSearchComponent,
-  ],
+    imports: [
+        FormsModule,
+        BreadcrumbComponent,
+        DateRangeSelectionComponent,
+        CompanyCustomerSearchComponent,
+        UserSearchComponent,
+        MatCardContent,
+        MatCard,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './fact-elect-report-page.component.html',
   styles: ``,
 })

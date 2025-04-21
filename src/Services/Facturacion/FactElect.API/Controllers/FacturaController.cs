@@ -1,4 +1,7 @@
-﻿namespace FactElect.API.Controllers;
+﻿//using Newtonsoft.Json.Serialization;
+//using Newtonsoft.Json;
+
+namespace FactElect.API.Controllers;
 
 public class FacturaController(IFacturaService service) : BaseApiController
 {
@@ -50,7 +53,6 @@ public class FacturaController(IFacturaService service) : BaseApiController
 
         return Ok(new { code = "1", payload = response });
     }
-
 
     [HttpPut("Cancel/{id}")]
     public async Task<IActionResult> Cancel(int id, ApiRequest data)

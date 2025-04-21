@@ -5,39 +5,59 @@
     class="btn-close"
     aria-label="Close"
     (click)="modal.close()"
-  >
-  </button>
+  ></button>
 </div>
 <div class="modal-body">
   <div class="form-group">
-    <label>
-      Ingrese el o los correos destinatarios
-    </label>
-    @for (item of emails;track $index){
+    <label> Ingrese el o los correos destinatarios </label>
+    @for (item of emails; track $index) {
       <div class="input-group mb-3">
-        <input type="email" [id]="'email'+$index" [name]="'email'+$index" class="form-control" autocomplete="off" [(ngModel)]="emails[$index]" placeholder="Ingrese un email">
+        <input
+          type="email"
+          [id]="'email' + $index"
+          [name]="'email' + $index"
+          class="form-control"
+          autocomplete="off"
+          [(ngModel)]="emails[$index]"
+          placeholder="Ingrese un email"
+        />
 
-        @if(emails.length!==1){
-          <button class="btn btn-danger btn-sm" type="button" (click)="removeEmail($index)" >
-            <fa-icon [icon]="['fas', 'trash-alt']" ></fa-icon>
-          </button>
+        @if (emails.length !== 1) {
+          <app-theme-button
+            variant="danger"
+            icon="delete"
+            matStyle="icon"
+            (click)="removeEmail($index)"
+          >
+          </app-theme-button>
         }
 
-        @if(lastIndex===$index){
-        <button class="btn btn-primary btn-sm" type="button" (click)="addEmail()">
-          <fa-icon [icon]="['fas', 'plus']" ></fa-icon>
-        </button>
+        @if (lastIndex === $index) {
+          <app-theme-button
+            icon="add"
+            matStyle="icon"
+            text="Añadir Nuevo"
+            (click)="addEmail()"
+          >
+          </app-theme-button>
         }
       </div>
     }
   </div>
-
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" type="button" (click)="send()">
-    <i class="mdi mdi-send"></i> Enviar
-  </button>
-  <button class="btn btn-dark" type="button" (click)="modal.close()">
-    Cerrar
-  </button>
+  <app-theme-button
+    variant="success"
+    icon="emal"
+    text="Cancelar"
+    (handleClick)="send()"
+  >
+  </app-theme-button
+  ><app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  >
+  </app-theme-button>
 </div>

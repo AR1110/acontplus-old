@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
@@ -13,14 +13,16 @@ import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-production-area-add-edit-modal',
-    imports: [ReactiveFormsModule, FaIconComponent, MatSlideToggle],
-    templateUrl: './production-area-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-production-area-add-edit-modal',
+  imports: [ReactiveFormsModule, MatSlideToggle, MatIcon, MatButton],
+  templateUrl: './production-area-add-edit-modal.component.html',
+  styles: ``,
 })
 export class ProductionAreaAddEditModalComponent {
   establecimientoId: number = 0;
@@ -41,7 +43,7 @@ export class ProductionAreaAddEditModalComponent {
     ]),
     enabled: new FormControl(true),
   });
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle: string = 'Registrar Área de Producción';
   #modalRef = inject(NgbActiveModal);
   #productionAreaService = inject(ProductionAreaService);

@@ -1,6 +1,6 @@
 export interface ParaisoFiscal {
-  idParaisoFiscal: number;
+  id: number;
   codigo: string;
   descripcion: string;
-  estado: boolean;
+  enabled: boolean;
 }

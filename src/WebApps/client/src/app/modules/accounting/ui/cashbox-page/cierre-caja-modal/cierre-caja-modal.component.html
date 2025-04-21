@@ -4,35 +4,39 @@
     type="button"
     class="btn-close"
     aria-label="Close"
-    (click)="closeModal()"
+    (click)="onModalClose()"
   ></button>
 </div>
 <div class="modal-body">
   <div class="row">
-    @for(item of monedas; track $index){
-    <div class="col-lg-3 col-md-3 col-sm-4 col-12">
-      <div class="form-group">
-        <h6>{{ item.descripcion }}</h6>
-        <input
-          type="number"
-          class="form-control form-control-border"
-          [(ngModel)]="item.cantidad"
-          (input)="onChangeQuantity()"
-          onclick="select();"
-        />
+    @for (item of monedas; track $index) {
+      <div class="col-lg-3 col-md-3 col-sm-4 col-12">
+        <div class="form-group">
+          <h6>{{ item.descripcion }}</h6>
+          <input
+            type="number"
+            class="form-control form-control-border"
+            [(ngModel)]="item.cantidad"
+            (input)="onChangeQuantity()"
+            onclick="select();"
+          />
+        </div>
       </div>
-    </div>
     }
   </div>
   <h5 class="ml-auto text-info">
-    Total: <span>{{ totalArqueo | currency : "$" }}</span>
+    Total: <span>{{ totalArqueo | currency: "$" }}</span>
   </h5>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-success" (click)="save()">
-    <fa-icon [icon]="'save'"></fa-icon> Guardar
+  <button type="button" mat-raised-button (click)="save()">
+    <mat-icon>save</mat-icon> Guardar
   </button>
-  <button type="button" class="btn btn-dark" (click)="closeModal()">
-    &times; Cerrar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="onModalClose()"
+  >
+  </app-theme-button>
 </div>

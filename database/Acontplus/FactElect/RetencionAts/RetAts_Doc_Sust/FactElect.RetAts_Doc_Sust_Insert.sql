@@ -9,10 +9,8 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for insert sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Insert
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Insert @idUsuarioRol INT  
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Insert @userRoleId INT  
 ,@idRetencionAts INT
 ,@json VARCHAR(MAX)
 AS
@@ -20,28 +18,29 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+
+
 		BEGIN TRAN 
 			
-			INSERT INTO FactElect.RetAtsDocSustento(idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
+			INSERT INTO FactElect.RetAtsDocSustento(idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
 			, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
-			, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
+			, numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
 
-			SELECT @idRetencionAts idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
+			SELECT @idRetencionAts idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
 			, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
-			, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
+			, numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
 			FROM OPENJSON(@json) WITH (uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
-								,codSustento VARCHAR(2) '$.codSustento'
-								,codDocSustento VARCHAR(2) '$.codDocSustento'
+								,documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
 								,numDocSustento VARCHAR(15) '$.numDocSustento'
 								,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
 								,fechaRegistroContable DATETIME '$.fechaRegistroContable'
 								,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
 								,pagoLocExt VARCHAR(2) '$.pagoLocExt'
-								,tipoRegi VARCHAR(2) '$.tipoRegi'
+								,tipoRegimenFiscalExteriorId INT '$.tipoRegi'
 								,paisEfecPago VARCHAR(3) '$.paisEfecPago'
 								,aplicConvDobTrib VARCHAR(2) '$.aplicConvDobTrib'
 								,pagExtSujRetNorLeg VARCHAR(2) '$.pagExtSujRetNorLeg'

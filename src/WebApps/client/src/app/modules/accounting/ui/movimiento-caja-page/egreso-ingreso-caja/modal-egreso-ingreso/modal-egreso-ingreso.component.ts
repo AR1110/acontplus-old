@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { CashboxSelectHtmlOnly } from '@accounting/core/domain/cashbox.model';
-import { SubEntidadFinanciera } from '@accounting/core/domain/subentidad-financiera.model';
+import { CashboxSelectHtmlOnly } from '@accounting/core/models/cashbox.model';
+import { SubEntidadFinanciera } from '@accounting/core/models/subentidad-financiera.model';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   AbstractControl,
@@ -16,16 +16,22 @@ import { EmployeeService } from '@sale/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { EntidadFinanciera } from '@accounting/core/domain/entidad-financiera.interface';
-import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.use-case";
+import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
+import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
-  imports: [
-    ReactiveFormsModule,
-    NgbTypeaheadModule,
-    CompanyCustomerSearchComponent,
-  ],
+    imports: [
+        ReactiveFormsModule,
+        NgbTypeaheadModule,
+        CompanyCustomerSearchComponent,
+        MatIcon,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
 export class ModalEgresoIngresoComponent {
@@ -66,7 +72,7 @@ export class ModalEgresoIngresoComponent {
     customerName: new FormControl(''),
   });
   private activeModal = inject(NgbActiveModal);
-  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase)
+  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
 
   private employeeSvc = inject(EmployeeService);
   private tS = inject(ToasterService);
@@ -182,27 +188,26 @@ export class ModalEgresoIngresoComponent {
       }
 
       this._movimientoCajaUseCase.create(params).subscribe((response) => {
-
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
-          if (response.code === '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
-            this.activeModal.close(response);
-          }
+        if (response.code === '0') {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message,
+          });
+        }
+        if (response.code === '1') {
+          this.tS.toastr({
+            type: 'success',
+            message: response.message,
+          });
+          this.activeModal.close(response);
+        }
       });
     } catch (error) {
       console.log(error);
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

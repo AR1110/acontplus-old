@@ -3,15 +3,14 @@ import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-device-list-modal',
-    imports: [
-        FontAwesomeModule
-    ],
-    templateUrl: './device-list-modal.component.html',
-    styles: ``
+  selector: 'app-device-list-modal',
+  imports: [MatIcon, ThemeButtonComponent],
+  templateUrl: './device-list-modal.component.html',
+  styles: ``,
 })
 export class DeviceListModalComponent implements OnInit {
   private deviceService = inject(DeviceService);
@@ -20,7 +19,7 @@ export class DeviceListModalComponent implements OnInit {
 
   data: any = {};
   devices: any = [];
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 

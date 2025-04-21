@@ -11,13 +11,9 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { ControlCaja } from '@accounting/core/domain/cashbox.model';
+import { ControlCaja } from '@accounting/core/models/cashbox.model';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import {
-  NgbActiveModal,
-  NgbDropdownModule,
-  NgbPagination,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import {
   PermissionCashAccounting,
   UserRoleStateService,
@@ -27,26 +23,34 @@ import Swal from 'sweetalert2';
 import { CierreCajaModalComponent } from '@accounting/ui/cashbox-page/cierre-caja-modal/cierre-caja-modal.component';
 import { FiltroControlCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 import { FiltroDetalleCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-control-caja-modal',
-  imports: [
-    FormsModule,
-    FontAwesomeModule,
-    NgbPagination,
-    NgbDropdownModule,
-    DateRangeSelectionComponent,
-    SendMailModalDirective,
-  ],
+    imports: [
+        FormsModule,
+        NgbPagination,
+
+        DateRangeSelectionComponent,
+        SendMailModalDirective,
+        MatMenu,
+        MatIcon,
+        MatMenuTrigger,
+        MatButton,
+        MatMenuItem,
+        ThemeButtonComponent,
+    ],
   templateUrl: './control-caja-modal.component.html',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class ControlCajaModalComponent {
   @Input('params') params = {
@@ -75,7 +79,7 @@ export class ControlCajaModalComponent {
   page = 1;
   totalRecords = 0;
   recordsQuantity = [25, 50, 100, 200, 500];
-  movimientosCaja: Array<ControlCaja> = [];
+  movimientosCaja: ControlCaja[] = [];
   estadosMovimiento = [
     {
       estado: false,
@@ -89,13 +93,13 @@ export class ControlCajaModalComponent {
   dataMovientoControCaja = {} as ControlCaja;
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
   private activeModal = inject(NgbActiveModal);
-  private _controlCajaUseCase = inject(ControlCajaUseCase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase);
   private modalSvc = inject(ModalService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private pS = inject(UserRoleStateService);
-  private _tokenUseCase = inject(TokenUseCase)
+  private _tokenUseCase = inject(TokenUseCase);
   private format = FORMAT_REPORT.PDF;
 
   getMovimientosCaja() {
@@ -446,8 +450,7 @@ export class ControlCajaModalComponent {
         idUsuario: this.params.idUsuario,
         idCliente: null,
 
-        userRoleId: this._tokenUseCase.getUserRoleId()
-
+        userRoleId: this._tokenUseCase.getUserRoleId(),
       };
 
       const parameters = {
@@ -494,7 +497,7 @@ export class ControlCajaModalComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close(this.isReloadCaja);
   }
 }

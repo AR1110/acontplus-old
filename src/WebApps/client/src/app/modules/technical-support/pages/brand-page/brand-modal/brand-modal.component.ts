@@ -8,10 +8,6 @@ import {
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Category } from '@modules/technical-support/models/category';
 import { Serie } from '@modules/technical-support/models/serie';
@@ -20,12 +16,15 @@ import { CategoryService } from '@modules/technical-support/services/category.se
 import { SerieService } from '@modules/technical-support/services/serie.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-brand-modal',
-    imports: [FontAwesomeModule, ReactiveFormsModule, TabulatorComponent],
-    templateUrl: './brand-modal.component.html',
-    styles: ``
+  selector: 'app-brand-modal',
+    imports: [ReactiveFormsModule, TabulatorComponent, MatIcon, MatButton, ThemeButtonComponent],
+  templateUrl: './brand-modal.component.html',
+  styles: ``,
 })
 export class BrandModalComponent {
   private brandService = inject(BrandService);
@@ -90,7 +89,7 @@ export class BrandModalComponent {
         //create delete button
         let delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
@@ -121,7 +120,7 @@ export class BrandModalComponent {
     categoryId: 0,
     categoryName: '',
   };
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Marca';
   series: Serie[] = [];
 
@@ -143,7 +142,6 @@ export class BrandModalComponent {
     this.onGet();
   }
   onGet() {
-    
     this.categoryService.get({}).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -153,30 +151,24 @@ export class BrandModalComponent {
         }
       },
       error(err) {
-        
         console.log(err);
       },
-      complete() {
-        
-      },
+      complete() {},
     });
   }
   onModalClose() {
     this.modalRef.close();
   }
   onSave() {
-    
     if (this.series.length > 0) {
       this.series.forEach((x) => {
         if (!x.code) {
-          
           return this.tS.toastr({
             type: 'warning',
             message: 'Código de la serie invalido',
           });
         }
         if (!x.name) {
-          
           return this.tS.toastr({
             type: 'warning',
             message: 'Nombre de la serie invalido',
@@ -193,22 +185,16 @@ export class BrandModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          
         },
-        complete() {
-          
-        },
+        complete() {},
       });
     } else {
       this.brandService.post(dataToSave).subscribe({
         next: this.successResponse,
         error(err) {
           console.error(err);
-          
         },
-        complete() {
-          
-        },
+        complete() {},
       });
     }
   }
@@ -229,7 +215,6 @@ export class BrandModalComponent {
       confirmButtonText: 'Si',
     }).then((response) => {
       if (response.isConfirmed) {
-        
         this.serieService.delete(item.id).subscribe({
           next: (response) => {
             if (isApiResponse(response)) {
@@ -240,18 +225,15 @@ export class BrandModalComponent {
               if (response.code === '1') {
                 this.series.splice(
                   this.series.findIndex((x) => x.id == item.id),
-                  1
+                  1,
                 );
               }
             }
           },
           error(err) {
-            
             console.log(err);
           },
-          complete() {
-            
-          },
+          complete() {},
         });
       }
     });

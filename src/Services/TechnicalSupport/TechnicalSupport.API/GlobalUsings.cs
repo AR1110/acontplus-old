@@ -1,5 +1,4 @@
-﻿global using AutoMapper;
-global using Common.Core.Data;
+﻿global using Common.Core.Data;
 global using Common.Core.Entities;
 global using Common.Core.Models;
 global using Common.Core.Validation;

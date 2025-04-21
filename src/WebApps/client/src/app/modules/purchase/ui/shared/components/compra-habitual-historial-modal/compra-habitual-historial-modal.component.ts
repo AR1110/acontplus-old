@@ -9,6 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import Swal from 'sweetalert2';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-compra-habitual-historial-modal',
@@ -16,7 +17,8 @@ import Swal from 'sweetalert2';
         MatDynamicTableComponent,
         CustomTableContainerComponent,
         MatIconModule,
-        MatButtonModule
+        MatButtonModule,
+        ThemeButtonComponent
     ],
     templateUrl: './compra-habitual-historial-modal.component.html',
     styles: ``
@@ -118,7 +120,7 @@ export class CompraHabitualHistorialModalComponent {
             message: response.message
           })
           this.isRefresh = true;
-          this.closeModal()
+          this.onModalClose()
         }
       })
 
@@ -128,7 +130,7 @@ export class CompraHabitualHistorialModalComponent {
   }
 
 
-  closeModal() {
+  onModalClose() {
     this.modal.close({
       isRefresh: this.isRefresh
     })

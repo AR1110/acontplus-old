@@ -1,0 +1,85 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{ titleModal }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modal.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label for="establishment">Establecimiento: </label>
+    <input
+      type="text"
+      name="establishment"
+      id="establishment"
+      [value]="params.establishmentName"
+      readonly
+      class="form-control"
+    />
+  </div>
+  <div class="form-group">
+    <label for="puntoEmision"
+      >Punto Emisión: <span class="text-danger">*</span></label
+    >
+    <input
+      type="text"
+      appInputNumber
+      [(ngModel)]="data.ptoEmi"
+      class="form-control"
+      placeholder="001"
+    />
+  </div>
+  <div class="form-group">
+    <label for="tipoAmbiente"
+      >Tipo Ambiente: <span class="text-danger">*</span></label
+    >
+    <select
+      name="tipoAmbiente"
+      id="tipoAmbiente"
+      class="form-select"
+      [(ngModel)]="data.ambiente"
+    >
+      @for (item of tiposAmbiente; track $index) {
+        <option [ngValue]="item.code">{{ item.description }}</option>
+      }
+    </select>
+  </div>
+  @if (params.idPuntoEmision > 0) {
+    <div class="d-flex flex-row gap-2">
+      <div class="icheck-primary">
+        <input
+          type="radio"
+          id="statusActive"
+          [(ngModel)]="data.estado"
+          [value]="true"
+          name="groupStatus"
+        />
+        <label for="statusActive">Activo</label>
+      </div>
+      <div class="icheck-primary">
+        <input
+          type="radio"
+          id="statusInactive"
+          [(ngModel)]="data.estado"
+          [value]="false"
+          name="groupStatus"
+        />
+        <label for="statusInactive">Inactivo</label>
+      </div>
+    </div>
+  }
+</div>
+<div class="modal-footer">
+  <button type="button" mat-raised-button (click)="save()">
+    {{ btnText }}
+  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  >
+  </app-theme-button>
+</div>

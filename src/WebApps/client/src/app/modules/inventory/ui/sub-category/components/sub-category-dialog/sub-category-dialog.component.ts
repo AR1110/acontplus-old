@@ -216,7 +216,7 @@ export class SubCategoryDialogComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.dialogRef.close({
       isRefresh: this.isRefresh()
     });

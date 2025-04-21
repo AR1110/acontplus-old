@@ -15,7 +15,15 @@ export class RetencionAtsUseCase {
     return this._retencionAtsRepository.getAll(parameters);
   }
 
+  getById(id: number) {
+    return this._retencionAtsRepository.getById(id);
+  }
+
   getDocs(parameters: unknown) {
     return this._retencionAtsRepository.getDocs(parameters);
+  }
+
+  create<T>(data: T) {
+    return this._retencionAtsRepository.create(data);
   }
 }

@@ -8,17 +8,18 @@ import {
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-category-modal',
-    imports: [FontAwesomeModule, ReactiveFormsModule],
-    templateUrl: './category-modal.component.html',
-    styles: ``
+  selector: 'app-category-modal',
+    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  templateUrl: './category-modal.component.html',
+  styles: ``,
 })
 export class CategoryModalComponent {
   private categoryService = inject(CategoryService);
@@ -42,7 +43,7 @@ export class CategoryModalComponent {
     code: '',
     name: '',
   };
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Categoría';
 
   ngOnInit(): void {
@@ -56,7 +57,6 @@ export class CategoryModalComponent {
     this.modalRef.close();
   }
   onSave() {
-    
     const dataToSave = {
       ...this.categoryForm.value,
     };
@@ -65,22 +65,16 @@ export class CategoryModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          
         },
-        complete() {
-          
-        },
+        complete() {},
       });
     } else {
       this.categoryService.post(dataToSave).subscribe({
         next: this.successResponse,
         error(err) {
           console.error(err);
-          
         },
-        complete() {
-          
-        },
+        complete() {},
       });
     }
   }

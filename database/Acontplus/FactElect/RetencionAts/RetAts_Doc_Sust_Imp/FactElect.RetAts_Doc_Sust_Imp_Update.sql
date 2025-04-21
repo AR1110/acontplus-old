@@ -9,40 +9,37 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for update tax sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Imp_Update', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Update
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Update @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Update @userRoleId INT 
 ,@id INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
 	,@idRetAtsDocSustento INT
 	,@totalSinImpuestos NUMERIC(18,2) = 0
 	,@totalImpuestos NUMERIC(18,2) = 0
 	,@importeTotal NUMERIC (18,2) = 0
 
-
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
+        
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+
 		BEGIN TRAN  
 
-			UPDATE rid SET rid.codImpuestoDocSustento = t.codImpuestoDocSustento
-			,rid.codigoPorcentaje = t.codigoPorcentaje
+			UPDATE rid SET rid.idTarifaImpuesto = t.idTarifaImpuesto
 			,rid.baseImponible = t.baseImponible
-			,rid.tarifa = t.tarifa
 			,rid.valorImpuesto = t.valorImpuesto
 			FROM FactElect.RetAtsImpDocSustento rid WITH (ROWLOCK)
-			JOIN (SELECT @id idRetAtsImpDocSustento, codImpuestoDocSustento,
-			 codigoPorcentaje, baseImponible, tarifa, valorImpuesto
+			JOIN (SELECT @id idRetAtsImpDocSustento, idTarifaImpuesto,
+			 baseImponible, valorImpuesto
 			FROM OPENJSON(@json)
 			WITH(
-				codImpuestoDocSustento VARCHAR(1) '$.codImpuestoDocSustento',
-				codigoPorcentaje VARCHAR(4) '$.codigoPorcentaje',
+				idTarifaImpuesto INT '$.idTarifaImpuesto',
 				baseImponible  NUMERIC(18,5) '$.baseImponible',
-				tarifa NUMERIC(18,5) '$.tarifa',
 				valorImpuesto  NUMERIC(18,5) '$.valorImpuesto' 
 			)) as t ON t.idRetAtsImpDocSustento = rid.idRetAtsImpDocSustento
 			WHERE rid.idRetAtsImpDocSustento = @id
@@ -60,17 +57,26 @@ BEGIN
 			,importeTotal = @importeTotal
 			WHERE idRetAtsDocSustento = @idRetAtsDocSustento
 
-			IF EXISTS (SELECT 1 FROM FactElect.RetencionAtsRet WHERE codigo = '1' AND idRetAtsDocSustento = @idRetAtsDocSustento)
+			IF EXISTS (SELECT 1 FROM FactElect.RetencionAtsRet ratr
+            INNER JOIN Sri.ImpuestoRetencion i ON ratr.impuestoRetencionId = i.Id
+            WHERE codigo = '1' AND idRetAtsDocSustento = @idRetAtsDocSustento)
 				BEGIN
-					UPDATE FactElect.RetencionAtsRet SET baseImponible = @totalSinImpuestos
+					UPDATE ratr SET baseImponible = @totalSinImpuestos
 					,valorRetenido =  (porcentajeRetener / 100) * @totalSinImpuestos
+
+                    FROM FactElect.RetencionAtsRet ratr
+                     INNER JOIN Sri.ImpuestoRetencion i ON ratr.impuestoRetencionId = i.Id
 					WHERE codigo = '1' AND idRetAtsDocSustento = @idRetAtsDocSustento
 				END
 
-			IF EXISTS (SELECT 1 FROM FactElect.RetencionAtsRet WHERE codigo = '2' AND idRetAtsDocSustento = @idRetAtsDocSustento)
+			IF EXISTS (SELECT 1 FROM FactElect.RetencionAtsRet ratr
+                 INNER JOIN Sri.ImpuestoRetencion i ON ratr.impuestoRetencionId = i.Id
+            WHERE codigo = '2' AND idRetAtsDocSustento = @idRetAtsDocSustento)
 				BEGIN
-					UPDATE FactElect.RetencionAtsRet SET baseImponible = @totalImpuestos
+					UPDATE ratr SET baseImponible = @totalImpuestos
 					,valorRetenido =  (porcentajeRetener / 100) * @totalImpuestos
+                    FROM FactElect.RetencionAtsRet ratr
+                     INNER JOIN Sri.ImpuestoRetencion i ON ratr.impuestoRetencionId = i.Id
 					WHERE codigo = '2' AND idRetAtsDocSustento = @idRetAtsDocSustento
 				END
 

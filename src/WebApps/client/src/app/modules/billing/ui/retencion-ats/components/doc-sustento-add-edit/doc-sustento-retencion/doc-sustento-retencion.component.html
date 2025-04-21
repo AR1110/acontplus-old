@@ -4,20 +4,20 @@
       <mat-form-field class="w-100">
         <mat-label>Impuesto:</mat-label>
         <mat-select
-          formControlName="idImpuestoRetencion"
-          id="idImpuestoRetencion-{{
+          formControlName="impuestoRetencionId"
+          id="impuestoRetencionId-{{
             retencionGroup().get('uniqueIdDoc')?.value
           }}"
           (selectionChange)="
             selectImpuestoRetencion(
-              retencionGroup().get('idImpuestoRetencion')?.value
+              retencionGroup().get('impuestoRetencionId')?.value
             )
           "
           required
         >
           <mat-option [value]="">Seleccione un impuesto</mat-option>
           @for (impuesto of impuestosRetencion(); track $index) {
-            <mat-option [value]="impuesto.idImpuestoRetencion">
+            <mat-option [value]="impuesto.id">
               {{ impuesto.codigo }} - {{ impuesto.descripcion }}
             </mat-option>
           }

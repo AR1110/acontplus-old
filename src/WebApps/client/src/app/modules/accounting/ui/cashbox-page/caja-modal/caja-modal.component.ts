@@ -1,28 +1,30 @@
 import { Component, Input, inject } from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Turno } from '@accounting/core/domain/turno.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {CajaUseCase} from "@accounting/core/use-cases/caja.use-case";
 
+import { Turno } from '@accounting/core/models/turno.model';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatIcon } from '@angular/material/icon';
+import { CajaUseCase } from '@accounting/core/use-cases/caja.use-case';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-caja-modal',
-    imports: [
-        ReactiveFormsModule,
-        FontAwesomeModule
-    ],
-    templateUrl: './caja-modal.component.html',
-    styleUrl: './caja-modal.component.scss'
+  selector: 'app-caja-modal',
+    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  templateUrl: './caja-modal.component.html',
+  styleUrl: './caja-modal.component.scss',
 })
 export class CajaModalComponent {
-
   private activeModal = inject(NgbActiveModal);
-  private _cajaUseCase = inject(CajaUseCase)
+  private _cajaUseCase = inject(CajaUseCase);
 
   private tS = inject(ToasterService);
 
@@ -30,12 +32,11 @@ export class CajaModalComponent {
     idCaja: 0,
     descripcion: '',
     idUsuario: 0,
-    idTurno: 0
-  }
-
+    idTurno: 0,
+  };
 
   titleModal = 'Nueva Caja';
-  btnIcon : IconProp = 'save';
+  btnIcon = 'save';
   btnText = 'Guardar';
   tipoRegistro = 1;
 
@@ -52,43 +53,41 @@ export class CajaModalComponent {
 
   idAsignacionCaja = 0;
 
-
   ngOnInit() {
-    this._cajaUseCase.getDataForm().subscribe( (response) => {
+    this._cajaUseCase.getDataForm().subscribe((response) => {
+      let { turnos, usuarios } = response as { turnos: any; usuarios: any };
 
-        let { turnos, usuarios } = response as { turnos: any, usuarios: any };
+      this.usuarios = usuarios;
+      this.turnos = turnos;
 
-        this.usuarios = usuarios;
-        this.turnos = turnos;
+      if (typeof this.params === 'object' && this.params.idCaja > 0) {
+        this._cajaUseCase.getId(this.params.idCaja).subscribe({
+          next: (response) => {
+            this.tipoRegistro = 2;
+            this.titleModal = 'Editar Caja';
+            this.btnIcon = 'edit';
+            this.btnText = 'Actualizar';
+            let { caja, asignaciones } = response;
 
-        if (typeof this.params === 'object' && this.params.idCaja > 0) {
-          this._cajaUseCase.getId(this.params.idCaja).subscribe({
-            next: (response) => {
-              this.tipoRegistro = 2;
-              this.titleModal = 'Editar Caja';
-              this.btnIcon = 'edit';
-              this.btnText = 'Actualizar';
-              let { caja, asignaciones } = response;
+            const dataAsignacion = asignaciones[0];
 
-              const dataAsignacion = asignaciones[0];
-
-              this.idAsignacionCaja = dataAsignacion.idAsignacionCaja;
-              this.dataForm.get('idCaja')?.setValue(caja.idCaja)
-              this.dataForm.get('descripcion')?.setValue(caja.descripcion)
-              this.dataForm.get('idUsuario')?.setValue(dataAsignacion.idUsuario)
-              this.dataForm.get('idTurno')?.setValue(dataAsignacion.idTurno)
-              this.dataForm.get('estado')?.setValue(caja.estado)
-            }, error: (err) => {
-              this.tS.toastr({
-                type: 'error',
-                message: err
-              })
-              this.activeModal.close()
-            },
-          })
-        }
-    })
-
+            this.idAsignacionCaja = dataAsignacion.idAsignacionCaja;
+            this.dataForm.get('idCaja')?.setValue(caja.idCaja);
+            this.dataForm.get('descripcion')?.setValue(caja.descripcion);
+            this.dataForm.get('idUsuario')?.setValue(dataAsignacion.idUsuario);
+            this.dataForm.get('idTurno')?.setValue(dataAsignacion.idTurno);
+            this.dataForm.get('estado')?.setValue(caja.estado);
+          },
+          error: (err) => {
+            this.tS.toastr({
+              type: 'error',
+              message: err,
+            });
+            this.activeModal.close();
+          },
+        });
+      }
+    });
   }
 
   save() {
@@ -97,9 +96,9 @@ export class CajaModalComponent {
       if (this.dataForm.invalid) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Complete todos los campos requeridos!'
-        })
-        return
+          message: 'Complete todos los campos requeridos!',
+        });
+        return;
       }
 
       let paramsToApi = {
@@ -107,59 +106,55 @@ export class CajaModalComponent {
         asignacion: {
           idTurno: data.idTurno,
           idUsuario: data.idUsuario,
-          idAsignacionCaja: this.idAsignacionCaja
-        }
-      }
+          idAsignacionCaja: this.idAsignacionCaja,
+        },
+      };
 
       if (data.idCaja && data.idCaja > 0) {
-
-        this._cajaUseCase.update(data.idCaja, paramsToApi).subscribe(  (response) => {
+        this._cajaUseCase
+          .update(data.idCaja, paramsToApi)
+          .subscribe((response) => {
             if (isApiResponse(response)) {
-              if (response.code === "0") {
+              if (response.code === '0') {
                 this.tS.toastr({
                   type: 'warning',
-                  message: response.message
-                })
+                  message: response.message,
+                });
               }
-              if (response.code === "1") {
+              if (response.code === '1') {
                 this.tS.toastr({
                   type: 'success',
-                  message: response.message
-                })
-                this.activeModal.close(response)
+                  message: response.message,
+                });
+                this.activeModal.close(response);
               }
             }
-        })
+          });
       } else if (!(data.idCaja && data.idCaja > 0)) {
-
-        this._cajaUseCase.create(paramsToApi).subscribe( (response) => {
-            if (isApiResponse(response)) {
-              if (response.code === "0") {
-                this.tS.toastr({
-                  type: 'warning',
-                  message: response.message
-                })
-              }
-              if (response.code === "1") {
-                this.tS.toastr({
-                  type: 'success',
-                  message: response.message
-                })
-                this.activeModal.close(response)
-              }
+        this._cajaUseCase.create(paramsToApi).subscribe((response) => {
+          if (isApiResponse(response)) {
+            if (response.code === '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
             }
-        })
+            if (response.code === '1') {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+              this.activeModal.close(response);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log(error);
     }
-
   }
 
-
-
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
-
 }

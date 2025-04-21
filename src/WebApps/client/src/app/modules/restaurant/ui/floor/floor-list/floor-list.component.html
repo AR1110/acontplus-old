@@ -1,14 +1,17 @@
-
-
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row cols-xxl-6 cols-xl-6 cols-md-6 cols-sm-12 mb-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select [(ngModel)]="establecimientoId" (selectionChange)="loadData()">
-            @for(item of  establecimientos; track $index){
-            <mat-option [value]="item.idEstablecimiento">{{item.estab}}-{{item.nombreComercial}}</mat-option>
+          <mat-select
+            [(ngModel)]="establecimientoId"
+            (selectionChange)="loadData()"
+          >
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.idEstablecimiento"
+                >{{ item.estab }}-{{ item.nombreComercial }}</mat-option
+              >
             }
           </mat-select>
         </mat-form-field>
@@ -37,24 +40,22 @@
     </app-mat-dynamic-table>
 
     <ng-template #templateOp let-item="item">
-      <button mat-icon-button   (click)="onModalOpen(item)" >
+      <button mat-icon-button (click)="onModalOpen(item)">
         <mat-icon>edit</mat-icon>
       </button>
 
-      <button mat-icon-button  color="primary"  (click)="onDelete(item)">
+      <button mat-icon-button color="primary" (click)="onDelete(item)">
         <mat-icon>delete</mat-icon>
       </button>
-
-
     </ng-template>
 
     <ng-template #statusTemplate let-item>
-       <span
-         [ngClass]="item.enabled ? 'text-success' : 'text-danger'"
-         class="badge"
-       >
-                  {{ item.enabled ? 'Activo' : 'Inactivo' }}
-                </span>
+      <span
+        [ngClass]="item.enabled ? 'text-success' : 'text-danger'"
+        class="badge"
+      >
+        {{ item.enabled ? "Activo" : "Inactivo" }}
+      </span>
     </ng-template>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

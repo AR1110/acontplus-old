@@ -1,18 +1,14 @@
-<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
+<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row mb-3">
       <div class="col-md-2 col-12">
-        <button
-          (click)="onModalOpen()"
-          class="btn btn-primary"
-          type="button"
-        >
-          <fa-icon [icon]="'plus'"></fa-icon>
+        <button (click)="onModalOpen()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
           Nuevo
         </button>
       </div>
     </div>
-    <app-device-list/>
-  </div>
-</div>
+    <app-device-list />
+  </mat-card-content>
+</mat-card>

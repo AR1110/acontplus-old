@@ -19,22 +19,27 @@ import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 
 import { formatDateToString } from '@core/utils/date.util';
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-rentabilidad-page',
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BreadcrumbComponent,
-        ProductSearchComponent,
-        UserSearchComponent,
-        DateRangeSelectionComponent,
-    ],
-    templateUrl: './rentabilidad-page.component.html'
+  selector: 'app-rentabilidad-page',
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BreadcrumbComponent,
+    ProductSearchComponent,
+    UserSearchComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './rentabilidad-page.component.html',
 })
 export class RentabilidadPageComponent {
   estalecimientos: Array<GroupedEstab> = [];
@@ -77,15 +82,12 @@ export class RentabilidadPageComponent {
   };
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private _productUseCase = inject(ProductUseCase)
-  private _tokenUseCase= inject(TokenUseCase)
-
+  private _productUseCase = inject(ProductUseCase);
+  private _tokenUseCase = inject(TokenUseCase);
 
   ngOnInit() {
-    
     this._productUseCase.getDataReport().subscribe({
       next: (response) => {
-        
         let { estabs, tarifas, tiposDoc, subCategorias } = response;
         this.estalecimientos = estabs;
         this.tarifas = tarifas;
@@ -112,7 +114,6 @@ export class RentabilidadPageComponent {
         }
       },
       error(err) {
-        
         console.log(err);
       },
     });
@@ -257,7 +258,7 @@ export class RentabilidadPageComponent {
         (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
       porcentajeRenta: this.dataSearch.porcentajeRenta,
       porcentajeComision: this.dataSearch.porcentajeComision,
-      userRoleId: this._tokenUseCase.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId(),
     };
 
     const parameters = {

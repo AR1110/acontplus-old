@@ -5,7 +5,7 @@ import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { getPermisosLocal } from '@core/utils/utils';
-import { Cashbox } from '@accounting/core/domain/cashbox.model';
+import { Cashbox } from '@accounting/core/models/cashbox.model';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { ActionAperturaCajaDirective } from '@shared/directives/permission/action-apertura-caja.directive';
 import { ActionDeleteDirective } from '@shared/directives/permission/action-delete.directive';

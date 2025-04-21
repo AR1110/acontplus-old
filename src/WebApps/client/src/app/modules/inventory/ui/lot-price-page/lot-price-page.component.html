@@ -1,7 +1,7 @@
 <app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row justify-content-between">
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
         <select
@@ -34,7 +34,7 @@
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <label for="subFamilias">SubFamilias</label>
+          <span>SubFamilias</span>
           <app-sub-category-select-multiple
             [checkedSubCategorias]="checkedSubCategorias"
             [subCategorias]="subCategorias"
@@ -43,7 +43,7 @@
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <label>Artículo: </label>
+          <span>Artículo: </span>
           <app-product-search
             [props]="productSearchProps"
             (onProductSelected)="onProductSelected($event)"
@@ -63,7 +63,7 @@
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="nroDocumento">N° de Documento:</label>
+          <span>N° de Documento:</span>
           <input
             type="text"
             class="form-control"
@@ -78,20 +78,24 @@
       <div
         class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3"
       >
-        <button type="button" class="btn btn-info" (click)="toSearch()">
-          <fa-icon [icon]="'search'"></fa-icon> Buscar
-        </button>
+        <app-theme-button
+          variant="info"
+          icon="search"
+          text="Buscar"
+          (handleClick)="toSearch()"
+        >
+        </app-theme-button>
       </div>
       <div
         class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end mt-xl-3 mtlg-3 mt-md-3"
       >
-        <button
-          type="button"
-          class="btn btn-success btn-lg"
-          (click)="askToSave()"
+        <app-theme-button
+          variant="success"
+          icon="save"
+          text="Guardar"
+          (handleClick)="askToSave()"
         >
-          Guardar
-        </button>
+        </app-theme-button>
       </div>
     </div>
     <hr />
@@ -169,16 +173,16 @@
                   [(ngModel)]="mainForm.valueToCalculate"
                   class="form-control"
                 />
-                <button
-                  type="button"
-                  class="btn btn-info"
-                  (click)="calculate()"
+                <app-theme-button
+                  variant="info"
+                  icon="info"
+                  text="Calcular"
+                  (handleClick)="calculate()"
                 >
-                  Calcular
-                </button>
+                </app-theme-button>
                 <button
                   type="button"
-                  class="btn btn-success"
+                  mat-raised-button
                   (click)="calculateManual()"
                 >
                   Modificación Manual
@@ -186,11 +190,11 @@
 
                 <button
                   type="button"
-                  class="btn btn-danger"
+                  mat-icon-button
                   ngbTooltip="Deshacer cambios"
                   (click)="refreshToNestedProducts()"
                 >
-                  <fa-icon [icon]="'undo-alt'"></fa-icon>
+                  <mat-icon>undo</mat-icon>
                 </button>
               </div>
             </div>
@@ -209,5 +213,5 @@
         height="400px"
       />
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

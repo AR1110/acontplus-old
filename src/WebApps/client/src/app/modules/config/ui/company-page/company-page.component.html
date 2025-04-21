@@ -1,0 +1,48 @@
+<app-breadcrumb />
+
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Op.</th>
+            <th>Ruc</th>
+            <th>Razón Social</th>
+            <th>Nombre Comercial</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of companies; track $index) {
+            <tr>
+              <td>
+                <app-theme-button
+                  variant="info"
+                  icon="edit"
+                  matStyle="icon"
+                  (handleClick)="openModalEdit(item)"
+                >
+                </app-theme-button>
+              </td>
+              <td>{{ item.ruc }}</td>
+              <td>{{ item.razonSocial }}</td>
+              <td>{{ item.nombreComercial }}</td>
+              <td>{{ item.email }}</td>
+              <td>{{ item.telefono }}</td>
+              <td>
+                <div [innerHTML]="item.estado | primaryStatus"></div>
+              </td>
+            </tr>
+          } @empty {
+            <tr class="text-center">
+              <td colspan="7">Sin datos!!</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

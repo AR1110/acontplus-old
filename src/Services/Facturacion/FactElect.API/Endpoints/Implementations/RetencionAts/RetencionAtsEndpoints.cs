@@ -1,4 +1,5 @@
 ﻿using FactElect.API.Endpoints.Interfaces.RetencionAts;
+using FactElect.Application.DTOs.RetencionAts;
 
 namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
@@ -17,14 +18,19 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         return Results.Ok(await retencionAtsService.GetAsync(parameters));
     }
 
-    public Task<IResult> GetRetencionAtsByIdAsync(int id)
+    public async Task<IResult> GetRetencionAtsByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
+            { "id", id }
+        };
+        return Results.Ok(await retencionAtsService.GetByIdAsync(parameters));
     }
 
-    public async Task<IResult> CreateRetencionAtsAsync(ApiRequest apiRequest)
+    public async Task<IResult> CreateRetencionAtsAsync(RetencionAtsDto retencionAtsDto)
     {
-        var dataSerialized = DataConverters.SerializeDictionary(apiRequest.Data);
+        var dataSerialized = DataConverters.SerializeObjectCustom<RetencionAtsDto>(retencionAtsDto);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
@@ -34,13 +40,16 @@ public class RetencionAtsEndpoints(IRetencionAtsService retencionAtsService, IUs
         return Results.Ok(await retencionAtsService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateRetencionAtsAsync(int id, string json)
+    public async Task<IResult> UpdateRetencionAtsAsync(int id, RetencionAtsDto RetencionAtsDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(json) }
+            {
+                "json",
+                SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<RetencionAtsDto>(RetencionAtsDto))
+            }
         };
 
         return Results.Ok(await retencionAtsService.UpdateAsync(parameters));

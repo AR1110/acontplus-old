@@ -1,15 +1,11 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 @if (breeds.length > 0) {
-  <div class="card">
-    <div class="card-body">
+  <mat-card appearance="outlined">
+    <mat-card-content>
       <div class="row mb-3">
         <div class="col-md-2 col-12">
-          <button
-            (click)="onModalOpen()"
-            class="btn btn-primary"
-            type="button"
-          >
-            <fa-icon [icon]="'plus-circle'"></fa-icon>
+          <button (click)="onModalOpen()" mat-raised-button type="button">
+            <mat-icon>add</mat-icon>
             Nueva
           </button>
         </div>
@@ -17,35 +13,32 @@
       <div class="table-responsive">
         <table class="table table-bordered">
           <thead>
-          <tr>
-            <th class="text-center">Opciones</th>
-            <th class="text-center">#</th>
-            <th>Especie</th>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Estado</th>
-          </tr>
+            <tr>
+              <th class="text-center">Opciones</th>
+              <th class="text-center">#</th>
+              <th>Especie</th>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+            </tr>
           </thead>
           <tbody>
             @for (item of breeds; track $index) {
               <tr>
                 <td class="text-center">
-                  <div ngbDropdown class="d-inline-block">
-                    <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
-                      <fa-icon [icon]="'list'"></fa-icon>
+                  <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="onEdit(item)">
+                      <mat-icon>edit</mat-icon>
+                      Editar
                     </button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                      <button ngbDropdownItem (click)="onEdit(item)">
-                        <fa-icon [icon]="'edit'"></fa-icon>
-                        Editar
-                      </button>
-                      <button ngbDropdownItem (click)="onDelete(item)">
-                        <fa-icon [icon]="'trash'"></fa-icon>
-                        Editar
-                      </button>
-                    </div>
-                  </div>
+                    <button mat-menu-item (click)="onDelete(item)">
+                      <mat-icon>delete</mat-icon>
+                      Eliminar
+                    </button>
+                  </mat-menu>
                 </td>
                 <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ item.petType?.name }}</td>
@@ -60,8 +53,8 @@
           </tbody>
         </table>
       </div>
-    </div>
-  </div>
+    </mat-card-content>
+  </mat-card>
 } @else {
   <h5>No se encontraron registros de razas</h5>
 }

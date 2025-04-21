@@ -900,7 +900,8 @@
                             bodegaOrigen: item.bodegaOrigen,
                             bodegaDestino: item.bodegaDestino,
                             rowColor: item.rowColor,
-                            totalRecords: item.totalRecords
+                            totalRecords: item.totalRecords,
+                            observacion: item.observacion
                         }
                     })
                 }

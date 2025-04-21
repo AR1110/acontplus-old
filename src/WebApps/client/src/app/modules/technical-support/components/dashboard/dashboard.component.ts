@@ -1,18 +1,19 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrderListComponent } from '@modules/technical-support/pages/order-page/order-list/order-list.component';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { StatsService } from '@modules/technical-support/services/stats.service';
 import { Chart, registerables } from 'chart.js';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 Chart.register(...registerables);
 
 @Component({
-    selector: 'app-dashboard',
-    imports: [FontAwesomeModule, OrderListComponent],
-    templateUrl: './dashboard.component.html',
-    styles: ``
+  selector: 'app-dashboard',
+  imports: [OrderListComponent, MatCard, MatCardContent, MatIcon],
+  templateUrl: './dashboard.component.html',
+  styles: ``,
 })
 export class DashboardComponent implements OnInit {
   orders: any = [];
@@ -76,12 +77,9 @@ export class DashboardComponent implements OnInit {
           });
         }
       },
-      complete() {
-        
-      },
+      complete() {},
       error(error) {
         console.log(error);
-        
       },
     });
   }

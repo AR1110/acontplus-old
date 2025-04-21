@@ -1,27 +1,28 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-
-<div class="card">
-  <div class="card-body">
-
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
-
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label>Tipo Transacción</label>
-          <select (change)="onChangeTypeTransaccion()" [(ngModel)]="dataSearch.idTipoTransaccion" class="form-select">
+          <select
+            (change)="onChangeTypeTransaccion()"
+            [(ngModel)]="dataSearch.idTipoTransaccion"
+            class="form-select"
+          >
             <option [ngValue]="0">-- Todos --</option>
             @for (item of transactionTypes; track $index) {
-              <option [ngValue]="item.idTipoTransaccion">{{ item.descripcion }}</option>
+              <option [ngValue]="item.idTipoTransaccion">
+                {{ item.descripcion }}
+              </option>
             }
           </select>
         </div>
       </div>
 
       @if (isPurchase) {
-
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-
           <div class="form-group">
             <label>Subcategoría</label>
             <select class="form-select" [(ngModel)]="dataSearch.idSubcategoria">
@@ -37,16 +38,29 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label>Rango fecha: </label>
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)"/>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
         </div>
       </div>
-
     </div>
-  </div>
+  </mat-card-content>
   <div class="card-footer">
     <div class="d-flex flex-row gap-1">
-      <button (click)="reportPdf()" class="btn btn-success" type="button">PDF</button>
-      <button (click)="reportExcel()" class="btn btn-info" type="button">EXCEL</button>
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="reportPdf()"
+      >
+      </app-theme-button
+      ><app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="reportExcel()"
+      >
+      </app-theme-button>
     </div>
   </div>
-</div>
+</mat-card>

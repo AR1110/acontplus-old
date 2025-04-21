@@ -9,3 +9,4 @@ global using Microsoft.AspNetCore.ResponseCompression;
 global using Microsoft.EntityFrameworkCore;
 global using Restaurant.API.Data;
 global using Restaurant.API.Extensions;
+global using Common.S3Application.Models;

@@ -1,14 +1,14 @@
 <form [formGroup]="orderForm" (ngSubmit)="save()">
   <div class="modal-header">
     <h4 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+      <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
     </h4>
     <button
       type="button"
       class="btn-close"
       aria-hidden="true"
       aria-label="btn-close"
-      (click)="closeModal()"
+      (click)="onModalClose()"
     ></button>
   </div>
   <div class="modal-body">
@@ -24,9 +24,9 @@
             (change)="onChangeEstab()"
           >
             @for (item of establecimientos; track $index) {
-            <option [ngValue]="item.idEstablecimiento">
-              {{ item.nombreComercial }}
-            </option>
+              <option [ngValue]="item.idEstablecimiento">
+                {{ item.nombreComercial }}
+              </option>
             }
           </select>
         </div>
@@ -40,9 +40,9 @@
             formControlName="puntoEmisionId"
           >
             @for (item of puntosEmision; track $index) {
-            <option [ngValue]="item.idPuntoEmision">
-              {{ item.ptoEmi }}
-            </option>
+              <option [ngValue]="item.idPuntoEmision">
+                {{ item.ptoEmi }}
+              </option>
             }
           </select>
         </div>
@@ -57,7 +57,7 @@
             class="form-control border-select"
             formControlName="fechaEmision"
             (change)="onChangeDate($event)"
-            [value]="orderForm.get('fechaEmision')?.value | date : 'yyyy-MM-dd'"
+            [value]="orderForm.get('fechaEmision')?.value | date: 'yyyy-MM-dd'"
             required
           />
         </div>
@@ -75,7 +75,9 @@
           >
             <option [value]="0">Pendiente</option>
             @for (item of users; track $index) {
-            <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+              <option [ngValue]="item.idUsuario">
+                {{ item.nombreUsuario }}
+              </option>
             }
           </select>
         </div>
@@ -84,10 +86,10 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label  >Cliente: </label>
+          <label>Cliente: </label>
           <app-company-customer-search
             [textSearch]="customerBusinessName"
-            (onCustomerSelected)="onCustomerSelected($event)"
+            (customerSelected)="onCustomerSelected($event)"
           ></app-company-customer-search>
         </div>
       </div>
@@ -95,31 +97,32 @@
 
     <!--End Form register-update customer-->
     @if (order.customerCompanyId > 0) {
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <app-device-search
-            [clearInput]="clearInput"
-            (deviceSelected)="onDeviceSelected($event)"
-          />
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+          <div class="form-group">
+            <app-device-search
+              [clearInput]="clearInput"
+              (deviceSelected)="onDeviceSelected($event)"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <button
+            type="button"
+            mat-raised-button
+            title="Ver Historial de equipos del cliente"
+            (click)="getDevices()"
+          >
+            <mat-icon>history</mat-icon> Historial
+          </button>
         </div>
       </div>
-      <div class="col">
-        <button
-          type="button"
-          class="btn btn-outline-success btn-sm"
-          title="Ver Historial de equipos del cliente"
-          (click)="getDevices()"
-        >
-          <fa-icon [icon]="'history'"></fa-icon> Historial
-        </button>
-      </div>
-    </div>
-    } @if (orderDetails.length > 0) {
-    <app-tabulator
-      [columnNames]="columnNames"
-      [tableData]="orderDetails"
-    ></app-tabulator>
+    }
+    @if (orderDetails.length > 0) {
+      <app-tabulator
+        [columnNames]="columnNames"
+        [tableData]="orderDetails"
+      ></app-tabulator>
     }
 
     <div class="row">
@@ -139,19 +142,19 @@
   <div class="modal-footer">
     <button
       type="submit"
-      class="btn btn-outline-success"
+      mat-raised-button
       title="Guardar Orden"
       [disabled]="orderForm.invalid"
     >
-      <fa-icon [icon]="'save'"></fa-icon> Guardar
+      <mat-icon>save</mat-icon> Guardar
     </button>
-    <button
-      type="button"
-      class="btn btn-outline-dark"
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
       title="Cancelar Orden"
-      (click)="closeModal()"
+      (handleClick)="onModalClose()"
     >
-      &times; Cancelar
-    </button>
+    </app-theme-button>
   </div>
 </form>

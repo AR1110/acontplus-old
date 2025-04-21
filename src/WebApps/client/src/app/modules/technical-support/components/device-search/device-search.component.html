@@ -13,29 +13,30 @@
     placeholder="Buscar Equipo"
   />
   @if (device.id > 0 && !clearInput) {
-  <button
-    type="button"
-    class="btn btn-outline-secondary btn-sm"
-    (click)="openModal()"
-  >
-    <fa-icon [icon]="'edit'"></fa-icon>
-  </button>
+    <app-theme-button
+      variant="secondary"
+      icon="edit"
+      matStyle="icon"
+      (handleClick)="openModal()"
+    >
+    </app-theme-button>
   } @else {
-  <button
-    type="button"
-    class="btn btn-outline-secondary btn-sm"
-    (click)="openModal()"
-  >
-    <fa-icon [icon]="'plus'"></fa-icon>
-  </button>
+    <app-theme-button
+      variant="secondary"
+      icon="add"
+      matStyle="icon"
+      (handleClick)="openModal()"
+    >
+    </app-theme-button>
   }
 </div>
 @if (searching) {
-<small class="form-text text-muted">Buscando...</small>
-} @if (searchFailed) {
-<div class="invalid-feedback">
-  Lo sentimos, no se han podido cargar las sugerencias.
-</div>
+  <small class="form-text text-muted">Buscando...</small>
+}
+@if (searchFailed) {
+  <div class="invalid-feedback">
+    Lo sentimos, no se han podido cargar las sugerencias.
+  </div>
 }
 <ng-template #rt let-r="result" let-t="term">
   <ngb-highlight

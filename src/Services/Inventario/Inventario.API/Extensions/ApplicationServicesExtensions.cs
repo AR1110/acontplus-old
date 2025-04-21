@@ -20,22 +20,34 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<InventarioContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        string[] nameSpaces =
+        string[] scopedNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
-            "Common.S3Application.Services",
             "Inventario.API.Services",
         ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+
+        string[] trascientNameSpaces =
+          [
+              "Common.S3Application.Services",
+              "Common.Infrastructure.Data.Repository.Implementations"
+          ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
 
-        services.AddSingleton<S3ObjectCustom>();
+        services.AddTransient<S3ObjectCustom>();
         return services;
     }
 }

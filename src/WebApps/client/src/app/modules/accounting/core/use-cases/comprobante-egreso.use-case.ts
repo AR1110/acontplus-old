@@ -11,18 +11,18 @@ export class ComprobanteEgresoUseCase {
   }
 
   getCuotasByIdCuentaPorPagar(idCuentaPorPagar: number) {
-    return this.repo.getCuotasByIdCuentaPorPagar(idCuentaPorPagar);
+    return this.repo.getCuotasByCuentaPorPagarId(idCuentaPorPagar);
   };
 
   getDataFormPago(idProveedor: number) {
-    return this.repo.getDataFormPago(idProveedor);
+    return this.repo.getFormaPagoData(idProveedor);
   }
 
   getDataFilter() {
-    return this.repo.getDataFilter();
+    return this.repo.getFilterData();
   }
 
   post<T>(obj: T) {
-    return this.repo.post<T>(obj);
+    return this.repo.create<T>(obj);
   }
 }

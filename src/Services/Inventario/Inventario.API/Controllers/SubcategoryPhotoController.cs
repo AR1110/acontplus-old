@@ -7,6 +7,7 @@ public class SubcategoryPhotoController(
     : BaseApiController
 {
     private const string IdCardCompany = "idCardCompany";
+    private const string BucketDirectory = "/subcategorias/";
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -30,7 +31,7 @@ public class SubcategoryPhotoController(
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
+                await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
             }
 
             data.SubcategoryId = subcategoryId;
@@ -40,7 +41,7 @@ public class SubcategoryPhotoController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-                s3ObjectCustom.Dispose();
+                
             }
 
             return Ok(response);
@@ -49,7 +50,7 @@ public class SubcategoryPhotoController(
         {
             if (file != null)
             {
-                s3ObjectCustom.Dispose();
+                
             }
             return BadRequest(ex.Message);
         }
@@ -65,7 +66,7 @@ public class SubcategoryPhotoController(
             data.UserId = User.GetUserId();
             if (file != null)
             {
-                await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file, data.S3ObjectKey,
+                await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file, data.S3ObjectKey,
                     data.S3ObjectUrl);
             }
 
@@ -73,7 +74,7 @@ public class SubcategoryPhotoController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
-                s3ObjectCustom.Dispose();
+                
             }
 
             return Ok(response);
@@ -82,7 +83,7 @@ public class SubcategoryPhotoController(
         {
             if (file != null)
             {
-                s3ObjectCustom.Dispose();
+                
             }
             return BadRequest(ex.Message);
         }

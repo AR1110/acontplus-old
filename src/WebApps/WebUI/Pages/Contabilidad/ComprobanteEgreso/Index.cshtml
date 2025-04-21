@@ -82,7 +82,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-12 col-sm-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-12 col-sm-12">
                     <div class="form-group" ng-show="dataSearch.byTipoPersona===1">
                         <span for="proveedorFiltro">Proveedor:</span>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
@@ -123,6 +123,13 @@
                                 <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
                             </div>
                         </script>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Buscar por Nro. Doc.:</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
             </div>
@@ -186,7 +193,7 @@
                                             Anular</button>
 
                                         <button class="dropdown-item" type="button" ng-if="accion.reporte"
-                                            btn-comprobante-ingreso-report unique="item.idComprobanteEgreso"
+                                            btn-comprobante-egreso-report unique="item.idComprobanteEgreso"
                                             cod-estab="item.codEstab"><i class="fa fa-file-pdf"></i> PDF</button>
 
                                         <button class="dropdown-item" type="button" ng-if="accion.enviarCorreo"

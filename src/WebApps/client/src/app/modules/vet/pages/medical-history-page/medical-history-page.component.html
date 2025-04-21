@@ -1,23 +1,19 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="row">
         <div class="col-md-2 col-12">
-          <button
-            (click)="onModalOpen()"
-            class="btn btn-primary"
-            type="button"
-          >
-            <fa-icon [icon]="'plus-circle'"></fa-icon>
+          <button (click)="onModalOpen()" mat-raised-button type="button">
+            <mat-icon>add</mat-icon>
             Nuevo
           </button>
         </div>
       </div>
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
         <div class="form-group">
-          <label>Establecimiento: </label>
+          <span>Establecimiento: </span>
           <div class="input-group">
             <select
               (change)="onChangeEstab()"
@@ -39,7 +35,6 @@
               placeholder="Buscar mascota o cliente"
             />
           </div>
-
         </div>
       </div>
     </div>
@@ -50,25 +45,24 @@
           <ng-container matColumnDef="op">
             <th *matHeaderCellDef mat-header-cell>Op.</th>
             <td *matCellDef="let element" mat-cell>
-              <div container="body" ngbDropdown>
-                <button class="btn btn-outline-primary btn-sm" ngbDropdownToggle type="button">
-                  <fa-icon [icon]="'list'"></fa-icon>
+              <button mat-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #menu="matMenu">
+                <button (click)="onEdit(element)" mat-menu-item>
+                  <mat-icon>edit</mat-icon>
+                  Editar
                 </button>
-                <div ngbDropdownMenu>
-                  <button (click)="onEdit(element)" ngbDropdownItem>
-                    <fa-icon [icon]="'pencil'"></fa-icon>
-                    Editar
-                  </button>
-                  <button (click)="onDelete(element)" ngbDropdownItem>
-                    <fa-icon [icon]="'trash'"></fa-icon>
-                    Eliminar
-                  </button>
-                  <button (click)="onReport(element)" ngbDropdownItem>
-                    <fa-icon [icon]="'file-pdf'"></fa-icon>
-                    Reporte
-                  </button>
-                </div>
-              </div>
+                <button (click)="onDelete(element)" mat-menu-item>
+                  <mat-icon>delete</mat-icon>
+                  Eliminar
+                </button>
+                <button (click)="onReport(element)" mat-menu-item>
+                  <mat-icon>download</mat-icon>
+                  Reporte
+                </button>
+              </mat-menu>
             </td>
           </ng-container>
 
@@ -104,16 +98,16 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="weight">
-            <th *matHeaderCellDef mat-header-cell>
-              Peso
-            </th>
+            <th *matHeaderCellDef mat-header-cell>Peso</th>
             <td *matCellDef="let element" mat-cell>
               {{ element.weight }}
             </td>
           </ng-container>
           <ng-container matColumnDef="observations">
             <th *matHeaderCellDef mat-header-cell>Obs</th>
-            <td *matCellDef="let element" mat-cell>{{ element.observations }}</td>
+            <td *matCellDef="let element" mat-cell>
+              {{ element.observations }}
+            </td>
           </ng-container>
           <tr
             *matHeaderRowDef="visibleColumns; sticky: true"
@@ -141,6 +135,5 @@
       >
       </mat-paginator>
     </div>
-
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

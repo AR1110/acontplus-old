@@ -10,32 +10,33 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { SubCategorySelectHtmlOnly } from '@accounting/core/domain/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/core/models/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-doc-manual-upload',
-  imports: [
-    ReactiveFormsModule,
-    MatCustomDialogComponent,
-    MatButton,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    MatRadioGroup,
-    MatRadioButton,
-    MatIcon,
-    FaIconComponent,
-    MatIconButton,
-  ],
+    imports: [
+        ReactiveFormsModule,
+        MatCustomDialogComponent,
+        MatButton,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatRadioGroup,
+        MatRadioButton,
+        MatIcon,
+        MatIconButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './doc-manual-upload.component.html',
   styles: ``,
 })

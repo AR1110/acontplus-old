@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '../enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
@@ -20,25 +20,24 @@ export class DocConfigService {
   }
 
   getInfoAdicional(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3,
       id,
     });
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => { 
+      map((response: any) => {
         let infoAdicional = [];
-        if(response && typeof response==='object'){
-          let [mainData ]= response.infoAdicional;
+        if (response && typeof response === 'object') {
+          const [mainData] = response.infoAdicional;
           infoAdicional = JSON.parse(mainData.infoAdicional);
         }
-       
+
         return {
-          infoAdicional
+          infoAdicional,
         };
       }),
     );
   }
-
 
   getDataForm() {
     return this.#http
@@ -59,22 +58,21 @@ export class DocConfigService {
   }
 
   getAll(idPuntoEmision: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       idPuntoEmision,
     });
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
-        let mainData = response.docs;
-        return mainData;
+        return response.docs;
       }),
     );
   }
 
   post<T>(obj: T) {
-    let data = {
-      docs: JSON.stringify(obj)
-     }
+    const data = {
+      docs: JSON.stringify(obj),
+    };
     return this.#http
       .post<ApiResponse>(`${this.#url}`, { data })
       .pipe(map((response) => response));

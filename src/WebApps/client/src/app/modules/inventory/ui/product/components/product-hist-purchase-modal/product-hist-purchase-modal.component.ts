@@ -92,7 +92,7 @@ export class ProductHistPurchaseModalComponent {
   }
 
 
-  closeModal() {
+  onModalClose() {
     this.modal.close()
   }
 }

@@ -2,12 +2,12 @@
 
 public class OrderController : BaseApiController
 {
-    private readonly IMapper _mapper;
+    
     private readonly IOrderService _orderService;
 
-    public OrderController(IOrderService orderService, IMapper mapper)
+    public OrderController(IOrderService orderService)
     {
-        _mapper = mapper;
+        
         _orderService = orderService;
     }
 

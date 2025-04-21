@@ -2,7 +2,7 @@
   <h4 class="modal-title">
     Historial de Compras Habituales - <strong>{{articleName}}</strong>
   </h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onModalClose()"></button>
 </div>
 <div class="modal-body">
 
@@ -20,7 +20,7 @@
 
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-dark" (click)="closeModal()">
+  <app-theme-button variant="dark" icon="close" text="Cancelar" (handleClick)="" (click)="onModalClose()">
     &times; Cerrar
   </button>
 </div>

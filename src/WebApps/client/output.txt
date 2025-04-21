@@ -105,7 +105,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  ├── cashbox.model.ts
 |  |  |  |  |  |  ├── category.ts
 |  |  |  |  |  |  ├── comp-ingreso.model.ts
-|  |  |  |  |  |  ├── comprobante-egreso.interface.ts
+|  |  |  |  |  |  ├── comprobante-egreso.model.ts
 |  |  |  |  |  |  ├── comprobante-ingreso.model.ts
 |  |  |  |  |  |  ├── comprobante-ingreso.ts
 |  |  |  |  |  |  ├── cuenta-por-cobrar.model.ts
@@ -397,7 +397,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── company.service.ts
 |  |  |  |  |  ├── doc-config.service.ts
 |  |  |  |  |  ├── firma-electronica.service.ts
-|  |  |  |  |  ├── general-config.service.ts
 |  |  |  |  |  ├── printer-doc.service.ts
 |  |  |  |  |  ├── sri
 |  |  |  |  |  |  ├── establishment-logo.service.ts

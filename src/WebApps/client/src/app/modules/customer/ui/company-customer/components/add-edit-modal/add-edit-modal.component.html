@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="customerForm" autocomplete="off">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -23,9 +23,9 @@
                   formControlName="idTipoIdentificacion"
                 >
                   @for (item of tiposIdentificacion; track $index) {
-                  <option [ngValue]="item.idTipoIdentificacion">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idTipoIdentificacion">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -100,7 +100,7 @@
                     ngbTooltip="Haz doble 'Click' sobre el correo para editar"
                     tooltip-placement="top"
                   >
-                    <fa-icon [icon]="'info-circle'"></fa-icon>
+                    <mat-icon>info</mat-icon>
                   </span>
                 </label>
                 <mat-chip-grid #chipGridEmail aria-label="Enter emails">
@@ -135,7 +135,7 @@
                     ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar"
                     tooltip-placement="top"
                   >
-                    <fa-icon [icon]="'info-circle'"></fa-icon>
+                    <mat-icon>info</mat-icon>
                   </span>
                 </label>
                 <mat-chip-grid
@@ -198,9 +198,9 @@
                   id="idSubContribuyente"
                 >
                   @for (item of tipoContribuyentes; track $index) {
-                  <option [ngValue]="item.idSubContribuyente">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idSubContribuyente">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -216,18 +216,18 @@
                     id="idTiempoCredito"
                   >
                     @for (item of tiemposCredito; track $index) {
-                    <option [ngValue]="item.idTiempoCredito">
-                      {{ item.descripcion }}
-                    </option>
+                      <option [ngValue]="item.idTiempoCredito">
+                        {{ item.descripcion }}
+                      </option>
                     }
                   </select>
-                  <button
-                    (click)="refreshTiempoCredito()"
-                    class="btn btn-outline-secondary btn-sm"
-                    type="button"
+                  <app-theme-button
+                    variant="secondary"
+                    icon="refresh"
+                    matStyle="icon"
+                    (handleClick)="refreshTiempoCredito()"
                   >
-                    <fa-icon [icon]="'sync'"></fa-icon>
-                  </button>
+                  </app-theme-button>
                 </div>
               </div>
             </div>
@@ -256,9 +256,9 @@
                   id="idTipoClienteProveedor"
                 >
                   @for (item of tiposCliente; track $index) {
-                  <option [ngValue]="item.idTipoClienteProveedor">
-                    {{ item.descripcion }}
-                  </option>
+                    <option [ngValue]="item.idTipoClienteProveedor">
+                      {{ item.descripcion }}
+                    </option>
                   }
                 </select>
               </div>
@@ -275,19 +275,19 @@
                     ng-model="data.idEmpresa"
                   >
                     @for (item of empresas; track $index) {
-                    <option [ngValue]="item.idEmpresa">
-                      {{ item.razonSocial }}
-                    </option>
+                      <option [ngValue]="item.idEmpresa">
+                        {{ item.razonSocial }}
+                      </option>
                     }
                   </select>
                   <button
                     btn-empresa
-                    class="btn btn-outline-secondary btn-sm"
+                    mat-icon-button
                     result-modal="resultModalEmpresa(result)"
                     tabindex="-1"
                     type="button"
                   >
-                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <mat-icon>add</mat-icon>
                   </button>
                 </div>
               </div>
@@ -329,12 +329,12 @@
                   </script>
                   <button
                     btn-empleado
-                    class="btn btn-outline-secondary btn-sm"
+                    app-theme-button
                     result-modal="resultModalEmpleado(result)"
                     tabindex="-1"
                     type="button"
                   >
-                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <mat-icon>add</mat-icon>
                   </button>
                 </div>
                 <small class="text-danger" ng-show="data.noResults"
@@ -353,19 +353,19 @@
                     id="idCargo"
                   >
                     @for (item of cargos; track $index) {
-                    <option [ngValue]="item.idCargo">
-                      {{ item.descripcion }}
-                    </option>
+                      <option [ngValue]="item.idCargo">
+                        {{ item.descripcion }}
+                      </option>
                     }
                   </select>
                   <button
                     btn-cargo
-                    class="btn btn-outline-secondary btn-sm"
+                    mat-icon-button
                     result-modal="resultModalCargo(result)"
                     tabindex="-1"
                     type="button"
                   >
-                    <fa-icon [icon]="'plus'"></fa-icon>
+                    <mat-icon>add</mat-icon>
                   </button>
                 </div>
               </div>
@@ -395,8 +395,8 @@
                     tooltip-placement="top"
                     uib-tooltip="Haz doble 'Click' sobre el placa para editar"
                   >
-                    <fa-icon [icon]="'info'"></fa-icon
-                  ></span>
+                    <mat-icon>info</mat-icon>
+                  </span>
                 </label>
                 <!-- <md-chips
                   ng-model="placas"
@@ -412,21 +412,21 @@
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <div class="form-group">
                 <label for="barcode"> Código de Barras:</label>
-                <button
-                  class="btn btn-info btn-sm"
+                <app-theme-button
+                  variant="info"
+                  icon="add"
+                  text="Generar"
                   ng-click="getBarcode(data.numeroIdentificacion)"
-                  type="button"
                 >
-                  <i class="fa fa-barcode"></i> Generar
-                </button>
+                </app-theme-button>
                 <img alt="" src="" style="display: none" />
               </div>
-              <div
-                class="card border border-success"
+              <mat-card
+                appearance="outlined"
                 id="cardBusiness"
                 style="max-width: 18rem"
               >
-                <div class="card-body">
+                <mat-card-content>
                   <h5 class="card-title text-center">
                     {{ customerForm.get("nombreFiscal")?.value }}
                   </h5>
@@ -443,14 +443,14 @@
                       <h6><small>&copy; Acontplus</small></h6>
                     </div>
                   </div>
-                </div>
-              </div>
+                </mat-card-content>
+              </mat-card>
               <button
-                class="btn btn-success btn-sm"
+                mat-raised-button
                 ng-click="exportTpvCard(data.numeroIdentificacion)"
                 ng-if="data.barcodeGenerated"
               >
-                <fa-icon [icon]="'share'"></fa-icon>
+                <mat-icon>share</mat-icon>
                 Compartir Tarjeta
               </button>
             </div>
@@ -461,16 +461,16 @@
     <div [ngbNavOutlet]="nav" class="mt-2"></div>
   </div>
   <div class="modal-footer">
-    <button
-      [disabled]="!customerForm.valid"
-      class="btn btn-outline-success"
-      type="submit"
-    >
-      <fa-icon [icon]="'save'"></fa-icon>
+    <button [disabled]="!customerForm.valid" mat-raised-button type="submit">
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
-    <button (click)="onModalClose()" class="btn btn-outline-dark" type="button">
-      &times; Cancelar
-    </button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
+    >
+    </app-theme-button>
   </div>
 </form>

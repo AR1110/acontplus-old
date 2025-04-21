@@ -1,4 +1,4 @@
-import { CuentaPorPagarCuotaConfig } from "../core/domain/cuenta-por-pagar.model";
+import { CuentaPorPagarCuotaConfig } from "../core/models/cuenta-por-pagar.model";
 
 export class CuentaPorPagarValidator {
 

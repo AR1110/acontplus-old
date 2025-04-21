@@ -1,18 +1,19 @@
 import { Routes } from '@angular/router';
-import { GeneralConfigComponent } from './pages/general-config/general-config.component';
-import { DocConfigPageComponent } from './pages/doc-config/doc-config.component';
+import { DocConfigPageComponent } from '@modules/config/ui/doc-config/doc-config.component';
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
-import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
-import { EstablishmentPageComponent } from './pages/establishment-page/establishment-page.component';
-import { CompanyPageComponent } from '@modules/config/pages/company-page/company-page.component';
+import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
+import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
+import { CompanyPageComponent } from '@modules/config/ui/company-page/company-page.component';
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
-import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
-import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
-import {UserCustomerComponent} from "@modules/config/ui/user-customer/user-customer.component";
+import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
+import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
+import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
+import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
+import {ImportacionComponent} from "@modules/config/ui/importacion/importacion.component";
 
 export const routes: Routes = [
   {
-    path: 'general-config-page',
+    path: 'general-config',
     title: 'Config. General',
     component: GeneralConfigComponent,
     data: {
@@ -89,6 +90,14 @@ export const routes: Routes = [
     component: TiempoCreditoPageComponent,
     data: {
       breadcrumb: 'Tiempo de Crédito',
+    },
+  },
+  {
+    path: 'importacion',
+    title: 'Importación',
+    component: ImportacionComponent,
+    data: {
+      breadcrumb: 'Importación',
     },
   },
 ];

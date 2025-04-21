@@ -9,6 +9,7 @@
     function comprobanteEgresoCtrl($scope, $injector) {
         let comprobanteEgresoSvc = $injector.get('comprobanteEgresoService'); 
         let fS = $injector.get('formulario');
+        const tS = $injector.get('toastService')
 
         $scope.recordsQuantity = [25, 50, 100];
 
@@ -54,6 +55,16 @@
         function getComprobantesEgreso() {
             try {
 
+                
+                if ($scope.dataSearch.nroSecuencial) {
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
+                        $scope.dataSearch.checkBoxFecha = true;
+                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                    $scope.dataSearch.checkBoxFecha = false;
+                }
+
                 let params = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -63,7 +74,8 @@
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     byEstado: [0, 1].includes($scope.dataSearch.byEstado) ? $scope.dataSearch.byEstado : null,
                     byPersona: [1, 2].includes($scope.dataSearch.byTipoPersona) ? fS.isValidField($scope.dataSearch.byPersona) : null,
-                    byUsuario: fS.isValidField($scope.dataSearch.byUsuario)
+                    byUsuario: fS.isValidField($scope.dataSearch.byUsuario),
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                 }
 
                 showLoader();

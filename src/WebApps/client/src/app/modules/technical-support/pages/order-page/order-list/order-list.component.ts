@@ -5,13 +5,9 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import {
-  NgbDropdownModule,
-  NgbPaginationModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import swal from 'sweetalert2';
 
@@ -24,25 +20,34 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { FormsModule } from '@angular/forms';
 import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-order-list',
-    imports: [
-        DateRangeSelectionComponent,
-        FontAwesomeModule,
-        FormsModule,
-        MatTableModule,
-        NgbDropdownModule,
-        NgbPaginationModule,
-        PrimaryStatusPipe,
-    ],
-    templateUrl: './order-list.component.html',
-    styles: `
+  selector: 'app-order-list',
+  imports: [
+    DateRangeSelectionComponent,
+    FormsModule,
+    MatTableModule,
+    NgbPaginationModule,
+    PrimaryStatusPipe,
+    MatCardContent,
+    MatCard,
+    MatButton,
+    MatMenuTrigger,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+  ],
+  templateUrl: './order-list.component.html',
+  styles: `
     .row {
       display: flex;
       align-items: center;
     }
-  `
+  `,
 })
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
@@ -67,7 +72,7 @@ export class OrderListComponent implements OnInit {
   ];
   orders: any = [];
   pagination = new Pagination();
-  startDate: string = '';
+  startDate = '';
   users: any = [];
   private modalService = inject(ModalService);
   private orderService = inject(OrderService);
@@ -85,7 +90,6 @@ export class OrderListComponent implements OnInit {
       denyButtonText: 'No',
     });
     if (result.isConfirmed) {
-      
       this.orderService.delete(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
@@ -100,17 +104,13 @@ export class OrderListComponent implements OnInit {
         },
         error(err) {
           console.log(err);
-          
         },
-        complete() {
-          
-        },
+        complete() {},
       });
     }
   }
 
   get() {
-    
     let params = {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
@@ -127,12 +127,9 @@ export class OrderListComponent implements OnInit {
           this.pagination.totalRecords = this.orders[0].totalRecords;
         }
       },
-      complete() {
-        
-      },
+      complete() {},
       error(error) {
         console.log(error);
-        
       },
     });
   }

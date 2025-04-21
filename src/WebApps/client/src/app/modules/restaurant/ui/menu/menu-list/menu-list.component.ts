@@ -3,15 +3,29 @@ import { Menu } from '@restaurant/domain/models/menu.model';
 import { MenuService } from '@restaurant/data/services/menu.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { Pagination } from '@shared/models/pagination.model';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ModalService } from '@core/services/modal.service';
 import { MenuAddEditModalComponent } from '@restaurant/ui/menu/menu-add-edit-modal/menu-add-edit-modal.component';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardFooter,
+  MatCardHeader,
+} from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-menu-list',
-    imports: [FaIconComponent ],
-    templateUrl: './menu-list.component.html',
-    styles: ``
+  selector: 'app-menu-list',
+  imports: [
+    MatCardContent,
+    MatCard,
+    MatCardHeader,
+    MatCardFooter,
+    MatButton,
+    MatIcon,
+  ],
+  templateUrl: './menu-list.component.html',
+  styles: ``,
 })
 export class MenuListComponent {
   menus: Menu[] = [];

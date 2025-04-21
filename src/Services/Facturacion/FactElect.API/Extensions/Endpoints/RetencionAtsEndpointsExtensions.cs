@@ -1,4 +1,5 @@
 ﻿using FactElect.API.Endpoints.Interfaces.RetencionAts;
+using FactElect.Application.DTOs.RetencionAts;
 
 namespace FactElect.API.Extensions.Endpoints;
 
@@ -19,12 +20,12 @@ public static class RetencionAtsEndpointsExtensions
         retencionAtsGroup.MapGet("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.GetRetencionAtsByIdAsync(id));
 
-        retencionAtsGroup.MapPost("/", async (IRetencionAtsEndpoints retencionAtsEndpoints, ApiRequest apiRequest) =>
-            await retencionAtsEndpoints.CreateRetencionAtsAsync(apiRequest));
+        retencionAtsGroup.MapPost("/", async (IRetencionAtsEndpoints retencionAtsEndpoints, RetencionAtsDto retencionAtsDto) =>
+            await retencionAtsEndpoints.CreateRetencionAtsAsync(retencionAtsDto));
 
         retencionAtsGroup.MapPut("/{id}",
-            async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, string json) =>
-                await retencionAtsEndpoints.UpdateRetencionAtsAsync(id, json));
+            async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, RetencionAtsDto retencionAtsDto) =>
+                await retencionAtsEndpoints.UpdateRetencionAtsAsync(id, retencionAtsDto));
 
         retencionAtsGroup.MapDelete("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.DeleteRetencionAtsAsync(id));

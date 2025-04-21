@@ -1,13 +1,19 @@
-<div class="card w-100">
-  <div class="card-body">
-
-    <div class="row cols-xxl-6 cols-xl-6 cols-lg-6 cols-md-6 cols-sm-12 cols-12">
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div
+      class="row cols-xxl-6 cols-xl-6 cols-lg-6 cols-md-6 cols-sm-12 cols-12"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select [(ngModel)]="establecimientoId" (selectionChange)="onEstabChange($event)">
-            @for(item of  establecimientos; track $index){
-              <mat-option [value]="item.idEstablecimiento">{{item.estab}}-{{item.nombreComercial}}</mat-option>
+          <mat-select
+            [(ngModel)]="establecimientoId"
+            (selectionChange)="onEstabChange($event)"
+          >
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.idEstablecimiento"
+                >{{ item.estab }}-{{ item.nombreComercial }}</mat-option
+              >
             }
           </mat-select>
         </mat-form-field>
@@ -27,10 +33,14 @@
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <app-tabulator-semantic-ui
           [columnNames]="columnNames"
-          [options]="{ dataTree: true, dataTreeStartExpanded: true, reactiveData: true  }"
+          [options]="{
+            dataTree: true,
+            dataTreeStartExpanded: true,
+            reactiveData: true,
+          }"
           [tableData]="rooms"
         ></app-tabulator-semantic-ui>
       </div>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

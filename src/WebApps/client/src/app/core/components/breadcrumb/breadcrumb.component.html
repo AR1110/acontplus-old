@@ -6,7 +6,9 @@
     <div class="d-flex justify-content-end align-items-center">
       @if (parentData.breadcrumb) {
         <ol class="breadcrumb justify-content-end">
-          <li class="breadcrumb-item"><a href="javascript:void(0)">{{ parentData.breadcrumb }}</a></li>
+          <li class="breadcrumb-item">
+            <a href="javascript:void(0)">{{ parentData.breadcrumb }}</a>
+          </li>
           <li class="breadcrumb-item active">{{ childData.breadcrumb }}</li>
         </ol>
       }

@@ -5,7 +5,7 @@ import {
   Output,
   inject,
   input,
-  signal,
+  signal, SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -345,7 +345,7 @@ export class ProductSearchComponent {
 
   ngOnInit() {
     this.filteredProducts = this.control.valueChanges.pipe(
-      distinctUntilChanged(),
+
       switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
@@ -355,6 +355,13 @@ export class ProductSearchComponent {
         return [];
       })
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["textSearch"]) {
+      this.control.setValue(this.textSearch)
+    }
+
   }
 
   private _filter(value: string) {

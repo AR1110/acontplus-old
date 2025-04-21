@@ -3,7 +3,7 @@ import { FormsModule } from "@angular/forms";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {ApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+
 import {
   AsignacionBodegaList,
 } from "@modules/config/domain/models/user-customer/asignacion-bodega.model";
@@ -44,7 +44,7 @@ import {
     selector: 'app-user-bodega-punto-emision-modal',
   imports: [
     MatSlideToggleModule,
-    FontAwesomeModule,
+    
     FormsModule,
     MatCustomDialogComponent,
     MatDynamicCardComponent,

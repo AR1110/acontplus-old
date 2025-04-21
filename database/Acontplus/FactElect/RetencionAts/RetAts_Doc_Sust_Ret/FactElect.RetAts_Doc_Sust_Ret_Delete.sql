@@ -9,31 +9,33 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for delete retenciones from sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Ret_Delete', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Delete
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Delete @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Delete @idUsuarioRol INT 
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
            ,@idRetencionAts INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
         
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+
         SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id)
 
 		BEGIN TRAN
 			DELETE FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id
 
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-                SET importeTotal = ISNULL((SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet WITH (NOLOCK) WHERE idRetencionAts = @idRetencionAts ),0)
+                SET importeTotal = ISNULL((SELECT SUM(valorRetenido) 
+                                                FROM FactElect.RetencionAtsRet WITH (NOLOCK) 
+                                                WHERE idRetencionAts = @idRetencionAts ),0)
             WHERE idDocumento = @idRetencionAts
               AND codDoc = '07'
 
-			
 		COMMIT TRAN
         SELECT '1' code, 'Retención del sustento eliminada con exito'  as 'message'
 	END TRY

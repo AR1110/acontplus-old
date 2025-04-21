@@ -10,48 +10,56 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
-import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
+import {
+  ajustarFechaEmisionModificada,
+  dateIsAfterCurrentDate,
+  formatDateToString,
+  isDateValid,
+} from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
 import { MatChipsModule } from '@angular/material/chips';
-import {InspectionUseCase} from "@mechanical/domain/use-cases/inspection.use-case";
+import { InspectionUseCase } from '@mechanical/domain/use-cases/inspection.use-case';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 type VehiclePartNode = VehiclePart & {
-  status: number
-  obs: string
-}
+  status: number;
+  obs: string;
+};
 type VehiclePartTypeNode = VehiclePartType & {
-  isCollapsed: boolean
-  nodes: VehiclePartNode[]
-}
+  isCollapsed: boolean;
+  nodes: VehiclePartNode[];
+};
 @Component({
-    selector: 'app-inspection-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        NgbAccordionModule,
-        MatButtonToggleModule,
-        MatSlideToggleModule,
-        MatRadioModule,
-        InputDateComponent,
-        MatChipsModule
-    ],
-    templateUrl: './inspection-modal.component.html'
+  selector: 'app-inspection-modal',
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgbAccordionModule,
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    MatRadioModule,
+    InputDateComponent,
+    MatChipsModule,
+    MatButton,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './inspection-modal.component.html',
 })
 export class InspectionModalComponent {
   @Input() params = {
     supportId: 0,
-    inspectionId: 0
-  }
-  modal = inject(NgbActiveModal)
+    inspectionId: 0,
+  };
+  modal = inject(NgbActiveModal);
   _inspectionUseCase = inject(InspectionUseCase);
-  tS = inject(ToasterService)
+  tS = inject(ToasterService);
 
-  titleModal = 'Registro Inspección'
+  titleModal = 'Registro Inspección';
   btnText = 'Guardar';
 
-
-  vehiclePartTypes: VehiclePartType[] = []
-  vehiclePartTypeNodes: VehiclePartTypeNode[] = []
+  vehiclePartTypes: VehiclePartType[] = [];
+  vehiclePartTypeNodes: VehiclePartTypeNode[] = [];
   vehicleParts: VehiclePart[] = [];
 
   support = {
@@ -61,8 +69,8 @@ export class InspectionModalComponent {
     vehicleType: '',
     model: '',
     color: '',
-    engine: ''
-  }
+    engine: '',
+  };
 
   data = {
     id: 0,
@@ -70,33 +78,31 @@ export class InspectionModalComponent {
     mileage: '',
     fuelLevel: '',
     obs: '',
-    fechaEmisionDocCreado: null as null | Date
-  }
+    fechaEmisionDocCreado: null as null | Date,
+  };
 
   successResponse = (response: any) => {
-        if (response.code === "0") {
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code === "1") {
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
+    if (response.code === '0') {
+      this.tS.toastr({
+        type: 'warning',
+        message: response.message,
+      });
+    }
+    if (response.code === '1') {
+      this.tS.toastr({
+        type: 'success',
+        message: response.message,
+      });
 
-          this.modal.close(response)
-        }
-  }
+      this.modal.close(response);
+    }
+  };
 
   ngOnInit(): void {
     try {
-
-
-      this._inspectionUseCase.getDataForm(this.params.supportId).subscribe(  (response) => {
-
-
+      this._inspectionUseCase
+        .getDataForm(this.params.supportId)
+        .subscribe((response) => {
           this.support = response.support;
 
           this.vehiclePartTypes = response.vehiclePartTypes;
@@ -105,35 +111,41 @@ export class InspectionModalComponent {
           if (this.params.inspectionId > 0) {
             this.btnText = 'Actualizar';
 
-            this._inspectionUseCase.getId(this.params.inspectionId).subscribe(  (response) => {
-
+            this._inspectionUseCase
+              .getId(this.params.inspectionId)
+              .subscribe((response) => {
                 this.data = response.data;
-                let vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
-                  let nodes = response.vehicleParts.filter((vp:any) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[];
-                  let isCollapsed = nodes.some(n => [1,2,3].includes(n.status))
+                let vehiclePartTypeNodes = this.vehiclePartTypes.map((item) => {
+                  let nodes = response.vehicleParts.filter(
+                    (vp: any) => vp.vehiclePartTypeId === item.id,
+                  ) as VehiclePartNode[];
+                  let isCollapsed = nodes.some((n) =>
+                    [1, 2, 3].includes(n.status),
+                  );
 
                   return {
                     ...item,
                     nodes,
-                    isCollapsed: !isCollapsed
-                  }
-                })
+                    isCollapsed: !isCollapsed,
+                  };
+                });
                 this.vehiclePartTypeNodes = vehiclePartTypeNodes;
-              } )
+              });
           } else {
-            this.vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
-              let nodes = this.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
+            this.vehiclePartTypeNodes = this.vehiclePartTypes.map((item) => {
+              let nodes = this.vehicleParts.filter(
+                (vp) => vp.vehiclePartTypeId === item.id,
+              ) as VehiclePartNode[];
               return {
                 ...item,
                 nodes,
-                isCollapsed: true
-              }
-            })
+                isCollapsed: true,
+              };
+            });
           }
-
-        } )
+        });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -168,28 +180,28 @@ export class InspectionModalComponent {
       return;
     }
 
-
-
     if (!isValidField(this.data.mileage)) {
       this.tS.toastr({ type: 'warning', message: 'Ingreso el kimoletraje' });
       return;
     }
 
     if (!isValidField(this.data.fuelLevel)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingreso el nivel de Combustible' });
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingreso el nivel de Combustible',
+      });
       return;
     }
 
-
-    let isSelectedStatus = this.vehiclePartTypeNodes.some(vtn => (
-      vtn.nodes.some(n => n.status == 1 || n.status == 2 || n.status == 3)
-    ))
+    let isSelectedStatus = this.vehiclePartTypeNodes.some((vtn) =>
+      vtn.nodes.some((n) => n.status == 1 || n.status == 2 || n.status == 3),
+    );
     if (!isSelectedStatus) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione al menos un tipo de inspección'
-      })
-      return
+        message: 'Seleccione al menos un tipo de inspección',
+      });
+      return;
     }
 
     return true;
@@ -200,37 +212,53 @@ export class InspectionModalComponent {
       id: item.id,
       description: item.description,
       obs: item.obs,
-      status: item.status
-    }
+      status: item.status,
+    };
   }
 
   save() {
     try {
-      if (!this.isValidForm()) return
+      if (!this.isValidForm()) return;
 
       //motor
-      let engine = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.MT)?.nodes.map(this.mapVehiclePart);
+      let engine = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.MT)
+        ?.nodes.map(this.mapVehiclePart);
 
       //cabina
-      let cabin = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.CB)?.nodes.map(this.mapVehiclePart);
+      let cabin = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.CB)
+        ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Transmisión
-      let transmission = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.ST)?.nodes.map(this.mapVehiclePart);
+      let transmission = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.ST)
+        ?.nodes.map(this.mapVehiclePart);
 
       // Rodamiento
-      let bearing = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.RD)?.nodes.map(this.mapVehiclePart);
+      let bearing = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.RD)
+        ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Frenos
-      let brake = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.SF)?.nodes.map(this.mapVehiclePart);
+      let brake = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SF)
+        ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Dirección
-      let steering = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.SD)?.nodes.map(this.mapVehiclePart);
+      let steering = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SD)
+        ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Suspensión
-      let suspension = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.SS)?.nodes.map(this.mapVehiclePart);
+      let suspension = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SS)
+        ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de luces
-      let lighting = this.vehiclePartTypeNodes.find((item) => item.code === VEHICLE_PART_TYPE_CODE.SL)?.nodes.map(this.mapVehiclePart);
+      let lighting = this.vehiclePartTypeNodes
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SL)
+        ?.nodes.map(this.mapVehiclePart);
       let data = {
         engine: JSON.stringify(engine),
         cabin: JSON.stringify(cabin),
@@ -244,19 +272,18 @@ export class InspectionModalComponent {
         mileage: this.data.mileage,
         fuelLevel: this.data.fuelLevel,
         date: formatDateToString(this.data.fechaEmision),
-        obs: isValidField(this.data.obs)
-      }
+        obs: isValidField(this.data.obs),
+      };
       if (this.params.inspectionId > 0) {
-
-        this._inspectionUseCase.put(this.params.inspectionId, data).subscribe(this.successResponse)
+        this._inspectionUseCase
+          .put(this.params.inspectionId, data)
+          .subscribe(this.successResponse);
       }
       if (!(this.params.inspectionId > 0)) {
-
-        this._inspectionUseCase.post(data).subscribe(this.successResponse)
+        this._inspectionUseCase.post(data).subscribe(this.successResponse);
       }
     } catch (error) {
-
-      console.log(error)
+      console.log(error);
     }
   }
 }

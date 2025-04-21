@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { CompanyCustomerSearch } from '@customer/core/domain/company-customer';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -13,29 +13,31 @@ import {
   tap,
 } from 'rxjs';
 import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/company-customer-add-edit.directive';
-import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.use-case";
+import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-company-customer-search',
-    imports: [
-        FormsModule,
-        NgbTypeaheadModule,
-        FontAwesomeModule,
-        CompanyCustomerAddEditDirective
-    ],
-    templateUrl: './company-customer-search.component.html',
-    styles: `  `
+  selector: 'app-company-customer-search',
+  imports: [
+    FormsModule,
+    NgbTypeaheadModule,
+    MatIcon,
+    CompanyCustomerAddEditDirective,
+    MatIconButton,
+  ],
+  templateUrl: './company-customer-search.component.html',
+  styles: ``,
 })
 export class CompanyCustomerSearchComponent {
-  @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
+  @Output() customerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
   @Input() isGetId = false;
   @Input() showActionsBtn = true;
   @Input() textSearch = '';
   @Input() isSearchToExternal = false;
-  private _companyCustomerUseCase = inject(CompanyCustomerUseCase)
-
+  private _companyCustomerUseCase = inject(CompanyCustomerUseCase);
 
   @Input() id = 0;
   customer: CompanyCustomerSearch = {
@@ -53,11 +55,10 @@ export class CompanyCustomerSearchComponent {
 
   onKeyupSearch() {
     if (!this.textSearch) {
-      this.id=0;
+      this.id = 0;
       this.resultEmptyInput.emit({});
     }
   }
-
 
   onSelect($event: any) {
     this.customer = $event.item;
@@ -66,7 +67,7 @@ export class CompanyCustomerSearchComponent {
   }
 
   search: OperatorFunction<string, Array<CompanyCustomerSearch>> = (
-    text$: Observable<string>
+    text$: Observable<string>,
   ) =>
     text$.pipe(
       distinctUntilChanged(),
@@ -84,47 +85,43 @@ export class CompanyCustomerSearchComponent {
             console.log(error);
             this.searchFailed = true;
             return of([]);
-          })
+          }),
         );
       }),
-      tap(() => (this.searching = false))
+      tap(() => (this.searching = false)),
     );
 
   setCustomerData(customer: CompanyCustomerSearch) {
-
     this.onEmitData(customer);
     setTimeout(() => {
       this.textSearch = customer.nombreFiscal;
     });
   }
 
-
   //retorno de data cuando registran del modal
-  onResult($event:any){
-    if(this.isGetId){
-      this._companyCustomerUseCase.getId($event.id).subscribe(response=>{
+  onResult($event: any) {
+    if (this.isGetId) {
+      this._companyCustomerUseCase.getId($event.id).subscribe((response) => {
         this.onEmitData(response);
-      })
-    }else{
-      this.onCustomerSelected.emit($event)
+      });
+    } else {
+      this.customerSelected.emit($event);
     }
   }
-  onEmitData(result:any){
+  onEmitData(result: any) {
     let data = {
       ...result,
       razonSocialComprador: result.nombreFiscal,
       identificacionComprador: result.numeroIdentificacion,
     };
 
-    this.onCustomerSelected.emit({
-      data
+    this.customerSelected.emit({
+      data,
     });
   }
 
-  onEnterKeyPressed(event:Event): void {
+  onEnterKeyPressed(event: Event): void {
     let ev = event as KeyboardEvent;
-    if (!this.isSearchToExternal && !(ev.key === 'Enter')) return
-
-
+    if (!this.isSearchToExternal && !(ev.key === 'Enter')) return;
   }
 }

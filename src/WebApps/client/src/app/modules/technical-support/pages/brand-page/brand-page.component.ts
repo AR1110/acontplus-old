@@ -6,13 +6,16 @@ import { Brand } from '@modules/technical-support/models/brand';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { BrandModalComponent } from './brand-modal/brand-modal.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-brand-page',
-    imports: [BreadcrumbComponent, FontAwesomeModule],
-    templateUrl: './brand-page.component.html',
-    styles: ``
+  selector: 'app-brand-page',
+    imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon, ThemeButtonComponent],
+  templateUrl: './brand-page.component.html',
+  styles: ``,
 })
 export class BrandPageComponent {
   private brandService = inject(BrandService);
@@ -23,7 +26,7 @@ export class BrandPageComponent {
     code: '',
     name: '',
     categoryName: '',
-    categoryId: 0
+    categoryId: 0,
   };
   ngOnInit(): void {
     this.onGet();
@@ -33,7 +36,6 @@ export class BrandPageComponent {
     this.onModalOpen();
   }
   onGet() {
-    
     this.brandService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -43,12 +45,9 @@ export class BrandPageComponent {
         }
       },
       error(err) {
-        
         console.error(err);
       },
-      complete() {
-        
-      },
+      complete() {},
     });
   }
   onModalOpen() {
@@ -67,5 +66,9 @@ export class BrandPageComponent {
         this.onGet();
       }
     });
+  }
+
+  onDelete(item: Brand) {
+    
   }
 }

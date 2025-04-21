@@ -9,26 +9,26 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for update pagos del sustento
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Pago_Update', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Update
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Update @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Update @userRoleId INT 
 ,@id INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	BEGIN TRY
 		BEGIN TRAN 
 			
-			UPDATE rp SET rp.formaPago = t.formaPago
+			UPDATE rp SET rp.formaPagoId = t.formaPagoId
 			,rp.total = t.total 
 			FROM FactElect.RetencionAtsPago rp WITH (ROWLOCK)
-			JOIN (SELECT @id idRetencionAtsPago, formaPago, total
+			JOIN (SELECT @id idRetencionAtsPago, formaPagoId, total
 			FROM OPENJSON(@json)
-			WITH( formaPago VARCHAR(2) '$.formaPago'
+			WITH( formaPagoId INT '$.formaPagoId'
 				,total NUMERIC(18,5) '$.total'
 			)) as t ON t.idRetencionAtsPago = rp.idRetencionAtsPago
 			WHERE rp.idRetencionAtsPago = @id

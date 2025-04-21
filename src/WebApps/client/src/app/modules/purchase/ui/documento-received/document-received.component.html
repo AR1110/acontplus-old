@@ -48,24 +48,21 @@
               }
             </select>
             <div class="input-group-append">
-              <button
-                (click)="onClickBtnMore()"
-                class="btn btn-primary m-l-5"
-                type="button"
+              <app-theme-button
+                [icon]="extraOptionsIcon"
+                matStyle="icon"
+                title="Más Opciones"
+                (handleClick)="onClickBtnMore()"
               >
-                <fa-icon
-                  [icon]="extraOptionsIcon"
-                  matTooltip="{{ extraOptionsTooltip }}"
-                ></fa-icon>
-              </button>
-              <button
-                (click)="loadData()"
-                class="btn btn-success m-l-5"
-                matTooltip="Recargar"
-                type="button"
+              </app-theme-button>
+              <app-theme-button
+                variant="success"
+                icon="refresh"
+                matStyle="icon"
+                (handleClick)="loadData()"
+                title="Recargar"
               >
-                <fa-icon [icon]="'refresh'"></fa-icon>
-              </button>
+              </app-theme-button>
             </div>
           </div>
         </div>
@@ -130,7 +127,7 @@
           mat-raised-button
           type="button"
         >
-          <fa-icon [icon]="'download'"></fa-icon>
+          <mat-icon>download</mat-icon>
           Importación Automatica
         </button>
         <button
@@ -139,7 +136,7 @@
           class="m-2"
           type="button"
         >
-          <fa-icon [icon]="'mouse'"></fa-icon>
+          <mat-icon>mouse</mat-icon>
           Importación Manual
         </button>
         <button
@@ -148,11 +145,11 @@
           class="m-2"
           type="button"
         >
-          <fa-icon [icon]="'file-export'"></fa-icon>
+          <<mat-icon>upload_file</mat-icon>
           Migrar Comprobantes
         </button>
         <button (click)="editSubcategory()" mat-raised-button type="button">
-          <fa-icon [icon]="'pencil'"></fa-icon>
+          <mat-icon>edit</mat-icon>
           Modificar Subcategoría
         </button>
       </div>

@@ -1,19 +1,24 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">Convertir a un documento:</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modal.dismiss('Cross click')"
+  ></button>
 </div>
 <div class="modal-body">
   <div class="d-flex flex-column bd-highlight mb-3">
     <div class="p-2 bd-highlight">
-      Ruc/Cédula: {{companyCustomer.identificacionComprador}}
+      Ruc/Cédula: {{ companyCustomer.identificacionComprador }}
     </div>
     <div class="p-2 bd-highlight">
-      Razon Social: {{companyCustomer.razonSocialComprador}}
+      Razon Social: {{ companyCustomer.razonSocialComprador }}
     </div>
     <!-- <div class="p-2 bd-highlight">Flex item 3</div> -->
-    <hr>
+    <hr />
     <div class="d-flex justify-content-center">
-      <h4><b>Total</b> {{data.total}}</h4>
+      <h4><b>Total</b> {{ data.total }}</h4>
     </div>
   </div>
 
@@ -22,14 +27,29 @@
       <app-tabulator
         [columnNames]="columns"
         [tableData]="infoAdicionalDoc"
-        [options]="tabulatorOptions">
+        [options]="tabulatorOptions"
+      >
       </app-tabulator>
     </div>
   </div>
-
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary " (click)="saveInvoice()">FACTURA</button>
-  <button class="btn btn-warning" (click)="saveNotaEntrega()">NOTA ENTREGA</button>
-  <button class="btn btn-dark " (click)="modal.close()">&times; CERRAR</button>
+  <app-theme-button
+    variant="success"
+    icon="save"
+    text="Factura"
+    (handleClick)="saveInvoice()"
+  ></app-theme-button>
+  <app-theme-button
+    variant="warning"
+    icon="save"
+    text="Nota de Entrega"
+    (handleClick)="saveNotaEntrega()"
+  ></app-theme-button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  ></app-theme-button>
 </div>

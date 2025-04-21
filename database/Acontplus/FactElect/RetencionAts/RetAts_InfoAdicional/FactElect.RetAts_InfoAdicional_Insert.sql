@@ -9,17 +9,17 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for insert additional info
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_InfoAdicional_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_InfoAdicional_Insert
-GO
-CREATE PROCEDURE FactElect.RetAts_InfoAdicional_Insert @idUsuarioRol INT  
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_InfoAdicional_Insert @userRoleId INT  
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
+        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 		BEGIN TRAN 
 			
 			INSERT INTO FactElect.RetAtsInfoAdicional(idRetencionAts, nombre, valor)

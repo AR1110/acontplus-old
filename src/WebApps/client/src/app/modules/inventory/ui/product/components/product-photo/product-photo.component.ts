@@ -246,7 +246,7 @@ export class ProductPhotoComponent {
   }
 
 
-  closeModal() {
+  onModalClose() {
     this.dialogRef.close({
       isRefresh: this.isRefresh()
     })

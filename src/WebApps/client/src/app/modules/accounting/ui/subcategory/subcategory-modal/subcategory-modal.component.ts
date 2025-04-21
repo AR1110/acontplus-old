@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subcategory } from '@accounting/core/domain/subcategory';
-import { Category } from '@accounting/core/domain/category';
+import { Subcategory } from '@accounting/core/models/subcategory';
+import { Category } from '@accounting/core/models/category';
 import { isApiResponse } from '@core/models/api-response';
 import {
   FormControl,
@@ -10,13 +10,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {SubCategoryUseCase} from "@accounting/core/use-cases/sub-category.use-case";
+
+import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-subcategory-modal',
-  imports: [ReactiveFormsModule, FaIconComponent],
+  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
   templateUrl: './subcategory-modal.component.html',
   styles: ``,
 })
@@ -38,14 +40,13 @@ export class SubcategoryModalComponent {
     ]),
     enabled: new FormControl(true),
   });
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Subcategoría';
   tipos: any[] = [];
   private readonly modalRef = inject(NgbActiveModal);
   private readonly toastService = inject(ToasterService);
 
-  private _subCategoryUseCase = inject(SubCategoryUseCase)
-
+  private _subCategoryUseCase = inject(SubCategoryUseCase);
 
   get() {
     this._subCategoryUseCase.getDataForm().subscribe((response) => {
@@ -82,7 +83,9 @@ export class SubcategoryModalComponent {
         .update(this.data.id, dataToSave)
         .subscribe(this.successResponse);
     } else {
-      this._subCategoryUseCase.create(dataToSave).subscribe(this.successResponse);
+      this._subCategoryUseCase
+        .create(dataToSave)
+        .subscribe(this.successResponse);
     }
   }
 

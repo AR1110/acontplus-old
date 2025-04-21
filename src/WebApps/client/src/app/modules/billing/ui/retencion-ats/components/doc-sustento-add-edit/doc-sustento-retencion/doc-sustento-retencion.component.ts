@@ -1,8 +1,8 @@
 import { Component, input, signal } from '@angular/core';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
-import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
-import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva';
+import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
+import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
 import { MatDynamicSelectComponent } from '@shared/components/mat-dynamic-select/mat-dynamic-select.component';
 import { SelectOption } from '@shared/models/select-option';
 import { MatFormField } from '@angular/material/form-field';
@@ -29,8 +29,8 @@ export class DocSustentoRetencionComponent {
   docSustentoArray = input.required<FormArray>();
   retencionGroup = input.required<any>();
   impuestosRetencion = input.required<ImpuestoRetencion[]>();
-  codigosRetencion = input.required<CodigoRetencion[]>();
-  porcentajesRetIva = input.required<PorcentajeRetIva[]>();
+  codigosRetencion = input.required<ConceptoRetencionAir[]>();
+  porcentajesRetIva = input.required<PorcentajeRetencionIva[]>();
 
   options = signal<SelectOption[]>([]);
 
@@ -38,6 +38,7 @@ export class DocSustentoRetencionComponent {
 
   selectCodigoRetencion(codigo: string) {
     setTimeout(() => {
+      console.log(codigo)
       this.retencionGroup().get('codigoRetencion').setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
@@ -95,7 +96,7 @@ export class DocSustentoRetencionComponent {
   selectImpuestoRetencion(idImpuestoRetencion: number) {
     // Logic to set porcentajes based on codigo
     const codigo = this.impuestosRetencion().filter(
-      (x) => x.idImpuestoRetencion === idImpuestoRetencion,
+      (x) => x.id === idImpuestoRetencion,
     )[0].codigo;
 
     this.codImpuestoRetencionSelected.set(codigo);

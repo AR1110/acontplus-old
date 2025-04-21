@@ -29,6 +29,7 @@ BEGIN
 		   ,@byTipoDocumento INT
 		   ,@byComprobante   INT
 		   ,@byEstado        INT 
+           ,@nroSecuencial VARCHAR(13)
 
     --> Recuperacion de Informacion
 	SELECT @tipo = tipo  FROM OPENJSON(@json) WITH (tipo INT)
@@ -81,6 +82,7 @@ BEGIN
 				  ,@fechaInicio     = fechaInicio
                   ,@pageSize        = pageSize
 				  ,@pageIndex       = pageIndex
+                  ,@nroSecuencial  = LTRIM(TRIM(nroSecuencial))
 			FROM OPENJSON(@json) WITH 
             (
                  checkBoxFecha     BIT 
@@ -95,6 +97,7 @@ BEGIN
                 ,byEstado          INT
                 ,pageSize          INT
                 ,pageIndex         INT
+                ,nroSecuencial  VARCHAR(13)
             )
  
 		    IF @byTipoDocumento > 0 AND @byComprobante > 0
@@ -121,6 +124,11 @@ BEGIN
 			    BEGIN
 				    SET @sql = @sql + 'AND ce.idUsuario = @idUsuario '
 			    END 
+
+             IF @nroSecuencial IS NOT NULL
+				BEGIN
+					SET @sql = @sql + ' AND ce.nroDocumento BETWEEN ' + REPLACE(@nroSecuencial,'-',' AND ')
+				END  
 
 		    SET @sql = @sql + 'ORDER BY ce.idComprobanteEgreso DESC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 

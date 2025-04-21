@@ -7,6 +7,7 @@ public class ProductPhotoController(
     : BaseApiController
 {
     private const string IdCardCompany = "idCardCompany";
+    private const string BucketDirectory = "/articulos/";
 
     [HttpGet("{productId}")]
     public async Task<IActionResult> Get(int productId)
@@ -24,7 +25,7 @@ public class ProductPhotoController(
         data.UserId = User.GetUserId();
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
+            await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
         }
 
         data.ProductId = productId;
@@ -34,7 +35,7 @@ public class ProductPhotoController(
         if (response.Code == "1" && file != null)
         {
             var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-            s3ObjectCustom.Dispose();
+            
         }
 
         return Ok(response);
@@ -48,7 +49,7 @@ public class ProductPhotoController(
         data.UserId = User.GetUserId();
         if (file != null)
         {
-            await s3ObjectCustom.Add($"{User.GetClaimValue<string>(IdCardCompany)}/articulos/", file);
+            await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
         }
         data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
         data.S3ObjectUrl = s3ObjectCustom.S3ObjectUrl;
@@ -56,7 +57,7 @@ public class ProductPhotoController(
         if (response.Code == "1" && file != null)
         {
             var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
-            s3ObjectCustom.Dispose();
+            
         }
 
         return Ok(response);
@@ -76,9 +77,9 @@ public class ProductPhotoController(
         var response = await productPhoto.DeleteAsync(id, User.GetUserId());
         if (response.Code == "1")
         {
-            s3ObjectCustom.Add(response.Payload);
+            await s3ObjectCustom.Initialize(response.Payload);
             var s3Response = await storageService.DeleteAsync(s3ObjectCustom);
-            s3ObjectCustom.Dispose();
+            
         }
 
         return Ok(response);

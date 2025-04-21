@@ -3,13 +3,12 @@
 public class EstablecimientoLogoController : BaseApiController
 {
     private readonly IEstablecimientoLogoService _establecimientoLogoService;
-    private readonly IMapper _mapper;
+    
 
-    public EstablecimientoLogoController(IEstablecimientoLogoService establecimientoLogoService,
-        IMapper mapper)
+    public EstablecimientoLogoController(IEstablecimientoLogoService establecimientoLogoService)
     {
         _establecimientoLogoService = establecimientoLogoService;
-        _mapper = mapper;
+        
     }
 
     [HttpGet("{establecimientoId}")]
@@ -25,8 +24,8 @@ public class EstablecimientoLogoController : BaseApiController
     public async Task<IActionResult> Post(int establecimientoId, IFormFile file)
     {
         var logo = new FileModel();
-        logo.CreateBytesCompressedDeflated(file);
-        var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
+        await logo.CreateBytesCompressedDeflatedAsync(file);
+        var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(logo);
         estabLogo.EstablecimientoId = establecimientoId;
         estabLogo.UserId = User.GetUserId();
         var response = await _establecimientoLogoService.AddAsync(estabLogo);
@@ -41,8 +40,8 @@ public class EstablecimientoLogoController : BaseApiController
         if (file == null) { return BadRequest("File not found"); }
 
         var logo = new FileModel();
-        logo.CreateBytesCompressedDeflated(file);
-        var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
+        await logo.CreateBytesCompressedDeflatedAsync(file);
+        var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(logo);
         estabLogo.UserId = User.GetUserId();
         var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
         if (response == null) { return BadRequest($"No response {id}"); }

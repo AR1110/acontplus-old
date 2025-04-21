@@ -5,7 +5,7 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="closeModal()"
+      (click)="onModalClose()"
     ></button>
   </div>
   <div class="modal-body">
@@ -31,9 +31,9 @@
         formControlName="idUsuario"
       >
         @for (item of usuarios; track $index) {
-        <option [ngValue]="item.idUsuario">
-          {{ item.nombreUsuario }}
-        </option>
+          <option [ngValue]="item.idUsuario">
+            {{ item.nombreUsuario }}
+          </option>
         }
       </select>
     </div>
@@ -46,40 +46,44 @@
         formControlName="idTurno"
       >
         @for (item of turnos; track $index) {
-        <option [ngValue]="item.idTurno">
-          {{ item.descripcion }}
-        </option>
+          <option [ngValue]="item.idTurno">
+            {{ item.descripcion }}
+          </option>
         }
       </select>
     </div>
-    @if (tipoRegistro===2) {
-    <div class="icheck-primary icheck-inline">
-      <input
-        type="radio"
-        id="estadoActivo"
-        formControlName="estado"
-        [value]="true"
-      />
-      <label for="estadoActivo">Activo</label>
-    </div>
-    <div class="icheck-primary icheck-inline">
-      <input
-        type="radio"
-        id="estadoInactivo"
-        formControlName="estado"
-        [value]="false"
-      />
-      <label for="estadoInactivo">Inactivo</label>
-    </div>
+    @if (tipoRegistro === 2) {
+      <div class="icheck-primary icheck-inline">
+        <input
+          type="radio"
+          id="estadoActivo"
+          formControlName="estado"
+          [value]="true"
+        />
+        <label for="estadoActivo">Activo</label>
+      </div>
+      <div class="icheck-primary icheck-inline">
+        <input
+          type="radio"
+          id="estadoInactivo"
+          formControlName="estado"
+          [value]="false"
+        />
+        <label for="estadoInactivo">Inactivo</label>
+      </div>
     }
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-success" [disabled]="!dataForm.valid">
-      <fa-icon [icon]="btnIcon"></fa-icon>
+    <button type="submit" mat-raised-button [disabled]="!dataForm.valid">
+      <mat-icon>{{ btnIcon }}</mat-icon>
       {{ btnText }}
     </button>
-    <button type="button" class="btn btn-dark" (click)="closeModal()">
-      &times; Cerrar
-    </button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
+    >
+    </app-theme-button>
   </div>
 </form>

@@ -1,22 +1,6 @@
 @if (isSearchSimple) {
-<input
-  id="typeahead-company-customers-simple"
-  type="text"
-  class="form-control"
-  [(ngModel)]="textSearch"
-  [ngbTypeahead]="search"
-  [resultTemplate]="rt"
-  [class.is-invalid]="searchFailed"
-  (selectItem)="onSelect($event)"
-  onclick="select();"
-  (keyup)="onKeyupSearch()"
-  placeholder="..."
-  (keyup.enter)="onEnterKeyPressed($event)"
-/>
-} @else {
-<div class="input-group">
   <input
-    id="typeahead-company-customers-advanced"
+    id="typeahead-company-customers-simple"
     type="text"
     class="form-control"
     [(ngModel)]="textSearch"
@@ -26,40 +10,57 @@
     (selectItem)="onSelect($event)"
     onclick="select();"
     (keyup)="onKeyupSearch()"
-    placeholder="Buscar cliente"
+    placeholder="..."
+    (keyup.enter)="onEnterKeyPressed($event)"
   />
+} @else {
+  <div class="input-group">
+    <input
+      id="typeahead-company-customers-advanced"
+      type="text"
+      class="form-control"
+      [(ngModel)]="textSearch"
+      [ngbTypeahead]="search"
+      [resultTemplate]="rt"
+      [class.is-invalid]="searchFailed"
+      (selectItem)="onSelect($event)"
+      onclick="select();"
+      (keyup)="onKeyupSearch()"
+      placeholder="Buscar cliente"
+    />
 
+    <button
+      type="button"
+      mat-icon-button
+      (companyCustomerSaved)="onResult($event)"
+      appCompanyCustomerAddEdit
+    >
+      <mat-icon>add</mat-icon>
+    </button>
 
-  <button
-    type="button"
-    class="btn btn-outline-secondary btn-sm"
-    (onResult)="onResult($event)"
-   appCompanyCustomerAddEdit
-  >
-    <fa-icon [icon]="'plus'"></fa-icon>
-  </button>
-
-  @if (id > 0) {
-  <button
-    type="button"
-    class="btn btn-outline-secondary btn-sm"
-    (onResult)="onResult($event)"
-   appCompanyCustomerAddEdit
-   [id]="id"
-  >
-    <fa-icon [icon]="'edit'"></fa-icon>
-  </button>
-  }
-  <button type="button" class="btn btn-outline-secondary btn-sm">
-    <fa-icon [icon]="'search'"></fa-icon>
-  </button>
-</div>
-} @if (searching) {
-<small class="form-text text-muted">Buscando...</small>
-} @if (searchFailed) {
-<div class="invalid-feedback">
-  Lo sentimos, no se han podido cargar las sugerencias.
-</div>
+    @if (id > 0) {
+      <button
+        type="button"
+        mat-icon-button
+        (companyCustomerSaved)="onResult($event)"
+        appCompanyCustomerAddEdit
+        [id]="id"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+    }
+    <button type="button" mat-icon-button>
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+}
+@if (searching) {
+  <small class="form-text text-muted">Buscando...</small>
+}
+@if (searchFailed) {
+  <div class="invalid-feedback">
+    Lo sentimos, no se han podido cargar las sugerencias.
+  </div>
 }
 
 <ng-template #rt let-r="result" let-t="term">

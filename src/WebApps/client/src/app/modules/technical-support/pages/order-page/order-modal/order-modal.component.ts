@@ -16,7 +16,7 @@ import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
-import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -25,7 +25,6 @@ import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
-import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -34,18 +33,23 @@ import {
   isDateValid,
 } from '@core/utils/date.util';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-order-modal',
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FontAwesomeModule,
+
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
     NgbAccordionModule,
     TabulatorComponent,
+    MatIcon,
+    MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
@@ -100,7 +104,7 @@ export class OrderModalComponent {
         //create edit button
         const editBtn = document.createElement('button');
         editBtn.type = 'button';
-        editBtn.innerHTML = `${icon(faSave).html.join('')}`;
+        editBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">save</i>`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
         editBtn.title = 'Guardar Detalle';
         editBtn.addEventListener('click', () => {
@@ -111,7 +115,7 @@ export class OrderModalComponent {
         //create delete button
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.title = 'Eliminar detalle';
         delBtn.addEventListener('click', () => {
@@ -145,7 +149,7 @@ export class OrderModalComponent {
   devices: any = [];
   establecimientos: GroupedEstab[] = [];
   formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Nueva Orden';
   order: any = {};
   orderDetails: OrderDetail[] = [];
@@ -233,7 +237,7 @@ export class OrderModalComponent {
     });
   }
 
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 

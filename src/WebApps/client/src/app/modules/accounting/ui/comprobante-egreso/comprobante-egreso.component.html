@@ -1,1 +1,124 @@
-<p>comprobante-egreso works!</p>
+<app-breadcrumb/>
+
+<app-mat-dynamic-card>
+  <div class="d-grid gap-2">
+
+    <div
+      class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select [(ngModel)]="dataSearch().codEstab">
+            @for (item of estabs; track $index) {
+              <mat-option [value]="item.codEstab">{{item.nombreEstab}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          [showMatSuffix]="true"
+          [(checkbox)]="dataSearch().isDate"
+          (onCheckboxChange)="refresh()"
+          (onChangeDateRange)="onChangeDateRange($event)"
+        />
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Estado</mat-label>
+          <mat-select [(ngModel)]="dataSearch().byEstado" (selectionChange)="refresh()">
+            <mat-option [value]="0">Todos</mat-option>
+            <mat-option [value]="1">Activo</mat-option>
+            <mat-option [value]="2">Anulado</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col d-flex justify-content-end">
+        <div class="hstack gap-2">
+          <button mat-icon-button  (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button mat-icon-button (click)="advancedFilter.set(!advancedFilter())" >
+            <mat-icon>filter_list</mat-icon>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    @if(advancedFilter()){
+      <div
+        class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
+      >
+        <div class="col">
+          <app-supplier-search-mat
+          [isSimpleMode]="true"
+          />
+        </div>
+        <div class="col">
+          <app-mat-user-search
+          (onSelect)="onUserSelected($event)"
+          (clearInput)="onEmptyInputUserSearch()"
+          />
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <mat-label>Buscar por Nro. Doc</mat-label>
+            <input matInput [(ngModel)]="dataSearch().nroSecuencial">
+          </mat-form-field>
+        </div>
+
+
+      </div>
+    }
+
+
+    <app-mat-dynamic-table
+      [tableData]="dataSource()"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+      [templateOp]="templateOp"
+      [paginationConfig]="pagination()"
+      [enablePagination]="true"
+      (pageEvent)="handlePageEvent($event)"
+    />
+
+  </div>
+
+  <ng-template #templateOp let-item="item">
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+
+<!--      <button mat-menu-item   >-->
+<!--        <mat-icon>details</mat-icon>-->
+<!--        <span>Historial</span>-->
+<!--      </button>-->
+      <button mat-menu-item  appActionComprobanteEgresoAnular [id]="item.idComprobanteEgreso" >
+        <mat-icon>clear</mat-icon>
+        <span>Anular</span>
+      </button>
+
+      <button mat-menu-item  appActionComprobanteEgresoReport [id]="item.idComprobanteEgreso" [codEstab]="item.codEstab">
+        <mat-icon>download</mat-icon>
+        <span>Reporte</span>
+      </button>
+
+
+<!--      <button mat-menu-item   appSendMailModal>-->
+<!--        <mat-icon>email</mat-icon>-->
+<!--        <span>Enviar correo</span>-->
+<!--      </button>-->
+
+
+    </mat-menu>
+
+  </ng-template>
+
+
+
+</app-mat-dynamic-card>

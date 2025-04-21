@@ -15,9 +15,9 @@ import {
 } from '@angular/material/expansion';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
-import { DocumentoSustento } from '@sri/domain/models/documento-sustento';
+import { TipoComprobante } from '@sri/domain/models/tipo-comprobante';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
-import { TipoRegimenFe } from '@sri/domain/models/tipo-regimen-fe';
+import { TipoRegimenFiscalExterior } from '@sri/domain/models/tipo-regimen-fiscal-exterior';
 import { Pais } from '@sri/domain/models/pais';
 import { GenericModel } from '@core/models/generic.model';
 import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
@@ -26,14 +26,15 @@ import { Impuesto } from '@sri/domain/models/impuesto';
 import { DocSustentoTaxComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-tax/doc-sustento-tax.component';
 import { DocSustentoRetencionComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-retencion/doc-sustento-retencion.component';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
-import { CodigoRetencion } from '@sri/domain/models/codigo-retencion';
-import { PorcentajeRetIva } from '@modules/sri/domain/models/porcentaje-ret-iva';
+import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
+import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { DocSustentoPaymentComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-payment/doc-sustento-payment.component';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { RetencionAtsDocPayment } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -51,6 +52,9 @@ import { RetencionAtsDocPayment } from '@billing/domain/models/retencion-ats/ret
     MatSelectModule,
     MatInput,
     DocSustentoPaymentComponent,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatDatepickerInput,
   ],
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,
@@ -59,17 +63,17 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
-  documentosSustento = input.required<DocumentoSustento[]>();
+  tiposComprobante = input.required<TipoComprobante[]>();
   sustentosTributarios = input.required<SustentoTributario[]>();
   tiposPago = input.required<TipoPago[]>();
-  tiposRegimenFe = input.required<TipoRegimenFe[]>();
+  tiposRegimenFiscalExterior = input.required<TipoRegimenFiscalExterior[]>();
   countries = input.required<Pais[]>();
   generic = input.required<GenericModel[]>();
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   taxes = input.required<Impuesto[]>();
   impuestosRetencion = input.required<ImpuestoRetencion[]>();
-  codigosRetencion = input.required<CodigoRetencion[]>();
-  porcentajesRetIva = input.required<PorcentajeRetIva[]>();
+  conceptosRetencionAir = input.required<ConceptoRetencionAir[]>();
+  porcentajesRetIva = input.required<PorcentajeRetencionIva[]>();
   formasPago = input.required<FormaPago[]>();
   panelOpenState = -1;
   sustentosFiltered = signal<SustentoTributario[]>([]);
@@ -86,12 +90,12 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   selectSustento(index: number) {
     // Filter sustentos based on document type
     this.sustentosFiltered.set([]);
-    const codDocSustento =
-      this.docSustentoArray().controls[index].get('codDocSustento')?.value;
+    const tipoComprobanteId =
+      this.docSustentoArray().controls[index].get('tipoComprobanteId')?.value;
 
     this.sustentosFiltered.set(
       this.sustentosTributarios().filter(
-        (x) => x.codDocSustento === codDocSustento,
+        (x) => x.tipoComprobanteId === tipoComprobanteId,
       ),
     );
   }
@@ -105,7 +109,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   }
 
   getTaxesArray(indexDoc: number): FormArray {
-    return this.docSustentoArray().at(indexDoc).get('impuestos') as FormArray;
+    return this.docSustentoArray().at(indexDoc).get('taxes') as FormArray;
   }
 
   getRetencionesArray(indexDoc: number): FormArray {
@@ -121,27 +125,26 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
 
   createTaxGroup(): FormGroup {
     return this._fb.group({
+      idRetAtsImpDocSustento: [0],
+      idRetAtsDocSustento: [0],
       idRetencionAts: [0],
-      impuesto: [''],
-      porcentaje: [''],
+      uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       idImpuesto: [0],
       idTarifaImpuesto: [0],
-      baseImponible: [0, Validators.required],
+      porcentaje: [''],
       tarifa: [0],
+      baseImponible: [0, Validators.required],
       valorImpuesto: [0],
-      uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
     });
   }
 
   createRetencionGroup(): FormGroup {
     return this._fb.group({
       idRetencionAtsRet: [0],
-      idRetencionAts: [0],
       idRetencionAtsDocSustento: [0],
+      idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
-      impuesto: [''],
-      idImpuestoRetencion: [0, [Validators.required]],
-      codigoDescripcion: [''],
+      impuestoRetencionId: [0, [Validators.required]],
       codigoRetencion: [''],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
@@ -152,11 +155,10 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   createPaymentGroup(): FormGroup {
     return this._fb.group({
       idRetencionAtsPago: [0],
-      idRetencionAts: [0],
       idRetencionAtsDocSustento: [0],
+      idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
-      idFormaPago: [0, [Validators.required]],
-      formaPago: [''],
+      formaPagoId: [0, [Validators.required]],
       total: [0, [Validators.required, Validators.min(0)]],
     });
   }

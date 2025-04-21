@@ -32,6 +32,7 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
+import {NgTemplateOutlet} from "@angular/common";
 
 const imports = [
   NgbNavModule,
@@ -45,6 +46,7 @@ const imports = [
   MatSelectModule,
   MatFormFieldModule,
   MatInputModule,
+  NgTemplateOutlet,
   BreadcrumbComponent,
   SubCategoryGroupComponent,
   ProductSearchComponent,

@@ -12,7 +12,9 @@ GO
 CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Cancel @idRol INT,@id INT 
 AS
 BEGIN
-	SET NOCOUNT ON; 
+	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
 	DECLARE @idUsuario INT
 	       ,@idRetencionAts INT
            ,@idEstadoServicio INT

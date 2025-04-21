@@ -14,20 +14,26 @@ import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-reception-reports',
-  imports: [
-    FormsModule,
-    SupplierSearchComponent,
-    DateRangeSelectionComponent,
-    UserSearchComponent,
-    BreadcrumbComponent,
-  ],
+    imports: [
+        FormsModule,
+        SupplierSearchComponent,
+        DateRangeSelectionComponent,
+        UserSearchComponent,
+        BreadcrumbComponent,
+        MatCardContent,
+        MatCard,
+        MatCardFooter,
+        ThemeButtonComponent,
+    ],
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })

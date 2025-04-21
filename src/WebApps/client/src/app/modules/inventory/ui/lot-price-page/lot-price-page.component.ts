@@ -10,7 +10,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
@@ -25,6 +25,10 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -38,7 +42,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
 @Component({
   selector: 'app-lot-price-page',
   imports: [
-    FontAwesomeModule,
+    MatIcon,
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
@@ -49,6 +53,11 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     SubCategorySelectMultipleComponent,
     ProductSearchComponent,
     SupplierSearchComponent,
+    MatCardContent,
+    MatCard,
+    MatButton,
+    ThemeButtonComponent,
+    MatIconButton,
   ],
   templateUrl: './lot-price-page.component.html',
 })
@@ -298,10 +307,8 @@ export class LotPricePageComponent {
   isCalculateManual = false;
 
   protected getDataFilter() {
-    
     this.lotPriceSvc.getDataFilter().subscribe({
       next: (response) => {
-        
         this.tarifas = response.tarifas;
         this.taxRates = response.tarifasImpuesto;
         this.decimal = response.decimal;
@@ -314,14 +321,12 @@ export class LotPricePageComponent {
       },
       error(err) {
         console.log(err);
-        
       },
     });
   }
 
   getProducts() {
     try {
-      
       let subCategoriasChecked =
         Array.isArray(this.checkedSubCategorias.value) &&
         this.checkedSubCategorias.value.join(',');
@@ -351,18 +356,15 @@ export class LotPricePageComponent {
 
       this.lotPriceSvc.getAll(dataSearch).subscribe({
         next: (response) => {
-          
           let results = response;
           this.nestedProducts = structuredClone(results);
           this.cloneNestedProducts = structuredClone(results);
         },
         error(err) {
-          
           console.log(err);
         },
       });
     } catch (error) {
-      
       console.log(error);
     }
   }
@@ -1016,10 +1018,9 @@ export class LotPricePageComponent {
           tipo: this.mainForm.tipo,
           articles: results,
         };
-        
+
         this.lotPriceSvc.put(data).subscribe({
           next: (response) => {
-            
             if (isApiResponse(response)) {
               if (response.code === '0') {
                 Swal.fire({
@@ -1044,7 +1045,6 @@ export class LotPricePageComponent {
               icon: 'error',
               text: typeof err == 'object' ? err.error : err,
             });
-            
           },
         });
       }

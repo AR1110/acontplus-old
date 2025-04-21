@@ -1,7 +1,7 @@
 <app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row">
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
@@ -66,7 +66,7 @@
       </div>
       <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
-          <label>Rango Fechas</label>
+          <span>Rango Fechas</span>
           <app-date-range-selection
             (onChangeDateRange)="onDateRangeSelection($event)"
           />
@@ -105,7 +105,7 @@
       @if (dataSearch.userChecked) {
         <div class="col-xl-4 col-lg-4 col-md-12 col-12">
           <div class="form-group">
-            <label>Usuario: </label>
+            <span>Usuario: </span>
             <app-user-search
               (onUserSelected)="onUserSelected($event)"
               [textSearch]="dataSearch.userName"
@@ -132,13 +132,21 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="card-body">
+  </mat-card-content>
+  <mat-card-footer>
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button (click)="pdf()" class="btn btn-danger" type="button">PDF</button>
-      <button (click)="excel()" class="btn btn-success" type="button">
-        EXCEL
-      </button>
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="pdf()"
+      ></app-theme-button>
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="excel()"
+      ></app-theme-button>
     </div>
-  </div>
-</div>
+  </mat-card-footer>
+</mat-card>

@@ -5,5 +5,4 @@ export interface TarifaImpuesto
   idTarifaImpuesto: number;
   idImpuesto?: number;
   codigo: string;
-  codImpuesto: string;
 }

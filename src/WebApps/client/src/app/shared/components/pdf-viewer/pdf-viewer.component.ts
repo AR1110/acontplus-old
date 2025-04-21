@@ -27,7 +27,7 @@ export class PdfViewerComponent {
    // this.printService.print();
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

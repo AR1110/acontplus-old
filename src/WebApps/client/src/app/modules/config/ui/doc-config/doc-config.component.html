@@ -1,0 +1,101 @@
+<app-breadcrumb />
+
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento: </mat-label>
+          <mat-select
+            name="establecimiento"
+            id="establecimiento"
+            [(ngModel)]="dataSearch.codEstab"
+            (change)="onChangeEstab()"
+          >
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.codEstab">
+                {{ item.nombreComercial }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+        <mat-form-field>
+          <mat-label>Puntos Emisión: </mat-label>
+          <mat-select
+            name="puntoEmision"
+            id="puntoEmision"
+            [(ngModel)]="dataSearch.idPuntoEmision"
+            (change)="getDocs()"
+          >
+            @for (item of puntosEmision; track $index) {
+              <mat-option [value]="item.idPuntoEmision">{{
+                item.ptoEmi
+              }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Nro.</th>
+            <th>Documento</th>
+            <th></th>
+            <th>Secuencia</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of docs; track $index) {
+            <tr style="vertical-align: middle">
+              <td>{{ $index + 1 }}</td>
+              <td>{{ item.descripcion }}</td>
+              <td>
+                <mat-checkbox
+                  type="checkbox"
+                  [name]="item.descripcion + $index"
+                  [id]="item.descripcion + $index"
+                  [(ngModel)]="item.estado"
+                >
+                </mat-checkbox>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="number"
+                    [(ngModel)]="item.ultimaSecuencia"
+                    onclick="this.select()"
+                    min="1"
+                  />
+                </mat-form-field>
+              </td>
+              <td class="d-flex gap-2">
+                <app-theme-button
+                  variant="success"
+                  icon="save"
+                  matStyle="icon"
+                  [disabled]="!item.ultimaSecuencia"
+                  (handleClick)="saveConfig(item)"
+                />
+                @if (item.infoAdicional) {
+                  <app-theme-button
+                    icon="sell"
+                    matStyle="icon"
+                    [disabled]="!item.ultimaSecuencia"
+                    (handleClick)="openModalInfoAdicional(item)"
+                  />
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

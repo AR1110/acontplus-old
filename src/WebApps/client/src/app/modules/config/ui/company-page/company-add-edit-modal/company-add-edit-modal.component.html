@@ -1,0 +1,106 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Editar Entidad</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modal.dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label for="ruc">Ruc: <span class="text-danger">*</span></label>
+    <input
+      type="text"
+      name="ruc"
+      id="ruc"
+      [(ngModel)]="data.ruc"
+      class="form-control"
+      placeholder="Ej: 1450152326001"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="razonSocial">
+      Razón Social:
+      <mat-icon
+        matTooltip="Nombre oficial y legal de la Persona Natural o Juridica"
+        class="text-info"
+        >info</mat-icon
+      >
+      <span class="text-danger">*</span>
+    </label>
+    <input
+      type="text"
+      appToUpperCase
+      name="razonSocial"
+      id="razonSocial"
+      [(ngModel)]="data.razonSocial"
+      class="form-control"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="nombreComercial"
+      >Nombre Comercial:
+      <mat-icon
+        matTooltip="Nombre de la Persona Natural o Juridica para el ejercicio de Actividades Economicas"
+        class="text-info"
+        >info</mat-icon
+      >
+      <span class="text-danger">*</span>
+    </label>
+    <input
+      type="text"
+      appToUpperCase
+      name="nombreComercial"
+      id="nombreComercial"
+      [(ngModel)]="data.nombreComercial"
+      class="form-control"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="address">Dirección</label>
+    <textarea
+      name="address"
+      id="address"
+      class="form-control"
+      [(ngModel)]="data.direccion"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Correo:</label>
+    <input
+      type="email"
+      name="email"
+      id="email"
+      [(ngModel)]="data.email"
+      class="form-control"
+      placeholder="Ej: example@gmail.com"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="telefono">Teléfono:</label>
+    <input
+      type="tel"
+      name="email"
+      id="telefono"
+      [(ngModel)]="data.telefono"
+      class="form-control"
+      placeholder="Ej: 0959889742"
+    />
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" mat-raised-button (click)="save()">Guardar</button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="modal.close()"
+  >
+  </app-theme-button>
+</div>
