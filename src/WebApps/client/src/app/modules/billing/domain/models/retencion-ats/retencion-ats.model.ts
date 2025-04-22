@@ -1,6 +1,8 @@
 export interface RetencionAts {
   idRetencionAts: number;
   idDocumentoElectronico: number;
+  codEstab?: string;
+  versionComp?: string;
 }
 
 export interface RetencionAtsList
@@ -8,7 +10,8 @@ export interface RetencionAtsList
   isAutomatic: boolean;
   codEstado: string;
   estado: string;
-  totalRecords: number;
+
+  totalRecords?: number;
 }
 
 export interface RetAtsInfoAdicional

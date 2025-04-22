@@ -19,7 +19,7 @@ import { FormaPago } from '@sri/domain/models/forma-pago';
 import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
 import { TipoIdentificacionProveedor } from '@sri/domain/models/tipo-identificacion-proveedor';
 import { PuntoEmisionEstablecimiento } from '@core/models/punto-emision.model';
-import {ApiResponse} from "@core/models/api-response";
+import { ApiResponse } from '@core/models/api-response';
 
 export abstract class RetencionAtsRepository {
   abstract getDataForm(parameters: unknown): Observable<{
@@ -50,4 +50,5 @@ export abstract class RetencionAtsRepository {
   abstract getDocs(parameters: unknown): Observable<{
     documents: RetAtsDocSustento[];
   }>;
+  abstract downloadXml(id: number): Observable<Blob>;
 }

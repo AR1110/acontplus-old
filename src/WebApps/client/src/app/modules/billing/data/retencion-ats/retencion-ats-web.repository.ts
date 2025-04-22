@@ -1,21 +1,24 @@
 import { inject, Injectable } from '@angular/core';
 import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats.repository';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import {
   RetencionAts,
   RetencionAtsList,
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { PATHS_API } from '@core/constants/global.constants';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
+import { SharedService } from '@core/services/shared.service';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.RETENCION_ATS}${BILLING_PATHS.RETENCION_ATS}`;
+  private readonly _urlDocElectronico = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`;
+  private readonly _sharedService = inject(SharedService);
 
   getAll<T>(parameters: T) {
     const obj = {
@@ -118,6 +121,20 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           const { documents } = JSON.parse(response.payload as string);
 
           return { documents: documents as RetAtsDocSustento[] };
+        }),
+      );
+  }
+
+  downloadXml(id: number) {
+    return this._http
+      .get(`${this._urlDocElectronico}GetXmlSri/${id}`, {
+        responseType: 'blob',
+        observe: 'response',
+      })
+      .pipe(
+        map((response: HttpResponse<Blob>) => {
+          this._sharedService.saveFile(response);
+          return response.body!;
         }),
       );
   }

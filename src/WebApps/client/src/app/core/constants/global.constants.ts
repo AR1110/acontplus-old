@@ -71,7 +71,7 @@ export type FORMAT_TYPE =
   | 'mhtml'
   | 'html';
 
-export enum CODE_REPORT {
+export enum REPORT_CODE {
   RF = 'RF', // Reporte Factura
   FG = 'FG', // Ventas -> Factura General
   CCR = 'CCR', // Cuenta por cobrar
@@ -101,6 +101,7 @@ export enum CODE_REPORT {
   RCXC = 'RCXC', // Contabilidad Cobros por Cuotas.
   RCXD = 'RCXD', // Contabilidad Cobros por Documentos
   RCXP = 'RCXP', // Contabilidad Cobros por Pagos
+  RRC = 'RRC', // Reporte Retencion
 }
 
 export enum CODE_ESTADO {

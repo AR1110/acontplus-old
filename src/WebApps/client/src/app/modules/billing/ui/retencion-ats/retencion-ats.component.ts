@@ -6,7 +6,10 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { RetencionAtsList } from '@billing/domain/models/retencion-ats/retencion-ats.model';
+import {
+  RetencionAts,
+  RetencionAtsList,
+} from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
@@ -17,6 +20,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
+import { SharedService } from '@core/services/shared.service';
+import { REPORT_CODE } from '@core/constants/global.constants';
 
 @Component({
   selector: 'app-retencion-ats',
@@ -58,6 +63,7 @@ export class RetencionAtsComponent implements OnInit {
 
   private readonly _dialogService = inject(DialogService);
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
+  private readonly _sharedService = inject(SharedService);
 
   pagination = signal(new MatPagination());
 
@@ -94,9 +100,28 @@ export class RetencionAtsComponent implements OnInit {
     this.loadData();
   }
 
-  downloadXml(item: any) {}
+  downloadXml(item: RetencionAts) {
+    this._retencionAtsUseCase
+      .downloadXml(item.idDocumentoElectronico)
+      .subscribe();
+  }
 
-  getRide(item: any) {}
+  getRide(item: RetencionAts) {
+    const format = 'pdf';
+    const parameters = {
+      dataParams: JSON.stringify({
+        versionComp: item.versionComp,
+        idDocumentoElectronico: item.idDocumentoElectronico,
+      }),
+      reportParams: JSON.stringify({
+        codigo: REPORT_CODE.RRC,
+        codEstab: item.codEstab,
+        format,
+      }),
+      hasService: true,
+    };
+    this._sharedService.getReport({ data: parameters, isOldVersion: true });
+  }
 
   cancel(item: any) {}
 
