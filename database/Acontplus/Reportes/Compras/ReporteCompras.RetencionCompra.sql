@@ -69,7 +69,7 @@ BEGIN
                     INNER JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = cu.IdTypeId
  					WHERE rc.idRetencionAts =  @id
 
-                    SELECT ds.codDocSustento                                as comprobante
+                    SELECT ds.Codigo                                as comprobante
 						  ,i.descripcion                                    as impuesto
 						  ,ret.codigoRetencion
 						  ,FORMAT(rcd.fechaEmisionDocSustento,'dd/MM/yyyy') as fechaEmisionComprobante
@@ -78,9 +78,10 @@ BEGIN
 						  ,CAST(ret.baseImponible AS numeric(15,2))         as baseImponible 
 						  ,CAST(ret.valorRetenido as numeric(15, 2))        as valorRetenido
 					FROM FactElect.RetAtsDocSustento rcd WITH (NOLOCK)
-					INNER JOIN Sri.DocumentoSustento      ds WITH (NOLOCK) ON rcd.codDocSustento      = ds.codDocSustento
+                    INNER JOIN Sri.DocumentoSustentoTributario dst ON rcd.documentoSustentoTributarioId = dst.Id
+					INNER JOIN Sri.TipoComprobante      ds WITH (NOLOCK) ON dst.TipoComprobanteId      = ds.Id
 					INNER JOIN FactElect.RetencionAtsRet ret WITH (NOLOCK) ON rcd.idRetAtsDocSustento = ret.idRetAtsDocSustento
-					INNER JOIN Sri.ImpuestoRetencion       i WITH (NOLOCK) ON ret.codigo              = i.codigo
+					INNER JOIN Sri.ImpuestoRetencion       i WITH (NOLOCK) ON ret.impuestoRetencionId              = i.Id
 					WHERE rcd.idRetencionAts = @id
 
                     SELECT nombre,valor FROM FactElect.RetAtsInfoAdicional WITH (NOLOCK) WHERE idRetencionAts = @id

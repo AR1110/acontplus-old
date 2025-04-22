@@ -82,6 +82,7 @@ BEGIN
                                   ,r.idDocumentoElectronico
                                   ,de.isAutomatic
                                   ,de.codEstado
+                                  ,de.codEstab
                                   ,de.estado
                                   ,CONVERT(VARCHAR, FORMAT(de.fechaEmision, ''dd/MM/yyyy''), 106) AS fechaEmision
                                   ,de.serieComprobante
@@ -92,6 +93,7 @@ BEGIN
                                   ,de.usuario
                                   ,(SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet ret WHERE r.idRetencionAts = ret.idRetencionAts) as importeTotal
                                   ,' + CAST(@totalRecords AS NVARCHAR(20)) + ' as totalRecords
+                                  ,de.versionComp
                             FROM FactElect.RetencionAts r WITH (NOLOCK)
                             INNER JOIN FactElect.v_DocElectronico de WITH (NOLOCK) 
                             ON r.idDocumentoElectronico = de.idDocumentoElectronico ' + @whereClause + '
