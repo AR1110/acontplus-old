@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToasterService } from '@core/services/toaster.service';
 import {
-  CODE_REPORT,
+  REPORT_CODE,
   DOC_TYPE,
 } from '@core/constants/global.constants';
 import {
@@ -192,8 +192,8 @@ export class ReporteCobrosComponent implements OnInit {
         reportParams: JSON.stringify({
           codEstab: this.dataSearch.codEstab,
           codigo: this.dataSearch.documentoChecked
-            ? CODE_REPORT.RCXD
-            : CODE_REPORT.RCXC,
+            ? REPORT_CODE.RCXD
+            : REPORT_CODE.RCXC,
           format,
         }),
         dataParams: JSON.stringify(dataParms),

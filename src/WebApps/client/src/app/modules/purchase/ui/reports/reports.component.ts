@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
-  CODE_REPORT,
+  REPORT_CODE,
   DOC_TYPE,
   PATHS_API,
 } from '@core/constants/global.constants';
@@ -145,7 +145,7 @@ export class ReportsComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: CODE_REPORT.RCP,
+        codigo: REPORT_CODE.RCP,
         format,
         aditionalParams: [],
       }),

@@ -3,7 +3,7 @@ import { DocumentReceivedWebRepository } from '@purchase/data/document-received/
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import {
-  CODE_REPORT,
+  REPORT_CODE,
   DOC_TYPE_SRI,
   REPORT_FORMAT,
 } from '@core/constants/global.constants';
@@ -130,16 +130,16 @@ export class ReceptionReportsComponent {
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.NC)
       return {
         tipo: 3,
-        codigo: CODE_REPORT.RRNC,
+        codigo: REPORT_CODE.RRNC,
       };
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.R)
       return {
         tipo: 4,
-        codigo: CODE_REPORT.RRG,
+        codigo: REPORT_CODE.RRG,
       };
     return {
       tipo: 2,
-      codigo: CODE_REPORT.RRF,
+      codigo: REPORT_CODE.RRF,
     }; //Factura por defecto
   }
 

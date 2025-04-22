@@ -1,5 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import { CODE_REPORT, REPORT_FORMAT } from '@core/constants/global.constants';
+import { REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
@@ -105,7 +105,7 @@ export class FiltroControlCajaReportModal {
     const parameters = {
       hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
       reportParams: JSON.stringify({
-        codigo: CODE_REPORT.RCC,
+        codigo: REPORT_CODE.RCC,
         format: this.format,
         aditionalParams: [],
       }),

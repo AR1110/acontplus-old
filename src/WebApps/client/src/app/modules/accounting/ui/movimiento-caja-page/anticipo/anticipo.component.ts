@@ -4,7 +4,7 @@ import { AnticipoModalComponent } from '@accounting/ui/movimiento-caja-page/anti
 
 import { AnticipoRead } from '@accounting/core/models/anticipo.model';
 import { SharedService } from '@core/services/shared.service';
-import { CODE_REPORT } from '@core/constants/global.constants';
+import { REPORT_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -176,7 +176,7 @@ export class AnticipoComponent {
 
     const parameters = {
       reportParams: JSON.stringify({
-        codigo: CODE_REPORT.RA,
+        codigo: REPORT_CODE.RA,
         format,
         codEstab: data.codEstab,
         aditionalParams: [],

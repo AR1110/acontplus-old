@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { CODE_REPORT } from '@core/constants/global.constants';
+import { REPORT_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
@@ -138,7 +138,7 @@ export class OrderListComponent implements OnInit {
     const parameters = {
       reportParams: JSON.stringify({
         codEstab: item.codEstab,
-        codigo: CODE_REPORT.RTS,
+        codigo: REPORT_CODE.RTS,
         format: 'pdf',
       }),
       dataParams: JSON.stringify(item),

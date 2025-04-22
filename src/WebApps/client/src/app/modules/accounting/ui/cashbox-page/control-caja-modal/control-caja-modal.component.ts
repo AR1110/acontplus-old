@@ -2,7 +2,7 @@ import { Component, inject, Input, ViewEncapsulation } from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
   CODE_ESTADO,
-  CODE_REPORT,
+  REPORT_CODE,
   REPORT_FORMAT,
   FORMAT_TYPE,
 } from '@core/constants/global.constants';
@@ -197,7 +197,7 @@ export class ControlCajaModalComponent {
         reportParams: {
           hasParams: true,
           codEstab: item.codEstab,
-          codigo: CODE_REPORT.RCC,
+          codigo: REPORT_CODE.RCC,
           format: 'pdf',
         },
         spParams: {
@@ -336,7 +336,7 @@ export class ControlCajaModalComponent {
     const parameters = {
       hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
       reportParams: JSON.stringify({
-        codigo: CODE_REPORT.RCC,
+        codigo: REPORT_CODE.RCC,
         format,
         aditionalParams: [],
       }),
@@ -457,7 +457,7 @@ export class ControlCajaModalComponent {
         hasService: true,
         reportParams: JSON.stringify({
           hasParams: false,
-          codigo: CODE_REPORT.FG,
+          codigo: REPORT_CODE.FG,
           format,
           aditionalParams: [],
         }),

@@ -1,5 +1,5 @@
 import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
-import { CODE_REPORT } from '@core/constants/global.constants';
+import { REPORT_CODE } from '@core/constants/global.constants';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
@@ -120,7 +120,7 @@ export class CierreCajaModalComponent {
           reportParams: {
             hasParams: true,
             codEstab: dataMail.codEstab,
-            codigo: CODE_REPORT.RCC,
+            codigo: REPORT_CODE.RCC,
             format: 'pdf',
           },
           spParams: {

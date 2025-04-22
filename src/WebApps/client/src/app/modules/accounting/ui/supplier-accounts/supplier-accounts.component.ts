@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import {
-  CODE_REPORT,
+  REPORT_CODE,
   DOC_TYPE,
   PATHS_API,
 } from '@core/constants/global.constants';
@@ -149,7 +149,7 @@ export class SupplierAccountsComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: this.dataSearch.ckCuotas ? CODE_REPORT.CCPC : CODE_REPORT.CCP,
+        codigo: this.dataSearch.ckCuotas ? REPORT_CODE.CCPC : REPORT_CODE.CCP,
         format,
         aditionalParams: [],
       }),

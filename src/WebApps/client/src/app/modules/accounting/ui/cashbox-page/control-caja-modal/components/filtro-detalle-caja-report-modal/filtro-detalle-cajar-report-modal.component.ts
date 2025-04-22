@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CODE_REPORT } from '@core/constants/global.constants';
+import { REPORT_CODE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
@@ -126,7 +126,7 @@ export class FiltroDetalleCajaReportModal {
       const parameters = {
         hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
         reportParams: JSON.stringify({
-          codigo: CODE_REPORT.CDCC,
+          codigo: REPORT_CODE.CDCC,
           format,
           aditionalParams: [],
         }),
