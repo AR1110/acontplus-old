@@ -20,6 +20,7 @@ import { billingProviders } from '@modules/billing/providers';
 import { DatePipe } from '@angular/common';
 import { importProvidersFrom } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
+import {barberShopProviders} from "@barber-shop/providers";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -59,4 +60,5 @@ export const featureProviders = [
   ...configProvider,
   ...saleProvider,
   ...billingProviders,
+  ...barberShopProviders
 ];

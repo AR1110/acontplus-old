@@ -1,1 +1,38 @@
-<p>add-edit-seat works!</p>
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+(close)="close()"
+  [title]="title"
+/>
+
+<ng-template #body>
+  <form id="formSeat" [formGroup]="dataForm" (ngSubmit)="save()">
+    <div class="d-grid gap-2">
+      <mat-form-field class="w-100">
+        <mat-label>Nombre</mat-label>
+        <input matInput placeholder="..." formControlName="name" appToUpperCase>
+
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <mat-label>Descripción</mat-label>
+        <input matInput placeholder="..." formControlName="description">
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <mat-label>Orden</mat-label>
+        <input type="number" matInput placeholder="..." formControlName="seatNumber">
+      </mat-form-field>
+    </div>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [type]="'submit'"
+    [variant]="'success'"
+    [text]="btnText"
+    [icon]="btnIcon"
+    [form]="'formSeat'"
+    [disabled]="!dataForm.valid"
+  />
+</ng-template>
