@@ -7,16 +7,16 @@ public class BarberPayment : BaseEntity
 
     [Column(TypeName = "decimal(18,2)")] public decimal Amount { get; set; }
 
-    [MaxLength(100)] public string PaymentMethod { get; set; }
+    public int FormaPagoId { get; set; }
 
-    [MaxLength(200)] public string Comments { get; set; }
+    [MaxLength(500)] public string S3ObjectKey { get; set; }
+
+    [MaxLength(800)] public string S3ObjectUrl { get; set; }
+
+    [MaxLength(300)] public string Comments { get; set; }
 
     [Column(TypeName = "decimal(18,2)")] public decimal BalanceForward { get; set; }
 
-    // Relaciones
-    public int BarberId { get; set; }
-    public virtual Barber Barber { get; set; }
-
-    public int SessionId { get; set; }
-    public virtual WorkSession Session { get; set; }
+    public int WorkSessionId { get; set; }
+    public WorkSession WorkSession { get; set; }
 }

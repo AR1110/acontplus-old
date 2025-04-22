@@ -1,12 +1,31 @@
-﻿namespace BarberShop.Infrastructure.Persistense;
+﻿using System.Reflection;
+using Common.Infrastructure.Core.Context;
+using Common.Infrastructure.Core.Entity;
 
-public class BarberShopContext(DbContextOptions<BarberShopContext> options) : DbContext(options)
+namespace BarberShop.Infrastructure.Persistense;
+
+public class BarberShopContext(DbContextOptions<BarberShopContext> options) : BaseContext(options)
 {
+    public DbSet<BarberPayment> BarberPayments { get; set; } = null!;
+
     public DbSet<Seat> Seats { get; set; } = null!;
+
+    public DbSet<Ticket> Tickets { get; set; } = null!;
+
+    public DbSet<TicketDetail> TicketDetails { get; set; } = null!;
+
+    public DbSet<TicketDocument> TicketDocuments { get; set; } = null!;
+
+    public DbSet<WorkSession> WorkSessions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // Add your custom model configurations here
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+            typeof(TicketDocument));
+
     }
 }

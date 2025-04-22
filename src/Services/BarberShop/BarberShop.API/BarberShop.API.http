@@ -1,6 +1,43 @@
-@BarberShop.API_HostAddress = http://localhost:5175
+@BarberShop.API_HostAddress = https://localhost:7114
+@Token = Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVsbWFycXVlemRlbGNvY2Fob3RlbEBob3RtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJJw5FJR1VFWiBDQUJSRVJBIEdMQURZUyIsImp0aSI6ImE2MmQ3ZTZiLWU0OWUtNGRmYy1hYzVhLWQxYWM3NTMxMThjNSIsIm5hbWUiOiJJw5FJR1VFWiBDQUJSRVJBIEdMQURZUyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMTQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBRE1JTklTVFJBRE9SIiwic3ViIjoiMTQiLCJ1bmlxdWVfbmFtZSI6ImnDsWlndWV6ZyIsInVzZXJSb2xlSWQiOiI2MyIsImlkQ2FyZENvbXBhbnkiOiIwMTAxMzc0MDE1MDAxIiwiY29tcGFueUlkIjoiOSIsInRyYWRlTmFtZSI6IklOSUdVRVogQ0FCUkVSQSBHTEFEWVMiLCJidXNpbmVzc05hbWUiOiJJTklHVUVaIENBQlJFUkEgR0xBRFlTIiwidXJsR2F0ZXdheSI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNjAiLCJleHAiOjE3NzYzMTQzNTl9.oQYUSBc-cY-9XNefFbcatNzEDLdxBEov-2GGQOjf6Lg
 
-GET {{BarberShop.API_HostAddress}}/weatherforecast/
-Accept: application/json
 
+GET {{BarberShop.API_HostAddress}}/seat
+Content-Type: application/json
+Authorization: {{Token}}
+
+###
+
+POST {{BarberShop.API_HostAddress}}/seat
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  "SeatNumber": 1,
+  "Code": "A1",
+  "Name": "Asiento 1"
+}
+###
+
+@id=0
+DELETE {{BarberShop.API_HostAddress}}/seat/{{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+
+###
+
+GET {{BarberShop.API_HostAddress}}/seat/{{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+
+###
+
+PUT {{BarberShop.API_HostAddress}}/seat/{{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  id: 1
+  "SeatNumber": 1,
+  "Code": "A1",
+  "Name": "Asiento 1"
+}
 ###

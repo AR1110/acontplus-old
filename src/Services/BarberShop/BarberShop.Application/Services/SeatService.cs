@@ -41,6 +41,16 @@ public class SeatService(BarberShopContext context) : ISeatService
     public async Task<ApiResponse> GetAllSeatsAsync()
     {
         var seats = await context.Seats.ToListAsync();
+
+        if (seats.Count == 0)
+        {
+            return new ApiResponse
+            {
+                Code = "0",
+                Message = "Data not found!"
+            };
+        }
+
         return new ApiResponse
         {
             Code = "1",
