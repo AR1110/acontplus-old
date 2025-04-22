@@ -1,8 +1,8 @@
 /* hierarchical-tree.component.css */
-.tree-container {
-  margin: 15px;
-  max-width: 500px;
-}
+//.tree-container {
+//  margin: 15px;
+//  max-width: 500px;
+//}
 
 .tree-table {
   width: 100%;
@@ -11,4 +11,26 @@
 .node-spacer {
   display: inline-block;
   width: 28px;
+}
+
+.table-container {
+  position: relative;
+  min-height: 200px;
+  //max-height: 400px;
+  overflow: auto;
+
+}
+
+table {
+  width: 100%;
+}
+
+
+.mat-column-select  {
+  width: 30px !important;
+}
+
+
+.mat-column-name  {
+  width: 400px;
 }

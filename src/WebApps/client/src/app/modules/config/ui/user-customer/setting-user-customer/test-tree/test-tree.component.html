@@ -1,40 +1,44 @@
 <!-- hierarchical-tree.component.html -->
-<div class="tree-container">
-  <h2>Árbol Jerárquico con Children</h2>
 
-  <table mat-table [dataSource]="dataSource" class="tree-table">
-    <!-- Columna de Checkbox -->
-    <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>Seleccionar</th>
-      <td mat-cell *matCellDef="let node">
-        <mat-checkbox
-          [checked]="node.isSelected"
-          (change)="toggleSelection(node)">
-        </mat-checkbox>
-      </td>
-    </ng-container>
 
-    <!-- Columna de Nombre -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Nombre</th>
-      <td mat-cell *matCellDef="let node" [style.padding-left]="getNodePadding(node.level)">
-        @if(hasChildren(node)){
-        <button
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="tree-table">
+      <!-- Columna de Checkbox -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>Seleccionar</th>
+        <td mat-cell *matCellDef="let node">
+          <mat-checkbox
+            [checked]="node.isSelected"
+            (change)="toggleSelection(node)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Columna de Nombre -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let node" [style.padding-left]="getNodePadding(node.level)">
+          <div class="hstack" style="width: 400px;">
+            @if(hasChildren(node)){
+              <button
                 mat-icon-button
                 (click)="toggleNode(node)">
-          <mat-icon>{{node.isExpanded ? 'expand_more' : 'chevron_right'}}</mat-icon>
-        </button>
+                <mat-icon>{{node.isExpanded ? 'expand_more' : 'chevron_right'}}</mat-icon>
+              </button>
 
-        }
-        @if(!hasChildren(node)){
-        <span  class="node-spacer"></span>
+            }
+            @if(!hasChildren(node)){
+              <span  class="node-spacer"></span>
+            }
+            <span>{{node.name}}</span>
+          </div>
+        </td>
+      </ng-container>
 
-        }
-        <span>{{node.name}}</span>
-      </td>
-    </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-</div>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+

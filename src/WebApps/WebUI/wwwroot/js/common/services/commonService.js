@@ -302,7 +302,11 @@ class CommonService {
                     screenY=${y}
                     screenX=${x}`
                         )
-                        setTimeout(function () { newWindow.document.title = fileName; }, 1000);
+                        setTimeout(function () { 
+                            if(newWindow && newWindow.document){
+                                newWindow.document.title = fileName; 
+                            }
+                        }, 1000);
                     }
                 } else {
                     let serverData = new Blob([response.data], {

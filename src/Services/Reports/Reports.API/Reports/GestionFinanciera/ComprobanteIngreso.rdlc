@@ -9,7 +9,7 @@
       <am:Name>MSRB</am:Name>
       <am:Version>15.0.20283.0</am:Version>
     </am:UpdatedBy>
-    <am:LastModifiedTimestamp>2025-04-21T17:09:58.9797357Z</am:LastModifiedTimestamp>
+    <am:LastModifiedTimestamp>2025-04-22T15:03:30.7717243Z</am:LastModifiedTimestamp>
   </am:AuthoringMetadata>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -122,7 +122,8 @@
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="nomDoc">
-          <Value>nomDoc</Value>
+          <DataField>nomDoc</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
     </DataSet>
