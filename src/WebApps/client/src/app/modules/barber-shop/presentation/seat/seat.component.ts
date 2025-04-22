@@ -5,13 +5,17 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 import {DialogService} from "@core/services/dialog.service";
 import {AddEditSeatComponent} from "@barber-shop/presentation/seat/add-edit-seat/add-edit-seat.component";
 import {ListSeatUseCase} from "@barber-shop/domain/use-cases/seat/list-seat.use-case";
+import {MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-seat',
   imports: [
     BreadcrumbComponent,
     MatDynamicCardComponent,
-    ThemeButtonComponent
+    ThemeButtonComponent,
+    MatIconButton,
+    MatIcon
   ],
   templateUrl: './seat.component.html',
   styleUrl: './seat.component.scss',
