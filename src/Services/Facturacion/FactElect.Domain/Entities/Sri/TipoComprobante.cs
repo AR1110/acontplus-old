@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace FactElect.Domain.Entities.Sri;
+﻿namespace FactElect.Domain.Entities.Sri;
 
 [Table("TipoComprobante", Schema = "Sri")]
 public class TipoComprobante : BaseEntity

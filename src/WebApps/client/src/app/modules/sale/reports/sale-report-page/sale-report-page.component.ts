@@ -9,7 +9,7 @@ import {
   CODE_ESTADO,
   DOC_TYPE,
   DOC_TYPE_SRI,
-  FORMAT_REPORT,
+  REPORT_FORMAT,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ToasterService } from '@core/services/toaster.service';
@@ -291,12 +291,12 @@ export class SaleReportPageComponent {
   }
 
   getReportPdf() {
-    this.format = FORMAT_REPORT.PDF;
+    this.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
 
   getReportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 
@@ -326,7 +326,7 @@ export class SaleReportPageComponent {
           reportParams: {
             hasParams: false,
             codigo:SALE_CODE_REPORT.FG,
-            format: FORMAT_REPORT.PDF
+            format: REPORT_FORMAT.PDF
           },
           spParams:  this.getDataParams(),
           withTableNames: true,

@@ -8,7 +8,7 @@ import {
   CODE_ESTADO,
   DOC_TYPE,
   DOC_TYPE_SRI,
-  FORMAT_REPORT,
+  REPORT_FORMAT,
 } from '@core/constants/global.constants';
 import {
   GroupedEstab,
@@ -29,12 +29,11 @@ import {
   MatCardActions,
   MatCardContent,
 } from '@angular/material/card';
-import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
+import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -53,10 +52,10 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatCardContent,
     MatCardActions,
     MatTabsModule,
-    FileButtonsComponent,
+    ReportButtonsComponent,
     MatDynamicCardComponent,
     MatFormFieldModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
@@ -185,31 +184,26 @@ export class CarteraClienteComponent {
     this.dataSearch.userId = data.idUsuario;
   }
 
-  getReportPdf(tipo : number) {
-    this.format = FORMAT_REPORT.PDF;
-    if (tipo == 1)
-    {
+  getReportPdf(tipo: number) {
+    this.format = REPORT_FORMAT.PDF;
+    if (tipo == 1) {
       this.getReport();
     }
 
-    if (tipo == 2)
-    {
-      this.getReportDeudores()
+    if (tipo == 2) {
+      this.getReportDeudores();
     }
-
   }
 
-  getReportExcel(tipo : number) {
-    this.format = FORMAT_REPORT.EXCEL;
+  getReportExcel(tipo: number) {
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
-    if (tipo == 1)
-    {
+    if (tipo == 1) {
       this.getReport();
     }
 
-    if (tipo == 2)
-    {
-      this.getReportDeudores()
+    if (tipo == 2) {
+      this.getReportDeudores();
     }
   }
 
@@ -318,12 +312,14 @@ export class CarteraClienteComponent {
     });
   }
 
-  handleFileDownload($event: { type: 'pdf' | 'excel' },tipo: number) {
-    if ($event.type === 'pdf') {
+  handleFileDownload($event: REPORT_FORMAT, tipo: number) {
+    if ($event === 'pdf') {
       this.getReportPdf(tipo);
     }
-    if ($event.type === 'excel') {
+    if ($event === 'excel') {
       this.getReportExcel(tipo);
     }
   }
+
+  protected readonly REPORT_FORMAT = REPORT_FORMAT;
 }

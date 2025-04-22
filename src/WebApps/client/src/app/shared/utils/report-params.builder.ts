@@ -1,5 +1,5 @@
 import { PURCHASE_CODE_REPORT } from "@purchase/core/enums/purchase.constants";
-import { FORMAT_REPORT } from "@core/constants/global.constants";
+import { REPORT_FORMAT } from "@core/constants/global.constants";
 import { ACCOUNTING_CODE_REPORT } from "@accounting/core/enums/accounting.constants";
 
 export interface ReportOptions {
@@ -27,19 +27,19 @@ export class ReportParamsBuilder {
     "DH": {
       hasParams: true,
       reportCode: PURCHASE_CODE_REPORT.RCNH,
-      format: FORMAT_REPORT.PDF,
+      format: REPORT_FORMAT.PDF,
       hasService: true,
     },
     "03": {
       hasParams: false,
       reportCode: PURCHASE_CODE_REPORT.RLC,
-      format: FORMAT_REPORT.PDF,
+      format: REPORT_FORMAT.PDF,
       hasService: true,
     },
     [ACCOUNTING_CODE_REPORT.RCEGR]: {
       hasParams: false,
       reportCode: ACCOUNTING_CODE_REPORT.RCEGR,
-      format: FORMAT_REPORT.PDF,
+      format: REPORT_FORMAT.PDF,
       hasService: true,
     },
   };

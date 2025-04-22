@@ -28,7 +28,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IOrderDetailService, OrderDetailService>();
         services.AddScoped<IOrderMaintenanceService, OrderMaintenanceService>();
         services.AddScoped<ISerieService, SerieService>();
-        services.AddScoped<IStatsService, StatsService>(); 
+        services.AddScoped<IStatsService, StatsService>();
 
         return services;
     }

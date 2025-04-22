@@ -1,15 +1,23 @@
 import {inject, Injectable} from "@angular/core";
 import {SeatRepository} from "@barber-shop/domain/repositories/seat.repository";
-import {Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {PATHS_API} from "@core/constants/global.constants";
 import {BARBER_SHOP_PATHS} from "@barber-shop/domain/enums/barber-shop.enum";
 import {HttpClient} from "@angular/common/http";
 import { ApiResponse } from "@core/models/api-response";
+import { SeatCreateDto, SeatUpdateParams } from "@modules/barber-shop/domain/models/seat.model";
+import {ListSeatMapper} from "@barber-shop/data/seat/list-seat.mapper";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SeatRepositoryImpl implements SeatRepository {
+     create(params: SeatCreateDto): Observable<ApiResponse> {
+        throw new Error("Method not implemented.");
+    }
+     update(params: SeatUpdateParams): Observable<ApiResponse> {
+        throw new Error("Method not implemented.");
+    }
     // override create(): Observable<ApiResponse> {
     //     throw new Error("Method not implemented.");
     // }
@@ -20,7 +28,9 @@ export class SeatRepositoryImpl implements SeatRepository {
     //     throw new Error("Method not implemented.");
     // }
     list(): Observable<any> {
-      return this.http.get(`${this.url}`)
+      return this.http.get(`${this.url}`).pipe(
+        map(res => ListSeatMapper.fromJson(res)),
+      )
   }
 
   private url = `${PATHS_API.BARBER_SHOP}/${BARBER_SHOP_PATHS.SEAT}`;

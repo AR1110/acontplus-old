@@ -505,6 +505,7 @@ BEGIN
 			      ,CAST(co.abono AS NUMERIC(18,2))                       as abono
 			      ,CAST(co.vuelto AS NUMERIC(18,2))                      as cambio
 			      ,IIF(co.posfechado = 1,'SI','NO')                      as posfechado
+                  ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nomDoc') as nomDoc
 		    FROM dbo.ComprobanteIngreso         ci WITH (NOLOCK)
 		    INNER JOIN dbo.Cobro                co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
 		    INNER JOIN dbo.EntidadFinanciera    ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera

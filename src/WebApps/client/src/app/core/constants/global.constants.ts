@@ -15,7 +15,8 @@ export const enum PATHS_API {
   BILLING = 'FactElect/',
   MECHANICAL = 'Mechanical/',
   VET = 'Vet/',
-  BARBER_SHOP = 'BarberShop'
+  BARBER_SHOP = 'BarberShop',
+  RETENCION_ATS = 'RetencionAts/',
 }
 
 export const enum PATHS {
@@ -32,13 +33,13 @@ export const enum DOC_TYPE {
   DNH = 'DH',
   LC = 'LC',
   IC = 'IC', //Ingreso Caja(Ingresos)
-  EC = 'EC',//Egreso Caja (Gastos)
+  EC = 'EC', //Egreso Caja (Gastos)
   FV = 'FV',
   FE = 'FE', //Factura Electrónica
   FF = 'FF', // Factura Fisica
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
   NE = 'NE', //Nota Entrega
-  CDV ='CDV' //Consolidao diario venta
+  CDV = 'CDV', //Consolidao diario venta
 }
 
 export const enum DOC_TYPE_SRI {
@@ -48,12 +49,27 @@ export const enum DOC_TYPE_SRI {
   R = '07',
 }
 
-export enum FORMAT_REPORT {
+export enum REPORT_FORMAT {
   PDF = 'pdf',
   EXCEL = 'excel',
+  WORD = 'word',
+  IMAGE = 'image',
+  XML = 'xml',
+  CSV = 'csv',
+  MHTML = 'mhtml',
+  HTML = 'html',
 }
 
-export type FORMAT_TYPE = FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL;
+export type FORMAT_TYPE =
+  | REPORT_FORMAT
+  | 'pdf'
+  | 'excel'
+  | 'word'
+  | 'image'
+  | 'xml'
+  | 'csv'
+  | 'mhtml'
+  | 'html';
 
 export enum CODE_REPORT {
   RF = 'RF', // Reporte Factura
@@ -89,7 +105,6 @@ export enum CODE_REPORT {
 
 export enum CODE_ESTADO {
   NCBR = 'NCBR',
-
 }
 
 export enum TAX_RATE_CODE {
@@ -182,22 +197,21 @@ export enum SEPARATOR_KEY_CODE {
   PUNTO_COMA = ';',
   DOS_PUNTOS = ':',
 }
-export const SEPARADORES_REGEX = new RegExp(`[${Object.values(SEPARATOR_KEY_CODE).join('')}]`);
-
+export const SEPARADORES_REGEX = new RegExp(
+  `[${Object.values(SEPARATOR_KEY_CODE).join('')}]`,
+);
 
 export enum CODE_ROLE {
   ADM = 'ADM',
 }
 
-
 export enum TIPO_TRANSACCION {
-  C='C',
-  V='V'
+  C = 'C',
+  V = 'V',
 }
-
 
 export const DECIMALS = {
   DOS: 2,
   CINCO: 5,
-  GENERAL: 6
-}
+  GENERAL: 6,
+};

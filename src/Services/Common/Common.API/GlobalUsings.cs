@@ -1,4 +1,5 @@
-﻿global using Common.API.Extensions;
+﻿global using Common.API.Data;
+global using Common.API.Extensions;
 global using Common.API.Interfaces;
 global using Common.Core.Data;
 global using Common.Core.Format;
@@ -9,6 +10,5 @@ global using Common.Infrastructure.Data.Repository.Interfaces;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
 global using Common.Services.Middleware;
-global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
-global using Newtonsoft.Json.Serialization;

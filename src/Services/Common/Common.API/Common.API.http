@@ -1,10 +1,30 @@
 @Common.API_HostAddress = https://localhost:7248
 
-# GET {{Common.API_HostAddress}}/weatherforecast/
-# Accept: application/json
+@json="{"tipo":1}"
+GET {{Common.API_HostAddress}}/dashboard
 
 ###
 
-GET {{Common.API_HostAddress}}/api/notificacion
+GET {{Common.API_HostAddress}}/emailqueue
+
+###
+
+GET {{Common.API_HostAddress}}/notification
+
+###
+
+GET {{Common.API_HostAddress}}/release
+
+###
+
+GET {{Common.API_HostAddress}}/usermanual
+
+###
+
+POST {{Common.API_HostAddress}}/userrelease
+
+###
+
+POST {{Common.API_HostAddress}}/whatsappmessage
 
 ###

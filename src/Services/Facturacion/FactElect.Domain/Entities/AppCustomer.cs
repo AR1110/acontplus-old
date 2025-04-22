@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace FactElect.Domain.Entities;
+﻿namespace FactElect.Domain.Entities;
 
 [Table("Customer", Schema = "Customer")]
 public class AppCustomer : BaseEntity

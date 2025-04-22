@@ -44,7 +44,7 @@ public class PromotionController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storage.UploadAsync(s3ObjectCustom);
-                
+
             }
 
             return Ok(response);
@@ -53,7 +53,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                
+
             }
 
             return BadRequest("Error on put: " + ex.Message);
@@ -85,7 +85,7 @@ public class PromotionController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storage.UploadAsync(s3ObjectCustom);
-                
+
             }
 
             return Ok(response);
@@ -94,7 +94,7 @@ public class PromotionController(
         {
             if (file != null)
             {
-                
+
             }
 
             return BadRequest(ex.Message);

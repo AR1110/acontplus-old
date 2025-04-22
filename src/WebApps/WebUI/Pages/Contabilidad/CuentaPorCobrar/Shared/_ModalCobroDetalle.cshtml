@@ -10,7 +10,7 @@
             <tbody>
                 <tr>
                     <td><b>Serie Comprobante</b></td>
-                    <td>{{comprobante.serieComprobante}}</td>
+                    <td>{{codDoc}}-{{comprobante.serieComprobante}}</td>
                 </tr>
                 <tr>
                     <td><b>Identificación Comprador</b></td>
@@ -213,6 +213,8 @@
                                                     <td>{{itemCobro.formaCobro}}</td>
                                                     <td>
                                                         <div class="d-flex flex-column justify-content-between">
+                                                            <span
+                                                                ng-if="itemCobro.infoCobro.codDoc"><b>Doc.:</b>{{itemCobro.infoCobro.nomDoc}}</span>
                                                             <span><b>Nro.:</b>{{itemCobro.infoCobro.nro}}</span>
                                                             <span><b>Lote:</b>{{itemCobro.infoCobro.lote}}</span>
                                                             <span><b>Referencia:</b>{{itemCobro.infoCobro.referencia}}</span>

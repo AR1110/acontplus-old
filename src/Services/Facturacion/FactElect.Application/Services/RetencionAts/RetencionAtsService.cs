@@ -36,8 +36,8 @@ public class RetencionAtsService(IAdoRepository adoRepository) : IRetencionAtsSe
         //    ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
         //    : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
 
-       var response = await adoRepository.SpExecuteAsync<RetencionAtsDto>($"{ModuleName}GetById", parameters);
-        return new ApiResponse { Code = "1", Payload = response};
+        var response = await adoRepository.SpExecuteAsync<RetencionAtsDto>($"{ModuleName}GetById", parameters);
+        return new ApiResponse { Code = "1", Payload = response };
 
     }
 

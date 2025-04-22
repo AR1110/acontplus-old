@@ -21,12 +21,12 @@
 
 
     <app-mat-dynamic-table
-      [tableData]="dataSource"
+      [tableData]="dataSource()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
-      [isLoadingData]="isLoadingResults"
+      [isLoadingData]="isLoadingResults()"
     >
     </app-mat-dynamic-table>
 

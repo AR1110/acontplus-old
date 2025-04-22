@@ -301,6 +301,28 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7120
+        }
+      ],
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/RetencionAts/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
           "Port": 7001
         }
       ],
@@ -327,7 +349,7 @@
           "Port": 7248
         }
       ],
-      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -335,7 +357,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/Common{everything}"
+      "UpstreamPathTemplate": "/gateway/Common/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -357,7 +379,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/BarberShop{everything}"
+      "UpstreamPathTemplate": "/gateway/BarberShop/{everything}"
     }
   ]
 }

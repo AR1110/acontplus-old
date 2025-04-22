@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
-  FORMAT_REPORT,
+  REPORT_FORMAT,
   TIPO_TRANSACCION,
 } from '@core/constants/global.constants';
 import { SharedService } from '@core/services/shared.service';
@@ -76,12 +76,12 @@ export class ResumenContableComponent {
   }
 
   reportPdf() {
-    this.format = FORMAT_REPORT.PDF;
+    this.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
 
   reportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 
