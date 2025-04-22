@@ -1,6 +1,23 @@
-@BarberShop.API_HostAddress = http://localhost:5175
+@BarberShop.API_HostAddress = https://localhost:7114
 
-GET {{BarberShop.API_HostAddress}}/weatherforecast/
-Accept: application/json
+
+GET {{BarberShop.API_HostAddress}}/seat
+
+###
+
+POST {{BarberShop.API_HostAddress}}/seat
+
+###
+
+@id=0
+DELETE {{BarberShop.API_HostAddress}}/seat/{{id}}
+
+###
+
+GET {{BarberShop.API_HostAddress}}/seat/{{id}}
+
+###
+
+PUT {{BarberShop.API_HostAddress}}/seat/{{id}}
 
 ###

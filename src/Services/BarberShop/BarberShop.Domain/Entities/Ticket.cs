@@ -27,8 +27,9 @@ public class Ticket : BaseEntity
 
     public int? CustomerId { get; set; }
 
-    public int? SessionId { get; set; }
-    public WorkSession Session { get; set; }
+    public int? WorkSessionId { get; set; }
+    public WorkSession WorkSession { get; set; }
 
-    public ICollection<TicketDetail> Details { get; set; }
+    public ICollection<TicketDetail> TicketDetails { get; set; }
+    public ICollection<TicketDocument> TicketDocuments { get; set; }
 }
