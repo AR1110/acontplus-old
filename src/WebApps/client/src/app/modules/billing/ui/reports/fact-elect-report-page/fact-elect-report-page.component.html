@@ -2,133 +2,117 @@
 
 <mat-card appearance="outlined">
   <mat-card-content>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="icheck-primary">
-          <input
-            type="checkbox"
-            id="checkBoxCustomer"
-            [(ngModel)]="dataSearch.checkBoxCustomer"
-            name="checkBoxCustomerName"
-          />
-          <label for="checkBoxCustomer">Cliente</label>
-        </div>
+        <mat-checkbox [(ngModel)]="dataSearch.checkBoxCustomer">
+          Cliente
+        </mat-checkbox>
       </div>
+
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="icheck-primary">
-          <input
-            type="checkbox"
-            id="checkBoxUser"
-            [(ngModel)]="dataSearch.checkBoxUser"
-            name="checkBoxUser"
-          />
-          <label for="checkBoxUser">Usuario</label>
-        </div>
+        <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser">
+          Usuario
+        </mat-checkbox>
       </div>
     </div>
-    <hr />
-
-    <div class="row">
+    <div class="row mb-3">
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Tipo Documento: </label>
-          <select
-            class="form-select"
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Documento: </mat-label>
+          <mat-select
             [(ngModel)]="dataSearch.idTipoDocumento"
-            (change)="onChangeTipoDoc()"
+            (selectionChange)="onChangeTipoDoc()"
           >
-            @for (item of tiposDoc; track $index) {
-              <option [ngValue]="item.idTipoDocumento">
+            @for (item of tiposDoc(); track $index) {
+              <mat-option [value]="item.idTipoDocumento">
                 {{ item.descripcion }}
-              </option>
+              </mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Establecimiento:</label>
-          <select
-            class="form-select"
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento:</mat-label>
+          <mat-select
             [(ngModel)]="dataSearch.idEstablecimiento"
             (change)="onChangeEstab()"
           >
-            <option [ngValue]="0">Todos</option>
+            <mat-option [value]="0">Todos</mat-option>
             @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.idEstablecimiento">
+              <mat-option [value]="item.idEstablecimiento">
                 {{ item.nombreComercial }}
-              </option>
+              </mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Punto Emisión</label>
-          <select class="form-select" [(ngModel)]="dataSearch.idPuntoEmision">
-            <option [ngValue]="0">Todos</option>
+        <mat-form-field class="w-100">
+          <mat-label>Punto Emisión</mat-label>
+          <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
+            <mat-option [value]="0">Todos</mat-option>
             @for (item of puntosEmision; track $index) {
-              <option [ngValue]="item.idPuntoEmision">
+              <mat-option [value]="item.idPuntoEmision">
                 {{ item.ptoEmi }}
-              </option>
+              </mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Estado</mat-label>
+          <mat-select [(ngModel)]="dataSearch.codEstado">
+            <mat-option [value]="0">Todos</mat-option>
+            @for (item of estadosDoc; track $index) {
+              <mat-option [value]="item.codEstado">
+                {{ item.descripcion }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <label>Rango Fechas: </label>
+        <mat-label>Rango Fechas: </mat-label>
         <app-date-range-selection
           (onChangeDateRange)="onDateRangeSelection($event)"
         />
       </div>
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Estado</label>
-          <select class="form-select" [(ngModel)]="dataSearch.codEstado">
-            <option [ngValue]="0">Todos</option>
-            @for (item of estadosDoc; track $index) {
-              <option [ngValue]="item.codEstado">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
 
       @if (showField) {
         <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-          <div class="form-group">
-            <label>Retencion</label>
-            <select class="form-select" [(ngModel)]="dataSearch.codeRetencion">
+          <mat-form-field class="w-100">
+            <mat-label>Retencion</mat-label>
+            <mat-select [(ngModel)]="dataSearch.codeRetencion">
               @for (item of retenciones; track $index) {
-                <option [ngValue]="item.code">
+                <mat-option [value]="item.code">
                   {{ item.descripcion }}
-                </option>
+                </mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-          <div class="form-group">
-            <label>Devolución</label>
-            <select class="form-select" [(ngModel)]="dataSearch.codeDevolucion">
+          <mat-form-field class="w-100">
+            <mat-label>Devolución</mat-label>
+            <mat-select [(ngModel)]="dataSearch.codeDevolucion">
               @for (item of devoluciones; track $index) {
-                <option [ngValue]="item.code">
+                <mat-option [value]="item.code">
                   {{ item.descripcion }}
-                </option>
+                </mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
       }
     </div>
-
-    <div class="row">
+    <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Cliente</label>
+        <div class="w-100">
+          <mat-label>Cliente</mat-label>
           <app-company-customer-search
             [isSearchSimple]="true"
             (resultEmptyInput)="resultEmptyInputCustomer()"
@@ -137,8 +121,8 @@
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Usuario: </label>
+        <div class="w-100">
+          <mat-label>Usuario: </mat-label>
           <app-user-search
             (emptyInput)="emptyInputUser()"
             (onUserSelected)="onUserSelected($event)"
@@ -147,7 +131,6 @@
         </div>
       </div>
     </div>
-
     <div class="d-flex flex-row gap-1">
       <app-theme-button
         variant="danger"

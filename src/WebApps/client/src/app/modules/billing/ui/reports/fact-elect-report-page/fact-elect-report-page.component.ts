@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -16,8 +16,10 @@ import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -30,14 +32,20 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatCardContent,
     MatCard,
     ThemeButtonComponent,
+    MatCheckbox,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    MatLabel,
   ],
   templateUrl: './fact-elect-report-page.component.html',
   styles: ``,
 })
-export class FactElectReportPageComponent {
-  private docElectSvc = inject(DocumentoElectronicoWebRepository);
-  private tS = inject(ToasterService);
-  private sharedSvc = inject(SharedService);
+export class FactElectReportPageComponent implements OnInit {
+  private readonly _docElectSvc = inject(DocumentoElectronicoWebRepository);
+  private readonly _tS = inject(ToasterService);
+  private readonly _sharedSvc = inject(SharedService);
+
   dataSearch = {
     checkBoxCustomer: false,
     checkBoxUser: false,
@@ -57,7 +65,7 @@ export class FactElectReportPageComponent {
   establecimientos: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
   estadosDoc: any[] = [];
-  tiposDoc: any[] = [];
+  tiposDoc = signal<any[]>([]);
   empresas: any[] = [];
 
   showField = true;
@@ -94,18 +102,15 @@ export class FactElectReportPageComponent {
   };
 
   onChangeTipoDoc() {
-    let dataTipoDoc = this.tiposDoc.find(
+    const dataTipoDoc = this.tiposDoc().find(
       (td) => td.idTipoDocumento === this.dataSearch.idTipoDocumento,
     );
-    this.showField = false;
 
-    if (dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F) {
-      this.showField = true;
-    }
+    this.showField = !!(dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F);
   }
 
   getDataFilter() {
-    this.docElectSvc.getDataFilter().subscribe((response) => {
+    this._docElectSvc.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc } = response;
       this.establecimientos = estabs;
       if (this.establecimientos.length > 0) {
@@ -114,8 +119,8 @@ export class FactElectReportPageComponent {
         );
         this.puntosEmision = dataEstab?.puntosEmision ?? [];
       }
-      this.tiposDoc = tiposDoc;
-      const dataTipoDoc = this.tiposDoc.find(
+      this.tiposDoc.set(tiposDoc);
+      const dataTipoDoc = this.tiposDoc().find(
         (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
       );
       this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
@@ -177,7 +182,7 @@ export class FactElectReportPageComponent {
         this.dataSearch.checkBoxCustomer &&
         !isValidField(this.dataSearch.identificacion)
       ) {
-        this.tS.toastr({
+        this._tS.toastr({
           type: 'warning',
           message: 'Seleccione el Cliente',
         });
@@ -187,7 +192,7 @@ export class FactElectReportPageComponent {
         this.dataSearch.checkBoxUser &&
         !isValidField(this.dataSearch.userId)
       ) {
-        this.tS.toastr({
+        this._tS.toastr({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
@@ -198,7 +203,7 @@ export class FactElectReportPageComponent {
           estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
       );
       // let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
-      const { codDoc } = this.tiposDoc.find(
+      const { codDoc } = this.tiposDoc().find(
         (item) => item.idTipoDocumento === this.dataSearch.idTipoDocumento,
       );
       const idCliente = this.dataSearch.checkBoxCustomer
@@ -247,7 +252,7 @@ export class FactElectReportPageComponent {
         reportParams,
         dataParams: JSON.stringify(dataParams),
       };
-      this.sharedSvc.getReport({
+      this._sharedSvc.getReport({
         data: parameters,
         format: this.format,
         isOldVersion: true,
