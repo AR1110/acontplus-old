@@ -127,22 +127,22 @@
     <Content Include="Reports\Factura.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionFinanciera\Anticipo.rdl">
+    <Content Include="Reports\Contabilidad\Anticipo.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionFinanciera\Cheque.rdlc">
+    <Content Include="Reports\Contabilidad\Cheque.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionFinanciera\ComprobanteEgreso.rdlc">
+    <Content Include="Reports\Contabilidad\ComprobanteEgreso.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionFinanciera\ComprobanteIngreso.rdlc">
+    <Content Include="Reports\Contabilidad\ComprobanteIngreso.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionFinanciera\ControlCaja.rdl">
+    <Content Include="Reports\Contabilidad\ControlCaja.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionFinanciera\IngresoEgresoCaja.rdl">
+    <Content Include="Reports\Contabilidad\IngresoEgresoCaja.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GestionReporte\ArticuloTarifa.rdl">

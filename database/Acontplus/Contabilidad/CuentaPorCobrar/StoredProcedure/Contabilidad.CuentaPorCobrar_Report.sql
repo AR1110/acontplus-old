@@ -97,6 +97,7 @@ BEGIN
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
                               ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
                               ,CAST(importeTotal as numeric(18,2))        as importeTotal
+                              ,CAST(mora as numeric(18,2))                as mora
                               ,CAST(abono as numeric(18,2))               as abono
                               ,CAST(saldo as numeric(18,2))               as saldo
                               ,estado 
@@ -127,12 +128,14 @@ BEGIN
                                       ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
                                       ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
                                       ,CAST(cc.importeTotal as numeric(18,2))     as importeTotal
+                                      ,CAST(cc.mora as numeric(18,2))             as mora
                                       ,CAST(cc.abono as numeric(18,2))            as abono
                                       ,CAST(cc.saldo as numeric(18,2))            as saldo
                                       ,cc.estado 
                                       ,cp.idCuotaPorCobrar
 		                              ,cp.nroCuota
 		                              ,CAST(cp.cuota as numeric(8,2))              as cuota
+		                              ,CAST(cp.mora as numeric(8,2))               as moraCuota
 		                              ,FORMAT(cp.fechaVencimiento,''dd/MM/yyyy'')  as fechaVencimientoCuota
                                       ,DATEDIFF(DAY,cp.fechaVencimiento,GETDATE()) as diasMora
 		                              ,CAST(cp.abono as numeric(8,2))              as abonoCuota
@@ -312,6 +315,7 @@ BEGIN
                               ,Format(fechaEmision,''dd/MM/yyyy'')                                                 as fechaEmision
                               ,Format(fechaVencimiento,''dd/MM/yyyy'')                                             as fechaVencimiento
                               ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(importeTotal as numeric(18,2))) as importeTotal
+                              ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(mora as numeric(18,2)))         as mora
                               ,CAST(abono as numeric(18,2))                                                        as abono
                               ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(saldo as numeric(18,2)))        as saldo
                               ,estado 
@@ -740,6 +744,7 @@ BEGIN
             SELECT cx.nroCuota
                   ,FORMAT(cx.fechaVencimiento,'dd/MM/yyyy') as fechaVencimiento
                   ,CAST(cx.cuota as numeric(18,2))          as cuota
+                  ,CAST(cx.mora as numeric(18,2))           as mora
                   ,CAST(cx.abono as numeric(18,2))          as abono
                   ,CAST(cx.saldo as numeric(18,2))          as saldo
             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) 
