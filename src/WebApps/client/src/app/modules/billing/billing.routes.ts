@@ -24,7 +24,7 @@ export const routes: Route[] = [
   },
 
   {
-    path: 'doc-elect',
+    path: 'documento-electronico',
     title: 'Documento Electrónico',
     component: DocElectComponent,
     data: {

@@ -18,7 +18,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.RETENCION_ATS}${BILLING_PATHS.RETENCION_ATS}`;
   private readonly _urlDocElectronico = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`;
-  private readonly _sharedService = inject(SharedService);
+
 
   getAll<T>(parameters: T) {
     const obj = {
@@ -125,17 +125,5 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       );
   }
 
-  downloadXml(id: number) {
-    return this._http
-      .get(`${this._urlDocElectronico}GetXmlSri/${id}`, {
-        responseType: 'blob',
-        observe: 'response',
-      })
-      .pipe(
-        map((response: HttpResponse<Blob>) => {
-          this._sharedService.saveFile(response);
-          return response.body!;
-        }),
-      );
-  }
+
 }

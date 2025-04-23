@@ -26,8 +26,4 @@ export class RetencionAtsUseCase {
   create<T>(data: T) {
     return this._retencionAtsRepository.create(data);
   }
-
-  downloadXml(id: number) {
-    return this._retencionAtsRepository.downloadXml(id);
-  }
 }

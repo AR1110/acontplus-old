@@ -17,14 +17,14 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { DocElectService } from '@billing/services/doc-elect.service';
+import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, forkJoin, switchMap } from 'rxjs';
 
 @Component({
-    selector: 'app-doc-elect',
+    selector: 'app-documento-electronico',
     imports: [
         FormsModule,
         MatCardModule,
@@ -45,7 +45,7 @@ import { finalize, forkJoin, switchMap } from 'rxjs';
 })
 export class DocElectComponent {
 
-  private docElectSvc = inject(DocElectService)
+  private docElectSvc = inject(DocumentoElectronicoWebRepository)
   private tS = inject(ToasterService)
 
 

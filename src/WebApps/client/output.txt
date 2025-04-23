@@ -318,7 +318,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  └── services
 |  |  |  |     ├── ats.service.ts
 |  |  |  |     ├── credit-note.service.ts
-|  |  |  |     ├── doc-elect.service.ts
+|  |  |  |     ├── documento-electronico-web.repository.ts
 |  |  |  |     ├── invoice.service.ts
 |  |  |  |     └── notificacion-tributaria.service.ts
 |  |  |  ├── common
