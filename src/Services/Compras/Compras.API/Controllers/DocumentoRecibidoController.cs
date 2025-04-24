@@ -50,9 +50,7 @@ public class DocumentoRecibidoController(
             await documentoTemp.AddAsync(details);
         }
 
-        response.Create(code: "1", payload: ceXml);
-
-        return Ok(response);
+        return Ok(ApiResponse.Success(payload: ceXml));
     }
 
 
@@ -63,8 +61,7 @@ public class DocumentoRecibidoController(
 
         if (file.ContentType != "text/plain")
         {
-            response.Create("0", "Formato de archivo no soportado");
-            return BadRequest(response);
+            return BadRequest(ApiResponse.Error(code: "0", message: "Formato de archivo no soportado"));
         }
 
 
@@ -78,14 +75,14 @@ public class DocumentoRecibidoController(
 
             if (DataValidation.DataTableIsNull(dt))
             {
-                response.Create("1", payload: DataConverters.DataTableToJson(dt));
+                return BadRequest(ApiResponse.Success(payload: DataConverters.DataTableToJson(dt)));
             }
             else
             {
                 if (dt.Rows.Count == dtExistent.Rows.Count)
                 {
-                    response.Create("0",
-                        "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!");
+                    response.Code = "0";
+                    response.Message = "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!";
                 }
                 else
                 {
@@ -98,13 +95,15 @@ public class DocumentoRecibidoController(
                                 where subRow2 == null
                                 select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
-                    response.Create("1", payload: DataConverters.DataTableToJson(filteredDataTable));
+                    response.Code = "1";
+                    response.Payload = DataConverters.DataTableToJson(filteredDataTable);
                 }
             }
         }
         else
         {
-            response.Create("0", "No se encontraron registros para importar");
+            response.Code = "0";
+            response.Message = "No se encontraron registros para importar";
         }
 
         return Ok(response);
@@ -185,7 +184,8 @@ public class DocumentoRecibidoController(
             var getXmlSriData = new DataXmlComprobante();
             if (!getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
             {
-                response.Create("0", sms);
+                response.Code = "0";
+                response.Message = sms;
             }
             else
             {
@@ -194,7 +194,8 @@ public class DocumentoRecibidoController(
         }
         else
         {
-            response.Create("0", "No se encontro xml");
+            response.Code = "0";
+            response.Message = "No se encontro xml";
         }
 
         return Ok(response);
