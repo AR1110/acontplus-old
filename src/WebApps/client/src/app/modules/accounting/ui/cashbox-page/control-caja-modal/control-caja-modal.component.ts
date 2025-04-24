@@ -24,7 +24,7 @@ import { CierreCajaModalComponent } from '@accounting/ui/cashbox-page/cierre-caj
 import { FiltroControlCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 import { FiltroDetalleCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
 import { FormsModule } from '@angular/forms';
-import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
+import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
@@ -42,7 +42,7 @@ import {MatCheckbox} from "@angular/material/checkbox";
     NgbPagination,
 
     DateRangeSelectionComponent,
-    SendMailModalDirective,
+    SendMailDialogDirective,
     MatMenu,
     MatIcon,
     MatMenuTrigger,

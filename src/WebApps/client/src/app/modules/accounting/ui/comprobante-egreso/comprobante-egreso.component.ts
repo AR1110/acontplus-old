@@ -30,7 +30,7 @@ import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { ActionComprobanteEgresoReportDirective } from '@accounting/ui/directives/action-comprobante-egreso-report.directive';
 import { ActionComprobanteEgresoAnularDirective } from '@accounting/ui/directives/action-comprobante-egreso-anular.directive';
-import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
+import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
@@ -60,7 +60,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     //Directives
     ActionComprobanteEgresoReportDirective,
     ActionComprobanteEgresoAnularDirective,
-    SendMailModalDirective,
+    SendMailDialogDirective,
     SupplierSearchComponent,
   ],
   templateUrl: './comprobante-egreso.component.html',

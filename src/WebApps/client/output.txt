@@ -960,7 +960,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |     |  |  ├── action-mov-caja.directive.ts
 |  |     |  |  ├── action-report.directive.ts
 |  |     |  |  └── is-admin.directive.ts
-|  |     |  ├── send-mail-modal.directive.ts
+|  |     |  ├── send-mail-dialog.directive.ts
 |  |     |  ├── time-input-format-directive.directive.ts
 |  |     |  └── ui
 |  |     |     ├── input-number.directive.ts
