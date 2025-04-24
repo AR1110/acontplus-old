@@ -3,11 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
-  OnInit,
+  OnInit, signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -50,9 +49,9 @@ export class DocConfigPageComponent implements OnInit {
   private readonly _modalService = inject(ModalService);
   private readonly _cdr = inject(ChangeDetectorRef);
 
-  establecimientos: GroupedEstab[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  docs: DocConfig[] = [];
+  establecimientos =signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  docs = signal<DocConfig[]>([]);
 
   dataSearch = {
     idPuntoEmision: 0,
@@ -60,22 +59,21 @@ export class DocConfigPageComponent implements OnInit {
   };
 
   getDocs() {
+    this.docs.set([])
     this._docConfigService
       .getAll(this.dataSearch.idPuntoEmision)
       .subscribe((response) => {
-        this.docs = response;
-        console.log(this.docs);
-        this._cdr.detectChanges();
+        this.docs.set(response);
       });
   }
 
   ngOnInit() {
     this._docConfigService.getDataForm().subscribe((response) => {
-      this.establecimientos = response.establecimientos;
-      const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
+      this.establecimientos.set(response.establecimientos);
+      const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
       if (dataEstab) {
-        this.puntosEmision = dataEstab?.puntosEmision;
-        const dataPuntoEmision = this.puntosEmision.find(
+        this.puntosEmision.set(dataEstab.puntosEmision);
+        const dataPuntoEmision = this.puntosEmision().find(
           (p) => p.defaultPtoEmi,
         );
         if (dataPuntoEmision) {
@@ -89,12 +87,12 @@ export class DocConfigPageComponent implements OnInit {
   }
 
   onChangeEstab() {
-    const dataEstab = this.establecimientos.find(
+    const dataEstab = this.establecimientos().find(
       (e) => e.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
-      this.puntosEmision = dataEstab.puntosEmision;
-      const dataPuntoEmision = this.puntosEmision.find((e) => e.defaultPtoEmi);
+      this.puntosEmision.set(dataEstab.puntosEmision);
+      const dataPuntoEmision = this.puntosEmision().find((e) => e.defaultPtoEmi);
       if (dataPuntoEmision) {
         this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision;
         this.getDocs();
@@ -129,7 +127,6 @@ export class DocConfigPageComponent implements OnInit {
     };
 
     this._docConfigService.post(data).subscribe((response) => {
-      if (isApiResponse(response)) {
         this._tS.toastr({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
@@ -137,7 +134,6 @@ export class DocConfigPageComponent implements OnInit {
         if (response.code === '1') {
           this.getDocs();
         }
-      }
     });
   }
 

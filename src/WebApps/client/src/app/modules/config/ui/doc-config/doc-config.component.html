@@ -10,9 +10,9 @@
             name="establecimiento"
             id="establecimiento"
             [(ngModel)]="dataSearch.codEstab"
-            (change)="onChangeEstab()"
+            (selectionChange)="onChangeEstab()"
           >
-            @for (item of establecimientos; track $index) {
+            @for (item of establecimientos(); track $index) {
               <mat-option [value]="item.codEstab">
                 {{ item.nombreComercial }}
               </mat-option>
@@ -29,7 +29,7 @@
             [(ngModel)]="dataSearch.idPuntoEmision"
             (change)="getDocs()"
           >
-            @for (item of puntosEmision; track $index) {
+            @for (item of puntosEmision(); track $index) {
               <mat-option [value]="item.idPuntoEmision">{{
                 item.ptoEmi
               }}</mat-option>
@@ -51,7 +51,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of docs; track $index) {
+          @for (item of docs(); track $index) {
             <tr style="vertical-align: middle">
               <td>{{ $index + 1 }}</td>
               <td>{{ item.descripcion }}</td>
