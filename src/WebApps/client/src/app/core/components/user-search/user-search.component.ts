@@ -1,63 +1,120 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  catchError,
+  distinctUntilChanged,
+  of,
+  switchMap,
+  tap,
+  startWith,
+  filter,
+  Observable,
+} from 'rxjs';
 import { UserSearch } from '@core/models/user.model';
 import { UserService } from '@core/services/user.service';
-import { Observable, OperatorFunction, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
-import {FormsModule} from "@angular/forms";
-import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+import { AsyncPipe } from '@angular/common';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import {
+  MatAutocomplete,
+  MatAutocompleteTrigger,
+  MatOption,
+} from '@angular/material/autocomplete';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
-    selector: 'app-user-search',
-    imports: [
-        FormsModule,
-        NgbTypeaheadModule
-    ],
-    templateUrl: './user-search.component.html',
-    styles: ``
+  selector: 'app-user-search',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    AsyncPipe,
+    MatFormField,
+    MatInput,
+    MatAutocomplete,
+    MatOption,
+    MatProgressBar,
+    MatAutocompleteTrigger,
+    MatError,
+    MatInputModule,
+    MatLabel,
+  ],
+  templateUrl: './user-search.component.html',
+  styles: [
+    `
+      .w-100 {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class UserSearchComponent {
-  @Output() onUserSelected = new EventEmitter<{ data: any }>();
-  @Output() emptyInput = new EventEmitter();
-  @Input() isSearchSimple = false;
-  @Input() textSearch = ''
+  userSelected = output<{ data: UserSearch }>();
+  emptyInput = output();
+  isSearchSimple = input(true);
+  textSearch = input<string>('');
+  textSearchControl = new FormControl<string>('', { nonNullable: true });
+  filteredUsers: Observable<UserSearch[]>;
 
-  private userSvc = inject(UserService)
   searching = false;
   searchFailed = false;
 
-  search: OperatorFunction<string, Array<UserSearch>> = (
-    text$: Observable<string>
-  ) =>
-    text$.pipe(
-      distinctUntilChanged(),
-      tap(() => (this.searching = true)),
-      switchMap((term) => {
-        if (!term || term.length < 2) {
+  private readonly userService = inject(UserService);
 
+  constructor() {
+    this.textSearchControl.setValue(this.textSearch() ?? '');
+
+    this.filteredUsers = this.textSearchControl.valueChanges.pipe(
+      startWith(''),
+      filter((value): value is string => value !== null && value !== undefined),
+      distinctUntilChanged(),
+      tap(() => {
+        this.searching = true;
+        this.searchFailed = false;
+      }),
+      switchMap((term) => {
+        // If term too short, return empty array
+        if (!term || term.length < 2) {
+          this.searching = false;
           return of([]);
         }
-        return this.userSvc.search({ textSearch: term }).pipe(
-          tap(() => (this.searchFailed = false)),
+
+        // Call user search service
+        return this.userService.search({ textSearch: term }).pipe(
+          tap({
+            next: () => {
+              this.searching = false;
+              this.searchFailed = false;
+            },
+            error: () => {
+              this.searching = false;
+              this.searchFailed = true;
+            },
+          }),
           catchError((error) => {
-            console.log(error);
-            this.searchFailed = true;
+            console.error(error);
             return of([]);
-          })
+          }),
         );
       }),
-      tap(() => (this.searching = false)),
     );
+  }
 
-  onSelect($event: any) {
-    let user: UserSearch = $event.item;
-    this.onUserSelected.emit({ data: user });
-    setTimeout(() => {
-      this.textSearch = user.nombreCompleto;
-    });
+  formatter(user: UserSearch): string {
+    return user?.nombreCompleto || '';
+  }
+
+  onSelect(user: UserSearch) {
+    if (user) {
+      this.userSelected.emit({ data: user });
+      // setTimeout(() => {
+      //   this.textSearchControl.setValue(user.nombreCompleto);
+      // });
+    }
   }
 
   onKeyupSearch() {
-    if (!this.textSearch) {
-      this.emptyInput.emit({})
+    if (!this.textSearchControl.value) {
+      this.emptyInput.emit();
     }
   }
 }

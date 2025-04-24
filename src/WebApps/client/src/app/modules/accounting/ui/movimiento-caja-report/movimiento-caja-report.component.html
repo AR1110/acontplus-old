@@ -102,7 +102,7 @@
           <label>Usuario: </label>
           <app-user-search
             (emptyInput)="emptyInputUser()"
-            (onUserSelected)="onUserSelected($event)"
+            (userSelected)="onUserSelected($event)"
             [isSearchSimple]="true"
           />
         </div>
