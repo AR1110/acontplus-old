@@ -39,10 +39,12 @@ export class AddEditSeatComponent {
     name: new FormControl("", [Validators.required]),
     description: new FormControl(null),
     seatNumber: new FormControl(null, [Validators.required]),
+    code: new FormControl<string|null>(null, [Validators.required]),
   })
 
 
   save(){
+    console.log(this.dataForm)
     if(this.dataForm.invalid){
       Swal.fire({
         icon: 'warning',
@@ -50,12 +52,15 @@ export class AddEditSeatComponent {
       })
       return
     }
+    this.dataForm.patchValue({
+      code: `${this.dataForm.value.name?.slice(0,3)}${this.dataForm.value.seatNumber}`
+    })
 
     if(getValidId(this.params.id)){
 
     }
     if(!getValidId(this.params.id)){
-    }
+
       this.$createUseCase.execute(this.dataForm.value as any).subscribe(response=>{
         if(response.code==="0"){
           Swal.fire({
@@ -72,6 +77,7 @@ export class AddEditSeatComponent {
         }
       })
     console.log(this.dataForm.invalid)
+    }
   }
 
 

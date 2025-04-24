@@ -1,8 +1,14 @@
 export interface SeatList {
-  id: number;
-  name: string;
-  description: string;
-  orderSeat: number
+  index: number
+  seatNumber: number
+  code: string
+  name: string
+  description: string
+  isOccupied: string,
+  id: number,
+  createdAt: string
+  enabled: boolean
+  deleted: null
 }
 
 export interface SeatResponse {

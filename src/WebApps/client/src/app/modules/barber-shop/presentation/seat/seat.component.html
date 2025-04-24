@@ -14,7 +14,7 @@
 </div>
 
   <div class="container-seat">
-    @for (item of [1,2,3,4,5,7];track $index){
+    @for (item of dataSource();track $index){
       <app-mat-dynamic-card class="seat-card">
 
         <div
@@ -62,7 +62,7 @@
         </div>
 
         <div class="seat-card__info">
-          <h3 class="seat-card__title">Asiento 2</h3>
+          <h3 class="seat-card__title">{{item.name}}</h3>
         </div>
 
       </app-mat-dynamic-card>

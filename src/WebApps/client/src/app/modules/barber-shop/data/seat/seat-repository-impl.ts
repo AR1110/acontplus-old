@@ -13,7 +13,8 @@ import {ListSeatMapper} from "@barber-shop/data/seat/list-seat.mapper";
 })
 export class SeatRepositoryImpl implements SeatRepository {
      create(params: SeatCreateDto): Observable<ApiResponse> {
-        throw new Error("Method not implemented.");
+       console.log(params)
+       return this.http.post<ApiResponse>(`${this.url}`, params)
     }
      update(params: SeatUpdateParams): Observable<ApiResponse> {
         throw new Error("Method not implemented.");
@@ -27,8 +28,8 @@ export class SeatRepositoryImpl implements SeatRepository {
     // override remove(): Observable<ApiResponse> {
     //     throw new Error("Method not implemented.");
     // }
-    list(): Observable<any> {
-      return this.http.get(`${this.url}`).pipe(
+    list()  {
+      return this.http.get<ApiResponse>(`${this.url}`).pipe(
         map(res => ListSeatMapper.fromJson(res)),
       )
   }

@@ -23,6 +23,15 @@
         <mat-label>Orden</mat-label>
         <input type="number" matInput placeholder="..." formControlName="seatNumber">
       </mat-form-field>
+
+      @if (dataForm.value.description && dataForm.value.seatNumber) {
+      <mat-form-field class="w-100">
+        <mat-label>Código</mat-label>
+        <input matInput placeholder="..." formControlName="code" appToUpperCase>
+
+      </mat-form-field>
+
+      }
     </div>
   </form>
 </ng-template>

@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -7,6 +7,7 @@ import {AddEditSeatComponent} from "@barber-shop/presentation/seat/add-edit-seat
 import {ListSeatUseCase} from "@barber-shop/domain/use-cases/seat/list-seat.use-case";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import {SeatList} from "@barber-shop/domain/models/seat.model";
 
 @Component({
   selector: 'app-seat',
@@ -24,6 +25,8 @@ export class SeatComponent {
   private _dialogSvc = inject(DialogService)
   private $listUseCase = inject(ListSeatUseCase)
 
+  dataSource = signal<SeatList[]>([])
+
   openAddEdit(data?: any){
     const ref = this._dialogSvc.open(AddEditSeatComponent, {
       data: {},
@@ -37,7 +40,8 @@ export class SeatComponent {
 
   private getList(){
     this.$listUseCase.execute({}).subscribe(response=>{
-
+      this.dataSource.set(response.data)
+      console.log(this.dataSource())
     })
   }
   ngOnInit(){
