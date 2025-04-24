@@ -119,7 +119,7 @@ export class GeneralConfigComponent {
   metodosValoracion:any[] = [];
 
   productSearchProps = {
-    isSearchSimple: true,
+    isSimpleMode: true,
   };
 
   //Notificaciones

@@ -42,7 +42,7 @@
               @if(configVenta.articleDefault){
                  <app-product-search
                  [isInputMat]="true"
-                 [isSearchSimple]="true"
+                 [isSimpleMode]="true"
                  (onProductSelected)="productSelected($event)"
                  (emptyInput)="emptyInputProduct()"
                  [textSearch]="configVenta.nombreArticulo"

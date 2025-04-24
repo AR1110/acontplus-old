@@ -31,7 +31,7 @@ export class AnticipoModalComponent {
   textBtn = 'Guardar';
   iconBtn = 'save';
 
-  isSearchSimpleCompanyCustomer = true;
+  isSimpleModeCompanyCustomer = true;
 
   private tempSubEntidadesFinanciera: Array<SubEntidadFinanciera> = [];
   establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];

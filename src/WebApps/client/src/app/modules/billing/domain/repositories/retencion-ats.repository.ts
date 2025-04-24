@@ -50,5 +50,4 @@ export abstract class RetencionAtsRepository {
   abstract getDocs(parameters: unknown): Observable<{
     documents: RetAtsDocSustento[];
   }>;
-  abstract downloadXml(id: number): Observable<Blob>;
 }

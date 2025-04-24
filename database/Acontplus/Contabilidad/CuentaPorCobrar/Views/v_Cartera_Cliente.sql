@@ -13,7 +13,9 @@ CREATE OR ALTER VIEW v_Cartera_Cliente AS (
 		,cc.fechaVencimiento
 		,nroDoc = cc.serieComprobante
 		,total  = cc.importeTotal
-		,cc.abono
+		,cc.mora
+        ,cc.diasMora
+        ,cc.abono
 		,cc.saldo
 		,cc.estado
 		,expira = (

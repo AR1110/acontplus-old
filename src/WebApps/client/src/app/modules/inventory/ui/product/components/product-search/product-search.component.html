@@ -66,7 +66,7 @@
   </div>
 </mat-autocomplete>
 
-} @if(isSearchSimple && isInputMat()){
+} @if(isSimpleMode && isInputMat()){
 
 <mat-form-field class="w-100">
   <mat-label>Artículo: </mat-label>
@@ -112,7 +112,7 @@
     }
   </mat-autocomplete>
 </mat-form-field>
-} @else if (props.isSearchSimple || isSearchSimple) {
+} @else if (props.isSimpleMode || isSimpleMode) {
 
 <input
   type="text"

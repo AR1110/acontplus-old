@@ -78,7 +78,7 @@ export class RentabilidadPageComponent {
     codigoTipoArticulo: 'B',
   };
   productSearchProps = {
-    isSearchSimple: true,
+    isSimpleMode: true,
   };
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);

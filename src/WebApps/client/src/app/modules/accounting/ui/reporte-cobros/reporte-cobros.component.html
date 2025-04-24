@@ -161,7 +161,7 @@
           <div class="mb-3">
             <label class="form-label">Cliente: </label>
             <app-company-customer-search
-              [isSearchSimple]="isCustomerSearchSimple"
+              [isSimpleMode]="isCustomerSearchSimple"
               (customerSelected)="onCustomerSelected($event)"
               (resultEmptyInput)="resultCustomerEmptyInput($event)"
             />

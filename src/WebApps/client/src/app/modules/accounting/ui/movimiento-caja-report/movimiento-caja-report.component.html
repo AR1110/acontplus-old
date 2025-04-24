@@ -83,7 +83,7 @@
           <app-company-customer-search
             (customerSelected)="onCustomerSelected($event)"
             (resultEmptyInput)="resultEmptyInputCustomer()"
-            [isSearchSimple]="true"
+            [isSimpleMode]="true"
           />
         </div>
         <!-- }-->
@@ -93,7 +93,7 @@
             <app-employee-search
               (onEmployeeSelected)="onEmployeeSelected($event)"
               (emptyInput)="emptyInputEmployee()"
-              [isSearchSimple]="true"/>
+              [isSimpleMode]="true"/>
           </div>
         }-->
       </div>
@@ -102,8 +102,8 @@
           <label>Usuario: </label>
           <app-user-search
             (emptyInput)="emptyInputUser()"
-            (onUserSelected)="onUserSelected($event)"
-            [isSearchSimple]="true"
+            (userSelected)="onUserSelected($event)"
+            [isSimpleMode]="true"
           />
         </div>
       </div>

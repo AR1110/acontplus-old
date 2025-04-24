@@ -22,6 +22,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
+import { DocumentoElectronicoRepository } from '@billing/domain/repositories/documento-electronico.repository';
 
 @Component({
   selector: 'app-retencion-ats',
@@ -62,6 +63,9 @@ export class RetencionAtsComponent implements OnInit {
   faWhatsapp: IconProp = faWhatsapp;
 
   private readonly _dialogService = inject(DialogService);
+  private readonly _documentoElectronicoUseCase = inject(
+    DocumentoElectronicoRepository,
+  );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _sharedService = inject(SharedService);
 
@@ -101,7 +105,7 @@ export class RetencionAtsComponent implements OnInit {
   }
 
   downloadXml(item: RetencionAts) {
-    this._retencionAtsUseCase
+    this._documentoElectronicoUseCase
       .downloadXml(item.idDocumentoElectronico)
       .subscribe();
   }

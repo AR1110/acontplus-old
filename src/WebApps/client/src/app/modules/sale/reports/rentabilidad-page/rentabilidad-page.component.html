@@ -135,7 +135,7 @@
         <div class="form-group">
           <label for="userSearch">Usuario: </label>
           <app-user-search
-            (onUserSelected)="onUserSelected($event)"
+            (userSelected)="onUserSelected($event)"
             [textSearch]="dataSearch.userName"
             (emptyInput)="userResultEmptyInput($event)"
           />

@@ -137,10 +137,10 @@
         <div class="form-group">
           <span>Proveedor</span>
           <app-supplier-search
-            [isSearchSimple]="isSearchSupplierSimple"
+            [isSimpleMode]="isSearchSupplierSimple"
             (supplierSelected)="onSupplierSelected($event)"
             [textSearch]="dataSearch.supplierName"
-            (clearEmpty)="supplierResultEmptyInput($event)"
+            (clearSearch)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
       </div>

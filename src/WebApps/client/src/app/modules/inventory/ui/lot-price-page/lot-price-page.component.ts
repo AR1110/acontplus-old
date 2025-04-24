@@ -298,7 +298,7 @@ export class LotPricePageComponent {
   optionPvp: OptionPvpEnum = 'precioVenta';
 
   productSearchProps = {
-    isSearchSimple: true,
+    isSimpleMode: true,
   };
 
   //Suppier

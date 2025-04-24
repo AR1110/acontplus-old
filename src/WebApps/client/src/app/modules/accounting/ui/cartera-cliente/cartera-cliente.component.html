@@ -151,7 +151,7 @@
             <div class="form-group">
               <label>Cliente</label>
               <app-company-customer-search
-                [isSearchSimple]="true"
+                [isSimpleMode]="true"
                 (resultEmptyInput)="resultEmptyInputCustomer()"
                 (customerSelected)="onCustomerSelected($event)"
               />

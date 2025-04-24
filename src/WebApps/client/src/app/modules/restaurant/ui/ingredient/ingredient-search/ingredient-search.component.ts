@@ -26,7 +26,7 @@ export class IngredientSearchComponent {
     ingredient: Ingredient;
   }>();
   @Output() resultEmptyInput = new EventEmitter();
-  @Input() isSearchSimple = false;
+  @Input() isSimpleMode = false;
   @Input() textSearch = '';
   @Input() isSearchToExternal = false;
   @Input() id = 0;
