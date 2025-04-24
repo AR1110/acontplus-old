@@ -16,7 +16,7 @@ export class ListUserCustomerPermissionMapper {
   }
 
   static fromJson(response: any): UserCustomerPermissionResponse {
-    console.log(response)
+
     const userPermissionData = response.userPermissionData[0] || {}
     const  userCustomPermissionsApi  = response.userCustomPermissions   || [];
     const  userCustomPermissionsSavedApi  = response.userCustomPermissionsSaved   || [];
@@ -65,7 +65,7 @@ export class ListUserCustomerPermissionMapper {
     permissionsProduct.permission = JSON.parse(permissionsProduct.permission);
     permissionsCashBox.permission = JSON.parse(permissionsCashBox.permission)
 
-    console.log(permissionsSale)
+   
 
     return {
       userCustomPermissions ,

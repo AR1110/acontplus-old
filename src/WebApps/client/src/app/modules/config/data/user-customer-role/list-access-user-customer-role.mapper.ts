@@ -14,7 +14,7 @@ export class ListAccessUserCustomerRoleMapper {
   }
 
   static fromJson(response: any): UserCustomerRoleAccessResponse {
-    console.log(structuredClone(response))
+
       let menus = response.submenus.map((sm:any)=>{
         let actions = isValidJSON(sm.actions) ? JSON.parse(sm.actions) :  [];
         let unique = generateUuidv4()
