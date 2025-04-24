@@ -1,53 +1,53 @@
-import {Directive, EventEmitter, HostListener, inject, input, Input, Output} from '@angular/core';
-
-import {ModalService} from "@core/services/modal.service";
-import {SendMailModalComponent} from "@shared/components/send-mail-modal/send-mail-modal.component";
-import {SendMailParams} from "@shared/models/send-mail.model";
-import {ToasterService} from "@core/services/toaster.service";
+import {
+  Directive,
+  HostListener,
+  inject,
+  input,
+  OnInit,
+  output,
+} from '@angular/core';
+import { SendMailDialogComponent } from '@shared/components/send-mail-dialog/send-mail-dialog.component';
+import { ToasterService } from '@core/services/toaster.service';
+import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
   selector: '[appSendMailModal]',
-  standalone: true
+  standalone: true,
 })
-export class SendMailModalDirective {
+export class SendMailModalDirective implements OnInit {
+  notificationAcontPlus = input(false);
+  notificationSri = input(false);
+  noModifyParam = input(true);
+  data = input.required<unknown>();
+  dialogResult = output();
 
-  tS = inject(ToasterService)
-  @Output() onResultModal = new EventEmitter();
+  private readonly _dialogService = inject(DialogService);
+  private readonly _tS = inject(ToasterService);
 
-
-  @Input() notificationAcontPlus = false;
-  @Input() notificationSri = false;
-  @Input() noModifyParam = true;
-  @Input({required: true}) getDataSendMail!: (data: any) => any;
-  data = input.required()
-
+  ngOnInit() {
+    console.log({});
+  }
 
   @HostListener('click') onClick() {
-
-    if(!(this.notificationAcontPlus || this.notificationSri)){
-      this.tS.toastr({
+    if (!(this.notificationAcontPlus() || this.notificationSri())) {
+      this._tS.toastr({
         type: 'warning',
-        message: 'No Definido el tipo de notificación'
-      })
-      return
+        message: 'No Definido el tipo de notificación',
+      });
+      return;
     }
-    const modalRef = this.modalSvc.open(SendMailModalComponent, {
-      backdrop: 'static'
+    const dialogRef = this._dialogService.open(SendMailDialogComponent, {
+      data: {
+        notificationAcontPlus: this.notificationAcontPlus(),
+        notificationSri: this.notificationSri(),
+        data: this.data(),
+        noModifyParam: this.noModifyParam(),
+      },
     });
-    let params: SendMailParams = {
-      notificationAcontPlus: this.notificationAcontPlus,
-      notificationSri: this.notificationSri,
-      data: this.getDataSendMail(this.data()),
-      noModifyParam: this.noModifyParam
-    }
-    modalRef.componentInstance.params = params;
-
-    modalRef.result.then((result: unknown) => {
-      if (this.onResultModal && typeof result === 'object') {
-        this.onResultModal.emit(result);
+    dialogRef.subscribe((result: any) => {
+      if (typeof result === 'object' && result !== null) {
+        this.dialogResult.emit(result);
       }
-    })
+    });
   }
-  constructor(private modalSvc: ModalService) { }
-
 }

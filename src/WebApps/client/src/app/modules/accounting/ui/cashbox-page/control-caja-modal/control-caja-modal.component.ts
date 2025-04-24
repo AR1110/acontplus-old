@@ -33,22 +33,24 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCheckbox} from "@angular/material/checkbox";
 
 @Component({
   selector: 'app-control-caja-modal',
-    imports: [
-        FormsModule,
-        NgbPagination,
+  imports: [
+    FormsModule,
+    NgbPagination,
 
-        DateRangeSelectionComponent,
-        SendMailModalDirective,
-        MatMenu,
-        MatIcon,
-        MatMenuTrigger,
-        MatButton,
-        MatMenuItem,
-        ThemeButtonComponent,
-    ],
+    DateRangeSelectionComponent,
+    SendMailModalDirective,
+    MatMenu,
+    MatIcon,
+    MatMenuTrigger,
+    MatButton,
+    MatMenuItem,
+    ThemeButtonComponent,
+    MatCheckbox,
+  ],
   templateUrl: './control-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })

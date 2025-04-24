@@ -103,7 +103,7 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
        
 
             if (esNotificacionGeneral) {
-                url = 'Common/Notificacion/?json='
+                url = 'Common/Notification/?json='
                 data = {
                     codDoc: $scope.data.codDoc,
                     serieComprobante: $scope.data.serieComprobante,

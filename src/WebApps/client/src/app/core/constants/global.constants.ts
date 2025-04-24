@@ -22,7 +22,7 @@ export const enum PATHS_API {
 export const enum PATHS {
   DOWNLOAD_V1 = 'Reporte/Download',
   DOWNLOAD = 'v2/Reporte/Download',
-  APP_NOTIFICATION = 'Notificacion/',
+  APP_NOTIFICATION = 'Notification/',
   PRINT = 'Print',
   USER = 'Usuario/',
   ESTAB_ASIGN = 'EstabAsig/',

@@ -748,5 +748,11 @@
     "inputFiles": [
       "wwwroot/js/ventas/controllers/clienteCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/modals/modalSendMailCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/modals/modalSendMailCtrl.js"
+    ]
   }
 ]

@@ -10,15 +10,13 @@
 <div class="modal-body">
   <div class="row">
     <div class="col-12">
-      <div class="icheck-primary">
-        <input
-          type="checkbox"
-          id="someCheckboxId"
-          [(ngModel)]="dataSearch.checkBoxDate"
-          (change)="getMovimientosCaja()"
-        />
-        <label for="someCheckboxId">Fecha: </label>
-      </div>
+      <mat-checkbox
+        id="someCheckboxId"
+        [(ngModel)]="dataSearch.checkBoxDate"
+        (change)="getMovimientosCaja()"
+      >
+        Fecha:
+      </mat-checkbox>
     </div>
   </div>
   <hr />
@@ -68,17 +66,14 @@
     </div>
     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
       <div class="d-flex justify-content-end">
-        <button type="button" mat-raised-button (click)="refresh()">
-          <mat-icon>refresh</mat-icon>
-        </button>
-        <!-- <form class="form-material">
-            <input
-              type="text"
-              class="form-control"
-              ng-model="buscar"
-              placeholder="..."
-            />
-          </form> -->
+        <app-theme-button
+          variant="secondary"
+          icon="refresh"
+          matStyle="icon"
+          title="Recargar"
+          (handleClick)="refresh()"
+        >
+        </app-theme-button>
       </div>
     </div>
   </div>
@@ -151,8 +146,7 @@
                   <button
                     mat-menu-item
                     appSendMailModal
-                    [data]="item"
-                    [getDataSendMail]="getDataSendMail"
+                    [data]="getDataSendMail(item)"
                     [notificationAcontPlus]="true"
                   >
                     <mat-icon>mail</mat-icon> Enviar correo

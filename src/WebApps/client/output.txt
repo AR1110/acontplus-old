@@ -939,8 +939,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |     |  |  ├── pdf-viewer.component.html
 |  |     |  |  └── pdf-viewer.component.ts
 |  |     |  ├── send-mail-modal
-|  |     |  |  ├── send-mail-modal.component.html
-|  |     |  |  └── send-mail-modal.component.ts
+|  |     |  |  ├── send-mail-dialog.component.html
+|  |     |  |  └── send-mail-dialog.component.ts
 |  |     |  ├── tabla-resumen-totales
 |  |     |  |  ├── tabla-resumen-totales.component.html
 |  |     |  |  └── tabla-resumen-totales.component.ts

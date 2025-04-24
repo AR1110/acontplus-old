@@ -1,0 +1,50 @@
+<form id="sendMailForm" (ngSubmit)="send()">
+  <app-mat-custom-dialog
+    [containerTemplate]="containerTemplate"
+    [actionsTemplate]="actionsTemplate"
+    icon="email"
+    title="Enviar Correo"
+    (close)="onClose()"
+  />
+</form>
+
+<ng-template #containerTemplate>
+  <!-- email-input.component.html -->
+  <mat-form-field class="w-100">
+    <mat-label>Ingrese el o los correos destinatarios</mat-label>
+    <mat-chip-grid #chipGrid aria-label="Email selection">
+      @for (email of emails; track $index) {
+        <mat-chip-row [removable]="true" (removed)="remove(email)">
+          {{ email }}
+          @if (emails.length > 1) {
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          }
+        </mat-chip-row>
+      }
+
+      <input
+        placeholder="Ingrese un email"
+        [formControl]="emailCtrl"
+        [matChipInputFor]="chipGrid"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        [matChipInputAddOnBlur]="true"
+        (matChipInputTokenEnd)="add($event)"
+      />
+    </mat-chip-grid>
+    @if (emailCtrl.hasError("email")) {
+      <mat-error> Por favor ingrese un correo electrónico válido </mat-error>
+    }
+  </mat-form-field>
+</ng-template>
+<ng-template #actionsTemplate>
+  <app-theme-button
+    type="submit"
+    variant="success"
+    icon="email"
+    text="Enviar"
+    form="sendMailForm"
+  >
+  </app-theme-button>
+</ng-template>

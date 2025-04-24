@@ -4,7 +4,6 @@ import { PATHS, PATHS_API } from '@core/constants/global.constants';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
 import { isApiResponse } from '@core/models/api-response';
 
-import { SendMailModalComponent } from '@shared/components/send-mail-modal/send-mail-modal.component';
 import FileSaver from 'file-saver';
 import { map } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -250,11 +249,6 @@ export class SharedService {
           return results;
         }),
       );
-  }
-
-  async openModalSendMail<T>(params: T) {
-    const modalRef = this.modalSvc.openModalCustom(SendMailModalComponent);
-    modalRef.componentInstance.params = params || {};
   }
 
   exportToExcel(data: any[], fileName: string): void {
