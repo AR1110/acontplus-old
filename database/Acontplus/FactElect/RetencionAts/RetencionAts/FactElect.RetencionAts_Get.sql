@@ -91,9 +91,11 @@ BEGIN
                                   ,de.claveAcceso
                                   ,CONVERT(VARCHAR, FORMAT(de.fechaAutorizacion, ''dd/MM/yyyy HH:mm:ss'')) AS fechaAutorizacion
                                   ,de.usuario
+                                  ,de.emailReceptor
                                   ,(SELECT SUM(valorRetenido) FROM FactElect.RetencionAtsRet ret WHERE r.idRetencionAts = ret.idRetencionAts) as importeTotal
-                                  ,' + CAST(@totalRecords AS NVARCHAR(20)) + ' as totalRecords
                                   ,de.versionComp
+                                  ,' + CAST(@totalRecords AS NVARCHAR(20)) + ' as totalRecords
+                                  
                             FROM FactElect.RetencionAts r WITH (NOLOCK)
                             INNER JOIN FactElect.v_DocElectronico de WITH (NOLOCK) 
                             ON r.idDocumentoElectronico = de.idDocumentoElectronico ' + @whereClause + '
