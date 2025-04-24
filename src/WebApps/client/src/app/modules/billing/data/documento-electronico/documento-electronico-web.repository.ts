@@ -19,8 +19,15 @@ export class DocumentoElectronicoWebRepository
   private readonly _http = inject(HttpClient);
   private readonly _sharedService = inject(SharedService);
 
-  cancel(id: number): Observable<DocumentoElectronico> {
-    throw new Error('Method not implemented.');
+  authorize(id: number) {
+    return this._http
+      .put<ApiResponse>(`${this._url}${id}`, '')
+      .pipe(map((response) => response));
+  }
+  cancel(id: number) {
+    return this._http
+      .put<ApiResponse>(`${this._url}Cancel/${id}`, '')
+      .pipe(map((response) => response));
   }
   downloadXml(id: number) {
     return this._http

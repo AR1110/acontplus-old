@@ -1,24 +1,27 @@
 import { inject, Injectable } from '@angular/core';
 import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats.repository';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
   RetencionAts,
   RetencionAtsList,
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { PATHS_API } from '@core/constants/global.constants';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
-import { SharedService } from '@core/services/shared.service';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.RETENCION_ATS}${BILLING_PATHS.RETENCION_ATS}`;
-  private readonly _urlDocElectronico = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`;
 
+  cancel(id: number) {
+    return this._http
+      .put<ApiResponse>(`${this._url}Cancel/${id}`, '')
+      .pipe(map((response) => response));
+  }
 
   getAll<T>(parameters: T) {
     const obj = {
@@ -102,9 +105,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   update(data: any): Observable<RetencionAts> {
     throw new Error('Method not implemented.');
   }
-  delete(id: number): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
-  }
+
   getDocs<T extends { idCard: string }>(parameters: T) {
     const obj = {
       ...parameters,
@@ -124,6 +125,4 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
         }),
       );
   }
-
-
 }

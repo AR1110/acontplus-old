@@ -7,6 +7,10 @@ import { RetencionAtsRepository } from '../repositories/retencion-ats.repository
 export class RetencionAtsUseCase {
   private readonly _retencionAtsRepository = inject(RetencionAtsRepository);
 
+  cancel(id: number) {
+    return this._retencionAtsRepository.cancel(id);
+  }
+
   getDataForm(parameters: unknown) {
     return this._retencionAtsRepository.getDataForm(parameters);
   }

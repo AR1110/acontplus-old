@@ -22,8 +22,10 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
-import { DocumentoElectronicoRepository } from '@billing/domain/repositories/documento-electronico.repository';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
+import Swal from 'sweetalert2';
+import { ToasterService } from '@core/services/toaster.service';
+import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
 
 @Component({
   selector: 'app-retencion-ats',
@@ -66,10 +68,11 @@ export class RetencionAtsComponent implements OnInit {
 
   private readonly _dialogService = inject(DialogService);
   private readonly _documentoElectronicoUseCase = inject(
-    DocumentoElectronicoRepository,
+    DocumentoElectronicoUseCase,
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _sharedService = inject(SharedService);
+  private readonly _tS = inject(ToasterService);
 
   pagination = signal(new MatPagination());
 
@@ -129,9 +132,55 @@ export class RetencionAtsComponent implements OnInit {
     this._sharedService.getReport({ data: parameters, isOldVersion: true });
   }
 
-  cancel(item: any) {}
+  cancel(item: RetencionAtsList) {
+    Swal.fire({
+      title: '¿Está seguro de anular el documento?',
+      text: 'Una vez cancelado no se podrá modificar.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._retencionAtsUseCase
+          .cancel(item.idDocumentoElectronico)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.loadData();
+            }
+          });
+      }
+    });
+  }
 
-  authorize(item: any) {}
+  authorize(item: RetencionAtsList) {
+    Swal.fire({
+      title: '¿Está seguro de autorizar el documento?',
+      text: 'Una vez autorizado no se podrá modificar.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, autorizar',
+      cancelButtonText: 'No, cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._documentoElectronicoUseCase
+          .authorize(item.idDocumentoElectronico)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.loadData();
+            }
+          });
+      }
+    });
+  }
 
   sendEmail(item: RetencionAtsList) {
     return {

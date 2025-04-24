@@ -9,6 +9,10 @@ export class DocumentoElectronicoUseCase {
     DocumentoElectronicoRepository,
   );
 
+  authorize(id: number) {
+    return this._documentoElectronicoRepository.authorize(id);
+  }
+
   getDataFilter(parameters: unknown) {
     return this._documentoElectronicoRepository.getDataFilter(parameters);
   }

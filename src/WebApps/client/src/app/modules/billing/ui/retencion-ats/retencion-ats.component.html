@@ -48,16 +48,16 @@
             <mat-icon>edit</mat-icon>
             Editar
           </button>
-        }
 
-        <button
-          mat-menu-item
-          (click)="authorize(item)"
-          matTooltip="Autorizar en el SRI"
-        >
-          <mat-icon>send</mat-icon>
-          Autorizar
-        </button>
+          <button
+            mat-menu-item
+            (click)="authorize(item)"
+            matTooltip="Autorizar en el SRI"
+          >
+            <mat-icon>send</mat-icon>
+            Autorizar
+          </button>
+        }
         <button
           mat-menu-item
           (click)="getRide(item)"
@@ -86,10 +86,13 @@
           <fa-icon [icon]="faWhatsapp"></fa-icon>
           Whatsapp
         </button>
-        <button mat-menu-item (click)="cancel(item)">
-          <mat-icon>undo</mat-icon>
-          Anular
-        </button>
+
+        @if (item.codEstado === 4) {
+          <button mat-menu-item (click)="cancel(item)">
+            <mat-icon>undo</mat-icon>
+            Anular
+          </button>
+        }
       </mat-menu>
       <button
         [matMenuTriggerFor]="menu"

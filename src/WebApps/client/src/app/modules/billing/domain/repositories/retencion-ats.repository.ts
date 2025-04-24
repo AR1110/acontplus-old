@@ -22,6 +22,8 @@ import { PuntoEmisionEstablecimiento } from '@core/models/punto-emision.model';
 import { ApiResponse } from '@core/models/api-response';
 
 export abstract class RetencionAtsRepository {
+  abstract cancel(id: number): Observable<ApiResponse>;
+
   abstract getDataForm(parameters: unknown): Observable<{
     conceptosRetencionAir: ConceptoRetencionAir[];
     countries: Pais[];
@@ -46,7 +48,6 @@ export abstract class RetencionAtsRepository {
   abstract getById(id: number): Observable<RetencionAts>;
   abstract create<T>(data: T): Observable<ApiResponse>;
   abstract update(data: RetencionAts): Observable<RetencionAts>;
-  abstract delete(id: number): Observable<RetencionAts>;
   abstract getDocs(parameters: unknown): Observable<{
     documents: RetAtsDocSustento[];
   }>;
