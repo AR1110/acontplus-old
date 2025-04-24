@@ -75,10 +75,8 @@ public class AccountController(
         };
 
         await loginHistoryService.AddAsync(logingHistory);
-        user.Token = token.Token;
-        response.Create("1", "Login Correcto", user);
-
-        return Ok(response);
+        user.Token = token.Token; 
+        return Ok(ApiResponse.Success(payload: user, message: "Login Correcto"));
     }
 
     [AllowAnonymous]
@@ -105,7 +103,6 @@ public class AccountController(
         await loginHistoryService.AddAsync(logingHistory);
         userData.Token = token.Token;
         var response = new ApiResponse();
-        response.Create("1", "Login Correcto", userData);
-        return Ok(response);
+        return Ok(ApiResponse.Success(payload: userData, message: "Login Correcto"));
     }
 }

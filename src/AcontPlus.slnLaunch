@@ -1,0 +1,23 @@
+[
+  {
+    "Name": "BarberShopProfile",
+    "Projects": [
+      {
+        "Path": "WebApps\\WebUI\\WebUI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\BarberShop\\BarberShop.API\\BarberShop.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ApiGateways\\GatewayAcontplus.API\\GatewayAcontplus.API.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
