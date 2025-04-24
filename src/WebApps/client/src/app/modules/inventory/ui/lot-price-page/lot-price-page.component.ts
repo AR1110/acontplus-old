@@ -1,11 +1,9 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import {Component, inject, signal, ViewChild} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
 
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -29,6 +27,10 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatRadioModule} from "@angular/material/radio";
+import {MatDivider} from "@angular/material/divider";
+import {MatInputModule} from "@angular/material/input";
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -48,6 +50,8 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     FormsModule,
     ReactiveFormsModule,
     NgbTooltipModule,
+    MatInputModule,
+    MatRadioModule,
     BreadcrumbComponent,
     TabulatorComponent,
     SubCategorySelectMultipleComponent,
@@ -55,22 +59,26 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     SupplierSearchComponent,
     MatCardContent,
     MatCard,
-    MatButton,
     ThemeButtonComponent,
     MatIconButton,
+    MatDynamicCardComponent,
+    MatDivider
   ],
   templateUrl: './lot-price-page.component.html',
+  styles: `.mat-mdc-radio-button ~ .mat-mdc-radio-button {
+    margin-left: 16px;
+  }
+  `
 })
 export class LotPricePageComponent {
   private readonly lotPriceSvc = inject(LotPriceService);
-  private readonly tS = inject(ToasterService);
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   readonly catalogs = [
     // { code: 0, description: 'Ninguno' },
     { code: 3, description: 'Subfamilias' },
-    { code: 1, description: 'Articulo' },
+    { code: 1, description: 'Artículo' },
     { code: 4, description: 'Proveedor' },
     { code: 5, description: 'N° Documento' },
   ];
@@ -275,7 +283,7 @@ export class LotPricePageComponent {
 
   productsModified: Array<any> = [];
 
-  nestedProducts: Array<LotPrice> = [];
+  nestedProducts = signal<LotPrice[]>([])
   cloneNestedProducts: Array<LotPrice> = [];
   taxRates: Array<TarifaImpuesto> = [];
 
@@ -307,8 +315,7 @@ export class LotPricePageComponent {
   isCalculateManual = false;
 
   protected getDataFilter() {
-    this.lotPriceSvc.getDataFilter().subscribe({
-      next: (response) => {
+    this.lotPriceSvc.getDataFilter().subscribe( (response) => {
         this.tarifas = response.tarifas;
         this.taxRates = response.tarifasImpuesto;
         this.decimal = response.decimal;
@@ -318,10 +325,6 @@ export class LotPricePageComponent {
         if (dataTarifa) {
           this.addTarifaDefault(dataTarifa.idTarifa);
         }
-      },
-      error(err) {
-        console.log(err);
-      },
     });
   }
 
@@ -351,18 +354,13 @@ export class LotPricePageComponent {
         // idSubFamilia: $scope.mainForm.idSubFamilia
       };
       this.cloneNestedProducts = [];
-      this.nestedProducts = [];
+      this.nestedProducts.set([]);
       this.productsModified = [];
 
-      this.lotPriceSvc.getAll(dataSearch).subscribe({
-        next: (response) => {
-          let results = response;
-          this.nestedProducts = structuredClone(results);
+      this.lotPriceSvc.getAll(dataSearch).subscribe(  (response) => {
+          let results = structuredClone(response);
+        this.nestedProducts.set(results);
           this.cloneNestedProducts = structuredClone(results);
-        },
-        error(err) {
-          console.log(err);
-        },
       });
     } catch (error) {
       console.log(error);
@@ -537,10 +535,10 @@ export class LotPricePageComponent {
         Array.isArray(checkedSubCategorias) &&
         checkedSubCategorias.length === 0
       ) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione al menos una SubFamilia',
-        });
+        Swal.fire({
+          icon: 'warning',
+          text: 'Seleccione al menos una SubFamilia',
+        })
         return;
       }
 
@@ -549,19 +547,19 @@ export class LotPricePageComponent {
         Array.isArray(checkedSubCategorias) &&
         checkedSubCategorias.length > 4
       ) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Máximo de SubFamilias permitidos es 3',
-        });
+        Swal.fire({
+          icon: 'warning',
+          text: 'Máximo de SubFamilias permitidos es 3',
+        })
         return;
       }
     }
 
     if (this.mainForm.opcion === 1 && !(this.mainForm.idArticulo > 0)) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione el arículo',
-      });
+      Swal.fire({
+        icon: 'warning',
+        text: 'Seleccione el arículo',
+      })
       return;
     }
 
@@ -569,10 +567,10 @@ export class LotPricePageComponent {
       this.mainForm.opcion === 4 &&
       !isValidField(this.mainForm.rucProveedor)
     ) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione el proveedor',
-      });
+      Swal.fire({
+        icon: 'warning',
+        text:'Seleccione el proveedor',
+      })
       return;
     }
 
@@ -580,10 +578,10 @@ export class LotPricePageComponent {
       this.mainForm.opcion === 5 &&
       !isValidField(this.mainForm.nroDocumento)
     ) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Ingrese el número de documento',
-      });
+      Swal.fire({
+        icon: 'warning',
+        text:'Ingrese el número de documento',
+      })
       return;
     }
 
@@ -601,27 +599,27 @@ export class LotPricePageComponent {
       this.isCalculateManual = false;
       let tarifasSelected = this.tarifasSelected.value;
 
-      if (this.nestedProducts.length === 0) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'No se encontrarón productos!',
-        });
+      if (this.nestedProducts().length === 0) {
+        Swal.fire({
+          icon: 'warning',
+          text: 'No se encontrarón productos',
+        })
         return;
       }
 
       if (!isValidField(this.mainForm.optionToCalculate)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione opcion a calcular',
-        });
+        Swal.fire({
+          icon: 'warning',
+          text: 'Seleccione opcion a calcular',
+        })
         return;
       }
 
       if (!isValidField(this.optionPvp)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione una opción de PVP.',
-        });
+        Swal.fire({
+          icon: 'warning',
+          text:  'Seleccione una opción de PVP.',
+        })
         return;
       }
 
@@ -630,24 +628,24 @@ export class LotPricePageComponent {
         Array.isArray(tarifasSelected) &&
         tarifasSelected.length === 0
       ) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione al menos una tarifa',
+        Swal.fire({
+          icon: 'warning',
+          text:  'Seleccione al menos una tarifa',
         });
         return;
       }
 
       if (isNaN(this.mainForm.valueToCalculate)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Ingrese un valor numérico válido en el campo Valor',
+        Swal.fire({
+          icon: 'warning',
+          text:  'Ingrese un valor numérico válido en el campo Valor',
         });
         return;
       }
       if (!(this.mainForm.valueToCalculate > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Ingrese un valor diferente de cero en el campo Valor',
+        Swal.fire({
+          icon: 'warning',
+          text: 'Ingrese un valor diferente de cero en el campo Valor',
         });
         return;
       }
@@ -656,11 +654,11 @@ export class LotPricePageComponent {
         this.mainForm.optionToCalculate === OptionsCalculateEnum.D &&
         this.mainForm.valueToCalculate > 100
       ) {
-        this.tS.toastr({
-          type: 'warning',
-          message:
-            'Cuando la opción a calcular es: "Calcular un porcentaje que se aplique a la tarifa", el valor no puede ser mayor a 100.',
+        Swal.fire({
+          icon: 'warning',
+          text: 'Cuando la opción a calcular es: "Calcular un porcentaje que se aplique a la tarifa", el valor no puede ser mayor a 100.',
         });
+
         return;
       }
 
@@ -672,25 +670,25 @@ export class LotPricePageComponent {
 
   calculateManual() {
     let tarifasSelected = this.tarifasSelected.value;
-    if (this.nestedProducts.length === 0) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'No se encontrarón productos!',
+    if (this.nestedProducts().length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        text:'No se encontrarón productos!',
       });
       return;
     }
     if (!isValidField(this.mainForm.optionToCalculate)) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione opcion a calcular',
+      Swal.fire({
+        icon: 'warning',
+        text: 'Seleccione opcion a calcular',
       });
       return;
     }
 
     if (!isValidField(this.optionPvp)) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione una opción de PVP.',
+      Swal.fire({
+        icon: 'warning',
+        text: 'Seleccione una opción de PVP.',
       });
       return;
     }
@@ -700,9 +698,9 @@ export class LotPricePageComponent {
       Array.isArray(tarifasSelected) &&
       tarifasSelected.length === 0
     ) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione al menos una tarifa',
+      Swal.fire({
+        icon: 'warning',
+        text: 'Seleccione al menos una tarifa',
       });
       return;
     }
@@ -735,7 +733,6 @@ export class LotPricePageComponent {
 
         if (this.isCalculateManual) {
           if (tarifasSelected.includes(t.idTarifa)) {
-            console.log('testts');
             setDataToProductsModified = true;
           }
         } else {
@@ -936,17 +933,18 @@ export class LotPricePageComponent {
       }
     }
 
-    this.nestedProducts = structuredClone(nestedProducts);
+    this.nestedProducts.set(structuredClone(nestedProducts));
 
     if (this.productsModified.length > 0) {
       Swal.fire({
         icon: 'success',
-        text: `${this.productsModified.length} Tarifas modificadas! Antes de guardar, revise que los precios modificados estén correctamente.`,
+        text: `${this.productsModified.length} tarifas modificadas. Antes de guardar, asegúrese de que los precios modificados sean correctos.`,
       });
+
     } else {
-      this.tS.toastr({
-        type: 'info',
-        message: `${this.productsModified.length} Tarifas modificados!`,
+      Swal.fire({
+        icon: 'info',
+        text:`${this.productsModified.length} Tarifas modificados!`,
       });
     }
   }
@@ -959,7 +957,7 @@ export class LotPricePageComponent {
 
   refreshToNestedProducts() {
     this.productsModified = [];
-    this.nestedProducts = structuredClone(this.cloneNestedProducts);
+    this.nestedProducts.set(structuredClone(this.cloneNestedProducts));
   }
 
   getSelectedData() {
@@ -974,9 +972,9 @@ export class LotPricePageComponent {
   askToSave() {
     const selectedData = this.getSelectedData();
     if (selectedData.length === 0) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Seleccione al menos un artículo!',
+      Swal.fire({
+        icon: 'warning',
+        text: 'Seleccione al menos un artículo!',
       });
       return;
     }
@@ -1019,9 +1017,7 @@ export class LotPricePageComponent {
           articles: results,
         };
 
-        this.lotPriceSvc.put(data).subscribe({
-          next: (response) => {
-            if (isApiResponse(response)) {
+        this.lotPriceSvc.put(data).subscribe( (response) => {
               if (response.code === '0') {
                 Swal.fire({
                   icon: 'warning',
@@ -1035,17 +1031,9 @@ export class LotPricePageComponent {
                   timer: 1000,
                 });
                 this.cloneNestedProducts = [];
-                this.nestedProducts = [];
+                this.nestedProducts.set([]);
                 this.productsModified = [];
               }
-            }
-          },
-          error(err) {
-            Swal.fire({
-              icon: 'error',
-              text: typeof err == 'object' ? err.error : err,
-            });
-          },
         });
       }
     });

@@ -6,6 +6,7 @@ import { map } from "rxjs";
 import { pricingCalculateUtil } from "@core/utils/pricing-calculate.util";
 import { roundNumber } from "@core/utils/round-number.utils";
 import { groupSubCategoryUtil } from "../utils/group-sub-category.util";
+import {ApiResponse} from "@core/models/api-response";
 
 
 @Injectable({
@@ -89,7 +90,7 @@ export class LotPriceService {
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
         let mainData = response.articulos;
-        console.log(mainData)
+
         let products = mainData.map((item: any, index: number) => {
           let mainTarifas = JSON.parse(item.tarifas);
           let tarifas = mainTarifas.map((t: any) => {
@@ -129,7 +130,7 @@ export class LotPriceService {
   }
 
   put<T>(data: T) {
-    return this.http.put(`${this.url}`, { data })
+    return this.http.put<ApiResponse>(`${this.url}`, { data })
   }
 
 

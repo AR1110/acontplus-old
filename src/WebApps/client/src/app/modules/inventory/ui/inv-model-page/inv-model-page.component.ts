@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
+import {finalize} from "rxjs/operators";
 
 
 @Component({
@@ -33,7 +34,7 @@ import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-mod
 export class InvModelPageComponent {
   private _modeloUseCase= inject(InventarioModeloUseCase);
   pagination = signal(new MatPagination());
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
@@ -58,12 +59,15 @@ export class InvModelPageComponent {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
-    if(this.isLoadingResults) return
+    if(this.isLoadingResults()) return
 
-    this.isLoadingResults = true;
-    this._modeloUseCase.getAll(params).subscribe({
-      next: (response) => {
-        this.isLoadingResults = false;
+    this.isLoadingResults.set(true) ;
+    this._modeloUseCase.getAll(params)
+      .pipe(
+        finalize(()=> this.isLoadingResults.set(false))
+      )
+      .subscribe((response) => {
+
         this.dataSource = new MatTableDataSource(response.data);
         if (this.dataSource.data.length > 0) {
           this.pagination.update((e) => {
@@ -73,9 +77,7 @@ export class InvModelPageComponent {
             };
           });
         }
-      },
-      error: () => (this.isLoadingResults = false),
-    });
+      });
   }
 
   ngOnInit() {

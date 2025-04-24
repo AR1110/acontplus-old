@@ -66,7 +66,7 @@ export class MassiveTaxPageComponent {
         .getAll({})
         .pipe(finalize(() => (this.isLoadingResults.set(false))))
         .subscribe((response) => {
-          this.dataSource = response;
+          this.dataSource.set(response);
         });
     } catch (error) {
       console.log(error);
