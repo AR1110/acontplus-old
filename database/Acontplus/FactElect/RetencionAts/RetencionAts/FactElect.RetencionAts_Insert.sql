@@ -151,7 +151,7 @@ BEGIN
 
         INSERT INTO @tblDocs
               (uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal)
-	    SELECT uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal
+	    SELECT uniqueIdDoc,documentoSustentoTributarioId,REPLACE(numDocSustento, '-', ''),fechaEmisionDocSustento,fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,totalSinImpuestos,importeTotal
 	    FROM OPENJSON(@documentosSustento) WITH
         (
 		     uniqueIdDoc                 UNIQUEIDENTIFIER 
