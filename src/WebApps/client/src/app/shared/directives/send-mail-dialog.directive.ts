@@ -11,10 +11,10 @@ import { ToasterService } from '@core/services/toaster.service';
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
-  selector: '[appSendMailModal]',
+  selector: '[appSendMailDialog]',
   standalone: true,
 })
-export class SendMailModalDirective implements OnInit {
+export class SendMailDialogDirective implements OnInit {
   notificationAcontPlus = input(false);
   notificationSri = input(false);
   noModifyParam = input(true);

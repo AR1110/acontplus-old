@@ -23,6 +23,7 @@ import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { DocumentoElectronicoRepository } from '@billing/domain/repositories/documento-electronico.repository';
+import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 
 @Component({
   selector: 'app-retencion-ats',
@@ -40,6 +41,7 @@ import { DocumentoElectronicoRepository } from '@billing/domain/repositories/doc
     ThemeButtonComponent,
     MatTooltip,
     FaIconComponent,
+    SendMailDialogDirective,
   ],
   templateUrl: './retencion-ats.component.html',
   styles: ``,
@@ -131,7 +133,26 @@ export class RetencionAtsComponent implements OnInit {
 
   authorize(item: any) {}
 
-  sendEmail(item: any) {}
+  sendEmail(item: RetencionAtsList) {
+    return {
+      subject: 'Retencion ATS',
+      receptor: item.emailReceptor,
+      params: {
+        hasFile: true,
+        isReport: 'SI',
+        reportParams: {
+          hasParams: true,
+          codEstab: item.codEstab,
+          codigo: REPORT_CODE.RRC,
+          format: 'pdf',
+        },
+        spParams: {
+          tipo: 1,
+          id: item.idDocumentoElectronico,
+        },
+      },
+    };
+  }
 
   sendWhatsApp(item: any) {}
 
