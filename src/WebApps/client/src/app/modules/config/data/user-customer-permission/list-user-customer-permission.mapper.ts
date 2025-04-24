@@ -65,7 +65,7 @@ export class ListUserCustomerPermissionMapper {
     permissionsProduct.permission = JSON.parse(permissionsProduct.permission);
     permissionsCashBox.permission = JSON.parse(permissionsCashBox.permission)
 
-   
+
 
     return {
       userCustomPermissions ,
