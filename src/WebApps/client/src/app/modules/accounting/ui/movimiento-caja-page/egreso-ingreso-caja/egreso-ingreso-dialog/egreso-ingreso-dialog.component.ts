@@ -19,10 +19,11 @@ import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatButtonModule} from "@angular/material/button";
 import {
-  CompanyCustomerSearchMatComponent
-} from "@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
+  CompanyCustomerSearchComponent
+} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {getValidId, isValidField} from "@core/utils/utils";
+import {CompanyCustomer} from "@customer/core/domain/company-customer";
 
 @Component({
   selector: 'app-egreso-ingreso-dialog',
@@ -34,7 +35,7 @@ import {getValidId, isValidField} from "@core/utils/utils";
     MatSelectModule,
     MatButtonModule,
     MatCustomDialogComponent,
-    CompanyCustomerSearchMatComponent,
+    CompanyCustomerSearchComponent,
     ToUpperCaseDirective
   ],
   templateUrl: './egreso-ingreso-dialog.component.html',
@@ -150,7 +151,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
     }
   }
 
-  onSelectCustomer(params: any) {
+  onSelectCustomer(params: CompanyCustomer) {
       this.dataForm.get('customerId')?.setValue(params.customerId);
   }
 

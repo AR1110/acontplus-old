@@ -25,10 +25,10 @@
         />
       </div>
       <div class="col">
-        <app-company-customer-search-mat
+        <app-company-customer-search
           [isSimpleMode]="true"
-          (onSelect)="onCustomerSelected($event)"
-          (clearInput)="resultCustomerEmptyInput($event)"
+          (customerSelected)="onCustomerSelected($event)"
+          (clearSearch)="resultCustomerEmptyInput($event)"
         />
       </div>
     </div>

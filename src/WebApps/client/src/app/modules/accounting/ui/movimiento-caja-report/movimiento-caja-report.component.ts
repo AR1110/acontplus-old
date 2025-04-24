@@ -9,11 +9,12 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {CompanyCustomer} from "@customer/core/domain/company-customer";
 
 @Component({
   selector: 'app-movimiento-caja-report',
@@ -82,10 +83,10 @@ export class MovimientoCajaReportComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 
@@ -101,6 +102,7 @@ export class MovimientoCajaReportComponent {
   }
 
   onUserSelected({ data }: any) {
+    console.log(data)
     this.dataSearch.userId = data.idUsuario;
   }
   getReportPdf() {

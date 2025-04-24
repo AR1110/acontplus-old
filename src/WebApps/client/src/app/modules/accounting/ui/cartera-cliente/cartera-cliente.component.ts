@@ -23,7 +23,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOptgroup, MatOption } from '@angular/material/autocomplete';
 import { MatSelect } from '@angular/material/select';
-import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import {
   MatCard,
   MatCardActions,
@@ -34,6 +34,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -47,7 +48,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatOptgroup,
     MatOption,
     MatSelect,
-    MatUserSearchComponent,
+    UserSearchComponent,
     MatCard,
     MatCardContent,
     MatCardActions,
@@ -166,10 +167,10 @@ export class CarteraClienteComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 

@@ -1,4 +1,5 @@
 export interface CompanyCustomer {
+  id: number;
   idCliente: number;
   nombreFiscal: string;
   nombreComercial?: string;
@@ -16,7 +17,7 @@ export interface CompanyCustomer {
   codigoSri?: string;
   rucEmpresa?: string;
   companyId?: number;
-  customerId?: number;
+  customerId: number;
   estado?: boolean;
 }
 

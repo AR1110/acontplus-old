@@ -95,10 +95,10 @@
                 />
               </div>
               <div class="col">
-                <app-mat-user-search
-                  (onSelect)="onUserSelected($event)"
-                  (clearInput)="onEmptyInputUserSearch()"
-                ></app-mat-user-search>
+                <app-user-search
+                  (userSelected)="onUserSelected($event)"
+                  (clearSearch)="onEmptyInputUserSearch()"
+                ></app-user-search>
               </div>
             </div>
 
@@ -106,9 +106,9 @@
               class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
             >
               <div class="col">
-                <app-company-customer-search-mat
-                  (onSelect)="onCustomerSelected($event)"
-                  (clearInput)="resultEmptyInputCustomer()"
+                <app-company-customer-search
+                  (customerSelected)="onCustomerSelected($event)"
+                  (clearSearch)="clearSearchCustomer()"
                   [isSimpleMode]="true"
                 />
               </div>
@@ -170,7 +170,7 @@
                 <app-supplier-search
                   [isSimpleMode]="true"
                   (supplierSelected)="onSupplierSelected($event)"
-                  (clearSearch)="supplierResultEmptyInput($event)"
+                  (clearSearch)="supplierclearSearch($event)"
                 />
               </div>
 
@@ -376,7 +376,7 @@
                 <app-supplier-search
                   [isSimpleMode]="true"
                   (supplierSelected)="onSupplierSelected($event)"
-                  (clearSearch)="supplierResultEmptyInput($event)"
+                  (clearSearch)="supplierclearSearch($event)"
                 />
               </div>
 
@@ -439,7 +439,7 @@
                 <app-supplier-search
                   [isSimpleMode]="true"
                   (supplierSelected)="onSupplierSelected($event)"
-                  (clearSearch)="supplierResultEmptyInput($event)"
+                  (clearSearch)="supplierclearSearch($event)"
                 />
               </div>
 

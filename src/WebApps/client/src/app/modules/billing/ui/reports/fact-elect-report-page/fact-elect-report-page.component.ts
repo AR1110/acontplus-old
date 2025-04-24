@@ -9,7 +9,7 @@ import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
 import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
@@ -20,6 +20,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -150,11 +151,11 @@ export class FactElectReportPageComponent implements OnInit {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
     this.dataSearch.identificacion = null;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.identificacion = data.numeroIdentificacion;
     this.dataSearch.companyCustomerId = data.idCliente;
   }

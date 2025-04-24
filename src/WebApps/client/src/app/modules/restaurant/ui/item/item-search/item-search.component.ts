@@ -25,7 +25,7 @@ export class ItemSearchComponent {
   @Output() onItemSelected = new EventEmitter<{
     item: Item;
   }>();
-  @Output() resultEmptyInput = new EventEmitter();
+  @Output() clearSearch = new EventEmitter();
   @Input() textSearch = '';
   @Input() id = 0;
   item = {} as Item;
@@ -34,7 +34,7 @@ export class ItemSearchComponent {
   onKeyupSearch() {
     if (!this.textSearch) {
       this.id = 0;
-      this.resultEmptyInput.emit({});
+      this.clearSearch.emit({});
     }
   }
 

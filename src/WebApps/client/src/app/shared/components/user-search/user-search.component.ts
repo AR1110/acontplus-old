@@ -49,7 +49,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 })
 export class UserSearchComponent {
   userSelected = output<{ data: UserSearch }>();
-  emptyInput = output();
+  clearSearch = output();
   isSimpleMode = input(true);
   textSearch = input<string>('');
   textSearchControl = new FormControl<string>('', { nonNullable: true });
@@ -114,7 +114,7 @@ export class UserSearchComponent {
 
   onKeyupSearch() {
     if (!this.textSearchControl.value) {
-      this.emptyInput.emit();
+      this.clearSearch.emit();
     }
   }
 }

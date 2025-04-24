@@ -35,7 +35,8 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-order-modal',
@@ -141,7 +142,7 @@ export class OrderModalComponent {
       width: 100,
     },
   ];
-  clearInput = true;
+  clearSearch = true;
   currentDate = new Date();
   customerBusinessName = '';
   data: any = {};
@@ -341,14 +342,13 @@ export class OrderModalComponent {
       });
     }
   }
-  onCustomerSelected($event: any) {
-    const { data } = $event;
+  onCustomerSelected(data: CompanyCustomer) {
     this.order.customerCompanyId = data.idCliente;
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
   onDeviceSelected($event: any) {
     this.addDetail($event.data);
-    this.clearInput = true;
+    this.clearSearch = true;
   }
 
   removeFromList(deviceId: number) {

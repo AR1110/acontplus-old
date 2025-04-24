@@ -41,15 +41,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
-import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-support-page',
   imports: [
     CommonModule,
     FormsModule,
-    
+
     MatTableModule,
     MatCheckboxModule,
     NgbPopoverModule,
@@ -62,7 +63,7 @@ import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/com
     MatSelectModule,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
-    CompanyCustomerSearchMatComponent,
+    CompanyCustomerSearchComponent,
   ],
   templateUrl: './support-page.component.html',
 })
@@ -155,7 +156,7 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  onCustomerSelected(data: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.customerId = data.customerId;
     this.getSupports();
   }

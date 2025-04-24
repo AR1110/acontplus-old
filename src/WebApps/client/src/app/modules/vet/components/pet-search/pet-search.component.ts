@@ -21,7 +21,7 @@ import { Pet } from '@modules/vet/models/pet.model';
 })
 export class PetSearchComponent {
   @Output() onPetSelected = new EventEmitter<{ data: any }>();
-  @Output() resultEmptyInput = new EventEmitter();
+  @Output() clearSearch = new EventEmitter();
   @Input() textSearch = '';
   @Input() id = 0;
   pet = {} as Pet;
@@ -32,7 +32,7 @@ export class PetSearchComponent {
   onKeyupSearch() {
     if (!this.textSearch) {
       this.id = 0;
-      this.resultEmptyInput.emit({});
+      this.clearSearch.emit({});
     }
   }
 

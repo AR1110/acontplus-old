@@ -25,7 +25,7 @@ export class IngredientSearchComponent {
   @Output() onIngredientSelected = new EventEmitter<{
     ingredient: Ingredient;
   }>();
-  @Output() resultEmptyInput = new EventEmitter();
+  @Output() clearSearch = new EventEmitter();
   @Input() isSimpleMode = false;
   @Input() textSearch = '';
   @Input() isSearchToExternal = false;
@@ -36,7 +36,7 @@ export class IngredientSearchComponent {
   onKeyupSearch() {
     if (!this.textSearch) {
       this.id = 0;
-      this.resultEmptyInput.emit({});
+      this.clearSearch.emit({});
     }
   }
 

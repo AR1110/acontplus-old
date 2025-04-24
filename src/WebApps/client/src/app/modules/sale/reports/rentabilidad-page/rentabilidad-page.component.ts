@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
@@ -142,7 +142,7 @@ export class RentabilidadPageComponent {
     this.dataSearch.idUsuario = data.idUsuario;
   }
 
-  userResultEmptyInput(event: any) {
+  userclearSearch(event: any) {
     this.dataSearch.idUsuario = 0;
   }
 
@@ -156,7 +156,7 @@ export class RentabilidadPageComponent {
     this.dataSearch.idArticulo = data.idArticulo;
   }
 
-  productResultEmptyInput(data: any) {
+  productclearSearch(data: any) {
     this.dataSearch.idArticulo = 0;
   }
 

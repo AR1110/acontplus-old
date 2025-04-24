@@ -92,11 +92,11 @@
           />
         </div>
         <div class="col">
-          <app-company-customer-search-mat
+          <app-company-customer-search
             [isSimpleMode]="true"
-            (onSelect)="onCustomerSelected($event)"
-            (clearInput)="resultEmptyInputCustomer()"
-          ></app-company-customer-search-mat>
+            (customerSelected)="onCustomerSelected($event)"
+            (clearSearch)="clearSearchCustomer()"
+          ></app-company-customer-search>
         </div>
         <div class="col">
           <mat-form-field class="w-100">
@@ -113,9 +113,9 @@
         </div>
 
         <div class="col">
-          <app-mat-user-search
-            (onSelect)="onUserSelected($event)"
-            (clearInput)="emptyInputUser()"
+          <app-user-search
+            (userSelected)="onUserSelected($event)"
+            (clearSearch)="emptyInputUser()"
           />
         </div>
       </div>

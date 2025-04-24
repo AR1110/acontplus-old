@@ -23,10 +23,9 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
   styles: ``,
 })
 export class DeviceSearchComponent {
-  @Input() clearInput = false;
   @Input() textSearch = '';
   @Output() deviceSelected = new EventEmitter<{ data: any }>();
-  @Output() resultEmptyInput = new EventEmitter();
+  @Output() clearSearch = new EventEmitter();
   private modalService = inject(ModalService);
   private deviceService = inject(DeviceService);
 
@@ -47,7 +46,7 @@ export class DeviceSearchComponent {
   }
   onKeyupSearch() {
     if (!this.textSearch) {
-      this.resultEmptyInput.emit();
+      this.clearSearch.emit();
     }
   }
   openModal() {
@@ -90,7 +89,7 @@ export class DeviceSearchComponent {
       },
     });
     setTimeout(() => {
-      if (!this.clearInput) {
+      if (!this.clearSearch) {
         this.textSearch = this.device.name;
       } else {
         this.textSearch = '';

@@ -98,7 +98,7 @@
             [isSimpleMode]="isSearchSupplierSimple"
             (supplierSelected)="onSupplierSelected($event)"
             [textSearch]="dataSearch.supplierName"
-            (clearSearch)="supplierResultEmptyInput($event)"
+            (clearSearch)="supplierclearSearch($event)"
           ></app-supplier-search>
         </div>
       }
@@ -109,7 +109,7 @@
             <app-user-search
               (userSelected)="onUserSelected($event)"
               [textSearch]="dataSearch.userName"
-              (emptyInput)="userResultEmptyInput($event)"
+              (clearSearch)="userclearSearch($event)"
             ></app-user-search>
           </div>
         </div>

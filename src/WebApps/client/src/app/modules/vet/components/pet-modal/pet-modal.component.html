@@ -10,10 +10,10 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label>Cliente: </label>
           <app-company-customer-search
             (customerSelected)="onCustomerSelected($event)"
             [textSearch]="customerBusinessName"
+            [isAdvancedMode]="true"
           ></app-company-customer-search>
         </div>
       </div>

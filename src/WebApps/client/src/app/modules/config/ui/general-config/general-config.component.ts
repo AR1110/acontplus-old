@@ -1,30 +1,32 @@
-import {ChangeDetectionStrategy, Component, inject,   signal} from '@angular/core';
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatTabsModule} from "@angular/material/tabs";
-import {ListGeneralConfigUseCase} from "@modules/config/domain/use-cases/general-config/list-general-config.use-case";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {MatDividerModule} from "@angular/material/divider";
-import {MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatRadioModule} from "@angular/material/radio";
-import {M3InputChipComponent} from "@shared/components/m3-input-chip/m3-input-chip.component";
-import {MatSelectModule} from "@angular/material/select";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {FormsModule} from "@angular/forms";
-import {isValidEmail, isValidField} from "@core/utils/utils";
-import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
-import Swal from "sweetalert2";
 import {
-  UpdateGeneralConfigUseCase
-} from "@modules/config/domain/use-cases/general-config/update-general-config.use-case";
-import {DecimalSelectComponent} from "@modules/config/ui/general-config/decimal-select/decimal-select.component";
-import {MatListModule} from "@angular/material/list";
-import {MatCardModule} from "@angular/material/card";
-import {
-  CompanyCustomerSearchMatComponent
-} from "@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
-import {ProductSearchComponent} from "@inventory/ui/product/components/product-search/product-search.component";
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ListGeneralConfigUseCase } from '@modules/config/domain/use-cases/general-config/list-general-config.use-case';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatRadioModule } from '@angular/material/radio';
+import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatSelectModule } from '@angular/material/select';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { FormsModule } from '@angular/forms';
+import { isValidEmail, isValidField } from '@core/utils/utils';
+import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
+import Swal from 'sweetalert2';
+import { UpdateGeneralConfigUseCase } from '@modules/config/domain/use-cases/general-config/update-general-config.use-case';
+import { DecimalSelectComponent } from '@modules/config/ui/general-config/decimal-select/decimal-select.component';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-general-config',
@@ -39,7 +41,7 @@ import {ProductSearchComponent} from "@inventory/ui/product/components/product-s
     FormsModule,
     MatCardModule,
     MatListModule,
-    CompanyCustomerSearchMatComponent,
+    CompanyCustomerSearchComponent,
     ProductSearchComponent,
     DecimalSelectComponent,
     BreadcrumbComponent,
@@ -51,9 +53,8 @@ import {ProductSearchComponent} from "@inventory/ui/product/components/product-s
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralConfigComponent {
-
-  private $listUseCase = inject(ListGeneralConfigUseCase)
-  private $updateUseCase = inject(UpdateGeneralConfigUseCase)
+  private $listUseCase = inject(ListGeneralConfigUseCase);
+  private $updateUseCase = inject(UpdateGeneralConfigUseCase);
   CODE_TABS = {
     CV: 'CV',
     CI: 'CI',
@@ -61,11 +62,10 @@ export class GeneralConfigComponent {
     CS: 'CS',
   };
 
-  selectedTab = signal(0)
-  selectedTabValue = signal(this.CODE_TABS.CV)
+  selectedTab = signal(0);
+  selectedTabValue = signal(this.CODE_TABS.CV);
 
-  notificacionesSelected: any[] = []
-
+  notificacionesSelected: any[] = [];
 
   private readonly decimal = {
     nroPrecio: 5,
@@ -116,23 +116,23 @@ export class GeneralConfigComponent {
     llevaInventario: false,
     idSistema: 0,
   };
-  metodosValoracion:any[] = [];
+  metodosValoracion: any[] = [];
 
   productSearchProps = {
     isSimpleMode: true,
   };
 
   //Notificaciones
-  notificaciones = signal<any[]>([])
+  notificaciones = signal<any[]>([]);
 
-  formasPagoSri = signal<any[]>([])
+  formasPagoSri = signal<any[]>([]);
 
-  private getList(){
-    this.$listUseCase.execute(this.selectedTabValue()).subscribe(response=>{
+  private getList() {
+    this.$listUseCase.execute(this.selectedTabValue()).subscribe((response) => {
       switch (this.selectedTabValue()) {
         case this.CODE_TABS.CV:
           this.configVenta = response.configVenta;
-          this.formasPagoSri.set(response.formasPagoSri)
+          this.formasPagoSri.set(response.formasPagoSri);
           this.emails = this.configVenta.cc;
           break;
 
@@ -148,29 +148,31 @@ export class GeneralConfigComponent {
           break;
 
         case this.CODE_TABS.CS:
-          this.notificaciones.set(response.notificaciones)
-          this.notificacionesSelected = this.notificaciones().filter(item=>item.estado)
+          this.notificaciones.set(response.notificaciones);
+          this.notificacionesSelected = this.notificaciones().filter(
+            (item) => item.estado,
+          );
           break;
         default:
           break;
       }
-    })
+    });
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.getList();
   }
 
-  selectedIndexChange($event:any){
+  selectedIndexChange($event: any) {
     const obj: Record<any, any> = {
       0: this.CODE_TABS.CV,
       1: this.CODE_TABS.CI,
       2: this.CODE_TABS.CD,
-      3: this.CODE_TABS.CS
-    }
+      3: this.CODE_TABS.CS,
+    };
     this.selectedTab.set($event);
     this.selectedTabValue.set(obj[$event]);
-    this.getList()
+    this.getList();
   }
 
   tipoConfigPI = true;
@@ -186,34 +188,31 @@ export class GeneralConfigComponent {
     }
   }
 
-  ngModelChangeNotifi($event:any){
-    this.notificacionesSelected=$event;
-
+  ngModelChangeNotifi($event: any) {
+    this.notificacionesSelected = $event;
   }
 
-  selectedCustomer($event:any){
+  selectedCustomer($event: CompanyCustomer) {
     // console.log($event)
     this.configVenta.idCliente = $event.idCliente;
-    this.configVenta.razonSocialComprador = $event.name;
+    this.configVenta.razonSocialComprador = $event.nombreFiscal;
   }
 
-  resultEmptyInputCustomer() {
-    this.configVenta.idCliente = 0
-    this.configVenta.razonSocialComprador = "";
+  clearSearchCustomer() {
+    this.configVenta.idCliente = 0;
+    this.configVenta.razonSocialComprador = '';
   }
 
-
-  productSelected($event:any){
+  productSelected($event: any) {
     let data = $event.data;
     this.configVenta.idArticulo = data.idArticulo;
     this.configVenta.nombreArticulo = data.descripcion;
   }
-  emptyInputProduct(){
+  emptyInputProduct() {
     this.configVenta.idArticulo = 0;
   }
 
   save() {
-
     let jsonConfig = {} as any;
     let data = {} as any;
 
@@ -222,9 +221,9 @@ export class GeneralConfigComponent {
       if (this.configVenta.customerDefault) {
         if (!(this.configVenta.idCliente > 0)) {
           Swal.fire({
-            icon:'warning',
+            icon: 'warning',
             text: 'Seleccione un Cliente',
-          })
+          });
           return;
         } else {
           jsonConfig.idCliente = this.configVenta.idCliente;
@@ -233,9 +232,9 @@ export class GeneralConfigComponent {
       if (this.configVenta.articleDefault) {
         if (!(this.configVenta.idArticulo > 0)) {
           Swal.fire({
-            icon:'warning',
+            icon: 'warning',
             text: 'Selecione un Articulo',
-          })
+          });
           return;
         } else {
           jsonConfig.idArticulo = this.configVenta.idArticulo;
@@ -245,17 +244,17 @@ export class GeneralConfigComponent {
       if (this.configVenta.configDeuda) {
         if (!isValidField(this.configVenta.tipoConfig)) {
           Swal.fire({
-            icon:'warning',
+            icon: 'warning',
             text: 'Seleccione El tipo de Configuración de Interes',
-          })
+          });
           return;
         }
 
         if (!(this.configVenta.interes > 0)) {
           Swal.fire({
-            icon:'warning',
+            icon: 'warning',
             text: ' Ingrese el valor del Interes',
-          })
+          });
 
           return;
         }
@@ -267,16 +266,16 @@ export class GeneralConfigComponent {
       if (this.configVenta.configCc) {
         if (this.emails.length === 0) {
           Swal.fire({
-            icon:'warning',
-            text:  'Ingrese al menos un correo!',
-          })
+            icon: 'warning',
+            text: 'Ingrese al menos un correo!',
+          });
           return;
         }
         if (!this.emails.every((e) => isValidEmail(e))) {
           Swal.fire({
-            icon:'warning',
-            text:   'Verifique que los correos esten en formato correcto',
-          })
+            icon: 'warning',
+            text: 'Verifique que los correos esten en formato correcto',
+          });
           return;
         }
       }
@@ -310,9 +309,9 @@ export class GeneralConfigComponent {
       if (this.configInventario.llevaInventario) {
         if (!(this.configInventario.idMetodoValoracion > 0)) {
           Swal.fire({
-            icon:'warning',
-            text:   'Seleccione un Metodo de Valoración',
-          })
+            icon: 'warning',
+            text: 'Seleccione un Metodo de Valoración',
+          });
           return;
         } else {
           jsonConfig = this.metodosValoracion.find(
@@ -352,32 +351,32 @@ export class GeneralConfigComponent {
         idSistema: this.notificaciones()[0].idSistema,
         jsonConfig: this.notificaciones().map((item) => ({
           idNotificacionSistema: item.idNotificacionSistema,
-          estado: this.notificacionesSelected.some(n=>n.idNotificacionSistema===item.idNotificacionSistema),
+          estado: this.notificacionesSelected.some(
+            (n) => n.idNotificacionSistema === item.idNotificacionSistema,
+          ),
           codigo: item.codigo,
         })),
       };
     }
 
     this.$updateUseCase.execute(data).subscribe((response) => {
-      if(response.code==="0"){
+      if (response.code === '0') {
         Swal.fire({
           icon: 'warning',
           text: response.message,
-        })
+        });
       }
 
-        if (response.code == '1') {
-            Swal.fire({
-              icon: 'success',
-              text: response.message,
-              timer: 1000
-            })
-          setTimeout(()=>{
+      if (response.code == '1') {
+        Swal.fire({
+          icon: 'success',
+          text: response.message,
+          timer: 1000,
+        });
+        setTimeout(() => {
           this.getList();
-          }, 1000)
-        }
-
+        }, 1000);
+      }
     });
   }
-
 }

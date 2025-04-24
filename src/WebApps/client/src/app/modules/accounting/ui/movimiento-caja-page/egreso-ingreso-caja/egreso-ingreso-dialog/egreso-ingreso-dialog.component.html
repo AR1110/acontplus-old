@@ -93,9 +93,9 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-company-customer-search-mat
-        (onSelect)="onSelectCustomer($event)"
-        (clearInput)="onEmptyCustomer()"
+        <app-company-customer-search
+        (customerSelected)="onSelectCustomer($event)"
+        (clearSearch)="onEmptyCustomer()"
         [isSimpleMode]="true"
         />
       </div>

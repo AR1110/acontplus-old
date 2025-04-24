@@ -27,8 +27,7 @@ import { ActionDeleteDirective } from '@shared/directives/permission/action-dele
 import { ActionEditDirective } from '@shared/directives/permission/action-edit.directive';
 import { ActionMovCajaDirective } from '@shared/directives/permission/action-mov-caja.directive';
 import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
-import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { ActionComprobanteEgresoReportDirective } from '@accounting/ui/directives/action-comprobante-egreso-report.directive';
 import { ActionComprobanteEgresoAnularDirective } from '@accounting/ui/directives/action-comprobante-egreso-anular.directive';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
@@ -56,7 +55,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatMenu,
     MatMenuItem,
     UserSearchComponent,
-    MatUserSearchComponent,
+    UserSearchComponent,
 
     //Directives
     ActionComprobanteEgresoReportDirective,
@@ -212,7 +211,7 @@ export class ComprobanteEgresoComponent {
     }));
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.update((item) => ({
       ...item,
       byPersona: 0,

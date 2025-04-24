@@ -28,7 +28,7 @@ type ProductSearchProps = {
   isSimpleMode?: boolean;
   isSearchAdvanced?: boolean;
   nameProduct?: string;
-  clearInput?: boolean;
+  clearSearch?: boolean;
 };
 
 /**
@@ -54,7 +54,7 @@ export class ProductSearchComponent {
     isSimpleMode: false,
     isSearchAdvanced: false,
     nameProduct: '',
-    clearInput: false,
+    clearSearch: false,
   };
   @Input() isSimpleMode = true;
   @Input() textSearch = '';
@@ -380,7 +380,7 @@ export class ProductSearchComponent {
   }
 
   onSelectionChange(product: ProductSearch) {
-    if (this.props.clearInput) {
+    if (this.props.clearSearch) {
       this.control.patchValue('');
     }
     this.onProductSelected.emit({ data: product });
