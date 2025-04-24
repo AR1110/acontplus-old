@@ -1,6 +1,6 @@
 import {Component, inject, ViewChild} from '@angular/core';
-import {MatTree, MatTreeFlatDataSource, MatTreeModule, MatTreeNestedDataSource} from '@angular/material/tree';
-import {MatCheckboxChange, MatCheckboxModule} from '@angular/material/checkbox';
+import {MatTree,  MatTreeModule, MatTreeNestedDataSource} from '@angular/material/tree';
+import {  MatCheckboxModule} from '@angular/material/checkbox';
 import {MatIcon} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -18,6 +18,8 @@ import Swal from "sweetalert2";
 interface TreeNode {
   name: string;
   children?: TreeNode[];
+  enabled?: boolean
+  level?: number
 }
 @Component({
   selector: 'app-user-customer-access',
@@ -40,59 +42,83 @@ export class UserCustomerAccessComponent {
   private $updateAccessUseCase = inject(UpdateAccessUserCustomerRoleUseCase)
   private $userCustomerStore = inject(UserCustomerStore);
 
+  private actions:any[] = [];
+
   childrenAccessor = (node: TreeNode) => node.children||[];
-
-
 
   getAccesses(){
     this.$listAccessUseCase.execute({
       userRoleId: this.$userCustomerStore.userRoleId()
     }).subscribe(response=>{
-
-    //  this.accesoMenus = response.menus;
-
-     // this.actions = structuredClone(response.actions)
-
-    //  this.cloneActions = structuredClone(this.actions)
+      this.actions = response.actions;
       const makeMenusNode = [{
         name: 'Todos',
-        children: response.menus.map((m:any)=>{
-          let {subMenus, ...rest} = m;
-
-          let nodeSubMenus = subMenus.map((item:any)=>{
-            const {enabled, ...restSm} = item;
-
-
-            let childrenActions = response.actions.map((a:any)=>{
-              let enabled = item.enabled && item.actions.some((aRaw:any)=>aRaw.code===a.codeAction) || false
-
-              return {
-                ...a,
-                subMenuId: item.subMenuId,
-                enabled
-              }
-            })
-
-            return {
-              ...restSm,
-              // children: structuredClone(childrenActions)
-            }
-          })
-
-          return {
-            ...rest,
-            children: nodeSubMenus
-          }
-        })
+        children: response.menus
       }]
-
+      this.checklistSelection = new SelectionModel<TreeNode>(true /* multiple */);
+      this.dataSource = new MatTreeNestedDataSource<TreeNode>();
       this.dataSource.data = makeMenusNode;
-
+      this.initializeCheckedNodes(this.dataSource.data)
+  //    this.tree.expandAll()
     })
   }
+
+  // Initialize checklistSelection with nodes that have checked=true
+  initializeCheckedNodes(nodes: TreeNode[]): void {
+
+    const checkNodes = (nodeArray: TreeNode[]) => {
+      for (const node of nodeArray) {
+
+        if (node.enabled) {
+          this.checklistSelection.select(node);
+        }
+
+        if (node.children) {
+          checkNodes(node.children);
+        }
+
+      }
+    };
+
+    checkNodes(nodes);
+
+
+    nodes.forEach(node => {
+      if (node.children) {
+        this.updateParentNodeCheckStatus(node);
+      }
+    });
+  }
+
+  // Update parent node status based on children
+  updateParentNodeCheckStatus(node: TreeNode): void {
+    if (!node.children || node.children.length === 0) {
+      return;
+    }
+
+    const allChildrenChecked = node.children.every(child =>
+      this.checklistSelection.isSelected(child)
+    );
+
+    if (allChildrenChecked) {
+      this.checklistSelection.select(node);
+    } else {
+      this.checklistSelection.deselect(node);
+    }
+
+    // Recursively update for nested children
+    node.children.forEach(child => {
+      if (child.children) {
+        this.updateParentNodeCheckStatus(child);
+      }
+    });
+  }
+
+
   ngOnInit(){
     this.getAccesses()
   }
+
 
   hasChild = (_: number, node: TreeNode) => !!node.children && node.children.length > 0;
 
@@ -130,28 +156,34 @@ export class UserCustomerAccessComponent {
     return result && !this.descendantsAllSelected(node);
   }
 
-  itemSelectionToggle(node: TreeNode, event: any): void {
-    // Stop event propagation to prevent node toggle
-    // event.stopPropagation();
+  itemSelectionToggle(node: TreeNode): void {
+    // Get current selection state before toggling
+    const isSelected = this.checklistSelection.isSelected(node);
 
+    // Toggle the node
     this.checklistSelection.toggle(node);
     const descendants = this.getDescendants(node);
 
-    if (this.checklistSelection.isSelected(node)) {
-      this.checklistSelection.select(...descendants);
-    } else {
+    // If was previously selected and now deselected, deselect all descendants
+    if (isSelected) {
       this.checklistSelection.deselect(...descendants);
     }
+    // If was previously deselected and now selected, select all descendants
+    else {
+      this.checklistSelection.select(...descendants);
+    }
 
+    // Update all parent nodes
     this.checkAllParentsSelection(node);
   }
 
-  leafItemSelectionToggle(node: TreeNode, event: any): void {
+  leafItemSelectionToggle(node: TreeNode): void {
     // Stop event propagation
     // event.stopPropagation();
 
     this.checklistSelection.toggle(node);
     this.checkAllParentsSelection(node);
+
   }
 
   checkAllParentsSelection(node: TreeNode): void {
@@ -163,16 +195,30 @@ export class UserCustomerAccessComponent {
   }
 
   checkRootNodeSelection(node: TreeNode): void {
-    const nodeSelected = this.checklistSelection.isSelected(node);
-    const descendants = this.getDescendants(node);
-    const descAllSelected = descendants.length > 0 &&
-      descendants.every(child => this.checklistSelection.isSelected(child));
 
-    if (nodeSelected && !descAllSelected) {
-      this.checklistSelection.deselect(node);
-    } else if (!nodeSelected && descAllSelected) {
+    const descendants = this.getDescendants(node);
+
+    if (descendants.length === 0) {
+      return; // Skip processing if there are no descendants
+    }
+
+    const descAllSelected = descendants.every(child => this.checklistSelection.isSelected(child));
+    const descNoneSelected = descendants.every(child => !this.checklistSelection.isSelected(child));
+
+    // If all descendants are selected, select the parent
+    if (descAllSelected) {
       this.checklistSelection.select(node);
     }
+    // If no descendants are selected, deselect the parent
+    else if (descNoneSelected) {
+      this.checklistSelection.deselect(node);
+    }
+    // Otherwise, it should be in an indeterminate state (neither selected nor deselected)
+    else {
+      this.checklistSelection.deselect(node);
+    }
+
+
   }
 
   getParentNode(node: TreeNode): TreeNode | null {
@@ -214,58 +260,42 @@ export class UserCustomerAccessComponent {
   }
 
   onSave(){
-    // const checklistSelection = this.checklistSelection.selected;
-    //
-    //
-    // const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(ck=>ck.level===2);//Nivel submenus
-    // const filteredCheckedsLevel3 = checklistSelection.filter(ck=>ck.level===3);//Nivel acciones
-    //
-    // const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce((acc:any, curr:any)=>{
-    //
-    //   let subMenuId = filteredCheckedsLevel2.find(l2=>l2.unique===curr.unique)?.subMenuId
-    //
-    //   let existingNode  = acc.find((m:any)=>m.subMenuId===subMenuId);
-    //   let action = this.actions.find(a=>a.codeAction===curr.codeAction)
-    //   let {codeAction, ...restAction} =action;
-    //
-    //   if(!existingNode ){
-    //
-    //     acc.push({
-    //       subMenuId,
-    //       actions: [{...restAction, code: codeAction}]
-    //     })
-    //   }else{
-    //     if(action){
-    //       existingNode.actions.push({...restAction, code: codeAction})
-    //     }
-    //   }
-    //
-    //   return acc;
-    //
-    // }, [])
-    //
-    // let mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
-    //   subMenuId: acc.subMenuId,
-    //   actions: JSON.stringify(acc.actions)
-    // }))
-    //
-    // if(checklistSelection.length===0){
-    //   Swal.fire({
-    //     icon: 'warning',
-    //     text: 'Seleccione al menos un SubMenu'
-    //   })
-    //   return
-    // }
-    //
-    //
-    //
-    // if (mappedLevel3.some((s:any) => (s.actions?.length === 0))) {
-    //   Swal.fire({
-    //     icon: 'warning',
-    //     text:'Agregue al menos una acción de todos los submenús seleccionados'
-    //   })
-    //   return;
-    // }
+
+    const menus = this.checklistSelection.selected.filter(cl=>cl.level===3);
+    const mergeDuplicateLevel3 = menus.reduce((acc:any, curr:any)=>{
+
+      let existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
+      let action = this.actions.find(a=>a.code===curr.code)
+
+      if(!existingNode ){
+
+        acc.push({
+          subMenuId: curr.subMenuId,
+          actions: [action]
+        })
+      }else{
+        if(action){
+          existingNode.actions.push(action)
+        }
+      }
+
+      return acc;
+
+    }, [])
+
+    let mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
+      subMenuId: acc.subMenuId,
+      actions: JSON.stringify(acc.actions)
+    }))
+
+    if(menus.length===0){
+      Swal.fire({
+        icon: 'warning',
+        text: 'Seleccione al menos una acción del SubMenú'
+      })
+      return
+    }
+
 
     Swal.fire({
       icon: 'warning',
@@ -278,7 +308,7 @@ export class UserCustomerAccessComponent {
 
       if(result.isConfirmed) {
         let data =   {
-          accesses: JSON.stringify([])
+          accesses: JSON.stringify(mappedLevel3)
         }
 
         const params = {
