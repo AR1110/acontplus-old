@@ -90,4 +90,8 @@ export enum GlobalRoutes {
   //Customer
   Cliente = 'customer/company-customer',
   CommonEmailQueue = 'common/email-queue',
+
+  //BarberShop
+  BarberShopSeat = 'barber-shop/seat',
+  BarberShopTicket = 'barber-shop/ticket',
 }
