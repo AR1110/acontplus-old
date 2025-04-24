@@ -1,11 +1,4 @@
-import {
-  Directive,
-  HostListener,
-  inject,
-  input,
-  OnInit,
-  output,
-} from '@angular/core';
+import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { SendMailDialogComponent } from '@shared/components/send-mail-dialog/send-mail-dialog.component';
 import { ToasterService } from '@core/services/toaster.service';
 import { DialogService } from '@core/services/dialog.service';
@@ -14,7 +7,7 @@ import { DialogService } from '@core/services/dialog.service';
   selector: '[appSendMailDialog]',
   standalone: true,
 })
-export class SendMailDialogDirective implements OnInit {
+export class SendMailDialogDirective {
   notificationAcontPlus = input(false);
   notificationSri = input(false);
   noModifyParam = input(true);
@@ -23,10 +16,6 @@ export class SendMailDialogDirective implements OnInit {
 
   private readonly _dialogService = inject(DialogService);
   private readonly _tS = inject(ToasterService);
-
-  ngOnInit() {
-    console.log({});
-  }
 
   @HostListener('click') onClick() {
     if (!(this.notificationAcontPlus() || this.notificationSri())) {

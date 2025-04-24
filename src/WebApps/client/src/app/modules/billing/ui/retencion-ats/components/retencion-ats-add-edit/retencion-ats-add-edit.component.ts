@@ -41,7 +41,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { RetAtsInfoAdicional } from '@billing/domain/models/retencion-ats/retencion-ats.model';
+import {
+  RetAtsInfoAdicional,
+  RetencionAts,
+} from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -72,7 +75,7 @@ import { ToasterService } from '@core/services/toaster.service';
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
   private datePipe = inject(DatePipe);
-  readonly data = inject<unknown>(MAT_DIALOG_DATA);
+  readonly data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
   );
@@ -241,11 +244,17 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.retencionAtsForm
-      .get('fechaEmision')
-      ?.setValue(this.datePipe.transform(new Date(), 'yyyy-MM-dd'));
-    this.getPeriod();
     this.initialLoad();
+    console.log(this.data);
+    if (this.data && this.data.idRetencionAts > 0) {
+      this.retencionAtsForm.patchValue(this.data);
+      this.getPeriod();
+    } else {
+      this.retencionAtsForm
+        .get('fechaEmision')
+        ?.setValue(this.datePipe.transform(new Date(), 'yyyy-MM-dd'));
+      this.getPeriod();
+    }
   }
 
   onClose() {

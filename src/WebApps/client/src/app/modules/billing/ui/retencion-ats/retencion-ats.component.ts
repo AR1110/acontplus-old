@@ -26,6 +26,7 @@ import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.dir
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
+import { isApiResponse } from '@core/models/api-response';
 
 @Component({
   selector: 'app-retencion-ats',
@@ -99,7 +100,9 @@ export class RetencionAtsComponent implements OnInit {
     });
 
     dialogRef.subscribe((response) => {
-      console.log(response);
+      if (isApiResponse(response) && response.code === '1') {
+        this.loadData();
+      }
     });
   }
 
@@ -203,13 +206,27 @@ export class RetencionAtsComponent implements OnInit {
     };
   }
 
-  sendWhatsApp(item: any) {}
+  sendWhatsApp(item: RetencionAtsList) {
+    console.log(item);
+  }
 
   edit(item: RetencionAtsList) {
     this._retencionAtsUseCase
       .getById(item.idRetencionAts)
       .subscribe((response) => {
-        console.log(response);
+        const dialogRef = this._dialogService.open(
+          RetencionAtsAddEditComponent,
+          {
+            size: 'xxl',
+            data: response,
+          },
+        );
+
+        dialogRef.subscribe((response) => {
+          if (isApiResponse(response) && response.code === '1') {
+            this.loadData();
+          }
+        });
       });
   }
 }

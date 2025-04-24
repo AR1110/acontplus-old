@@ -91,8 +91,11 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   getById(id: number): Observable<RetencionAts> {
     return this._http.get<ApiResponse>(`${this._url} ${id}`).pipe(
       map((response) => {
-        console.log(response);
-        return response.payload as RetencionAts;
+        if (response.code !== '1') {
+          return {} as RetencionAts;
+        }
+        const { retencionAts } = JSON.parse(response.payload as string);
+        return retencionAts[0] as RetencionAts;
       }),
     );
   }
