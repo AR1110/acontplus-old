@@ -12,51 +12,44 @@
           </mat-select>
         </mat-form-field>
       </div>
-      @for (item of catalogs; track $index) {
-        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-          <div class="icheck-primary">
-            <input
-              type="radio"
-              [id]="item.code"
-              [value]="item.code"
-              name="someGroupCatalogo"
-              [(ngModel)]="mainForm.opcion"
-            />
-            <label [for]="item.code">{{ item.description }}</label>
-          </div>
-        </div>
-      }
+      <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+        <mat-radio-group aria-label="Select an option catalog" [(ngModel)]="mainForm.opcion">
+          @for (item of catalogs; track $index){
+            <mat-radio-button [value]="item.code">{{ item.description }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
     </div>
-    <hr />
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <span>SubFamilias</span>
-          <app-sub-category-select-multiple
-            [checkedSubCategorias]="checkedSubCategorias"
-            [subCategorias]="subCategorias"
-          />
-        </div>
+    <mat-divider/>
+    <div
+      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+    >
+      <div class="col">
+        <app-sub-category-select-multiple
+          [isMat]="true"
+          [checkedSubCategorias]="checkedSubCategorias"
+          [subCategorias]="subCategorias"
+        />
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <span>Artículo: </span>
-          <app-product-search
-            [props]="productSearchProps"
-            (onProductSelected)="onProductSelected($event)"
-            (emptyInput)="productResultEmptyInput($event)"
-          />
-        </div>
+      <div class="col">
+        <app-product-search
+          [isInputMat]="true"
+          [props]="productSearchProps"
+          (onProductSelected)="onProductSelected($event)"
+          (emptyInput)="productclearSearch($event)"
+        />
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="col">
         <app-supplier-search
           [isSimpleMode]="isSearchSupplierSimple"
           (supplierSelected)="onSupplierSelected($event)"
-          (clearSearch)="supplierResultEmptyInput($event)"
-        ></app-supplier-search>
+        (clearSearch)="supplierclearSearch($event)"
+        />
+
       </div>
 
     </div>
+     
 
 
     <div class="row">
