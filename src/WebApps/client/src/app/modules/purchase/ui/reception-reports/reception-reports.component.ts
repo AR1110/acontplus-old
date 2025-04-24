@@ -7,7 +7,7 @@ import {
   DOC_TYPE_SRI,
   REPORT_FORMAT,
 } from '@core/constants/global.constants';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';

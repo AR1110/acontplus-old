@@ -9,7 +9,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';

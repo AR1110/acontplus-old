@@ -99,7 +99,7 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <app-user-search
-            (emptyInput)="emptyInputUser()"
+            (clearSearch)="emptyInputUser()"
             (userSelected)="onUserSelected($event)"
             [isSimpleMode]="true"
           />

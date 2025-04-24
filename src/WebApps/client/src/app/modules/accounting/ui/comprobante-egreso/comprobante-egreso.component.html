@@ -62,8 +62,8 @@
           <app-supplier-search [isSimpleMode]="true" />
         </div>
         <div class="col">
-          <app-mat-user-search
-            (onSelect)="onUserSelected($event)"
+          <app-user-search
+            (userSelected)="onUserSelected($event)"
             (clearSearch)="onEmptyInputUserSearch()"
           />
         </div>

@@ -23,7 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
@@ -54,7 +54,7 @@ const imports = [
   ProductSearchComponent,
   DateRangeSelectionComponent,
   SupplierSearchComponent,
-  MatUserSearchComponent,
+  UserSearchComponent,
   CompanyCustomerSearchComponent,
   ReportButtonsComponent,
   //Directives

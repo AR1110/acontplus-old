@@ -192,8 +192,8 @@
 
         <div class="row">
           <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-            <app-mat-user-search
-              (onSelect)="onUserSelected($event)"
+            <app-user-search
+              (userSelected)="onUserSelected($event)"
               (clearSearch)="emptyInputUser()"
             />
           </div>

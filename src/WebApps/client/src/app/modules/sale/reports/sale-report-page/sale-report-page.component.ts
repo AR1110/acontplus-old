@@ -25,14 +25,14 @@ import { MatDividerModule } from '@angular/material/divider';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { CuentaPorCobrarUseCase } from '@accounting/core/use-cases/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
 const imports = [
   MatCardModule,
@@ -46,7 +46,7 @@ const imports = [
   BreadcrumbComponent,
   CompanyCustomerSearchComponent,
   DateRangeSelectionComponent,
-  MatUserSearchComponent,
+  UserSearchComponent,
 
   //Directives
   ActionEnviarCorreoDirective,

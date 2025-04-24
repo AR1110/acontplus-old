@@ -33,7 +33,7 @@ import {DialogService} from "@core/services/dialog.service";
 import {
   AddEditGuiaRemisionComponent
 } from "@billing/ui/guia-remision/components/add-edit-guia-remision/add-edit-guia-remision.component";
-import {MatUserSearchComponent} from "@shared/components/mat-user-search/mat-user-search.component";
+import {UserSearchComponent} from "@shared/components/user-search/user-search.component";
 
 @Component({
   selector: 'app-guia-remision',
@@ -50,7 +50,7 @@ import {MatUserSearchComponent} from "@shared/components/mat-user-search/mat-use
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
-    MatUserSearchComponent,
+    UserSearchComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     MatMenu,

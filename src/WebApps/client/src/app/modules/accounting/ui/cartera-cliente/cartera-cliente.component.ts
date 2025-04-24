@@ -23,7 +23,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOptgroup, MatOption } from '@angular/material/autocomplete';
 import { MatSelect } from '@angular/material/select';
-import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import {
   MatCard,
   MatCardActions,
@@ -48,7 +48,7 @@ import { CompanyCustomer } from '@customer/core/domain/company-customer';
     MatOptgroup,
     MatOption,
     MatSelect,
-    MatUserSearchComponent,
+    UserSearchComponent,
     MatCard,
     MatCardContent,
     MatCardActions,
