@@ -124,7 +124,7 @@ export const routes: Routes = [
         },
       },
       {
-        path: 'barber',
+        path: 'barber-shop',
         title: 'App - Barberia',
         loadChildren: () =>
           import('@modules/barber-shop/barber-shop.routes').then((r) => r.routes),
