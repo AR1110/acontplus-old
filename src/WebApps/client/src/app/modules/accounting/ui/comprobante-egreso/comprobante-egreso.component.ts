@@ -27,12 +27,12 @@ import { ActionDeleteDirective } from '@shared/directives/permission/action-dele
 import { ActionEditDirective } from '@shared/directives/permission/action-edit.directive';
 import { ActionMovCajaDirective } from '@shared/directives/permission/action-mov-caja.directive';
 import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
-import { SupplierSearchMatComponent } from '@customer/ui/supplier/components/supplier-search-mat/supplier-search-mat.component';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
 import { ActionComprobanteEgresoReportDirective } from '@accounting/ui/directives/action-comprobante-egreso-report.directive';
 import { ActionComprobanteEgresoAnularDirective } from '@accounting/ui/directives/action-comprobante-egreso-anular.directive';
 import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-comprobante-egreso',
@@ -55,7 +55,6 @@ import { SendMailModalDirective } from '@shared/directives/send-mail-modal.direc
     ActionMovCajaDirective,
     MatMenu,
     MatMenuItem,
-    SupplierSearchMatComponent,
     UserSearchComponent,
     MatUserSearchComponent,
 
@@ -63,6 +62,7 @@ import { SendMailModalDirective } from '@shared/directives/send-mail-modal.direc
     ActionComprobanteEgresoReportDirective,
     ActionComprobanteEgresoAnularDirective,
     SendMailModalDirective,
+    SupplierSearchComponent,
   ],
   templateUrl: './comprobante-egreso.component.html',
   styles: ``,

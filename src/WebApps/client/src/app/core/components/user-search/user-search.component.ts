@@ -50,7 +50,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 export class UserSearchComponent {
   userSelected = output<{ data: UserSearch }>();
   emptyInput = output();
-  isSearchSimple = input(true);
+  isSimpleMode = input(true);
   textSearch = input<string>('');
   textSearchControl = new FormControl<string>('', { nonNullable: true });
   filteredUsers: Observable<UserSearch[]>;

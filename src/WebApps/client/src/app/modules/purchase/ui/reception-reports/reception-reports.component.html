@@ -95,10 +95,10 @@
       @if (dataSearch.supplierChecked) {
         <div class="col-xl-4 col-lg-4 col-md-12 col-12">
           <app-supplier-search
-            [isSearchSimple]="isSearchSupplierSimple"
+            [isSimpleMode]="isSearchSupplierSimple"
             (supplierSelected)="onSupplierSelected($event)"
             [textSearch]="dataSearch.supplierName"
-            (clearEmpty)="supplierResultEmptyInput($event)"
+            (clearSearch)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
       }

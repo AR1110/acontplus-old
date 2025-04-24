@@ -1,31 +1,92 @@
-@if (isSearchSimple()) {
+<!-- Simple mode template -->
+@if (isSimpleMode()) {
   <mat-form-field class="w-100">
     <mat-label>Proveedor:</mat-label>
     <input
       matInput
-      [formControl]="textSearchControl"
+      [formControl]="searchControl"
       [matAutocomplete]="auto"
       placeholder="Buscar proveedor"
-      (keyup)="onKeyupSearch()"
+      (keyup)="onSearchInput()"
     />
-    <mat-autocomplete
-      #auto="matAutocomplete"
-      (optionSelected)="onSelect($event.option.value)"
-      [displayWith]="formatter"
-    >
-      @for (supplier of filteredSuppliers | async; track $index) {
-        <mat-option [value]="supplier">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="formatter">
+      @if (isLoading) {
+        <mat-option disabled>
+          <mat-spinner diameter="35" style="margin: 0 auto"></mat-spinner>
+        </mat-option>
+      }
+      @for (
+        supplier of filteredSuppliers | async;
+        track supplier.identificacionComprador
+      ) {
+        <mat-option
+          [value]="supplier"
+          (onSelectionChange)="onSupplierSelect(supplier)"
+        >
           {{ supplier.identificacionComprador }} -
           {{ supplier.razonSocialComprador }}
+        </mat-option>
+      }
+      @if (searchFailed) {
+        <mat-option disabled>
+          <span class="text-danger">Error al cargar proveedores</span>
         </mat-option>
       }
     </mat-autocomplete>
   </mat-form-field>
 }
 
-@if (searching) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+<!-- Advanced mode template -->
+@if (isAdvancedMode()) {
+  <mat-form-field class="w-100">
+    <mat-label>Proveedor</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="searchControl"
+      [matAutocomplete]="auto"
+      (keydown.enter)="onEnterKeypress($event)"
+      onclick="select();"
+    />
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="formatter">
+      @if (isLoading) {
+        <mat-option disabled>
+          <mat-spinner diameter="35" style="margin: 0 auto"></mat-spinner>
+        </mat-option>
+      }
+      @for (
+        supplier of filteredSuppliers | async;
+        track supplier.identificacionComprador
+      ) {
+        <mat-option
+          [value]="supplier"
+          (onSelectionChange)="onSupplierSelect(supplier)"
+        >
+          {{ supplier.identificacionComprador }} -
+          {{ supplier.razonSocialComprador }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+
+    <ng-container matSuffix>
+      <button mat-icon-button appActionCompanyCustomerAddEditModal>
+        <mat-icon>add</mat-icon>
+      </button>
+
+      @if (id() > 0) {
+        <button
+          mat-icon-button
+          appActionCompanyCustomerAddEditModal
+          [id]="id()"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+      }
+    </ng-container>
+  </mat-form-field>
 }
-@if (searchFailed) {
-  <mat-error> Lo sentimos, no se han podido cargar las sugerencias. </mat-error>
+
+<!-- Loading indicator for overall component state -->
+@if (isLoading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }

@@ -133,7 +133,7 @@
         <div class="form-group">
           <label>Cliente: <span class="text-danger">*</span></label>
           <app-company-customer-search
-            [isSearchSimple]="true"
+            [isSimpleMode]="true"
             (customerSelected)="onSelectCustomer($event)"
             (resultEmptyInput)="onEmptyCustomer()"
           />

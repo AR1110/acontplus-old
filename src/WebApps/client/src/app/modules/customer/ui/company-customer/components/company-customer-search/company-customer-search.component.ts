@@ -32,7 +32,7 @@ import { MatIconButton } from '@angular/material/button';
 export class CompanyCustomerSearchComponent {
   @Output() customerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
-  @Input() isSearchSimple = false;
+  @Input() isSimpleMode = false;
   @Input() isGetId = false;
   @Input() showActionsBtn = true;
   @Input() textSearch = '';

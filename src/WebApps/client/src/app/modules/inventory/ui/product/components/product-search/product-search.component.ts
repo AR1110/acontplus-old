@@ -25,7 +25,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 type ProductSearchProps = {
-  isSearchSimple?: boolean;
+  isSimpleMode?: boolean;
   isSearchAdvanced?: boolean;
   nameProduct?: string;
   clearInput?: boolean;
@@ -51,12 +51,12 @@ type ProductSearchProps = {
 })
 export class ProductSearchComponent {
   @Input() props: ProductSearchProps = {
-    isSearchSimple: false,
+    isSimpleMode: false,
     isSearchAdvanced: false,
     nameProduct: '',
     clearInput: false,
   };
-  @Input() isSearchSimple = true;
+  @Input() isSimpleMode = true;
   @Input() textSearch = '';
   isInputMat = input(false)
 

@@ -20,7 +20,7 @@ export class EmployeeSearchComponent {
   @Output() onEmployeeSelected = new EventEmitter<{ data: any }>();
 
   @Output() emptyInput = new EventEmitter();
-  @Input() isSearchSimple = false;
+  @Input() isSimpleMode = false;
   @Input() textSearch = ''
 
   private employeeSvc = inject(EmployeeService)

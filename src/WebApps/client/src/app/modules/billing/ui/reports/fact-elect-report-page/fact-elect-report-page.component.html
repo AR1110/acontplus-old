@@ -114,7 +114,7 @@
           <app-user-search
             (emptyInput)="emptyInputUser()"
             (userSelected)="onUserSelected($event)"
-            [isSearchSimple]="true"
+            [isSimpleMode]="true"
           />
         </div>
       </div>
@@ -124,7 +124,7 @@
         <div class="w-100">
           <mat-label>Cliente</mat-label>
           <app-company-customer-search
-            [isSearchSimple]="true"
+            [isSimpleMode]="true"
             (resultEmptyInput)="resultEmptyInputCustomer()"
             (customerSelected)="onCustomerSelected($event)"
           />
