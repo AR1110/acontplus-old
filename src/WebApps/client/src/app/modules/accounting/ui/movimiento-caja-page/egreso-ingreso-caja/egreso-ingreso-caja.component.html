@@ -11,9 +11,9 @@
             (selectionChange)="getMovimientosCaja()"
           >
             @for (item of establecimientos; track $index) {
-            <mat-option [value]="item.codEstab">{{
-              item.nombreComercial
-            }}</mat-option>
+              <mat-option [value]="item.codEstab">{{
+                item.nombreComercial
+              }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -25,9 +25,9 @@
         />
       </div>
       <div class="col">
-        <app-company-customer-search-mat
-          (onSelect)="onSelectCustomer($event)"
-          (clearInput)="onEmptyCustomer()"
+        <app-company-customer-search
+          (customerSelected)="onSelectCustomer($event)"
+          (clearSearch)="onEmptyCustomer()"
           [isSimpleMode]="true"
         />
       </div>
@@ -38,15 +38,10 @@
       <button mat-icon-button aria-label="refresh" (click)="refresh()">
         <mat-icon>refresh</mat-icon>
       </button>
-      @if($userRoleStateManager.canCreate()){
-      <button
-        mat-icon-button
-        aria-label="Add"
-        (click)="openModal()"
-      >
-        <mat-icon>add</mat-icon>
-      </button>
-
+      @if ($userRoleStateManager.canCreate()) {
+        <button mat-icon-button aria-label="Add" (click)="openModal()">
+          <mat-icon>add</mat-icon>
+        </button>
       }
     </div>
   </div>
@@ -70,12 +65,11 @@
   </button>
 
   <mat-menu #menu="matMenu">
-    @if($userRoleStateManager.canGenerateReport()){
-    <button mat-menu-item (click)="getReport(item)"  >
-      <mat-icon>download</mat-icon>
-      <span>Reporte</span>
-    </button>
-
+    @if ($userRoleStateManager.canGenerateReport()) {
+      <button mat-menu-item (click)="getReport(item)">
+        <mat-icon>download</mat-icon>
+        <span>Reporte</span>
+      </button>
     }
 
     <button mat-menu-item (click)="getPrint(item)">
@@ -83,12 +77,11 @@
       <span>Imprimir</span>
     </button>
 
-    @if($userRoleStateManager.canCancel()){
-    <button mat-menu-item   (click)="askToDelete(item)">
-      <mat-icon>delete</mat-icon>
-      <span>Anular</span>
-    </button>
-
+    @if ($userRoleStateManager.canCancel()) {
+      <button mat-menu-item (click)="askToDelete(item)">
+        <mat-icon>delete</mat-icon>
+        <span>Anular</span>
+      </button>
     }
   </mat-menu>
 </ng-template>

@@ -73,7 +73,7 @@ export class ReportsComponent {
     this.dataSearch.idProveedor = $event.idProveedor;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.idProveedor = 0;
   }
 

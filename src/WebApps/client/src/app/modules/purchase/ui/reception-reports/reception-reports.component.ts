@@ -99,7 +99,7 @@ export class ReceptionReportsComponent {
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.numeroIdentificacion = '';
   }
 
@@ -109,7 +109,7 @@ export class ReceptionReportsComponent {
     this.dataSearch.userId = data.idUsuario;
   }
 
-  userResultEmptyInput($event: any) {
+  userclearSearch($event: any) {
     this.dataSearch.userId = 0;
   }
 

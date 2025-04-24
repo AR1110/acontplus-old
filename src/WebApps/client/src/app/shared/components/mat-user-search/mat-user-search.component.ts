@@ -27,7 +27,7 @@ export class MatUserSearchComponent {
   private userSvc = inject(UserService)
 
   onSelect = output<any>()
-  clearInput = output()
+  clearSearch = output()
 
   textName = model<string>('')
   control = new FormControl<null | string>(null);
@@ -46,7 +46,7 @@ export class MatUserSearchComponent {
           return this._filter(val);
         }
         if (!isValidField(val)) {
-          this.clearInput.emit()
+          this.clearSearch.emit()
 
         }
         return [];

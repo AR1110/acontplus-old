@@ -1,71 +1,183 @@
-@if (isSimpleMode) {
-  <input
-    id="typeahead-company-customers-simple"
-    type="text"
-    class="form-control"
-    [(ngModel)]="textSearch"
-    [ngbTypeahead]="search"
-    [resultTemplate]="rt"
-    [class.is-invalid]="searchFailed"
-    (selectItem)="onSelect($event)"
-    onclick="select();"
-    (keyup)="onKeyupSearch()"
-    placeholder="..."
-    (keyup.enter)="onEnterKeyPressed($event)"
-  />
-} @else {
-  <div class="input-group">
+<!-- Autocomplete options template -->
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="formatCustomer">
+  @if (isLoading()) {
+    <mat-option
+      disabled
+      style="display: flex; justify-content: center; align-items: center"
+    >
+      <mat-spinner diameter="35"></mat-spinner>
+    </mat-option>
+  }
+  @for (
+    customer of filteredCustomers | async;
+    track customer.idCliente || customer.id
+  ) {
+    <mat-option
+      [value]="customer"
+      (onSelectionChange)="onSelectionChange(customer)"
+    >
+      <span>{{ customer.numeroIdentificacion }}</span> |
+      <small>{{ customer.nombreFiscal }}</small>
+    </mat-option>
+  }
+  @if (searchFailed()) {
+    <mat-option disabled>
+      <span class="text-danger">Error al cargar clientes</span>
+    </mat-option>
+  }
+</mat-autocomplete>
+
+<!-- Advanced mode search field -->
+@if (isAdvancedMode()) {
+  <mat-form-field class="w-100">
+    <mat-label>Cliente</mat-label>
     <input
-      id="typeahead-company-customers-advanced"
       type="text"
-      class="form-control"
-      [(ngModel)]="textSearch"
-      [ngbTypeahead]="search"
-      [resultTemplate]="rt"
-      [class.is-invalid]="searchFailed"
-      (selectItem)="onSelect($event)"
+      matInput
+      [formControl]="searchControl"
+      [matAutocomplete]="auto"
+      (keydown.enter)="onEnter($event)"
+      (keyup)="onSearchInput()"
       onclick="select();"
-      (keyup)="onKeyupSearch()"
-      placeholder="Buscar cliente"
     />
 
-    <button
-      type="button"
-      mat-icon-button
-      (companyCustomerSaved)="onResult($event)"
-      appCompanyCustomerAddEdit
-    >
-      <mat-icon>add</mat-icon>
-    </button>
+    <ng-container matSuffix>
+      @if (isHandset()) {
+        <!-- Mobile layout - menu button -->
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          (click)="$event.stopPropagation()"
+          aria-label="actions"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button
+            mat-menu-item
+            appCompanyCustomerAddEdit
+            [openDialog]="true"
+            (companyCustomerSaved)="onSelectionChange($event)"
+          >
+            <mat-icon>add</mat-icon>
+            <span>Nuevo</span>
+          </button>
+          @if (id() > 0) {
+            <button
+              mat-menu-item
+              appCompanyCustomerAddEdit
+              [id]="id()"
+              [openDialog]="true"
+              (companyCustomerSaved)="onSelectionChange($event)"
+            >
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button
+              mat-menu-item
+              #trigger
+              cdkOverlayOrigin
+              (click)="toggleOverlay($event)"
+            >
+              <mat-icon>info</mat-icon>
+              <span>Detalle</span>
+            </button>
+          }
+        </mat-menu>
+      } @else {
+        <!-- Desktop layout - icon buttons -->
+        <button
+          mat-icon-button
+          appCompanyCustomerAddEdit
+          [openDialog]="true"
+          (companyCustomerSaved)="onSelectionChange($event)"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
 
-    @if (id > 0) {
-      <button
-        type="button"
-        mat-icon-button
-        (companyCustomerSaved)="onResult($event)"
-        appCompanyCustomerAddEdit
-        [id]="id"
-      >
-        <mat-icon>edit</mat-icon>
-      </button>
-    }
-    <button type="button" mat-icon-button>
-      <mat-icon>search</mat-icon>
-    </button>
-  </div>
-}
-@if (searching) {
-  <small class="form-text text-muted">Buscando...</small>
-}
-@if (searchFailed) {
-  <div class="invalid-feedback">
-    Lo sentimos, no se han podido cargar las sugerencias.
-  </div>
+        @if (id() > 0) {
+          <button
+            mat-icon-button
+            appCompanyCustomerAddEdit
+            [id]="id()"
+            [openDialog]="true"
+            (companyCustomerSaved)="onSelectionChange($event)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            #trigger
+            cdkOverlayOrigin
+            (click)="toggleOverlay($event)"
+          >
+            <mat-icon>info</mat-icon>
+          </button>
+        }
+      }
+    </ng-container>
+  </mat-form-field>
 }
 
-<ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight
-    [result]="r.numeroIdentificacion + ' - ' + r.nombreFiscal"
-    [term]="t"
-  />
-</ng-template>
+<!-- Simple mode search field -->
+@if (isSimpleMode()) {
+  <mat-form-field class="w-100">
+    <mat-label>Cliente</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="searchControl"
+      [matAutocomplete]="auto"
+      (keyup)="onSearchInput()"
+      onclick="select();"
+    />
+  </mat-form-field>
+}
+
+<!-- Customer details overlay -->
+@if (isAdvancedMode() && trigger && id() > 0) {
+  <ng-template
+    [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="isOpenDetail()"
+    (overlayOutsideClick)="isOpenDetail.set(false)"
+    cdkConnectedOverlay
+    cdkConnectedOverlayPush="true"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayPositionStrategy]="positionStrategy"
+    [cdkConnectedOverlayViewportMargin]="7"
+  >
+    <div class="overlay-content">
+      <mat-card class="m-0 p-0">
+        <mat-card-content>
+          @if (customerDetail()) {
+            <div class="vstack gap-1">
+              <p>
+                <strong>Identificación:</strong>
+                {{ customerDetail()?.numeroIdentificacion }}
+              </p>
+              <p>
+                <strong>Nombre Fiscal:</strong>
+                {{ customerDetail()?.nombreFiscal }}
+              </p>
+              <p>
+                <strong>Nombre Comercial:</strong>
+                {{ customerDetail()?.nombreComercial }}
+              </p>
+              <p>
+                <strong>Dirección:</strong>
+                {{ customerDetail()?.direccion }}
+              </p>
+            </div>
+          } @else {
+            <p>Cargando...</p>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
+}
+
+<!-- Loading indicator -->
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}

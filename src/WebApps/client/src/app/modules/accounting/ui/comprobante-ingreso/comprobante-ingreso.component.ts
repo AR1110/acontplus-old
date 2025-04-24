@@ -195,7 +195,7 @@ export class ComprobanteIngresoComponent {
     this.companyCustomerSearchName = data.nombreCompleto;
   }
 
-  employeeResultEmptyInput($event: any) {
+  employeeclearSearch($event: any) {
     this.dataSearch.identificacionComprador = null;
     this.companyCustomerSearchName = '';
   }

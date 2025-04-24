@@ -3,6 +3,7 @@ import { AddEditModalComponent } from '@customer/ui/company-customer/components/
 import { ModalService } from '@core/services/modal.service';
 import { DialogService } from '@core/services/dialog.service';
 import { CompanyCustomerAddEditDialogComponent } from './components/company-customer-add-edit-dialog/company-customer-add-edit-dialog.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Directive({
   selector: '[appCompanyCustomerAddEdit]',
@@ -11,7 +12,7 @@ export class CompanyCustomerAddEditDirective {
   #modalSvc = inject(ModalService);
   private dialogSvc = inject(DialogService);
 
-  companyCustomerSaved = output();
+  companyCustomerSaved = output<CompanyCustomer>();
   id = input(0);
   openDialog = input(false);
 

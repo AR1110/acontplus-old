@@ -212,7 +212,7 @@ export class ComprobanteEgresoComponent {
     }));
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.update((item) => ({
       ...item,
       byPersona: 0,

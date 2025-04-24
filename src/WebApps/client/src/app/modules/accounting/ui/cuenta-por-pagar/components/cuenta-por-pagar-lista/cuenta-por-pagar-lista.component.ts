@@ -296,7 +296,7 @@ export class CuentaPorPagarListaComponent {
     this.setDataSearch('nombreProveedor', $event.name);
   }
 
-  clearInputSupplier() {
+  clearSearchSupplier() {
     this.setDataSearch('idProveedor', 0);
   }
 

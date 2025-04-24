@@ -22,7 +22,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
@@ -30,8 +30,9 @@ import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
-import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { CuentaPorCobrarUseCase } from '@accounting/core/use-cases/cuenta-por-cobrar.use-case';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import {CompanyCustomer} from "@customer/core/domain/company-customer";
 
 const imports = [
   MatCardModule,
@@ -43,19 +44,19 @@ const imports = [
   MatButtonModule,
   MatIconModule,
   BreadcrumbComponent,
-  CompanyCustomerSearchMatComponent,
+  CompanyCustomerSearchComponent,
   DateRangeSelectionComponent,
   MatUserSearchComponent,
 
   //Directives
   ActionEnviarCorreoDirective,
-  ActionReportDirective
-]
+  ActionReportDirective,
+];
 @Component({
-    selector: 'app-sale-report-page',
-    imports,
-    templateUrl: './sale-report-page.component.html',
-    styles: ``
+  selector: 'app-sale-report-page',
+  imports,
+  templateUrl: './sale-report-page.component.html',
+  styles: ``,
 })
 export class SaleReportPageComponent {
   isSelectedNotaEntrega = false;
@@ -84,13 +85,12 @@ export class SaleReportPageComponent {
   empresas: any[] = [];
   format: any;
   provinciasAgrupadas: any[] = [];
-  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase)
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
-  private appNotifiSvc = inject(NotificacionService)
-  private _tokenUseCase= inject(TokenUseCase)
-
+  private appNotifiSvc = inject(NotificacionService);
+  private _tokenUseCase = inject(TokenUseCase);
 
   getDataFilter() {
     this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
@@ -173,7 +173,7 @@ export class SaleReportPageComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
     this.dataSearch.identificacion = null;
   }
@@ -191,24 +191,19 @@ export class SaleReportPageComponent {
     this.dataSearch.userId = data.idUsuario;
   }
 
-
-
   getTipoDoc() {
     if (this.dataSearch.codDoc === DOC_TYPE.FV) return DOC_TYPE_SRI.F;
     if (this.dataSearch.codDoc === DOC_TYPE.CDV) return null;
     return this.dataSearch.codDoc;
   }
 
-
-  private getDataParams (){
+  private getDataParams() {
     let dataEstab = this.establecimientos.find(
-      (estab) =>
-        estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     let dataEstado = this.estadosDoc.find(
       (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
-
 
     let identificacion = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.identificacion)
@@ -219,7 +214,6 @@ export class SaleReportPageComponent {
     let idCliente = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
-
 
     let dataParams = {
       tipo: 2,
@@ -235,13 +229,12 @@ export class SaleReportPageComponent {
       convertToDoc: this.dataSearch.convertToDoc,
       idCiudad: this.dataSearch.idCiudad,
 
-      userRoleId: this._tokenUseCase.getUserRoleId()
+      userRoleId: this._tokenUseCase.getUserRoleId(),
     };
     return dataParams;
-
   }
 
-  private isValidDataSearch(){
+  private isValidDataSearch() {
     if (
       this.dataSearch.checkBoxCustomer &&
       !isValidField(this.dataSearch.identificacion)
@@ -252,10 +245,7 @@ export class SaleReportPageComponent {
       });
       return;
     }
-    if (
-      this.dataSearch.checkBoxUser &&
-      !isValidField(this.dataSearch.userId)
-    ) {
+    if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione el Usuario',
@@ -267,8 +257,7 @@ export class SaleReportPageComponent {
 
   getReport() {
     try {
-
-      if(!this.isValidDataSearch()) return
+      if (!this.isValidDataSearch()) return;
 
       let reportParams = JSON.stringify({
         hasParams: false,
@@ -279,7 +268,7 @@ export class SaleReportPageComponent {
       const parameters = {
         reportParams,
         dataParams: JSON.stringify(this.getDataParams()),
-        hasService: true
+        hasService: true,
       };
       this.sharedSvc.getReport({
         data: parameters,
@@ -300,58 +289,49 @@ export class SaleReportPageComponent {
     this.getReport();
   }
 
+  async askToSendMail() {
+    if (!this.isValidDataSearch()) return;
 
-  async askToSendMail(){
-
-    if(!this.isValidDataSearch()) return
-
-
-    let {isConfirmed} = await Swal.fire({
+    let { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
       showCancelButton: true,
-      showConfirmButton: true
-    })
+      showConfirmButton: true,
+    });
 
+    if (!isConfirmed) return;
 
-    if(!isConfirmed) return
-
-     const params = {
-        subject: 'Reporte Ventas',
-        params: {
-          hasFile: true,
-          isReport: "SI",
-          reportParams: {
-            hasParams: false,
-            codigo:SALE_CODE_REPORT.FG,
-            format: REPORT_FORMAT.PDF
-          },
-          spParams:  this.getDataParams(),
-          withTableNames: true,
+    const params = {
+      subject: 'Reporte Ventas',
+      params: {
+        hasFile: true,
+        isReport: 'SI',
+        reportParams: {
+          hasParams: false,
+          codigo: SALE_CODE_REPORT.FG,
+          format: REPORT_FORMAT.PDF,
         },
-        codigo:SALE_CODE_REPORT.FG,
+        spParams: this.getDataParams(),
+        withTableNames: true,
+      },
+      codigo: SALE_CODE_REPORT.FG,
+    };
 
+    this.appNotifiSvc.post(params).subscribe((response) => {
+      if (response.code === '0') {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message,
+        });
       }
-
-
-      this.appNotifiSvc.post(params).subscribe( (response) =>{
-        if(response.code==="0"){
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if(response.code==="1"){
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
-        }
-      })
-
+      if (response.code === '1') {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message,
+        });
+      }
+    });
   }
-
-
 }

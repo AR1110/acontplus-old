@@ -517,7 +517,7 @@ export class LotPricePageComponent {
     this.mainForm.idArticulo = data.idArticulo;
   }
 
-  productResultEmptyInput(data: any) {
+  productclearSearch(data: any) {
     this.mainForm.idArticulo = 0;
   }
 
@@ -525,7 +525,7 @@ export class LotPricePageComponent {
     this.mainForm.rucProveedor = data.identificacionComprador;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.mainForm.rucProveedor = '';
   }
 

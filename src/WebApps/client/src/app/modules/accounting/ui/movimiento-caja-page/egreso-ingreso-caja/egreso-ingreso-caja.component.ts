@@ -14,7 +14,7 @@ import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caj
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -28,6 +28,7 @@ import { DialogService } from '@core/services/dialog.service';
 import {
   EgresoIngresoDialogComponent
 } from "@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
+import {CompanyCustomer} from "@customer/core/domain/company-customer";
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -40,7 +41,7 @@ import {
     MatButtonModule,
     MatMenuModule,
     DateRangeSelectionComponent,
-    CompanyCustomerSearchMatComponent,
+    CompanyCustomerSearchComponent,
     MatDynamicTableComponent,
   ],
   templateUrl: './egreso-ingreso-caja.component.html',
@@ -140,7 +141,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     this.getMovimientosCaja();
   }
 
-  onSelectCustomer($event: any) {
+  onSelectCustomer($event: CompanyCustomer) {
     this.dataSearch.customerId = $event.customerId;
     this.getMovimientosCaja();
   }

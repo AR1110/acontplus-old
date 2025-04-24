@@ -76,7 +76,7 @@ export class SupplierAccountsComponent {
     this.dataSearch.idProveedor = data.idProveedor;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.idProveedor = 0;
   }
 

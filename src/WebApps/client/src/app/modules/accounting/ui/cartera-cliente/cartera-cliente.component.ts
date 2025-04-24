@@ -34,6 +34,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -166,10 +167,10 @@ export class CarteraClienteComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 

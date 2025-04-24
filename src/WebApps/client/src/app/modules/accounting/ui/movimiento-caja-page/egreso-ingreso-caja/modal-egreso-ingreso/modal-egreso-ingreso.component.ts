@@ -20,18 +20,19 @@ import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.in
 import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
-    imports: [
-        ReactiveFormsModule,
-        NgbTypeaheadModule,
-        CompanyCustomerSearchComponent,
-        MatIcon,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    ReactiveFormsModule,
+    NgbTypeaheadModule,
+    CompanyCustomerSearchComponent,
+    MatIcon,
+    MatButton,
+    ThemeButtonComponent,
+  ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
 export class ModalEgresoIngresoComponent {
@@ -132,9 +133,9 @@ export class ModalEgresoIngresoComponent {
     }
   }
 
-  onSelectCustomer(params: any) {
-    if ('data' in params) {
-      this.dataForm.get('customerId')?.setValue(params.data.customerId);
+  onSelectCustomer(data: CompanyCustomer) {
+    if (data && data.customerId) {
+      this.dataForm.get('customerId')?.setValue(data.customerId);
     }
   }
 

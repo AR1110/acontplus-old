@@ -20,6 +20,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -150,11 +151,11 @@ export class FactElectReportPageComponent implements OnInit {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
     this.dataSearch.identificacion = null;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.identificacion = data.numeroIdentificacion;
     this.dataSearch.companyCustomerId = data.idCliente;
   }

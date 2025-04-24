@@ -1,5 +1,5 @@
-import {Component, ElementRef, inject,  ViewChild} from '@angular/core';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
@@ -8,48 +8,49 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { CompanyCustomerSearchMatComponent } from '@modules/customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { CompanyCustomerSearchComponent } from '@modules/customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use-case';
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import {CompanyCustomer} from "@customer/core/domain/company-customer";
 
 @Component({
-    selector: 'app-vehicle-add-edit-modal',
-    imports: [
-        FormsModule,
-        MatFormFieldModule, MatInputModule,
-        MatSelectModule,
-        MatButtonModule,
-      ReactiveFormsModule,
-      MatAutocompleteModule,
-      ToUpperCaseDirective,
-        MatCustomDialogComponent,
-        MatDynamicCardComponent,
-        CompanyCustomerSearchMatComponent
-    ],
-    templateUrl: './vehicle-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-vehicle-add-edit-modal',
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    ToUpperCaseDirective,
+    MatCustomDialogComponent,
+    MatDynamicCardComponent,
+    CompanyCustomerSearchComponent,
+  ],
+  templateUrl: './vehicle-add-edit-modal.component.html',
+  styles: ``,
 })
 export class VehicleAddEditModalComponent {
-
   readonly dialogRef = inject(MatDialogRef<VehicleAddEditModalComponent>);
-    readonly data = inject<{
-      id: number;
-      descripcion: null | string
-    }>(MAT_DIALOG_DATA);
+  readonly data = inject<{
+    id: number;
+    descripcion: null | string;
+  }>(MAT_DIALOG_DATA);
 
-  vehicleUseCase = inject(VehicleUseCase)
-  tS = inject(ToasterService)
+  vehicleUseCase = inject(VehicleUseCase);
+  tS = inject(ToasterService);
 
   titleModal = 'Nuevo Vehículo';
   btnText = 'Guardar';
 
   countries: any = [];
-  vehicleTypes: VehicleTypeSelectHtmlOnly[] = []
+  vehicleTypes: VehicleTypeSelectHtmlOnly[] = [];
 
   loading = false;
 
@@ -62,7 +63,7 @@ export class VehicleAddEditModalComponent {
     email: '',
     telephone: '',
     address: '',
-  }
+  };
   dataForm = {
     customerId: 0,
     countryId: 0,
@@ -74,44 +75,44 @@ export class VehicleAddEditModalComponent {
     color: null,
     engine: null,
     chassis: null,
-    cylindraje: null
-  }
+    cylindraje: null,
+  };
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   myControlCountry = new FormControl<any>('');
-  optionsCountry: any[] = [ ];
+  optionsCountry: any[] = [];
   filteredCountryOptions!: any[];
 
   successResponse = {
     next: (response: ApiResponse) => {
-        if (response.code === "0") {
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code === "1") {
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
-          let id = 0;
-          if (this.data.id > 0) {
-            id = this.data.id;
-          }else{
-            let data = JSON.parse(response.payload as string)
-            if(Array.isArray(data) && data.length>0){
-              id = data[0].id;
-            }
+      if (response.code === '0') {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message,
+        });
+      }
+      if (response.code === '1') {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message,
+        });
+        let id = 0;
+        if (this.data.id > 0) {
+          id = this.data.id;
+        } else {
+          let data = JSON.parse(response.payload as string);
+          if (Array.isArray(data) && data.length > 0) {
+            id = data[0].id;
           }
-          this.dialogRef.close({ id })
         }
+        this.dialogRef.close({ id });
+      }
     },
     error(err: any) {
       // hideLoader()
-      console.log(err)
-    }
-  }
+      console.log(err);
+    },
+  };
 
   ngOnInit() {
     if (this.data.id > 0) {
@@ -119,86 +120,81 @@ export class VehicleAddEditModalComponent {
       this.btnText = 'Actualizar';
     }
 
-    this.loading=true;
-    this.vehicleUseCase.getDataForm()
-    .pipe(
-      finalize(()=>this.loading=false)
-    )
-    .subscribe(  (response) => {
-        const {
-          countries,
-          vehicleTypes
-        } = response;
+    this.loading = true;
+    this.vehicleUseCase
+      .getDataForm()
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe((response) => {
+        const { countries, vehicleTypes } = response;
         this.countries = countries;
         this.vehicleTypes = vehicleTypes;
 
         this.optionsCountry = countries;
-      this.filteredCountryOptions = countries.slice();
+        this.filteredCountryOptions = countries.slice();
 
         if (this.data.id > 0) {
           this.titleModal = 'Editar Vehículo';
           this.btnText = 'Actualizar';
           this.loading = true;
-          this.vehicleUseCase.getId(this.data.id)
-          .pipe(
-            finalize(()=>this.loading=false)
-          )
-          .subscribe(  (response) => {
+          this.vehicleUseCase
+            .getId(this.data.id)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe((response) => {
               // hideLoader()
-              this.customer = response.customer as any
+              this.customer = response.customer as any;
               this.dataForm = {
                 ...this.dataForm,
-                ...response.vehicle
+                ...response.vehicle,
               };
 
-              this.myControlCountry.setValue(this.dataForm.countryId as any)
-
-            } )
+              this.myControlCountry.setValue(this.dataForm.countryId as any);
+            });
         }
-      })
+      });
   }
 
-
-
-  onCustomerSelected( dataForm  : any) {
+  onCustomerSelected(dataForm: CompanyCustomer) {
     this.dataForm.customerId = dataForm.idCliente;
-    this.customer.idType = dataForm.codigoSri;
+    this.customer.idType = dataForm.codigoSri!;
     this.customer.idCard = dataForm.numeroIdentificacion;
     // cardTypeId = e.idTipoIdentificacion;
-    this.customer.businessName = dataForm.nombreComercial;
+    this.customer.businessName = dataForm.nombreComercial!;
     this.customer.tradeName = dataForm.nombreFiscal;
-    this.customer.email = dataForm.correo;
-    this.customer.telephone = dataForm.telefono;
-    this.customer.address = dataForm.direccion;
+    this.customer.email = dataForm.correo!;
+    this.customer.telephone = dataForm.telefono!;
+    this.customer.address = dataForm.direccion!;
   }
 
   getCountryTitle(countryId: number) {
-    return this.countries.find((item:any) => item.countryId === countryId)?.description;
+    return this.countries.find((item: any) => item.countryId === countryId)
+      ?.description;
   }
 
   filterCountry(): void {
     const filterValue = this.input.nativeElement.value.toLowerCase();
-    this.filteredCountryOptions = this.optionsCountry.filter(o => o.description.toLowerCase().includes(filterValue));
+    this.filteredCountryOptions = this.optionsCountry.filter((o) =>
+      o.description.toLowerCase().includes(filterValue),
+    );
   }
 
-
   isValidForm() {
-
-
     if (!(this.dataForm.customerId > 0)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione el Cliente / Conductor'
+        message: 'Seleccione el Cliente / Conductor',
       });
       return;
     }
 
-    if (!(this.dataForm.vehicleTypeId)) {
-      this.tS.toastr({ type: 'warning', message: 'Seleccione el tipo de Vehículo' });
+    if (!this.dataForm.vehicleTypeId) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el tipo de Vehículo',
+      });
       return;
     }
 
-    if (!(this.dataForm.countryId > 0 || this.myControlCountry.value>0)) {
+    if (!(this.dataForm.countryId > 0 || this.myControlCountry.value > 0)) {
       this.tS.toastr({ type: 'warning', message: 'Selecccion el país' });
       return;
     }
@@ -214,7 +210,10 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!isValidField(this.dataForm.year)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese un año de fabricación' });
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese un año de fabricación',
+      });
       return;
     }
 
@@ -237,7 +236,7 @@ export class VehicleAddEditModalComponent {
       return;
     }
     return true;
-  };
+  }
 
   onSubmit() {
     try {
@@ -247,32 +246,22 @@ export class VehicleAddEditModalComponent {
       let dataParams = {
         customer: this.customer,
         vehicle: this.dataForm,
-
-      }
+      };
       if (!(this.data.id > 0)) {
-        this.vehicleUseCase.post(dataParams).subscribe(this.successResponse)
+        this.vehicleUseCase.post(dataParams).subscribe(this.successResponse);
       }
 
       if (this.data.id > 0) {
-        this.vehicleUseCase.put(this.data.id, dataParams).subscribe(this.successResponse)
+        this.vehicleUseCase
+          .put(this.data.id, dataParams)
+          .subscribe(this.successResponse);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-
-
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
-
-
-
-
-
-
-
-
-
 }

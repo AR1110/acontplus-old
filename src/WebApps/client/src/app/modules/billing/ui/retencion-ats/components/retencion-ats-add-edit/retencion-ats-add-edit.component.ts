@@ -320,7 +320,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     // }
   }
 
-  supplierResultEmptyInput() {
+  supplierclearSearch() {
     this.retencionAtsForm.get('identificacionSujetoRetenido')?.setValue('');
   }
 

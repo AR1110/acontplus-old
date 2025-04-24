@@ -142,7 +142,7 @@ export class RentabilidadPageComponent {
     this.dataSearch.idUsuario = data.idUsuario;
   }
 
-  userResultEmptyInput(event: any) {
+  userclearSearch(event: any) {
     this.dataSearch.idUsuario = 0;
   }
 
@@ -156,7 +156,7 @@ export class RentabilidadPageComponent {
     this.dataSearch.idArticulo = data.idArticulo;
   }
 
-  productResultEmptyInput(data: any) {
+  productclearSearch(data: any) {
     this.dataSearch.idArticulo = 0;
   }
 

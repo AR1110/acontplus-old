@@ -24,7 +24,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
-import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
@@ -34,6 +34,7 @@ import { ReportButtonsComponent } from '@shared/components/report-buttons/report
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {CompanyCustomer} from "@customer/core/domain/company-customer";
 
 const imports = [
   NgbNavModule,
@@ -54,7 +55,7 @@ const imports = [
   DateRangeSelectionComponent,
   SupplierSearchComponent,
   MatUserSearchComponent,
-  CompanyCustomerSearchMatComponent,
+  CompanyCustomerSearchComponent,
   ReportButtonsComponent,
   //Directives
   ActionEnviarCorreoDirective,
@@ -236,7 +237,7 @@ export class InventoryReportComponent {
     this.dataSearch.nameSupplier = data.name;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.numeroIdentificacion = null;
   }
 
@@ -246,12 +247,12 @@ export class InventoryReportComponent {
     }
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected(data: any) {
-    this.dataSearch.numeroIdentificacion = data.identificacionComprador;
+  onCustomerSelected(data: CompanyCustomer) {
+    this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 
   private getFilterDate() {

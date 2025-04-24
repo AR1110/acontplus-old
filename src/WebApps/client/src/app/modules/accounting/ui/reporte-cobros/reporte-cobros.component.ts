@@ -1,43 +1,39 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToasterService } from '@core/services/toaster.service';
-import {
-  REPORT_CODE,
-  DOC_TYPE,
-} from '@core/constants/global.constants';
+import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
-import {
-  SubEntidadFinancieraSelectHtmlOnly,
-} from '@accounting/core/models/subentidad-financiera.model';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/core/models/subentidad-financiera.model';
 import { SharedService } from '@core/services/shared.service';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import {BancoSelectOnly} from "@accounting/core/models/banco.interface";
+import { BancoSelectOnly } from '@accounting/core/models/banco.interface';
 import { formatDateToString } from '@core/utils/date.util';
-import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ComprobanteIngresoUseCase } from '@accounting/core/use-cases/comprobante-ingreso.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
-    selector: 'app-reporte-cobros',
-    templateUrl: './reporte-cobros.component.html',
-    styles: ``,
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-        MatCardContent,
-        MatCard,
-        ThemeButtonComponent,
-    ]
+  selector: 'app-reporte-cobros',
+  templateUrl: './reporte-cobros.component.html',
+  styles: ``,
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    CompanyCustomerSearchComponent,
+    MatCardContent,
+    MatCard,
+    ThemeButtonComponent,
+  ],
 })
 export class ReporteCobrosComponent implements OnInit {
   http = inject(HttpClient);
@@ -73,19 +69,20 @@ export class ReporteCobrosComponent implements OnInit {
 
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
 
-
   ngOnInit(): void {
     this.getInitialLoad();
   }
 
   getInitialLoad() {
-
-    this._comprobanteIngresoUseCase.getDataFilter().subscribe(response => {
-      const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } = response;
+    this._comprobanteIngresoUseCase.getDataFilter().subscribe((response) => {
+      const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } =
+        response;
 
       this.establecimientos = establecimientos;
 
-      const dataEstab = this.establecimientos.find((estab) => estab.defaultEstab);
+      const dataEstab = this.establecimientos.find(
+        (estab) => estab.defaultEstab,
+      );
 
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
@@ -101,9 +98,10 @@ export class ReporteCobrosComponent implements OnInit {
       this.tiposDoc = tiposDoc;
       this.subEntidadFinanciera = subEntidadesFinanciera;
       this.bancos = bancos;
-      this.dataSearch.codDoc = this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
-    })
-
+      this.dataSearch.codDoc =
+        this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
+          ?.codDoc || '';
+    });
   }
 
   onChangeEstab() {
@@ -128,8 +126,7 @@ export class ReporteCobrosComponent implements OnInit {
     this.dataSearch.toDate = range.to;
   }
 
-  onCustomerSelected<T extends { data: any }>($event: T) {
-    let { data } = $event;
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.customerId = data.idCliente;
   }
 

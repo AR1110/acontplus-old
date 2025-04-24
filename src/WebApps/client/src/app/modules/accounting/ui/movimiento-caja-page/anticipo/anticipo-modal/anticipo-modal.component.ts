@@ -15,11 +15,17 @@ import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/co
 import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
 import { AnticipoUseCase } from '@accounting/core/use-cases/anticipo.use-case';
 import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-anticipo-modal',
-  imports: [ReactiveFormsModule, CompanyCustomerSearchComponent, MatButton, ThemeButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    CompanyCustomerSearchComponent,
+    MatButton,
+    ThemeButtonComponent,
+  ],
   templateUrl: './anticipo-modal.component.html',
   styles: ``,
 })
@@ -82,8 +88,7 @@ export class AnticipoModalComponent {
       this.tempSubEntidadesFinanciera = subEntidadesFinanciera;
     });
   }
-  onCustomerSelected<T extends { data: any }>(result: T) {
-    let { data } = result;
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataForm.get('idCliente')?.setValue(data.idCliente);
   }
 

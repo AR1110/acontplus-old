@@ -79,10 +79,9 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <!-- @if(isShowCompanyCustomer){-->
         <div class="form-group">
-          <label>Cliente: </label>
           <app-company-customer-search
             (customerSelected)="onCustomerSelected($event)"
-            (resultEmptyInput)="resultEmptyInputCustomer()"
+            (clearSearch)="clearSearchCustomer()"
             [isSimpleMode]="true"
           />
         </div>
@@ -99,7 +98,6 @@
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label>Usuario: </label>
           <app-user-search
             (emptyInput)="emptyInputUser()"
             (userSelected)="onUserSelected($event)"

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import {
   FormControl,
@@ -20,24 +20,25 @@ import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/co
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/core/domain/company-customer';
 
 @Component({
   selector: 'app-pet-modal',
-    imports: [
-        MatIcon,
-        FormsModule,
-        ReactiveFormsModule,
-        CompanyCustomerSearchComponent,
-        MatCard,
-        MatCardContent,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    CompanyCustomerSearchComponent,
+    MatCard,
+    MatCardContent,
+    MatButton,
+    ThemeButtonComponent,
+  ],
   templateUrl: './pet-modal.component.html',
   styles: ``,
 })
-export class PetModalComponent {
+export class PetModalComponent implements OnInit {
   breeds: Breed[] = [];
   breedsFiltered: Breed[] = [];
   customerBusinessName = '';
@@ -79,6 +80,7 @@ export class PetModalComponent {
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Mascota';
+      console.log(this.data);
       if (this.data?.customer != null) {
         this.customerBusinessName = this.data?.customer;
       }
@@ -86,8 +88,7 @@ export class PetModalComponent {
     }
   }
 
-  onCustomerSelected($event: any) {
-    const { data } = $event;
+  onCustomerSelected(data: CompanyCustomer) {
     this.petForm.patchValue({ customerCompanyId: data.idCliente });
   }
 
