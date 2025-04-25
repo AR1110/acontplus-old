@@ -8,7 +8,7 @@
     <PackageVersion Include="Acontplus.Common.Barcode" Version="0.1.4" />
     <PackageVersion Include="Acontplus.Common.Core" Version="1.3.10" />
     <PackageVersion Include="Acontplus.Common.FactElect" Version="0.1.7" />
-    <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.2.9" />
+    <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.2.10" />
     <PackageVersion Include="Acontplus.Common.Logging" Version="0.1.2" />
     <PackageVersion Include="Acontplus.Common.Notifications" Version="0.1.17" />
     <PackageVersion Include="Acontplus.Common.Reports" Version="1.0.9" />
