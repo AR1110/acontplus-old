@@ -1,5 +1,6 @@
 import { TAX_RATE_CODE } from "@domain/enums/main.enum"
 import { Tarifa } from "./tarifa.model"
+import {MedidaProducto} from "@domain/models/inventory/medida.model";
 
 
 export interface ProductSearchApiDto {
@@ -48,4 +49,25 @@ export interface ProductoConsolidacion {
     idArticulo: number
     idBodega: number
     fechaConsolidacion: Date
+}
+
+
+export interface ProductSearchParams {
+  textSearch: string
+}
+
+export interface GetSaleProductParams {
+  productId: number
+  bodegaId?: number
+}
+export interface GetSaleProductResponse {
+  product: any
+medidas: MedidaProducto[]
+  productoConsolidaciones:  ProductoConsolidacion[],
+}
+
+export interface CheckStockProps {
+  idArticulo: number;
+  cantidad: number;
+  idBodega: number;
 }

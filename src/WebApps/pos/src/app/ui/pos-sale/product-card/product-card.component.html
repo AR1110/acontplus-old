@@ -41,16 +41,16 @@
   </div>
 </div>
 
-
 <ng-template
-
-  cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="infoProductCard()"
-
-
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="infoProductCard()"
   cdkConnectedOverlayPush="true"
   (overlayOutsideClick)="overlayOutsideClick($event)"
 >
-  <div class="z-50   text-base   rounded divide-y divide-gray-100 shadow  info-product-card">
+  <div
+    class="z-50 text-base rounded divide-y divide-gray-100 shadow info-product-card"
+  >
     <div class="row">
       <div class="col-12 text-start">
         <div class="d-flex flex-column small">

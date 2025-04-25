@@ -1,5 +1,6 @@
 import { ConsolidacionFecha, MedidaProducto } from "@domain/models/inventory/medida.model"
 import { TarifaProducto } from "@domain/models/inventory/tarifa.model"
+import {UserSelectHtmlOnly} from "@domain/models/user.model";
 
 
 
@@ -111,3 +112,9 @@ export interface OrderData {
   order: Order
 }
 
+
+
+export interface GetFilterDataOrderResponse {
+  tablesGroup: any[]
+  users:  UserSelectHtmlOnly[]
+}

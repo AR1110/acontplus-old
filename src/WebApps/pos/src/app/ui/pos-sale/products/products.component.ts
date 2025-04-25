@@ -1,4 +1,4 @@
-import { ProductService } from '@/data/repositories/product/product.service';
+
 import { DECIMALS } from '@/domain/enums/main.enum';
 import { TarifaProducto } from '@/domain/models/inventory/tarifa.model';
 import { ItemRead } from '@/domain/models/item.model';
@@ -18,6 +18,8 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { switchMap, map, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ProductCardComponent } from '../product-card/product-card.component';
+import { GetSaleProductUseCase } from '@/domain/use-cases/product/get-sale-product.use-case';
+import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-product.use-case";
 
 @Component({
   selector: 'app-products',
@@ -28,8 +30,9 @@ import { ProductCardComponent } from '../product-card/product-card.component';
 export class ProductsComponent {
   private tS = inject(ToasterService);
   private posStoreSvc = inject(PosStoreService);
-  private productSvc = inject(ProductService);
   private mainStore = inject(MainStoreService);
+  private $getSaleProductUsecase = inject(GetSaleProductUseCase);
+  protected $checkStockUseCase = inject(CheckStockProductUseCase)
 
   products = input<ItemRead[]>([]);
 
@@ -44,7 +47,7 @@ export class ProductsComponent {
   }
 
   private addRow() {
-    let data: OrderItem = {
+    const data: OrderItem = {
       uuid: generateUuidv4(),
       itemTypeCode: '',
       id: 0,
@@ -80,13 +83,16 @@ export class ProductsComponent {
   }
 
   private getDataItem($event: ItemRead) {
-    return this.productSvc
-      .getForSale($event.productId, this.mainStore.state().bodegaId)
+    return this.$getSaleProductUsecase
+      .execute({
+        productId: $event.productId,
+        bodegaId: this.mainStore.state().bodegaId,
+      })
       .pipe(
         switchMap((firstResponse) => {
           let dataAdded = this.addRow(),
             isAdd = false;
-          let findIndexById = this.posStoreSvc
+          const findIndexById = this.posStoreSvc
             .state()
             .orderItems.findIndex((item) => {
               return (
@@ -103,7 +109,7 @@ export class ProductsComponent {
             dataAdded.quantity += 1;
           }
 
-          let dataMedida = firstResponse.medidas.find(
+          const dataMedida = firstResponse.medidas.find(
             (medida) => medida.defaultMedida
           );
 
@@ -115,7 +121,7 @@ export class ProductsComponent {
           dataAdded.code = firstResponse.product.codigoArticulo;
           dataAdded.descripcion = firstResponse.product.descripcion;
 
-          let tarifaImpuesto =
+          const tarifaImpuesto =
             this.posStoreSvc.state().taxRates[
               firstResponse.product.codigoPorcentaje
             ];
@@ -148,18 +154,18 @@ export class ProductsComponent {
           dataAdded.precioConIva = dataTarifa?.precioConIva ?? 0;
 
           //totales
-          let subtotalSinImpuesto =
+          const subtotalSinImpuesto =
             pricingCalculateUtil.calcularSubtotalSinImpuesto(
               dataAdded.price,
               dataAdded.quantity,
               dataAdded.discount
             );
-          let taxValue = pricingCalculateUtil.calculateTaxValue(
+          const taxValue = pricingCalculateUtil.calculateTaxValue(
             subtotalSinImpuesto,
             dataAdded.taxPercent
           );
           dataAdded.taxValue = roundNumber(taxValue, DECIMALS.CINCO);
-          let total = pricingCalculateUtil.calcularTotalConImpuesto(
+          const total = pricingCalculateUtil.calcularTotalConImpuesto(
             subtotalSinImpuesto,
             dataAdded.taxValue
           );
@@ -171,7 +177,7 @@ export class ProductsComponent {
           dataAdded.total = roundNumber(total, DECIMALS.CINCO);
 
           if (firstResponse.product.llevaInventario) {
-            let dataMergeStockQty = mergeStockQty(
+            const dataMergeStockQty = mergeStockQty(
               [structuredClone(dataAdded)],
               {
                 idArticulo: firstResponse.product.idArticulo,
@@ -179,7 +185,7 @@ export class ProductsComponent {
               }
             );
 
-            let paramsStock = {
+            const paramsStock = {
               idArticulo: firstResponse.product.idArticulo,
               idBodega: this.mainStore.state().bodegaId,
               cantidad: calculateCantidadStock({
@@ -190,7 +196,7 @@ export class ProductsComponent {
               }),
             };
 
-            return this.productSvc.checkNotificationStock(paramsStock).pipe(
+            return this.$checkStockUseCase.execute(paramsStock).pipe(
               map((secondResponse) => {
                 return { dataAdded, secondResponse, isAdd }; // Retorna ambos valores
               })
@@ -276,7 +282,7 @@ export class ProductsComponent {
             return;
           }
 
-          const { code, message, titleSms } = response.secondResponse;
+          const { code, message, titleSms } = response.secondResponse as any;
 
           // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
           if (code === '1') {

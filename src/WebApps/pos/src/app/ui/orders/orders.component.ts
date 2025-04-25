@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { formatDateToString } from '@domain/utils/date.util';
 import {ROUTES_PATH, STATUS_ORDER} from '@domain/enums/main.enum';
 import {PermissionStore} from "@ui/store/permission.store";
+import {TableOrdersComponent} from "@ui/orders/components/table-orders/table-orders.component";
 
 @Component({
     selector: 'app-orders',
@@ -14,7 +15,8 @@ import {PermissionStore} from "@ui/store/permission.store";
         MatCardModule,
         MatButtonModule,
         MatIconModule,
-        OrderListComponent
+        OrderListComponent,
+      TableOrdersComponent
     ],
     templateUrl: './orders.component.html',
     styleUrl: './orders.component.scss'
@@ -30,7 +32,8 @@ export class OrdersComponent {
     endDate: formatDateToString(new Date()),
     customerCompanyId: 0,
     selectedStatus: STATUS_ORDER.PENDIENTE,
-    typeSearchCustomer: 'OR'
+    typeSearchCustomer: 'OR',
+    roomId: 0
   }
 
   navigateToPos() {

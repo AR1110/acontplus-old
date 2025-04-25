@@ -8,8 +8,8 @@ export const environment = {
   storageKey: 'tokenf649fc9a5f55',
   clientId: 'acontplus-restaurant-client',
   greenApi: {
-    url: '',
-    idInstance: '',
-    apiTokenInstance: ''
-  }
+    url: 'https://api.green-api.com',
+    idInstance: '7103845341',
+    apiTokenInstance: 'a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c',
+  },
 };

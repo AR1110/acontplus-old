@@ -1,19 +1,21 @@
 
-import { ProductService } from '@data/repositories/product/product.service';
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, input, model, output } from '@angular/core';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {Component, inject, input, model, output, signal} from '@angular/core';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Observable, catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs';
+import { Observable, debounceTime, distinctUntilChanged,  switchMap } from 'rxjs';
 import {ProductSearchDto} from "@domain/models/inventory/product.model";
 import { isValidField } from '@domain/utils/utils';
+import {SearchProductUseCase} from "@domain/use-cases/product/search-product.use-case";
+import {finalize} from "rxjs/operators";
 
 @Component({
     selector: 'app-product-search',
     imports: [
+      FormsModule,
         ReactiveFormsModule,
         MatAutocompleteModule,
         MatInputModule,
@@ -25,6 +27,7 @@ import { isValidField } from '@domain/utils/utils';
     styleUrl: './product-search.component.scss'
 })
 export class ProductSearchComponent {
+  private $searchUseCase = inject(SearchProductUseCase)
 
   isSimple = input(false);
   isAdvanced = input(false)
@@ -33,22 +36,19 @@ export class ProductSearchComponent {
   textName = model('')
   onSelect = output<any>()
   clearInput = output()
-  private productSvc = inject(ProductService)
   control = new FormControl('');
   filteredProducts!: Observable<any[]>;
 
-  isLoadingResults=false;
+  isLoadingResults=signal(false);
 
   ngOnInit() {
 
     this.filteredProducts = this.control.valueChanges.pipe(
-      startWith(''),
       debounceTime(100),
       distinctUntilChanged(),
       switchMap((val) => {
-        this.isLoadingResults=false;
+        this.isLoadingResults.set(false);
         if (val && val.length > 2) {
-        this.isLoadingResults=true;
           return this._filter(val);
         }
         if(!isValidField(val)){
@@ -62,16 +62,9 @@ export class ProductSearchComponent {
   }
 
   private _filter(value: string) {
-    return this.productSvc.search({ textSearch: value }).pipe(
-      map((response) => {
-
-        this.isLoadingResults=false;
-        return response;
-      }),
-      catchError(() => {
-        this.isLoadingResults=false;
-        return []
-      })
+    this.isLoadingResults.set(true)
+    return this.$searchUseCase.execute({ textSearch: value }).pipe(
+      finalize(()=>this.isLoadingResults.set(false)),
     );
   }
 

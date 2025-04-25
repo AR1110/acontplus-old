@@ -9,7 +9,6 @@ import {
   CustomContainerDialogComponent
 } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 
-import { ProductService } from '@data/repositories/product/product.service';
 import { ToasterService } from "@domain/services/toaster.service";
 import { ToUpperCaseDirective } from '@ui/directives/to-upper-case.directive';
 
@@ -26,6 +25,7 @@ import { DialogService } from '@domain/services/dialog.service';
 import { PaymentComponent } from '@ui/components/payment/payment.component';
 import { OrderData, OrderDivideItem, OrderItem } from '@domain/models/order.model';
 import {OrderUseCase} from "@domain/use-cases/order.use-case";
+import {GetSaleProductUseCase} from "@domain/use-cases/product/get-sale-product.use-case";
 
 type Props = {
   dataForm: any,
@@ -51,9 +51,9 @@ export class OrderCustomItemComponent {
   readonly dialogRef = inject(MatDialogRef<OrderCustomItemComponent>);
   readonly matDialogData = inject<Props>(MAT_DIALOG_DATA);
 
-  private productSvc = inject(ProductService);
   private tS = inject(ToasterService);
   private _orderUseCase = inject(OrderUseCase)
+  private $getSaleProductUseCase = inject(GetSaleProductUseCase)
   private dialogSvc = inject(DialogService)
 
   orderItemCustom = signal({
@@ -74,7 +74,9 @@ export class OrderCustomItemComponent {
       if (!getValidId(idArticulo)) return;
 
 
-      this.productSvc.getForSale(idArticulo).subscribe(response => {
+      this.$getSaleProductUseCase.execute({
+        productId: idArticulo
+      }).subscribe(response => {
         const { product, medidas } = response;
         if (product.llevaInventario) {
           this.tS.toastr({

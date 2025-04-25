@@ -1,9 +1,9 @@
 import { ApiResponse } from "@/domain/models/api-response";
 import { Observable } from "rxjs";
-import {Order} from "@domain/models/order.model";
+import {GetFilterDataOrderResponse, Order} from "@domain/models/order.model";
 
 export abstract class OrderRepository {
-  abstract getDataFilter():Observable<any>
+  abstract getDataFilter():Observable<GetFilterDataOrderResponse>
   abstract getAll<T>(obj: T): Observable<any[]>;
   abstract getOrderDocs(orderId: number): Observable<any[]>;
   abstract setAnul(id: number):Observable<ApiResponse>;
