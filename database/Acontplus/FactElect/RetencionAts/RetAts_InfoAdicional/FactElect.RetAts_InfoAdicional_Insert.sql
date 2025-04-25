@@ -22,8 +22,8 @@ BEGIN
         SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 		BEGIN TRAN 
 			
-			INSERT INTO FactElect.RetAtsInfoAdicional(idRetencionAts, nombre, valor)
-			SELECT idRetencionAts, nombre, valor
+			INSERT INTO FactElect.RetAtsInfoAdicional(idRetencionAts, nombre, valor, idUsuario)
+			SELECT idRetencionAts, nombre, valor, @idUsuario
 			FROM OPENJSON(@json)
 			WITH(
 				idRetencionAts INT '$.idRetencionAts'

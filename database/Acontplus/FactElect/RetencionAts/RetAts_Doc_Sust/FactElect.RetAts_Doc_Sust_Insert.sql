@@ -27,12 +27,12 @@ BEGIN
 			INSERT INTO FactElect.RetAtsDocSustento(idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
 			, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
 			, numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
-			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
+			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal, idUsuario)
 
 			SELECT @idRetencionAts idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
 			, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
 			, numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
-			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
+			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal, @idUsuario
 			FROM OPENJSON(@json) WITH (uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
 								,documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
 								,numDocSustento VARCHAR(15) '$.numDocSustento'
