@@ -9,3 +9,5 @@ global using FactElect.Application.Interfaces.RetencionAts;
 global using FactElect.Application.Interfaces.Sri;
 global using FactElect.Domain.Entities;
 global using FactElect.Infrastructure.Data;
+global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
