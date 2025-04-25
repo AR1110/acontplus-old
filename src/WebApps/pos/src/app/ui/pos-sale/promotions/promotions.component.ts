@@ -1,8 +1,6 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PromotionService } from '@data/repositories/promotion/promotion.service';
-import { MainStoreService } from '@domain/services/main-store.service';
 import { PosStoreService } from '@ui/store/pos-store.service';
 import { PromotionsItemComponent } from './promotions-item/promotions-item.component';
 
@@ -13,8 +11,6 @@ import { PromotionsItemComponent } from './promotions-item/promotions-item.compo
   styleUrl: './promotions.component.scss',
 })
 export class PromotionsComponent {
-  private promotionSvc = inject(PromotionService);
-  private mainStoreSvc = inject(MainStoreService);
   private posStoreSvc = inject(PosStoreService);
 
   promotions = computed(() => this.posStoreSvc.state().promotionsMenu);
@@ -43,20 +39,16 @@ export class PromotionsComponent {
   //   })
   // }
 
-  ngOnInit() {
-    //  this.getPromotions()
-  }
-
   toggleNode(node: any) {
     node.expanded = !node.expanded;
 
     this.posStoreSvc.state.update((e) => {
-      let promotionsMenu = structuredClone(e.promotionsMenu);
+      const promotionsMenu = structuredClone(e.promotionsMenu);
 
       return {
         ...e,
         promotionsMenu: promotionsMenu.map((item) => {
-          let newObj = {
+          const newObj = {
             ...item,
             expanded: false,
           };

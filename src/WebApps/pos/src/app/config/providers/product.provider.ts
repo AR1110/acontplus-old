@@ -1,9 +1,9 @@
-import {ClassProvider} from "@angular/core"; 
-import {ApiGreenRepository} from "@domain/repositories/api-green.repository";
-import {ApiGreenWebRepository} from "@data/repositories/api-green-api/api-green-web.repository";
+import {ClassProvider} from "@angular/core";
+import {ProductRepository} from "@domain/repositories/product.repository";
+import {ProductRepositoryImpl} from "@data/repositories/product/product.repository.impl";
 
 
-export const apiGreenProvider:ClassProvider = {
-  provide: ApiGreenRepository,
-  useClass: ApiGreenWebRepository
+export const productProvider:ClassProvider = {
+  provide: ProductRepository,
+  useClass: ProductRepositoryImpl
 }

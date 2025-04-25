@@ -1,18 +1,22 @@
 import {Injectable} from "@angular/core";
 import {BaseUseCase} from "@core/base-use-case";
-import {ProductSearchDto, ProductSearchParams} from "@domain/models/inventory/product.model";
+import {
+  GetSaleProductParams,
+  GetSaleProductResponse,
+} from "@domain/models/inventory/product.model";
 import {ProductRepository} from "@domain/repositories/product.repository";
 import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root',
 })
-export class SearchProductUseCase implements BaseUseCase<ProductSearchDto[], ProductSearchParams> {
+export class GetSaleProductUseCase implements BaseUseCase<GetSaleProductResponse, GetSaleProductParams> {
   constructor(private repo: ProductRepository) {
   }
 
-  execute(params: ProductSearchParams): Observable<ProductSearchDto[]> {
-       return this.repo.search(params);
+  execute(params: GetSaleProductParams): Observable<GetSaleProductResponse> {
+        return this.repo.getSale(params);
     }
+
 
 }

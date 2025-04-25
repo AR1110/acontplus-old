@@ -8,23 +8,22 @@ import {
   calculateCantidadStock,
   mergeStockQty,
 } from '@domain/utils/product.util';
-import { ProductService } from '@data/repositories/product/product.service';
 import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
 import { roundNumber } from '@domain/utils/round-number.util';
 import { OrderItem } from '@domain/models/order.model';
 import { CartInfoComponent } from '@/ui/pos-sale/cart-info/cart-info.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
+import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-product.use-case";
 
 @Component({
   selector: 'app-cart-items',
   imports: [OverlayscrollbarsModule, CartComponent],
   templateUrl: './cart-items.component.html',
-  styleUrl: './cart-items.component.scss',
 })
 export class CartItemsComponent {
   private dialogSvc = inject(DialogService);
   private posStoreSvc = inject(PosStoreService);
-  private productSvc = inject(ProductService);
+  protected $checkStockUseCase = inject(CheckStockProductUseCase)
 
   orderItems = computed(() => this.posStoreSvc.state().orderItems);
   isSelectedItem = computed(() => {
@@ -131,7 +130,7 @@ export class CartItemsComponent {
     };
 
     this.setIsSelectedItem(true);
-    this.productSvc.checkNotificationStock(paramsStock).subscribe({
+    this.$checkStockUseCase.execute(paramsStock).subscribe({
       next: async (response) => {
         this.setIsSelectedItem(false);
         if (

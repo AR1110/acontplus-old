@@ -1,37 +1,48 @@
-import {ProductSearchDto, ProductSearchParams} from "@domain/models/inventory/product.model";
+import {
+  GetSaleProductParams,
+  GetSaleProductResponse,
+} from "@domain/models/inventory/product.model";
 import {ApiResponse} from "acontplus-utils";
-import {imgDefault, sanitizeAndEncodeURIComponent} from "@domain/utils/utils";
-import {Tarifa} from "@domain/models/inventory/tarifa.model";
+import {MedidaProducto} from "@domain/models/inventory/medida.model";
+import {mergeMeasureFromAdapter} from "@data/mappers/medida.adapter";
 
-export class SearchProductMapper {
-  static toJson(params:ProductSearchParams) {
+export class GetSaleProductMapper {
+  static toJson(params:GetSaleProductParams) {
     return JSON.stringify({
-      pageIndex: 1,
-      pageSize: 30,
-      busqueda: sanitizeAndEncodeURIComponent(params.textSearch),
+      idArticulo: params.productId,
+      idBodega: params.bodegaId,
+      tipo: 6,
     })
   }
 
-  static fromJson(response:ApiResponse){
-    const productsFound = JSON.parse(response.payload as string) ?? [];
-    const results : ProductSearchDto[] = productsFound.map((item: any) => {
-        const tempTarifas: any[] = JSON.parse(item.priceSale) || [];
-        const tarifas: Tarifa[] = tempTarifas.map((tarifa) => ({
-          idTarifa: tarifa.idTarifa,
-          descripcion: tarifa.tarifa,
-          precioVenta: tarifa.precioVenta,
-          precioConIva: tarifa.precioConIva,
-          default: tarifa.predeterminada,
-        }));
+  static fromJson(response:ApiResponse): GetSaleProductResponse{
+    const {
+      product,
+      measures: medidasPrincipal,
+      fractionedMeasures: medidasFraccionado,
+      inventoryAdjustment: productoConsolidaciones,
+      //additionalInfo,
+    } =  JSON.parse(response.payload as string);
+
+    const resultMedidas: MedidaProducto[] = mergeMeasureFromAdapter(
+      medidasPrincipal,
+      medidasFraccionado
+    );
+
+    const productoConsolidacionesResult = productoConsolidaciones.map(
+      (item: any) => {
         return {
-          idArticulo: item.idArticulo,
-          codigo: item.codigo,
-          descripcion: item.descripcion,
-          iva: item.iva,
-          tarifas: tarifas,
-          s3ObjectUrl: item.s3ObjectUrl || imgDefault,
+          ...item,
+          fechaConsolidacion:
+            item.fechaConsolidacion && new Date(item.fechaConsolidacion),
         };
-      });
-      return results;
+      }
+    );
+
+    return {
+      product: product[0] || {},
+      medidas: resultMedidas,
+      productoConsolidaciones: productoConsolidacionesResult,
+    };
   }
 }

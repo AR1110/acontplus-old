@@ -1,8 +1,14 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { PromotionMenuService } from '@data/repositories/promotion-menu/promotion-menu.service';
 import { ItemRead } from '@domain/models/item.model';
 import { PosStoreService } from '@ui/store/pos-store.service';
-import { ProductService } from '@data/repositories/product/product.service';
 import { MainStoreService } from '@domain/services/main-store.service';
 import { map, of, switchMap } from 'rxjs';
 import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
@@ -18,6 +24,8 @@ import Swal from 'sweetalert2';
 import { OrderItem } from '@domain/models/order.model';
 import { TarifaProducto } from '@domain/models/inventory/tarifa.model';
 import { ProductCardComponent } from '../../product-card/product-card.component';
+import { GetSaleProductUseCase } from '@/domain/use-cases/product/get-sale-product.use-case';
+import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-product.use-case";
 
 @Component({
   selector: 'app-promotions-item',
@@ -25,13 +33,14 @@ import { ProductCardComponent } from '../../product-card/product-card.component'
   templateUrl: './promotions-item.component.html',
   styleUrl: './promotions-item.component.scss',
 })
-export class PromotionsItemComponent {
+export class PromotionsItemComponent implements OnInit {
   promotionId = input(0);
   private promotionItemSvc = inject(PromotionMenuService);
   private posStoreSvc = inject(PosStoreService);
-  private productSvc = inject(ProductService);
   private mainStore = inject(MainStoreService);
   private tS = inject(ToasterService);
+  private $getSaleProductUsecase = inject(GetSaleProductUseCase);
+  protected $checkStockUseCase = inject(CheckStockProductUseCase)
 
   isSelectedItem = computed(() => this.posStoreSvc.state().isSelectedItem);
   uniqueItemSelected = signal<string | null>(null);
@@ -59,13 +68,16 @@ export class PromotionsItemComponent {
   }
 
   private getDataItem($event: ItemRead) {
-    return this.productSvc
-      .getForSale($event.productId, this.mainStore.state().bodegaId)
+    return this.$getSaleProductUsecase
+      .execute({
+        productId: $event.productId,
+        bodegaId: this.mainStore.state().bodegaId,
+      })
       .pipe(
         switchMap((firstResponse) => {
           let dataAdded = this.posStoreSvc.addRow(),
             isAdd = false;
-          let findIndexById = this.posStoreSvc
+          const findIndexById = this.posStoreSvc
             .state()
             .orderItems.findIndex((item) => {
               return (
@@ -82,7 +94,7 @@ export class PromotionsItemComponent {
             dataAdded.quantity += 1;
           }
 
-          let dataMedida = firstResponse.medidas.find(
+          const dataMedida = firstResponse.medidas.find(
             (medida) => medida.defaultMedida
           );
 
@@ -94,7 +106,7 @@ export class PromotionsItemComponent {
           dataAdded.code = firstResponse.product.codigoArticulo;
           dataAdded.descripcion = firstResponse.product.descripcion;
 
-          let tarifaImpuesto =
+          const tarifaImpuesto =
             this.posStoreSvc.state().taxRates[
               firstResponse.product.codigoPorcentaje
             ];
@@ -128,18 +140,18 @@ export class PromotionsItemComponent {
           dataAdded.precioConIva = dataTarifa?.precioConIva ?? 0;
 
           //totales
-          let subtotalSinImpuesto =
+          const subtotalSinImpuesto =
             pricingCalculateUtil.calcularSubtotalSinImpuesto(
               dataAdded.price,
               dataAdded.quantity,
               dataAdded.discount
             );
-          let taxValue = pricingCalculateUtil.calculateTaxValue(
+          const taxValue = pricingCalculateUtil.calculateTaxValue(
             subtotalSinImpuesto,
             dataAdded.taxPercent
           );
           dataAdded.taxValue = roundNumber(taxValue, DECIMALS.CINCO);
-          let total = pricingCalculateUtil.calcularTotalConImpuesto(
+          const total = pricingCalculateUtil.calcularTotalConImpuesto(
             subtotalSinImpuesto,
             dataAdded.taxValue
           );
@@ -151,7 +163,7 @@ export class PromotionsItemComponent {
           dataAdded.total = roundNumber(total, DECIMALS.CINCO);
 
           if (firstResponse.product.llevaInventario) {
-            let dataMergeStockQty = mergeStockQty(
+            const dataMergeStockQty = mergeStockQty(
               [structuredClone(dataAdded)],
               {
                 idArticulo: firstResponse.product.idArticulo,
@@ -159,7 +171,7 @@ export class PromotionsItemComponent {
               }
             );
 
-            let paramsStock = {
+            const paramsStock = {
               idArticulo: firstResponse.product.idArticulo,
               idBodega: this.mainStore.state().bodegaId,
               cantidad: calculateCantidadStock({
@@ -170,7 +182,7 @@ export class PromotionsItemComponent {
               }),
             };
 
-            return this.productSvc.checkNotificationStock(paramsStock).pipe(
+            return this.$checkStockUseCase.execute(paramsStock).pipe(
               map((secondResponse) => {
                 return { dataAdded, secondResponse, isAdd }; // Retorna ambos valores
               })
@@ -256,7 +268,7 @@ export class PromotionsItemComponent {
             return;
           }
 
-          const { code, message, titleSms } = response.secondResponse;
+          const { code, message, titleSms } = response.secondResponse as any;
 
           // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
           if (code === '1') {

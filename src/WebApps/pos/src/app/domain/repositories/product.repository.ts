@@ -1,9 +1,16 @@
 
 import { Observable } from "rxjs";
-import {StateInstanceGreenApiResponse} from "@domain/models/api-green.model";
+import {
+  CheckStockProps,
+  GetSaleProductParams,
+  GetSaleProductResponse,
+  ProductSearchDto,
+  ProductSearchParams
+} from "@domain/models/inventory/product.model";
+import {ApiResponse} from "acontplus-utils";
 
-export abstract class ApiGreenRepository {
-  abstract getStateInstance(): Observable<StateInstanceGreenApiResponse>;
-  abstract sendSMS(chatId: string, message: string): Observable<StateInstanceGreenApiResponse>;
-  abstract sendFileByUpload<T extends { caption: string, chatId: string, file: File }>(obj: T): Observable<StateInstanceGreenApiResponse>;
+export abstract class ProductRepository {
+  abstract search(params: ProductSearchParams): Observable<ProductSearchDto[]>;
+  abstract getSale(params: GetSaleProductParams): Observable<GetSaleProductResponse>;
+  abstract checkStock(params: CheckStockProps): Observable<ApiResponse>;
 }
