@@ -17,6 +17,7 @@ import { MainStoreService } from '@/domain/services/main-store.service';
 import {GetMenusUseCase} from "@domain/use-cases/menu/get-menus.use-case";
 import {SubMenuItem} from "@domain/models/menu.model";
 import {PermissionStore} from "@ui/store/permission.store";
+import {IconUserComponent} from "@ui/components/icons/icon-user/icon-user.component";
 
 @Component({
   selector: 'app-sidebar',
@@ -27,6 +28,7 @@ import {PermissionStore} from "@ui/store/permission.store";
     MatIconModule,
     MatButtonModule,
     MatListModule,
+    IconUserComponent,
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',

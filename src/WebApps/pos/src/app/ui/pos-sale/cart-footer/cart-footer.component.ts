@@ -23,11 +23,12 @@ import { ToUpperCaseDirective } from '@ui/directives/to-upper-case.directive';
 import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
 import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
 import { MatInputModule } from '@angular/material/input';
-import { OrderUseCase } from '@domain/use-cases/order.use-case';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
-import {PermissionStore} from "@ui/store/permission.store";
+import { PermissionStore } from '@ui/store/permission.store';
+import { UpdateOrderUseCase } from '@/domain/use-cases/order/update-order.use-case';
+import { CreateOrderUseCase } from '@/domain/use-cases/order/create-order.use-case';
 
-const messageSave: { [key: string]: string } = {
+const messageSave: Record<string, string> = {
   [DOC_TYPE.FV]: `
     Esta seguro de guardar el pedido como Factura? </br>
     <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
@@ -47,12 +48,13 @@ const messageSave: { [key: string]: string } = {
 export class CartFooterComponent {
   private posStore = inject(PosStoreService);
   private tS = inject(ToasterService);
-  private _orderUseCase = inject(OrderUseCase);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
-    $permissionStore = inject(PermissionStore)
+  $permissionStore = inject(PermissionStore);
+  private $updateUseCase = inject(UpdateOrderUseCase);
+  private $createUseCase = inject(CreateOrderUseCase);
 
   private subtotalSinImpuestos = 0;
   private tax = 0;
@@ -63,7 +65,7 @@ export class CartFooterComponent {
   orderId = computed(() => this.posStore.state().order?.orderId);
 
   htmlContentTotals = computed(() => {
-    let dataTotals = this.calculateTotals();
+    const dataTotals = this.calculateTotals();
 
     let drawTotalsHtml = `
         ${dataTotals.htmlSubtotalImpuesto}
@@ -173,7 +175,7 @@ export class CartFooterComponent {
 
   onBlurObs($event: any) {
     this.posStore.state.update((e) => {
-      let dataOrder = {
+      const dataOrder = {
         ...e.order,
         obs: $event.target.value,
       };
@@ -186,7 +188,7 @@ export class CartFooterComponent {
 
   clean() {
     this.posStore.state.update((e) => {
-      let order = structuredClone(e.order);
+      const order = structuredClone(e.order);
       order.tableId = 0;
       order.obs = null;
       order.customerName = orderInitialState().customerName;
@@ -215,25 +217,25 @@ export class CartFooterComponent {
     this.save(DOC_TYPE.NE);
   }
 
-  openTableModal(codDoc: string, fn:(codDoc: string)=>void) {
+  openTableModal(codDoc: string, fn: (codDoc: string) => void) {
     // this.dialogSvc.open(TableModalComponent, {
     //   size: 'md'
     // })
     const ref = this.dialog.open(TableModalComponent, {
       size: 'xl',
     });
-    ref.subscribe(result => {
-      let order = structuredClone(this.posStore.state().order);
-      if(order.tableId > 0){
-        fn(codDoc)
+    ref.subscribe(() => {
+      const order = structuredClone(this.posStore.state().order);
+      if (order.tableId > 0) {
+        fn(codDoc);
       }
-    })
+    });
   }
 
-   save = async (codDoc: string)=> {
+  save = async (codDoc: string) => {
     try {
       const { orderItems } = this.posStore.state();
-      let order = structuredClone(this.posStore.state().order);
+      const order = structuredClone(this.posStore.state().order);
 
       order.subtotalSinImpuestos = this.subtotalSinImpuestos;
       order.tax = this.tax;
@@ -358,28 +360,30 @@ export class CartFooterComponent {
         items: itemsResult,
         taxes: taxesResult,
       };
-      let params = OrderMapper.toApiParams(data);
+      const params = OrderMapper.toApiParams(data);
 
       if (order.orderId > 0) {
-        this._orderUseCase.put(order.orderId, params).subscribe((response) => {
-          if (response.code === '0') {
-            Swal.fire({
-              icon: 'warning',
-              html: response.message,
-            });
-          }
-          if (response.code === '1') {
-            Swal.fire({
-              icon: 'success',
-              html: response.message,
-              timer: 1000,
-            });
-            this.clean();
-            this.$cartOverlaySvc.closeCart();
-          }
-        });
+        this.$updateUseCase
+          .execute(order.orderId, params)
+          .subscribe((response) => {
+            if (response.code === '0') {
+              Swal.fire({
+                icon: 'warning',
+                html: response.message,
+              });
+            }
+            if (response.code === '1') {
+              Swal.fire({
+                icon: 'success',
+                html: response.message,
+                timer: 1000,
+              });
+              this.clean();
+              this.$cartOverlaySvc.closeCart();
+            }
+          });
       } else {
-        this._orderUseCase.post(params).subscribe((response) => {
+        this.$createUseCase.execute(params).subscribe((response) => {
           // Manejo de respuesta con código "0"
           if (response.code === '0') {
             Swal.fire({
@@ -419,7 +423,7 @@ export class CartFooterComponent {
                   },
                 });
 
-                modalRef.subscribe((result) => {
+                modalRef.subscribe(() => {
                   // if (result && typeof result === 'object') {
                   if (dataSave.printerAutomatic) {
                     this.sharedSvc.printerDoc(dataSave, codDoc);
@@ -442,5 +446,5 @@ export class CartFooterComponent {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 }

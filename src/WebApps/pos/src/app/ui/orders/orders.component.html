@@ -4,16 +4,20 @@
       <mat-card-title>Ordenes</mat-card-title>
       <div class="d-flex flex-row gap-2">
         @if($permissionStore.actions().crear){
-          <button mat-flat-button (click)="navigateToPos()">
+          <button mat-icon-button (click)="navigateToPos()">
             <mat-icon>add</mat-icon>
-            Nuevo
           </button>
         }
+        <button mat-icon-button (click)="moreFilter.set(!moreFilter())">
+          <mat-icon>filter_list</mat-icon>
+        </button>
       </div>
     </mat-card-title-group>
   </mat-card-header>
   <mat-card-content>
 <!--    <app-order-list [dataSearch]="dataSearch" />-->
-    <app-table-orders [dataSearch]="dataSearch"/>
+    <app-table-orders [dataSearch]="dataSearch"
+    [moreFilter]="moreFilter()"
+    />
   </mat-card-content>
 </mat-card>

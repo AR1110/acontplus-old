@@ -20,9 +20,9 @@ export const routes: Routes = [
     canActivate: [sessionGuard],
     loadChildren: () =>
       import('@/ui/layouts/app-layout.routes').then((m) => m.routes),
-    resolve: {
-      configData: configDataResolver,
-    },
+    // resolve: {
+    //   configData: configDataResolver,
+    // },
   },
 
   {

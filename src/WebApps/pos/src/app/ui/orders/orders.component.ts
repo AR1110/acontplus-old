@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,8 @@ import {TableOrdersComponent} from "@ui/orders/components/table-orders/table-ord
 export class OrdersComponent {
   private router = inject(Router)
   $permissionStore = inject(PermissionStore)
+
+  moreFilter = signal(false)
 
   dataSearch = {
     userId: 0,

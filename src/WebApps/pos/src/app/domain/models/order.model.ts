@@ -118,3 +118,42 @@ export interface GetFilterDataOrderResponse {
   tablesGroup: any[]
   users:  UserSelectHtmlOnly[]
 }
+
+export interface OrderList {
+  id: number
+  codDoc: string
+  codEstab: string
+  sequence: string
+  serie: string
+  tax: number
+  discount: number
+  tip: number
+  total: number
+  obs: string
+  createdAt: string
+  enabled: boolean
+  deleted: boolean
+  uuid: string
+  razonSocialComprador: string
+  identificacionComprador: string
+  userName: string
+  totalRecords: number
+  divided: boolean
+  finished: boolean
+  tableName: string
+}
+
+export class ListOrderResponse {
+  data: OrderList[]=[]
+  totalRecords: number = 0
+}
+
+export interface GetIdOrderResponse {
+  order: Order
+}
+
+export class GetStatsOrderResponse {
+  sales:   any[]=[]
+  productsTop:   any[]=[]
+  documentCounts:   any[]=[]
+}

@@ -29,6 +29,7 @@ import {
   output,
   signal,
   ViewEncapsulation,
+  OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,9 +49,12 @@ import { OrderDivideModalComponent } from '@ui/orders/components/order-divide-mo
 import { OrderDocListComponent } from '@ui/orders/components/order-doc-list/order-doc-list.component';
 import { OrderRead } from '@domain/models/order.model';
 import { MatCardModule } from '@angular/material/card';
-import { OrderUseCase } from '@domain/use-cases/order.use-case';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
-import {PermissionStore} from "@ui/store/permission.store";
+import { PermissionStore } from '@ui/store/permission.store';
+import { GetIdOrderUseCase } from '@/domain/use-cases/order/get-id-order.use-case';
+import { AnularOrderUseCase } from '@/domain/use-cases/order/anular-order.use-case';
+import { GetFilterDataOrderUseCase } from '@/domain/use-cases/order/get-filter-data-order.use-case';
+import { ListOrderUseCase } from '@/domain/use-cases/order/list-order.use-case';
 
 @Component({
   selector: 'app-order-list',
@@ -87,7 +91,7 @@ import {PermissionStore} from "@ui/store/permission.store";
   styleUrl: './order-list.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class OrderListComponent {
+export class OrderListComponent implements OnInit {
   @Input({ required: true }) dataSearch = {} as any;
   isComingOfPos = input(false);
   closeDialog = output();
@@ -97,13 +101,17 @@ export class OrderListComponent {
   private mainStore = inject(MainStoreService);
 
   private dialogSvc = inject(DialogService);
-  private _orderUseCase = inject(OrderUseCase);
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
   private posStoreSvc = inject(PosStoreService);
   private router = inject(Router);
   private $cartOverlaySvc = inject(CartOverlayService);
-  $permissionStore = inject(PermissionStore)
+  $permissionStore = inject(PermissionStore);
+
+  private $getFilterDataUseCase = inject(GetFilterDataOrderUseCase);
+  private $listUseCase = inject(ListOrderUseCase);
+  private $anularUseCase = inject(AnularOrderUseCase);
+  private $getIdUseCase = inject(GetIdOrderUseCase);
 
   displayedColumns: string[] = [
     'index',
@@ -145,7 +153,7 @@ export class OrderListComponent {
   isDeleted = computed(() => this.selectedStatus() === STATUS_ORDER.ANULADO);
 
   getOrders() {
-    let params = {
+    const params = {
       isSearchDate: true,
       estabId: getValidId(this.mainStore.state().establecimientoId),
       puntoEmisionId: getValidId(this.mainStore.state().puntoEmisionId),
@@ -166,9 +174,11 @@ export class OrderListComponent {
     this.isLoadingResults.set(true);
 
     this.dataSource.set([]);
-    this._orderUseCase.getAll(params).subscribe({
+    this.$listUseCase.execute(params).subscribe({
       next: (response) => {
-        this.dataSource.set(response.map((_, i) => ({ ..._, index: i + 1 })));
+        this.dataSource.set(
+          response.data.map((_, i) => ({ ..._, index: i + 1 }))
+        );
         this.pagination.update((e) => ({
           ...e,
           totalRecords:
@@ -186,7 +196,7 @@ export class OrderListComponent {
 
   ngOnInit() {
     this.selectedStatus.set(this.dataSearch.selectedStatus);
-    this._orderUseCase.getDataFilter().subscribe((response) => {
+    this.$getFilterDataUseCase.execute().subscribe((response) => {
       this.tablesGroup = response.tablesGroup;
       this.users = response.users;
       this.getOrders();
@@ -241,7 +251,7 @@ export class OrderListComponent {
   }
 
   onEdit(data: OrderRead) {
-    this._orderUseCase.getId(data.id).subscribe({
+    this.$getIdUseCase.execute(data.id).subscribe({
       next: (response) => {
         this.posStoreSvc.state.update((state) => ({
           ...state,
@@ -267,7 +277,7 @@ export class OrderListComponent {
   }
 
   async askToAnul(row: OrderRead) {
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: 'Anular Orden',
       text: '¿Estas seguro de anular el pedido?',
       icon: 'warning',
@@ -278,7 +288,7 @@ export class OrderListComponent {
       cancelButtonText: 'No!',
     });
     if (isConfirmed) {
-      this._orderUseCase.setAnul(row.id).subscribe((response) => {
+      this.$anularUseCase.execute(row.id).subscribe((response) => {
         if (response.code === '0') {
           this.tS.toastr({
             type: 'warning',

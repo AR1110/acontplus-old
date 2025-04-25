@@ -43,7 +43,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     </div>
     }
 
-    <mat-dialog-content class="mat-typography">
+    <mat-dialog-content  >
       <ng-container *ngTemplateOutlet="containerTemplate"></ng-container>
     </mat-dialog-content>
     <mat-dialog-actions align="end">

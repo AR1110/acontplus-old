@@ -1,0 +1,150 @@
+/* 🔄 SCROLLABLE CONTENEDOR */
+.pos-tables-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  &.dark-theme &::-webkit-scrollbar-track {
+    background: #333;
+  }
+
+  &.dark-theme &::-webkit-scrollbar-thumb {
+    background: #666;
+  }
+}
+
+/* 🔳 TABLAS CON GRID HORIZONTAL SCROLLABLE */
+.pos-tables {
+  display: flex;
+  gap: 10px;
+  min-width: max-content; // << Esto hace posible el scroll
+  padding: 5px 0;
+}
+
+/* 🪑 BOTÓN DE MESA */
+.pos-table {
+  width: var(--button-size);
+  height: var(--button-size);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 16px;
+  background-color: var(--bg);
+  border: 2px solid var(--border);
+  color: var(--text);
+  flex-shrink: 0; // 👈 no se encoge
+
+  &__image {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-speed) ease;
+    }
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    transition: color var(--transition-speed) ease;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover:not(.pos-table--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    img {
+      transform: scale(1.1);
+    }
+  }
+
+  &--active {
+    //background-color: var(--active-bg);
+    border-color: var(--active-border);
+
+    .pos-table__label {
+      //color: var(--active-text);
+      font-weight: 600;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    &__image {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 8px;
+    }
+
+    &__label {
+      font-size: 12px;
+    }
+  }
+}
+
+.table-order-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px 0 20px 0;
+  margin: 0 auto;
+}
+
+/* Para dispositivos móviles */
+@media (max-width: 600px) {
+  /* Ajusta el tamaño según necesidad */
+  //.table-order-container {
+  //  grid-template-columns: repeat(2, 1fr);
+  //}
+}
+
+:host ::ng-deep .mat-mdc-card-header > .mat-mdc-card-header-text {
+  padding-right: 12px;
+}
+
+
+ .price-total{
+   right: 16px;
+   color: var(--pink);
+   font-weight: bold;
+ }
+
+
+.name-title {
+  color: var(--name-title-color);
+}
+

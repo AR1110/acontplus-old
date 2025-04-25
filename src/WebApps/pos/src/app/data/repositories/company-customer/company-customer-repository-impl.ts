@@ -17,6 +17,7 @@ import { CompanyCustomerPostMapper } from '@data/repositories/company-customer/c
 import { Observable } from 'rxjs';
 import { CompanyCustomerSearchMapper } from '@data/repositories/company-customer/company-customer-search.mapper';
 import { withoutSpinner } from 'acontplus-utils';
+import {sanitizeAndEncodeURIComponent} from "@domain/utils/utils";
 
 @Injectable({
   providedIn: 'root',
@@ -107,7 +108,7 @@ export class CompanyCustomerRepositoryImpl extends CompanyCustomerRepository {
 
   search<T extends { textSearch: string }>(data: T) {
     let query = {
-      textSearch: data.textSearch,
+      textSearch:sanitizeAndEncodeURIComponent(data.textSearch) ,
     };
     return this._http
       .get<ApiResponse<any>>(

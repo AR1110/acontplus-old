@@ -105,6 +105,7 @@ BEGIN
                                ,ro.[Deleted]
                                ,us.nombreUsuario                           as UserName
                                ,ISNULL(cu.TradeName,''CONSUMIDOR FINAL'')                  as nameFiscal
+                               ,ISNULL(cu.IdCard, ''9999999999999'') as IdCard
                                ,ta.[Description]                           as tableName
                                ,COUNT(*) OVER()                            as totalRecords
                          FROM Restaurant.[Order]         ro WITH (NOLOCK)

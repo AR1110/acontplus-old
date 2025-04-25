@@ -7,8 +7,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import { Widget } from '@domain/models/widget.model';
-import { computed, inject, input } from '@angular/core';
-import { OrderUseCase } from '@domain/use-cases/order.use-case';
+import { computed, inject } from '@angular/core';
+import {GetStatsOrderUseCase} from "@domain/use-cases/order/get-stats-order.use-case";
 
 function getAnios() {
   const startYear = 2023;
@@ -97,7 +97,7 @@ export const DashboardStore = signalStore(
     }),
   })),
 
-  withMethods((store, _orderUseCase = inject(OrderUseCase)) => ({
+  withMethods((store, $getStatsUseCase = inject(GetStatsOrderUseCase)) => ({
     addWidget(w: Widget) {
       patchState(store, (state) => ({
         addedWidgets: [...state.addedWidgets, { ...w }],
@@ -124,7 +124,7 @@ export const DashboardStore = signalStore(
         estabId,
         anio: store.anio(),
       };
-      _orderUseCase.getStats(params).subscribe((response) => {
+      $getStatsUseCase.execute(params).subscribe((response) => {
         let documentCounts = response.documentCounts.map((item, index) => {
           return {
             id: index + 1,

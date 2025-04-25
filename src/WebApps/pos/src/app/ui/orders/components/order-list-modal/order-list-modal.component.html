@@ -6,14 +6,19 @@
   />
 
 
-<ng-template #containerTemplate> 
+<ng-template #containerTemplate>
 
-  <app-order-list 
+<!--  <app-order-list-->
+<!--    [dataSearch]="dataSearch"-->
+<!--    (closeDialog)="closeDialog()"-->
+<!--    [isComingOfPos]="true"-->
+<!--     />-->
+  <app-table-orders
     [dataSearch]="dataSearch"
     (closeDialog)="closeDialog()"
     [isComingOfPos]="true"
-     />
-     
+  />
+
 </ng-template>
 
 <ng-template #actionsTemplate>

@@ -5,14 +5,21 @@ import { CODE_REPORT, DOC_TYPE } from '@domain/enums/main.enum';
 import { OrderDocRed } from '@domain/models/order-doc.model';
 import { DialogService } from '@domain/services/dialog.service';
 import { SharedService } from '@domain/services/shared.service';
-import {Component, inject, input, signal} from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  signal,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import { OrderUseCase } from '@domain/use-cases/order.use-case';
-import {finalize} from "rxjs/operators";
+import { finalize } from 'rxjs/operators';
+import { GetDocsOrderUseCase } from '@/domain/use-cases/order/get-docs-order.use-case';
 
 @Component({
   selector: 'app-order-doc-list',
@@ -27,9 +34,9 @@ import {finalize} from "rxjs/operators";
   ],
   templateUrl: './order-doc-list.component.html',
 })
-export class OrderDocListComponent {
+export class OrderDocListComponent implements OnInit, OnDestroy {
   readonly data = input.required<{ id: 0 }>();
-  private _orderUseCase = inject(OrderUseCase);
+  private $getDocsUseCase = inject(GetDocsOrderUseCase);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService);
 
@@ -45,20 +52,19 @@ export class OrderDocListComponent {
     'saldo',
     'estado',
   ];
-  dataSource = signal<OrderDocRed[]>([]) ;
+  dataSource = signal<OrderDocRed[]>([]);
 
   isLoadingResults = signal(false);
 
   private getOrderDocs() {
     this.dataSource.set([]);
     this.isLoadingResults.set(true);
-    this._orderUseCase.getOrderDocs(this.data().id)
-      .pipe(
-        finalize(()=> this.isLoadingResults.set(false))
-      )
-      .subscribe( (response) => {
-        this.dataSource.set(response)
-    });
+    this.$getDocsUseCase
+      .execute(this.data().id)
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
+      .subscribe((response) => {
+        this.dataSource.set(response);
+      });
   }
 
   ngOnInit() {
@@ -115,7 +121,7 @@ export class OrderDocListComponent {
   }
 
   openCobroModal(data: OrderDocRed) {
-    let modalRef = this.dialogSvc.open(PaymentComponent, {
+    const modalRef = this.dialogSvc.open(PaymentComponent, {
       size: 'xl',
 
       data: {

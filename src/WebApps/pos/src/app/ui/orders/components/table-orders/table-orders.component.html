@@ -1,24 +1,220 @@
-<div class="d-grid gap-2">
+<div class="vstack gap-2">
   <div
-    class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+    class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1  "
   >
     <div class="col">
       <mat-form-field class="w-100">
         <mat-label>Sala/Piso</mat-label>
-        <mat-select [(ngModel)]="dataSearch.roomId" (selectionChange)="handleFloorChange($event)">
+        <mat-select
+          [(ngModel)]="dataSearch.roomId"
+          (selectionChange)="handleFloorChange()"
+        >
           @for (item of rooms(); track $index) {
-            <mat-option [value]="item.roomId">{{item.name}}</mat-option>
+          <mat-option [value]="item.roomId">{{ item.name }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     </div>
-  </div>
-@if(tables().length>0){
-  <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex()"  (selectedIndexChange)="selectedIndex.set($event)">
-    @for (item of tables(); track $index) {
-    <mat-tab [label]="item.description">Content 1</mat-tab>
-    }
-  </mat-tab-group>
+    <div class="col"></div>
+    <div class="col">
+      <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
 
-}
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="selectionChangeStatusOrder()">
+          @for (item of statusOrder(); track $index) {
+            <mat-option  [value] ="item.code">{{item.description}}</mat-option>
+
+          }
+
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+  </div>
+
+  @if(moreFilter()){
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1  "
+    >
+      <div class="col">
+        <div class="row">
+          <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-5 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Opción Cliente</mat-label>
+              <mat-select [(ngModel)]="dataSearch.typeSearchCustomer" (selectionChange)="onChangeTypeSearchCustomer()">
+                <mat-option  value ="OR">Pedido</mat-option>
+                <mat-option  value ="DOC">Documento</mat-option>
+
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-7 col-sm-12 col-12">
+            <app-company-customer-search
+              [isSimple]="true"
+              (onSelect)="onSelectCustomer($event)"
+              (clearInput)="clearCustomer()"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Usuario</mat-label>
+          <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
+            <mat-option [value]="0">-- Todos --</mat-option>
+            @for(item of users;track $index){
+              <mat-option [value]="item.idUsuario">{{
+                  item.nombreUsuario
+                }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  }
+
+  <div>
+    @if(tables().length>0){
+      <div class="pos-tables-container">
+        <div class="pos-tables">
+          @for (table of tables(); track $index) {
+            <div
+              class="pos-table"
+              [ngClass]="{
+          'pos-table--active': dataSearch.tableId === table.id
+        }"
+              (click)="selectedIndexChange($index)"
+            >
+              <div class="vstack justify-content-center align-items-center gap-2">
+                <img src="img/round-table.png" width="32" height="32" />
+                <div class="pos-table__label">{{ table.description }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+
+      <div class="table-order-container">
+        @for (item of dataSource(); track $index){
+          <mat-card   appearance="outlined">
+            <mat-card-header>
+              <div mat-card-avatar >
+                <app-icon-user/>
+              </div>
+              <mat-card-title style="font-size: 14px;">{{ item.razonSocialComprador }}</mat-card-title>
+              <mat-card-subtitle style="font-size: 12px;">{{item.identificacionComprador}}</mat-card-subtitle>
+              <span class="price-total " >
+                      {{item.total | currency : "$" : "symbol" : "1.1-2" }}
+                    </span>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="d-grid gap-2">
+                <div
+                  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+                >
+                  <div class="col">
+                    <div class="vstack">
+                      <small class="name-title">Nro. Doc.</small>
+                      <small>{{item.serie}}</small>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="vstack">
+                      <small class="name-title">Fecha Emisión</small>
+                      <small>{{item.createdAt}}</small>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="vstack">
+                  <small class="name-title">Usuario</small>
+                  <small>{{item.userName}}</small>
+                </div>
+                <div class="vstack">
+                  <small class="name-title">Obs.</small>
+                  <small>{{item.obs}}</small>
+                </div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                aria-hidden="false"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              @if(isPending()){
+                <button
+                  mat-icon-button
+                  (click)="openOrderDivideDialog(item)"
+                  matTooltip="Completar Venta"
+                >
+                  <app-icon-tabler-shopping-cart-discount/>
+                </button>
+              }
+
+              <button
+                mat-icon-button
+                (click)="printOrder(item)"
+                matTooltip="Imprimir"
+              >
+                <mat-icon>print</mat-icon>
+              </button>
+
+              <mat-menu #menu="matMenu">
+                @if($permissionStore.actions().editar && isPending()){
+                  <button mat-menu-item (click)="onEdit(item)" >
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
+                  </button>
+                } @if($permissionStore.actions().anular && isPending()){
+                <button mat-menu-item (click)="askToAnul(item)" >
+                  <mat-icon>delete</mat-icon>
+                  <span>Anular</span>
+                </button>
+              }
+
+                @if($permissionStore.actions().reporte){
+                  <button mat-menu-item (click)="getReport(item)">
+                    <mat-icon>get_app</mat-icon>
+                    <span>PDF</span>
+                  </button>
+                }
+
+
+                <button mat-menu-item appActionWhatsappSend [params]="item"  >
+                  <mat-icon>share</mat-icon>
+                  <span>WhatsApp</span>
+                </button>
+              </mat-menu>
+            </mat-card-actions>
+          </mat-card>
+
+
+        } @empty {
+          <span  >No se encontrarón los datos</span>
+
+        }
+      </div>
+
+
+      @if(dataSource().length < pagination().totalRecords){
+        <app-load-more
+          [size]="'large'"
+          [loading]="loading()"
+          (loadMore)="onLoadMore()"
+        />
+      }
+
+    }
+  </div>
+
 </div>
+

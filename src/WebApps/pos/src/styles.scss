@@ -113,6 +113,7 @@ $compact-theme: mat.define-theme(
   --product-card-bg: var(--pink);
   --card-border: rgba(0, 0, 0, 0.1);
   --card-spacing: 16px;
+  --name-title-color: rgba(33, 37, 41, 0.75);
 }
 
 html, body {
@@ -166,6 +167,7 @@ html, body {
   --bg-range-date: rgba(255, 255, 255, 0.12);
   --color-pink: #ffffff;
   --category-bg: var(--pink);
+  --name-title-color: rgb(141 158 176 / 75%);
 }
 
 // Default to light theme
