@@ -34,7 +34,11 @@ import { MatInput } from '@angular/material/input';
 import { DocSustentoPaymentComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-payment/doc-sustento-payment.component';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { RetencionAtsDocPayment } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {
+  MatDatepicker,
+  MatDatepickerInput,
+  MatDatepickerToggle,
+} from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -145,10 +149,13 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       impuestoRetencionId: [0, [Validators.required]],
-      codigoRetencion: [''],
+      codigoRetencion: [
+        '',
+        Validators.required,
+      ],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
-      valorRetenido: [0],
+      valorRetenido: [0, [Validators.required, Validators.min(0)]],
     });
   }
 

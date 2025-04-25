@@ -24,7 +24,6 @@
                 id="idEstablecimiento"
                 formControlName="idEstablecimiento"
                 (selectionChange)="onSelectEstablecimiento()"
-                [disabled]="idDocumentoElectronico > 0"
               >
                 @for (item of estabs; track $index) {
                   <mat-option [value]="item.idEstablecimiento">
@@ -42,7 +41,6 @@
                   id="idPuntoEmision"
                   formControlName="idPuntoEmision"
                   (selectionChange)="onSelectPuntoEmision()"
-                  [disabled]="idDocumentoElectronico > 0"
                 >
                   @for (item of puntosEmision; track $index) {
                     <mat-option [value]="item.idPuntoEmision">
@@ -127,7 +125,6 @@
                 <mat-select
                   id="tipoSujetoRetenido"
                   formControlName="tipoSujetoRetenido"
-                  [disabled]="isNotForeign"
                 >
                   @for (item of tiposIdentificacionProveedor; track $index) {
                     <mat-option [value]="item.codigo">

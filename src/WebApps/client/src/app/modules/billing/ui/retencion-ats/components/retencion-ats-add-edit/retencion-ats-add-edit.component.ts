@@ -248,6 +248,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
     console.log(this.data);
     if (this.data && this.data.idRetencionAts > 0) {
       this.retencionAtsForm.patchValue(this.data);
+      this.retencionAtsForm.get('idEstablecimiento')?.disable();
+      this.retencionAtsForm.get('idPuntoEmision')?.disable();
       this.getPeriod();
     } else {
       this.retencionAtsForm
@@ -262,7 +264,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
   onSave() {
     console.log(this.retencionAtsForm.value);
-
     this._retencionAtsUseCase
       .create(this.retencionAtsForm.value)
       .subscribe((response) => {
@@ -271,7 +272,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
           message: response.message,
         });
         if (response.code === '1') {
-          this.dialogRef.close(true);
+          this.dialogRef.close(response);
         }
       });
   }
@@ -344,7 +345,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
 
     dialogRef.subscribe((response) => {
-      if (response !== 'undefined') {
+      if (typeof response !== 'undefined') {
         const { documents } = response;
         if (documents.length > 0) {
           this.retAtsDocSustentos = documents;
