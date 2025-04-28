@@ -7,7 +7,7 @@ public class RetencionAtsRetDto
     public int IdRetencionAts { get; set; }
     public Guid UniqueIdDoc { get; set; }
     public int ImpuestoRetencionId { get; set; }
-    public string CodigoRetencion { get; set; }
+    [Required] public string CodigoRetencion { get; set; }
     public decimal BaseImponible { get; set; }
     public decimal PorcentajeRetener { get; set; }
     public decimal ValorRetenido { get; set; }

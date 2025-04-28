@@ -30,8 +30,9 @@ BEGIN
 		BEGIN TRAN
 
 			INSERT INTO FactElect.RetencionAtsRet(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, impuestoRetencionId, codigoRetencion
-			, baseImponible, porcentajeRetener, valorRetenido)
-			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, impuestoRetencionId, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido
+			, baseImponible, porcentajeRetener, valorRetenido, idUsuario)
+			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, impuestoRetencionId, codigoRetencion,
+            baseImponible, porcentajeRetener, valorRetenido, @idUsuario
 			FROM OPENJSON(@json) 
 			WITH(
 				uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',

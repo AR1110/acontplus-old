@@ -9,7 +9,7 @@ GO
 -- Create date: 2023-03-02
 -- Description: sp for cancel in sri retencion ats
 -- =============================================
-CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Cancel @idRol INT,@id INT 
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Cancel @userRoleId INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
         
-        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
 
