@@ -17,13 +17,13 @@ export class GetIdOrderMapper {
 
   static fromJson(response:ApiResponse): GetIdOrderResponse{
     const { order, orderItems } = JSON.parse(response.payload as string);
-    console.log(order)
+
 
     // Mapear items de la orden
     const mappedOrderItems = orderItems.map(GetIdOrderMapper.itemFromJson);
 
     // Crear objeto Order mapeado
-    const mappedOrder = GetIdOrderMapper.orderFromJson(order, mappedOrderItems);
+    const mappedOrder = GetIdOrderMapper.orderFromJson(order[0], mappedOrderItems);
 
     console.log(mappedOrder)
     return { order: mappedOrder };
