@@ -12,12 +12,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { menusRoutes } from '../../menus-routes';
-import { MainStoreService } from '@/domain/services/main-store.service';
-import {GetMenusUseCase} from "@domain/use-cases/menu/get-menus.use-case";
-import {SubMenuItem} from "@domain/models/menu.model";
 import {PermissionStore} from "@ui/store/permission.store";
 import {IconUserComponent} from "@ui/components/icons/icon-user/icon-user.component";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-sidebar',
@@ -34,10 +31,10 @@ import {IconUserComponent} from "@ui/components/icons/icon-user/icon-user.compon
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  mainStore = inject(MainStoreService);
+  $layoutStore = inject(LayoutStore)
    $permissionStore = inject(PermissionStore)
 
-  userName = computed(() => this.mainStore.state().userName);
+  userName = computed(() => this.$layoutStore.userName());
 
   toggle = output();
   sideNavCollapsed = signal(false);

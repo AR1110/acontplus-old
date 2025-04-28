@@ -1,4 +1,4 @@
-import { MainStoreService } from '@domain/services/main-store.service';
+
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {
@@ -15,10 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { ActivatedRoute } from '@angular/router';
 import { DialogService } from '@/domain/services/dialog.service';
 import { InfoCompanyComponent } from '../info-company/info-company.component';
 import {truncateText} from "@domain/utils/utils";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-nav-user-info-toggle',
@@ -34,21 +34,17 @@ import {truncateText} from "@domain/utils/utils";
   styleUrl: './nav-user-info-toggle.component.scss',
 })
 export class NavUserInfoToggleComponent {
-  private mainStore = inject(MainStoreService);
-  activatedRoute = inject(ActivatedRoute);
+  private $layoutStore = inject(LayoutStore)
   private dialogSvc = inject(DialogService);
   private breakpointObserver = inject(BreakpointObserver);
 
-  estabs = computed(() => this.mainStore.state().establecimientos);
-  puntosEmision = computed(() => this.mainStore.state().puntosEmision);
-  bodegas = computed(() => this.mainStore.state().bodegas);
-
-  // entidadName = computed(() => this.mainStore.state().entidadName);
-  // estabName = computed(() => this.mainStore.state().dataEstab?.nombreComercial)
+  estabs = computed(() => this.$layoutStore.establecimientos());
+  puntosEmision = computed(() => this.$layoutStore.puntosEmision());
+  bodegas = computed(() => this.$layoutStore.bodegas());
 
   entidadName = signal('');
   estabName = signal('');
-  data = model(this.mainStore.state());
+  data = model(this.$layoutStore);
   isMobile: boolean = false;
 
   ngOnInit(): void {
@@ -64,11 +60,11 @@ export class NavUserInfoToggleComponent {
   private setText(): void {
     const maxLength = this.isMobile ? 15 : 250; // Ajusta el tamaño máximo del texto para móvil o escritorio
     this.entidadName.set(
-      truncateText(this.mainStore.state().entidadName, maxLength)
+      truncateText(this.$layoutStore.entidadName(), maxLength)
     );
     this.estabName.set(
       truncateText(
-        this.mainStore.state().dataEstab?.nombreComercial,
+        this.$layoutStore.dataEstab().nombreComercial,
         maxLength
       )
     );

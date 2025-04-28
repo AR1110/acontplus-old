@@ -21,12 +21,14 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@ui/directives/to-upper-case.directive';
 import { generateUuidv4 } from '@domain/utils/generate-uuidv4';
-import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
+import { TableModalComponent } from '@ui/pos-sale/table-modal/table-modal.component';
 import { MatInputModule } from '@angular/material/input';
-import { CartOverlayService } from '@/ui/store/cart-overlay.service';
+import { CartOverlayService } from '@ui/store/cart-overlay.service';
 import { PermissionStore } from '@ui/store/permission.store';
-import { UpdateOrderUseCase } from '@/domain/use-cases/order/update-order.use-case';
-import { CreateOrderUseCase } from '@/domain/use-cases/order/create-order.use-case';
+import { UpdateOrderUseCase } from '@domain/use-cases/order/update-order.use-case';
+import { CreateOrderUseCase } from '@domain/use-cases/order/create-order.use-case';
+import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
+import {LayoutStore} from "@ui/store/layout.store";
 
 const messageSave: Record<string, string> = {
   [DOC_TYPE.FV]: `
@@ -52,9 +54,16 @@ export class CartFooterComponent {
   private dialogSvc = inject(DialogService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
-  $permissionStore = inject(PermissionStore);
   private $updateUseCase = inject(UpdateOrderUseCase);
   private $createUseCase = inject(CreateOrderUseCase);
+  private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
+
+
+  //store
+  private $layoutStore = inject(LayoutStore)
+  $permissionStore = inject(PermissionStore);
+  private establecimientoId = this.$layoutStore.establecimientoId()
+  private codEstab = this.$layoutStore.codEstab()
 
   private subtotalSinImpuestos = 0;
   private tax = 0;
@@ -406,6 +415,7 @@ export class CartFooterComponent {
             if (codDoc === DOC_TYPE.OR) {
               const orderId = response.payload as number;
               this.sharedSvc.createOrderPrint(orderId);
+              this.refreshGetFormData()
               this.clean();
               return;
             }
@@ -424,11 +434,10 @@ export class CartFooterComponent {
                 });
 
                 modalRef.subscribe(() => {
-                  // if (result && typeof result === 'object') {
                   if (dataSave.printerAutomatic) {
                     this.sharedSvc.printerDoc(dataSave, codDoc);
                   }
-                  // }
+                  this.refreshGetFormData()
                   this.clean();
                 });
                 return;
@@ -438,6 +447,7 @@ export class CartFooterComponent {
               if (dataSave.printerAutomatic) {
                 this.sharedSvc.printerDoc(dataSave, codDoc);
               }
+              this.refreshGetFormData();
               this.clean();
             }
           }
@@ -447,4 +457,21 @@ export class CartFooterComponent {
       console.log(error);
     }
   };
+
+
+  private refreshGetFormData(){
+    let params = {
+      codEstab: this.codEstab,
+      idEstablecimiento: this.establecimientoId,
+    };
+    this.$getFormDataUseCase.execute(params).subscribe(response=>{
+      this.posStore.state.update((e) => {
+
+        return {
+          ...e,
+          pendingOrders: response.pendingOrders,
+        };
+      });
+    })
+  }
 }

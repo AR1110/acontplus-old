@@ -1,7 +1,6 @@
 import { playBeepSound } from '@domain/utils/sound.util';
 import { ActionOrderDialogDirective } from '@ui/directives/action-order-dialog.directive';
 import { TableService } from '@data/repositories/table/table.service';
-import { MainStoreService } from '@domain/services/main-store.service';
 import { PosStoreService } from '@ui/store/pos-store.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
@@ -16,10 +15,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
-import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { CustomContainerDialogComponent } from '@/ui/components/custom-container-dialog/custom-container-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {ToasterService} from "@domain/services/toaster.service";
+import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-table-modal',
@@ -44,13 +44,11 @@ export class TableModalComponent {
   close(): void {
     this.dialogRef.close();
   }
-
-  // readonly dialogRef = inject(MatDialogRef<TableModalComponent>);
-  private _configUseCase = inject(ConfigUseCase);
-  private mainStore = inject(MainStoreService);
+  private $layoutStore = inject(LayoutStore)
   private posStore = inject(PosStoreService);
   private tableSvc = inject(TableService);
   private tS = inject(ToasterService);
+  private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
 
   selectedOption = computed(() => this.posStore.state().order.tableId);
 
@@ -80,10 +78,10 @@ export class TableModalComponent {
 
   private getDataForm() {
     let params = {
-      idEstablecimiento: this.mainStore.state().dataEstab.idEstablecimiento,
-      codEstab: this.mainStore.state().dataEstab.codEstab,
+      idEstablecimiento: this.$layoutStore.dataEstab.idEstablecimiento(),
+      codEstab: this.$layoutStore.dataEstab.codEstab(),
     };
-    this._configUseCase.getDataForm(params).subscribe((response) => {
+    this.$getFormDataUseCase.execute(params).subscribe((response) => {
       this.roomTables.set(
         response.roomTables.map((item) => {
           return {

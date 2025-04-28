@@ -36,11 +36,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { OrderCustomItemComponent } from '@ui/orders/components/order-divide-modal/order-custom-item/order-custom-item.component';
 import { OrderData, OrderDivideItem } from '@domain/models/order.model';
 import { TokenUseCase } from '@domain/use-cases/token.use-case';
-import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { PermissionStore } from '@ui/store/permission.store';
 import { GetIdOrderUseCase } from '@/domain/use-cases/order/get-id-order.use-case';
 import { CreateOrderUseCase } from '@/domain/use-cases/order/create-order.use-case';
 import { UpdateOrderUseCase } from '@/domain/use-cases/order/update-order.use-case';
+import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-order-divide-modal',
@@ -69,10 +70,10 @@ export class OrderDivideModalComponent implements OnInit {
 
   private responsiveService = inject(ResponsiveService);
   private _tokenUseCase = inject(TokenUseCase);
-  private _configUseCase = inject(ConfigUseCase);
   private $getIdUseCase = inject(GetIdOrderUseCase);
   private $createUseCase = inject(CreateOrderUseCase);
   private $updateUseCase = inject(UpdateOrderUseCase);
+  private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
   private dialogSvc = inject(DialogService);
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
@@ -134,9 +135,7 @@ export class OrderDivideModalComponent implements OnInit {
     this.$getIdUseCase
       .execute(this.matDialogData.orderId)
       .pipe(
-        tap(() => {
-          this.isLoadingResults = false;
-        })
+        finalize(() =>   this.isLoadingResults = false)
       )
       .subscribe((response) => {
         const orderDivideItems = response.order.items.map((item) => ({
@@ -164,7 +163,7 @@ export class OrderDivideModalComponent implements OnInit {
       codEstab: dataEstab.codEstab,
       idEstablecimiento: dataEstab.idEstablecimiento,
     };
-    this._configUseCase.getDataForm(params).subscribe((response) => {
+    this.$getFormDataUseCase.execute(params).subscribe((response) => {
       this.dataForm = response;
     });
   }

@@ -9,7 +9,6 @@ import { CompanyCustomerSearchComponent } from '@ui/company-customer/components/
 import { DialogService } from '@domain/services/dialog.service';
 import { SharedService } from '@domain/services/shared.service';
 import { ToasterService } from '@domain/services/toaster.service';
-import { MainStoreService } from '@domain/services/main-store.service';
 import { PosStoreService } from '@ui/store/pos-store.service';
 import {
   animate,
@@ -55,6 +54,8 @@ import { GetIdOrderUseCase } from '@/domain/use-cases/order/get-id-order.use-cas
 import { AnularOrderUseCase } from '@/domain/use-cases/order/anular-order.use-case';
 import { GetFilterDataOrderUseCase } from '@/domain/use-cases/order/get-filter-data-order.use-case';
 import { ListOrderUseCase } from '@/domain/use-cases/order/list-order.use-case';
+import {finalize} from "rxjs/operators";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-order-list',
@@ -98,7 +99,7 @@ export class OrderListComponent implements OnInit {
 
   pagination = signal(new Pagination());
 
-  private mainStore = inject(MainStoreService);
+  private $layoutStore = inject(LayoutStore)
 
   private dialogSvc = inject(DialogService);
   private tS = inject(ToasterService);
@@ -155,8 +156,8 @@ export class OrderListComponent implements OnInit {
   getOrders() {
     const params = {
       isSearchDate: true,
-      estabId: getValidId(this.mainStore.state().establecimientoId),
-      puntoEmisionId: getValidId(this.mainStore.state().puntoEmisionId),
+      estabId: getValidId(this.$layoutStore.establecimientoId()),
+      puntoEmisionId: getValidId(this.$layoutStore.puntoEmisionId()),
       startDate: this.dataSearch.startDate,
       endDate: this.dataSearch.endDate,
       customerCompanyId: getValidId(this.dataSearch.customerCompanyId),
@@ -174,8 +175,9 @@ export class OrderListComponent implements OnInit {
     this.isLoadingResults.set(true);
 
     this.dataSource.set([]);
-    this.$listUseCase.execute(params).subscribe({
-      next: (response) => {
+    this.$listUseCase.execute(params)
+      .pipe(finalize(()=>this.isLoadingResults.set(false)))
+      .subscribe( (response) => {
         this.dataSource.set(
           response.data.map((_, i) => ({ ..._, index: i + 1 }))
         );
@@ -186,11 +188,6 @@ export class OrderListComponent implements OnInit {
               ? this.dataSource()[0].totalRecords
               : 0,
         }));
-      },
-      error: () => this.isLoadingResults.set(false),
-      complete: () => {
-        this.isLoadingResults.set(false);
-      },
     });
   }
 
@@ -247,12 +244,11 @@ export class OrderListComponent implements OnInit {
   }
 
   navigateToPos() {
-    this.router.navigateByUrl('/pos');
+    this.router.navigateByUrl('/pos').then()
   }
 
   onEdit(data: OrderRead) {
-    this.$getIdUseCase.execute(data.id).subscribe({
-      next: (response) => {
+    this.$getIdUseCase.execute(data.id).subscribe( (response) => {
         this.posStoreSvc.state.update((state) => ({
           ...state,
           order: response.order,
@@ -269,10 +265,6 @@ export class OrderListComponent implements OnInit {
         } else {
           this.navigateToPos();
         }
-      },
-      error: (err) => {
-        console.error('Error fetching order:', err);
-      },
     });
   }
 
@@ -354,5 +346,9 @@ export class OrderListComponent implements OnInit {
     return this.dataSource()
       .map((t) => t.total)
       .reduce((acc, value) => acc + value, 0);
+  }
+
+  private showDocs(){
+
   }
 }

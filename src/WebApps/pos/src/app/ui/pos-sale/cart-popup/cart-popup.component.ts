@@ -1,8 +1,8 @@
 import { Component, computed, inject, output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { CartHeaderComponent } from '@/ui/pos-sale/cart-header/cart-header.component';
-import { CartFooterComponent } from '@/ui/pos-sale/cart-footer/cart-footer.component';
-import { CartItemsComponent } from '../cart-items/cart-items.component';
+import { CartHeaderComponent } from '@ui/pos-sale/cart-popup/cart-header/cart-header.component';
+import { CartFooterComponent } from '@ui/pos-sale/cart-popup/cart-footer/cart-footer.component';
+import { CartItemsComponent } from '@ui/pos-sale/cart-popup/cart-items/cart-items.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,4 +30,5 @@ export class CartPopupComponent {
   toggleCart = output();
   private posStoreSvc = inject(PosStoreService);
   orderItems = computed(() => this.posStoreSvc.state().orderItems);
+
 }

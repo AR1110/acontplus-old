@@ -27,7 +27,6 @@ import { CODE_REPORT, DOC_TYPE, STATUS_ORDER } from '@domain/enums/main.enum';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
 import { ListOrderUseCase } from '@domain/use-cases/order/list-order.use-case';
 import { getValidId } from '@domain/utils/utils';
-import { MainStoreService } from '@domain/services/main-store.service';
 import { Pagination } from '@domain/models/pagination.model';
 import { PageNumber } from '@domain/value-objects/page-number.vo';
 import { PageSize } from '@domain/value-objects/page-size.vo';
@@ -49,6 +48,9 @@ import { CartOverlayService } from '@ui/store/cart-overlay.service';
 import Swal from 'sweetalert2';
 import { AnularOrderUseCase } from '@domain/use-cases/order/anular-order.use-case';
 import { ToasterService } from 'acontplus-utils';
+import {MatBottomSheet} from "@angular/material/bottom-sheet";
+import {BottomSheetDocsComponent} from "@ui/orders/components/bottom-sheet-docs/bottom-sheet-docs.component";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-table-orders',
@@ -82,9 +84,9 @@ export class TableOrdersComponent implements OnInit {
   private $getIdUseCase = inject(GetIdOrderUseCase);
   //Stores
   $permissionStore = inject(PermissionStore);
-  private mainStore = inject(MainStoreService);
   private posStoreSvc = inject(PosStoreService);
   private $cartOverlaySvc = inject(CartOverlayService);
+  private $layoutStore = inject(LayoutStore)
 
   //services
   private _dialogSvc = inject(DialogService);
@@ -93,6 +95,8 @@ export class TableOrdersComponent implements OnInit {
 
   //angular
   private router = inject(Router);
+  private _bottomSheet = inject(MatBottomSheet);
+
   @Input({ required: true }) dataSearch = {} as any;
   isComingOfPos = input(false);
   moreFilter = input(false);
@@ -133,8 +137,8 @@ export class TableOrdersComponent implements OnInit {
 
     return {
       isSearchDate: true,
-      estabId: getValidId(this.mainStore.state().establecimientoId),
-      puntoEmisionId: getValidId(this.mainStore.state().puntoEmisionId),
+      estabId: getValidId(this.$layoutStore.establecimientoId()),
+      puntoEmisionId: getValidId(this.$layoutStore.puntoEmisionId()),
       startDate: this.dataSearch.startDate,
       endDate: this.dataSearch.endDate,
       customerCompanyId: getValidId(this.dataSearch.customerCompanyId),
@@ -242,20 +246,18 @@ export class TableOrdersComponent implements OnInit {
     this.$listUseCase
       .execute(this.getParams())
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.dataSource.set([...this.dataSource(), ...response.data]);
-          this.pagination.update((item) => {
-            return {
-              ...item,
-              totalRecords: response.totalRecords,
-            };
-          });
-        },
-      });
+      .subscribe((response)=>{
+        this.dataSource.set([...this.dataSource(), ...response.data]);
+        this.pagination.update((item) => {
+          return {
+            ...item,
+            totalRecords: response.totalRecords,
+          };
+        })
+      })
   }
 
-  openOrderDivideDialog(item: OrderRead) {
+  openOrderDivideDialog(item: OrderList) {
     const modalRef = this._dialogSvc.open(OrderDivideModalComponent, {
       size: 'xl',
       data: {
@@ -351,6 +353,12 @@ export class TableOrdersComponent implements OnInit {
     };
     this._sharedSvc.getReport({
       data: parameters,
+    });
+  }
+
+  showDocs(data: OrderList){
+    this._bottomSheet.open(BottomSheetDocsComponent, {
+      data
     });
   }
 }

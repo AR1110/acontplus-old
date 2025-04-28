@@ -19,6 +19,7 @@ import {CompanyCustomerGetAllUseCase} from "@domain/use-cases/company-customer/c
 import {MatDynamicCardComponent} from "@ui/components/mat-dynamic-card/mat-dynamic-card.component";
 import {PermissionStore} from "@ui/store/permission.store";
 import {ROUTES_PATH} from "@domain/enums/main.enum";
+import {finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-company-customer',
@@ -39,7 +40,7 @@ export class CompanyCustomerPageComponent {
 
   data: CompanyCustomerRead[] = [];
 
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
 
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -70,15 +71,13 @@ export class CompanyCustomerPageComponent {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
-    this.isLoadingResults = true;
-    this.$companyCustomerGetAllUseCase.execute(params).subscribe({
-      next: (response) => {
-        this.isLoadingResults = false;
+    this.isLoadingResults.set(true);
+    this.$companyCustomerGetAllUseCase.execute(params)
+      .pipe(finalize(()=>this.isLoadingResults.set(false)))
+      .subscribe((response) => {
         this.data = response.data;
         this.pagination().totalRecords =
           this.data.length > 0 ? this.data[0].totalRecords : 0;
-      },
-      error: () => (this.isLoadingResults = false),
     });
   }
 

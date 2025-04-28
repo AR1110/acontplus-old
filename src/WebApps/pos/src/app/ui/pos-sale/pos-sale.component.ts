@@ -1,9 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import { finalize, forkJoin } from 'rxjs';
 import { ItemService } from '@data/repositories/item/item.service';
 import { Pagination } from '@domain/models/pagination.model';
 import { ItemRead } from '@domain/models/item.model';
-import {  PageEvent } from '@angular/material/paginator';
 import { SubCategory } from '@domain/models/inventory/subcategory.model';
 import { MatCardModule } from '@angular/material/card';
 import {
@@ -11,7 +10,6 @@ import {
   posStoreStateInitial,
 } from '@ui/store/pos-store.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MainStoreService } from '@domain/services/main-store.service';
 import {ROUTES_PATH, SUB_CATEGORY_CODE} from '@domain/enums/main.enum';
 import { FormsModule } from '@angular/forms';
 import { getValidId, isValidField } from '@domain/utils/utils';
@@ -19,7 +17,6 @@ import { Order } from '@domain/models/order.model';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { ConfigUseCase } from '@domain/use-cases/config.use-case';
 import { MatIconModule } from '@angular/material/icon';
 import { CategoriesComponent } from './categories/categories.component';
 import { LoadMoreComponent } from './load-more/load-more.component';
@@ -27,8 +24,9 @@ import { DialogService } from '@/domain/services/dialog.service';
 import { ProductsComponent } from './products/products.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { CartOverlayService } from '../store/cart-overlay.service';
-import {Router} from "@angular/router";
 import {PermissionStore} from "@ui/store/permission.store";
+import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
+import {LayoutStore} from "@ui/store/layout.store";
 @Component({
   selector: 'app-pos-sale',
   imports: [
@@ -49,16 +47,19 @@ import {PermissionStore} from "@ui/store/permission.store";
 })
 export class PosSaleComponent {
   private posStoreSvc = inject(PosStoreService);
-  private mainStore = inject(MainStoreService);
-  private _configUseCase = inject(ConfigUseCase);
   private itemSvc = inject(ItemService);
   public dialog = inject(DialogService);
   public $cartOverlaySvc = inject(CartOverlayService);
   private $permissionStore = inject(PermissionStore)
+  private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
+
+  //stores
+  private $layoutStore = inject(LayoutStore)
 
 
-  private establecimientoId = this.mainStore.select('establecimientoId');
-  private codEstab = this.mainStore.select('codEstab');
+  private establecimientoId = this.$layoutStore.establecimientoId();
+  private codEstab = this.$layoutStore.codEstab();
+  private puntoEmisionId = this.$layoutStore.puntoEmisionId()
 
   currentTabIndex: number = 0;
 
@@ -123,13 +124,13 @@ export class PosSaleComponent {
   }
 
   getDataFormInit() {
-    if (!this.codEstab() || !(this.establecimientoId() > 0)) {
+    if (!this.codEstab || !getValidId(this.establecimientoId)) {
       console.log('no se encontró datos del establecimiento');
       return;
     }
     let params = {
-      codEstab: this.codEstab(),
-      idEstablecimiento: this.establecimientoId(),
+      codEstab: this.codEstab,
+      idEstablecimiento: this.establecimientoId,
     };
     let paramsItem = {
       pageIndex: this.dataPagination().pageIndex + 1,
@@ -137,7 +138,7 @@ export class PosSaleComponent {
     };
 
     return forkJoin([
-      this._configUseCase.getDataForm(params),
+      this.$getFormDataUseCase.execute(params),
       this.itemSvc.getAll(paramsItem),
     ]);
   }
@@ -157,32 +158,26 @@ export class PosSaleComponent {
     this.itemSvc
       .getAll(this.getParams())
       .pipe(finalize(() => this.setLoading(false)))
-      .subscribe({
-        next: (response) => {
+      .subscribe(  (response) => {
           this.items.set(response.items);
           this.setTotalRecords();
-        },
       });
   }
 
   getCombos() {
     this.items.set([]);
     this.setLoading(true);
-    this.itemSvc.getCombos(this.getParams()).subscribe({
-      next: (response) => {
+    this.itemSvc.getCombos(this.getParams())
+      .pipe(finalize(() => this.setLoading(false)))
+      .subscribe((response) => {
         this.setLoading(false);
         this.items.set(response.items);
         this.setTotalRecords();
-      },
-      error: (err) => {
-        console.log(err);
-        this.setLoading(false);
-      },
     });
   }
 
   getPromotions() {
-    this.posStoreSvc.getPromotions(this.establecimientoId());
+    this.posStoreSvc.getPromotions(this.establecimientoId);
   }
 
   setTotalRecords() {
@@ -203,6 +198,7 @@ export class PosSaleComponent {
     }));
   }
 
+
   ngOnInit() {
     let orderId = this.posStoreSvc.state().order?.orderId || 0;
     if (this.posStoreSvc.state().isLoading) return;
@@ -219,8 +215,8 @@ export class PosSaleComponent {
             dataForm.tarifas.find((t) => t.defaultTarifa)?.idTarifa ?? 0;
           let orderData: Order = {
             ...e.order,
-            puntoEmisionId: this.mainStore.state().puntoEmisionId,
-            establecimientoId: this.mainStore.state().establecimientoId,
+            puntoEmisionId: this.puntoEmisionId,
+            establecimientoId: this.establecimientoId,
             userId:
               orderId > 0
                 ? e.order.userId
@@ -288,17 +284,17 @@ export class PosSaleComponent {
     }
   }
 
-  handlePageEvent(e: PageEvent) {
-    this.dataPagination.update((dp) => {
-      return {
-        ...dp,
-        totalRecords: e.length,
-        pageIndex: e.pageIndex,
-        pageSize: e.pageSize,
-      };
-    });
-    this.getItems();
-  }
+  // handlePageEvent(e: PageEvent) {
+  //   this.dataPagination.update((dp) => {
+  //     return {
+  //       ...dp,
+  //       totalRecords: e.length,
+  //       pageIndex: e.pageIndex,
+  //       pageSize: e.pageSize,
+  //     };
+  //   });
+  //   this.getItems();
+  // }
 
   private hasReloadedForNullSearch = false; // Nueva variable para rastrear recarga
 
@@ -331,10 +327,7 @@ export class PosSaleComponent {
     });
   }
 
-  //items to cart
-
   onLoadMore() {
-    console.log('load more');
     this.dataPagination.update((dp) => {
       return {
         ...dp,
@@ -346,14 +339,14 @@ export class PosSaleComponent {
       this.itemSvc
         .getAll(this.getParams())
         .pipe(finalize(() => this.setLoading(false)))
-        .subscribe({
-          next: (response) => {
+        .subscribe(  (response) => {
             this.items.set([...this.items(), ...response.items]);
             this.setTotalRecords();
-          },
         });
     }
   }
+
+
 
   ngOnDestroy() {
     this.posStoreSvc.state.update((e) => {

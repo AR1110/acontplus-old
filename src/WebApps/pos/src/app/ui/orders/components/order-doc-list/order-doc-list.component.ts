@@ -35,7 +35,7 @@ import { GetDocsOrderUseCase } from '@/domain/use-cases/order/get-docs-order.use
   templateUrl: './order-doc-list.component.html',
 })
 export class OrderDocListComponent implements OnInit, OnDestroy {
-  readonly data = input.required<{ id: 0 }>();
+  readonly data = input.required<{ id: number }>();
   private $getDocsUseCase = inject(GetDocsOrderUseCase);
   private sharedSvc = inject(SharedService);
   private dialogSvc = inject(DialogService);

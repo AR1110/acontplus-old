@@ -1,4 +1,4 @@
-import { MainStoreService } from '@/domain/services/main-store.service';
+
 import { CustomContainerDialogComponent } from '@/ui/components/custom-container-dialog/custom-container-dialog.component';
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, computed, inject, model } from '@angular/core';
@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-info-company',
@@ -23,15 +24,20 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './info-company.component.html',
 })
 export class InfoCompanyComponent {
-  constructor(public dialogRef: DialogRef<InfoCompanyComponent>) {}
+  private $layoutStore = inject(LayoutStore)
+   public dialogRef = inject(DialogRef<InfoCompanyComponent>)
 
+  estabs = computed(() => this.$layoutStore.establecimientos());
+  puntosEmision = computed(() => this.$layoutStore.puntosEmision());
+  bodegas = computed(() => this.$layoutStore.bodegas());
+  data = computed(()=>{
+    return {
+      estabId: this.$layoutStore.establecimientoId(),
+      puntoEmisionId: this.$layoutStore.puntoEmisionId(),
+      bodegaId: this.$layoutStore.bodegaId()
+    }
+  });
   close(): void {
     this.dialogRef.close();
   }
-  private mainStore = inject(MainStoreService);
-
-  estabs = computed(() => this.mainStore.state().establecimientos);
-  puntosEmision = computed(() => this.mainStore.state().puntosEmision);
-  bodegas = computed(() => this.mainStore.state().bodegas);
-  data = model(this.mainStore.state());
 }

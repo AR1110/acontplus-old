@@ -1,6 +1,10 @@
 .overlay-content {
   height: calc(100dvh - 40px - 0px);
   overflow: auto;
+  overflow-y: hidden; /* optional: disable vertical scroll */
+  white-space: nowrap; /* force contents in one line */
+
+
 }
 .pos-cart-card {
   max-width: 650px;

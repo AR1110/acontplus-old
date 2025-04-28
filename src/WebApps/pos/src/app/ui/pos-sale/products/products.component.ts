@@ -3,7 +3,6 @@ import { DECIMALS } from '@/domain/enums/main.enum';
 import { TarifaProducto } from '@/domain/models/inventory/tarifa.model';
 import { ItemRead } from '@/domain/models/item.model';
 import { OrderItem } from '@/domain/models/order.model';
-import { MainStoreService } from '@/domain/services/main-store.service';
 import { ToasterService } from '@/domain/services/toaster.service';
 import { generateUuidv4 } from '@/domain/utils/generate-uuidv4';
 import { pricingCalculateUtil } from '@/domain/utils/princing-calculate.util';
@@ -17,9 +16,10 @@ import { PosStoreService } from '@/ui/store/pos-store.service';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { switchMap, map, of } from 'rxjs';
 import Swal from 'sweetalert2';
-import { ProductCardComponent } from '../product-card/product-card.component';
+import { ProductCardComponent } from '@ui/pos-sale/products/product-card/product-card.component';
 import { GetSaleProductUseCase } from '@/domain/use-cases/product/get-sale-product.use-case';
 import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-product.use-case";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-products',
@@ -30,7 +30,7 @@ import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-pr
 export class ProductsComponent {
   private tS = inject(ToasterService);
   private posStoreSvc = inject(PosStoreService);
-  private mainStore = inject(MainStoreService);
+  private $layoutStore = inject(LayoutStore)
   private $getSaleProductUsecase = inject(GetSaleProductUseCase);
   protected $checkStockUseCase = inject(CheckStockProductUseCase)
 
@@ -38,6 +38,8 @@ export class ProductsComponent {
 
   isSelectedItem = computed(() => this.posStoreSvc.state().isSelectedItem);
   uniqueItemSelected = signal<string | null>(null);
+
+  private bodegaId = this.$layoutStore.bodegaId()
 
   setIsSelectedItem(isSelectedItem: boolean) {
     this.posStoreSvc.state.update((e) => ({
@@ -86,7 +88,7 @@ export class ProductsComponent {
     return this.$getSaleProductUsecase
       .execute({
         productId: $event.productId,
-        bodegaId: this.mainStore.state().bodegaId,
+        bodegaId: this.bodegaId,
       })
       .pipe(
         switchMap((firstResponse) => {
@@ -129,7 +131,7 @@ export class ProductsComponent {
           dataAdded.taxPercentId = tarifaImpuesto.idTarifaImpuesto;
           dataAdded.taxPercent = tarifaImpuesto.porcentaje;
 
-          dataAdded.bodegaId = this.mainStore.state().bodegaId;
+          dataAdded.bodegaId = this.bodegaId;
           dataAdded.llevaInventario = firstResponse.product.llevaInventario;
           dataAdded.medidas = firstResponse.medidas;
           dataAdded.medidaId = dataMedida?.idMedida ?? 0; // Medida por defecto
@@ -181,13 +183,13 @@ export class ProductsComponent {
               [structuredClone(dataAdded)],
               {
                 idArticulo: firstResponse.product.idArticulo,
-                idBodega: this.mainStore.state().bodegaId,
+                idBodega: this.bodegaId,
               }
             );
 
             const paramsStock = {
               idArticulo: firstResponse.product.idArticulo,
-              idBodega: this.mainStore.state().bodegaId,
+              idBodega: this.bodegaId,
               cantidad: calculateCantidadStock({
                 cantidadStock: dataMergeStockQty.cantidadStock,
                 idBodega: dataAdded.bodegaId,
