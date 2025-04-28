@@ -1,6 +1,62 @@
 USE Acontplus
 GO
---DESPUES DE LAS MIGRACIONES
+--DESPUES DE LAS MIGRACIONES- ORDEN 3
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'documentoSustentoTributarioId'
+        AND Object_ID = Object_ID(N'FactElect.RetAtsDocSustento')
+)
+BEGIN
+	ALTER TABLE FactElect.RetAtsDocSustento 
+	ADD documentoSustentoTributarioId INT
+	CONSTRAINT fk_doc_sustento_doc_sustento_tributario
+	FOREIGN KEY (documentoSustentoTributarioId) REFERENCES Sri.DocumentoSustentoTributario(Id)
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'tipoRegimenFiscalExteriorId'
+        AND Object_ID = Object_ID(N'FactElect.RetAtsDocSustento')
+)
+BEGIN
+	ALTER TABLE FactElect.RetAtsDocSustento 
+	ADD tipoRegimenFiscalExteriorId INT
+	CONSTRAINT fk_doc_sustento_tipo_fiscal_regimen_exterior
+	FOREIGN KEY (tipoRegimenFiscalExteriorId) REFERENCES Sri.TipoRegimenFiscalExterior(Id)
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'formaPagoId'
+        AND Object_ID = Object_ID(N'FactElect.RetencionAtsPago')
+)
+BEGIN
+	ALTER TABLE FactElect.RetencionAtsPago 
+	ADD formaPagoId INT
+	CONSTRAINT fk_ret_ats_payment_method 
+	FOREIGN KEY (formaPagoId) REFERENCES Sri.FormaPago(Id)
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'impuestoRetencionId'
+        AND Object_ID = Object_ID(N'FactElect.RetencionAtsRet')
+)
+BEGIN
+	ALTER TABLE FactElect.RetencionAtsRet 
+	ADD impuestoRetencionId INT
+	CONSTRAINT fk_ret_ats_ret_retencion_tax
+	FOREIGN KEY (impuestoRetencionId) REFERENCES Sri.ImpuestoRetencion(Id)
+END
+GO
 
 UPDATE fc SET fc.idSustentoTributario = st.Id
 

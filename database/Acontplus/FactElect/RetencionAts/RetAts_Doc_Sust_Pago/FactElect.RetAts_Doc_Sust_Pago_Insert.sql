@@ -38,8 +38,8 @@ BEGIN
 
 		BEGIN TRAN
 
-			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total)
-			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total
+			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total, idUsuario)
+			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total, @idUsuario
 			FROM OPENJSON(@json)
 			WITH	( 
 				uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',

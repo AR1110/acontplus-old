@@ -94,9 +94,9 @@ BEGIN
 		 uniqueIdDoc UNIQUEIDENTIFIER NOT NULL 
 		,impuestoRetencionId INT NOT NULL
 		,codigoRetencion VARCHAR(5) NOT NULL
-		,baseImponible NUMERIC(18,5)  NOT NULL
-		,porcentajeRetener NUMERIC(18,5)  NOT NULL
-		,valorRetenido NUMERIC(18,5)  NOT NULL
+		,baseImponible NUMERIC(18,5) NOT NULL
+		,porcentajeRetener NUMERIC(18,5) NOT NULL
+		,valorRetenido NUMERIC(18,5) NOT NULL
 	);
 
 	DECLARE @tblPayments AS TABLE(
@@ -156,7 +156,7 @@ BEGIN
         (
 		     uniqueIdDoc                 UNIQUEIDENTIFIER 
 	        ,documentoSustentoTributarioId                INT
-	        ,numDocSustento              VARCHAR(15) 
+	        ,numDocSustento              VARCHAR(17) 
 	        ,fechaEmisionDocSustento     DATETIME 
 	        ,fechaRegistroContable       DATETIME 
 	        ,numAutDocSustento           VARCHAR(49) 
@@ -366,38 +366,38 @@ BEGIN
                    (idRetencionAts,uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,
                    fechaRegistroContable,numAutDocSustento,pagoLocExt,tipoRegimenFiscalExteriorId,paisEfecPago,
                    aplicConvDobTrib,pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,
-                   totalImpuestoReembolso,totalSinImpuestos,importeTotal)
+                   totalImpuestoReembolso,totalSinImpuestos,importeTotal,idUsuario)
 			SELECT @idRetencionAts,uniqueIdDoc,documentoSustentoTributarioId,numDocSustento,fechaEmisionDocSustento,
             fechaRegistroContable,numAutDocSustento,pagoLocExt,IIF(tipoRegimenFiscalExteriorId = 0, NULL, tipoRegimenFiscalExteriorId),paisEfecPago,aplicConvDobTrib,
             pagExtSujRetNorLeg,pagoRegFis,totalComprobantesReembolso,totalBaseImponibleReembolso,totalImpuestoReembolso,
-            totalSinImpuestos,importeTotal
+            totalSinImpuestos,importeTotal, @idUsuario
 			FROM @tblDocs
 
 			--> Impuestos
 			INSERT INTO FactElect.RetAtsImpDocSustento
-                   (idRetencionAts,uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto)
-			SELECT @idRetencionAts,uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto
+                   (idRetencionAts,uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto,idUsuario)
+			SELECT @idRetencionAts,uniqueIdDoc,idTarifaImpuesto,baseImponible,valorImpuesto,@idUsuario
 			FROM @tblTaxes
 
             --> Retenciones
 			INSERT INTO FactElect.RetencionAtsRet
-                   (idRetencionAts,uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido)
-			SELECT @idRetencionAts,uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido
+                   (idRetencionAts,uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido,idUsuario)
+			SELECT @idRetencionAts,uniqueIdDoc,impuestoRetencionId,codigoRetencion,baseImponible,porcentajeRetener,valorRetenido,@idUsuario
 			FROM @tblRetenciones
 
 
             --> Pagos
 			INSERT INTO FactElect.RetencionAtsPago 
-                   (idRetencionAts,uniqueIdDoc,formaPagoId,total)
-			SELECT @idRetencionAts,uniqueIdDoc,formaPagoId,total
+                   (idRetencionAts,uniqueIdDoc,formaPagoId,total,idUsuario)
+			SELECT @idRetencionAts,uniqueIdDoc,formaPagoId,total,@idUsuario
 			FROM @tblPayments
 
             --> Informacion adicional
 			IF EXISTS (SELECT 1 FROM @tblAddInfo)
 				BEGIN
 					INSERT INTO FactElect.RetAtsInfoAdicional
-                           (idRetencionAts,nombre,valor)	
-					SELECT @idRetencionAts,nombre,valor 
+                           (idRetencionAts,nombre,valor,idUsuario)	
+					SELECT @idRetencionAts,nombre,valor,@idUsuario
                     FROM @tblAddInfo
 				END
 

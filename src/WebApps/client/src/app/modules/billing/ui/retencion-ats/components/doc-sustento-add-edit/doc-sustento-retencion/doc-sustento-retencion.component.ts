@@ -38,7 +38,7 @@ export class DocSustentoRetencionComponent {
 
   selectCodigoRetencion(codigo: string) {
     setTimeout(() => {
-      console.log(codigo)
+      console.log(codigo);
       this.retencionGroup().get('codigoRetencion').setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
@@ -61,8 +61,6 @@ export class DocSustentoRetencionComponent {
     const baseImponibleControl = this.retencionGroup().get('baseImponible');
 
     const docGroup = this.docSustentoArray().at(this.indexDoc());
-
-    console.log(docGroup.get('totalSinImpuestos')?.value);
 
     let taxValue = 0;
     if (codigo === '2') {
@@ -128,19 +126,16 @@ export class DocSustentoRetencionComponent {
       switch (codigo) {
         case '1':
           this.setBaseImponible(codigo);
-          // this.codigosRetencionMixed.set(this.codigosRetencion());
-
           break;
         case '2':
           this.setBaseImponible(codigo);
-          // this.codigosRetencionMixed.set(this.porcentajesRetIva());
           this.options().map((x, index) => {
             return {
               ...x,
               value:
                 this.porcentajesRetIva()[
                   index % this.porcentajesRetIva().length
-                ], // Cycle through retIvaValues
+                ],
             };
           });
           break;
