@@ -1,8 +1,8 @@
 services:
   reports.api:
     build:
-      context: ./src/
-      dockerfile: Services/Reports/Reports.API/Dockerfile
+      context: .
+      dockerfile: src/Services/Reports/Reports.API/Dockerfile
       args:
         - Configuration=Release
     environment:
