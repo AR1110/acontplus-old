@@ -4,6 +4,9 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+    <UserSecretsId>15b38f30-6fea-476c-bc66-678e6831d055</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Reports\Contabilidad\AccountingMovement.rdl" />
@@ -235,5 +238,6 @@
     <PackageReference Include="Acontplus.Common.Reports" />
     <PackageReference Include="Acontplus.Common.Services" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
   </ItemGroup>
 </Project>
