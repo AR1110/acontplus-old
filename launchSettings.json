@@ -4,7 +4,20 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "technicalsupport.api": "StartDebugging"
+        "technicalsupport.api": "StartDebugging",
+        "gatewayacontplus.api": "StartDebugging",
+        "barbershop.api": "StartDebugging",
+        "common.api": "StartDebugging",
+        "compras.api": "StartDebugging",
+        "configuracion.api": "StartDebugging",
+        "contabilidad.api": "StartDebugging",
+        "factelect.api": "StartDebugging",
+        "identity.api": "StartDebugging",
+        "inventario.api": "StartDebugging",
+        "mechanical.api": "StartDebugging",
+        "restaurant.api": "StartDebugging",
+        "ventas.api": "StartDebugging",
+        "reports.api": "StartDebugging"
       }
     }
   }

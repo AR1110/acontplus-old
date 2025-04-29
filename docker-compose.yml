@@ -1,13 +1,103 @@
 services:
+  gatewayacontplus.api:
+    image: ${DOCKER_REGISTRY-}gatewayacontplusapi
+    build:
+      context: .
+      dockerfile: src/ApiGateways/GatewayAcontplus.API/Dockerfile
+
+  barbershop.api:
+    image: ${DOCKER_REGISTRY-}barbershopapi
+    build:
+      context: .
+      dockerfile: src/Services/BarberShop/BarberShop.API/Dockerfile
+
+
+  common.api:
+    image: ${DOCKER_REGISTRY-}commonapi
+    build:
+      context: .
+      dockerfile: src/Services/Common/Common.API/Dockerfile
+
+
+  compras.api:
+    image: ${DOCKER_REGISTRY-}comprasapi
+    build:
+      context: .
+      dockerfile: src/Services/Compras/Compras.API/Dockerfile
+
+
+  configuracion.api:
+    image: ${DOCKER_REGISTRY-}configuracionapi
+    build:
+      context: .
+      dockerfile: src/Services/Configuracion/Configuracion.API/Dockerfile
+
+
+  contabilidad.api:
+    image: ${DOCKER_REGISTRY-}contabilidadapi
+    build:
+      context: .
+      dockerfile: src/Services/Contabilidad/Contabilidad.API/Dockerfile
+
+
+  factelect.api:
+    image: ${DOCKER_REGISTRY-}factelectapi
+    build:
+      context: .
+      dockerfile: src/Services/Facturacion/FactElect.API/Dockerfile
+
+
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+
+
+  inventario.api:
+    image: ${DOCKER_REGISTRY-}inventarioapi
+    build:
+      context: .
+      dockerfile: src/Services/Inventario/Inventario.API/Dockerfile
+
+
+  mechanical.api:
+    image: ${DOCKER_REGISTRY-}mechanicalapi
+    build:
+      context: .
+      dockerfile: src/Services/Mechanical/Mechanical.API/Dockerfile
+
+
+  restaurant.api:
+    image: ${DOCKER_REGISTRY-}restaurantapi
+    build:
+      context: .
+      dockerfile: src/Services/Restaurant/Restaurant.API/Dockerfile
+
+  technicalsupport.api:
+    image: ${DOCKER_REGISTRY-}technicalsupportapi
+    build:
+      context: .
+      dockerfile: src/Services/TechnicalSupport/TechnicalSupport.API/Dockerfile
+
+
+  ventas.api:
+    image: ${DOCKER_REGISTRY-}ventasapi
+    build:
+      context: .
+      dockerfile: src/Services/Ventas/Ventas.API/Dockerfile
+
+
+  webui:
+    image: ${DOCKER_REGISTRY-}webui
+    build:
+      context: .
+      dockerfile: src/WebApps/WebUI/Dockerfile
+
+
   reports.api:
+    image: ${DOCKER_REGISTRY-}reportsapi
     build:
       context: .
       dockerfile: src/Services/Reports/Reports.API/Dockerfile
-      args:
-        - Configuration=Release
-    environment:
-      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
-      - ConnectionStrings__DefaultConnection=Data Source=${SQL_SERVER_HOST};Initial Catalog=${SQL_SERVER_DB};Persist Security Info=True;User ID=${SQL_SERVER_USER};Password=${SQL_SERVER_PASSWORD};MultipleActiveResultSets=True;Trusted_Connection=False;TrustServerCertificate=True
-      - ASPNETCORE_URLS=http://+:5010
-    ports:
-      - "5010"
+
