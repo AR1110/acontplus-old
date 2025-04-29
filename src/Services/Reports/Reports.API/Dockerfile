@@ -13,10 +13,10 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0-nanoserver-1809 AS build
 ARG BUILD_CONFIGURATION=Release
 ARG DOTNET_SKIP_POLICY_LOADING=true
 WORKDIR /src
-COPY ["src/Services/Reports/Reports.API/Reports.API.csproj", "Services/Reports/Reports.API/"]
-RUN dotnet restore "Services/Reports/Reports.API/Reports.API.csproj"
+COPY ["src/Services/Reports/Reports.API/Reports.API.csproj", "src/Services/Reports/Reports.API/"]
+RUN dotnet restore "src/Services/Reports/Reports.API/Reports.API.csproj"
 COPY . .
-WORKDIR "/src/Services/Reports/Reports.API"
+WORKDIR "/src/src/Services/Reports/Reports.API"
 RUN dotnet build "Reports.API.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
