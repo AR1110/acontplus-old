@@ -78,8 +78,8 @@ export class TableModalComponent {
 
   private getDataForm() {
     let params = {
-      idEstablecimiento: this.$layoutStore.dataEstab.idEstablecimiento(),
-      codEstab: this.$layoutStore.dataEstab.codEstab(),
+      idEstablecimiento: this.$layoutStore.dataEstab().idEstablecimiento,
+      codEstab: this.$layoutStore.dataEstab().codEstab,
     };
     this.$getFormDataUseCase.execute(params).subscribe((response) => {
       this.roomTables.set(
