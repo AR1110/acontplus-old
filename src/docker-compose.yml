@@ -1,8 +1,0 @@
-version: '3.4'
-
-services:
-  technicalsupport.api:
-    image: ${DOCKER_REGISTRY-}technicalsupportapi
-    build:
-      context: .
-      dockerfile: Services/TechnicalSupport/TechnicalSupport.API/Dockerfile
