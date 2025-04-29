@@ -4,6 +4,10 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+    <UserSecretsId>4e8db3cd-4bdb-4c06-9e5e-737ad0be80e5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Core" />
@@ -26,6 +30,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Scrutor" />
   </ItemGroup>
   <ItemGroup>

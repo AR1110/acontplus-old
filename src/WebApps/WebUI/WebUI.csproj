@@ -5,11 +5,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RazorCompileOnPublish>false</RazorCompileOnPublish>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+    <UserSecretsId>91172d96-c02a-43c0-be60-f277ff2bb70c</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
   </ItemGroup>
   
 </Project>
