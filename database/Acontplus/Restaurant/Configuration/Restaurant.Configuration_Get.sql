@@ -64,6 +64,8 @@ BEGIN
                  [Description], 
                  [Floor], 
                  roomDescription ,
+                 vt.RoomId,
+                 vt.FloorId,
                  vt.Assigned
              FROM Restaurant.v_Table vt 
              INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc 

@@ -13,12 +13,14 @@ export class ActionOrderDialogDirective {
 
     private dialogSvc = inject(DialogService)
   private $permissionStore = inject(PermissionStore)
-    tableId = input<number>()
+  tableId = input<number>()
+  roomId = input<number>()
 
     @HostListener('click', ['$event']) onClick($event: any) {
         $event.stopPropagation();
         let data = {
-            tableId: this.tableId()
+            tableId: this.tableId(),
+          roomId: this.roomId()
         }
       this.$permissionStore.loadActions(ROUTES_PATH.ORDER)
 

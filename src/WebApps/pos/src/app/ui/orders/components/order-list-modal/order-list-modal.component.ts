@@ -18,7 +18,7 @@ import { TableOrdersComponent } from '@ui/orders/components/table-orders/table-o
   templateUrl: './order-list-modal.component.html',
 })
 export class OrderListModalComponent implements OnInit {
-  readonly matDialogData = inject<{ tableId: 0 }>(MAT_DIALOG_DATA);
+  readonly matDialogData = inject<{ tableId: 0, roomId: 0 }>(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<OrderListModalComponent>);
    moreFilter = signal(false)
   private  oldTableId = 0;
@@ -29,23 +29,24 @@ export class OrderListModalComponent implements OnInit {
     endDate: formatDateToString(new Date()),
     selectedStatus: STATUS_ORDER.PENDIENTE,
     typeSearchCustomer: 'OR',
-    customerCompanyId: 0
+    customerCompanyId: 0,
+    roomId: 0
   };
 
   ngOnInit() {
     this.dataSearch.tableId = this.matDialogData.tableId;
+    this.dataSearch.roomId = this.matDialogData.roomId;
   }
 
   handleChangeMoreFilter() {
     this.moreFilter.set(!this.moreFilter())
     if(this.moreFilter()){
       this.oldTableId = this.dataSearch.tableId;
-      //this.dataSearch.tableId = 0;
+      this.dataSearch.tableId = 0;
     }else{
       this.dataSearch.tableId = this.oldTableId;
       this.dataSearch.customerCompanyId = 0;
     }
-    console.log(this.dataSearch)
   }
 
   closeDialog() {
