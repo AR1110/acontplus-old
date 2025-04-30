@@ -173,15 +173,23 @@ export class TableOrdersComponent implements OnInit {
       this.rooms.set(response.tablesGroup);
 
       this.users = response.users;
-      const dataRoom = this.rooms().length > 0 ? this.rooms()[0] : {};
+      let dataRoom: any = {};
+
+      //cuando proviene de modulo pos y mesas
+      if(this.dataSearch.roomId>0){
+       dataRoom = this.rooms().find(r=>r.roomId===this.dataSearch.roomId) || {};
+      }else{
+        dataRoom = this.rooms().length>0? this.rooms()[0]: {}
+      }
+
       if (dataRoom.roomId > 0) {
         this.dataSearch.roomId = dataRoom.roomId;
-        this.handleFloorChange();
+        this.handleFloorChange(this.dataSearch.tableId);
       }
     });
   }
 
-  handleFloorChange() {
+  handleFloorChange(tableId?: number) {
     const tables = this.rooms().flatMap((r) => r.tables);
 
     const tablesFiltered = tables.filter(
@@ -191,7 +199,13 @@ export class TableOrdersComponent implements OnInit {
     this.tables.set(tablesFiltered);
 
     this.selectedIndex.set(0);
-    const dataTable = this.tables().length > 0 ? this.tables()[0] : {};
+    let dataTable: any = {}
+    if(tableId){
+      dataTable = this.tables().find(r=>r.id === this.dataSearch.tableId);
+    }else{
+     dataTable = this.tables().length > 0 ? this.tables()[0] : {};
+
+    }
     if (dataTable.id > 0) {
       this.dataSearch.tableId = dataTable.id;
       dataTable.isActive = true;
@@ -208,6 +222,7 @@ export class TableOrdersComponent implements OnInit {
     this.refresh();
   }
   selectionChangeStatusOrder() {
+    this.dataSearch.typeSearchCustomer = 'DOC'
     this.refresh();
   }
 

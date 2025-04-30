@@ -52,10 +52,9 @@ export class OrdersComponent {
     this.moreFilter.set(!this.moreFilter())
     if(this.moreFilter()){
       this.oldTableId = this.dataSearch.tableId;
-      //this.dataSearch.tableId = 0;
+      this.dataSearch.tableId = 0;
     }else{
     this.dataSearch.tableId = this.oldTableId;
     }
-    console.log(this.dataSearch)
   }
 }
