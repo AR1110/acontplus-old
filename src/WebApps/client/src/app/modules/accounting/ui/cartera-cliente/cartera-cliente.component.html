@@ -3,176 +3,114 @@
   <mat-tab-group>
     <!-- Pestaña Cartera Cliente -->
     <mat-tab label="Cartera Cliente">
-      <div class="my-2 mx-3">
+      <div class="d-grid gap-2 my-2 mx-3">
         <div class="row">
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
-            <div class="icheck-primary">
-              <input
-                type="checkbox"
-                id="ckFecha"
-                [(ngModel)]="dataSearch.ckFecha"
-                name="ckFecha"
-              />
-              <label for="ckFecha">Rango Fecha</label>
-            </div>
+            <mat-checkbox   [(ngModel)]="dataSearch.ckFecha">Rango Fecha</mat-checkbox>
           </div>
 
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
-            <div class="icheck-primary">
-              <input
-                type="checkbox"
-                id="checkboxCompanyCustomer"
-                [(ngModel)]="dataSearch.checkboxCompanyCustomer"
-                name="checkboxCompanyCustomer"
-              />
-              <label for="checkboxCompanyCustomer">Cliente</label>
-            </div>
+            <mat-checkbox
+              [(ngModel)]="dataSearch.checkboxCompanyCustomer"
+            >Cliente</mat-checkbox>
           </div>
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
-            <div class="icheck-primary">
-              <input
-                type="checkbox"
-                id="ckCxcVencida"
-                [(ngModel)]="dataSearch.ckCxcVencida"
-              />
-              <label for="ckCxcVencida">Vencidas</label>
-            </div>
+            <mat-checkbox
+              [(ngModel)]="dataSearch.ckCxcVencida"
+            >Vencidas</mat-checkbox>
+
           </div>
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-            <div class="icheck-primary">
-              <input
-                type="checkbox"
-                id="ckCuotas"
-                [(ngModel)]="dataSearch.ckCuotas"
-              />
-              <label for="ckCuotas">Cuotas</label>
-            </div>
+            <mat-checkbox
+              [(ngModel)]="dataSearch.ckCuotas"
+            >Cuotas</mat-checkbox>
           </div>
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
-            <div class="icheck-primary">
-              <input
-                type="checkbox"
-                id="dirViviendaCliente"
-                [(ngModel)]="dataSearch.checkBoxDirViviendaCliente"
-              />
-              <label for="dirViviendaCliente">Dir. Vivienda Cliente</label>
-            </div>
+            <mat-checkbox
+              [(ngModel)]="dataSearch.checkBoxDirViviendaCliente"
+            >Dir. Vivienda Cliente</mat-checkbox>
           </div>
         </div>
-        <hr />
-        <div class="row">
+        <mat-divider/>
+        <div class="row ">
           <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-            <div class="form-group">
-              <label for="estabs"
-                >Estab: <span class="text-danger">*</span></label
-              >
-              <select
-                name="estabs"
-                id="estabs"
-                class="form-select"
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <mat-select
                 [(ngModel)]="dataSearch.codEstab"
-                (change)="onChangeEstab()"
+                (selectionChange)="onChangeEstab()"
               >
                 @for (item of establecimientos; track $index) {
-                  <option [ngValue]="item.codEstab">
-                    {{ item.nombreComercial }}
-                  </option>
+                  <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
                 }
-              </select>
-            </div>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div class="col-lg-2 col-md-2 col-sm-6 col-12">
-            <div class="form-group">
-              <label for="punto-emision"
-                >Pto. emisión: <span class="text-danger">*</span></label
-              >
-              <select
-                name="punto-emision"
-                id="punto-emision"
-                class="form-select"
+            <mat-form-field class="w-100">
+              <mat-label>Pto. emisión:</mat-label>
+              <mat-select
                 [(ngModel)]="dataSearch.idPuntoEmision"
               >
                 @for (item of puntosEmision; track $index) {
-                  <option [ngValue]="item.idPuntoEmision">
-                    {{ item.ptoEmi }}
-                  </option>
+                  <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
                 }
-              </select>
-            </div>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-12">
-            <div class="form-group">
-              <label>Rango Fechas: </label>
               <app-date-range-selection
+                [showInputMaterial]="true"
                 (onChangeDateRange)="onDateRangeSelection($event)"
               />
-            </div>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-            <div class="form-group">
-              <label for="estados-doc">Estado:</label>
-              <select
-                name="estados-doc"
-                id="estados-doc"
+            <mat-form-field class="w-100">
+              <mat-label>Estado:</mat-label>
+              <mat-select
                 [(ngModel)]="dataSearch.codEstado"
-                class="form-select"
-              >
-                <option [ngValue]="null">Todos</option>
+              > <mat-option [value]="null">Todos</mat-option>
                 @for (item of estadosDoc; track $index) {
-                  <option [ngValue]="item.codigo">
-                    {{ item.descripcion }}
-                  </option>
+                  <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
                 }
-              </select>
-            </div>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="tipo-doc">Tipo Doc.</label>
-              <select
-                name="tipo-doc"
-                id="tipo-doc"
+            <mat-form-field class="w-100">
+              <mat-label>Tipo Documento</mat-label>
+              <mat-select
                 [(ngModel)]="dataSearch.codDoc"
-                (change)="onChangeTipoDoc()"
-                class="form-select"
+                (selectionChange)="onChangeTipoDoc()"
               >
-                <option [ngValue]="null">Todos</option>
+                <mat-option [value]="null">Todos</mat-option>
                 @for (item of tiposDoc; track $index) {
-                  <option [ngValue]="item.codigo">
-                    {{ item.descripcion }}
-                  </option>
+                  <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
                 }
-              </select>
-            </div>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
               <app-company-customer-search
                 [isSimpleMode]="true"
                 (clearSearch)="clearSearchCustomer()"
                 (customerSelected)="onCustomerSelected($event)"
               />
-            </div>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="empresa">Empresa: </label>
-              <select
-                name="empresa"
-                id="empresa"
+            <mat-form-field class="w-100">
+              <mat-label>Empresa</mat-label>
+              <mat-select
                 [(ngModel)]="dataSearch.idEmpresa"
-                class="form-select"
               >
-                <option [ngValue]="0">Todos</option>
+                <mat-option [value]="0">Todos</mat-option>
                 @for (item of empresas; track $index) {
-                  <option [ngValue]="item.idEmpresa">
-                    {{ item.nombreComercial }}
-                  </option>
+                  <mat-option [value]="item.idEmpresa">{{item.nombreComercial}}</mat-option>
                 }
-              </select>
-            </div>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div
             class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex align-items-center"
@@ -216,15 +154,11 @@
               </mat-form-field>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-              <div class="form-group">
-                <input
-                  type="text"
-                  placeholder="Dirección de vivienda (Sector, Barrio y Calle):"
-                  class="form-control border-select"
-                  id="dirVivienda"
-                  [(ngModel)]="dataSearch.dirViviendaCliente"
-                />
-              </div>
+              <mat-form-field class="w-100">
+                <mat-label>Dirección de vivienda</mat-label>
+                <input matInput  [(ngModel)]="dataSearch.dirViviendaCliente" placeholder="Ej: (Sector, Barrio y Calle):">
+              </mat-form-field>
+
             </div>
           }
         </div>
@@ -252,59 +186,47 @@
 
     <!-- Pestaña Deudores -->
     <mat-tab label="Deudores">
-      
-      
-      <div class="my-2">
+
+
+      <div class="d-grid gap-2 my-2 mx-3">
           <div class="row">
             <!-- Solo los filtros de Establecimiento, Punto de emisión y Dirección de vivienda -->
             <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="estabs">Estab: <span class="text-danger">*</span></label>
-                <select
-                  name="estabs"
-                  id="estabs"
-                  class="form-select"
+              <mat-form-field class="w-100">
+                <mat-label>Establecimiento</mat-label>
+                <mat-select
                   [(ngModel)]="dataSearch.codEstab"
-                  (change)="onChangeEstab()"
+                  (selectionChange)="onChangeEstab()"
                 >
                   @for (item of establecimientos; track $index) {
-                    <option [ngValue]="item.codEstab">
-                      {{ item.nombreComercial }}
-                    </option>
+                    <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
                   }
-                </select>
-              </div>
+                </mat-select>
+              </mat-form-field>
+
+
             </div>
             <div class="col-lg-2 col-md-2 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="punto-emision">Pto. emisión: <span class="text-danger">*</span></label>
-                <select
-                  name="punto-emision"
-                  id="punto-emision"
-                  class="form-select"
+              <mat-form-field class="w-100">
+                <mat-label>Punto emisión:</mat-label>
+                <mat-select
                   [(ngModel)]="dataSearch.idPuntoEmision"
-                >
+                > <mat-option [value]="0">Todos</mat-option>
                   @for (item of puntosEmision; track $index) {
-                    <option [ngValue]="item.idPuntoEmision">
-                      {{ item.ptoEmi }}
-                    </option>
+                    <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
                   }
-                </select>
-              </div>
+                </mat-select>
+              </mat-form-field>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Dirección Vivienda: </label>
-                <input
-                  type="text"
-                  [(ngModel)]="dataSearch.dirViviendaCliente"
-                  class="form-control"
-                />
-              </div>
+              <mat-form-field class="w-100">
+                <mat-label>Dirección de vivienda</mat-label>
+                <input matInput  [(ngModel)]="dataSearch.dirViviendaCliente" placeholder="Ej: (Sector, Barrio y Calle):">
+              </mat-form-field>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Ciudad</label>
+              <mat-form-field>
+                <mat-label>Ciudad</mat-label>
                 <mat-select
                   [(ngModel)]="dataSearch.idCiudad"
                   placeholder="Seleccione Ciudad"
@@ -318,13 +240,10 @@
                     </mat-optgroup>
                   }
                 </mat-select>
-              </div>
+              </mat-form-field>
             </div>
           </div>
-      </div>
-
-      <mat-card-actions>
-        <div class="d-flex flex-row gap-1">
+        <div class="hstack gap-2">
           <!-- In your parent component template -->
           <app-report-buttons
             [fileType]="REPORT_FORMAT.PDF"
@@ -340,7 +259,7 @@
           >
           </app-report-buttons>
         </div>
-      </mat-card-actions>
+      </div>
     </mat-tab>
   </mat-tab-group>
 </app-mat-dynamic-card>

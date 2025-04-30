@@ -35,6 +35,8 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import {MatDivider} from "@angular/material/divider";
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -57,6 +59,8 @@ import { CompanyCustomer } from '@customer/core/domain/company-customer';
     MatDynamicCardComponent,
     MatFormFieldModule,
     MatCheckboxModule,
+    MatInputModule,
+    MatDivider,
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,

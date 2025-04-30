@@ -16,7 +16,7 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { FormsModule } from '@angular/forms';
+import {FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { Subcategory } from '@accounting/core/models/subcategory';
@@ -24,11 +24,19 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'app-reports',
   imports: [
     FormsModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatSelectModule,
     BreadcrumbComponent,
     SupplierSearchComponent,
     DateRangeSelectionComponent,
@@ -36,6 +44,8 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatCard,
     MatCardFooter,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatDivider
   ],
   templateUrl: './reports.component.html',
   styles: ``,
