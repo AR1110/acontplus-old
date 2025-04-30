@@ -141,7 +141,7 @@ BEGIN
                                       ,@LicensePlate    = @LicensePlate
                                       ,@fromDate        = @fromDate
                                       ,@toDate          = @toDate
-                    --RETURN
+                    RETURN
 		        END
 
             --> DataForm 

@@ -159,6 +159,7 @@
                     <th md-column colspan="6"></th>
                     <th md-column>Total:</th>
                     <th md-column>{{dataSearch.totalVenta}}</th>
+                    <th md-column>{{dataSearch.totalMora}}</th>
                     <th md-column>{{dataSearch.totalAbono}}</th>
                     <th md-column>{{dataSearch.totalSaldo}}</th>
                     <th md-column></th>
@@ -174,6 +175,7 @@
                     <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
                     <th md-column md-order-by="fechaVencimiento">Fecha Vcto.</th>
                     <th md-column md-order-by="importeTotal">Total</th>
+                    <th md-column md-order-by="mora">Mora</th>
                     <th md-column md-order-by="abono">Abono</th>
                     <th md-column md-order-by="saldo">Saldo</th>
                     <th md-column>Tiempo Credito</th>
@@ -236,6 +238,7 @@
                     <td md-cell>{{item.fechaEmision}}</td>
                     <td md-cell>{{item.fechaVencimiento}}</td>
                     <td md-cell>${{item.importeTotal}}</td>
+                    <td md-cell>${{item.mora}}</td>
                     <td md-cell>${{item.abono}}</td>
                     <td md-cell>${{item.saldo}}</td>
                     <td md-cell>{{item.tiempoCredito}}</td>

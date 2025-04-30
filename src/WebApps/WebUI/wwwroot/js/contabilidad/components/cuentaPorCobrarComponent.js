@@ -154,11 +154,12 @@
                 selectedDocumentosTemp = [];
                 showLoader();
                 cuentaPorCobrarSvc.getAll(params).then(response => {
-                    const { cuentasPorCobrar, totalRecords, totalVenta, totalAbono, totalSaldo } = response;
+                    const { cuentasPorCobrar, totalRecords, totalMora ,totalVenta, totalAbono, totalSaldo } = response;
 
                     $scope.cuentasPorCobrar = cuentasPorCobrar;
                     $scope.dataSearch.totalRecords = totalRecords;
                     $scope.dataSearch.totalVenta = totalVenta;
+                    $scope.dataSearch.totalMora = totalMora;
                     $scope.dataSearch.totalAbono = totalAbono;
                     $scope.dataSearch.totalSaldo = totalSaldo;
 

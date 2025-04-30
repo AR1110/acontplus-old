@@ -1124,7 +1124,6 @@
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (!response) throw response
 
-
                 const { cuentasPorCobrar } = response;
 
 
@@ -1160,10 +1159,12 @@
                     cuentasPorCobrar: results,
                     totalRecords: dataFiltered && dataFiltered.totalRecords || 0,
                     totalVenta: dataFiltered && dataFiltered.totalVenta || 0,
+                    totalMora: dataFiltered && dataFiltered.totalMora || 0,
                     totalAbono: dataFiltered && dataFiltered.totalAbono || 0,
                     totalSaldo: dataFiltered && dataFiltered.totalSaldo || 0,
                 };
 
+                
             })
         }
 

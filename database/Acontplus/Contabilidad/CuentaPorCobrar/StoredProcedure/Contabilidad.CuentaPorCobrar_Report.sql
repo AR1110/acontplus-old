@@ -995,6 +995,7 @@ BEGIN
                               ,dt.telefono
                               ,dt.refDomicilio
                               ,SUM(dt.importeTotal) as importeTotal
+                              ,SUM(dt.mora)         as mora
                               ,SUM(dt.abono)        as abono
                               ,SUM(dt.saldo)        as saldo
                               ,SUM(dt.diasMora)     as diasMora
@@ -1007,6 +1008,7 @@ BEGIN
                                   ,JSON_VALUE(cl.infoCrediticia,''$.dirVivienda'') +  '' | '' + JSON_VALUE(cl.infoCrediticia,''$.refDomicilio'') as refDomicilio
 	                              ,cl.telefono
 	                              ,CAST(cc.importeTotal as numeric(18,2))           as importeTotal
+	                              ,CAST(cc.mora as numeric(18,2))                   as mora
 	                              ,CAST(cc.abono as numeric(18,2))                  as abono
 	                              ,CAST(cc.saldo as numeric(18,2))                  as saldo
 	                              ,cc.diasMora

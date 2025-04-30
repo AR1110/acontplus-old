@@ -104,14 +104,15 @@ BEGIN
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')                          as fechaEmision
                               ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'')                      as fechaVencimiento
                               ,CAST(importeTotal as numeric(18,2))                             as importeTotal
+                              ,CAST(mora as numeric(18,2))                                     as mora
                               ,CAST(abono as numeric(18,2))                                    as abono
                               ,CAST(saldo as numeric(18,2))                                    as saldo
                               ,cc.diasMora
-                              ,cc.mora
                               ,tipoTiempoCredito                                               as tiempoCredito
                               ,estado
                               ,COUNT(*)                                                 OVER() as totalRecords
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,importeTotal)) OVER() as totalVenta
+                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,mora))         OVER() as totalMora
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
                               ,codEstado
