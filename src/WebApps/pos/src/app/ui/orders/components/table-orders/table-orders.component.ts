@@ -22,7 +22,7 @@ import { PermissionStore } from '@ui/store/permission.store';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { OrderList, OrderRead } from '@domain/models/order.model';
+import { OrderList } from '@domain/models/order.model';
 import { CODE_REPORT, DOC_TYPE, STATUS_ORDER } from '@domain/enums/main.enum';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
 import { ListOrderUseCase } from '@domain/use-cases/order/list-order.use-case';
@@ -268,11 +268,12 @@ export class TableOrdersComponent implements OnInit {
     modalRef.subscribe((result) => {
       if (result && result.isReload) {
         this.refresh();
+
       }
     });
   }
 
-  printOrder(data: OrderRead) {
+  printOrder(data: OrderList) {
     try {
       this._sharedSvc.askToPrint({
         id: data.id,

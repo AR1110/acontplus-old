@@ -46,7 +46,7 @@ import Swal from 'sweetalert2';
 
 import { OrderDivideModalComponent } from '@ui/orders/components/order-divide-modal/order-divide-modal.component';
 import { OrderDocListComponent } from '@ui/orders/components/order-doc-list/order-doc-list.component';
-import { OrderRead } from '@domain/models/order.model';
+import { OrderList } from '@domain/models/order.model';
 import { MatCardModule } from '@angular/material/card';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
 import { PermissionStore } from '@ui/store/permission.store';
@@ -142,7 +142,7 @@ export class OrderListComponent implements OnInit {
   users: UserSelectHtmlOnly[] = [];
   tablesGroup: any[] = [];
 
-  dataSource = signal<OrderRead[]>([]);
+  dataSource = signal<OrderList[]>([]);
 
   selectedStatus = model('');
 
@@ -247,7 +247,7 @@ export class OrderListComponent implements OnInit {
     this.router.navigateByUrl('/pos').then()
   }
 
-  onEdit(data: OrderRead) {
+  onEdit(data: OrderList) {
     this.$getIdUseCase.execute(data.id).subscribe( (response) => {
         this.posStoreSvc.state.update((state) => ({
           ...state,
@@ -268,7 +268,7 @@ export class OrderListComponent implements OnInit {
     });
   }
 
-  async askToAnul(row: OrderRead) {
+  async askToAnul(row: OrderList) {
     const { isConfirmed } = await Swal.fire({
       title: 'Anular Orden',
       text: '¿Estas seguro de anular el pedido?',
@@ -298,7 +298,7 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  openOrderDivideDialog(item: OrderRead) {
+  openOrderDivideDialog(item: OrderList) {
     const modalRef = this.dialogSvc.open(OrderDivideModalComponent, {
       size: 'xl',
       data: {
@@ -313,7 +313,7 @@ export class OrderListComponent implements OnInit {
     });
   }
 
-  getReport(data: OrderRead) {
+  getReport(data: OrderList) {
     const parameters = {
       dataParams: JSON.stringify({
         id: data.id,
@@ -329,7 +329,7 @@ export class OrderListComponent implements OnInit {
     });
   }
 
-  printOrder(data: OrderRead) {
+  printOrder(data: OrderList) {
     try {
       this.sharedSvc.askToPrint({
         id: data.id,
@@ -346,9 +346,5 @@ export class OrderListComponent implements OnInit {
     return this.dataSource()
       .map((t) => t.total)
       .reduce((acc, value) => acc + value, 0);
-  }
-
-  private showDocs(){
-
   }
 }
