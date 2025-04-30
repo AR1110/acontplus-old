@@ -1,6 +1,6 @@
 import { PosStoreService } from '@ui/store/pos-store.service';
 import { Component, computed, inject } from '@angular/core';
-import { CartComponent } from '@/ui/pos-sale/cart/cart.component';
+import { CartComponent } from '@ui/pos-sale/cart-popup/cart/cart.component';
 import { DialogService } from '@domain/services/dialog.service';
 import Swal from 'sweetalert2';
 import { playBeepSound, playClearSound } from '@domain/utils/sound.util';
@@ -11,7 +11,7 @@ import {
 import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
 import { roundNumber } from '@domain/utils/round-number.util';
 import { OrderItem } from '@domain/models/order.model';
-import { CartInfoComponent } from '@/ui/pos-sale/cart-info/cart-info.component';
+import { CartInfoComponent } from '@ui/pos-sale/cart-popup/cart-info/cart-info.component';
 import { OverlayscrollbarsModule } from 'overlayscrollbars-ngx';
 import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-product.use-case";
 

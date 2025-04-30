@@ -23,8 +23,9 @@ export class GetIdOrderMapper {
     const mappedOrderItems = orderItems.map(GetIdOrderMapper.itemFromJson);
 
     // Crear objeto Order mapeado
-    const mappedOrder = GetIdOrderMapper.orderFromJson(order, mappedOrderItems);
+    const mappedOrder = GetIdOrderMapper.orderFromJson(order[0], mappedOrderItems);
 
+    console.log(mappedOrder)
     return { order: mappedOrder };
 
   }

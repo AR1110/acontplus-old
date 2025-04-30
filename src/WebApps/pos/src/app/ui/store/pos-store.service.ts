@@ -5,7 +5,6 @@ import { Tax, TaxRate } from '@domain/models/tax.model';
 import { GenericStoreSignalService } from '@domain/services/generic-store-signal.service';
 import { PromotionService } from '@data/repositories/promotion/promotion.service';
 import { inject, Injectable } from '@angular/core';
-import { CartOverlayService } from './cart-overlay.service';
 
 type PosStoreState = {
   isModulePos: boolean;
@@ -191,4 +190,7 @@ export class PosStoreService extends GenericStoreSignalService<PosStoreState> {
     };
     return data;
   }
+
+
+
 }

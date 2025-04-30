@@ -1,51 +1,31 @@
-
-
-import {MainStoreService} from "@domain/services/main-store.service"
-import {inject} from "@angular/core"
-import {ResolveFn, Router} from "@angular/router"
-import {TokenUseCase} from "@domain/use-cases/token.use-case";
-import {ConfigUseCase} from "@domain/use-cases/config.use-case";
-
+import { inject } from "@angular/core";
+import { ResolveFn, Router } from "@angular/router";
+import { TokenUseCase } from "@domain/use-cases/token.use-case";
+import { GetEstabsConfigUseCase } from "@domain/use-cases/config/get-estabs-config.use-case";
+import { catchError, map, of } from "rxjs";
+import { LayoutStore } from "@ui/store/layout.store";
 
 export const configDataResolver: ResolveFn<any> = (route, state) => {
-  let _tokenUseCase = inject(TokenUseCase)
-  let posStoreSvc = inject(MainStoreService)
-  const router = inject(Router)
-  let _getConfigData = inject(ConfigUseCase).getEstabs();
-  let dataEstab = _tokenUseCase.getDataEstab();
+  const _tokenUseCase = inject(TokenUseCase);
+  const $layoutStore = inject(LayoutStore);
+  const router = inject(Router);
+  const $getEstabsUseCase = inject(GetEstabsConfigUseCase);
+  const dataEstab = _tokenUseCase.getDataEstab();
 
+  return $getEstabsUseCase.execute().pipe(
+    map(response => {
+      const groupedEstab = response.estabs.find(e => e.idEstablecimiento === dataEstab.idEstablecimiento);
 
-  _getConfigData.subscribe({
-    next: response=>{
-      let dataEstabNew = response.estabs.find(e => e.idEstablecimiento === dataEstab.idEstablecimiento);
-      if (dataEstabNew) {
-        let puntosEmision = dataEstabNew.puntosEmision;
-        let bodegas = dataEstabNew.bodegas;
-        let dataPuntoEmision = puntosEmision.find(p => p.defaultPtoEmi)
-        let dataBodega = bodegas.find(p => p.defaultBodega)
-        posStoreSvc.state.update(e => {
-          return {
-            ...e,
-            dataEstab: dataEstabNew,
-            entidadName: dataEstab.entidad,
-            userName: dataEstab.usuario,
-            establecimientos: response.estabs,
-            puntosEmision: dataEstabNew.puntosEmision,
-            bodegas: dataEstabNew.bodegas,
-            codEstab:dataEstabNew.codEstab,
-            establecimientoId: dataEstabNew.idEstablecimiento,
-            puntoEmisionId: dataPuntoEmision?.idPuntoEmision ?? 0,
-            bodegaId: dataBodega?.idBodega ?? 0
-          }
-        })
+      if (groupedEstab) {
+        $layoutStore.setData(groupedEstab, response.estabs);
+        return response;
       } else {
-        throw new Error('No se pudo recuperar el establecimiento')
+        throw new Error('No se pudo recuperar el establecimiento');
       }
-    },
-    error: ()=>{
+    }),
+    catchError(error => {
       router.navigateByUrl('auth').then()
-    }
-  } )
-
-  return _getConfigData;
-}
+      return of(null);
+    })
+  );
+};

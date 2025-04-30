@@ -23,5 +23,11 @@
   "dotnet.server.useOmnisharp": false,
   "csharp.format.enable": true,
   "editor.inlineSuggest.enabled": true,
-  "dotnet.defaultSolution": "src/AcontPlus.sln"
+  "dotnet.defaultSolution": "AcontPlus.sln",
+
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Be extremaly detailed with the change, detect the kind of change and add alias before. Add lot of emojis",
+    }
+  ]
 }

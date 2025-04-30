@@ -2,33 +2,6 @@ import { ConsolidacionFecha, MedidaProducto } from "@domain/models/inventory/med
 import { TarifaProducto } from "@domain/models/inventory/tarifa.model"
 import {UserSelectHtmlOnly} from "@domain/models/user.model";
 
-
-
-export interface OrderRead {
-  id: number
-  codDoc: string
-  codEstab: string
-  sequence: string
-  serie: string
-  tax: number
-  discount: number
-  tip: number
-  total: number
-  obs: string
-  createdAt: string
-  enabled: boolean
-  deleted: boolean
-  uuid: string
-  razonSocialComprador: string
-  userName: string
-  totalRecords: number
-  divided: boolean
-  finished: boolean
-  tableName: string
-}
-
-
-
 export type OrderItem = {
   uuid: string;
   itemTypeCode: string;

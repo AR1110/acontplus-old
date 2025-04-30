@@ -22,6 +22,7 @@ import { PosStoreService } from '@/ui/store/pos-store.service';
 import { CartPopupComponent } from '@/ui/pos-sale/cart-popup/cart-popup.component';
 import { CartOverlayService } from '@/ui/store/cart-overlay.service';
 import {ThemeToggleComponent} from "@core/components/theme/theme-toggle/theme-toggle.component";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-header',
@@ -31,6 +32,7 @@ import {ThemeToggleComponent} from "@core/components/theme/theme-toggle/theme-to
         MatBadgeModule,
         MatButtonModule,
         OverlayModule,
+      MatTooltipModule,
         NavUserInfoToggleComponent,
         NavUserToggleComponent,
         CartPopupComponent,

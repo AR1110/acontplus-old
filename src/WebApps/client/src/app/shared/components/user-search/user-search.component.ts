@@ -48,7 +48,12 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   ],
 })
 export class UserSearchComponent {
+  //tiene que ser eliminado mas adelante
   userSelected = output<{ data: UserSearch }>();
+
+  //usar esta funcion para devolver usuario seleccionado
+  selectedChange = output<UserSearch>()
+
   clearSearch = output();
   isSimpleMode = input(true);
   textSearch = input<string>('');
@@ -106,6 +111,7 @@ export class UserSearchComponent {
   onSelect(user: UserSearch) {
     if (user) {
       this.userSelected.emit({ data: user });
+      this.selectedChange.emit(user)
       // setTimeout(() => {
       //   this.textSearchControl.setValue(user.nombreCompleto);
       // });

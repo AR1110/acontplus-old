@@ -6,12 +6,22 @@
 />
 
 <ng-template #containerTemplate>
-  <div class="mt-1"></div>
-  <app-product-search
-    [isSimple]="true"
-    [labelText]="'Buscar Producto de Tipo Servicio'"
-    (onSelect)="onSelectProduct($event)"
-  />
+  <div class="d-grid gap-2">
+    <app-company-customer-search
+      [textName]="matDialogData.orderData.order.customerName"
+      [id]="matDialogData.orderData.order.customerCompanyId"
+      [isAdvanced]="true"
+      (onSelect)="onSelectCompanyCustomer($event)"
+    />
+
+    <app-product-search
+      [isSimple]="true"
+      [labelText]="'Buscar Producto de Tipo Servicio'"
+      (onSelect)="onSelectProduct($event)"
+    />
+
+  </div>
+
 
   @if(orderItemCustom().productId>0){
   <div class="form-group">

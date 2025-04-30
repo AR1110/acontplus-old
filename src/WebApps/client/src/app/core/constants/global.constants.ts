@@ -22,7 +22,8 @@ export const enum PATHS_API {
 export const enum PATHS {
   DOWNLOAD_V1 = 'Reporte/Download',
   DOWNLOAD = 'v2/Reporte/Download',
-  APP_NOTIFICATION = 'Notification/',
+  //APP_NOTIFICATION = 'Notification/',
+  APP_NOTIFICATION = 'Notificacion/',
   PRINT = 'Print',
   USER = 'Usuario/',
   ESTAB_ASIGN = 'EstabAsig/',
@@ -216,3 +217,7 @@ export const DECIMALS = {
   CINCO: 5,
   GENERAL: 6,
 };
+
+interface D {
+  nu: 2
+}

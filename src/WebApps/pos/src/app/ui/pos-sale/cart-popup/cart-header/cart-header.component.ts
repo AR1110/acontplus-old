@@ -4,14 +4,14 @@ import { PosStoreService } from '@ui/store/pos-store.service';
 import { Dialog } from '@angular/cdk/dialog';
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TableModalComponent } from '@/ui/pos-sale/table-modal/table-modal.component';
+import { TableModalComponent } from '@ui/pos-sale/table-modal/table-modal.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import Swal from 'sweetalert2';
 import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
 import { DECIMALS } from '@domain/enums/main.enum';
 import { roundNumber } from '@domain/utils/round-number.util';
-import { DialogService } from '@/domain/services/dialog.service';
+import { DialogService } from '@domain/services/dialog.service';
 
 @Component({
   selector: 'app-cart-header',

@@ -18,11 +18,11 @@ public static class CommonEndpointsExtensions
                 .WithOpenApi()
                 .WithTags("Email Queue");
 
-        builder.MapPost("/notification", async (ICommonEndpoints commonEndpoints, string json) =>
+        builder.MapPost("/notificacion", async (ICommonEndpoints commonEndpoints, string json) =>
               await commonEndpoints.CreateNotificationAsync(json))
                 .RequireAuthorization()
                 .WithOpenApi()
-                .WithTags("Notification");
+                .WithTags("Notificacion");
 
         builder.MapGet("/release", async (ICommonEndpoints commonEndpoints) =>
            await commonEndpoints.GetReleaseAsync())

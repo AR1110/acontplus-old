@@ -6,7 +6,7 @@
 <ng-template #containerTemplate>
   <mat-form-field class="w-100">
     <mat-label>Establecimiento</mat-label>
-    <mat-select [(ngModel)]="data().establecimientoId" disabled>
+    <mat-select [(ngModel)]="data().estabId" disabled>
       @for(item of estabs();track $index){
       <mat-option [value]="item.idEstablecimiento">{{ item.name }}</mat-option>
       }

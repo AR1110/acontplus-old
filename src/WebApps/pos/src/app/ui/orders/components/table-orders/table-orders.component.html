@@ -3,6 +3,26 @@
     class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1  "
   >
     <div class="col">
+      @if(moreFilter()){
+        <mat-form-field class="w-100">
+          <mat-label>Mesa</mat-label>
+          <mat-select
+            [(ngModel)]="dataSearch.tableId"
+            (selectionChange)="refresh()"
+          >
+            <mat-option [value]="0">-- Todos --</mat-option>
+            @for (group of rooms(); track $index) {
+              <mat-optgroup [label]="group.name" style="font-weight: 500">
+                @for (children of group.tables; track $index) {
+                  <mat-option [value]="children.id">{{
+                      children.description
+                    }}</mat-option>
+                }
+              </mat-optgroup>
+            }
+          </mat-select>
+        </mat-form-field>
+      } @else {
       <mat-form-field class="w-100">
         <mat-label>Sala/Piso</mat-label>
         <mat-select
@@ -14,11 +34,24 @@
           }
         </mat-select>
       </mat-form-field>
+      }
     </div>
-    <div class="col"></div>
     <div class="col">
       <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
 
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Usuario</mat-label>
+        <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
+          <mat-option [value]="0">-- Todos --</mat-option>
+          @for(item of users;track $index){
+            <mat-option [value]="item.idUsuario">{{
+                item.nombreUsuario
+              }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col">
       <mat-form-field class="w-100">
@@ -60,24 +93,11 @@
           </div>
         </div>
       </div>
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Usuario</mat-label>
-          <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
-            <mat-option [value]="0">-- Todos --</mat-option>
-            @for(item of users;track $index){
-              <mat-option [value]="item.idUsuario">{{
-                  item.nombreUsuario
-                }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
     </div>
   }
 
   <div>
-    @if(tables().length>0){
+    @if(tables().length>0 && !moreFilter()){
       <div class="pos-tables-container">
         <div class="pos-tables">
           @for (table of tables(); track $index) {
@@ -96,6 +116,7 @@
           }
         </div>
       </div>
+    }
 
 
       <div class="table-order-container">
@@ -128,14 +149,28 @@
                       <small class="name-title">Fecha Emisión</small>
                       <small>{{item.createdAt}}</small>
                     </div>
+
+                  </div>
+                </div>
+                <div
+                  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+                >
+                  <div class="col">
+                    <div class="vstack">
+                      <small class="name-title">Usuario</small>
+                      <small>{{item.userName}}</small>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="vstack">
+                      <small class="name-title">Mesa</small>
+                      <small>{{item.tableName}}</small>
+                    </div>
                   </div>
                 </div>
 
 
-                <div class="vstack">
-                  <small class="name-title">Usuario</small>
-                  <small>{{item.userName}}</small>
-                </div>
+
                 <div class="vstack">
                   <small class="name-title">Obs.</small>
                   <small>{{item.obs}}</small>
@@ -166,6 +201,25 @@
                 matTooltip="Imprimir"
               >
                 <mat-icon>print</mat-icon>
+              </button>
+
+              <button mat-icon-button (click)="showDocs(item)">
+                <svg  xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="icon icon-tabler icons-tabler-outline icon-tabler-file-symlink">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M4 21v-4a3 3 0 0 1 3 -3h5" />
+                  <path d="M9 17l3 -3l-3 -3" />
+                  <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                  <path d="M5 11v-6a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-9.5" />
+                </svg>
               </button>
 
               <mat-menu #menu="matMenu">
@@ -212,8 +266,6 @@
           (loadMore)="onLoadMore()"
         />
       }
-
-    }
   </div>
 
 </div>

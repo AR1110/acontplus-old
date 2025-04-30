@@ -9,7 +9,6 @@ import {
 import { PromotionMenuService } from '@data/repositories/promotion-menu/promotion-menu.service';
 import { ItemRead } from '@domain/models/item.model';
 import { PosStoreService } from '@ui/store/pos-store.service';
-import { MainStoreService } from '@domain/services/main-store.service';
 import { map, of, switchMap } from 'rxjs';
 import { pricingCalculateUtil } from '@domain/utils/princing-calculate.util';
 import { roundNumber } from '@domain/utils/round-number.util';
@@ -23,9 +22,10 @@ import { playBeepSound } from '@domain/utils/sound.util';
 import Swal from 'sweetalert2';
 import { OrderItem } from '@domain/models/order.model';
 import { TarifaProducto } from '@domain/models/inventory/tarifa.model';
-import { ProductCardComponent } from '../../product-card/product-card.component';
+import { ProductCardComponent } from '@ui/pos-sale/products/product-card/product-card.component';
 import { GetSaleProductUseCase } from '@/domain/use-cases/product/get-sale-product.use-case';
 import {CheckStockProductUseCase} from "@domain/use-cases/product/check-stock-product.use-case";
+import {LayoutStore} from "@ui/store/layout.store";
 
 @Component({
   selector: 'app-promotions-item',
@@ -37,7 +37,7 @@ export class PromotionsItemComponent implements OnInit {
   promotionId = input(0);
   private promotionItemSvc = inject(PromotionMenuService);
   private posStoreSvc = inject(PosStoreService);
-  private mainStore = inject(MainStoreService);
+  private $layoutStore = inject(LayoutStore)
   private tS = inject(ToasterService);
   private $getSaleProductUsecase = inject(GetSaleProductUseCase);
   protected $checkStockUseCase = inject(CheckStockProductUseCase)
@@ -45,6 +45,9 @@ export class PromotionsItemComponent implements OnInit {
   isSelectedItem = computed(() => this.posStoreSvc.state().isSelectedItem);
   uniqueItemSelected = signal<string | null>(null);
   items = signal<ItemRead[]>([]);
+
+
+  bodegaId = this.$layoutStore.bodegaId()
 
   setIsSelectedItem(isSelectedItem: boolean) {
     this.posStoreSvc.state.update((e) => ({
@@ -71,7 +74,7 @@ export class PromotionsItemComponent implements OnInit {
     return this.$getSaleProductUsecase
       .execute({
         productId: $event.productId,
-        bodegaId: this.mainStore.state().bodegaId,
+        bodegaId: this.bodegaId,
       })
       .pipe(
         switchMap((firstResponse) => {
@@ -114,7 +117,7 @@ export class PromotionsItemComponent implements OnInit {
           dataAdded.taxPercentId = tarifaImpuesto.idTarifaImpuesto;
           dataAdded.taxPercent = tarifaImpuesto.porcentaje;
 
-          dataAdded.bodegaId = this.mainStore.state().bodegaId;
+          dataAdded.bodegaId = this.bodegaId;
           dataAdded.llevaInventario = firstResponse.product.llevaInventario;
           dataAdded.medidas = firstResponse.medidas;
           dataAdded.medidaId = dataMedida?.idMedida ?? 0; // Medida por defecto
@@ -167,13 +170,13 @@ export class PromotionsItemComponent implements OnInit {
               [structuredClone(dataAdded)],
               {
                 idArticulo: firstResponse.product.idArticulo,
-                idBodega: this.mainStore.state().bodegaId,
+                idBodega: this.bodegaId,
               }
             );
 
             const paramsStock = {
               idArticulo: firstResponse.product.idArticulo,
-              idBodega: this.mainStore.state().bodegaId,
+              idBodega: this.bodegaId,
               cantidad: calculateCantidadStock({
                 cantidadStock: dataMergeStockQty.cantidadStock,
                 idBodega: dataAdded.bodegaId,

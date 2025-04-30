@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  inject,
+  inject, model,
   OnInit, signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -53,15 +53,16 @@ export class DocConfigPageComponent implements OnInit {
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   docs = signal<DocConfig[]>([]);
 
-  dataSearch = {
+  dataSearch = model({
     idPuntoEmision: 0,
     codEstab: '',
-  };
+  })
+
 
   getDocs() {
     this.docs.set([])
     this._docConfigService
-      .getAll(this.dataSearch.idPuntoEmision)
+      .getAll(this.dataSearch().idPuntoEmision)
       .subscribe((response) => {
         this.docs.set(response);
       });
@@ -77,10 +78,16 @@ export class DocConfigPageComponent implements OnInit {
           (p) => p.defaultPtoEmi,
         );
         if (dataPuntoEmision) {
-          this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+          this.dataSearch.update(ds=>({
+            ...ds,
+            idPuntoEmision: dataPuntoEmision.idPuntoEmision
+          }))
           this.getDocs();
         }
-        this.dataSearch.codEstab = dataEstab?.codEstab;
+        this.dataSearch.update(ds=>({
+          ...ds,
+          codEstab: dataEstab.codEstab
+        }))
       }
       this._cdr.detectChanges();
     });
@@ -88,22 +95,28 @@ export class DocConfigPageComponent implements OnInit {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos().find(
-      (e) => e.codEstab === this.dataSearch.codEstab,
+      (e) => e.codEstab === this.dataSearch().codEstab,
     );
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
       const dataPuntoEmision = this.puntosEmision().find((e) => e.defaultPtoEmi);
       if (dataPuntoEmision) {
-        this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision;
+        this.dataSearch.update(ds=>({
+          ...ds,
+          idPuntoEmision: dataPuntoEmision.idPuntoEmision
+        }))
         this.getDocs();
       } else {
-        this.dataSearch.idPuntoEmision = 0;
+        this.dataSearch.update(ds=>({
+          ...ds,
+          idPuntoEmision: 0
+        }))
       }
     }
   }
 
   saveConfig(item: DocConfig) {
-    if (!(this.dataSearch.idPuntoEmision > 0)) {
+    if (!(this.dataSearch().idPuntoEmision > 0)) {
       this._tS.toastr({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
@@ -120,7 +133,7 @@ export class DocConfigPageComponent implements OnInit {
 
     const data = {
       idConfiguracionDocumento: item.idConfiguracionDocumento,
-      idPuntoEmision: this.dataSearch.idPuntoEmision,
+      idPuntoEmision: this.dataSearch().idPuntoEmision,
       idTipoDocumento: item.idTipoDocumento,
       estado: item.estado,
       ultimaSecuencia: item.ultimaSecuencia,
@@ -144,7 +157,7 @@ export class DocConfigPageComponent implements OnInit {
 
     const params = {
       ...structuredClone(data),
-      idPuntoEmision: this.dataSearch.idPuntoEmision,
+      idPuntoEmision: this.dataSearch().idPuntoEmision,
     };
     modalRef.componentInstance.params = structuredClone(params);
 

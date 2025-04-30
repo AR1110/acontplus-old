@@ -22,12 +22,11 @@ import { PermissionStore } from '@ui/store/permission.store';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { OrderList, OrderRead } from '@domain/models/order.model';
+import { OrderList } from '@domain/models/order.model';
 import { CODE_REPORT, DOC_TYPE, STATUS_ORDER } from '@domain/enums/main.enum';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
 import { ListOrderUseCase } from '@domain/use-cases/order/list-order.use-case';
 import { getValidId } from '@domain/utils/utils';
-import { MainStoreService } from '@domain/services/main-store.service';
 import { Pagination } from '@domain/models/pagination.model';
 import { PageNumber } from '@domain/value-objects/page-number.vo';
 import { PageSize } from '@domain/value-objects/page-size.vo';
@@ -49,6 +48,10 @@ import { CartOverlayService } from '@ui/store/cart-overlay.service';
 import Swal from 'sweetalert2';
 import { AnularOrderUseCase } from '@domain/use-cases/order/anular-order.use-case';
 import { ToasterService } from 'acontplus-utils';
+import {MatBottomSheet} from "@angular/material/bottom-sheet";
+import {BottomSheetDocsComponent} from "@ui/orders/components/bottom-sheet-docs/bottom-sheet-docs.component";
+import {LayoutStore} from "@ui/store/layout.store";
+import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
 
 @Component({
   selector: 'app-table-orders',
@@ -80,12 +83,12 @@ export class TableOrdersComponent implements OnInit {
   private $listUseCase = inject(ListOrderUseCase);
   private $anularUseCase = inject(AnularOrderUseCase);
   private $getIdUseCase = inject(GetIdOrderUseCase);
+  private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
   //Stores
   $permissionStore = inject(PermissionStore);
-  private mainStore = inject(MainStoreService);
   private posStoreSvc = inject(PosStoreService);
   private $cartOverlaySvc = inject(CartOverlayService);
-
+  private $layoutStore = inject(LayoutStore)
   //services
   private _dialogSvc = inject(DialogService);
   private _sharedSvc = inject(SharedService);
@@ -93,6 +96,8 @@ export class TableOrdersComponent implements OnInit {
 
   //angular
   private router = inject(Router);
+  private _bottomSheet = inject(MatBottomSheet);
+
   @Input({ required: true }) dataSearch = {} as any;
   isComingOfPos = input(false);
   moreFilter = input(false);
@@ -133,8 +138,8 @@ export class TableOrdersComponent implements OnInit {
 
     return {
       isSearchDate: true,
-      estabId: getValidId(this.mainStore.state().establecimientoId),
-      puntoEmisionId: getValidId(this.mainStore.state().puntoEmisionId),
+      estabId: getValidId(this.$layoutStore.establecimientoId()),
+      puntoEmisionId: getValidId(this.$layoutStore.puntoEmisionId()),
       startDate: this.dataSearch.startDate,
       endDate: this.dataSearch.endDate,
       customerCompanyId: getValidId(this.dataSearch.customerCompanyId),
@@ -166,6 +171,7 @@ export class TableOrdersComponent implements OnInit {
 
     this.$getFilterDataUseCase.execute().subscribe((response) => {
       this.rooms.set(response.tablesGroup);
+
       this.users = response.users;
       const dataRoom = this.rooms().length > 0 ? this.rooms()[0] : {};
       if (dataRoom.roomId > 0) {
@@ -242,20 +248,18 @@ export class TableOrdersComponent implements OnInit {
     this.$listUseCase
       .execute(this.getParams())
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.dataSource.set([...this.dataSource(), ...response.data]);
-          this.pagination.update((item) => {
-            return {
-              ...item,
-              totalRecords: response.totalRecords,
-            };
-          });
-        },
-      });
+      .subscribe((response)=>{
+        this.dataSource.set([...this.dataSource(), ...response.data]);
+        this.pagination.update((item) => {
+          return {
+            ...item,
+            totalRecords: response.totalRecords,
+          };
+        })
+      })
   }
 
-  openOrderDivideDialog(item: OrderRead) {
+  openOrderDivideDialog(item: OrderList) {
     const modalRef = this._dialogSvc.open(OrderDivideModalComponent, {
       size: 'xl',
       data: {
@@ -266,11 +270,28 @@ export class TableOrdersComponent implements OnInit {
     modalRef.subscribe((result) => {
       if (result && result.isReload) {
         this.refresh();
+        this.refreshGetFormData()
       }
     });
   }
 
-  printOrder(data: OrderRead) {
+  private refreshGetFormData(){
+    let params = {
+      codEstab: this.$layoutStore.codEstab(),
+      idEstablecimiento: this.$layoutStore.establecimientoId(),
+    };
+    this.$getFormDataUseCase.execute(params).subscribe(response=>{
+      this.posStoreSvc.state.update((e) => {
+
+        return {
+          ...e,
+          pendingOrders: response.pendingOrders,
+        };
+      });
+    })
+  }
+
+  printOrder(data: OrderList) {
     try {
       this._sharedSvc.askToPrint({
         id: data.id,
@@ -351,6 +372,12 @@ export class TableOrdersComponent implements OnInit {
     };
     this._sharedSvc.getReport({
       data: parameters,
+    });
+  }
+
+  showDocs(data: OrderList){
+    this._bottomSheet.open(BottomSheetDocsComponent, {
+      data
     });
   }
 }

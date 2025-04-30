@@ -7,17 +7,26 @@
 
 
 <ng-template #containerTemplate>
+  <div class="d-grid gap-2">
+    <div class="text-end">
+      <button mat-icon-button (click)="handleChangeMoreFilter()">
+        <mat-icon>filter_list</mat-icon>
+      </button>
+    </div>
 
-<!--  <app-order-list-->
-<!--    [dataSearch]="dataSearch"-->
-<!--    (closeDialog)="closeDialog()"-->
-<!--    [isComingOfPos]="true"-->
-<!--     />-->
-  <app-table-orders
-    [dataSearch]="dataSearch"
-    (closeDialog)="closeDialog()"
-    [isComingOfPos]="true"
-  />
+  <!--  <app-order-list-->
+  <!--    [dataSearch]="dataSearch"-->
+  <!--    (closeDialog)="closeDialog()"-->
+  <!--    [isComingOfPos]="true"-->
+  <!--     />-->
+    <app-table-orders
+      [dataSearch]="dataSearch"
+      (closeDialog)="closeDialog()"
+      [isComingOfPos]="true"
+      [moreFilter]="moreFilter()"
+    />
+
+  </div>
 
 </ng-template>
 

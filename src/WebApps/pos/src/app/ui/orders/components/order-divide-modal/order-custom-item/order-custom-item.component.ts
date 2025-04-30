@@ -28,6 +28,9 @@ import {
 } from '@domain/models/order.model';
 import { GetSaleProductUseCase } from '@domain/use-cases/product/get-sale-product.use-case';
 import { UpdateOrderUseCase } from '@/domain/use-cases/order/update-order.use-case';
+import {
+  CompanyCustomerSearchComponent
+} from "@ui/company-customer/components/company-customer-search/company-customer-search.component";
 
 interface Props {
   dataForm: any;
@@ -46,6 +49,7 @@ interface Props {
     CustomContainerDialogComponent,
     ProductSearchComponent,
     ToUpperCaseDirective,
+    CompanyCustomerSearchComponent,
   ],
   templateUrl: './order-custom-item.component.html',
 })
@@ -67,6 +71,13 @@ export class OrderCustomItemComponent {
   descriptionCustom = model('');
 
   importeTotal = this.matDialogData.orderData.order.total;
+
+
+  onSelectCompanyCustomer($event: any) {
+    this.matDialogData.orderData.order.customerCompanyId = $event.idCliente;
+    this.matDialogData.orderData.order.customerName = $event.name;
+    this.matDialogData.orderData.order.tipoIdentificacionSri = $event.codigoSri;
+  }
 
   onSelectProduct<T extends { idArticulo: number }>({ idArticulo }: T) {
     try {

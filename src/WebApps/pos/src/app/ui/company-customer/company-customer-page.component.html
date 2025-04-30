@@ -8,13 +8,13 @@
     <div class="col ">
       <div class="d-flex justify-content-end flex-row gap-2">
         @if($permissionStore.actions().crear){
-        <button [disabled]="isLoadingResults" mat-flat-button appActionCompanyCustomerAddEditModal>
+        <button [disabled]="isLoadingResults()" mat-flat-button appActionCompanyCustomerAddEditModal>
           <mat-icon>add</mat-icon>
           Nuevo
         </button>
 
         }
-        <button mat-icon-button [disabled]="isLoadingResults" (click)="refresh()">
+        <button mat-icon-button [disabled]="isLoadingResults()" (click)="refresh()">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -28,7 +28,7 @@
     [paginationConfig]="pagination()"
     [enablePagination]="true"
     (onPageEvent)="handlePageEvent($event)"
-    [isLoadingData]="isLoadingResults"
+    [isLoadingData]="isLoadingResults()"
   >
   </app-mat-dynamic-table>
 

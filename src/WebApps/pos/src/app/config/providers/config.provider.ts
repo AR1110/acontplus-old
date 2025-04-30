@@ -1,9 +1,9 @@
 import {ClassProvider} from "@angular/core";
 import {ConfigRepository} from "@domain/repositories/config.repository";
-import {ConfigWebRepository} from "@data/repositories/config/config-web.repository";
+import {ConfigRepositoryImpl} from "@data/repositories/config/config-repository.impl";
 
 
 export const configProvider:ClassProvider = {
   provide: ConfigRepository,
-  useClass: ConfigWebRepository
+  useClass: ConfigRepositoryImpl
 }

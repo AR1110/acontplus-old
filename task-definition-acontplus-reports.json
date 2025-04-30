@@ -1,0 +1,39 @@
+{
+    "family": "acontplus-reports",
+    "networkMode": "awsvpc",
+    "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+      {
+        "name": "acontplus-reports",
+        "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/acontplus-reports:latest",
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 8080,
+            "protocol": "tcp"
+          }
+        ],
+        "environment": [
+          { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
+          { "name": "Reports__MainDirectory", "value": "Reports" },
+          { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
+          { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "true" },
+          { "name": "AdvancedLogging__ConnectionString", "value": "Data Source=${SQL_SERVER_HOST};Initial Catalog=${SQL_SERVER_DB};Persist Security Info=True;User ID=${SQL_SERVER_USER};Password=${SQL_SERVER_PASSWORD};MultipleActiveResultSets=True;Trusted_Connection=False;TrustServerCertificate=True" },
+          { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
+          { "name": "ConnectionStrings__DefaultConnection", "value": "Data Source=${SQL_SERVER_HOST};Initial Catalog=${SQL_SERVER_DB};Persist Security Info=True;User ID=${SQL_SERVER_USER};Password=${SQL_SERVER_PASSWORD};MultipleActiveResultSets=True;Trusted_Connection=False;TrustServerCertificate=True" }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-create-group": "true",
+            "awslogs-group": "/acontplus-reports",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        }
+      }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "512",
+    "memory": "1024"
+  }
