@@ -1,6 +1,6 @@
 import { CustomContainerDialogComponent } from '@ui/components/custom-container-dialog/custom-container-dialog.component';
 import { formatDateToString } from '@domain/utils/date.util';
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +20,8 @@ import { TableOrdersComponent } from '@ui/orders/components/table-orders/table-o
 export class OrderListModalComponent implements OnInit {
   readonly matDialogData = inject<{ tableId: 0 }>(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<OrderListModalComponent>);
-
+   moreFilter = signal(false)
+  private  oldTableId = 0;
   dataSearch = {
     userId: 0,
     tableId: 0,
@@ -28,10 +29,23 @@ export class OrderListModalComponent implements OnInit {
     endDate: formatDateToString(new Date()),
     selectedStatus: STATUS_ORDER.PENDIENTE,
     typeSearchCustomer: 'OR',
+    customerCompanyId: 0
   };
 
   ngOnInit() {
     this.dataSearch.tableId = this.matDialogData.tableId;
+  }
+
+  handleChangeMoreFilter() {
+    this.moreFilter.set(!this.moreFilter())
+    if(this.moreFilter()){
+      this.oldTableId = this.dataSearch.tableId;
+      //this.dataSearch.tableId = 0;
+    }else{
+      this.dataSearch.tableId = this.oldTableId;
+      this.dataSearch.customerCompanyId = 0;
+    }
+    console.log(this.dataSearch)
   }
 
   closeDialog() {

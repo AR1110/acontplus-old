@@ -209,7 +209,7 @@ export class OrderDivideModalComponent implements OnInit {
         size: 'md',
         data: {
           dataForm: this.dataForm,
-          orderData: this.orderData,
+          orderData: structuredClone(this.orderData),
           selectedRows: this.selectedRows(),
         },
       })

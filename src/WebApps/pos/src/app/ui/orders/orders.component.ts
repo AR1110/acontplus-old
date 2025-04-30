@@ -27,6 +27,8 @@ export class OrdersComponent {
 
   moreFilter = signal(false)
 
+  oldTableId = 0;
+
   dataSearch = {
     userId: 0,
     tableId: 0,
@@ -44,5 +46,16 @@ export class OrdersComponent {
 
   ngOnInit(){
     this.$permissionStore.loadActions(ROUTES_PATH.ORDER)
+  }
+
+  handleChangeMoreFilter() {
+    this.moreFilter.set(!this.moreFilter())
+    if(this.moreFilter()){
+      this.oldTableId = this.dataSearch.tableId;
+      //this.dataSearch.tableId = 0;
+    }else{
+    this.dataSearch.tableId = this.oldTableId;
+    }
+    console.log(this.dataSearch)
   }
 }

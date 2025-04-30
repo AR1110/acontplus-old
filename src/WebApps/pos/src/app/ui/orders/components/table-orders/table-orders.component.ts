@@ -51,6 +51,7 @@ import { ToasterService } from 'acontplus-utils';
 import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {BottomSheetDocsComponent} from "@ui/orders/components/bottom-sheet-docs/bottom-sheet-docs.component";
 import {LayoutStore} from "@ui/store/layout.store";
+import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
 
 @Component({
   selector: 'app-table-orders',
@@ -82,12 +83,12 @@ export class TableOrdersComponent implements OnInit {
   private $listUseCase = inject(ListOrderUseCase);
   private $anularUseCase = inject(AnularOrderUseCase);
   private $getIdUseCase = inject(GetIdOrderUseCase);
+  private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
   //Stores
   $permissionStore = inject(PermissionStore);
   private posStoreSvc = inject(PosStoreService);
   private $cartOverlaySvc = inject(CartOverlayService);
   private $layoutStore = inject(LayoutStore)
-
   //services
   private _dialogSvc = inject(DialogService);
   private _sharedSvc = inject(SharedService);
@@ -170,6 +171,7 @@ export class TableOrdersComponent implements OnInit {
 
     this.$getFilterDataUseCase.execute().subscribe((response) => {
       this.rooms.set(response.tablesGroup);
+
       this.users = response.users;
       const dataRoom = this.rooms().length > 0 ? this.rooms()[0] : {};
       if (dataRoom.roomId > 0) {
@@ -268,9 +270,25 @@ export class TableOrdersComponent implements OnInit {
     modalRef.subscribe((result) => {
       if (result && result.isReload) {
         this.refresh();
-
+        this.refreshGetFormData()
       }
     });
+  }
+
+  private refreshGetFormData(){
+    let params = {
+      codEstab: this.$layoutStore.codEstab(),
+      idEstablecimiento: this.$layoutStore.establecimientoId(),
+    };
+    this.$getFormDataUseCase.execute(params).subscribe(response=>{
+      this.posStoreSvc.state.update((e) => {
+
+        return {
+          ...e,
+          pendingOrders: response.pendingOrders,
+        };
+      });
+    })
   }
 
   printOrder(data: OrderList) {
