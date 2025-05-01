@@ -7,7 +7,7 @@
     loginCtrl.$inject = ['$scope', '$http', '$localStorage'];
 
     function loginCtrl($scope, $http, $localStorage) {
-        let urlBase = document.getElementById('urlGateway').value;
+        let urlBase = window.apiProxyUrl;
         let urlService = `${urlBase}/gateway/seguridad`
         // For get the customer data from response
         $scope.codes = ['', '', '', '', '', ''];
