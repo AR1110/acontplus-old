@@ -15,7 +15,13 @@ public class ApiProxyModel : PageModel
     private readonly ILogger<ApiProxyModel> _logger;
     private readonly HashSet<string> _excludedRequestHeaders = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Host", "Connection", "Content-Length", "Origin", "Referer", "User-Agent"
+        "Host", "Connection", "Content-Length", "Origin", "Referer", "User-Agent",
+        "Transfer-Encoding" // Añadido para evitar conflictos con chunking
+    };
+
+    private readonly HashSet<string> _excludedResponseHeaders = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Transfer-Encoding", "Connection", "Keep-Alive"
     };
 
     public ApiProxyModel(IConfiguration config, IHttpClientFactory httpClientFactory, ILogger<ApiProxyModel> logger)
@@ -53,6 +59,10 @@ public class ApiProxyModel : PageModel
             var client = _httpClientFactory.CreateClient();
             client.Timeout = TimeSpan.FromMinutes(5);
 
+            // Configurar cliente para manejar correctamente respuestas de contenido grande
+            client.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
+            client.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600, max=1000");
+
             var requestMessage = new HttpRequestMessage
             {
                 Method = new HttpMethod(Request.Method),
@@ -62,12 +72,38 @@ public class ApiProxyModel : PageModel
             await CopyRequestHeadersAsync(requestMessage);
             await CopyRequestBodyAsync(requestMessage);
 
-            var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, HttpContext.RequestAborted);
-            await CopyResponseHeadersAsync(response);
-            Response.StatusCode = (int)response.StatusCode;
+            // Cambiar a StreamContent para mejor manejo de respuestas grandes
+            var response = await client.SendAsync(
+                requestMessage,
+                HttpCompletionOption.ResponseHeadersRead,
+                HttpContext.RequestAborted);
 
-            var responseStream = await response.Content.ReadAsStreamAsync();
-            return new FileStreamResult(responseStream, response.Content.Headers.ContentType?.ToString() ?? "application/json");
+            // Copiar status code y headers
+            Response.StatusCode = (int)response.StatusCode;
+            await CopyResponseHeadersAsync(response);
+
+            // Para respuestas no exitosas, enviar como texto
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return Content(errorContent, response.Content.Headers.ContentType?.ToString() ?? "text/plain");
+            }
+
+            try
+            {
+                // Leer el contenido completo para evitar problemas de streaming
+                var content = await response.Content.ReadAsByteArrayAsync();
+
+                // Devolver como un FileContentResult en lugar de StreamResult para evitar problemas de chunking
+                return new FileContentResult(
+                    content,
+                    response.Content.Headers.ContentType?.ToString() ?? "application/json");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reading response content");
+                return StatusCode(502, "Error reading from upstream server");
+            }
         }
         catch (OperationCanceledException ex)
         {
@@ -151,11 +187,14 @@ public class ApiProxyModel : PageModel
         // For POST, PUT, PATCH with actual body content, use the request body directly
         if (hasRequestBody && (Request.Method is "POST" or "PUT" or "PATCH"))
         {
-            var ms = new MemoryStream();
+            // Leer todo el contenido del body para evitar problemas de streaming
+            using var ms = new MemoryStream();
             await Request.Body.CopyToAsync(ms);
             ms.Position = 0;
 
-            requestMessage.Content = new StreamContent(ms);
+            // Usar ByteArrayContent en lugar de StreamContent para mayor consistencia
+            var bytes = ms.ToArray();
+            requestMessage.Content = new ByteArrayContent(bytes);
 
             // Set content type from the original request
             var contentType = Request.ContentType;
@@ -221,16 +260,25 @@ public class ApiProxyModel : PageModel
 
     private async Task CopyResponseHeadersAsync(HttpResponseMessage response)
     {
+        // Copiar headers de la respuesta, excluyendo los que causan problemas
         foreach (var header in response.Headers)
-            Response.Headers[header.Key] = header.Value.ToArray();
-
-        foreach (var header in response.Content.Headers)
         {
-            if (!string.Equals(header.Key, "Content-Type", StringComparison.OrdinalIgnoreCase))
-                Response.Headers[header.Key] = header.Value.ToArray();
+            if (_excludedResponseHeaders.Contains(header.Key))
+                continue;
+
+            Response.Headers[header.Key] = header.Value.ToArray();
         }
 
-        // Optional: Add CORS support if needed
+        // Copiar headers de contenido, excluyendo Transfer-Encoding
+        foreach (var header in response.Content.Headers)
+        {
+            if (_excludedResponseHeaders.Contains(header.Key))
+                continue;
+
+            Response.Headers[header.Key] = header.Value.ToArray();
+        }
+
+        // Opcional: Añadir soporte CORS si es necesario
         Response.Headers["Access-Control-Allow-Origin"] = "*";
     }
 }

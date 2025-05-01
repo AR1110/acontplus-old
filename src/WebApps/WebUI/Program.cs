@@ -29,8 +29,16 @@ builder.Services.AddAdvancedLogging(builder.Configuration);
 builder.Services.AddHttpClient("ApiProxy", client =>
 {
     // Aumentar el timeout para solicitudes grandes
-    client.Timeout = TimeSpan.FromMinutes(10);
-});
+    client.Timeout = TimeSpan.FromMinutes(30);
+    client.DefaultRequestHeaders.ConnectionClose = false;
+})
+.ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+{
+    PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+    PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
+    MaxConnectionsPerServer = 100,
+    EnableMultipleHttp2Connections = true
+}); ;
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
@@ -65,25 +73,25 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.Use(async (context, next) =>
-{
-    // Para solicitudes PUT
-    if (context.Request.Method == HttpMethods.Put)
-    {
-        var queryLength = context.Request.QueryString.Value?.Length ?? 0;
+//app.Use(async (context, next) =>
+//{
+//    // Para solicitudes PUT
+//    if (context.Request.Method == HttpMethods.Put)
+//    {
+//        var queryLength = context.Request.QueryString.Value?.Length ?? 0;
 
-        // Log para query strings grandes
-        if (queryLength > 2000)
-        {
-            Log.Warning("Solicitud PUT con query string largo: {Length} caracteres", queryLength);
+//        // Log para query strings grandes
+//        if (queryLength > 2000)
+//        {
+//            Log.Warning("Solicitud PUT con query string largo: {Length} caracteres", queryLength);
 
-            // Habilitar buffering para asegurar que se pueda leer el cuerpo varias veces
-            context.Request.EnableBuffering();
-        }
-    }
+//            // Habilitar buffering para asegurar que se pueda leer el cuerpo varias veces
+//            context.Request.EnableBuffering();
+//        }
+//    }
 
-    await next();
-});
+//    await next();
+//});
 
 app.UseAuthentication();
 

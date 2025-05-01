@@ -285,7 +285,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
         }
         return $http({
             method: method,
-            url: _token.urlGateway + "/gateway/" + url,
+            url: window.apiProxyUrl + "/gateway/" + url,
             data: data,
             noLoader,
         }).then((response) => {
@@ -295,7 +295,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
 
     function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
-            url: _token.urlGateway + "/gateway/" + url,
+            url: window.apiProxyUrl + "/gateway/" + url,
             headers: {
                 Authorization: authToken.get({ decoded: false }),
             },
@@ -310,7 +310,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
 
     function _uploadFile({ url, file, data = null }) {
         return Upload.upload({
-            url: _token.urlGateway + "/gateway/" + url,
+            url: window.apiProxyUrl + "/gateway/" + url,
             headers: {
                 Authorization: authToken.get({ decoded: false }),
             },
@@ -326,7 +326,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
     function _getFile(method, url, data = null, forApi = false) {
         return $http({
             method,
-            url: `${_token.urlGateway}/gateway/${url}`,
+            url: `${window.apiProxyUrl}/gateway/${url}`,
             data,
             responseType: "blob",
         }).then((response) => response);
