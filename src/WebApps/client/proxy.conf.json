@@ -1,0 +1,17 @@
+{
+  "/gateway": {
+    "target": "http://localhost:5001",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/gateway": ""
+    },
+    "headers": {
+      "Connection": "keep-alive",
+      "X-Forwarded-For": "clientip",
+      "X-Forwarded-Proto": "https",
+      "X-Forwarded-Host": "localhost:4200"
+    }
+  }
+}
