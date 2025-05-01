@@ -9,6 +9,8 @@ namespace WebUI.Pages;
 /// <summary>
 /// API Proxy optimizado para manejar query strings largos, especialmente en métodos PUT
 /// </summary>
+
+[IgnoreAntiforgeryToken]
 public class ApiProxyModel : PageModel
 {
     private readonly IConfiguration _config;
@@ -272,9 +274,59 @@ public class ApiProxyModel : PageModel
             // For PUT/POST requests with no body, add an empty content to avoid HTTP 411 errors
             requestMessage.Content = new StringContent(string.Empty);
 
-            if (!string.IsNullOrEmpty(Request.ContentType))
+            // Si no hay body, intenta construir JSON desde los parámetros de query
+            if (Request.ContentLength == null || Request.ContentLength == 0)
             {
-                requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(Request.ContentType);
+                // Si se especificó un parámetro "json", úsalo directamente
+                if (Request.Query.TryGetValue("json", out var jsonValues))
+                {
+                    var json = jsonValues.FirstOrDefault();
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                        return;
+                    }
+                }
+
+                // Construir JSON desde los parámetros de query (excepto 'path')
+                var dict = Request.Query
+                    .Where(p => !string.Equals(p.Key, "path", StringComparison.OrdinalIgnoreCase))
+                    .ToDictionary(
+                        p => p.Key,
+                        p => p.Value.Count == 1 ? (object)p.Value[0] : p.Value.ToArray()
+                    );
+
+                var jsonPayload = System.Text.Json.JsonSerializer.Serialize(dict);
+                requestMessage.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+            }
+            else
+            {
+                // Ya hay cuerpo, usarlo directamente
+                Request.EnableBuffering();
+                if (Request.Body.Position != 0)
+                {
+                    Request.Body.Position = 0;
+                }
+
+                requestMessage.Content = new StreamContent(Request.Body);
+
+                var contentType = Request.ContentType;
+                if (!string.IsNullOrEmpty(contentType))
+                {
+                    requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+                }
+
+                foreach (var header in Request.Headers)
+                {
+                    if (_excludedRequestHeaders.Contains(header.Key))
+                        continue;
+
+                    if (header.Key.StartsWith("Content-", StringComparison.OrdinalIgnoreCase) &&
+                        !header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                    {
+                        requestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                    }
+                }
             }
         }
     }

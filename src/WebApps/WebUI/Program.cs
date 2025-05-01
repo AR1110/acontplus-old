@@ -65,12 +65,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-
 app.Use(async (context, next) =>
 {
     // Para solicitudes PUT
@@ -90,5 +84,13 @@ app.Use(async (context, next) =>
 
     await next();
 });
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+
+app.MapRazorPages();
+
 
 await app.RunAsync();
