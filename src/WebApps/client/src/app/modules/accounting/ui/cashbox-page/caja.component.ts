@@ -25,6 +25,7 @@ import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
 import {ControlCajaModalComponent} from "@accounting/ui/cashbox-page/control-caja-modal/control-caja-modal.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
     selector: 'app-cashbox',
@@ -49,6 +50,7 @@ export class CajaComponent {
   private modalSvc = inject(ModalService);
   private tS = inject(ToasterService);
   private _cajaUseCase = inject(CajaUseCase)
+  private _dialogSvc = inject(DialogService)
 
   acciones: any = {}
 
@@ -113,11 +115,12 @@ export class CajaComponent {
   }
 
   openModalAddUpdate(params?: CashboxList) {
-    const modalRef = this.modalSvc.openModalCustom(CajaModalComponent);
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
+    const modalRef = this._dialogSvc.open(CajaModalComponent, {
+      data: structuredClone(params) || {}
+    });
+    modalRef.subscribe(result => {
 
-      if (typeof result === 'object') {
+      if (result && typeof result === 'object') {
         this.getCashboxs();
       }
     })
@@ -159,11 +162,11 @@ export class CajaComponent {
   }
 
   openModalAperturar(params: CashboxList) {
-    const modalRef = this.modalSvc.openModalCustom(AperturaCajaModalComponent);
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
-
-      if (typeof result === 'object') {
+    const modalRef = this._dialogSvc.open(AperturaCajaModalComponent, {
+      data: params || {}
+    });
+    modalRef.subscribe(result=>{
+      if (result && typeof result === 'object') {
         this.getCashboxs();
       }
     })

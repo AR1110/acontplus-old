@@ -43,7 +43,8 @@ BEGIN
 						  ,@fechaFin          DATETIME2
 						  ,@codEstado         VARCHAR(20)
                           ,@pageIndex         INT
-                          ,@pageSize          INT'
+                          ,@pageSize          INT
+                          ,@idUsuario INT'
 
             SET @sql = 'SELECT an.idAnticipo
 							  ,es.codEstab
@@ -86,6 +87,11 @@ BEGIN
                  ,pageIndex     INT
             )
 
+              IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
+				BEGIN
+                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+				END
+
 	
 		    IF @idCliente > 0 
 			    BEGIN
@@ -108,6 +114,11 @@ BEGIN
 				    SET @sql = @sql + 'AND CAST(an.fechaEmision AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@FechaFin as date) '
 			    END 
 
+             IF @idUsuario > 0
+		        BEGIN
+			        SET @sql = @sql + ' AND us.idUsuario = @idUsuario '
+		        END 
+
 		    SET @sql = @sql + ' ORDER BY an.idAnticipo DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
  		    EXEC sp_executesql @sql
@@ -119,6 +130,7 @@ BEGIN
 				              ,@codEstado         = @codEstado
                               ,@pageIndex         = @pageIndex
                               ,@pageSize          = @pageSize
+                              ,@idUsuario         = @idUsuario
             RETURN 
         END 
     

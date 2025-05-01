@@ -1793,13 +1793,13 @@
                         })
                         return
                     }
-                    if (!fS.isValidField(data.nro)) {
-                        tS.toastr({
-                            type: 'warning',
-                            message: 'Ingrese el Número'
-                        })
-                        return
-                    }
+                    // if (!fS.isValidField(data.nro)) {
+                    //     tS.toastr({
+                    //         type: 'warning',
+                    //         message: 'Ingrese el Número'
+                    //     })
+                    //     return
+                    // }
                 }
 
                 // =================== CHEQUES  =================================== //
