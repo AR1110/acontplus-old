@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import { finalize } from 'rxjs/operators';
 import { GetDocsOrderUseCase } from '@/domain/use-cases/order/get-docs-order.use-case';
+import {OrderList} from "@domain/models/order.model";
 
 @Component({
   selector: 'app-order-doc-list',
@@ -120,7 +121,7 @@ export class OrderDocListComponent implements OnInit, OnDestroy {
     }
   }
 
-  openCobroModal(data: OrderDocRed) {
+  openCobroModal(data: OrderList) {
     const modalRef = this.dialogSvc.open(PaymentComponent, {
       size: 'xl',
 

@@ -1,0 +1,9 @@
+<div class="vstack gap-2">
+  <app-payment-calculator (onEqual)="calculate($event)" />
+
+  <div class="d-flex justify-content-center align-items-center">
+    <button mat-raised-button (click)="dialogRef.close()">
+      Cerrar
+    </button>
+  </div>
+</div>

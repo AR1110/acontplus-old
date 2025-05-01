@@ -110,6 +110,7 @@ export class PaymentCalculatorComponent {
 
       this.onEqual.emit(this.display)
 
+
     } catch {
       this.display = '0';
     }

@@ -41,6 +41,9 @@ import { PaymentCalculatorComponent } from '@ui/components/payment/payment-calcu
 import { DialogService } from '@domain/services/dialog.service';
 import { ComprobanteIngresoService } from '@data/repositories/comprobante-ingreso/comprobante-ingreso.service';
 import { ToasterService } from '@domain/services/toaster.service';
+import {
+  BottomSheetCalculatorComponent
+} from "@ui/components/payment/bottom-sheet-calculator/bottom-sheet-calculator.component";
 
 let dataInitial = {
   posfechado: false,
@@ -85,7 +88,7 @@ const _filterCiudadGroup = (opt: any[], value: string): string[] => {
         MatBadgeModule,
         CustomContainerDialogComponent,
         PaymentCalculatorComponent,
-        InputNumberDirective
+        InputNumberDirective,
     ],
     templateUrl: './payment.component.html'
 })
@@ -139,6 +142,14 @@ export class PaymentComponent {
 
   saldoPendiente = signal(0)
 
+
+  openCalculator(){
+    this.dialogSvc.open(BottomSheetCalculatorComponent, {}).subscribe(result=>{
+      if(result){
+        this.onEqual(result)
+      }
+    })
+  }
 
   ngOnInit() {
     let { data } = this.matDialogData
