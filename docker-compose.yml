@@ -93,11 +93,3 @@ services:
     build:
       context: .
       dockerfile: src/WebApps/WebUI/Dockerfile
-
-
-  reports.api:
-    image: ${DOCKER_REGISTRY-}reportsapi
-    build:
-      context: .
-      dockerfile: src/Services/Reports/Reports.API/Dockerfile
-
