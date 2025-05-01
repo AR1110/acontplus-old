@@ -1671,9 +1671,9 @@
                     let { cuotas, cuotasOriginal, ...documento } = x;
                     let cuotasCalculadas = cuotas.map(cuota => {
                         // Inicialización de variables
-                        let interesPorMoraActual = 0;
-                        let diasMoraActual = 0;
-                        let interesActual = 0;
+                        let interesPorMoraActual = cuota.interes;
+                        let diasMoraActual = cuota.diasMora;
+                        let interesActual = cuota.interes ;
                         let saldoTotalActual = cuota.saldo;
 
 
