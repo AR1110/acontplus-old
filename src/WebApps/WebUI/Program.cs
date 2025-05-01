@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAdvancedLogging(builder.Configuration);
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddSignalR();

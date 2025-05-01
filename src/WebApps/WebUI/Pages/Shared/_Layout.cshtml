@@ -289,7 +289,9 @@ var youtube = Configuration["SocialNetworks:Youtube"]; *@
 
 
     <script>
+        window.apiProxyUrl = '/ApiProxy?path=';
 
+        console.log(window.apiProxyUrl);
 
         $(document).on({
             'show.bs.modal': function () {
