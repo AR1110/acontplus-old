@@ -1678,20 +1678,20 @@
 
 
                         // Calcular interés y mora si hay días de mora
-                        if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
-                            // Calcular días de mora 
-                            diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
+                        // if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
+                            
+                        //     diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
 
-                            if (diasMoraActual > 0) {
+                        //     if (diasMoraActual > 0) {
 
-                                interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
-                                interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
-                                saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
+                        //         interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
+                        //         interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
+                        //         saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
 
-                            } else {
-                                diasMoraActual = 0;
-                            }
-                        }
+                        //     } else {
+                        //         diasMoraActual = 0;
+                        //     }
+                        // }
 
                         return {
                             idCuotaPorCobrar: cuota.idCuotaPorCobrar,
