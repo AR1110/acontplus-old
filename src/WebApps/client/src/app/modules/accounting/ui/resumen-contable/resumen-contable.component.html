@@ -1,66 +1,62 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Tipo Transacción</label>
-          <select
-            (change)="onChangeTypeTransaccion()"
+<app-mat-dynamic-card>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Transacción</mat-label>
+          <mat-select
+            (selectionChange)="onChangeTypeTransaccion()"
             [(ngModel)]="dataSearch.idTipoTransaccion"
-            class="form-select"
           >
-            <option [ngValue]="0">-- Todos --</option>
-            @for (item of transactionTypes; track $index) {
-              <option [ngValue]="item.idTipoTransaccion">
-                {{ item.descripcion }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
+            <mat-option [value]="0">Todos</mat-option>
 
+            @for (item of transactionTypes(); track $index) {
+              <mat-option [value]="item.idTipoTransaccion">{{item.descripcion}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
+      </div>
       @if (isPurchase) {
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label>Subcategoría</label>
-            <select class="form-select" [(ngModel)]="dataSearch.idSubcategoria">
-              <option [ngValue]="0">-- Todos --</option>
-              @for (item of subcategories; track $index) {
-                <option [ngValue]="item.id">{{ item.name }}</option>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Subcategoría</mat-label>
+            <mat-select
+              [(ngModel)]="dataSearch.idSubcategoria"
+            >
+              <mat-option [value]="0">Todos</mat-option>
+
+              @for (item of subcategories(); track $index) {
+                <mat-option [value]="item.id">{{item.name}}</mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
       }
-
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Rango fecha: </label>
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-          />
-        </div>
-      </div>
     </div>
-  </mat-card-content>
-  <div class="card-footer">
-    <div class="d-flex flex-row gap-1">
+
+
+    <div class="hstack gap-1">
       <app-theme-button
         variant="danger"
         icon="picture_as_pdf"
         text="Pdf"
         (handleClick)="reportPdf()"
-      >
-      </app-theme-button
-      ><app-theme-button
+      />
+      <app-theme-button
         variant="success"
         icon="download"
         text="Excel"
         (handleClick)="reportExcel()"
-      >
-      </app-theme-button>
+      />
     </div>
   </div>
-</mat-card>
+</app-mat-dynamic-card>
+

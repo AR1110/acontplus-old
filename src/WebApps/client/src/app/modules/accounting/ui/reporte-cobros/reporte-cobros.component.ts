@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToasterService } from '@core/services/toaster.service';
 import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
@@ -20,7 +20,15 @@ import { ComprobanteIngresoUseCase } from '@accounting/core/use-cases/comprobant
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatRadioModule} from "@angular/material/radio";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
 
+type TipoDocSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
 @Component({
   selector: 'app-reporte-cobros',
   templateUrl: './reporte-cobros.component.html',
@@ -33,16 +41,23 @@ import { CompanyCustomer } from '@customer/core/domain/company-customer';
     MatCardContent,
     MatCard,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatCheckbox,
+    MatRadioModule,
+    MatDivider,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule
   ],
 })
-export class ReporteCobrosComponent implements OnInit {
+export class ReporteCobrosComponent  {
   http = inject(HttpClient);
   // VARIABLES Y CONSTANTES
-  establecimientos: Array<GroupedEstab> = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-  subEntidadFinanciera: Array<SubEntidadFinancieraSelectHtmlOnly> = [];
-  bancos: Array<BancoSelectOnly> = [];
+  establecimientos = signal<GroupedEstab[]>([]);
+  puntosEmision =signal<GroupedEstabPuntoEmision[]>([])
+  tiposDoc = signal<TipoDocSelect[]>([])
+  subEntidadFinanciera = signal<SubEntidadFinancieraSelectHtmlOnly[]>([]);
+  bancos = signal<BancoSelectOnly[]>([]);
   isCustomerSearchSimple = true;
   dataSearch = {
     codEstab: '',
@@ -78,42 +93,42 @@ export class ReporteCobrosComponent implements OnInit {
       const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } =
         response;
 
-      this.establecimientos = establecimientos;
+      this.establecimientos.set(establecimientos);
 
-      const dataEstab = this.establecimientos.find(
+      const dataEstab = this.establecimientos().find(
         (estab) => estab.defaultEstab,
       );
 
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
-        this.puntosEmision = dataEstab.puntosEmision;
+        this.puntosEmision.set(dataEstab.puntosEmision);
 
-        const dataPuntoEmision = this.puntosEmision.find(
+        const dataPuntoEmision = this.puntosEmision().find(
           (ptoEmi) => ptoEmi.defaultPtoEmi,
         );
         if (dataPuntoEmision) {
           this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
         }
       }
-      this.tiposDoc = tiposDoc;
-      this.subEntidadFinanciera = subEntidadesFinanciera;
-      this.bancos = bancos;
+      this.tiposDoc.set(tiposDoc)
+      this.subEntidadFinanciera.set(subEntidadesFinanciera);
+      this.bancos.set(bancos);
       this.dataSearch.codDoc =
-        this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
+        this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
           ?.codDoc || '';
     });
   }
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos.find(
+      let dataEstab = this.establecimientos().find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
-        this.puntosEmision = dataEstab.puntosEmision;
+        this.puntosEmision.set(dataEstab.puntosEmision);
 
         this.dataSearch.idPuntoEmision =
-          this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
+          this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
             ?.idPuntoEmision || 0;
         return;
       }

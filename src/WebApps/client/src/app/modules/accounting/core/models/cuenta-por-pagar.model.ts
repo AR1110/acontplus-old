@@ -1,3 +1,5 @@
+import {GroupedEstab} from "@core/models/estab.model";
+
 export interface CuentaPorPagar {
   idCuentaPorPagar: number
 }
@@ -37,3 +39,9 @@ export interface CuentaPorPagarCuotaConfig {
 }
 
 
+export class FilterDataCuentaPorPagarResponse {
+  estabs:GroupedEstab[]=[]
+  estadosDoc: any[]=[]
+  tiposDoc: any[]=[]
+  categorias: any[]=[]
+}

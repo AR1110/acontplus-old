@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   REPORT_CODE,
   DOC_TYPE,
-  PATHS_API,
 } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -13,9 +11,7 @@ import {
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -25,6 +21,17 @@ import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {
+  GetFilterDataCuentaPorPagarUseCase
+} from "@accounting/core/use-cases/cuenta-por-pagar/get-filter-data-cuenta-por-pagar.use-case";
+
+
+type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string }
 
 @Component({
   selector: 'app-supplier-accounts',
@@ -38,16 +45,21 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     MatCardFooter,
     MatButton,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatCheckbox,
+    MatDivider,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   templateUrl: './supplier-accounts.component.html',
   styles: ``,
 })
 export class SupplierAccountsComponent {
   http = inject(HttpClient);
-  establecimientos: Array<GroupedEstab> = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-  estadosDoc: Array<{ codigo: string; descripcion: string }> = [];
+  establecimientos = signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  tiposDoc = signal<EstadoSelect[]>([])
+  estadosDoc = signal<{ codigo: string; descripcion: string }[]>([]);
   dataSearch = {
     codEstab: '',
     idPuntoEmision: 0,
@@ -65,7 +77,7 @@ export class SupplierAccountsComponent {
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
+  private $getFilterDataUseCase = inject(GetFilterDataCuentaPorPagarUseCase)
 
   ngOnInit() {
     this.initialed();
@@ -82,14 +94,14 @@ export class SupplierAccountsComponent {
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos.find(
+      let dataEstab = this.establecimientos().find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
-        this.puntosEmision = dataEstab.puntosEmision;
+        this.puntosEmision.set(dataEstab.puntosEmision);
 
         this.dataSearch.idPuntoEmision =
-          this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
+          this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
             ?.idPuntoEmision || 0;
         return;
       }
@@ -167,48 +179,28 @@ export class SupplierAccountsComponent {
   // }
 
   private initialed() {
-    this.http
-      .get(this.url, {
-        params: {
-          json: JSON.stringify({ tipo: 6 }),
-        },
-      })
-      .subscribe((response) => {
-        if (isApiResponse(response)) {
-          if (response.code === '0') {
-            console.log(response);
-          }
-          if (response.code === '1') {
-            const [estabs, estadosDoc, tiposDoc] = JSON.parse(
-              response.payload as string,
-            );
-
-            this.establecimientos = groupEstabUtil({
-              estabs,
-              isGroupPuntoEmision: true,
-            });
-            const dataEstab = this.establecimientos.find(
-              (estab) => estab.defaultEstab,
-            );
-            if (dataEstab) {
-              this.dataSearch.codEstab = dataEstab.codEstab;
-              this.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = this.puntosEmision.find(
-                (ptoEmi) => ptoEmi.defaultPtoEmi,
-              );
-              if (dataPuntoEmision) {
-                this.dataSearch.idPuntoEmision =
-                  dataPuntoEmision.idPuntoEmision;
-              }
-            }
-            this.tiposDoc = tiposDoc;
-            this.dataSearch.codDoc =
-              this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
-                ?.codDoc || '';
-            //console.log(this.tiposDoc)
-            this.estadosDoc = estadosDoc;
-          }
+    this.$getFilterDataUseCase.execute().subscribe(response=>{
+      this.establecimientos.set(response.estabs);
+      const dataEstab = this.establecimientos().find(
+        (estab) => estab.defaultEstab,
+      );
+      if (dataEstab) {
+        this.dataSearch.codEstab = dataEstab.codEstab;
+        this.puntosEmision.set(dataEstab.puntosEmision);
+        const dataPuntoEmision = this.puntosEmision().find(
+          (ptoEmi) => ptoEmi.defaultPtoEmi,
+        );
+        if (dataPuntoEmision) {
+          this.dataSearch.idPuntoEmision =
+            dataPuntoEmision.idPuntoEmision;
         }
-      });
+      }
+      this.tiposDoc.set(response.tiposDoc);
+      this.dataSearch.codDoc =
+        this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
+          ?.codDoc || '';
+      this.estadosDoc.set(response.estadosDoc);
+    })
+
   }
 }

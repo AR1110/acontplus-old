@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubCategorySelectHtmlOnly } from '@accounting/core/models/subcategory';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +15,9 @@ import { ResumenContableUseCase } from '@accounting/core/use-cases/resumen-conta
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'app-resumen-contable',
@@ -26,6 +29,9 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     MatCard,
     MatButton,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   templateUrl: './resumen-contable.component.html',
   styles: ``,
@@ -33,8 +39,8 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 export class ResumenContableComponent {
   private _resumenContableCaseUse = inject(ResumenContableUseCase);
   private sharedSvc = inject(SharedService);
-  subcategories: SubCategorySelectHtmlOnly[] = [];
-  transactionTypes: any[] = [];
+  subcategories = signal<SubCategorySelectHtmlOnly[]>([]);
+  transactionTypes =signal<any[]>([]);
 
   isPurchase = false;
 
@@ -48,9 +54,9 @@ export class ResumenContableComponent {
   };
   getDataFilter() {
     this._resumenContableCaseUse.getDataFilter().subscribe((response) => {
-      this.subcategories = response.subCategories;
-      this.transactionTypes = response.transactionTypes;
-      let dataTipoTransaccion = this.transactionTypes.find(
+      this.subcategories.set(response.subCategories);
+      this.transactionTypes.set(response.transactionTypes);
+      let dataTipoTransaccion = this.transactionTypes().find(
         (tt) => tt.codigo === TIPO_TRANSACCION.V,
       );
       this.dataSearch.idTipoTransaccion =
@@ -63,7 +69,7 @@ export class ResumenContableComponent {
   }
 
   public onChangeTypeTransaccion() {
-    this.isPurchase = this.transactionTypes.some(
+    this.isPurchase = this.transactionTypes().some(
       (tt) =>
         tt.idTipoTransaccion === this.dataSearch.idTipoTransaccion &&
         tt.codigo === TIPO_TRANSACCION.C,
