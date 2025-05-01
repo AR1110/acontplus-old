@@ -1,21 +1,41 @@
 [
   {
     "Name": "BarberShopProfile",
+    "Projects": []
+  },
+  {
+    "Name": "FactElect Profile",
     "Projects": [
       {
-        "Path": "WebApps\\WebUI\\WebUI.csproj",
+        "Path": "src\\ApiGateways\\GatewayAcontplus.API\\GatewayAcontplus.API.csproj",
         "Action": "Start"
       },
       {
-        "Path": "Services\\BarberShop\\BarberShop.API\\BarberShop.API.csproj",
+        "Path": "src\\Services\\Common\\Common.API\\Common.API.csproj",
         "Action": "Start"
       },
       {
-        "Path": "Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "Path": "src\\Services\\Compras\\Compras.API\\Compras.API.csproj",
         "Action": "Start"
       },
       {
-        "Path": "ApiGateways\\GatewayAcontplus.API\\GatewayAcontplus.API.csproj",
+        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Configuracion\\Configuracion.API\\Configuracion.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Facturacion\\FactElect.API\\FactElect.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Inventario\\Inventario.API\\Inventario.API.csproj",
         "Action": "Start"
       }
     ]
