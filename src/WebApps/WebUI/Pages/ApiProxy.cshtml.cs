@@ -60,8 +60,7 @@ public class ApiProxyModel : PageModel
             };
 
             await CopyRequestHeadersAsync(requestMessage);
-            if (Request.ContentLength > 0 || Request.Method is "POST" or "PUT" or "PATCH")
-                await CopyRequestBodyAsync(requestMessage);
+            await CopyRequestBodyAsync(requestMessage);
 
             var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, HttpContext.RequestAborted);
             await CopyResponseHeadersAsync(response);
@@ -142,51 +141,81 @@ public class ApiProxyModel : PageModel
 
     private async Task CopyRequestBodyAsync(HttpRequestMessage requestMessage)
     {
+        // Enable request body buffering to allow multiple reads
         Request.EnableBuffering();
         Request.Body.Position = 0;
 
-        if (Request.ContentLength > 0)
-        {
-            requestMessage.Content = new StreamContent(Request.Body);
-        }
-        else
-        {
-            if (Request.Query.TryGetValue("json", out var jsonValues) && !string.IsNullOrEmpty(jsonValues.FirstOrDefault()))
-            {
-                requestMessage.Content = new StringContent(jsonValues.First(), Encoding.UTF8, "application/json");
-                return;
-            }
+        // Check if there's actually content in the body
+        var hasRequestBody = Request.ContentLength.HasValue && Request.ContentLength.Value > 0;
 
+        // For POST, PUT, PATCH with actual body content, use the request body directly
+        if (hasRequestBody && (Request.Method is "POST" or "PUT" or "PATCH"))
+        {
+            var ms = new MemoryStream();
+            await Request.Body.CopyToAsync(ms);
+            ms.Position = 0;
+
+            requestMessage.Content = new StreamContent(ms);
+
+            // Set content type from the original request
+            var contentType = Request.ContentType;
+            if (!string.IsNullOrEmpty(contentType))
+            {
+                try
+                {
+                    requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+                }
+                catch
+                {
+                    requestMessage.Content.Headers.TryAddWithoutValidation("Content-Type", contentType);
+                }
+            }
+        }
+        // For POST/PUT/PATCH without a body but with a json query parameter, use that as the body
+        else if (!hasRequestBody && (Request.Method is "POST" or "PUT" or "PATCH") &&
+                 Request.Query.TryGetValue("json", out var jsonValues) &&
+                 !string.IsNullOrEmpty(jsonValues.FirstOrDefault()))
+        {
+            requestMessage.Content = new StringContent(jsonValues.First(), Encoding.UTF8, "application/json");
+        }
+        // For POST/PUT/PATCH without a body and no json parameter, convert query parameters to JSON body
+        else if (!hasRequestBody && (Request.Method is "POST" or "PUT" or "PATCH"))
+        {
             var dict = Request.Query
                 .Where(p => !string.Equals(p.Key, "path", StringComparison.OrdinalIgnoreCase))
                 .ToDictionary(p => p.Key, p => p.Value.Count == 1 ? (object)p.Value[0] : p.Value.ToArray());
 
-            var jsonPayload = System.Text.Json.JsonSerializer.Serialize(dict);
-            requestMessage.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-        }
-
-        var contentType = Request.ContentType;
-        if (!string.IsNullOrEmpty(contentType))
-        {
-            try
+            if (dict.Count > 0)
             {
-                requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+                var jsonPayload = System.Text.Json.JsonSerializer.Serialize(dict);
+                requestMessage.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
             }
-            catch
+            else
             {
-                requestMessage.Content.Headers.TryAddWithoutValidation("Content-Type", contentType);
+                // Empty POST/PUT/PATCH request
+                requestMessage.Content = new StringContent("", Encoding.UTF8, "application/json");
             }
         }
 
-        foreach (var header in Request.Headers)
+        // Only copy content headers if we have content
+        if (requestMessage.Content != null)
         {
-            if (_excludedRequestHeaders.Contains(header.Key)) continue;
-
-            if (header.Key.StartsWith("Content-", StringComparison.OrdinalIgnoreCase) &&
-                !header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+            foreach (var header in Request.Headers)
             {
-                requestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                if (_excludedRequestHeaders.Contains(header.Key)) continue;
+
+                if (header.Key.StartsWith("Content-", StringComparison.OrdinalIgnoreCase) &&
+                    !header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                {
+                    requestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                }
             }
+        }
+
+        // Reset the body position for potential future reads
+        if (hasRequestBody)
+        {
+            Request.Body.Position = 0;
         }
     }
 
