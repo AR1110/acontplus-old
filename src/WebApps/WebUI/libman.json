@@ -135,10 +135,6 @@
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.7.9",
-      "destination": "wwwroot/lib/axios/"
-    },
-    {
       "library": "tabulator@6.3.0",
       "destination": "wwwroot/lib/tabulator/",
       "files": [
