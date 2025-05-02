@@ -36,10 +36,7 @@ BEGIN
     IF @tipo = 1
         BEGIN 
             
-            SET @tableNames = 'movimientos'
-            DECLARE @verOtrasCajas BIT 
-
-			SELECT @verOtrasCajas = (SELECT TOP 1 verOtrasCajas FROM Config.v_User_Permission_CashAccounting WHERE idUsuarioRol = @userRoleId)
+            SET @tableNames = 'movimientos' 
             
             SET @params = '@idEntidad   INT
 						  ,@IDCard      VARCHAR(50) 
@@ -87,6 +84,7 @@ BEGIN
 		          ,@fechaFin       = fechaFin
                   ,@pageSize       = pageSize
 				  ,@pageIndex      = pageIndex
+                  ,@idUsuario      = usuarioId
 	        FROM OPENJSON(@json) WITH 
             (     
                   fechaInicio     DATETIME2
@@ -96,9 +94,16 @@ BEGIN
                  ,codEstado       VARCHAR(10)
                  ,pageSize        INT
                  ,pageIndex       INT
+                 ,usuarioId       INT
             )
 
-             IF @verOtrasCajas = 0
+             IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
+				BEGIN
+                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+				END
+
+
+             IF @idUsuario>0
                 BEGIN
                     SET @sql = @sql + ' AND mc.idUsuarioRegister = @idUsuario '
                 END 

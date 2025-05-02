@@ -229,7 +229,7 @@ BEGIN
             )
 
             
-            SELECT ISNULL(cu.TradeName,'CONSUMIDOR FINAL')   as customerName
+            SELECT ISNULL(cu.BusinessName,'CONSUMIDOR FINAL')   as customerName
                   ,tableName = rm.[description] + ' - ' + ISNULL(ta.[Description], '') 
                   ,numberTable = numberTable
                   ,tipoIdentificacionSri= ti.codigoSri
