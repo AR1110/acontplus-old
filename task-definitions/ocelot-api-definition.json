@@ -20,12 +20,20 @@
           "name": "SafeOrigins",
           "value": "https://app.acontplus.com,https://demo.acontplus.com,https://erp.acontplus.com,https://invoice.acontplus.com,https://print.acontplus.com,https://restaurant.acontplus.com,http://localhost:7166,http://localhost:4200,http://localhost:5001"
         },
+        {
+          "name": "JwtSettings__ExpirationInMinutes",
+          "value": "${ACONTPLUS_JWT_SETTINGS_EXPIRATION_IN_MINUTES}"
+        },
         { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
         { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "true" },
         { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
         { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" }
       ],
       "secrets": [
+        {
+          "name": "JwtSettings__SecurityKey",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
+        },
         {
           "name": "AdvancedLogging__DatabaseConnectionString",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
