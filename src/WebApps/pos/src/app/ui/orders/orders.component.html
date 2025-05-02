@@ -8,7 +8,7 @@
             <mat-icon>add</mat-icon>
           </button>
         }
-        <button mat-icon-button (click)="handleChangeMoreFilter()">
+        <button mat-icon-button (click)="$orderStore.handleChangeMoreFilter()">
           <mat-icon>filter_list</mat-icon>
         </button>
       </div>
@@ -16,8 +16,6 @@
   </mat-card-header>
   <mat-card-content>
 <!--    <app-order-list [dataSearch]="dataSearch" />-->
-    <app-table-orders [dataSearch]="dataSearch"
-    [moreFilter]="moreFilter()"
-    />
+    <app-table-orders />
   </mat-card-content>
 </mat-card>

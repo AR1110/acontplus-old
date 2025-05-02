@@ -2,14 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
+  EventEmitter, input,
+  Input, model,
   output,
   Output,
   ViewChild,
 } from '@angular/core';
 
-declare var DateRangePicker: any;
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -24,11 +23,14 @@ import {
   weekEnd,
   weekStart,
 } from '@formkit/tempo';
+import {MatCheckbox} from "@angular/material/checkbox";
+declare var DateRangePicker: any;
 
 @Component({
   selector: 'app-date-range-selection',
-  imports: [FormsModule, MatInputModule],
-  template: `<mat-form-field class="w-100" [floatLabel]="'always'">
+  imports: [FormsModule, MatInputModule, MatCheckbox],
+  template: `
+    <mat-form-field class="w-100" [floatLabel]="'always'">
     <mat-label>Rango Fecha</mat-label>
     <input
       matInput
@@ -36,14 +38,21 @@ import {
       id="date-range-selection-input"
       #dateRangeInput
     />
+    <ng-container matSuffix>
+      <mat-checkbox [ngModel]="enableDateFilter"
+                    (change)="emitDateFilterChange($event)"
+                    (click)="$event.stopPropagation()"
+      ></mat-checkbox>
+    </ng-container>
   </mat-form-field> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateRangeSelectionComponent {
+  @Input() enableDateFilter = false;
+  enableDateFilterChange = output<any>()
   @Input() from: string | null = null;
   @Input() to: string | null = null;
 
-  @Output() valueChangeRequiredDate = new EventEmitter<boolean>();
   @Input() options = {
     timePicker: false,
     format: 'YYYY-MM-DD',
@@ -61,6 +70,10 @@ export class DateRangeSelectionComponent {
 
   private getDateAddDay(day: number) {
     return addDay(this.currentDate, day);
+  }
+
+  emitDateFilterChange($event:any){
+    this.enableDateFilterChange.emit($event.checked);
   }
 
   ngAfterViewInit() {

@@ -76,6 +76,7 @@ BEGIN
 		          ,@fechaFin      = fechaFin
                   ,@pageSize      = pageSize
 				  ,@pageIndex     = pageIndex
+                  ,@idUsuario     = usuarioId
 	        FROM OPENJSON(@json) WITH 
             (     
                   fechaInicio   DATETIME2
@@ -85,6 +86,7 @@ BEGIN
                  ,codEstado     VARCHAR(10)
                  ,pageSize      INT
                  ,pageIndex     INT
+                 ,usuarioId     INT
             )
 
               IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
