@@ -80,7 +80,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     },
     { key: 'valor', label: 'Valor', type: 'string' },
     { key: 'observaciones', label: 'Obs.', type: 'string' },
-    { key: 'nomEmpleado', label: 'Empleado', type: 'string' },
+    { key: 'nomEmpleado', label: 'Cliente', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];

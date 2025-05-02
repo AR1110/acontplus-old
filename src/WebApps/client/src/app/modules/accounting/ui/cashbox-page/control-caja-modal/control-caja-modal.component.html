@@ -1,222 +1,117 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Movimiento Caja</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="onModalClose()"
-  ></button>
-</div>
-<div class="modal-body">
-  <div class="row">
-    <div class="col-12">
-      <mat-checkbox
-        id="someCheckboxId"
-        [(ngModel)]="dataSearch.checkBoxDate"
-        (change)="getMovimientosCaja()"
-      >
-        Fecha:
-      </mat-checkbox>
-    </div>
-  </div>
-  <hr />
-  <div class="row">
-    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <span>Rango Fechas: </span>
+<app-mat-custom-dialog
+[containerTemplate]="body"
+(close)="close()"
+[title]="'Movimiento Caja'"
+/>
+<ng-template #body>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+      <div class="col">
         <app-date-range-selection
+          [showMatSuffix]="true"
+          [showInputMaterial]="true"
+          [(checkbox)]="dataSearch.checkBoxDate"
+          (onCheckboxChange)="refresh()"
           (onChangeDateRange)="onDateRangeSelection($event)"
         />
       </div>
-    </div>
-
-    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="estado">Estado: </label>
-        <select
-          id="estado"
-          class="form-select"
-          [(ngModel)]="dataSearch.statusMovement"
-          (change)="getMovimientosCaja()"
-        >
-          <option value="">Todos</option>
-          @for (item of estadosMovimiento; track $index) {
-            <option [ngValue]="item.estado">{{ item.descripcion }}</option>
-          }
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-      <div class="d-flex justify-content-start">
-        <span class="form-group pull-left page-size form-inline">
-          <select
-            class="form-select"
-            [(ngModel)]="dataSearch.pageSize"
-            (change)="changePageSize()"
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Documento: </mat-label>
+          <mat-select
+            [(ngModel)]="dataSearch.statusMovement"
+            (selectionChange)="getMovimientosCaja()"
           >
-            @for (item of recordsQuantity; track $index) {
-              <option [ngValue]="item">{{ item }}</option>
+            <mat-option [value]="''">--Todos--</mat-option>
+
+            @for (item of estadosMovimiento; track $index) {
+              <mat-option [value]="item.estado">{{item.descripcion}}</mat-option>
             }
-          </select>
-        </span>
+          </mat-select>
+        </mat-form-field>
       </div>
-    </div>
-    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-      <div class="d-flex justify-content-end">
+      <div class="col d-flex justify-content-end align-items-center">
         <app-theme-button
           variant="secondary"
           icon="refresh"
           matStyle="icon"
           title="Recargar"
           (handleClick)="refresh()"
-        >
-        </app-theme-button>
+        />
       </div>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Op.</th>
-          <th>N°</th>
-          <th>F. Apertura</th>
-          <th>F. Cierre</th>
-          <th>Faltante</th>
-          <th>Sobrante</th>
-          <th>Total</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of movimientosCaja; track $index) {
-          <tr>
-            <td>
-              <button mat-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon> Opciones
-              </button>
+  <app-mat-dynamic-table
+    [tableData]="movimientosCaja()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  />
 
-              <mat-menu #menu="matMenu">
-                @if (cerrarCaja(item.estado)) {
-                  <button mat-menu-item (click)="openModalCashboxClose(item)">
-                    <mat-icon>payments</mat-icon> Cerrar caja
-                  </button>
-                }
+  <ng-template #templateOp let-item="item">
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      @if (cerrarCaja(item.estado)) {
+        <button mat-menu-item (click)="openModalCashboxClose(item)">
+          <mat-icon>payments</mat-icon> Cerrar caja
+        </button>
+      }
 
-                @if (verReporteMovimientoCaja(item.estado)) {
-                  <button mat-menu-item (click)="askToReportType(item)">
-                    <mat-icon>description</mat-icon> Reporte Control Caja
-                  </button>
-                }
+      @if (verReporteMovimientoCaja(item.estado)) {
+        <button mat-menu-item (click)="askToReportType(item)">
+          <mat-icon>description</mat-icon> Reporte Control Caja
+        </button>
+      }
 
-                @if (dataPermisosCaja.reporteTransaccionPendiente) {
-                  <button
-                    mat-menu-item
-                    (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)"
-                  >
-                    <mat-icon>money_off</mat-icon>
-                    Reporte Transacciones pendientes
-                  </button>
-                }
+      @if (dataPermisosCaja.reporteTransaccionPendiente) {
+        <button
+          mat-menu-item
+          (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)"
+        >
+          <mat-icon>money_off</mat-icon>
+          Reporte Transacciones pendientes
+        </button>
+      }
 
-                @if (dataPermisosCaja.reporteDetalleControlCaja) {
-                  <button
-                    mat-menu-item
-                    (click)="openModalReporteFiltroDetalleCaja(item)"
-                  >
-                    <mat-icon>view_list</mat-icon>Reporte Detalle Control Caja
-                  </button>
-                }
+      @if (dataPermisosCaja.reporteDetalleControlCaja) {
+        <button
+          mat-menu-item
+          (click)="openModalReporteFiltroDetalleCaja(item)"
+        >
+          <mat-icon>view_list</mat-icon>Reporte Detalle Control Caja
+        </button>
+      }
 
-                @if (!item.estado) {
-                  <button
-                    mat-menu-item
-                    (click)="openModalDetalleArqureoCaja(item)"
-                  >
-                    <mat-icon>price_check</mat-icon>
-                    Detalle Arqueo Caja
-                  </button>
-                }
+      @if (!item.estado) {
+        <button
+          mat-menu-item
+          (click)="openModalDetalleArqureoCaja(item)"
+        >
+          <mat-icon>price_check</mat-icon>
+          Detalle Arqueo Caja
+        </button>
+      }
 
-                @if (!item.estado) {
-                  <button
-                    mat-menu-item
-                    appSendMailDialog
-                    [data]="getDataSendMail(item)"
-                    [notificationAcontPlus]="true"
-                  >
-                    <mat-icon>mail</mat-icon> Enviar correo
-                  </button>
-                }
-              </mat-menu>
-            </td>
-            <td>{{ $index + 1 }}</td>
-            <td>{{ item.fechaApertura }}</td>
-            <td>{{ item.fechaCierre }}</td>
-            <td>{{ item.faltante }}</td>
-            <td>{{ item.sobrante }}</td>
-            <td>{{ item.totalArqueo }}</td>
-            <td>
-              @if (item.estado) {
-                <span class="label label-success">ABIERTO</span>
-              } @else {
-                <span class="label label-danger">CERRADO</span>
-              }
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="8" class="text-center">No hay registros!</td>
-          </tr>
-        }
-      </tbody>
-      <tfoot>
-        <tr>
-          <td align="center" colspan="8">
-            <ngb-pagination
-              [collectionSize]="totalRecords"
-              [(page)]="dataSearch.pageIndex"
-              [maxSize]="dataSearch.maxSize"
-              [pageSize]="dataSearch.pageSize"
-              [rotate]="true"
-              (pageChange)="pageChanged()"
-              [boundaryLinks]="true"
-            />
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+      @if (!item.estado) {
+        <button
+          mat-menu-item
+          appSendMailDialog
+          [data]="getDataSendMail(item)"
+          [notificationAcontPlus]="true"
+        >
+          <mat-icon>mail</mat-icon> Enviar correo
+        </button>
+      }
+    </mat-menu>
 
-  <ng-template #popContentReporteTransaccionPendiente>
-    <div class="d-grid gap-2 d-md-flex justify-content-center">
-      <app-theme-button
-        variant="danger"
-        icon="picture_as_pdf"
-        text="Pdf"
-        (handleClick)="getReportTransactionPending('pdf')"
-      >
-      </app-theme-button>
-      <app-theme-button
-        variant="success"
-        icon="download"
-        text="Excel"
-        (handleClick)="getReportTransactionPending('excel')"
-      >
-      </app-theme-button>
-    </div>
   </ng-template>
-</div>
-<div class="modal-footer">
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="onModalClose()"
-  >
-  </app-theme-button>
-</div>
+</ng-template>
+
+
+

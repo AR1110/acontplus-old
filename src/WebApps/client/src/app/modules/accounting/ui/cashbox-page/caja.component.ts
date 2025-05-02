@@ -173,13 +173,11 @@ export class CajaComponent {
   }
 
   openModalMovimiento(params: CashboxList) {
-    const modalRef = this.modalSvc.open(ControlCajaModalComponent, {
-      size: 'xl',
-      centered: true
+    const modalRef = this._dialogSvc.open(ControlCajaModalComponent, {
+      data: params || {},
+      size: 'xl'
     });
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
-
+    modalRef.subscribe(result => {
       if (result) {
         this.getCashboxs();
       }

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { EmployeeSearchDto } from '@sale/domain/models/employee.model';
-import { EmployeeService } from '@modules/sale/services/employee.service';
+import { EmployeeService } from '@sale/data/services/employee.service';
 import { Observable, OperatorFunction, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 import {FormsModule} from "@angular/forms";
 import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";

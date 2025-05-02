@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+
+import {Component, inject, signal} from '@angular/core';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -20,29 +21,37 @@ import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
+type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
+type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
 @Component({
   selector: 'app-reception-reports',
-    imports: [
-        FormsModule,
-        SupplierSearchComponent,
-        DateRangeSelectionComponent,
-        UserSearchComponent,
-        BreadcrumbComponent,
-        MatCardContent,
-        MatCard,
-        MatCardFooter,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+    UserSearchComponent,
+    BreadcrumbComponent,
+    ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatCheckbox,
+    MatDivider,
+    MatFormFieldModule,
+    MatSelectModule
+
+  ],
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })
 export class ReceptionReportsComponent {
-  establecimientos: Array<
-    Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
-  > = [];
-  documentTypes: Array<Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>> = [];
-  subcategories: Subcategory[] = [];
+  establecimientos = signal<EstabSelect[]>([])
+  documentTypes = signal<TipoDocSelect[]>([])
+  subcategories= signal<Subcategory[]>([]);
   isSearchSupplierSimple = true;
   dataSearch = {
     codEstab: '',
@@ -79,15 +88,15 @@ export class ReceptionReportsComponent {
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {
       const { establecimientos, documentTypes, subcategories } = response;
-      this.establecimientos = establecimientos;
-      this.documentTypes = documentTypes;
-      this.subcategories = subcategories;
-      if (this.establecimientos.length > 0) {
-        this.dataSearch.codEstab = this.establecimientos[0].codEstab;
+      this.establecimientos.set( establecimientos);
+      this.documentTypes.set(documentTypes);
+      this.subcategories.set(subcategories);
+      if (this.establecimientos().length > 0) {
+        this.dataSearch.codEstab = this.establecimientos()[0].codEstab;
       }
-      if (this.documentTypes.length > 0) {
+      if (this.documentTypes().length > 0) {
         this.dataSearch.codDoc =
-          this.documentTypes.find(
+          this.documentTypes().find(
             (tipoDoc) => tipoDoc.codigoSri === DOC_TYPE_SRI.F,
           )?.codigoSri || '';
       }

@@ -15,20 +15,30 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'app-movimiento-caja-report',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-        UserSearchComponent,
-        MatCardContent,
-        MatCard,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    CompanyCustomerSearchComponent,
+    UserSearchComponent,
+    MatCardContent,
+    MatCard,
+    MatButton,
+    ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatCheckbox,
+    MatDivider
+  ],
   templateUrl: './movimiento-caja-report.component.html',
   styles: ``,
 })
@@ -90,12 +100,6 @@ export class MovimientoCajaReportComponent {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 
-  onEmployeeSelected({ data }: any) {
-    this.dataSearch.employeeId = data.idEmpleado;
-  }
-  emptyInputEmployee() {
-    this.dataSearch.employeeId = 0;
-  }
 
   emptyInputUser() {
     this.dataSearch.userId = 0;

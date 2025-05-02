@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +14,7 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { SALE_CODE_REPORT } from '@modules/sale/enums/sale.enum';
+import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 
@@ -23,12 +23,17 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatDivider} from "@angular/material/divider";
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
   selector: 'app-rentabilidad-page',
   imports: [
     MatFormFieldModule,
     MatSelectModule,
+    MatInputModule,
     FormsModule,
     ReactiveFormsModule,
     BreadcrumbComponent,
@@ -38,15 +43,18 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatCardContent,
     MatCard,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatCheckbox,
+    MatDivider
   ],
   templateUrl: './rentabilidad-page.component.html',
 })
 export class RentabilidadPageComponent {
-  estalecimientos: Array<GroupedEstab> = [];
-  bodegas: Array<GroupedEstabBodega> = [];
-  tarifas: Array<TarifaSelectHtmlOnly> = [];
-  tiposDoc: Array<TipoDoc> = [];
-  subCategorias: Array<GroupedSubFamilia> = [];
+  establecimientos = signal<GroupedEstab[]>([]);
+  bodegas = signal<GroupedEstabBodega[]>([]);
+  tarifas = signal<TarifaSelectHtmlOnly[]>([])
+  tiposDoc = signal<TipoDoc[]>([])
+  subCategorias = signal<GroupedSubFamilia[]>([])
   tiposArticulo = [
     {
       codigo: 'B',
@@ -86,53 +94,48 @@ export class RentabilidadPageComponent {
   private _tokenUseCase = inject(TokenUseCase);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe({
-      next: (response) => {
+    this._productUseCase.getDataReport().subscribe( (response) => {
         let { estabs, tarifas, tiposDoc, subCategorias } = response;
-        this.estalecimientos = estabs;
-        this.tarifas = tarifas;
-        this.tiposDoc = tiposDoc;
-        this.subCategorias = subCategorias;
+        this.establecimientos.set(estabs);
+        this.tarifas.set(tarifas)
+        this.tiposDoc.set(tiposDoc)
+        this.subCategorias.set(subCategorias);
 
-        let dataEstab = this.estalecimientos.find(
+        let dataEstab = this.establecimientos().find(
           (estab) => estab.defaultEstab,
         );
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
-          this.bodegas = dataEstab.bodegas;
-          let dataBodega = this.bodegas.find((bodega) => bodega.defaultBodega);
+          this.bodegas.set(dataEstab.bodegas);
+          let dataBodega = this.bodegas().find((bodega) => bodega.defaultBodega);
           if (dataBodega) {
             this.dataSearch.idBodega = dataBodega.idBodega;
           }
         }
 
         if (this.tarifas.length > 0) {
-          let dataTarifa = this.tarifas.find((t) => t.predeterminada);
+          let dataTarifa = this.tarifas().find((t) => t.predeterminada);
           if (dataTarifa) {
             this.dataSearch.idTarifa = dataTarifa.idTarifa;
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
     });
   }
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.estalecimientos.find(
+      let dataEstab = this.establecimientos().find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
-        this.bodegas = dataEstab.bodegas;
-        let dataBodega = this.bodegas.find((b) => b.defaultBodega);
+        this.bodegas.set(dataEstab.bodegas);
+        let dataBodega = this.bodegas().find((b) => b.defaultBodega);
         if (dataBodega) {
           this.dataSearch.idBodega = dataBodega.idBodega;
         }
       }
     } else {
-      this.bodegas = [];
+      this.bodegas.set([]);
       this.dataSearch.idBodega = 0;
     }
   }

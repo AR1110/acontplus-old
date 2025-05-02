@@ -12,7 +12,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { EmployeeService } from '@sale/services/employee.service';
+import { EmployeeService } from '@sale/data/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';

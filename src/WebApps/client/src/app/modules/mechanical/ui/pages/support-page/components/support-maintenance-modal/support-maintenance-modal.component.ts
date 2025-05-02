@@ -15,7 +15,7 @@ import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail,
 } from '@mechanical/domain/models/support-maintenance.model';
-import { DecimalSale } from '@sale/shared/models/decimal-sale.model';
+import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 import {
   NgbActiveModal,
   NgbPopoverModule,

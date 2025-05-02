@@ -15,7 +15,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
-import { SALE_CODE_REPORT } from '@sale/enums/sale.enum';
+import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';

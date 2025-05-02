@@ -25,7 +25,7 @@ import {
   getCantidadStock,
   mergeProductStock,
 } from '@modules/inventory/utils/product-stock.util';
-import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
+import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 import { orderMaintenanceAdapter } from '@modules/technical-support/adapters/order-maintenance.adapter';
 import {
   ColOrderMaintenance,

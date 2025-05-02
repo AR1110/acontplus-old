@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { NotaEntregaService } from '@modules/sale/services/nota-entrega.service';
+import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
 import { TablaResumenTotalesComponent } from '@shared/components/tabla-resumen-totales/tabla-resumen-totales.component';
 import { finalize } from 'rxjs';
 

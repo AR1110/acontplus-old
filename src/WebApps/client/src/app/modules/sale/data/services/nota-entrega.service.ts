@@ -5,8 +5,8 @@ import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
 
-import { SALE_PATHS } from '../enums/sale.enum';
-import { NotaEntregaAdapter } from '../adapters/nota-entrega.adapter';
+import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
+import { NotaEntregaAdapter } from '../nota-entrega.adapter';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { GroupedEstab } from '@core/models/estab.model';
 

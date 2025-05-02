@@ -18,8 +18,8 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
-import { NotaEntregaDetalleDialogDirective } from '@modules/sale/directives/nota-entrega-detalle-dialog.directive';
-import { NotaEntregaService } from '@modules/sale/services/nota-entrega.service';
+import { NotaEntregaDetalleDialogDirective } from '@sale/ui/directives/nota-entrega-detalle-dialog.directive';
+import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';

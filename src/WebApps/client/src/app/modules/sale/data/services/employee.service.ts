@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 
-import { SALE_PATHS } from "../enums/sale.enum";
+import { SALE_PATHS } from "@sale/domain/enums/sale.enum";
 import { PATHS_API } from "@core/constants/global.constants";
 import { isApiResponse } from "@core/models/api-response";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
