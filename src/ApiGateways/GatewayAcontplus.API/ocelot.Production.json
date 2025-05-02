@@ -1,0 +1,414 @@
+{
+  "GlobalConfiguration": {
+    "RateLimitOptions": {
+      "ClientIdHeader": "X-Client-Id",
+      "ClientWhitelist": [
+        "acontplus-admin",
+        "acontplus-app",
+        "acontplus-demo",
+        "acontplus-erp",
+        "acontplus-invoice",
+        "acontplus-print",
+        "acontplus-restaurant"
+      ],
+      "EnableRateLimiting": true,
+      "httptatusCode": 429,
+      "Limit": 100,
+      "Period": "1s",
+      "PeriodTimespan": 1,
+      "QuotaExceededMessage": "Rate limit exceeded. Please wait and try again."
+    },
+    "RequestIdKey": "OcRequestId"
+  },
+  "Routes": [
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.41.52",
+          "Port": 5000
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post"],
+      "UpstreamPathTemplate": "/gateway/Reports{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5007
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Post"],
+      "UpstreamPathTemplate": "/gateway/Seguridad{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5004
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Articulo{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get"],
+      "UpstreamPathTemplate": "/gateway/Recepcion/Articulo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5006
+        }
+      ],
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/RetencionAts/{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5006
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Consultas/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get"],
+      "UpstreamPathTemplate": "/gateway/Consultas/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5008
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/Inventario{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5004
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/Config{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5005
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5013
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/Venta{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5011
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5014
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/Vet{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5006
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/FactElect{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5003
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/Compra{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5008
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Inventario{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5013
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2/Cliente{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Cliente{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5006
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2/Factura{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Factura{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5006
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Consultas/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Consultas/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5002
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Dashboard{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Dashboard{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5013
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Estadisticas{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Estadisticas{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.41.52",
+          "Port": 5000
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Reporte/Download",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Post"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/Reporte/Download"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5006
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/FactElect{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5004
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/app-mobile/WhatsappMessage{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5002
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
+      "UpstreamPathTemplate": "/gateway/Common{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5012
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/TechnicalSupport{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.10.147",
+          "Port": 5009
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
+    }
+  ]
+}

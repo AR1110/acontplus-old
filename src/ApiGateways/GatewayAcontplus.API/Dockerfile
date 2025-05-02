@@ -5,13 +5,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
-
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG DOTNET_SKIP_POLICY_LOADING=true
 WORKDIR /src
+
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 COPY ["src/ApiGateways/GatewayAcontplus.API/GatewayAcontplus.API.csproj", "src/ApiGateways/GatewayAcontplus.API/"]
@@ -29,4 +29,5 @@ RUN dotnet publish "./GatewayAcontplus.API.csproj" -c $BUILD_CONFIGURATION -o /a
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY src/ApiGateways/GatewayAcontplus.API/ocelot.Production.json /app/ocelot.Production.json
 ENTRYPOINT ["dotnet", "GatewayAcontplus.API.dll"]
