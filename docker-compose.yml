@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: src/ApiGateways/GatewayAcontplus.API/Dockerfile
+    volumes:
+      - ./config/ocelot.json:/app/ocelot.json
 
   barbershop.api:
     image: ${DOCKER_REGISTRY-}barbershopapi
@@ -11,13 +13,11 @@ services:
       context: .
       dockerfile: src/Services/BarberShop/BarberShop.API/Dockerfile
 
-
   common.api:
     image: ${DOCKER_REGISTRY-}commonapi
     build:
       context: .
       dockerfile: src/Services/Common/Common.API/Dockerfile
-
 
   compras.api:
     image: ${DOCKER_REGISTRY-}comprasapi
@@ -25,13 +25,11 @@ services:
       context: .
       dockerfile: src/Services/Compras/Compras.API/Dockerfile
 
-
   configuracion.api:
     image: ${DOCKER_REGISTRY-}configuracionapi
     build:
       context: .
       dockerfile: src/Services/Configuracion/Configuracion.API/Dockerfile
-
 
   contabilidad.api:
     image: ${DOCKER_REGISTRY-}contabilidadapi
@@ -39,13 +37,11 @@ services:
       context: .
       dockerfile: src/Services/Contabilidad/Contabilidad.API/Dockerfile
 
-
   factelect.api:
     image: ${DOCKER_REGISTRY-}factelectapi
     build:
       context: .
       dockerfile: src/Services/Facturacion/FactElect.API/Dockerfile
-
 
   identity.api:
     image: ${DOCKER_REGISTRY-}identityapi
@@ -53,20 +49,17 @@ services:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
 
-
   inventario.api:
     image: ${DOCKER_REGISTRY-}inventarioapi
     build:
       context: .
       dockerfile: src/Services/Inventario/Inventario.API/Dockerfile
 
-
   mechanical.api:
     image: ${DOCKER_REGISTRY-}mechanicalapi
     build:
       context: .
       dockerfile: src/Services/Mechanical/Mechanical.API/Dockerfile
-
 
   restaurant.api:
     image: ${DOCKER_REGISTRY-}restaurantapi
@@ -80,13 +73,11 @@ services:
       context: .
       dockerfile: src/Services/TechnicalSupport/TechnicalSupport.API/Dockerfile
 
-
   ventas.api:
     image: ${DOCKER_REGISTRY-}ventasapi
     build:
       context: .
       dockerfile: src/Services/Ventas/Ventas.API/Dockerfile
-
 
   webui:
     image: ${DOCKER_REGISTRY-}webui
