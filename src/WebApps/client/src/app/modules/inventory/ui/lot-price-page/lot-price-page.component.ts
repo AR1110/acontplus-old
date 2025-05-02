@@ -56,7 +56,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     TabulatorComponent,
     SubCategorySelectMultipleComponent,
     ProductSearchComponent,
-    SupplierSearchComponent, 
+    SupplierSearchComponent,
     ThemeButtonComponent,
     MatIconButton,
     MatDynamicCardComponent,
