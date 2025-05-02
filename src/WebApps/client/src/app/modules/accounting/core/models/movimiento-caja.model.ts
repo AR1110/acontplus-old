@@ -7,13 +7,24 @@ export interface MovimientoCaja {
   valor: number
   observaciones: string
   nroDoc: string
-  estado: string
   subEntidadFinanciera: string
   empleado: string
   caja: string
-  nroIdentificacion: string 
+  nroIdentificacion: string
+
+  nomEstado: string
+  nomSubEntidadFinanciera: string
+  nomEmpleado:string
+  nomCaja: string
+  nomUsuario: string
 }
 
-export interface MovimientoCajaRead extends MovimientoCaja {
+export interface MovimientoCajaList extends MovimientoCaja {
   totalRecords: number
+  index: number
+}
+
+export class ListMovimientoCajaResponse {
+  data: MovimientoCajaList[]=[];
+  totalRecords: number=0;
 }

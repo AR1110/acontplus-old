@@ -5,9 +5,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { MovimientoCajaRead } from '@accounting/core/models/movimiento-caja.model';
 import Swal from 'sweetalert2';
-import { ModalEgresoIngresoComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/modal-egreso-ingreso/modal-egreso-ingreso.component';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
 import { formatDateToString } from '@core/utils/date.util';
 import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
@@ -29,6 +27,8 @@ import {
   EgresoIngresoDialogComponent
 } from "@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
 import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {ListMovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja/list-movimiento-caja.use-case";
+import {MovimientoCajaList} from "@accounting/core/models/movimiento-caja.model";
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -53,33 +53,36 @@ export class EgresoIngresoCajaComponent implements OnInit {
     toDate: formatDateToString(new Date()),
     customerId: 0,
     codEstado: '',
+    enableDateFilter: true
   };
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
+  private $listUseCase = inject(ListMovimientoCajaUseCase)
   $userRoleStateManager = inject(UserRoleStateManager);
 
-  dataSource: MovimientoCajaRead[] = [];
+  dataSource: MovimientoCajaList[] = [];
 
   isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: 'Nro.', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'caja', label: 'Caja', type: 'string' },
+    { key: 'nomCaja', label: 'Caja', type: 'string' },
     { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
     { key: 'nroDoc', label: 'Nro. Doc', type: 'string' },
     {
-      key: 'subEntidadFinanciera',
+      key: 'nomSubEntidadFinanciera',
       label: 'Entidad Financiera',
       type: 'string',
     },
     { key: 'valor', label: 'Valor', type: 'string' },
     { key: 'observaciones', label: 'Obs.', type: 'string' },
-    { key: 'empleado', label: 'Empleado', type: 'string' },
-    { key: 'estado', label: 'Estado', type: 'string' },
+    { key: 'nomEmpleado', label: 'Empleado', type: 'string' },
+    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
@@ -87,10 +90,10 @@ export class EgresoIngresoCajaComponent implements OnInit {
 
   getMovimientosCaja() {
     const params = {
+      checkBoxFecha: this.dataSearch.enableDateFilter,
       codEstab: this.dataSearch.codEstab,
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      checkBoxFecha: true,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       customerId: isValidField(this.dataSearch.customerId),
@@ -101,19 +104,17 @@ export class EgresoIngresoCajaComponent implements OnInit {
     if (this.isLoadingResults()) return;
 
     this.isLoadingResults.set(true);
-    this._movimientoCajaUseCase
-      .getAll(params)
+    this.$listUseCase.execute(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe((response) => {
-        this.dataSource = response || [];
-        this.pagination.update((e) => {
-          return {
-            ...e,
-            totalRecords:
-              this.dataSource.length > 0 ? this.dataSource[0].totalRecords : 0,
-          };
-        });
+      .subscribe(response=>{
+      this.dataSource = response.data;
+      this.pagination.update((e) => {
+        return {
+          ...e,
+          totalRecords: response.totalRecords
+        };
       });
+    })
   }
 
   ngOnInit() {
@@ -162,7 +163,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     });
   }
 
-  getPrint(item: MovimientoCajaRead) {
+  getPrint(item: MovimientoCajaList) {
     const parameters = {
       idDocument: item.idMovimientoCaja,
       idTipoDocumento: item.idTipoDocumento,
@@ -176,7 +177,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     });
   }
 
-  getReport(item: MovimientoCajaRead) {
+  getReport(item: MovimientoCajaList) {
     try {
       const format = 'pdf';
       const dataParms = {
@@ -203,7 +204,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     }
   }
 
-  askToDelete(item: MovimientoCajaRead) {
+  askToDelete(item: MovimientoCajaList) {
     try {
       Swal.fire({
         icon: 'warning',

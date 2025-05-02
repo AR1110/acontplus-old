@@ -1,8 +1,9 @@
 import { ApiResponse } from "@core/models/api-response";
 import { Observable } from "rxjs";
+import {ListMovimientoCajaResponse} from "@accounting/core/models/movimiento-caja.model";
 
 export abstract class MovimientoCajaRepository {
-    abstract getAll<T>(obj:T): Observable<any[]>;
+    abstract getAll<T>(obj:T): Observable<ListMovimientoCajaResponse>;
   abstract getDataFilter(): Observable<{ establecimientos: any[] }>
   abstract getDataForm(): Observable<{
     cajas: any[],

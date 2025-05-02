@@ -65,6 +65,7 @@ BEGIN
 						       END																     as nroIdentificacion
 						      ,UPPER(ca.descripcion)											     as caja
                               ,COUNT(*) OVER()													     as totalRecords
+                              ,us.nombreUsuario
 					    FROM dbo.MovimientoCaja              mc WITH (NOLOCK) 
 					    INNER JOIN dbo.Caja                  ca WITH (NOLOCK) ON ca.idCaja                 = mc.idCaja
 					    INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento        = mc.idTipoDocumento

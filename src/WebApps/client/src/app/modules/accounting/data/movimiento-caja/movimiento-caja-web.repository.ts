@@ -6,6 +6,7 @@ import {map} from "rxjs";
 import {ApiResponse } from "@core/models/api-response";
 import {MovimientoCajaRepository} from "@accounting/core/repositories/movimiento-caja.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
+import {ListMovimientoCajaMapper} from "@accounting/data/movimiento-caja/list-movimiento-caja.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -19,19 +20,12 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository{
  }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({ ...obj, tipo: 1 })
-
+    const json = ListMovimientoCajaMapper.toJson(obj)
     return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`, {
       context: getNoLoader()
     })
       .pipe(
-        map(response => {
-            if (response.code === "1") {
-              let { movimientos } = JSON.parse(response.payload as string)
-              return movimientos;
-            }
-          return []
-        })
+        map(response => ListMovimientoCajaMapper.fromJson(response))
       )
   }
 
