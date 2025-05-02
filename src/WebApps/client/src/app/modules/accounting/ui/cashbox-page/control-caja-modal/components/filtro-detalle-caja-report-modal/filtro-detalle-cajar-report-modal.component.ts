@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, Input} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -19,19 +19,42 @@ import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatTimepickerModule} from "@angular/material/timepicker";
+import {provideNativeDateAdapter} from "@angular/material/core";
+import {MatSlideToggle} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-filtro-detalle-caja-report-modal',
-  imports: [CommonModule, FormsModule, NgbTimepickerModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [CommonModule,
+    FormsModule,
+    NgbTimepickerModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatTimepickerModule,
+    MatIcon,
+    MatButton,
+
+    ThemeButtonComponent,
+    MatCustomDialogComponent, MatSlideToggle
+  ],
   templateUrl: './filtro-detalle-cajar-report-modal.component.html',
+  providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FiltroDetalleCajaReportModal {
-  @Input('params') params = {
+  private dialogRef = inject(MatDialogRef<FiltroDetalleCajaReportModal>);
+  params = inject<{
     id: 0,
     fechaApertura: '',
     fechaCierre: '',
-  };
-  activeModal = inject(NgbActiveModal);
+  }>(MAT_DIALOG_DATA);
+
   dataSearch = {
     idEntidadFinanciera: '',
     codDoc: '',
@@ -41,10 +64,7 @@ export class FiltroDetalleCajaReportModal {
   };
   entidadesFinanciera: Array<EntidadFinanciera> = [];
   tipoDocumentos: Array<TipoDoc> = [];
-  dateRangeOptions = {
-    timePicker: true,
-    format: 'YYYY-MM-DD HH:mm',
-  };
+
   private _controlCajaUseCase = inject(ControlCajaUseCase);
 
   private tS = inject(ToasterService);
@@ -97,11 +117,6 @@ export class FiltroDetalleCajaReportModal {
     }
   }
 
-  // onDateRangeSelection(range: { from: string, to: string }) {
-
-  //   this.dataSearch.fromDate = range.from;
-  //   this.dataSearch.toDate = range.to;
-  // }
 
   getReport(format: 'pdf' | 'excel') {
     try {
@@ -143,5 +158,7 @@ export class FiltroDetalleCajaReportModal {
     }
   }
 
-  protected readonly close = close;
+  close(){
+    this.dialogRef.close()
+  }
 }

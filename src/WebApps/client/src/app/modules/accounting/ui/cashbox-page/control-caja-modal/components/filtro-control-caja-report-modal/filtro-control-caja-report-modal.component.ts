@@ -1,29 +1,30 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import {
-  NgbActiveModal,
-  NgbTimepickerModule,
-} from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-filtro-control-caja-modal-report-modal',
-  imports: [FormsModule, NgbTimepickerModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [FormsModule, ThemeButtonComponent, MatCustomDialogComponent,
+  MatFormFieldModule,
+    MatSelectModule,
+  ],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {
-  @Input('params') params = {
+  private dialogRef = inject(MatDialogRef<FiltroControlCajaReportModal>)
+  params = inject<{
     id: 0,
     enterKey: false,
-  };
-  activeModal = inject(NgbActiveModal);
+  }>(MAT_DIALOG_DATA)
   dataSearch = {
     sortByDefault: 0,
     sortOrder: 'ASC',
@@ -116,5 +117,9 @@ export class FiltroControlCajaReportModal {
       format: this.format,
       isOldVersion: true,
     });
+  }
+
+  close(){
+    this.dialogRef.close()
   }
 }

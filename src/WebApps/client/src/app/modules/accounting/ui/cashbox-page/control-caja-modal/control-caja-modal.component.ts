@@ -41,6 +41,7 @@ import {ColumnDefinition} from "@shared/models/mat-table-models/column-definitio
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-control-caja-modal',
@@ -109,6 +110,7 @@ export class ControlCajaModalComponent {
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
   private _controlCajaUseCase = inject(ControlCajaUseCase);
   private modalSvc = inject(ModalService);
+  private dialogSvc = inject(DialogService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
@@ -496,23 +498,23 @@ export class ControlCajaModalComponent {
 
   // --> Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
-    try {
-      const modalRef = this.modalSvc.openModalCustom(
+       this.dialogSvc.open(
         FiltroDetalleCajaReportModal,
+        {
+          data: params || {},
+        }
       );
-      modalRef.componentInstance.params = params || {};
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   // --> Modal Detalle ArqueoCaja
   openModalDetalleArqureoCaja(params: ControlCaja) {
     try {
-      const modalRef = this.modalSvc.openModalCustom(
+       this.dialogSvc.open(
         DetalleArqueoControlCajaModalComponent,
-      );
-      modalRef.componentInstance.params = params || {};
+        {
+          data: params || {}
+        }
+      )
     } catch (error) {
       console.log(error);
     }

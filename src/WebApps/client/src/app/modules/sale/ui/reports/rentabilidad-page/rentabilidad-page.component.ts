@@ -21,7 +21,6 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { formatDateToString } from '@core/utils/date.util';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
@@ -40,8 +39,6 @@ import {MatInputModule} from "@angular/material/input";
     ProductSearchComponent,
     UserSearchComponent,
     DateRangeSelectionComponent,
-    MatCardContent,
-    MatCard,
     ThemeButtonComponent,
     MatDynamicCardComponent,
     MatCheckbox,

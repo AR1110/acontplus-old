@@ -1,56 +1,29 @@
-<div class="modal-header">
-  <h4 class="modal-title">Detalle Arqueo Caja</h4>
-  <br />
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('Cross click')"
-  ></button>
-</div>
-<div class="modal-body">
-  <span> fecha Cierre: {{ this.params.fechaCierre }}</span>
-  <div class="row">
-    <table class="table">
-      <thead>
-        <tr class="text-center">
-          <th scope="col">Descripcion</th>
-          <th scope="col">Cantidad</th>
-          <th scope="col">Valor</th>
-          <th scope="col">Total</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        @for (item of arqueoCajaDetalle; track $index) {
-          <tr class="text-center">
-            <td>{{ item.descripcion }}</td>
-            <td>{{ item.cantidad }}</td>
-            <td>{{ item.valor }}</td>
-            <td>{{ item.total }}</td>
-          </tr>
-        }
-      </tbody>
-
-      <tfoot>
-        <tr class="text-center">
-          <td colspan="3">Total</td>
-          <td>${{ total }}</td>
-        </tr>
-      </tfoot>
-    </table>
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [title]="'Detalle Arqueo Caja'"
+  (close)="close()"
+/>
+<ng-template #body>
+  <div class="vstack gap-2">
+    <div class="hstack gap-2">
+      <strong>Fecha Cierre:</strong>{{ this.params.fechaCierre }}
+    </div>
+    <div class="hstack gap-2">
+      <strong>Total:</strong>{{total}}
+    </div>
+    <app-theme-button
+      [variant]="'success'"
+      [text]="'Descargar'"
+      [icon]="'download'"
+      (handleClick)="exportData()"
+    />
   </div>
-</div>
-<div class="modal-footer">
-  <button type="button" mat-raised-button (click)="exportData()">
-    <mat-icon>download</mat-icon> Exportar
-  </button>
 
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="activeModal.close('Close click')"
-  >
-  </app-theme-button>
-</div>
+  <app-mat-dynamic-table
+    [tableData]="arqueoCajaDetalle()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+  />
+</ng-template>
+
+
