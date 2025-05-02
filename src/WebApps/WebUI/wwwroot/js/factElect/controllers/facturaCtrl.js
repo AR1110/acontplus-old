@@ -2028,7 +2028,7 @@
             facturaSvc
                 .getDataForm()
                 .then((response) => {
-                    $scope.tiemposCredito = response.tiemposCredito;
+                    $scope.tiemposCredito = response.tiemposCredito; 
                 })
         };
 

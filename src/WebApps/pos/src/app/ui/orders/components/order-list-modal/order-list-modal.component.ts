@@ -6,6 +6,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { TableOrdersComponent } from '@ui/orders/components/table-orders/table-orders.component';
 import {OrderStore} from "@ui/store/order.store";
+import {IconFilterMinusComponent} from "@ui/components/icons/icon-filter-minus/icon-filter-minus.component";
+import {IconFilterPlusComponent} from "@ui/components/icons/icon-filter-plus/icon-filter-plus.component";
 
 @Component({
   selector: 'app-order-list-modal',
@@ -14,6 +16,8 @@ import {OrderStore} from "@ui/store/order.store";
     MatIconModule,
     CustomContainerDialogComponent,
     TableOrdersComponent,
+    IconFilterMinusComponent,
+    IconFilterPlusComponent,
   ],
   templateUrl: './order-list-modal.component.html',
 })

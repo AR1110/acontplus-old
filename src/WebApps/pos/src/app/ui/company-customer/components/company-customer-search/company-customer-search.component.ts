@@ -6,9 +6,9 @@ import { DialogService } from '@domain/services/dialog.service';
 import { ToasterService } from '@domain/services/toaster.service';
 import { CdkOverlayOrigin, FlexibleConnectedPositionStrategy, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { AsyncPipe } from "@angular/common";
-import { computed, SimpleChanges, ViewChild } from '@angular/core';
+import {computed, SimpleChanges, ViewChild} from '@angular/core';
 import { Component, inject, input, model, output, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import {FormControl, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from '@angular/material/card';
@@ -26,24 +26,27 @@ import { ResponsiveService } from '@domain/services/responsive.service';
 import {  MatMenuModule } from '@angular/material/menu';
 import {CompanyCustomerGetIdUseCase} from "@domain/use-cases/company-customer/company-customer-get-id.use-case";
 import {CompanyCustomerSearchUseCase} from "@domain/use-cases/company-customer/company-customer-search.use-case";
+import {MatCheckbox} from "@angular/material/checkbox";
 
 @Component({
     selector: 'app-company-customer-search',
-    imports: [
-        ReactiveFormsModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        MatIconModule,
-        MatFormFieldModule,
-        AsyncPipe,
-        MatButtonModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        MatCardModule,
-        MatMenuModule,
-        OverlayModule,
-        ActionCompanyCustomerAddEditModalDirective,
-    ],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatIconModule,
+    MatFormFieldModule,
+    AsyncPipe,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatCardModule,
+    MatMenuModule,
+    OverlayModule,
+    ActionCompanyCustomerAddEditModalDirective,
+    MatCheckbox,
+  ],
     templateUrl: './company-customer-search.component.html',
     styles: `
   .loading-option {
@@ -74,6 +77,9 @@ export class CompanyCustomerSearchComponent {
   private tS = inject(ToasterService);
   private dialogSvc = inject(DialogService)
 
+   enableFilter = input(false);
+  enableFilterChange = output<any>()
+
   isSimple = input(false);
   isAdvanced = input(false)
   isApplyGetId = input(false)
@@ -99,6 +105,10 @@ export class CompanyCustomerSearchComponent {
   private overlay = inject(Overlay)
 
   dataDetail = {} as any;
+
+  emitFilterChange($event:any){
+    this.enableFilterChange.emit($event.checked);
+  }
 
   ngOnInit() {
     this.filteredCustomers = this.control.valueChanges.pipe(

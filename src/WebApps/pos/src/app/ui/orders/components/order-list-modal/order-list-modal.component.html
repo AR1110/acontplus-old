@@ -10,15 +10,16 @@
   <div class="d-grid gap-2">
     <div class="text-end">
       <button mat-icon-button (click)="$orderStore.handleChangeMoreFilter()">
-        <mat-icon>filter_list</mat-icon>
+          @if($orderStore.moreFilter()){
+            <app-icon-filter-minus/>
+          }@else{
+            <app-icon-filter-plus/>
+          }
+      </button>
+      <button mat-icon-button (click)="$orderStore.refresh()">
+        <mat-icon>refresh</mat-icon>
       </button>
     </div>
-
-  <!--  <app-order-list-->
-  <!--    [dataSearch]="dataSearch"-->
-  <!--    (closeDialog)="closeDialog()"-->
-  <!--    [isComingOfPos]="true"-->
-  <!--     />-->
     <app-table-orders
       (closeDialog)="closeDialog()"
       [isComingOfPos]="true"

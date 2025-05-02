@@ -1867,6 +1867,15 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
     }
 
+    $scope.refreshMedida = async function () {
+        try {  
+            const { medidas } = await articuloSvc.getDataForForm();
+            $scope.medidas = medidas; 
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     $scope.save = function () {
         if (!($scope.data.idArticulo > 0)) {
             tS.toastr('warning', "Seleccione el Articulo");

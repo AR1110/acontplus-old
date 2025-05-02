@@ -136,6 +136,7 @@ export class GetStatsOrderResponse {
 
 export class DataSearchOrder {
   enableDateFilter = true;
+  enableCustomerFilter = false;
   userId = 0;
   tableId = 0;
   startDate = formatDateToString(new Date());

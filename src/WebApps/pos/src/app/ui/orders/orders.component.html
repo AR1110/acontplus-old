@@ -8,8 +8,17 @@
             <mat-icon>add</mat-icon>
           </button>
         }
+
         <button mat-icon-button (click)="$orderStore.handleChangeMoreFilter()">
-          <mat-icon>filter_list</mat-icon>
+          @if($orderStore.moreFilter()){
+            <app-icon-filter-minus/>
+          }@else{
+          <app-icon-filter-plus/>
+          }
+        </button>
+
+        <button mat-icon-button (click)="$orderStore.refresh()">
+          <mat-icon>refresh</mat-icon>
         </button>
       </div>
     </mat-card-title-group>

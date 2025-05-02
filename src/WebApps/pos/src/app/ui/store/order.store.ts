@@ -16,7 +16,7 @@ import {getValidId} from "@domain/utils/utils";
 import {Pagination} from "@domain/models/pagination.model";
 import {LayoutStore} from "@ui/store/layout.store";
 import {STATUS_ORDER} from "@domain/enums/main.enum";
-import {finalize} from "rxjs";
+import {ToasterService} from "acontplus-utils";
 
 
 export interface OrderState {
@@ -47,7 +47,7 @@ export const OrderStore = signalStore(
 
   })),
 
-  withMethods((store, $listUseCase = inject(ListOrderUseCase), $layoutStore = inject(LayoutStore)) => ({
+  withMethods((store, $listUseCase = inject(ListOrderUseCase), $layoutStore = inject(LayoutStore), _tS = inject(ToasterService)) => ({
 
     setPropDataSearch<K extends keyof DataSearchOrder>(
       key: K,
@@ -76,6 +76,11 @@ export const OrderStore = signalStore(
       this.getList()
     },
 
+    emitCustomerFilterChange(enableCustomerFilter: boolean){
+      this.setPropDataSearch("enableCustomerFilter", enableCustomerFilter);
+      this.getList()
+    },
+
     refresh(){
       this.getList()
     },
@@ -86,15 +91,23 @@ export const OrderStore = signalStore(
         PageSize.create(store.pagination().pageSize)
       );
 
-      const query = pagination.toQuery();
+      if(store.dataSearch.enableCustomerFilter() && !getValidId(store.dataSearch.customerCompanyId())){
+        _tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el cliente'
+        })
+        throw new Error("Seleccione el cliente")
+      }
 
+      const query = pagination.toQuery();
+      const customerCompanyId = store.dataSearch.enableCustomerFilter() ? store.dataSearch.customerCompanyId: null;
       return {
         isSearchDate: store.dataSearch.enableDateFilter(),
         estabId: getValidId($layoutStore.establecimientoId()),
         puntoEmisionId: getValidId($layoutStore.puntoEmisionId()),
         startDate: store.dataSearch.startDate(),
         endDate: store.dataSearch.endDate(),
-        customerCompanyId: getValidId(store.dataSearch.customerCompanyId()),
+        customerCompanyId,
         tableId: getValidId(store.dataSearch.tableId()),
         userId: getValidId(store.dataSearch.userId()),
         pageIndex: query.page,
@@ -144,9 +157,11 @@ export const OrderStore = signalStore(
       this.setPropState("moreFilter", !store.moreFilter())
       if(store.moreFilter()){
         this.setPropState("oldTableId", store.dataSearch.tableId())
+        this.setPropDataSearch("enableCustomerFilter", true)
         this.setPropDataSearch("tableId", 0)
       }else{
         this.setPropDataSearch("tableId", store.oldTableId());
+        this.setPropDataSearch("enableCustomerFilter", false)
       }
       this.refresh()
     },

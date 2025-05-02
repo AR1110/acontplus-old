@@ -92,6 +92,8 @@
               [isSimple]="true"
               (onSelect)="onSelectCustomer($event)"
               (clearInput)="clearCustomer()"
+              [enableFilter]="$orderStore.dataSearch.enableCustomerFilter()"
+              (enableFilterChange)="$orderStore.emitCustomerFilterChange($event)"
             />
           </div>
         </div>

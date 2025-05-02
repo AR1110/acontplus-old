@@ -8,16 +8,20 @@ import {ROUTES_PATH} from '@domain/enums/main.enum';
 import {PermissionStore} from "@ui/store/permission.store";
 import {TableOrdersComponent} from "@ui/orders/components/table-orders/table-orders.component";
 import {OrderStore} from "@ui/store/order.store";
+import {IconFilterMinusComponent} from "@ui/components/icons/icon-filter-minus/icon-filter-minus.component";
+import {IconFilterPlusComponent} from "@ui/components/icons/icon-filter-plus/icon-filter-plus.component";
 
 @Component({
     selector: 'app-orders',
-    imports: [
-        MatCardModule,
-        MatButtonModule,
-        MatIconModule,
-        OrderListComponent,
-      TableOrdersComponent
-    ],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    OrderListComponent,
+    TableOrdersComponent,
+    IconFilterMinusComponent,
+    IconFilterPlusComponent
+  ],
     templateUrl: './orders.component.html',
     styleUrl: './orders.component.scss'
 })

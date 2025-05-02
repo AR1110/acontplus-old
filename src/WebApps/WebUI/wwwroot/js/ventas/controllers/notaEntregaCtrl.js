@@ -29,8 +29,7 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        nombreModalVenta = $injector.get('nombreModalVenta');
-        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+        nombreModalVenta = $injector.get('nombreModalVenta'); 
 
         const nombreModalCommon = $injector.get('nombreModalCommon');
         const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
@@ -1489,6 +1488,11 @@
             })
         }
 
+        $scope.getAllTiempoCredito = function(){
+            notaEntregaSvc.getDataForm().then(response => {
+                $scope.tiemposCredito = response.tiemposCredito;
+            })
+        }
 
 
 

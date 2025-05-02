@@ -90,6 +90,12 @@
     [formControl]="control"
     [matAutocomplete]="auto"
   />
+  <ng-container matSuffix>
+    <mat-checkbox [ngModel]="enableFilter"
+                  (change)="emitFilterChange($event)"
+                  (click)="$event.stopPropagation()"
+    ></mat-checkbox>
+  </ng-container>
 </mat-form-field>
 } @if(isAdvanced() && trigger && id() > 0) {
 <ng-template
