@@ -4,7 +4,6 @@ import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
-import { AnticipoMapper } from '@accounting/data/anticipo/anticipo.mapper';
 import { CustomerRepository } from '@customer/core/repositories/customer.repository';
 
 @Injectable({
@@ -27,9 +26,7 @@ export class CustomerWebRepository extends CustomerRepository {
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         if (response.code === '1') {
-          return AnticipoMapper.fromApiGetAll(
-            JSON.parse(response.payload as string),
-          );
+
         }
         return [];
       }),

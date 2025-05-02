@@ -5,8 +5,8 @@ import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
 import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
-import {AnticipoMapper} from "@accounting/data/anticipo/anticipo.mapper";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
+import {ListAnticipoMapper} from "@accounting/data/anticipo/list-anticipo.mapper";
 
 
 @Injectable({
@@ -19,21 +19,12 @@ export class AnticipoWebRepository implements AnticipoRepository{
 
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
-      tipo: 1,
-      ...obj
-    })
-
+    const json = ListAnticipoMapper.toJson(obj);
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`, {
       context: getNoLoader()
     })
       .pipe(
-        map(response => {
-            if (response.code === "1") {
-              return AnticipoMapper.fromApiGetAll(JSON.parse(response.payload as string));
-            }
-          return []
-        })
+        map(response => ListAnticipoMapper.fromJson(response))
       )
   }
 

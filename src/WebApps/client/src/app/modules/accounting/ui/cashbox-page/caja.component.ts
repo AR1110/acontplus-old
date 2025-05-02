@@ -5,7 +5,7 @@ import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { getPermisosLocal } from '@core/utils/utils';
-import { Cashbox } from '@accounting/core/models/cashbox.model';
+import {CashboxList} from '@accounting/core/models/cashbox.model';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { ActionAperturaCajaDirective } from '@shared/directives/permission/action-apertura-caja.directive';
 import { ActionDeleteDirective } from '@shared/directives/permission/action-delete.directive';
@@ -25,6 +25,7 @@ import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
 import {ControlCajaModalComponent} from "@accounting/ui/cashbox-page/control-caja-modal/control-caja-modal.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
     selector: 'app-cashbox',
@@ -49,10 +50,11 @@ export class CajaComponent {
   private modalSvc = inject(ModalService);
   private tS = inject(ToasterService);
   private _cajaUseCase = inject(CajaUseCase)
+  private _dialogSvc = inject(DialogService)
 
   acciones: any = {}
 
-  cashboxs: Array<Cashbox> = [];
+  cashboxs = signal<CashboxList[]>([]);
 
   dataSearch = {
     pageIndex: 1,
@@ -64,7 +66,6 @@ export class CajaComponent {
   page = 1;
 
   totalRecords = 0;
-  recordsQuantity = [10, 25, 50, 100, 200, 500];
 
   columnsDefs: ColumnDefinition[] = [
 
@@ -91,11 +92,11 @@ export class CajaComponent {
     }
 
     this._cajaUseCase.getAll(params).subscribe(response=>{
-        this.cashboxs = response;
+        this.cashboxs.set(response);
         this.pagination.update(item=>{
           return {
             ...item,
-            totalRecords: this.cashboxs.length > 0 ? this.cashboxs[0]?.totalRecords : 0
+            totalRecords: this.cashboxs.length > 0 ? this.cashboxs()[0]?.totalRecords : 0
           }
         })
     })
@@ -113,25 +114,16 @@ export class CajaComponent {
     }
   }
 
-  openModalAddUpdate(params?: Cashbox) {
-    const modalRef = this.modalSvc.openModalCustom(CajaModalComponent);
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
+  openModalAddUpdate(params?: CashboxList) {
+    const modalRef = this._dialogSvc.open(CajaModalComponent, {
+      data: structuredClone(params) || {}
+    });
+    modalRef.subscribe(result => {
 
-      if (typeof result === 'object') {
+      if (result && typeof result === 'object') {
         this.getCashboxs();
       }
     })
-  }
-
-
-  pageChanged(): void {
-    this.getCashboxs();
-  }
-
-  changePageSize(): void {
-    this.dataSearch.pageIndex = 1;
-    this.getCashboxs();
   }
 
 
@@ -147,25 +139,20 @@ export class CajaComponent {
         allowOutsideClick: false
       }).then(result => {
         if (result.isConfirmed) {
-          this._cajaUseCase.delete(id).subscribe({
-            next: (response) => {
-
-                if (response.code === "0") {
-                  this.tS.toastr({
-                    type: 'warning',
-                    message: response.message
-                  })
-                }
-                if (response.code === "1") {
-                  this.tS.toastr({
-                    type: 'success',
-                    message: response.message
-                  })
-                  this.getCashboxs();
-                }
-            }, error(err) {
-              console.log(err)
-            },
+          this._cajaUseCase.delete(id).subscribe((response) => {
+            if (response.code === "0") {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message
+              })
+            }
+            if (response.code === "1") {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message
+              })
+              this.getCashboxs();
+            }
           })
         }
       })
@@ -174,18 +161,18 @@ export class CajaComponent {
     }
   }
 
-  openModalAperturar(params: Cashbox) {
-    const modalRef = this.modalSvc.openModalCustom(AperturaCajaModalComponent);
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
-
-      if (typeof result === 'object') {
+  openModalAperturar(params: CashboxList) {
+    const modalRef = this._dialogSvc.open(AperturaCajaModalComponent, {
+      data: params || {}
+    });
+    modalRef.subscribe(result=>{
+      if (result && typeof result === 'object') {
         this.getCashboxs();
       }
     })
   }
 
-  openModalMovimiento(params: Cashbox) {
+  openModalMovimiento(params: CashboxList) {
     const modalRef = this.modalSvc.open(ControlCajaModalComponent, {
       size: 'xl',
       centered: true

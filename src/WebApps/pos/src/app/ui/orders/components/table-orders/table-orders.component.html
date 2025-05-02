@@ -3,12 +3,12 @@
     class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1  "
   >
     <div class="col">
-      @if(moreFilter()){
+      @if($orderStore.moreFilter()){
         <mat-form-field class="w-100">
           <mat-label>Mesa</mat-label>
           <mat-select
-            [(ngModel)]="dataSearch.tableId"
-            (selectionChange)="refresh()"
+            [ngModel]="$orderStore.dataSearch.tableId()"
+            (selectionChange)="selectionChangeTable($event)"
           >
             <mat-option [value]="0">-- Todos --</mat-option>
             @for (group of rooms(); track $index) {
@@ -26,8 +26,8 @@
       <mat-form-field class="w-100">
         <mat-label>Sala/Piso</mat-label>
         <mat-select
-          [(ngModel)]="dataSearch.roomId"
-          (selectionChange)="handleFloorChange()"
+          [ngModel]="$orderStore.dataSearch.roomId()"
+          (selectionChange)="handleFloorChange($event)"
         >
           @for (item of rooms(); track $index) {
           <mat-option [value]="item.roomId">{{ item.name }}</mat-option>
@@ -37,13 +37,16 @@
       }
     </div>
     <div class="col">
-      <app-date-range-selection (onChangeDateRange)="onChangeDateRange($event)" />
+      <app-date-range-selection
+        [enableDateFilter]="$orderStore.dataSearch.enableDateFilter()"
+        (enableDateFilterChange)="$orderStore.emitDateFilterChange($event)"
+        (onChangeDateRange)="onChangeDateRange($event)" />
 
     </div>
     <div class="col">
       <mat-form-field class="w-100">
         <mat-label>Usuario</mat-label>
-        <mat-select [(ngModel)]="dataSearch.userId" (selectionChange)="refresh()">
+        <mat-select [ngModel]="$orderStore.dataSearch.userId()" (selectionChange)="selectionChangeUser($event)">
           <mat-option [value]="0">-- Todos --</mat-option>
           @for(item of users;track $index){
             <mat-option [value]="item.idUsuario">{{
@@ -56,7 +59,7 @@
     <div class="col">
       <mat-form-field class="w-100">
         <mat-label>Estado</mat-label>
-        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="selectionChangeStatusOrder()">
+        <mat-select [ngModel]="$orderStore.dataSearch.selectedStatus()" (selectionChange)="selectionChangeStatusOrder($event)">
           @for (item of statusOrder(); track $index) {
             <mat-option  [value] ="item.code">{{item.description}}</mat-option>
 
@@ -68,7 +71,7 @@
 
   </div>
 
-  @if(moreFilter()){
+  @if($orderStore.moreFilter()){
     <div
       class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1  "
     >
@@ -77,7 +80,7 @@
           <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-5 col-sm-12 col-12">
             <mat-form-field class="w-100">
               <mat-label>Opción Cliente</mat-label>
-              <mat-select [(ngModel)]="dataSearch.typeSearchCustomer" (selectionChange)="onChangeTypeSearchCustomer()">
+              <mat-select [ngModel]="$orderStore.dataSearch.typeSearchCustomer()" (selectionChange)="onChangeTypeSearchCustomer($event)">
                 <mat-option  value ="OR">Pedido</mat-option>
                 <mat-option  value ="DOC">Documento</mat-option>
 
@@ -97,14 +100,14 @@
   }
 
   <div>
-    @if(tables().length>0 && !moreFilter()){
+    @if(tables().length>0 && !$orderStore.moreFilter()){
       <div class="pos-tables-container">
         <div class="pos-tables">
           @for (table of tables(); track $index) {
             <div
               class="pos-table"
               [ngClass]="{
-          'pos-table--active': dataSearch.tableId === table.id
+          'pos-table--active': $orderStore.dataSearch.tableId() === table.id
         }"
               (click)="selectedIndexChange($index)"
             >
@@ -120,7 +123,7 @@
 
 
       <div class="table-order-container">
-        @for (item of dataSource(); track $index){
+        @for (item of $orderStore.orders(); track $index){
           <mat-card   appearance="outlined">
             <mat-card-header>
               <div mat-card-avatar >
@@ -185,7 +188,7 @@
               >
                 <mat-icon>more_vert</mat-icon>
               </button>
-              @if(isPending()){
+              @if($orderStore.isPending()){
                 <button
                   mat-icon-button
                   (click)="openOrderDivideDialog(item)"
@@ -223,12 +226,12 @@
               </button>
 
               <mat-menu #menu="matMenu">
-                @if($permissionStore.actions().editar && isPending()){
+                @if($permissionStore.actions().editar && $orderStore.isPending()){
                   <button mat-menu-item (click)="onEdit(item)" >
                     <mat-icon>edit</mat-icon>
                     <span>Editar</span>
                   </button>
-                } @if($permissionStore.actions().anular && isPending()){
+                } @if($permissionStore.actions().anular && $orderStore.isPending()){
                 <button mat-menu-item (click)="askToAnul(item)" >
                   <mat-icon>delete</mat-icon>
                   <span>Anular</span>
@@ -259,11 +262,10 @@
       </div>
 
 
-      @if(dataSource().length < pagination().totalRecords){
+      @if($orderStore.orders().length < $orderStore.pagination().totalRecords){
         <app-load-more
           [size]="'large'"
-          [loading]="loading()"
-          (loadMore)="onLoadMore()"
+          (loadMore)="$orderStore.onLoadMore()"
         />
       }
   </div>

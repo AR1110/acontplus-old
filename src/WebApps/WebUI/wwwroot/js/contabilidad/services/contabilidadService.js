@@ -1671,27 +1671,27 @@
                     let { cuotas, cuotasOriginal, ...documento } = x;
                     let cuotasCalculadas = cuotas.map(cuota => {
                         // Inicialización de variables
-                        let interesPorMoraActual = 0;
-                        let diasMoraActual = 0;
-                        let interesActual = 0;
+                        let interesPorMoraActual = cuota.interes;
+                        let diasMoraActual = cuota.diasMora;
+                        let interesActual = cuota.interes ;
                         let saldoTotalActual = cuota.saldo;
 
 
                         // Calcular interés y mora si hay días de mora
-                        if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
-                            // Calcular días de mora 
-                            diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
+                        // if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
+                            
+                        //     diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
 
-                            if (diasMoraActual > 0) {
+                        //     if (diasMoraActual > 0) {
 
-                                interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
-                                interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
-                                saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
+                        //         interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
+                        //         interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
+                        //         saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
 
-                            } else {
-                                diasMoraActual = 0;
-                            }
-                        }
+                        //     } else {
+                        //         diasMoraActual = 0;
+                        //     }
+                        // }
 
                         return {
                             idCuotaPorCobrar: cuota.idCuotaPorCobrar,
@@ -1793,13 +1793,13 @@
                         })
                         return
                     }
-                    if (!fS.isValidField(data.nro)) {
-                        tS.toastr({
-                            type: 'warning',
-                            message: 'Ingrese el Número'
-                        })
-                        return
-                    }
+                    // if (!fS.isValidField(data.nro)) {
+                    //     tS.toastr({
+                    //         type: 'warning',
+                    //         message: 'Ingrese el Número'
+                    //     })
+                    //     return
+                    // }
                 }
 
                 // =================== CHEQUES  =================================== //

@@ -1,63 +1,37 @@
-<form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Apertura Caja</h4>
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="onModalClose()"
-    ></button>
-  </div>
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="'Apertura Caja'"
+  (close)="close()"
+/>
+<ng-template #body>
+  <form autocomplete="off" [formGroup]="dataForm" id="formData" (ngSubmit)="save()">
+    <div class="d-grid gap-2">
+      <mat-form-field class="w-100">
+        <mat-label>Entidad Financiera</mat-label>
+        <mat-select formControlName="idEntidadFinanciera">
+          @for (item of entidadesFinanciera; track $index) {
+            <mat-option [value]="item.idEntidadFinanciera">{{item.descripcion}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-  <div class="modal-body">
-    <div class="form-group">
-      <label for="entidadesFinanciera"
-        >Entidad Financiera <span class="text-danger">*</span>
-      </label>
-      <select
-        name="entidadesFinanciera"
-        id="entidadesFinanciera"
-        class="form-select form-control-border"
-        formControlName="idEntidadFinanciera"
-      >
-        @for (item of entidadesFinanciera; track $index) {
-          <option [ngValue]="item.idEntidadFinanciera">
-            {{ item.descripcion }}
-          </option>
-        }
-      </select>
+      <mat-form-field class="w-100">
+        <mat-label>Valor</mat-label>
+        <input type="number" matInput formControlName="entrada">
+      </mat-form-field>
     </div>
 
-    <div class="form-group">
-      <label for="concepto">Concepto <span class="text-danger">*</span></label>
-      <input
-        id="concepto"
-        class="form-control border-select"
-        touppercase
-        type="text"
-        formControlName="concepto"
-      />
-    </div>
-    <div class="form-group">
-      <label for="concepto">Valor <span class="text-danger">*</span></label>
-      <input
-        class="form-control border-select"
-        decimal
-        type="number"
-        formControlName="entrada"
-      />
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="submit" mat-raised-button [disabled]="!dataForm.valid">
-      <mat-icon>save</mat-icon> Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+  </form>
+
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+  [variant]="'success'"
+  [type]="'submit'"
+  [form]="'formData'"
+  [disabled]="!dataForm.valid"
+  [text]="'Guardar'"
+  [icon]="'save'"
+  />
+</ng-template>

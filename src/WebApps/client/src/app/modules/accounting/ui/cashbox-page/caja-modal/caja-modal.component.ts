@@ -1,39 +1,50 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { Turno } from '@accounting/core/models/turno.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import { CajaUseCase } from '@accounting/core/use-cases/caja.use-case';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatRadioModule} from "@angular/material/radio";
 
 @Component({
   selector: 'app-caja-modal',
-    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+    imports: [ReactiveFormsModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+      MatRadioModule,
+      MatIcon, MatButton, ThemeButtonComponent,
+    MatCustomDialogComponent
+
+    ],
   templateUrl: './caja-modal.component.html',
-  styleUrl: './caja-modal.component.scss',
 })
 export class CajaModalComponent {
-  private activeModal = inject(NgbActiveModal);
+  private _dialogRef = inject(MatDialogRef<CajaModalComponent>)
   private _cajaUseCase = inject(CajaUseCase);
 
   private tS = inject(ToasterService);
-
-  @Input() params = {
+  readonly params = inject< {
     idCaja: 0,
     descripcion: '',
     idUsuario: 0,
     idTurno: 0,
-  };
+}>(MAT_DIALOG_DATA);
+
 
   titleModal = 'Nueva Caja';
   btnIcon = 'save';
@@ -83,7 +94,7 @@ export class CajaModalComponent {
               type: 'error',
               message: err,
             });
-            this.activeModal.close();
+            this._dialogRef.close();
           },
         });
       }
@@ -114,7 +125,6 @@ export class CajaModalComponent {
         this._cajaUseCase
           .update(data.idCaja, paramsToApi)
           .subscribe((response) => {
-            if (isApiResponse(response)) {
               if (response.code === '0') {
                 this.tS.toastr({
                   type: 'warning',
@@ -126,13 +136,11 @@ export class CajaModalComponent {
                   type: 'success',
                   message: response.message,
                 });
-                this.activeModal.close(response);
+                this._dialogRef.close(response);
               }
-            }
           });
       } else if (!(data.idCaja && data.idCaja > 0)) {
         this._cajaUseCase.create(paramsToApi).subscribe((response) => {
-          if (isApiResponse(response)) {
             if (response.code === '0') {
               this.tS.toastr({
                 type: 'warning',
@@ -144,9 +152,8 @@ export class CajaModalComponent {
                 type: 'success',
                 message: response.message,
               });
-              this.activeModal.close(response);
+              this._dialogRef.close(response);
             }
-          }
         });
       }
     } catch (error) {
@@ -154,7 +161,7 @@ export class CajaModalComponent {
     }
   }
 
-  onModalClose() {
-    this.activeModal.close();
+  close() {
+    this._dialogRef.close();
   }
 }

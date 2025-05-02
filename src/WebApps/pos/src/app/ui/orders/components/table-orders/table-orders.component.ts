@@ -1,13 +1,10 @@
 import {
   Component,
-  computed,
   inject,
   input,
-  Input,
   model,
   output,
   signal,
-  OnInit,
 } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -25,17 +22,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { OrderList } from '@domain/models/order.model';
 import { CODE_REPORT, DOC_TYPE, STATUS_ORDER } from '@domain/enums/main.enum';
 import { DateRangeSelectionComponent } from '@ui/components/date-range-selection/date-range-selection.component';
-import { ListOrderUseCase } from '@domain/use-cases/order/list-order.use-case';
 import { getValidId } from '@domain/utils/utils';
-import { Pagination } from '@domain/models/pagination.model';
-import { PageNumber } from '@domain/value-objects/page-number.vo';
-import { PageSize } from '@domain/value-objects/page-size.vo';
-import { PaginationParams } from '@domain/value-objects/pagination-params';
 import { MatCardModule } from '@angular/material/card';
 import { IconUserComponent } from '@ui/components/icons/icon-user/icon-user.component';
 import { IconTablerShoppingCartDiscountComponent } from '@ui/components/icons/icon-tabler-shopping-cart-discount/icon-tabler-shopping-cart-discount.component';
 import { LoadMoreComponent } from '@ui/pos-sale/load-more/load-more.component';
-import { finalize } from 'rxjs';
 import { CompanyCustomerSearchComponent } from '@ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { UserSelectHtmlOnly } from '@domain/models/user.model';
 import { OrderDivideModalComponent } from '@ui/orders/components/order-divide-modal/order-divide-modal.component';
@@ -52,6 +43,7 @@ import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {BottomSheetDocsComponent} from "@ui/orders/components/bottom-sheet-docs/bottom-sheet-docs.component";
 import {LayoutStore} from "@ui/store/layout.store";
 import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-config.use-case";
+import {OrderStore} from "@ui/store/order.store";
 
 @Component({
   selector: 'app-table-orders',
@@ -78,9 +70,8 @@ import {GetFormDataConfigUseCase} from "@domain/use-cases/config/get-form-data-c
   templateUrl: './table-orders.component.html',
   styleUrl: './table-orders.component.scss',
 })
-export class TableOrdersComponent implements OnInit {
+export class TableOrdersComponent  {
   private $getFilterDataUseCase = inject(GetFilterDataOrderUseCase);
-  private $listUseCase = inject(ListOrderUseCase);
   private $anularUseCase = inject(AnularOrderUseCase);
   private $getIdUseCase = inject(GetIdOrderUseCase);
   private $getFormDataUseCase = inject(GetFormDataConfigUseCase)
@@ -89,21 +80,19 @@ export class TableOrdersComponent implements OnInit {
   private posStoreSvc = inject(PosStoreService);
   private $cartOverlaySvc = inject(CartOverlayService);
   private $layoutStore = inject(LayoutStore)
+  $orderStore = inject(OrderStore)
   //services
   private _dialogSvc = inject(DialogService);
   private _sharedSvc = inject(SharedService);
   private _tS = inject(ToasterService);
 
   //angular
-  private router = inject(Router);
+  private router = inject(Router)
   private _bottomSheet = inject(MatBottomSheet);
 
-  @Input({ required: true }) dataSearch = {} as any;
   isComingOfPos = input(false);
-  moreFilter = input(false);
   closeDialog = output();
 
-  selectedStatus = model('');
   rooms = signal<any[]>([]);
   tables = signal<any[]>([]);
   selectedIndex = signal(0);
@@ -118,56 +107,7 @@ export class TableOrdersComponent implements OnInit {
     { code: STATUS_ORDER.ANULADO, description: 'Anulado' },
   ]);
 
-  isPending = computed(() => this.selectedStatus() === STATUS_ORDER.PENDIENTE);
-  isFinished = computed(
-    () => this.selectedStatus() === STATUS_ORDER.FINALIZADO
-  );
-  isDividing = computed(() => this.selectedStatus() === STATUS_ORDER.PROCESO);
-  isDeleted = computed(() => this.selectedStatus() === STATUS_ORDER.ANULADO);
-
-  pagination = signal(new Pagination());
-  loading = signal(false);
-
-  private getParams() {
-    const pagination = new PaginationParams(
-      PageNumber.create(this.pagination().pageIndex + 1),
-      PageSize.create(this.pagination().pageSize)
-    );
-
-    const query = pagination.toQuery();
-
-    return {
-      isSearchDate: true,
-      estabId: getValidId(this.$layoutStore.establecimientoId()),
-      puntoEmisionId: getValidId(this.$layoutStore.puntoEmisionId()),
-      startDate: this.dataSearch.startDate,
-      endDate: this.dataSearch.endDate,
-      customerCompanyId: getValidId(this.dataSearch.customerCompanyId),
-      tableId: getValidId(this.dataSearch.tableId),
-      userId: getValidId(this.dataSearch.userId),
-      pageIndex: query.page,
-      pageSize: query.pageSize,
-      isEnabled: !this.isDeleted(),
-      finished: this.isFinished(),
-      divided: this.isDividing(),
-      deleted: this.isDeleted(),
-      typeSearchCustomer: this.dataSearch.typeSearchCustomer,
-    };
-  }
-  private getList() {
-    this.$listUseCase.execute(this.getParams()).subscribe((response) => {
-      this.dataSource.set(response.data);
-      this.pagination.update((item) => {
-        return {
-          ...item,
-          totalRecords: response.totalRecords,
-        };
-      });
-    });
-  }
-
   ngOnInit() {
-    this.selectedStatus.set(this.dataSearch.selectedStatus);
 
     this.$getFilterDataUseCase.execute().subscribe((response) => {
       this.rooms.set(response.tablesGroup);
@@ -176,69 +116,84 @@ export class TableOrdersComponent implements OnInit {
       let dataRoom: any = {};
 
       //cuando proviene de modulo pos y mesas
-      if(this.dataSearch.roomId>0){
-       dataRoom = this.rooms().find(r=>r.roomId===this.dataSearch.roomId) || {};
+      if(this.$orderStore.dataSearch.roomId()>0){
+       dataRoom = this.rooms().find(r=>r.roomId===this.$orderStore.dataSearch.roomId()) || {};
       }else{
         dataRoom = this.rooms().length>0? this.rooms()[0]: {}
       }
 
       if (dataRoom.roomId > 0) {
-        this.dataSearch.roomId = dataRoom.roomId;
-        this.handleFloorChange(this.dataSearch.tableId);
+        this.$orderStore.setPropDataSearch("roomId", dataRoom.roomId);
+        this.handleFloorChange(null,this.$orderStore.dataSearch.tableId());
       }
     });
   }
 
-  handleFloorChange(tableId?: number) {
-    const tables = this.rooms().flatMap((r) => r.tables);
-
-    const tablesFiltered = tables.filter(
-      (t) => t.roomId === this.dataSearch.roomId
-    );
-    this.tables.set([]);
-    this.tables.set(tablesFiltered);
-
-    this.selectedIndex.set(0);
-    let dataTable: any = {}
-    if(tableId){
-      dataTable = this.tables().find(r=>r.id === this.dataSearch.tableId);
-    }else{
-     dataTable = this.tables().length > 0 ? this.tables()[0] : {};
-
+  handleFloorChange(event?: any, tableId?: number): void {
+    const selectedRoomId = event?.value;
+    if (selectedRoomId) {
+      this.$orderStore.setPropDataSearch("roomId", selectedRoomId);
     }
-    if (dataTable.id > 0) {
-      this.dataSearch.tableId = dataTable.id;
-      dataTable.isActive = true;
-      this.getList();
+
+    const allTables = this.rooms().flatMap(room => room.tables);
+    const filteredTables = allTables.filter(
+      table => table.roomId === this.$orderStore.dataSearch.roomId()
+    );
+
+    this.tables.set(filteredTables);
+    this.selectedIndex.set(0);
+
+    let selectedTable = tableId
+      ? filteredTables.find(table => table.id === this.$orderStore.dataSearch.tableId())
+      : filteredTables[0];
+
+    if (selectedTable?.id > 0) {
+      this.$orderStore.setPropDataSearch("tableId", selectedTable.id);
+      selectedTable.isActive = true;
+      this.$orderStore.refresh();
     }
   }
-  refresh() {
-    this.getList();
+
+  selectionChangeTable($event:any){
+    this.$orderStore.setPropDataSearch("tableId", $event.value);
+    this.$orderStore.refresh();
   }
 
   onChangeDateRange($event: any) {
-    this.dataSearch.startDate = $event.from;
-    this.dataSearch.endDate = $event.to;
-    this.refresh();
+    this.$orderStore.setPropDataSearch("startDate", $event.from)
+    this.$orderStore.setPropDataSearch("endDate", $event.to)
+    this.$orderStore.refresh();
   }
-  selectionChangeStatusOrder() {
-    this.dataSearch.typeSearchCustomer = 'DOC'
-    this.refresh();
+
+  selectionChangeUser($event:any){
+    this.$orderStore.setPropDataSearch("userId", $event.value)
+    this.$orderStore.refresh();
+  }
+
+  selectionChangeStatusOrder($event:any) {
+    this.$orderStore.setPropDataSearch("selectedStatus", $event.value)
+    if(this.$orderStore.dataSearch.selectedStatus()===STATUS_ORDER.FINALIZADO){
+      this.$orderStore.setPropDataSearch("typeSearchCustomer", 'DOC');
+    }else{
+      this.$orderStore.setPropDataSearch("typeSearchCustomer", 'OR');
+    }
+    this.$orderStore.refresh();
   }
 
   clearCustomer() {
-    this.dataSearch.customerCompanyId = 0;
-    this.refresh();
+    this.$orderStore.setPropDataSearch("customerCompanyId", 0)
+    this.$orderStore.refresh();
   }
 
   onSelectCustomer($event: any) {
-    this.dataSearch.customerCompanyId = $event.idCliente;
-    this.refresh();
+    this.$orderStore.setPropDataSearch("customerCompanyId",  $event.idCliente)
+    this.$orderStore.refresh();
   }
 
-  onChangeTypeSearchCustomer() {
-    if (getValidId(this.dataSearch.customerCompanyId)) {
-      this.refresh();
+  onChangeTypeSearchCustomer($event:any) {
+    this.$orderStore.setPropDataSearch("typeSearchCustomer", $event.value)
+    if (getValidId(this.$orderStore.dataSearch.customerCompanyId())) {
+      this.$orderStore.refresh();
     }
   }
 
@@ -246,32 +201,9 @@ export class TableOrdersComponent implements OnInit {
     this.selectedIndex.set($event);
     const dataTable = this.tables().at($event);
     if (dataTable) {
-      this.dataSearch.tableId = dataTable.id;
-
-      this.refresh();
+      this.$orderStore.setPropDataSearch("tableId", dataTable.id)
+      this.$orderStore.refresh();
     }
-  }
-
-  onLoadMore() {
-    this.pagination.update((dp) => {
-      return {
-        ...dp,
-        pageIndex: dp.pageIndex + 1,
-      };
-    });
-    this.loading.set(true);
-    this.$listUseCase
-      .execute(this.getParams())
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response)=>{
-        this.dataSource.set([...this.dataSource(), ...response.data]);
-        this.pagination.update((item) => {
-          return {
-            ...item,
-            totalRecords: response.totalRecords,
-          };
-        })
-      })
   }
 
   openOrderDivideDialog(item: OrderList) {
@@ -284,7 +216,7 @@ export class TableOrdersComponent implements OnInit {
 
     modalRef.subscribe((result) => {
       if (result && result.isReload) {
-        this.refresh();
+        this.$orderStore.refresh();
         this.refreshGetFormData()
       }
     });
@@ -368,7 +300,7 @@ export class TableOrdersComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.refresh();
+          this.$orderStore.refresh();
         }
       });
     }
@@ -394,5 +326,9 @@ export class TableOrdersComponent implements OnInit {
     this._bottomSheet.open(BottomSheetDocsComponent, {
       data
     });
+  }
+
+  ngOnDestroy(){
+    this.$orderStore.resetState()
   }
 }

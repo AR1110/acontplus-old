@@ -1,6 +1,8 @@
 import { ConsolidacionFecha, MedidaProducto } from "@domain/models/inventory/medida.model"
 import { TarifaProducto } from "@domain/models/inventory/tarifa.model"
 import {UserSelectHtmlOnly} from "@domain/models/user.model";
+import {formatDateToString} from "@domain/utils/date.util";
+import {STATUS_ORDER} from "@domain/enums/main.enum";
 
 export type OrderItem = {
   uuid: string;
@@ -129,4 +131,17 @@ export class GetStatsOrderResponse {
   sales:   any[]=[]
   productsTop:   any[]=[]
   documentCounts:   any[]=[]
+}
+
+
+export class DataSearchOrder {
+  enableDateFilter = true;
+  userId = 0;
+  tableId = 0;
+  startDate = formatDateToString(new Date());
+  endDate =  formatDateToString(new Date());
+  customerCompanyId=0;
+  selectedStatus = STATUS_ORDER.PENDIENTE;
+  typeSearchCustomer = 'OR';
+  roomId = 0;
 }

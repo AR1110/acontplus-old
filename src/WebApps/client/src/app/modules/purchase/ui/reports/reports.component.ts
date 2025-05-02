@@ -21,7 +21,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { formatDateToString } from '@core/utils/date.util'; 
+import { formatDateToString } from '@core/utils/date.util';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";

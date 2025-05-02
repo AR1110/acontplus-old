@@ -15,7 +15,6 @@ export class ActionAddDirective implements OnInit {
   ngOnInit() {
     this.pS.select('accion').subscribe({
       next: (value) => {
-        console.log(value);
         if (value && value.crear) return;
         this.renderer.removeChild(
           this.el.nativeElement.parentNode,

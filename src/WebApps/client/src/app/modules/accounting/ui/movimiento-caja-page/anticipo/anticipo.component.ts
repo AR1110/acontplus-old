@@ -52,6 +52,7 @@ export class AnticipoComponent {
     customerId: 0,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
+    checkBoxFecha: true
   };
   private modalSvc = inject(ModalService);
   private sharedSvc = inject(SharedService);
@@ -77,6 +78,7 @@ export class AnticipoComponent {
     { key: 'obs', label: 'Obs.', type: 'string' },
     { key: 'razonSocialCiente', label: 'Cliente', type: 'string' },
     { key: 'estadoDoc', label: 'Estado', type: 'string' },
+    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
@@ -90,6 +92,7 @@ export class AnticipoComponent {
       idCliente: isValidField(this.dataSearch.customerId),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
+      checkBoxFecha: this.dataSearch.checkBoxFecha
     };
 
     if (this.isLoadingResults()) return;

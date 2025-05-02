@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -8,33 +8,41 @@ import {
 } from '@angular/forms';
 
 import { ToasterService } from '@core/services/toaster.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
 import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {PaymentTypeCode} from "@accounting/core/enums/accounting.constants";
 
 @Component({
   selector: 'app-apertura-caja-modal',
-    imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+    imports: [FormsModule, ReactiveFormsModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+      MatIcon, MatButton, ThemeButtonComponent,
+    MatCustomDialogComponent
+    ],
   templateUrl: './apertura-caja-modal.component.html',
 })
 export class AperturaCajaModalComponent {
-  private activeModal = inject(NgbActiveModal);
+  private dialogRef = inject(MatDialogRef<AperturaCajaModalComponent>)
+  readonly params = inject<{ idCaja: number }>(MAT_DIALOG_DATA);
   private _controlCajaUseCase = inject(ControlCajaUseCase);
   private tS = inject(ToasterService);
-
-  @Input() params = {
-    idCaja: 0,
-  };
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
 
   dataForm = new FormGroup({
     idCaja: new FormControl(0),
     idEntidadFinanciera: new FormControl(0, Validators.required),
-    concepto: new FormControl('', Validators.required),
+    concepto: new FormControl(''),
     entrada: new FormControl(0, Validators.required),
   });
 
@@ -44,13 +52,16 @@ export class AperturaCajaModalComponent {
     this._controlCajaUseCase.getDataForm().subscribe((response) => {
       let { formaPagos } = response as { formaPagos: any };
       this.entidadesFinanciera = formaPagos;
+      let dataEF = this.entidadesFinanciera.find(item=>item.codigo===PaymentTypeCode.EFE)
+      if(dataEF){
+        this.dataForm.get('idEntidadFinanciera')?.setValue(dataEF.idEntidadFinanciera);
+      }
     });
   }
 
   save() {
     try {
       let data = this.dataForm.value;
-
       if (this.dataForm.invalid) {
         this.tS.toastr({
           type: 'warning',
@@ -84,7 +95,7 @@ export class AperturaCajaModalComponent {
               type: 'success',
               message: response.message,
             });
-            this.activeModal.close(response);
+            this.dialogRef.close(response);
           }
         });
       }
@@ -93,7 +104,7 @@ export class AperturaCajaModalComponent {
     }
   }
 
-  onModalClose() {
-    this.activeModal.close();
+  close() {
+    this.dialogRef.close();
   }
 }

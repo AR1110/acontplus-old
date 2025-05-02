@@ -55,7 +55,7 @@ export class FactElectReportPageComponent implements OnInit {
     idPuntoEmision: 0,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
-    codEstado: 0,
+    codEstado: 4,
     codeRetencion: 'ALL',
     codeDevolucion: 'ALL',
     companyCustomerId: 0,
@@ -108,6 +108,11 @@ export class FactElectReportPageComponent implements OnInit {
     );
 
     this.showField = !!(dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F);
+    if(this.showField){
+      this.dataSearch.codeDevolucion='SD'
+    }else{
+      this.dataSearch.codeDevolucion= 'ALL';
+    }
   }
 
   getDataFilter() {
