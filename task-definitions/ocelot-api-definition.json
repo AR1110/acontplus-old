@@ -18,7 +18,7 @@
         { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
         {
           "name": "SafeOrigins",
-          "value": "https://app.acontplus.com,https://demo.acontplus.com,https://erp.acontplus.com,https://invoice.acontplus.com,https://print.acontplus.com,https://restaurant.acontplus.com,http://localhost:7166,http://localhost:4200,http://localhost:5001"
+          "value": "https://app.acontplus.com,https://demo.acontplus.com,https://admin.acontplus.com,https://invoice.acontplus.com,https://restaurant.acontplus.com,http://localhost:7166,http://localhost:4200"
         },
         {
           "name": "JwtSettings__ExpirationInMinutes",
@@ -51,6 +51,6 @@
     }
   ],
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "256",
-  "memory": "512"
+  "cpu": "512",
+  "memory": "1024"
 }

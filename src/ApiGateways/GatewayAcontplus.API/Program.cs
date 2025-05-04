@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Common.Logging;
+﻿using Common.Logging;
 using Common.Services.Configuration;
 using Common.Services.Extensions;
 using Common.Services.Middleware;
@@ -43,9 +42,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicy, policy =>
     {
-        policy.WithOrigins(safeOrigins)
-            .SetIsOriginAllowed(isOriginAllowed: _ => true)
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
+        policy 
+            .SetIsOriginAllowed(origin =>
+                safeOrigins.Any(o => origin.StartsWith(o, StringComparison.OrdinalIgnoreCase)))
             .AllowCredentials()
             .AllowAnyHeader()
             .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
@@ -84,17 +83,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseRouting();
 
-// Handle Port Configuration for Different Environments (consider a configuration or environment variable)
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5001"); // Linux Port
-}
-else
-{
-    // Consider configuring HTTPS redirection conditionally based on environment
-    // or using a more robust certificate management strategy.
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 // Improved CORS Configuration
 app.UseCors(corsPolicy);
