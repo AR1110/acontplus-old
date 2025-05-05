@@ -34,36 +34,36 @@
     <div class="hstack gap-2">
       <mat-form-field  >
         <mat-label>Fecha Inicio</mat-label>
-        <input matInput [ngModel]="dataSearch.fromDate | date: 'yyyy-MM-dd'">
+        <input matInput disabled [ngModel]="dataSearch.fromDate | date: 'yyyy-MM-dd'">
       </mat-form-field>
       <mat-form-field>
         <mat-label>Hora</mat-label>
         <input matInput
-               [matTimepicker]="picker"
+               [matTimepicker]="pickerFromDate"
                [(ngModel)]="dataSearch.fromDate"
                [ngModelOptions]="{updateOn: 'blur'}"
                (blur)="onTimeChange($event, false)"
         >
-        <mat-timepicker-toggle matIconSuffix [for]="picker"/>
-        <mat-timepicker #picker/>
+        <mat-timepicker-toggle matIconSuffix [for]="pickerToDate"/>
+        <mat-timepicker #pickerFromDate/>
       </mat-form-field>
     </div>
 
     <div class="hstack gap-2">
       <mat-form-field  >
         <mat-label>Fecha Fin</mat-label>
-        <input matInput [ngModel]="dataSearch.toDate | date: 'yyyy-MM-dd'">
+        <input matInput disabled [ngModel]="dataSearch.toDate | date: 'yyyy-MM-dd'">
       </mat-form-field>
       <mat-form-field>
         <mat-label>Hora</mat-label>
         <input matInput
-               [matTimepicker]="picker"
+               [matTimepicker]="pickerToDate"
                [(ngModel)]="dataSearch.toDate"
                [ngModelOptions]="{updateOn: 'blur'}"
                (blur)="onTimeChange($event, false)"
         >
-        <mat-timepicker-toggle matIconSuffix [for]="picker"/>
-        <mat-timepicker #picker/>
+        <mat-timepicker-toggle matIconSuffix [for]="pickerToDate"/>
+        <mat-timepicker #pickerToDate/>
       </mat-form-field>
     </div>
 

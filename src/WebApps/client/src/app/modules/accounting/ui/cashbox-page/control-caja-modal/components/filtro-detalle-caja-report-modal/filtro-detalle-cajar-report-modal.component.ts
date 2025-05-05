@@ -103,9 +103,11 @@ export class FiltroDetalleCajaReportModal {
   }
 
   onTimeChange(event: Event, fromDate: boolean): void {
+    console.log(event)
     const inputElement = event.target as HTMLInputElement;
-    const timeString = inputElement.value;
-    const [hours, minutes] = timeString.split(':').map(Number);
+    const timeStr = inputElement.value;
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
 
     // Actualiza solo la hora y el minuto manteniendo la fecha actual
     if (fromDate) {
