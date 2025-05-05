@@ -61,12 +61,6 @@ services:
       context: .
       dockerfile: src/Services/Mechanical/Mechanical.API/Dockerfile
 
-  restaurant.api:
-    image: ${DOCKER_REGISTRY-}restaurantapi
-    build:
-      context: .
-      dockerfile: src/Services/Restaurant/Restaurant.API/Dockerfile
-
   technicalsupport.api:
     image: ${DOCKER_REGISTRY-}technicalsupportapi
     build:
