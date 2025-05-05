@@ -134,10 +134,20 @@ BEGIN
                     SET @sql = @sql + 'AND f.idUsuario = @idUsuario '
                 END 
 
-            IF @ckDevolucion = 1
+            IF @ckDevolucion IN (0,1)
                 BEGIN
-                    SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
-                END 
+                    IF @ckDevolucion = 1
+                        BEGIN
+                            SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
+                        END 
+
+                    IF @ckDevolucion = 0
+                        BEGIN
+                            SET @sql = @sql + 'AND nc.idNotaCredito IS NULL '
+                        END
+                    
+                END
+             
 
             IF @ckRetencion IN (1,0)
                 BEGIN
@@ -168,7 +178,7 @@ BEGIN
                                        ,nc.total
 		                               ,fi.tax
                                        ,dr.idDocumentoRecibido 
-                                       ORDER BY f.fechaEmision,f.identificacionComprador DESC ' 
+                                       ORDER BY f.serieComprobante,f.fechaEmision,f.identificacionComprador DESC ' 
             
 
             SELECT entidad as razonSocial 
