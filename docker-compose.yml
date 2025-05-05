@@ -1,9 +1,12 @@
 services:
   gatewayacontplus.api:
     image: ${DOCKER_REGISTRY-}gatewayacontplusapi
+    container_name: ocelot-api
     build:
       context: .
       dockerfile: src/ApiGateways/GatewayAcontplus.API/Dockerfile
+      args:
+        - Configuration=Release
     volumes:
       - ./config/ocelot.json:/app/ocelot.json
 
@@ -15,6 +18,7 @@ services:
 
   common.api:
     image: ${DOCKER_REGISTRY-}commonapi
+    container_name: common-api
     build:
       context: .
       dockerfile: src/Services/Common/Common.API/Dockerfile

@@ -370,8 +370,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5002
+          "Host": "172.31.61.119",
+          "Port": 8080
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
