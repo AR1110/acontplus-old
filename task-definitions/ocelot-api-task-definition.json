@@ -4,8 +4,8 @@
   "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "gateway-api-container",
-      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/ocelot-api:latest",
+      "name": "ocelot-api-container",
+      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/ocelot-api-repo:latest",
       "essential": true,
       "portMappings": [
         {

@@ -4,7 +4,7 @@
   "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "common-api",
+      "name": "common-api-container",
       "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/common-api-repo:latest",
       "essential": true,
       "portMappings": [
