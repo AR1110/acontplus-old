@@ -166,8 +166,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5011
+          "Host": "restaurant-api-service.acontplus-services-namespace",
+          "Port": 8080
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",

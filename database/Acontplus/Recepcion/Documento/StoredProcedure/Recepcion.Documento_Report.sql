@@ -636,11 +636,6 @@ BEGIN
                         SET @sql = @sql + 'AND dr.idUsuario = @idUsuario '
                     END
 
-                 IF @ckRetencion = 1
-                    BEGIN
-                        SET @sql = @sql + 'AND dr.nroRetencion IS NOT NULL '
-                    END 
-
                 SET @sql = @sql + 'ORDER BY dr.idDocumento DESC '
 
                 SELECT entidad as razonSocial 
@@ -788,6 +783,104 @@ BEGIN
 
             
             END 
+    
+        --> Nota Debito
+        IF @tipo = 5
+            BEGIN
+            
+                SET @tableNames = 'dataEntidad,comprobantes'
+
+                SELECT @codEstab       = codEstab
+                      ,@ckFecha        = ckFecha
+                      ,@fechaInicio    = fechaInicio
+                      ,@fechaFin       = fechaFin
+                      ,@ckRetencion    = ckRetencion
+                      ,@identificacion = identificacion
+                      ,@idUsuario      = idUsuario
+                FROM OPENJSON(@json) WITH 
+                (
+                    codEstab       VARCHAR(100)
+                   ,ckFecha        BIT
+                   ,fechaInicio    DATETIME2
+                   ,fechaFin       DATETIME2
+                   ,ckRetencion    BIT
+                   ,identificacion VARCHAR(20)
+                   ,idUsuario      INT
+                )
+
+                SET @params = '@idEntidad              INT
+                              ,@identificacionReceptor VARCHAR(20)
+                              ,@codEstab               VARCHAR(100)
+                              ,@fechaInicio            DATETIME2
+                              ,@fechaFin               DATETIME2
+                              ,@identificacion         VARCHAR(20)
+                              ,@idUsuario              INT'
+
+                SET @sql = '  SELECT es.idEstablecimiento
+                                    ,es.nombreComercial
+	                                ,dr.serieComprobante
+	                                ,dr.claveAcceso
+	                                ,dr.fechaEmision
+                                    ,format(CONVERT(DATETIME2, dr.fechaAutorizacion), ''dd/MM/yyyy HH:mm'')                                         as fechaAutorizacion
+	                                ,dr.rucEmisor
+	                                ,dr.razonSocialEmisior as razonSocialEmisor
+									,(SELECT TOP 1 ''Iva'' + '' '' + ti.descripcion FROM Sri.TarifaImpuesto ti WHERE ti.codigo = di.CodePercentage) as impuesto
+									,CAST(di.TaxBase AS NUMERIC(18,3))																			    as subTotal
+									,CAST(di.TaxValue AS NUMERIC(18,3))																			    as iva																		
+									,rd.numDocSustento																						        as numDocModificado
+							FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
+                            INNER JOIN Sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento   = dr.idEstablecimiento
+                            INNER JOIN dbo.Usuario                 us WITH (NOLOCK) ON us.idUsuario           = dr.idUsuario
+							INNER JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dr.idDocumento
+							INNER JOIN FactElect.DocRelacionado    rd WITH (NOLOCK) ON rd.idDocumentoRecibido = dr.idDocumento
+                            WHERE dr.codDoc = ''05''
+                              AND dr.xmlCompressed IS NOT NULL
+                              AND dr.identificacionReceptor = @identificacionReceptor '
+
+                IF LEN(@codEstab) > 6 
+                    BEGIN
+                        SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                    END 
+
+                IF @ckFecha = 1
+                    BEGIN
+                        SET @sql = @sql + 'AND CAST(dr.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                    END
+
+                IF @identificacion IS NOT NULL
+                    BEGIN
+                        SET @sql = @sql + 'AND dr.rucEmisor = @identificacion '
+                    END 
+
+                IF @idUsuario IS NOT NULL
+                    BEGIN
+                        SET @sql = @sql + 'AND dr.idUsuario = @idUsuario '
+                    END
+
+                SET @sql = @sql + 'ORDER BY dr.idDocumento DESC '
+
+                SELECT entidad as razonSocial 
+                      ,rucEmpresa as ruc
+                      ,telefono 
+                      ,nombreUsuario as usuario
+                      ,'Comprobantes Recibidos - Nota Débito' as nombreReporte
+                      ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+                FROM v_usuario
+                WHERE idUsuarioRol = @userRoleId
+
+                EXEC sp_executesql @sql
+							      ,@params 
+							      ,@idEntidad              = @idEntidad
+                                  ,@identificacionReceptor = @identificacionReceptor 
+                                  ,@codEstab               = @codEstab
+                                  ,@fechaInicio            = @fechaInicio
+                                  ,@fechaFin               = @fechaFin
+                                  ,@identificacion         = @identificacion
+                                  ,@idUsuario              = @idUsuario
+
+                RETURN 
+            END 
+            
     END TRY
     BEGIN CATCH
         INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])

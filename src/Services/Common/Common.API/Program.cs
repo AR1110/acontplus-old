@@ -18,20 +18,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
+{
+    app.Urls.Add("http://*:5002"); // Linux Port
+}
+
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
 
 app.UseRouting();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5002"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

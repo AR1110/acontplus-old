@@ -266,6 +266,7 @@ BEGIN
                         AND rd.numDocSustento = REPLACE(dr.serieComprobante, '-', '')
                 );
 			SELECT * FROM @docsFounded ORDER BY fechaEmisionDocSustento DESC
+            return
 		END
  
     END TRY

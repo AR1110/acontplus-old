@@ -1,9 +1,12 @@
 services:
   gatewayacontplus.api:
     image: ${DOCKER_REGISTRY-}gatewayacontplusapi
+    container_name: ocelot-api
     build:
       context: .
       dockerfile: src/ApiGateways/GatewayAcontplus.API/Dockerfile
+      args:
+        - Configuration=Release
     volumes:
       - ./config/ocelot.json:/app/ocelot.json
 
@@ -15,6 +18,7 @@ services:
 
   common.api:
     image: ${DOCKER_REGISTRY-}commonapi
+    container_name: common-api
     build:
       context: .
       dockerfile: src/Services/Common/Common.API/Dockerfile
@@ -61,12 +65,6 @@ services:
       context: .
       dockerfile: src/Services/Mechanical/Mechanical.API/Dockerfile
 
-  restaurant.api:
-    image: ${DOCKER_REGISTRY-}restaurantapi
-    build:
-      context: .
-      dockerfile: src/Services/Restaurant/Restaurant.API/Dockerfile
-
   technicalsupport.api:
     image: ${DOCKER_REGISTRY-}technicalsupportapi
     build:
@@ -84,3 +82,10 @@ services:
     build:
       context: .
       dockerfile: src/WebApps/WebUI/Dockerfile
+
+  restaurant.api:
+    image: ${DOCKER_REGISTRY-}restaurantapi
+    build:
+      context: src
+      dockerfile: Services/Restaurant/Restaurant.Api/Dockerfile
+
