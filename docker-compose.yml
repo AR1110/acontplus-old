@@ -82,3 +82,10 @@ services:
     build:
       context: .
       dockerfile: src/WebApps/WebUI/Dockerfile
+
+  restaurant.api:
+    image: ${DOCKER_REGISTRY-}restaurantapi
+    build:
+      context: src
+      dockerfile: Services/Restaurant/Restaurant.Api/Dockerfile
+

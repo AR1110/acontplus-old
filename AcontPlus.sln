@@ -93,6 +93,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedSettings", "SharedSet
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Restaurant", "Restaurant", "{20BD77DA-D3EB-43A5-BA7E-C03D622B8D92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.Api", "src\Services\Restaurant\Restaurant.Api\Restaurant.Api.csproj", "{ACE7743C-7873-D530-6397-724DE3008084}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +199,10 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACE7743C-7873-D530-6397-724DE3008084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACE7743C-7873-D530-6397-724DE3008084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACE7743C-7873-D530-6397-724DE3008084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACE7743C-7873-D530-6397-724DE3008084}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +243,8 @@ Global
 		{A85C99BE-D714-3D25-10B3-4527A1CAE617} = {132A7BC7-0BFF-4448-9FBF-180C9E9E390D}
 		{7C857697-8C62-5A67-53AB-DDC665DE4DAD} = {B9077375-CA54-4D82-9A9F-4FA39FE31671}
 		{2192854E-DB1C-C0EB-AB5D-04A9E6614CC3} = {24D46C5E-C5AE-4214-B8BB-EB3812E08015}
+		{20BD77DA-D3EB-43A5-BA7E-C03D622B8D92} = {EDC98C44-5020-46E7-9D6B-881EAA02EEDB}
+		{ACE7743C-7873-D530-6397-724DE3008084} = {20BD77DA-D3EB-43A5-BA7E-C03D622B8D92}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}
