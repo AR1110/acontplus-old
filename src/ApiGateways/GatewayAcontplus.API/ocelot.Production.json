@@ -370,11 +370,11 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.21.125",
+          "Host": "172.31.10.147",
           "Port": 8080
         }
       ],
-      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
       "UpstreamPathTemplate": "/gateway/Common{everything}"
