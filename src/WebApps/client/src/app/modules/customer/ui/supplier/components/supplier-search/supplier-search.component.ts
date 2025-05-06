@@ -19,8 +19,8 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { SupplierUseCase } from '@customer/domain/usecases/supplier.use-case';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 
 @Component({
   selector: 'app-supplier-search',

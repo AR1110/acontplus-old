@@ -22,7 +22,7 @@ import { LotPriceService } from '@inventory/services/lot-price.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import {MatButton, MatIconButton} from '@angular/material/button';

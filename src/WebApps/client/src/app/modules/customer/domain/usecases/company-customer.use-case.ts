@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {CompanyCustomerRepository} from "@customer/core/repositories/company-customer.repository";
+import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
 
 
 @Injectable({

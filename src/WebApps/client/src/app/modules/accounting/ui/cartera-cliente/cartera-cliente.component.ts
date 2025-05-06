@@ -34,7 +34,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 import {MatDivider} from "@angular/material/divider";
 import {MatInputModule} from "@angular/material/input";
 

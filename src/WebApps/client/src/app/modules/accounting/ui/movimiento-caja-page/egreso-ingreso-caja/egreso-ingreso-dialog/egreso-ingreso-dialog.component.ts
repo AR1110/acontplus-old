@@ -23,7 +23,7 @@ import {
 } from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {getValidId, isValidField} from "@core/utils/utils";
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 
 @Component({
   selector: 'app-egreso-ingreso-dialog',

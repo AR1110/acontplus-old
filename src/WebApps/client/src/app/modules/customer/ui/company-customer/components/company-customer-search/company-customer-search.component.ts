@@ -39,9 +39,9 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
-import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
+import { CompanyCustomerUseCase } from '@customer/domain/usecases/company-customer.use-case';
 import { CompanyCustomerAddEditDirective } from '../../company-customer-add-edit.directive';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
   selector: 'app-company-customer-search',

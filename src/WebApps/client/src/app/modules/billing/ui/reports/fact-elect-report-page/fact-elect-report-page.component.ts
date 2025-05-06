@@ -20,7 +20,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
   selector: 'app-fact-elect-report-page',

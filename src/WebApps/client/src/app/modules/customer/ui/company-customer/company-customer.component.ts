@@ -13,7 +13,7 @@ import { isValidField } from '@core/utils/utils';
 import { Pagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { CompanyCustomerUseCase } from '@customer/core/usecases/company-customer.use-case';
+import { CompanyCustomerUseCase } from '@customer/domain/usecases/company-customer.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

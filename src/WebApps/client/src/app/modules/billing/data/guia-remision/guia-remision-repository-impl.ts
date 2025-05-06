@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map, Observable } from 'rxjs';
 import { GuiaRemisionRepository } from '@billing/domain/repositories/guia-remision.repository';
-import { GuiaRemisionDataForm } from '@modules/billing/domain/models/guia-remision.model';
+import { GuiaRemisionDataForm } from '@billing/domain/models/guia-remision/guia-remision.model';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { GetGuiaRemisionFilterDataMapper } from './get-guia-remision-filter-data.mapper';
 import {ListGuiaRemisionMapper} from "@billing/data/guia-remision/list-guia-remision.mapper";
@@ -25,9 +25,7 @@ export class GuiaRemisionRepositoryImpl implements GuiaRemisionRepository {
         );
   }
     getFilterData() {
-    const json = JSON.stringify({
-      tipo: 2,
-    });
+    const json = GetGuiaRemisionFilterDataMapper.toJson()
     return this._http
       .get(`${this._url}?json=${json}`)
       .pipe(

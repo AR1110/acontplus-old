@@ -10,7 +10,7 @@ import {
 import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { SupplierUseCase } from '@customer/core/usecases/supplier.use-case';
+import { SupplierUseCase } from '@customer/domain/usecases/supplier.use-case';
 
 @Directive({
   selector: '[appSupplierSearchDrtv]',

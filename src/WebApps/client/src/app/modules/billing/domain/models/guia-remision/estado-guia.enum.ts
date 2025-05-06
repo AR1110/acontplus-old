@@ -1,0 +1,7 @@
+export enum EstadoGuia {
+  BORRADOR = 'BORRADOR',
+  EMITIDA = 'EMITIDA',
+  EN_TRANSITO = 'EN_TRANSITO',
+  ENTREGADA = 'ENTREGADA',
+  ANULADA = 'ANULADA'
+}

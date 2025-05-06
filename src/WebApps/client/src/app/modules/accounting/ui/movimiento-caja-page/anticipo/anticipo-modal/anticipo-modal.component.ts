@@ -16,7 +16,7 @@ import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.in
 import { AnticipoUseCase } from '@accounting/core/use-cases/anticipo.use-case';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
   selector: 'app-anticipo-modal',

@@ -1,4 +1,4 @@
-import {GuiaRemisionDataForm, GuiaRemisionFilterData} from '@modules/billing/domain/models/guia-remision.model';
+import {GuiaRemisionDataForm, GuiaRemisionFilterData} from '@billing/domain/models/guia-remision/guia-remision.model';
 import {groupEstabUtil} from "@core/utils/group-estab.util";
 
 export class GetGuiaRemisionFormDataMapper {

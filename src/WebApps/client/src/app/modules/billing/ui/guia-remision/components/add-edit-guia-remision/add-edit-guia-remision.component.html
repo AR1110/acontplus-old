@@ -1,3 +1,4 @@
+
 <app-mat-custom-dialog
   (close)="close()"
   [title]="title"
@@ -7,12 +8,137 @@
 />
 
 <ng-template #body>
-  <div class="d-grid gap-3">
+  <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+    <mat-stepper orientation="vertical">
+      <mat-step>
+        <ng-template matStepLabel>Información del Documento</ng-template>
+        <ng-template matStepContent  >
+          <div class="d-grid gap-3 my-2">
+            <div class="row">
+              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Establecimiento</mat-label>
+                  <mat-select formControlName="codEstab"  >
+                    @for(item of estabs(); track $index){
+                      <mat-option [value]="item.codEstab">{{
+                          item.nombreEstab
+                        }}</mat-option>
+
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Punto Emisión</mat-label>
+                  <mat-select formControlName="puntoEmisionId">
+                    @for (item of puntosEmision(); track $index) {
+                      <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Est. Destino:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Documento Aduanero:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+              </div>
+            </div>
+
+
+            <div
+              class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+            >
+              <div class="col">
+                <mat-form-field class="w-100">
+                  <mat-label>Fecha Emisión</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+              </div>
+
+              <div class="col">
+                <mat-form-field class="w-100">
+                  <mat-label>Fecha Salida:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+              </div>
+
+              <div class="col">
+                <mat-form-field class="w-100">
+                  <mat-label>Fecha Entrega:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+              </div>
+
+            </div>
+
+            <div
+              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+            >
+              <div class="col vstack gap-2">
+                <mat-form-field class="w-100">
+                  <mat-label>Punto de Partida:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+
+                <mat-form-field class="w-100">
+                  <mat-label>Ruta:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+
+                <mat-form-field class="w-100">
+                  <mat-label>Entrega A: </mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+
+              </div>
+              <div class="col vstack gap-2">
+                <mat-form-field class="w-100">
+                  <mat-label>Punto de Destino:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+
+                <mat-form-field class="w-100">
+                  <mat-label>Motivo Traslado:</mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+
+                <mat-form-field class="w-100">
+                  <mat-label>Empleado: </mat-label>
+                  <input matInput placeholder="...">
+                </mat-form-field>
+              </div>
+            </div>
+
+          </div>
+          <button mat-button matStepperNext>Next</button>
+        </ng-template>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Productos</ng-template>
+        <ng-template matStepContent>
+          <p>This content was also rendered lazily</p>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </ng-template>
+      </mat-step>
+    </mat-stepper>
+
+
+    <div class="d-grid gap-3">
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select [(ngModel)]="dataForm.codEstab">
+          <mat-select formControlName="codEstab"  >
             @for(item of estabs(); track $index){
               <mat-option [value]="item.codEstab">{{
                   item.nombreEstab
@@ -25,7 +151,7 @@
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Punto Emisión</mat-label>
-          <mat-select [(ngModel)]="dataForm.idPuntoEmision">
+          <mat-select formControlName="puntoEmisionId">
             @for (item of puntosEmision(); track $index) {
             <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
             }
@@ -192,6 +318,7 @@
 
 
   </div>
+  </form>
 </ng-template>
 <ng-template #footer>
   <app-theme-button

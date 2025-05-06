@@ -27,7 +27,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
 import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({

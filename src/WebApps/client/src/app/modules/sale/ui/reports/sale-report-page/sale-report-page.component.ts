@@ -31,7 +31,7 @@ import { ActionEnviarCorreoDirective } from '@shared/directives/permission/actio
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { CuentaPorCobrarUseCase } from '@accounting/core/use-cases/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
 const imports = [

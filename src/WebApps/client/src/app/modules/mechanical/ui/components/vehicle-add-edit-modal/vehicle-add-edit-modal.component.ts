@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use-case';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 
 @Component({
   selector: 'app-vehicle-add-edit-modal',

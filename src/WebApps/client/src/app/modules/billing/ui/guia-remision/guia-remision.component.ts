@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +14,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { PageEvent } from '@angular/material/paginator';
 import { GetGuiaRemisionFilterDataUseCase } from '@modules/billing/domain/use-cases/guia-remision/get-guia-remision-filter-data.use-case';
 import { ListGuiasRemisionUseCase } from '@modules/billing/domain/use-cases/guia-remision/list-guias-remision.use-case';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize } from 'rxjs';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -23,17 +23,15 @@ import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { FormsModule } from '@angular/forms';
 import {formatDateToString} from "@core/utils/date.util";
-import {GuiaRemisionList} from "@billing/domain/models/guia-remision.model";
+import {GuiaRemisionList} from "@billing/domain/models/guia-remision/guia-remision.model";
 import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
 import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habitual-historial.directive";
-import {MatMenu, MatMenuItem, MatMenuModule} from "@angular/material/menu";
-import {MatTooltip} from "@angular/material/tooltip";
+import {  MatMenuModule} from "@angular/material/menu";
 import {ProductKardexModalDirective} from "@inventory/ui/product/directives/product-kardex-modal.directive";
 import {DialogService} from "@core/services/dialog.service";
 import {
   AddEditGuiaRemisionComponent
 } from "@billing/ui/guia-remision/components/add-edit-guia-remision/add-edit-guia-remision.component";
-import {UserSearchComponent} from "@shared/components/user-search/user-search.component";
 
 @Component({
   selector: 'app-guia-remision',
@@ -50,12 +48,9 @@ import {UserSearchComponent} from "@shared/components/user-search/user-search.co
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
-    UserSearchComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
-    MatMenu,
-    MatMenuItem,
-    MatTooltip,
+    MatMenuModule,
     ProductKardexModalDirective,
   ],
   templateUrl: './guia-remision.component.html',
@@ -72,6 +67,7 @@ export class GuiaRemisionComponent   {
   estabs = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   estadosDoc: any[] = [];
+  users = signal<any[]>([])
 
   dataSearch = {
     codEstab: '',
@@ -189,6 +185,7 @@ export class GuiaRemisionComponent   {
       .subscribe((filterData) => {
         this.estabs.set(filterData.estabs);
         this.estadosDoc = filterData.estadosDoc;
+        this.users.set(filterData.users)
 
         if (this.estabs().length > 0) {
           const dataEstab = this.estabs().find((item) => item.defaultEstab);
@@ -203,8 +200,8 @@ export class GuiaRemisionComponent   {
             this.dataSearch.puntoEmisionId =
               dataPuntoEmision?.idPuntoEmision || 0;
           }
-        }
         this.refresh();
+        }
       });
   }
 

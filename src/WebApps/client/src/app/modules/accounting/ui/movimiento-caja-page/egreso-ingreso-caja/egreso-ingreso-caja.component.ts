@@ -26,7 +26,7 @@ import { DialogService } from '@core/services/dialog.service';
 import {
   EgresoIngresoDialogComponent
 } from "@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 import {ListMovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja/list-movimiento-caja.use-case";
 import {MovimientoCajaList} from "@accounting/core/models/movimiento-caja.model";
 
