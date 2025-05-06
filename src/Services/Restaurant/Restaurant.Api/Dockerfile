@@ -17,10 +17,12 @@ ARG BUILD_CONFIGURATION=Release
 ARG DOTNET_SKIP_POLICY_LOADING=true
 
 WORKDIR /src
-COPY ["Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj", "Services/Restaurant/Restaurant.Api/"]
-RUN dotnet restore "./Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj"
+COPY ["Directory.Packages.props", "."]
+COPY ["Nuget.config", "."]
+COPY ["src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj", "src/Services/Restaurant/Restaurant.Api/"]
+RUN dotnet restore "./src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj"
 COPY . .
-WORKDIR "/src/Services/Restaurant/Restaurant.Api"
+WORKDIR "/src/src/Services/Restaurant/Restaurant.Api"
 RUN dotnet build "./Restaurant.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 RUN ls /app/build
