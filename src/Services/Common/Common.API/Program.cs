@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using System.Runtime.InteropServices;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
@@ -15,6 +17,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
+{
+    app.Urls.Add("http://*:5002"); // Linux Port
+}
+
 
 app.UseMiddleware<ExceptionMiddleware>();
 
