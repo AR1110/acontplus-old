@@ -160,20 +160,35 @@
       "UpstreamPathTemplate": "/gateway/Venta{everything}"
     },
     {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5011
+          "Host": "restaurant.acontplus.com",
+          "Port": 443
         }
       ],
-      "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/gateway/Restaurant{everything}",
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
-      "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "DelegatingHandlers": [],
+      "AddHeadersToRequest": {
+        "Authorization": "{Request.Headers.Authorization}"
+      },
+      "AddClaimsToRequest": {},
+      "RouteClaimsRequirement": {},
+      "AddQueriesToRequest": {},
+      "RequestIdKey": null,
+      "FileCacheOptions": {
+        "TtlSeconds": 0,
+        "Region": null
+      },
+      "RouteIsCaseSensitive": false,
+      "ServiceName": null,
+      "DownstreamHttpVersion": "2.0"
     },
     {
       "AuthenticationOptions": {
