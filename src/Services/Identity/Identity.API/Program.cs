@@ -30,14 +30,12 @@ app.UseMiddleware<MobileRequestMiddleware>();
 
 app.UseRouting();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
 {
     app.Urls.Add("http://*:5007"); // Linux Port
 }
-else
-{
-    app.UseHttpsRedirection();
-}
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

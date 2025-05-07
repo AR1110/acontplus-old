@@ -41,8 +41,8 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5007
+          "Host": "identity-api.acontplus-services",
+          "Port": 80
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
