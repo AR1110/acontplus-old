@@ -42,6 +42,10 @@
         {
           "name": "ConnectionStrings__DefaultConnection",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
+        },
+        {
+          "name":"ApiGateways__Acontplus",
+          "valueFrom":"arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_API_GATEWAY_PRD-CoHQu7"
         }
       ],
       "essential": true,
