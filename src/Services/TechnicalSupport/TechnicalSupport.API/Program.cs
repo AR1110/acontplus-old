@@ -21,14 +21,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
 {
     app.Urls.Add("http://*:5012"); // Linux Port
 }
-else
-{
-    app.UseHttpsRedirection();
-}
+
+app.UseHttpsRedirection();
 
 app.UseStatusCodePages();
 

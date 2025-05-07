@@ -37,14 +37,12 @@ app.UseCors(options =>
     options.WithOrigins("https://localhost:7111");
 });
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
 {
     app.Urls.Add("http://*:5009"); // Linux Port
 }
-else
-{
-    app.UseHttpsRedirection();
-}
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
