@@ -282,7 +282,10 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   }
 
   // Format customer for display in autocomplete
-  formatCustomer(customer: CompanyCustomerSearch): string {
+  formatCustomer(customer: CompanyCustomerSearch | string): string {
+    if(typeof customer === 'string') {
+      return customer
+    }
     return customer?.name || '';
   }
 }
