@@ -19,26 +19,10 @@
       ],
       "environment": [
         { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
-        {
-          "name": "AllowedCorsOrigins",
-          "value": "http://localhost,http://localhost:8000,https://tech-support.acontplus.com,https://acontplus.com"
-        },
-        {
-          "name": "JwtSettings__ExpirationInMinutes",
-          "value": "${ACONTPLUS_JWT_SETTINGS_EXPIRATION_IN_MINUTES}"
-        },
         { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
         { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
         { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" },
-        {
-          "name": "S3Bucket__Name",
-          "value": "acontplusprd"
-        },
-        {
-          "name": "S3Bucket__Region",
-          "value": "us-east-1"
-        }
+        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" }
       ],
       "secrets": [
         {
@@ -52,14 +36,6 @@
         {
           "name": "ConnectionStrings__DefaultConnection",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
-        },
-        {
-          "name": "AwsConfiguration__AWSAccessKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:AWS_ACCESS_KEY_PRD-brGgAt"
-        },
-        {
-          "name": "AwsConfiguration__AWSSecretKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:AWS_SECRET_KEY_PRD-sSGTMu"
         }
       ],
       "essential": true,

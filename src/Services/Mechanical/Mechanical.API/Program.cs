@@ -1,6 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-
-
+using Common.Services.Middleware;
 using Mechanical.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +10,6 @@ builder.Configuration.AddConfiguration(configuration);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
-
-builder.Services.AddCors();
 
 builder.Services.AddIdentityService(builder.Configuration);
 
@@ -25,30 +22,20 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseStatusCodePages();
-
-app.UseRouting();
-
-app.UseCors(options =>
-{
-    options.AllowAnyHeader();
-    options.AllowAnyMethod();
-    options.AllowCredentials();
-    options.WithOrigins("https://localhost:7111");
-});
-
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
 {
     app.Urls.Add("http://*:5009"); // Linux Port
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseRouting();
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseStaticFiles();
 
 app.MapControllers().RequireAuthorization();
 

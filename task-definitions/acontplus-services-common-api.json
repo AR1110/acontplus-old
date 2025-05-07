@@ -23,10 +23,6 @@
           "name": "SafeOrigins",
           "value": "https://acontplus.com"
         },
-        {
-          "name": "JwtSettings__ExpirationInMinutes",
-          "value": "${ACONTPLUS_JWT_SETTINGS_EXPIRATION_IN_MINUTES}"
-        },
         { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
         { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
         { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
