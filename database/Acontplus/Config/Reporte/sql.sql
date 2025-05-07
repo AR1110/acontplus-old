@@ -14,3 +14,6 @@ select reportPath, REPLACE(reportPath,'GestionFinanciera','Contabilidad') from C
 
 --update Config.reporte set reportPath = REPLACE(reportPath,'GestionFinanciera','Contabilidad') where reportPath like '%GestionFinanciera%' 
 
+--insert into Config.Reporte(codigo,reportPath,contentType,storedProcedure,nombreReporte,fechaRegistro)
+--select 'RRND','/Compras/RecepcionNotaDebito.rdl','application/pdf','Recepcion.Documento_Report','Recepcion Nota Debito',GETDATE()
+

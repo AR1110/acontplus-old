@@ -48,6 +48,7 @@ export const enum DOC_TYPE_SRI {
   F = '01',
   NC = '04',
   R = '07',
+  ND = '05'
 }
 
 export enum REPORT_FORMAT {
@@ -103,6 +104,7 @@ export enum REPORT_CODE {
   RCXD = 'RCXD', // Contabilidad Cobros por Documentos
   RCXP = 'RCXP', // Contabilidad Cobros por Pagos
   RRC = 'RRC', // Reporte Retencion
+  RRND = 'RRND', // Reporte Recepcion de Nota de Debito
 }
 
 export enum CODE_ESTADO {

@@ -2,14 +2,9 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-
-ENV ASPNETCORE_URLS=http://+:8080
-
-RUN groupadd -g 2000 dotnet \
-    && useradd -m -u 2000 -g 2000 dotnet
-USER dotnet
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
