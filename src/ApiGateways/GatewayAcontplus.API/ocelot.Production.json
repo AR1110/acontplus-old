@@ -166,8 +166,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "restaurant-api-service.acontplus-services-namespace",
-          "Port": 8080
+          "Host": "restaurant-api.acontplus-services",
+          "Port": 80
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -370,11 +370,11 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5002
+          "Host": "common-api.acontplus-services",
+          "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
       "UpstreamPathTemplate": "/gateway/Common{everything}"
