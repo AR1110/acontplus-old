@@ -1,5 +1,5 @@
 {
-  "cluster": "acontplus-services",
+  "cluster": "acontplus-erp",
   "deploymentConfiguration": {
     "maximumPercent": 200,
     "minimumHealthyPercent": 0
@@ -27,7 +27,7 @@
   },
   "platformVersion": "LATEST",
   "propagateTags": "SERVICE",
-  "serviceName": "service-connect-common-api-service",
+  "serviceName": "acontplus-services-common-api-service",
   "serviceConnectConfiguration": {
     "enabled": true,
     "services": [
@@ -44,11 +44,11 @@
       "logDriver": "awslogs",
       "options": {
         "awslogs-create-group": "true",
-        "awslogs-group": "/ecs/service-connect-common-api",
+        "awslogs-group": "/ecs/acontplus-services-common-api",
         "awslogs-region": "us-east-1",
-        "awslogs-stream-prefix": "service-connect-common-api"
+        "awslogs-stream-prefix": "acontplus-services-common-api"
       }
     }
   },
-  "taskDefinition": "service-connect-common-api"
+  "taskDefinition": "acontplus-services-common-api"
 }

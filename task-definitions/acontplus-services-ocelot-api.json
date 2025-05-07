@@ -1,17 +1,20 @@
 {
-  "family": "ocelot-api-td",
-  "networkMode": "awsvpc",
+  "family": "acontplus-services-ocelot-api",
   "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::866150703026:role/ecsTaskRole",
+  "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "ocelot-api-container",
-      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/ocelot-api-repo:latest",
-      "essential": true,
+      "name": "ocelot-api",
+      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/ocelot-api:latest",
+      "cpu": 100,
       "portMappings": [
         {
+          "name": "ocelot-api",
           "containerPort": 8080,
           "hostPort": 8080,
-          "protocol": "tcp"
+          "protocol": "tcp",
+          "appProtocol": "http"
         }
       ],
       "environment": [
@@ -39,18 +42,19 @@
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         }
       ],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-region": "us-east-1",
           "awslogs-create-group": "true",
-          "awslogs-group": "acontplus/services/ocelot-api",
-          "awslogs-stream-prefix": "ecs"
+          "awslogs-group": "/ecs/acontplus-services-ocelot-api",
+          "awslogs-stream-prefix": "ocelot-api"
         }
       }
     }
   ],
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "512",
-  "memory": "1024"
+  "cpu": "256",
+  "memory": "512"
 }

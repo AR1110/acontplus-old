@@ -1,17 +1,20 @@
 {
-  "family": "restaurant-api-td",
-  "networkMode": "awsvpc",
+  "family": "acontplus-services-restaurant-api",
   "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::866150703026:role/ecsTaskRole",
+  "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "restaurant-api-container",
-      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/restaurant-api-repo:latest",
-      "essential": true,
+      "name": "restaurant-api",
+      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/restaurant-api:latest",
+      "cpu": 100,
       "portMappings": [
         {
+          "name": "restaurant-api",
           "containerPort": 8080,
           "hostPort": 8080,
-          "protocol": "tcp"
+          "protocol": "tcp",
+          "appProtocol": "http"
         }
       ],
       "environment": [
@@ -59,13 +62,14 @@
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:AWS_SECRET_KEY_PRD-sSGTMu"
         }
       ],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-region": "us-east-1",
           "awslogs-create-group": "true",
-          "awslogs-group": "acontplus/services/restaurant-api",
-          "awslogs-stream-prefix": "ecs"
+          "awslogs-group": "/ecs/acontplus-services-restaurant-api",
+          "awslogs-stream-prefix": "restaurant-api"
         }
       }
     }
