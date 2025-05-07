@@ -40,8 +40,11 @@ import {
   switchMap,
 } from 'rxjs';
 import { CompanyCustomerUseCase } from '@customer/domain/usecases/company-customer.use-case';
-import { CompanyCustomerAddEditDirective } from '../../company-customer-add-edit.directive';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {
+  CompanyCustomer,
+  CompanyCustomerSearch,
+} from '@customer/domain/models/company-customer';
+import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/company-customer-add-edit.directive';
 
 @Component({
   selector: 'app-company-customer-search',
@@ -87,7 +90,6 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   private readonly responsiveService = inject(ResponsiveService);
   private readonly companyCustomerUseCase = inject(CompanyCustomerUseCase);
   private readonly toasterService = inject(ToasterService);
-  private readonly dialogService = inject(DialogService);
   private readonly overlay = inject(Overlay);
 
   // Input properties
@@ -105,7 +107,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
 
   // Form control and observables
   searchControl = new FormControl<string>('');
-  filteredCustomers: Observable<CompanyCustomer[]>;
+  filteredCustomers: Observable<CompanyCustomerSearch[]>;
 
   // UI state flags
   isLoading = signal(false);
@@ -119,7 +121,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   @ViewChild(CdkOverlayOrigin) trigger!: CdkOverlayOrigin;
   isOpenDetail = signal(false);
   positionStrategy!: FlexibleConnectedPositionStrategy;
-  customerDetail = signal<CompanyCustomer | null>(null);
+  customerDetail = signal<CompanyCustomerSearch | null>(null);
 
   constructor() {
     // Initialize searchControl with textSearch value if provided
@@ -133,6 +135,8 @@ export class CompanyCustomerSearchComponent implements OnChanges {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((term) => {
+        console.log('Search term:', term);
+        if (term && typeof term !== 'string') return of([]);
         // Return empty array for short search terms
         if (!term || term.length < 2) {
           this.isLoading.set(false);
@@ -149,9 +153,9 @@ export class CompanyCustomerSearchComponent implements OnChanges {
             console.error('Company customer search error:', error);
             this.searchFailed.set(true);
             return of([]);
-          }),
+          })
         );
-      }),
+      })
     );
   }
 
@@ -163,18 +167,19 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   }
 
   // Handle customer selection
-  onSelectionChange(customer: CompanyCustomer) {
-    if (customer) {
-      if (this.isGetId()) {
-        this.companyCustomerUseCase
-          .getId(customer.idCliente || customer.id)
-          .subscribe((response) => {
-            this.customerSelected.emit(response);
-          });
-      } else {
-        this.customerSelected.emit(customer);
-      }
+  onSelectionChange(customer: CompanyCustomerSearch | CompanyCustomer) {
+    if (!customer) return;
+
+    if (this.isGetId()) {
+      this.companyCustomerUseCase
+        .getId(customer.idCliente || customer.id)
+        .subscribe((response) => {
+          this.customerSelected.emit(response);
+        });
+      return;
     }
+
+    this.customerSelected.emit(customer);
   }
 
   // Clear event when input is empty
@@ -277,7 +282,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   }
 
   // Format customer for display in autocomplete
-  formatCustomer(customer: CompanyCustomer): string {
-    return customer?.nombreFiscal || '';
+  formatCustomer(customer: CompanyCustomerSearch): string {
+    return customer?.name || '';
   }
 }

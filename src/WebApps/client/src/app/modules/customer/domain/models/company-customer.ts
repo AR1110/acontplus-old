@@ -19,6 +19,13 @@ export interface CompanyCustomer {
   companyId?: number;
   customerId: number;
   estado?: boolean;
+  name: string;
 }
 
-export interface CompanyCustomerSearch extends CompanyCustomer {}
+export interface CompanyCustomerSearch extends CompanyCustomer {
+  name: string;
+}
+
+export interface SearchCompanyCustomerParams {
+  textSearch: string;
+}

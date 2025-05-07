@@ -1,7 +1,6 @@
 import { ApiResponse } from "@core/models/api-response";
 import { Observable } from "rxjs";
-import {MatPagination} from "@shared/models/pagination.model";
-import {CompanyCustomerSearch} from "@customer/domain/models/company-customer";
+import {CompanyCustomerSearch, SearchCompanyCustomerParams} from "@customer/domain/models/company-customer";
 
 export abstract class CompanyCustomerRepository {
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
@@ -12,5 +11,5 @@ export abstract class CompanyCustomerRepository {
   abstract  put<T>(id: number, data: T): Observable<ApiResponse>
   abstract  post<T>(data: T): Observable<ApiResponse>
 
-  abstract search<T extends { textSearch: string }>(obj: T): Observable<CompanyCustomerSearch[]>
+  abstract search (obj: SearchCompanyCustomerParams): Observable<CompanyCustomerSearch[]>
 }
