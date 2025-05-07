@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
-import { DocumentReceived } from '@purchase/core/domain/document-received.model';
+import { DocumentReceived } from '@purchase/domain/document-received.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
@@ -25,7 +25,7 @@ import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 import { DialogService } from '@core/services/dialog.service';
 import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
-import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
+import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

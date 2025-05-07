@@ -1,4 +1,4 @@
-import { DocumentReceivedRepository } from '@purchase/core/repositories/document-received.repository';
+import { DocumentReceivedRepository } from '@purchase/domain/repositories/document-received.repository';
 import { inject, Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',

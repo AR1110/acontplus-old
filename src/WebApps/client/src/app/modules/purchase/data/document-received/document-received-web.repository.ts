@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { PURCHASE_PATHS } from '../../core/enums/purchase.constants';
+import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
-import { DocumentReceived } from '@purchase/core/domain/document-received.model';
-import { DocumentReceivedRepository } from '@purchase/core/repositories/document-received.repository';
+import { DocumentReceived } from '@purchase/domain/document-received.model';
+import { DocumentReceivedRepository } from '@purchase/domain/repositories/document-received.repository';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 
 @Injectable({

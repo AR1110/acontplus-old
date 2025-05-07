@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ToasterService } from '@core/services/toaster.service';
-import { CompraHabitual } from '@purchase/core/domain/compra-habitual.model';
+import { CompraHabitual } from '@purchase/domain/compra-habitual.model';
 import { CompraHabitualService } from '@purchase/data/services/compra-habitual.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';

@@ -11,7 +11,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { finalize, switchMap, throwError } from 'rxjs';
-import { FacturaFisicaLista } from '../../core/domain/factura-fisica.interface';
+import { FacturaFisicaLista } from '@purchase/domain/factura-fisica.interface';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
