@@ -402,8 +402,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5009
+          "Host": "mechanical-api.acontplus-services",
+          "Port": 80
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
