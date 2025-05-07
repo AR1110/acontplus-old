@@ -1,5 +1,5 @@
 
-import {Component, inject, signal} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -18,14 +18,14 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import {MatCard, MatCardContent, MatCardFooter} from "@angular/material/card";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {MatDivider} from "@angular/material/divider";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
+import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { MatCard, MatCardContent, MatCardFooter } from "@angular/material/card";
+import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
+import { MatDynamicCardComponent } from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatCheckbox } from "@angular/material/checkbox";
+import { MatDivider } from "@angular/material/divider";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 
 type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
 type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
@@ -51,7 +51,7 @@ type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
 export class ReceptionReportsComponent {
   establecimientos = signal<EstabSelect[]>([])
   documentTypes = signal<TipoDocSelect[]>([])
-  subcategories= signal<Subcategory[]>([]);
+  subcategories = signal<Subcategory[]>([]);
   isSearchSupplierSimple = true;
   dataSearch = {
     codEstab: '',
@@ -88,7 +88,7 @@ export class ReceptionReportsComponent {
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {
       const { establecimientos, documentTypes, subcategories } = response;
-      this.establecimientos.set( establecimientos);
+      this.establecimientos.set(establecimientos);
       this.documentTypes.set(documentTypes);
       this.subcategories.set(subcategories);
       if (this.establecimientos().length > 0) {
@@ -145,6 +145,11 @@ export class ReceptionReportsComponent {
       return {
         tipo: 4,
         codigo: REPORT_CODE.RRG,
+      };
+    if (this.dataSearch.codDoc === DOC_TYPE_SRI.ND)
+      return {
+        tipo: 5,
+        codigo: REPORT_CODE.RRND,
       };
     return {
       tipo: 2,
