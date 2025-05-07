@@ -1,8 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 
-using FactElect.API.Extensions;
-using FactElect.API.Extensions.Endpoints;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings

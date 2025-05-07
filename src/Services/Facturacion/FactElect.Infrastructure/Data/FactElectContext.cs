@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using FactElect.Domain.Entities.Sri;
 
 namespace FactElect.Infrastructure.Data;
 

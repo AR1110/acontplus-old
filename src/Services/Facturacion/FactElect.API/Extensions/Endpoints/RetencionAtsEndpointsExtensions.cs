@@ -1,7 +1,4 @@
-﻿using FactElect.API.Endpoints.Interfaces.RetencionAts;
-using FactElect.Application.DTOs.RetencionAts;
-
-namespace FactElect.API.Extensions.Endpoints;
+﻿namespace FactElect.API.Extensions.Endpoints;
 
 public static class RetencionAtsEndpointsExtensions
 {

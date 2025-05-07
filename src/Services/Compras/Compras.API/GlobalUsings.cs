@@ -1,11 +1,16 @@
 ﻿global using System.Data;
 global using System.Text;
+global using System.Web;
 global using System.Xml;
 global using Common.Core.Data;
 global using Common.Core.Models;
 global using Common.Core.Validation;
+global using Common.FactElect.Interfaces.Services;
 global using Common.FactElect.Models;
+global using Common.FactElect.Models.Documents;
 global using Common.FactElect.Services;
+global using Common.FactElect.Services.Conversion;
+global using Common.FactElect.Services.Documents;
 global using Common.Infrastructure.Core.Context;
 global using Common.Infrastructure.Data.Repository.Interfaces;
 global using Common.Services.Configuration;

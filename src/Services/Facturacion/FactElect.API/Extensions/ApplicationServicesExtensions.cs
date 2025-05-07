@@ -1,8 +1,4 @@
-﻿using Common.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Scrutor;
-using Serilog;
+﻿using Scrutor;
 
 namespace FactElect.API.Extensions;
 
