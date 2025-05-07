@@ -18,7 +18,6 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
 import { MatCard, MatCardContent, MatCardFooter } from "@angular/material/card";
 import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
 import { MatDynamicCardComponent } from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
@@ -26,6 +25,7 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { MatDivider } from "@angular/material/divider";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+import {SupplierSearch} from "@customer/domain/models/supplier.interface";
 
 type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
 type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
