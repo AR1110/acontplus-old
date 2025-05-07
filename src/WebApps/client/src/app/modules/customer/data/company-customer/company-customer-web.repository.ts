@@ -3,10 +3,10 @@ import {PATHS_API, SEPARADORES_REGEX} from "@core/constants/global.constants";
 import {HttpClient, HttpContext} from "@angular/common/http";
 import {ApiResponse, isApiResponse} from "@core/models/api-response";
 import {map, Observable} from "rxjs";
-import {CompanyCustomerRepository} from "@customer/core/repositories/company-customer.repository";
+import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
 import {CompanyCustomerMapper} from "@customer/data/company-customer/company-customer.mapper";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import {CompanyCustomerSearch} from "@customer/core/domain/company-customer";
+import {CompanyCustomerSearch} from "@customer/domain/models/company-customer";
 
 
 @Injectable({

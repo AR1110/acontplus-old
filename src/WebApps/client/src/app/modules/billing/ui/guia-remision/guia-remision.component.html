@@ -78,7 +78,18 @@
         </mat-form-field>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-        <app-user-search/>
+        <mat-form-field class="w-100">
+          <mat-label>Usuario</mat-label>
+          <mat-select [(ngModel)]="dataSearch.usuarioId" (selectionChange)="refresh()">
+            <mat-option [value]="0">--Todos--</mat-option>
+            @for(item of users(); track $index){
+              <mat-option [value]="item.idUsuario">{{
+                  item.nombreUsuario
+                }}</mat-option>
+
+            }
+          </mat-select>
+        </mat-form-field>
 
       </div>
 

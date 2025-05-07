@@ -4,7 +4,7 @@ import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
-import { CustomerRepository } from '@customer/core/repositories/customer.repository';
+import { CustomerRepository } from '@customer/domain/repositories/customer.repository';
 
 @Injectable({
   providedIn: 'root',

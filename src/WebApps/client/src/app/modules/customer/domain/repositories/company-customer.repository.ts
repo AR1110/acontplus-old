@@ -1,7 +1,7 @@
 import { ApiResponse } from "@core/models/api-response";
 import { Observable } from "rxjs";
 import {MatPagination} from "@shared/models/pagination.model";
-import {CompanyCustomerSearch} from "@customer/core/domain/company-customer";
+import {CompanyCustomerSearch} from "@customer/domain/models/company-customer";
 
 export abstract class CompanyCustomerRepository {
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;

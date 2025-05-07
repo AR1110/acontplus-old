@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { MatCard, MatCardContent, MatCardFooter } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

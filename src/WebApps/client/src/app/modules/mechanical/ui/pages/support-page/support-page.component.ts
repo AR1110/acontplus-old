@@ -43,7 +43,7 @@ import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
   selector: 'app-support-page',

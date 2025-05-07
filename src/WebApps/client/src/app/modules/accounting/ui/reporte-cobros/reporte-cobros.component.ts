@@ -19,7 +19,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteIngresoUseCase } from '@accounting/core/use-cases/comprobante-ingreso.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/core/domain/company-customer';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";

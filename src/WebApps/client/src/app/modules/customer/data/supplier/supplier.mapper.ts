@@ -1,4 +1,4 @@
-import { Supplier } from '@customer/core/domain/supplier.interface';
+import { Supplier } from '@customer/domain/models/supplier.interface';
 
 export class SupplierMapper {
   static fromApiSearch(response: Supplier[]) {

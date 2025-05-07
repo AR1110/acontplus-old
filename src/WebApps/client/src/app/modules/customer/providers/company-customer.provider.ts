@@ -1,5 +1,5 @@
 import {ClassProvider} from "@angular/core";
-import {CompanyCustomerRepository} from "@customer/core/repositories/company-customer.repository";
+import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
 import {CompanyCustomerWebRepository} from "@customer/data/company-customer/company-customer-web.repository";
 
 

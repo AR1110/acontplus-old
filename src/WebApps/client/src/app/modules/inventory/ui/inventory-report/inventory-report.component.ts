@@ -34,7 +34,7 @@ import { ReportButtonsComponent } from '@shared/components/report-buttons/report
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 
 const imports = [
   NgbNavModule,

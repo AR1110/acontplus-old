@@ -4,7 +4,7 @@ import {
   GuiaRemisionDataForm,
   GuiaRemisionFilterData,
   GuiasRemisionResponse,
-} from '@billing/domain/models/guia-remision.model';
+} from '@billing/domain/models/guia-remision/guia-remision.model';
 
 export abstract class GuiaRemisionRepository {
   abstract getFormData(): Observable<GuiaRemisionDataForm>;

@@ -27,7 +27,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { finalize } from 'rxjs/operators';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 
 @Component({
   selector: 'app-anticipo',

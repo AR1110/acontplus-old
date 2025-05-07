@@ -14,7 +14,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CompanyCustomer} from "@customer/core/domain/company-customer";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatDivider} from "@angular/material/divider";

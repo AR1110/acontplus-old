@@ -1,4 +1,4 @@
-import {  GuiasRemisionResponse} from '@modules/billing/domain/models/guia-remision.model';
+import {  GuiasRemisionResponse} from '@billing/domain/models/guia-remision/guia-remision.model';
 
 export class ListGuiaRemisionMapper {
 

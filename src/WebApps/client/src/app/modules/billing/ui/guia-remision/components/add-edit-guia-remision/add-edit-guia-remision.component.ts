@@ -14,7 +14,10 @@ import {
 } from "@billing/domain/use-cases/guia-remision/get-guia-remision-form-data.use-case.";
 import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {TipoDoc} from "@core/models/tipo-doc.model";
-import {FormsModule} from "@angular/forms";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import Swal from "sweetalert2";
+import {MatStepperModule} from "@angular/material/stepper";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-add-edit-guia-remision',
@@ -24,7 +27,10 @@ import {FormsModule} from "@angular/forms";
     MatSelectModule,
     FormsModule,
     MatCustomDialogComponent,
-    ThemeButtonComponent
+    ThemeButtonComponent,
+    ReactiveFormsModule,
+    MatStepperModule,
+    MatButtonModule,
   ],
   templateUrl: './add-edit-guia-remision.component.html',
   styles: ``
@@ -36,21 +42,32 @@ export class AddEditGuiaRemisionComponent {
   private $getGuiaRemisionFormDataUseCase = inject(GetGuiaRemisionFormDataUseCase)
   title = 'Nuevo Guía Remisión';
 
-   estabs = signal<GroupedEstab[]>([])
+ estabs = signal<GroupedEstab[]>([])
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([])
   tiposDoc = signal<TipoDoc[]>([])
 
-  dataForm = {
-     codEstab: "",
-    idPuntoEmision: 0,
 
-  }
+
+
+  //Angular
+  private fb = inject(FormBuilder)
+  // dataForm = {
+  //    codEstab: "",
+  //   idPuntoEmision: 0,
+  //
+  // }
+
+  dataForm!:FormGroup
 
   dataFormClone = {
      codEstab: "",
   }
 
-   protected openDocs(){
+  //Footer
+  informacionAdicionalDocumento = signal<any[]>([])
+  configuracionesInfoAdicional=signal<any[]>([])
+
+  protected openDocs(){
      let ref = this._dialogSvc.open(DocsGuiaRemisionComponent, {
        size: 'lg'
      })
@@ -58,24 +75,178 @@ export class AddEditGuiaRemisionComponent {
 
 
    ngOnInit(){
+
+     this.dataForm = this.fb.group({
+       codEstab: ['', Validators.required],
+       puntoEmisionId: [0, Validators.required],
+       fechaInicioTraslado: [new Date(), Validators.required],
+
+       // Remitente (normalmente la empresa emisora)
+       remitenteId: ['', Validators.required],
+       remitenteRuc: ['', Validators.required],
+       remitenteRazonSocial: ['', Validators.required],
+
+       // Destinatario
+       destinatarioId: ['', Validators.required],
+       destinatarioRuc: [{value: '', disabled: true}],
+       destinatarioRazonSocial: [{value: '', disabled: true}],
+
+       // Direcciones
+       direccionPartida: this.fb.group({
+         calle: ['', Validators.required],
+         numero: ['', Validators.required],
+         complemento: [''],
+         ciudad: ['', Validators.required],
+         provincia: ['', Validators.required],
+         codigoPostal: [''],
+         pais: ['', Validators.required],
+       }),
+
+       direccionLlegada: this.fb.group({
+         calle: ['', Validators.required],
+         numero: ['', Validators.required],
+         complemento: [''],
+         ciudad: ['', Validators.required],
+         provincia: ['', Validators.required],
+         codigoPostal: [''],
+         pais: ['', Validators.required],
+       }),
+
+       // Transporte
+       transportistaId: ['', Validators.required],
+       transportista: this.fb.group({
+         ruc: [{value: '', disabled: true}],
+         razonSocial: [{value: '', disabled: true}],
+         licenciaConducir: [''],
+         placa: ['', Validators.required]
+       }),
+
+       // Items
+       items: this.fb.array([]),
+
+       // Otros datos
+       motivoTraslado: ['', Validators.required],
+       observaciones: [''],
+       documentosReferencia: this.fb.array([])
+     });
+
+     this.initForm()
+   }
+
+
+   private initForm(){
      this.$getGuiaRemisionFormDataUseCase.execute().subscribe(response=>{
        this.estabs.set(response.estabs);
        let dataEstab = this.estabs().find(item=>item.defaultEstab);
 
-       if (dataEstab) {
-         this.dataForm.codEstab = dataEstab.codEstab;
-         this.dataFormClone.codEstab = dataEstab.codEstab;
-
-         this.puntosEmision.set(dataEstab.puntosEmision);
-         let dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
-         if (dataPuntoEmision) {
-          this.dataForm.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-         }
+       if(!dataEstab){
+         Swal.fire({
+           icon: 'warning',
+           text: 'No tienes asignado el Establecimiento',
+           timer: 1000
+         })
+         return
        }
 
+       this.puntosEmision.set(dataEstab.puntosEmision);
+       let dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+       if (!dataPuntoEmision) {
+         Swal.fire({
+           icon: 'warning',
+           text: 'No tienes asignado los puntos de emisión',
+           timer: 1000
+         })
+         return
+       }
+       this.dataFormClone.codEstab = dataEstab.codEstab;
+         this.dataForm.patchValue({
+           codEstab: dataEstab.codEstab,
+           puntoEmisionId: dataPuntoEmision.idPuntoEmision
+       })
      })
    }
 
+   async estabChange(){
+     const { isConfirmed } = await Swal.fire({
+       icon: 'warning',
+       title: 'Cambiar Establecimiento',
+       text: '¿Está seguro de cambiar? Se cambiará el Punto de Emisión',
+       showCancelButton: true,
+       showConfirmButton: true,
+       confirmButtonText: 'Sí',
+       cancelButtonText: 'No',
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       reverseButtons: true
+     });
+
+     if(!isConfirmed){
+       this.dataForm.patchValue({
+         codEstab: this.dataFormClone.codEstab
+       })
+       return
+     }
+
+     this.dataFormClone.codEstab = this.dataForm.value.codEstab;
+
+     const dataEstab = this.estabs().find(item => item.codEstab === this.dataForm.value.codEstab);
+     if(!dataEstab){
+       Swal.fire({
+         icon: 'warning',
+         text: 'No tienes asignado el Establecimiento',
+         timer: 1000
+       })
+       return
+     }
+
+     this.puntosEmision.set(dataEstab.puntosEmision);
+     let dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+     if (!dataPuntoEmision) {
+       Swal.fire({
+         icon: 'warning',
+         text: 'No tienes asignado los puntos de emisión',
+         timer: 1000
+       })
+       return
+     }
+     this.dataForm.patchValue({
+       puntoEmisionId: dataPuntoEmision.idPuntoEmision
+     })
+     this.asignarInfoAdicionalPorPuntoDeEmision()
+   }
+
+ private asignarInfoAdicionalPorPuntoDeEmision(){
+
+     // Elimina info adicional existente relacionada a algún punto de emisión
+     this.informacionAdicionalDocumento.set(this.informacionAdicionalDocumento().filter(
+       (info) => !(info.idPuntoEmision > 0)
+     ))
+
+     // Busca la configuración para el punto de emisión actual
+     const configuracionPuntoEmision = this.configuracionesInfoAdicional().find(
+       (config) => config.idPuntoEmision === this.dataForm.value.puntoEmisionId
+     );
+
+     if (!configuracionPuntoEmision) return;
+
+     // Clona los valores y les asigna el punto de emisión actual
+     const infoAdicionalGenerada = configuracionPuntoEmision.infoAdicional.map((item:any) => ({
+       ...item,
+       idPuntoEmision: this.dataForm.value.puntoEmisionId,
+     }));
+
+     // Asigna la nueva información adicional combinada con la existente
+    this.informacionAdicionalDocumento.set([
+       ...infoAdicionalGenerada,
+       ...this.informacionAdicionalDocumento(),
+     ])
+
+ }
+
+
+  onSubmit(){
+
+  }
 
 
   close(){

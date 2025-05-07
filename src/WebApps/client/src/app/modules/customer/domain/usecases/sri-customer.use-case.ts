@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
-import {CompanyCustomerRepository} from "@customer/core/repositories/company-customer.repository";
-import {SupplierRepository} from "@customer/core/repositories/supplier.repository";
-import {CustomerRepository} from "@customer/core/repositories/customer.repository";
-import {SriCustomerRepository} from "@customer/core/repositories/sri-customer.repository";
+import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
+import {SupplierRepository} from "@customer/domain/repositories/supplier.repository";
+import {CustomerRepository} from "@customer/domain/repositories/customer.repository";
+import {SriCustomerRepository} from "@customer/domain/repositories/sri-customer.repository";
 
 
 @Injectable({
