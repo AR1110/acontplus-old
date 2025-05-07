@@ -788,7 +788,7 @@ BEGIN
         IF @tipo = 5
             BEGIN
             
-                SET @tableNames = 'dataEntidad,comprobantes'
+                SET @tableNames = 'headerDs,detalleDs'
 
                 SELECT @codEstab       = codEstab
                       ,@ckFecha        = ckFecha
@@ -824,9 +824,10 @@ BEGIN
                                     ,format(CONVERT(DATETIME2, dr.fechaAutorizacion), ''dd/MM/yyyy HH:mm'')                                         as fechaAutorizacion
 	                                ,dr.rucEmisor
 	                                ,dr.razonSocialEmisior as razonSocialEmisor
+                                    ,CAST(dr.importeTotal AS NUMERIC(18,2))                                                                         as importeTotal
 									,(SELECT TOP 1 ''Iva'' + '' '' + ti.descripcion FROM Sri.TarifaImpuesto ti WHERE ti.codigo = di.CodePercentage) as impuesto
-									,CAST(di.TaxBase AS NUMERIC(18,3))																			    as subTotal
-									,CAST(di.TaxValue AS NUMERIC(18,3))																			    as iva																		
+									,CAST(di.TaxBase AS NUMERIC(18,2))																			    as subTotal
+									,CAST(di.TaxValue AS NUMERIC(18,2))																			    as iva																		
 									,rd.numDocSustento																						        as numDocModificado
 							FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
                             INNER JOIN Sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento   = dr.idEstablecimiento
@@ -835,7 +836,7 @@ BEGIN
 							INNER JOIN FactElect.DocRelacionado    rd WITH (NOLOCK) ON rd.idDocumentoRecibido = dr.idDocumento
                             WHERE dr.codDoc = ''05''
                               AND dr.xmlCompressed IS NOT NULL
-                              AND dr.identificacionReceptor = @identificacionReceptor '
+                              --AND dr.identificacionReceptor = @identificacionReceptor '
 
                 IF LEN(@codEstab) > 6 
                     BEGIN
