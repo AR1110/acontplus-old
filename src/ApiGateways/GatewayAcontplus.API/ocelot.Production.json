@@ -182,8 +182,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5014
+          "Host": "vet-api.acontplus-services",
+          "Port": 80
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
