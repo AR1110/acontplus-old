@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
 
-ENV ASPNETCORE_URLS=http://+:8080
+
 
 RUN groupadd -g 2000 dotnet \
     && useradd -m -u 2000 -g 2000 dotnet
