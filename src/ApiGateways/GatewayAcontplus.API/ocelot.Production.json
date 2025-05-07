@@ -386,8 +386,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
-          "Port": 5012
+          "Host": "tech-support-api.acontplus-services",
+          "Port": 80
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
