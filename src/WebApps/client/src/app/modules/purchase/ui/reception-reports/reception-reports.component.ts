@@ -18,7 +18,6 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { Subcategory } from '@accounting/core/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { MatCard, MatCardContent, MatCardFooter } from "@angular/material/card";
 import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
 import { MatDynamicCardComponent } from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import { MatCheckbox } from "@angular/material/checkbox";
