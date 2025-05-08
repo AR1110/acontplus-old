@@ -754,5 +754,11 @@
     "inputFiles": [
       "wwwroot/js/common/modals/modalSendMailCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/modals/modalSendWhatsAppCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/modals/modalSendWhatsAppCtrl.js"
+    ]
   }
 ]

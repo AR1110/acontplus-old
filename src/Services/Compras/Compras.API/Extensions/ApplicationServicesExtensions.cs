@@ -39,9 +39,7 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Compras.API.Services",
-            "Common.FactElect.Services.Documents",
-            "Common.FactElect.Services.Conversion"
+            "Compras.API.Services"
         ];
 
         services.Scan(scan => scan
@@ -64,6 +62,8 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
+
+        services.AddSingleton<IDocumentConverter, DocumentConverter>();
 
         return services;
     }
