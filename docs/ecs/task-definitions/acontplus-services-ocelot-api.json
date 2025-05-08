@@ -21,7 +21,7 @@
         { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
         {
           "name": "SafeOrigins",
-          "value": "https://app.acontplus.com,https://demo.acontplus.com,https://admin.acontplus.com,https://invoice.acontplus.com,https://restaurant.acontplus.com,http://localhost:7166,http://localhost:4200"
+          "value": "https://app.acontplus.com,https://client.acontplus.com,https://demo.acontplus.com,https://admin.acontplus.com,https://invoice.acontplus.com,https://restaurant.acontplus.com,http://localhost:7166,http://localhost:4200"
         },
         {
           "name": "JwtSettings__ExpirationInMinutes",
