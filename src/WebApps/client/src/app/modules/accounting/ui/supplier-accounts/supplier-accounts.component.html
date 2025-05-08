@@ -96,7 +96,7 @@
             <app-supplier-search
               [isSimpleMode]="isSearchSupplierSimple"
               (supplierSelected)="onSupplierSelected($event)"
-              [textSearch]="dataSearch.supplierName"
+              [(textSearch)]="dataSearch.supplierName"
               (clearSearch)="supplierclearSearch($event)"
             />
         </div>

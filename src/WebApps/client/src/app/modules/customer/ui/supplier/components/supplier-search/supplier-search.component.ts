@@ -17,7 +17,7 @@ import {
   of,
   startWith,
   switchMap,
-  tap,
+  tap, debounceTime,
 } from 'rxjs';
 import { SupplierUseCase } from '@customer/domain/usecases/supplier.use-case';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
@@ -71,26 +71,30 @@ export class SupplierSearchComponent {
 
   constructor() {
     // Initialize searchControl with textSearch value
-    this.searchControl.setValue(this.textSearch() ?? '');
+
+    if (this.textSearch()) {
+      this.searchControl.setValue(this.textSearch());
+    }
 
     // Setup filtered suppliers observable
     this.filteredSuppliers = this.searchControl.valueChanges.pipe(
       startWith(''),
-      filter((value): value is string => value !== null && value !== undefined),
+      debounceTime(300),
       distinctUntilChanged(),
-      tap(() => {
-        this.isLoading = true;
-        this.searchFailed = false;
-      }),
+
       switchMap((term) => {
+        if(term && typeof term!=='string') return of([]);
         // Return empty array for short search terms
         if (!term || term.length < 2) {
           this.isLoading = false;
           return of([]);
         }
 
+        this.isLoading = true;
+        this.searchFailed = false;
         // Call supplier search use case
         return this.supplierUseCase.search({ textSearch: term }).pipe(
+
           tap({
             next: () => (this.searchFailed = false),
             error: () => (this.searchFailed = true),
@@ -107,14 +111,18 @@ export class SupplierSearchComponent {
 
   // Update control value when textSearch input changes
   ngOnChanges() {
+    console.log(this.textSearch())
     if (this.textSearch()) {
       this.searchControl.setValue(this.textSearch());
     }
   }
 
   // Format supplier for display in autocomplete
-  formatter(supplier: SupplierSearch): string {
-    return supplier?.razonSocialComprador || '';
+  formatter(supplier: SupplierSearch | string): string {
+    if(typeof supplier === 'string') {
+      return  supplier;
+    }
+    return supplier?.name || '';
   }
 
   // Handle supplier selection

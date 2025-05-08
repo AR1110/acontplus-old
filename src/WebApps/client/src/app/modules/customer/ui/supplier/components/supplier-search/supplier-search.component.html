@@ -17,14 +17,14 @@
       }
       @for (
         supplier of filteredSuppliers | async;
-        track supplier.identificacionComprador
+        track $index
       ) {
         <mat-option
           [value]="supplier"
           (onSelectionChange)="onSupplierSelect(supplier)"
         >
-          {{ supplier.identificacionComprador }} -
-          {{ supplier.razonSocialComprador }}
+          <span>{{ supplier.identificacionComprador }}</span> |
+          <small>{{ supplier.name }}</small>
         </mat-option>
       }
       @if (searchFailed) {
@@ -56,14 +56,14 @@
       }
       @for (
         supplier of filteredSuppliers | async;
-        track supplier.identificacionComprador
+        track $index
       ) {
         <mat-option
           [value]="supplier"
           (onSelectionChange)="onSupplierSelect(supplier)"
         >
-          {{ supplier.identificacionComprador }} -
-          {{ supplier.razonSocialComprador }}
+          <span>{{ supplier.identificacionComprador }}</span> |
+          <small>{{ supplier.name }}</small>
         </mat-option>
       }
     </mat-autocomplete>

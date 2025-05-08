@@ -84,7 +84,7 @@ export class SupplierAccountsComponent {
   }
 
   onSupplierSelected(data: SupplierSearch) {
-    this.dataSearch.supplierName = data.razonSocialComprador;
+    this.dataSearch.supplierName = data.name;
     this.dataSearch.idProveedor = data.idProveedor;
   }
 
