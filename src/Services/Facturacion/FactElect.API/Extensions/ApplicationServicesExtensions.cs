@@ -45,8 +45,10 @@ public static class ApplicationServicesExtensions
             "FactElect.Application.Services.Logistica",
             "FactElect.Application.Services.RetencionAts",
             "FactElect.Application.Services.Sri",
-            "Common.FactElect.Services",
-            "FactElect.API.Endpoints.Implementations"
+            "FactElect.API.Endpoints.Implementations",
+            "Common.FactElect.Services.Documents",
+            "Common.FactElect.Services.External",
+            "Common.FactElect.Services.Validation"
         ];
 
         services.Scan(scan => scan

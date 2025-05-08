@@ -67,11 +67,11 @@ builder.Services.AddResponseCompression(options =>
 
 builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
 {
-    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+    options.Level = System.IO.Compression.CompressionLevel.Optimal;
 });
 builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 {
-    options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+    options.Level = System.IO.Compression.CompressionLevel.Optimal;
 });
 
 var app = builder.Build();

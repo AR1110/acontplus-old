@@ -31,11 +31,11 @@ public static class ApplicationServicesExtensions
 
         services.Configure<BrotliCompressionProviderOptions>(options =>
         {
-            options.Level = System.IO.Compression.CompressionLevel.Fastest;
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
         });
         services.Configure<GzipCompressionProviderOptions>(options =>
         {
-            options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
         });
 
 
