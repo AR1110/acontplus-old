@@ -21,7 +21,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-const string corsPolicy = "AllowAll";
+const string corsPolicy = "OcelotCorsPolicy";
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
@@ -44,11 +44,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(corsPolicy, policy =>
     {
         policy 
-            .SetIsOriginAllowed(origin =>
-                safeOrigins.Any(o => origin.StartsWith(o, StringComparison.OrdinalIgnoreCase)))
-            .AllowCredentials()
+            .WithOrigins(safeOrigins)
             .AllowAnyHeader()
-            .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+            .AllowAnyMethod()
+            .AllowCredentials()
             .WithExposedHeaders("Content-Disposition")
             .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
     });
