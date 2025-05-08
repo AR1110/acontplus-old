@@ -1,4 +1,5 @@
-﻿using Common.API.Endpoints.Interfaces;
+﻿using Common.API.Dtos;
+using Common.API.Endpoints.Interfaces;
 
 namespace Common.API.Endpoints.Implementations;
 
@@ -37,12 +38,12 @@ public class CommonEndpoints(IDashboardService dashboardService,
         return Results.Ok(await userReleaseReadService.AddAsync(apiRequest));
     }
 
-    public async Task<IResult> CreateWhatsappMessageAsync(ApiRequest apiRequest)
+    public async Task<IResult> CreateWhatsappMessageAsync(WhatsappMessageDto whatsappMessageDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
-            { "json", DataConverters.SerializeDictionary(apiRequest.Data) },
+            { "json", DataConverters.SerializeObjectCustom<WhatsappMessageDto>(whatsappMessageDto) },
             { "fromMobile", httpContextAccessor.HttpContext.Items["FromMobile"] as bool? ?? false }
         };
         return Results.Ok(await whatsappMessageService.AddAsync(parameters));

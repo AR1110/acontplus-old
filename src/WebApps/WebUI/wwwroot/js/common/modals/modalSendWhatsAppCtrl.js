@@ -1,169 +1,106 @@
-//@ts-check
 export {
-    modalSendWhatsAppCtrl
+    ModalWhatsAppCtrl
 }
 
-modalSendWhatsAppCtrl.$inject = [
-    '$scope', 
+ModalWhatsAppCtrl.$inject = [
+    '$scope',
+    '$http',
     '$uibModalInstance',
-    '$injector',
     'toastService',
     'mainService',
     'commonService',
     'params',
-    'sharedService',
     'decodeToken'
 ]
 
-function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, commonSvc, params, sharedSvc, _token) {
-
-    let DOC_TYPE = $injector.get('DOC_TYPE');
-    let CODE_REPORT = $injector.get('CODE_REPORT');
-    let $http = $injector.get('$http');
-
-    const {data} = params;
- 
+function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
+    $scope.client = {}
     $scope.whatsapp = {}
     $scope.connected_devices = []
     $scope.current_device = {}
- 
+
+
+    $scope.hasPermissions = _token.userRoleId == '26'
 
     let parser = new UAParser(navigator.userAgent)
     let parserResults = parser.getResult()
     $scope.browser = parserResults.browser.name + parserResults.browser.version
     $scope.os = parserResults.os.name + parserResults.os.version
 
-    $scope.session = {
-        is_logged_in: false
-    } 
- 
-    $scope.comprobante = "";
+    $scope.session = {}
+    $scope.session.is_logged_in = false
+
+    $scope.type = params.type
+    $scope.codDoc = params.codDoc
+    $scope.comprobante = params.comprobante + ': ' + params.serieComprobante
 
     let idInstance = "7103845341"
     let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c"
- 
-
-    let phoneNumbers;
-    $scope.hasPhoneNumber = true;
-    let esNotificacionTributaria = false;
-    let esNotificacionGeneral = false;
-
-    let telefonoEstab = null;
-    let nombreEstab = null;
-
-    function createDataParamDocSri() {
-        let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.idDocumento;
-        return {
-            tipo: 2,
-            id,
-            codDoc: data.codDoc,
-            esNotificacionTributaria: true,
-            comprobante: `${data.comprobanteVersion || data.comprobante} : ${data.serieComprobante}`,
-            versionComp: data.versionComp
-        };
-    }
- 
-    function createDataParamDoc() {
-        return {
-            tipo: 3,
-            id: data.idDocumento,
-            codDoc: data.codDoc,
-            esNotificacionGeneral: true,
-            comprobante: `${data.comprobanteVersion || data.comprobante} : ${data.serieComprobante}`,
-            versionComp: data.versionComp
-        };
-    }
-
-
-    let dataParamGetDataForm = {
-        [DOC_TYPE.FV_SRI]: createDataParamDocSri(),
-        [DOC_TYPE.LC_SRI]: createDataParamDocSri(),
-        [DOC_TYPE.GR_SRI]: createDataParamDocSri(),
-        [DOC_TYPE.R_SRI]: createDataParamDocSri(),
-        [DOC_TYPE.NC_SRI]: createDataParamDocSri(),
-        [DOC_TYPE.NE]: createDataParamDoc(),
-        [DOC_TYPE.PR]: createDataParamDoc(),
-        ["09"]: createDataParamDoc(),
-
-
-    };
-
-
-    function createDataParamSenFile(codigo){
-        let id = data.idDocumento;
-        let idDocumentoElectronico = data.idDocumentoElectronico;
-        return {
-            codigo,
-            id,
-            idDocumentoElectronico,
-            codEstab: data.codEstab,
-            versionComp: data.versionComp
-        }
-    }
-     
- 
-    let dataParamSenFile = {
-        [DOC_TYPE.FV_SRI]: createDataParamSenFile(CODE_REPORT.RF),
-        [DOC_TYPE.LC_SRI]: createDataParamSenFile(CODE_REPORT.RLC),
-        [DOC_TYPE.GR_SRI]: createDataParamSenFile(CODE_REPORT.RGR),
-        [DOC_TYPE.R_SRI]: createDataParamSenFile(CODE_REPORT.RRC),
-        [DOC_TYPE.NC_SRI]: createDataParamSenFile(CODE_REPORT.RNC),
-        [DOC_TYPE.NE]: createDataParamSenFile(CODE_REPORT.RNE),
-        [DOC_TYPE.PR]: createDataParamSenFile(CODE_REPORT.PR),
-        ["09"]: createDataParamSenFile(CODE_REPORT.PR),
-        [DOC_TYPE.CI]: createDataParamSenFile(CODE_REPORT.RCINGR), 
-    };
-
-
-    getDataForm();
-    function getDataForm() { 
-
-        let params = dataParamGetDataForm[data.codDoc];
-        if (!params) {
-            console.error(`No se encontraron parámetros para el tipo de documento: ${data.codDoc}`);
-            return;
-        }
-        esNotificacionTributaria = params.esNotificacionTributaria;
-        esNotificacionGeneral = params.esNotificacionGeneral;
-        $scope.comprobante = params.comprobante;
-
-        sharedSvc.getDataFormNotificacion(params).then(response => {
-            phoneNumbers = response.telefonos; 
-            telefonoEstab = response.telefonoEstab;
-            nombreEstab = response.nombreEstab;
-            
-            $scope.phoneNumbers = phoneNumbers.filter(p=>p.length===10).map(p=>({
-                number: p
-            }))
-  
-            if ($scope.phoneNumbers.length == 0) {
-                $scope.hasPhoneNumber = false
-            } else {
-                $scope.whatsapp.number = $scope.phoneNumbers[0].number
-            }
-
-            if (esNotificacionTributaria) {
-                $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante electrónico:'
-            } else {
-                $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
-            } 
-
-        })
-    }
-
-    connectGreenApi()
-    function connectGreenApi  ()  {
-        $http.get(`https://api.green-api.com/waInstance${idInstance}/getSettings/${apiTokenInstance}`).then(
-            response => {
-                if (response.data) {
-                    let { wid } = response.data
-                    $scope.current_device.device = wid 
+    $scope.getInstanceStatus = () => {
+        $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
+            (response) => {
+                let { stateInstance } = response.data
+                if (stateInstance === "authorized") {
+                    $scope.session.is_logged_in = true
+                } else {
+                    getQrCode()
                 }
             }
         )
     }
 
-      
+    $scope.connectGreenApi = () => {
+        $http.get(`https://api.green-api.com/waInstance${idInstance}/getSettings/${apiTokenInstance}`).then(
+            response => {
+                if (response.data) {
+                    let { wid } = response.data
+                    $scope.current_device.device = wid
+                    $scope.getInstanceStatus()
+                }
+            }
+        )
+    }
+    $scope.connectGreenApi();
+
+    $scope.hasPhoneNumber = true
+    let phoneNumbers
+    if (params.telefono) {
+
+        if (params.telefono.includes(";")) {
+            phoneNumbers = params.telefono.split(";")
+        } else if (params.telefono.includes("|")) {
+            phoneNumbers = params.telefono.split("|")
+        } else {
+            phoneNumbers = params.telefono.split(" ")
+        }
+    } else {
+        $scope.hasPhoneNumber = false
+    }
+
+    $scope.phoneNumbers = []
+    if (phoneNumbers) {
+        //Only cellphone numbers
+        for (const p of phoneNumbers) {
+            if (p.length == 10) {
+                $scope.phoneNumbers.push({
+                    number: p,
+                })
+            }
+        }
+    }
+
+    if ($scope.phoneNumbers.length == 0) {
+        $scope.hasPhoneNumber = false
+    } else {
+        $scope.whatsapp.number = $scope.phoneNumbers[0].number
+    }
+
+    if ($scope.type == 'SRI') {
+        $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante electrónico:'
+    } else {
+        $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
+    }
+
     $scope.validatePhoneNumber = (phone) => {
         if (!phone) {
             tS.toastr('warning', 'El número de celular no puede estar vacio!')
@@ -211,89 +148,141 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         }
     }
 
-    const http = axios.create({
-        baseURL: "https://api.green-api.com"
-    })
- 
+    function getQrCode() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let url = `/waInstance${idInstance}/qr/${apiTokenInstance}` // `/app/login`
+                $http.get(`https://api.green-api.com${url}`).then(
+                    response => {
+                        if ($scope.hasPermissions) {
+                            tS.toastr("info", "Por favor escanee el codigo QR, con su cuenta de whatsapp")
+                            if (response) {
+                                let { type, message } = response.data
+                                if (type === "qrCode") {
+                                    $scope.session.src = "data:image/png;base64," + message
+                                }
+                            }
+                        } else {
+                            tS.toastr("info", "Ha perdido session de whatsapp, comuniquese con el administrador del sistema")
+                        }
+
+                        setTimeout(() => {
+                            if (!$scope.session.is_logged_in) {
+                                getQrCode()
+                            }
+                        }, (results.qr_duration * 1000))
+
+                        resolve()
+                    },
+                    error => {
+                        if (error.data) {
+                            reject(error.data.message)
+                        } else {
+                            reject(error.message || 'Error occurred')
+                        }
+                    }
+                )
+            } catch (error) {
+                reject(error.message || 'Error occurred')
+            }
+        })
+    }
 
     let totalMessages = 1
 
     function sendSms(message, firstMessage = null) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
                 showLoader()
-                let url = `/waInstance${idInstance}/sendMessage/${apiTokenInstance}`
+                let url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`
                 let payload = {
                     chatId: phoneNumberFormatter($scope.whatsapp.number),
                     message: message ? message : $scope.whatsapp.message,
                 }
-                let response = await http.post(url, JSON.stringify(payload), {
-                    headers: {
-                        'Content-Type': 'application/json'
+
+                $http.post(url, payload).then(
+                    response => {
+                        resolve(response.data.message)
+                        totalMessages++
+                        if (firstMessage) {
+                            $scope.sendFiles()
+                        }
+                        hideLoader()
+                    },
+                    error => {
+                        if (error.data) {
+                            reject(error.data.message)
+                        } else {
+                            reject(error.message || 'Error occurred')
+                        }
+                        hideLoader()
                     }
-                })
-                resolve(response.data.message)
-                totalMessages++
-                if (firstMessage) {
-                    $scope.sendFiles()
-                }
+                )
             } catch (error) {
-                if (error.response) {
-                    reject(error.response.data.message)
-                } else {
-                    reject(error.message)
-                }
-            } finally {
                 hideLoader()
+                reject(error.message || 'Error occurred')
             }
         })
     }
 
     $scope.sendMedia = (caption, file, lastMessage = null, contentTye = null) => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
                 showLoader()
-                let url = `/waInstance${idInstance}/sendFileByUpload/${apiTokenInstance}`
+                let url = `https://api.green-api.com/waInstance${idInstance}/sendFileByUpload/${apiTokenInstance}`
                 let payload = new FormData();
                 let phone = phoneNumberFormatter($scope.whatsapp.number)
                 payload.append("caption", caption)
                 payload.append("chatId", phone)
                 payload.append("file", file)
-                let response = await http.post(url, payload)
-                resolve(response.data.message)
-                totalMessages++
-                if (lastMessage) {
-                    let messageAdd = ''
-                    if (telefonoEstab) {
-                        messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${nombreEstab}* al siguiente número: *${telefonoEstab}*`
-                        sendSms(messageAdd)
-                    }
-                    setTimeout(() => {
-                        sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
-                    }, 2000)
 
-                    setTimeout(() => {
-                        sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
-                        saveHistory()
-                    }, 3000)
-                }
+                $http.post(url, payload, {
+                    transformRequest: angular.identity,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                }).then(
+                    response => {
+                        resolve(response.data.message)
+                        totalMessages++
+                        if (lastMessage) {
+                            let messageAdd = ''
+                            if (params.telefonoEstablecimiento) {
+                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${params.nombreComercial}* al siguiente número: *${params.telefonoEstablecimiento}*`
+                                sendSms(messageAdd)
+                            }
+                            setTimeout(() => {
+                                sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
+                            }, 2000)
+
+                            setTimeout(() => {
+                                sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
+                                saveHistory()
+                            }, 3000)
+                        }
+                        hideLoader()
+                    },
+                    error => {
+                        if (error.data) {
+                            reject(error.data.message)
+                        } else {
+                            reject(error.message || 'Error occurred')
+                        }
+                        hideLoader()
+                    }
+                )
             } catch (error) {
-                if (error.response) {
-                    reject(error.response.data.message)
-                } else {
-                    reject(error.message)
-                }
-            } finally {
                 hideLoader()
+                reject(error.message || 'Error occurred')
             }
         })
     }
 
     $scope.generateXml = () => {
-        if (!(data.idDocumentoElectronico > 0 && data.fechaAutorizacion)) {
+        if (!params.idDocumentoElectronico) {
             return;
         }
-        mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + data.idDocumentoElectronico, null, true).then(response => {
+        mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
             fileName = fileName.replace('"', "")
             const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
@@ -303,7 +292,16 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
         })
     }
 
-    
+    const REPORT_CODES = Object.freeze({
+        '01': 'RF',
+        '03': 'RLC',
+        '04': 'RNCC',
+        '06': 'RGR',
+        '07': 'RRC',
+        'NE': 'RNE',
+        '09': 'PR',
+        'CI': 'RCINGR'
+    })
 
     function generateFileAndSend(response) {
         let fileName = response
@@ -315,30 +313,24 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
     }
 
     $scope.generateFile = () => {
-        let dataParamFile = dataParamSenFile[data.codDoc];
-   
-        if(!dataParamFile){
-            console.error('no definido el codigo documento');
-            return 
-        }
         let format = 'pdf'
         let dataParms = {
             hasParams: true,
-            id: dataParamFile.id,
-            idDocumentoElectronico: dataParamFile.idDocumentoElectronico,
-            versionComp: dataParamFile.versionComp
+            id: params.idDocumento,
+            versionComp: params.versionComp
         }
         let reportParams = {
             hasParams: true,
-            codigo: dataParamFile.codigo,
+            codigo: REPORT_CODES[params.codDoc],
             format,
-            codEstab: dataParamFile.codEstab,
+            codEstab: params.codEstab,
             aditionalParams: [],
-            versionComp: dataParamFile.versionComp
+            versionComp: params.versionComp
         }
- 
 
-        if (data.codDoc === 'CI') {
+
+
+        if (params.codDoc === 'CI') {
             dataParms.tipo = 3;
             dataParms.hasParams = true;
             let parameters = {
@@ -369,7 +361,9 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
                 .catch(error => {
                     console.log(error)
                 })
-        } 
+        }
+
+
 
     }
 
@@ -385,13 +379,17 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
     }
 
     $scope.sendFiles = () => {
-        if (esNotificacionTributaria){
-            $scope.generateXml()
-            $scope.generateFile()
+        switch ($scope.type) {
+            case 'SRI':
+                $scope.generateXml()
+                $scope.generateFile()
+                break
+            case 'GenericFile':
+                $scope.generateFile()
+                break
+            default:
+                break
         }
-        if (esNotificacionGeneral){
-            $scope.generateFile();
-        } 
     }
     //first request
     $scope.sendMessage = () => {
@@ -410,8 +408,62 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
             console.log(error)
         }
     }
- 
-   
+
+    function logoutApi() {
+        return new Promise((resolve, reject) => {
+            try {
+                showLoader()
+                let url = `https://api.green-api.com/waInstance${idInstance}/logout/${apiTokenInstance}`
+                $http.get(url).then(
+                    result => {
+                        if (result) {
+                            let { isLogout } = result.data
+                            if (isLogout) {
+                                tS.toastr('info', "Logout success")
+                                getQrCode()
+                            }
+                        }
+                        resolve()
+                        hideLoader()
+                    },
+                    error => {
+                        if (error.data) {
+                            reject(error.data.message)
+                        } else {
+                            reject(error.message || 'Error occurred')
+                        }
+                        hideLoader()
+                    }
+                )
+            } catch (error) {
+                hideLoader()
+                reject(error.message || 'Error occurred')
+            }
+        })
+    }
+
+    $scope.askToLogout = async () => {
+        let { isConfirmed } = await Swal.fire({
+            //title: '',
+            text: "Esta seguro de cerrar la session?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.value) {
+                $scope.logout()
+            }
+        })
+        if (isConfirmed) {
+            await logoutApi()
+            $scope.session.is_logged_in = false
+        }
+    }
+
     /** STATISCS */
     /************************************************************ */
     function saveHistory() {
@@ -424,7 +476,7 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
             totalMensajes: totalMessages,
             params: JSON.stringify(params)
         }
-        mS.getData('post', 'Common/WhatsappMessage', { data: data }, true).then(response => {
+        mS.getData('post', 'Common/WhatsappMessage', data).then(response => {
             if (response.code == '1') {
                 tS.toastr("info", response.message)
             } else {
@@ -437,6 +489,6 @@ function modalSendWhatsAppCtrl($scope, uibModalInstance, $injector, tS, mS, comm
     /************************************************************** */
     /*******************************END ****************************/
     $scope.closeModal = function () {
-        uibModalInstance.close()
+        uibModal.close()
     }
 }

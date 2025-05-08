@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.ResponseCompression;
+﻿using Common.FactElect.Services.Conversion;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace FactElect.API.Extensions;
@@ -64,9 +65,6 @@ public static class ApplicationServicesExtensions
             "FactElect.Application.Services.RetencionAts",
             "FactElect.Application.Services.Sri",
             "FactElect.API.Endpoints.Implementations",
-            "Common.FactElect.Services.Documents",
-            "Common.FactElect.Services.External",
-            "Common.FactElect.Services.Validation"
         ];
 
         services.Scan(scan => scan
@@ -90,6 +88,7 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
+        services.AddSingleton<IDocumentConverter, DocumentConverter>();
 
         return services;
     }

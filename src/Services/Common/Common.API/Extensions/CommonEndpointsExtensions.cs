@@ -1,4 +1,5 @@
-﻿using Common.API.Endpoints.Interfaces;
+﻿using Common.API.Dtos;
+using Common.API.Endpoints.Interfaces;
 
 namespace Common.API.Extensions;
 
@@ -42,8 +43,8 @@ public static class CommonEndpointsExtensions
                     .WithOpenApi()
                     .WithTags("User Release");
 
-        builder.MapPost("/whatsappmessage", async (ICommonEndpoints commonEndpoints, ApiRequest apiRequest) =>
-                await commonEndpoints.CreateWhatsappMessageAsync(apiRequest))
+        builder.MapPost("/whatsappmessage", async (ICommonEndpoints commonEndpoints, WhatsappMessageDto whatsappMessageDto) =>
+                await commonEndpoints.CreateWhatsappMessageAsync(whatsappMessageDto))
                     .RequireAuthorization()
                     .WithOpenApi()
                     .WithTags("WhatsApp Message");
