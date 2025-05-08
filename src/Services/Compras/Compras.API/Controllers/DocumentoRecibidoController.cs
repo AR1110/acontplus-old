@@ -6,7 +6,7 @@ public class DocumentoRecibidoController(
     IAdoRepository adoRepository,
     IConfiguration configuration,
     IDocumentoRecibidoService docRecibidoSvc,
-    DocumentoXmlToHtml documentoXmlToHtml,
+    IDocumentConverter documentoXmlToHtml,
     IFileTextService fileTextService,
     IDocumentoTempService documentoTemp,
     IWebServiceSri webServiceSri,

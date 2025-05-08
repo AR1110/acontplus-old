@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace Compras.API.Extensions;
@@ -9,7 +10,23 @@ public static class ApplicationServicesExtensions
         IConfiguration configuration)
     {
         services.AddAdvancedLogging(configuration);
+        
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
 
+        services.Configure<BrotliCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
+        });
+
+        services.Configure<GzipCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
+        });
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -20,16 +37,29 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        string[] nameSpaces =
+        string[] scopedNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
             "Compras.API.Services",
-            "Common.FactElect.Services",
+            "Common.FactElect.Services.Documents",
+            "Common.FactElect.Services.Conversion"
         ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+
+        string[] trascientNameSpaces =
+[
+            "Common.Infrastructure.Data.Repository.Implementations"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()
