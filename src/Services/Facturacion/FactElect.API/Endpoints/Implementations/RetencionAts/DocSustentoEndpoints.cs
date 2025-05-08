@@ -1,6 +1,4 @@
-﻿using FactElect.API.Endpoints.Interfaces.RetencionAts;
-
-namespace FactElect.API.Endpoints.Implementations.RetencionAts;
+﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserContext userContext) : IDocSustentoEndpoints
 {

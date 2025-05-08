@@ -1,6 +1,4 @@
-﻿using FactElect.Application.DTOs.RetencionAts;
-
-namespace FactElect.Application.Services.RetencionAts;
+﻿namespace FactElect.Application.Services.RetencionAts;
 
 public class RetencionAtsService(IAdoRepository adoRepository) : IRetencionAtsService
 {

@@ -20,7 +20,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseResponseCompression();
+
 app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseMiddleware<MobileRequestMiddleware>();
 
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

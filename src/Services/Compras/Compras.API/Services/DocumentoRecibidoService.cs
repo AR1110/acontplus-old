@@ -1,6 +1,4 @@
-﻿using System.Web;
-
-namespace Compras.API.Services;
+﻿namespace Compras.API.Services;
 
 public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRecibidoService
 {

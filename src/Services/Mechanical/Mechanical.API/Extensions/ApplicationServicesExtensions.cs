@@ -4,6 +4,7 @@ using Common.Infrastructure.Data.Repository.Interfaces;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 using Mechanical.API.Services;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
@@ -14,6 +15,24 @@ namespace Mechanical.API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration configuration)
         {
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
+            services.Configure<BrotliCompressionProviderOptions>(options =>
+            {
+                options.Level = System.IO.Compression.CompressionLevel.Optimal;
+            });
+
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = System.IO.Compression.CompressionLevel.Optimal;
+            });
+
             services.AddControllers()
                 .AddNewtonsoftJson(x =>
                 {

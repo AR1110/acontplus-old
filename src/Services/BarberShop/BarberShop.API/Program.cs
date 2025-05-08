@@ -21,6 +21,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseResponseCompression();
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Web;
-
-namespace FactElect.Application.Services;
+﻿namespace FactElect.Application.Services;
 
 public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocumentoElectronicoService
 {

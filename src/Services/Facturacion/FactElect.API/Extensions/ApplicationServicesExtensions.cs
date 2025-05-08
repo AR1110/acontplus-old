@@ -1,8 +1,5 @@
-﻿using Common.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using Serilog;
 
 namespace FactElect.API.Extensions;
 
@@ -15,6 +12,23 @@ public static class ApplicationServicesExtensions
 
         services.AddHttpContextAccessor();
 
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
+        });
+
+        services.Configure<GzipCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
+        });
+        
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -49,8 +63,10 @@ public static class ApplicationServicesExtensions
             "FactElect.Application.Services.Logistica",
             "FactElect.Application.Services.RetencionAts",
             "FactElect.Application.Services.Sri",
-            "Common.FactElect.Services",
-            "FactElect.API.Endpoints.Implementations"
+            "FactElect.API.Endpoints.Implementations",
+            "Common.FactElect.Services.Documents",
+            "Common.FactElect.Services.External",
+            "Common.FactElect.Services.Validation"
         ];
 
         services.Scan(scan => scan

@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace FactElect.Domain.Entities;
+﻿namespace FactElect.Domain.Entities;
 
 [Table("DocumentoElectronico", Schema = "FactElect")]
 public class DocumentoElectronico : BaseEntity

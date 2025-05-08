@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace BarberShop.API.Extensions;
@@ -14,6 +15,23 @@ public static class ApplicationServicesExtensions
         {
             opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("BarberShop.Infrastructure"));
+        });
+        
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
+        });
+
+        services.Configure<GzipCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Optimal;
         });
 
         services.AddHttpContextAccessor();

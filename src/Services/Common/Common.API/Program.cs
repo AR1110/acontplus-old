@@ -23,6 +23,7 @@ if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.Is
     app.Urls.Add("http://*:5002"); // Linux Port
 }
 
+app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

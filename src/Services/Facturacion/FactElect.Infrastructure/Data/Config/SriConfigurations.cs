@@ -1,5 +1,4 @@
-﻿using FactElect.Domain.Entities.Sri;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FactElect.Infrastructure.Data.Config;
 

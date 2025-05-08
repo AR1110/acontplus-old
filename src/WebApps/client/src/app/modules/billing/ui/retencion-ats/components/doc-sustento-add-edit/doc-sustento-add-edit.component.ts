@@ -33,12 +33,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { DocSustentoPaymentComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-payment/doc-sustento-payment.component';
 import { FormaPago } from '@sri/domain/models/forma-pago';
-import { RetencionAtsDocPayment } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
+import {
+  RetAtsDocSustento,
+  RetencionAtsDocPayment,
+} from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 import {
   MatDatepicker,
   MatDatepickerInput,
   MatDatepickerToggle,
 } from '@angular/material/datepicker';
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -86,6 +90,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
 
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
+  private readonly _tS = inject(ToasterService);
 
   setPanelOpen(index: number) {
     this.panelOpenState = index;
@@ -149,10 +154,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       impuestoRetencionId: [0, [Validators.required]],
-      codigoRetencion: [
-        '',
-        Validators.required,
-      ],
+      codigoRetencion: ['', Validators.required],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
       valorRetenido: [0, [Validators.required, Validators.min(0)]],
@@ -223,8 +225,17 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
     this.createRetencion(indexDoc, {});
   }
 
-  docPreview(item: any): void {
-    // Preview document logic
+  docPreview(index: number): void {
+    const doc = this.docSustentoArray().controls[index]
+      .value as RetAtsDocSustento;
+    if (doc.isAutomatic) {
+      console.log(doc);
+    } else {
+      this._tS.toastr({
+        type: 'info',
+        message: 'No disponible para documentos manuales',
+      });
+    }
   }
 
   // Remove a docSustento at a specific index

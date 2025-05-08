@@ -26,6 +26,8 @@ if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.Is
     app.Urls.Add("http://*:5012"); // Linux Port
 }
 
+app.UseResponseCompression();
+
 app.UseHttpsRedirection();
 
 app.UseStatusCodePages();

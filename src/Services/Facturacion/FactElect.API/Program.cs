@@ -1,8 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 
-using FactElect.API.Extensions;
-using FactElect.API.Extensions.Endpoints;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
@@ -23,6 +20,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

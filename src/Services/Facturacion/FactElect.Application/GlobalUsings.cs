@@ -11,3 +11,6 @@ global using FactElect.Domain.Entities;
 global using FactElect.Infrastructure.Data;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Text;
+global using System.Web;
+global using FactElect.Application.DTOs.RetencionAts;
