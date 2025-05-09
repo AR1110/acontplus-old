@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { Subcategory } from '@accounting/core/models/subcategory';
+import { Subcategory } from '@accounting/domain/models/subcategory';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 
 export abstract class DocumentReceivedRepository {

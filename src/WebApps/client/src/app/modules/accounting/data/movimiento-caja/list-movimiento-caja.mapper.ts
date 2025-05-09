@@ -1,5 +1,5 @@
 import {ApiResponse} from "@core/models/api-response";
-import {ListMovimientoCajaResponse} from "@accounting/core/models/movimiento-caja.model";
+import {ListMovimientoCajaResponse} from "@accounting/domain/models/movimiento-caja.model";
 
 export class ListMovimientoCajaMapper {
   static toJson(obj:any){

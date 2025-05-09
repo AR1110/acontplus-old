@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subcategory } from '@accounting/core/models/subcategory';
-import { Category } from '@accounting/core/models/category';
+import { Subcategory } from '@accounting/domain/models/subcategory';
+import { Category } from '@accounting/domain/models/category';
 import { isApiResponse } from '@core/models/api-response';
 import {
   FormControl,
@@ -11,7 +11,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

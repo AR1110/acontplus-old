@@ -1,6 +1,6 @@
 import {
   ComprobanteEgresoFilterResponse,
-} from "@accounting/core/models/comprobante-egreso.model";
+} from "@accounting/domain/models/comprobante-egreso.model";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
 
 export class DataFilterComprobanteEgresoMapper {

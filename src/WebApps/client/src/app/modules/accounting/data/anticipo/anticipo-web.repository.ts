@@ -1,10 +1,10 @@
 import {inject, Injectable} from "@angular/core";
 import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_PATHS} from "@accounting/domain/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
-import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
+import {AnticipoRepository} from "@accounting/domain/repositories/anticipo.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
 import {ListAnticipoMapper} from "@accounting/data/anticipo/list-anticipo.mapper";
 

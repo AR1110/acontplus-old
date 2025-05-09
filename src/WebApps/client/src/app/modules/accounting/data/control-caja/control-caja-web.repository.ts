@@ -1,12 +1,10 @@
 import {inject, Injectable} from "@angular/core";
 import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_PATHS} from "@accounting/domain/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {ApiResponse} from "@core/models/api-response";
 import {map} from "rxjs";
-import {SubCategoryMapper} from "@accounting/data/sub-category/sub-category.mapper";
-import {SubCategoryRepository} from "@accounting/core/repositories/sub-category.repository";
-import {ControlCajaRepository} from "@accounting/core/repositories/control-caja.repository";
+import {ControlCajaRepository} from "@accounting/domain/repositories/control-caja.repository";
 
 
 @Injectable({

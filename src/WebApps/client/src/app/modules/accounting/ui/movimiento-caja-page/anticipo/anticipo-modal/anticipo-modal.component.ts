@@ -9,11 +9,11 @@ import {
 } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { SubEntidadFinanciera } from '@accounting/core/models/subentidad-financiera.model';
+import { SubEntidadFinanciera } from '@accounting/domain/models/subentidad-financiera.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
-import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
-import { AnticipoUseCase } from '@accounting/core/use-cases/anticipo.use-case';
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
+import { AnticipoUseCase } from '@accounting/domain/use-cases/anticipo.use-case';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';

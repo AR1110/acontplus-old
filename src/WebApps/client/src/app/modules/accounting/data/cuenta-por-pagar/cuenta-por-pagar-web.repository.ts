@@ -5,16 +5,16 @@ import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { CuentaPorPagarMapper } from './cuenta-por-pagar.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ComprobanteEgresoLista } from '@accounting/core/models/comprobante-egreso.model';
-import { HistorialPagoLista } from '@accounting/core/models/historial-pago.model';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
+import { ComprobanteEgresoLista } from '@accounting/domain/models/comprobante-egreso.model';
+import { HistorialPagoLista } from '@accounting/domain/models/historial-pago.model';
+import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
 
-import { TiempoCreditoSelectHtmlOnly } from '@accounting/core/models/tiempo-credito.interface';
-import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por-pagar.repository";
+import { TiempoCreditoSelectHtmlOnly } from '@accounting/domain/models/tiempo-credito.interface';
+import {CuentaPorPagarRepository} from "@accounting/domain/repositories/cuenta-por-pagar.repository";
 import {
   GetFilterDataCuentaPorPagarMapper
 } from "@accounting/data/cuenta-por-pagar/get-filter-data-cuenta-por-pagar.mapper";
-import {CuentaPorPagarCuotaConfig, CuentaPorPagarLista} from "@accounting/core/models/cuenta-por-pagar.model";
+import {CuentaPorPagarCuotaConfig, CuentaPorPagarLista} from "@accounting/domain/models/cuenta-por-pagar.model";
 
 @Injectable({
   providedIn: 'root',

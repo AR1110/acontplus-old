@@ -5,7 +5,7 @@ import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { getPermisosLocal } from '@core/utils/utils';
-import {CashboxList} from '@accounting/core/models/cashbox.model';
+import {CashboxList} from '@accounting/domain/models/cashbox.model';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { ActionAperturaCajaDirective } from '@shared/directives/permission/action-apertura-caja.directive';
 import { ActionDeleteDirective } from '@shared/directives/permission/action-delete.directive';
@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 
 import { AperturaCajaModalComponent } from '@accounting/ui/cashbox-page/apertura-caja-modal/apertura-caja-modal.component';
 import { CajaModalComponent } from '@accounting/ui/cashbox-page/caja-modal/caja-modal.component';
-import {CajaUseCase} from "@accounting/core/use-cases/caja.use-case";
+import {CajaUseCase} from "@accounting/domain/use-cases/caja.use-case";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";

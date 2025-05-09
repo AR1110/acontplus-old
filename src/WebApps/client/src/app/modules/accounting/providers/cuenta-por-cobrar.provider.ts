@@ -1,8 +1,8 @@
 import {ClassProvider} from "@angular/core";
-import {CuentaPorCobrarRepository} from "@accounting/core/repositories/cuenta-por-cobrar.repository";
 import {
   CuentaPorCobrarWebRepository
 } from "@accounting/data/cuenta-por-cobrar/cuenta-por-cobrar-web.repository";
+import {CuentaPorCobrarRepository} from "@accounting/domain/repositories/cuenta-por-cobrar.repository";
 
 
 export const cuentaPorCobrarProvider:ClassProvider = {

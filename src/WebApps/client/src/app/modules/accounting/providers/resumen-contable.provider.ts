@@ -1,6 +1,6 @@
 import {ClassProvider} from "@angular/core";
-import {ResumenContableRepository} from "@accounting/core/repositories/resumen-contable.repository";
 import {ResumenContableWebRepository} from "@accounting/data/resumen-contable/resumen-contable-web.repository";
+import {ResumenContableRepository} from "@accounting/domain/repositories/resumen-contable.repository";
 
 
 export const resumenContableProvider:ClassProvider = {

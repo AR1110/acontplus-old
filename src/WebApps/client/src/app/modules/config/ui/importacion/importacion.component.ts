@@ -1,7 +1,6 @@
 import {Component, inject, model, signal} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatSelectModule} from "@angular/material/select";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {
@@ -23,7 +22,6 @@ import {MatTableDataSource, MatTableModule} from "@angular/material/table";
     MatFormFieldModule,
     BreadcrumbComponent,
     MatDynamicCardComponent,
-    ThemeButtonComponent,
     MatIconModule,
     MatButtonModule,
     MatInput,

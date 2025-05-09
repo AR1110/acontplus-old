@@ -1,6 +1,6 @@
 import {Directive, HostListener, inject, input} from '@angular/core';
 import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
-import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_CODE_REPORT} from "@accounting/domain/enums/accounting.constants";
 import {SharedService} from "@core/services/shared.service";
 
 @Directive({

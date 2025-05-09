@@ -30,7 +30,7 @@ import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { MODAL_SIZE } from '@core/constants/global.constants';
 
 // Accounting Module Components and Services
-import { CuentaPorPagarLista } from '@accounting/core/models/cuenta-por-pagar.model';
+import { CuentaPorPagarLista } from '@accounting/domain/models/cuenta-por-pagar.model';
 import { CuentaPorPagarCuotaModalComponent } from '@accounting/ui/cuenta-por-pagar/components/cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
 
 // Shared Components, Models, and Pipes
@@ -46,9 +46,9 @@ import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
 import { ParameterReportUtil } from '@shared/utils/parameter-report.util';
 import { SharedService } from '@core/services/shared.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { CuentaPorPagarUseCase } from '@accounting/core/use-cases/cuenta-por-pagar.use-case';
+import { CuentaPorPagarUseCase } from '@accounting/domain/use-cases/cuenta-por-pagar.use-case';
 import { ComprobanteEgresoLoteComponent } from '@accounting/ui/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component';
-import { ComprobanteEgresoUseCase } from '@accounting/core/use-cases/comprobante-egreso.use-case';
+import { ComprobanteEgresoUseCase } from '@accounting/domain/use-cases/comprobante-egreso.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({

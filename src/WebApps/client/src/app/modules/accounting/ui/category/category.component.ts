@@ -5,9 +5,9 @@ import { ModalService } from '@core/services/modal.service';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import {CategoryUseCase} from "@accounting/core/use-cases/category.use-case";
+import {CategoryUseCase} from "@accounting/domain/use-cases/category.use-case";
 import {MatCard, MatCardContent} from "@angular/material/card";
-import {Category} from "@accounting/core/models/category";
+import {Category} from "@accounting/domain/models/category";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MatMenuModule} from "@angular/material/menu";
@@ -16,7 +16,7 @@ import {MatMenuModule} from "@angular/material/menu";
     selector: 'app-category',
     imports: [
         BreadcrumbComponent,
-        
+
         NgbDropdownModule,
         SecondaryStatusPipe,
         MatCardContent,

@@ -8,25 +8,22 @@ import {
 } from '@angular/forms';
 
 import { ToasterService } from '@core/services/toaster.service';
-import { MatIcon } from '@angular/material/icon';
-import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
-import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
-import { MatButton } from '@angular/material/button';
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
+import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
-import {PaymentTypeCode} from "@accounting/core/enums/accounting.constants";
+import {PaymentTypeCode} from "@accounting/domain/enums/accounting.constants";
 
 @Component({
   selector: 'app-apertura-caja-modal',
     imports: [FormsModule, ReactiveFormsModule,
       MatFormFieldModule,
       MatInputModule,
-      MatSelectModule,
-      MatIcon, MatButton, ThemeButtonComponent,
+      MatSelectModule, ThemeButtonComponent,
     MatCustomDialogComponent
     ],
   templateUrl: './apertura-caja-modal.component.html',

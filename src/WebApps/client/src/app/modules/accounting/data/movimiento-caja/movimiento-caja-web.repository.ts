@@ -1,10 +1,10 @@
 import {inject, Injectable} from "@angular/core";
 import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_PATHS} from "@accounting/domain/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {ApiResponse } from "@core/models/api-response";
-import {MovimientoCajaRepository} from "@accounting/core/repositories/movimiento-caja.repository";
+import {MovimientoCajaRepository} from "@accounting/domain/repositories/movimiento-caja.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
 import {ListMovimientoCajaMapper} from "@accounting/data/movimiento-caja/list-movimiento-caja.mapper";
 

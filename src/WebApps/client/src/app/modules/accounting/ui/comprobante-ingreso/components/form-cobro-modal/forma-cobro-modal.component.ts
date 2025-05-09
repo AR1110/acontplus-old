@@ -7,13 +7,13 @@ import { ValorAbonoComponent } from '@accounting/ui/comprobante-ingreso/componen
 import { FechaEmisionComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/fecha-emision/fecha-emision.component';
 import { BancoSelectComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/banco-select/banco-select.component';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { PaymentTypeCode } from '@accounting/core/enums/accounting.constants';
+import { PaymentTypeCode } from '@accounting/domain/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
 import {
   PaymentSubType,
   PaymentType,
-} from '@accounting/core/models/payment-type.model';
-import { PaymentData } from '@accounting/core/models/comprobante-ingreso';
+} from '@accounting/domain/models/payment-type.model';
+import { PaymentData } from '@accounting/domain/models/comprobante-ingreso';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { map, Observable, startWith } from 'rxjs';

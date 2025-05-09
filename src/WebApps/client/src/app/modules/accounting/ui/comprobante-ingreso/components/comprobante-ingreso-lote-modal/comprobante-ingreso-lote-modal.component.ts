@@ -16,18 +16,18 @@ import {
 import { roundNumber } from '@core/utils/round-number.utils';
 import ComprobanteIngresoUtil, {
   getPaymentSubTotales,
-} from '@accounting/utils/comprobante-ingreso.util';
+} from '@accounting/domain/utils/comprobante-ingreso.util';
 import {
   MultiplesPaymentType,
   PaymentData,
   PaymentDetail,
   PaymentHistory,
-} from '@accounting/core/models/comprobante-ingreso';
+} from '@accounting/domain/models/comprobante-ingreso';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
-import { ComprobanteIngresoUseCase } from '@accounting/core/use-cases/comprobante-ingreso.use-case';
-import { CuentaPorCobrarUseCase } from '@accounting/core/use-cases/cuenta-por-cobrar.use-case';
+import { ComprobanteIngresoUseCase } from '@accounting/domain/use-cases/comprobante-ingreso.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

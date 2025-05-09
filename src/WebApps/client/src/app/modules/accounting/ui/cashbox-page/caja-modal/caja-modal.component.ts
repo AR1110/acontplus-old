@@ -8,10 +8,8 @@ import {
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
 
-import { Turno } from '@accounting/core/models/turno.model';
-import { MatIcon } from '@angular/material/icon';
-import { CajaUseCase } from '@accounting/core/use-cases/caja.use-case';
-import { MatButton } from '@angular/material/button';
+import { Turno } from '@accounting/domain/models/turno.model';
+import { CajaUseCase } from '@accounting/domain/use-cases/caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -26,8 +24,7 @@ import {MatRadioModule} from "@angular/material/radio";
       MatFormFieldModule,
       MatInputModule,
       MatSelectModule,
-      MatRadioModule,
-      MatIcon, MatButton, ThemeButtonComponent,
+      MatRadioModule,  ThemeButtonComponent,
     MatCustomDialogComponent
 
     ],
