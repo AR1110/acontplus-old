@@ -6,7 +6,6 @@ import {
   REPORT_FORMAT,
 } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
@@ -20,7 +19,6 @@ import {
 import Swal from 'sweetalert2';
 
 import { CierreCajaModalComponent } from '@accounting/ui/cashbox-page/cierre-caja-modal/cierre-caja-modal.component';
-import { FiltroControlCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 import { FiltroDetalleCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
 import { FormsModule } from '@angular/forms';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
@@ -109,7 +107,6 @@ export class ControlCajaModalComponent {
   dataMovientoControCaja = {} as ControlCaja;
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
   private _controlCajaUseCase = inject(ControlCajaUseCase);
-  private modalSvc = inject(ModalService);
   private dialogSvc = inject(DialogService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
@@ -257,8 +254,8 @@ export class ControlCajaModalComponent {
               const response = await this.userPermissionSvc
                 .checkHasPermission(obj)
                 .toPromise();
+              if(!response) return
 
-              if (isApiResponse(response)) {
                 if (response.code === '0') {
                   Swal.showValidationMessage(`${response.message}`);
                 }
@@ -266,7 +263,6 @@ export class ControlCajaModalComponent {
                   isOpenModal = true;
                   return response.code;
                 }
-              }
 
               return true;
             } catch (err) {
@@ -284,13 +280,14 @@ export class ControlCajaModalComponent {
       }
 
       if (isOpenModal) {
-        const modalRef = this.modalSvc.openModalCustom(
+        const modalRef = this.dialogSvc.open(
           CierreCajaModalComponent,
-          { size: 'lg', centered: true },
+          {
+            data: params || {}
+          }
         );
-        modalRef.componentInstance.params = params || {};
-        modalRef.result.then((result) => {
-          if (typeof result === 'object') {
+        modalRef.subscribe(result => {
+          if (result && typeof result === 'object') {
             this.isReloadCaja = true;
             this.getMovimientosCaja();
           }
@@ -371,23 +368,23 @@ export class ControlCajaModalComponent {
       isOldVersion: true,
     });
   }
-
-  openModalFiltroReporteDetalleCaja(data: ControlCaja) {
-    try {
-      const modalRef = this.modalSvc.openModalCustom(
-        FiltroControlCajaReportModal,
-        {
-          size: 'sm',
-        },
-      );
-      modalRef.componentInstance.params = {
-        id: data.id,
-        enterKey: this.dataPermisosCaja.enterKey,
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //
+  // openModalFiltroReporteDetalleCaja(data: ControlCaja) {
+  //   try {
+  //     const modalRef = this.modalSvc.openModalCustom(
+  //       FiltroControlCajaReportModal,
+  //       {
+  //         size: 'sm',
+  //       },
+  //     );
+  //     modalRef.componentInstance.params = {
+  //       id: data.id,
+  //       enterKey: this.dataPermisosCaja.enterKey,
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   async askToReportType(data: ControlCaja, buttonType?: string) {
     const { isConfirmed, value } = await Swal.fire({
