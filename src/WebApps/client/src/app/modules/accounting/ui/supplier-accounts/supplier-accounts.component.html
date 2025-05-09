@@ -4,7 +4,17 @@
   <div class="d-grid gap-2">
     <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
-        <mat-checkbox [(ngModel)]="dataSearch.ckFecha">Rango fecha</mat-checkbox>
+        <mat-form-field class="w-100">
+          <mat-label>Tipo de Reporte: </mat-label>
+          <mat-select
+            (selectionChange)="onChangeEstab()"
+            [(ngModel)]="dataSearch.reportTypeCode"
+          >
+            @for (item of reportTypes(); track $index) {
+              <mat-option [value]="item.code">{{item.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
       <div class="col">
         <mat-checkbox   [(ngModel)]="dataSearch.supplierChecked">Proveedor</mat-checkbox>
@@ -19,6 +29,47 @@
       </div>
     </div>
     <mat-divider/>
+
+<!--    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">-->
+<!--      <div class="col">-->
+<!--        <div class="vstack gap-2 border border-dark rounded-4 p-2">-->
+<!--          <app-date-range-selection-->
+<!--           [showMatSuffix]="true"-->
+<!--           [(checkbox)]="dataSearch.ckFecha"-->
+<!--            [showInputMaterial]="true"-->
+<!--            (onChangeDateRange)="onDateRangeSelection($event)"-->
+<!--          />-->
+<!--          @if (dataSearch.ckFecha) {-->
+<!--            <div class="vstack ">-->
+<!--              <label>Filtrar Fecha por: </label>-->
+<!--              <mat-radio-group aria-label="Opción fecha ">-->
+<!--                <mat-radio-button value="1">Emisión</mat-radio-button>-->
+<!--                <mat-radio-button value="2">Vencimiento</mat-radio-button>-->
+<!--              </mat-radio-group>-->
+
+<!--            </div>-->
+<!--          }-->
+
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="col">-->
+<!--        <mat-form-field class="w-100">-->
+<!--          <mat-label>Establecimiento</mat-label>-->
+<!--          <mat-select-->
+<!--            (selectionChange)="onChangeEstab()"-->
+<!--            [(ngModel)]="dataSearch.codEstab"-->
+<!--          >-->
+<!--            <mat-option [value]="''">Todos</mat-option>-->
+
+<!--            @for (item of establecimientos(); track $index) {-->
+<!--              <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>-->
+<!--            }-->
+<!--          </mat-select>-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
+<!--      <div class="col"></div>-->
+<!--    </div>-->
+
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
         <mat-form-field class="w-100">

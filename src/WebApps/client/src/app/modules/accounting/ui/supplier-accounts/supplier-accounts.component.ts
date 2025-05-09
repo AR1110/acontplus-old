@@ -29,6 +29,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {
   GetFilterDataCuentaPorPagarUseCase
 } from "@accounting/core/use-cases/cuenta-por-pagar/get-filter-data-cuenta-por-pagar.use-case";
+import {MatRadioModule} from "@angular/material/radio";
 
 
 type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string }
@@ -49,7 +50,8 @@ type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string }
     MatCheckbox,
     MatDivider,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatRadioModule
   ],
   templateUrl: './supplier-accounts.component.html',
   styles: ``,
@@ -73,11 +75,22 @@ export class SupplierAccountsComponent {
     ckCxcVencida: false,
     ckCuotas: false,
     ckFecha: true,
+    reportTypeCode: 'RG'
   };
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private $getFilterDataUseCase = inject(GetFilterDataCuentaPorPagarUseCase)
+
+  reportTypeCode = {
+    RG: 'RG',
+    RD: 'RD'
+  }
+
+  reportTypes = signal([
+    {code: this.reportTypeCode.RG,name: 'Reporte General'},
+    {code: this.reportTypeCode.RD,name: 'Reporte Detallado(Incluye cuotas)'},
+  ])
 
   ngOnInit() {
     this.initialed();
