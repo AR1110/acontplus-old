@@ -7,7 +7,6 @@
     {
       "name": "tech-support-api",
       "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/tech-support-api:latest",
-      "cpu": 100,
       "portMappings": [
         {
           "name": "tech-support-api",

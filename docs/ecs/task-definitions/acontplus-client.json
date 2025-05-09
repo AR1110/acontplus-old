@@ -6,7 +6,6 @@
     {
       "name": "acontplus-client",
       "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/acontplus-client:latest",
-      "cpu": 100,
       "portMappings": [
         {
           "name": "acontplus-client",

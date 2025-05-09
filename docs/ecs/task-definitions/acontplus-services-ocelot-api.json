@@ -7,7 +7,6 @@
     {
       "name": "ocelot-api",
       "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/ocelot-api:latest",
-      "cpu": 100,
       "portMappings": [
         {
           "name": "ocelot-api",
