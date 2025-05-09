@@ -177,6 +177,8 @@ BEGIN
         BEGIN
 
             SET @tableNames = 'dataEntidad,compras'
+            DECLARE @useQuotaDueDateFilter BIT
+            DECLARE @dateFilterType INT
 
             SELECT @idProveedor  = idProveedor  
                   ,@ckFecha      = ckFecha
@@ -187,6 +189,8 @@ BEGIN
                   ,@codDoc       = codDoc
                   ,@ckCxcVencida = ckCxcVencida
                   ,@ckCuotas     = ckCuotas
+                  ,@useQuotaDueDateFilter = useQuotaDueDateFilter
+                  ,@dateFilterType = dateFilterType
             FROM OPENJSON(@json) WITH 
             (
                 idProveedor  INT         
@@ -198,102 +202,95 @@ BEGIN
                ,codDoc       VARCHAR(10) 
                ,ckCxcVencida BIT         
                ,ckCuotas     BIT
+               ,useQuotaDueDateFilter BIT
+               ,dateFilterType INT
             )
+             
 
-            SET @sql = 'SELECT CASE cc.codDoc WHEN ''01'' THEN ''FE'' 
-                                              WHEN ''03'' THEN ''LC''
-                                                          ELSE cc.codDoc
-                               END as codDoc  
-                              ,razonSocialProveedor
-                              ,serieComprobante
-                              ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
-                              ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
-                              ,CAST(importeTotal as numeric(18,2))        as importeTotal
-                              ,CAST(abono as numeric(18,2))               as abono
-                              ,CAST(saldo as numeric(18,2))               as saldo
-                              ,estado 
-                        FROM v_CuentaPorPagar cc WITH (NOLOCK)
-                        WHERE idEntidad = @idEntidad '
-
-            SET @params = '@idProveedor INT
-                          ,@idEntidad   INT
-                          ,@codEstab    VARCHAR(25)
-                          ,@fechaInicio DATETIME2
-                          ,@fechaFin    DATETIME2
-                          ,@codEstado   VARCHAR(15)
-                          ,@codDoc      VARCHAR(10)'
+            -- Parámetros para sp_executesql
+            SET @params = '@idProveedor INT, @idEntidad INT, @codEstab VARCHAR(25), @fechaInicio DATETIME2, @fechaFin DATETIME2, @codEstado VARCHAR(15), @codDoc VARCHAR(10)';
 
 
             IF @ckCuotas = 1
                 BEGIN
-                    SET @sql = 'SELECT cc.idCuentaPorPagar
-                                      ,CASE cc.codDoc WHEN ''01'' THEN ''FE'' 
-                                                      WHEN ''03'' THEN ''LC''
-                                                                  ELSE cc.codDoc
-                                       END as codDoc
-                                      ,cc.razonSocialProveedor
-                                      ,cc.serieComprobante
-                                      ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
-                                      ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
-                                      ,CAST(cc.importeTotal as numeric(18,2))     as importeTotal
-                                      ,CAST(cc.abono as numeric(18,2))            as abono
-                                      ,CAST(cc.saldo as numeric(18,2))            as saldo
-                                      ,cc.estado 
-                                      ,cp.idCuotaPorPagar
-		                              ,cp.nroCuota
-		                              ,CAST(cp.cuota as numeric(8,2))              as cuota
-		                              ,FORMAT(cp.fechaVencimiento,''dd/MM/yyyy'')  as fechaVencimientoCuota
-                                      ,DATEDIFF(DAY,cp.fechaVencimiento,GETDATE()) as diasMora
-		                              ,CAST(cp.abono as numeric(8,2))              as abonoCuota
-		                              ,CAST(cp.saldo as numeric(8,2))              as saldoCuota
-		                              ,ep.descripcion                              as estadoCuota
-                                FROM v_CuentaPorPagar                 cc WITH (NOLOCK) 
-                                LEFT JOIN Contabilidad.CuotaPorPagar  cp WITH (NOLOCK) ON cp.idCuentaPorPagar = cc.idCuentaPorPagar
-                                LEFT JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago     = cp.idEstadoPago
-                                WHERE cc.codEstab = @codEstab '
+                    SET @sql = '
+                        SELECT 
+                            cc.idCuentaPorPagar,
+                            CASE cc.codDoc WHEN ''01'' THEN ''FE'' WHEN ''03'' THEN ''LC'' ELSE cc.codDoc END AS codDoc,
+                            cc.razonSocialProveedor,
+                            cc.serieComprobante,
+                            FORMAT(cc.fechaEmision, ''dd/MM/yyyy'') AS fechaEmision,
+                            FORMAT(cc.fechaVencimiento, ''dd/MM/yyyy'') AS fechaVencimiento,
+                            CAST(cc.importeTotal AS numeric(18,2)) AS importeTotal,
+                            CAST(cc.abono AS numeric(18,2)) AS abono,
+                            CAST(cc.saldo AS numeric(18,2)) AS saldo,
+                            cc.estado,
+                            cp.idCuotaPorPagar,
+                            cp.nroCuota,
+                            CAST(cp.cuota AS numeric(8,2)) AS cuota,
+                            FORMAT(cp.fechaVencimiento, ''dd/MM/yyyy'') AS fechaVencimientoCuota,
+                            DATEDIFF(DAY, cp.fechaVencimiento, GETDATE()) AS diasMora,
+                            CAST(cp.abono AS numeric(8,2)) AS abonoCuota,
+                            CAST(cp.saldo AS numeric(8,2)) AS saldoCuota,
+                            ep.descripcion AS estadoCuota
+                        FROM v_CuentaPorPagar cc WITH (NOLOCK)
+                        LEFT JOIN Contabilidad.CuotaPorPagar cp WITH (NOLOCK) ON cp.idCuentaPorPagar = cc.idCuentaPorPagar
+                        LEFT JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
+                        WHERE cc.codEstab = @codEstab ';
+    
+                    IF @useQuotaDueDateFilter = 1
+                        SET @sql += 'AND CAST(cp.fechaVencimiento AS date) BETWEEN CAST(@fechaInicio AS date) AND CAST(@fechaFin AS date) ';
+    
+                    IF @ckCxcVencida = 1
+                        SET @sql += 'AND DATEDIFF(DAY, cp.fechaVencimiento, GETDATE()) > 0 ';
+                END
+                ELSE
+                BEGIN
+                    SET @sql = '
+                        SELECT 
+                            CASE cc.codDoc WHEN ''01'' THEN ''FE'' WHEN ''03'' THEN ''LC'' ELSE cc.codDoc END AS codDoc,
+                            cc.razonSocialProveedor,
+                            cc.serieComprobante,
+                            FORMAT(cc.fechaEmision, ''dd/MM/yyyy'') AS fechaEmision,
+                            FORMAT(cc.fechaVencimiento, ''dd/MM/yyyy'') AS fechaVencimiento,
+                            CAST(cc.importeTotal AS numeric(18,2)) AS importeTotal,
+                            CAST(cc.abono AS numeric(18,2)) AS abono,
+                            CAST(cc.saldo AS numeric(18,2)) AS saldo,
+                            cc.estado,
+                            cc.usuario
+                        FROM v_CuentaPorPagar cc WITH (NOLOCK)
+                        WHERE cc.idEntidad = @idEntidad ';
+    
+                    IF @ckCxcVencida = 1
+                        SET @sql += 'AND DATEDIFF(DAY, cc.fechaVencimiento, GETDATE()) > 0 ';
+                END
+                 
 
-                    IF @ckCxcVencida = 1 
-                        BEGIN
-                            SET @sql = @sql + 'AND DATEDIFF(DAY,cp.fechaVencimiento,GETDATE()) > 0 '
-                        END 
-                END 
-
+            -- Filtros comunes
             IF @codDoc IS NOT NULL
-                BEGIN
-                    SET @sql = @sql + 'AND cc.codDoc = @codDoc '
-                END
-
-            IF @ckCuotas = 0
-                BEGIN
-                    IF @ckCxcVencida = 1 
-                        BEGIN
-                            SET @sql = @sql + 'AND DATEDIFF(DAY,CC.fechaVencimiento,GETDATE()) > 0 '
-                        END 
-                END
+                SET @sql += 'AND cc.codDoc = @codDoc '; 
 
             IF @ckFecha = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(cc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                    IF @dateFilterType = 1
+                        SET @sql = @sql + 'AND CAST(cc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                    IF @dateFilterType = 2
+                         SET @sql = @sql + 'AND CAST(cc.fechaVencimiento as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
                 END 
 
-            IF @idProveedor > 0 
-                BEGIN
-                    SET @sql = @sql + 'AND cc.idProveedor = @idProveedor '
-                END 
+            IF @idProveedor > 0
+                SET @sql += 'AND cc.idProveedor = @idProveedor ';
 
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NPA'
-                        BEGIN 
-                            SET @sql = @sql + 'AND cc.codEstado IN (''PE'',''PP'') '
-                        END 
+                        SET @sql += 'AND cc.codEstado IN (''PE'', ''PP'') ';
                     ELSE
-                        BEGIN
-                            SET @sql = @sql + 'AND cc.codEstado = @codEstado '
-                        END 
-                END 
+                        SET @sql += 'AND cc.codEstado = @codEstado ';
+                END
 
-            SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idProveedor,cc.codDoc ASC '
+            -- Orden final
+            SET @sql += 'ORDER BY cc.fechaEmision, cc.idProveedor, cc.codDoc ASC;';
 
              SELECT en.razonSocial
                   ,es.nombreComercial
