@@ -81,8 +81,8 @@ export enum GlobalRoutes {
   ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
   ContabilidadCaja = 'accounting/cashbox-page',
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
-  ContabilidadAccountingSummary = 'accounting/resumen-contable',
-  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja-report',
+  ContabilidadAccountingSummary = 'accounting/reports/resumen-contable',
+  ContabilidadMovimientoCajaReport = 'accounting/reports/movimiento-caja-report',
   ContabilidadComprobanteEgreso = 'accounting/comprobante-egreso',
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',

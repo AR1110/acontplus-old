@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { CashboxSelectHtmlOnly } from '@accounting/core/models/cashbox.model';
-import { SubEntidadFinanciera } from '@accounting/core/models/subentidad-financiera.model';
+import { CashboxSelectHtmlOnly } from '@accounting/domain/models/cashbox.model';
+import { SubEntidadFinanciera } from '@accounting/domain/models/subentidad-financiera.model';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   AbstractControl,
@@ -16,8 +16,8 @@ import { EmployeeService } from '@sale/data/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
-import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
+import { MovimientoCajaUseCase } from '@accounting/domain/use-cases/movimiento-caja.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';

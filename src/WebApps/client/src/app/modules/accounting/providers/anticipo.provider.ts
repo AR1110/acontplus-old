@@ -1,6 +1,6 @@
 import {ClassProvider} from "@angular/core";
-import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
 import {AnticipoWebRepository} from "@accounting/data/anticipo/anticipo-web.repository";
+import {AnticipoRepository} from "@accounting/domain/repositories/anticipo.repository";
 
 
 export const anticipoProvider:ClassProvider = {

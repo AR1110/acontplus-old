@@ -9,25 +9,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 
-import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { DialogService } from '@core/services/dialog.service';
 import { FormaPagoComponent } from '@accounting/ui/comprobante-egreso/components/forma-pago/forma-pago.component';
-import { ComprobanteEgresoStore } from '@accounting/store/comprobante-egreso.store';
+import { ComprobanteEgresoStore } from '@accounting/ui/store/comprobante-egreso.store';
 import { ToasterService } from '@core/services/toaster.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { CuotaPorPagarLista } from '@accounting/core/models/cuota-por-pagar.interface';
+import { CuotaPorPagarLista } from '@accounting/domain/models/cuota-por-pagar.interface';
 import Swal from 'sweetalert2';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 import {
   obtenerCuotasPorPagarEstadoUtil,
-} from "@accounting/utils/comprobante-egreso/obtener-cuotas-por-pagar-estado.util";
-import {obtenerCuentasPorPagarEstado} from "@accounting/utils/comprobante-egreso/obtener-cuentas-por-pagar-estado.util";
+} from "@accounting/domain/utils/comprobante-egreso/obtener-cuotas-por-pagar-estado.util";
+import {obtenerCuentasPorPagarEstado} from "@accounting/domain/utils/comprobante-egreso/obtener-cuentas-por-pagar-estado.util";
 import { FormsModule } from '@angular/forms';
-import {ComprobanteEgresoUseCase} from "@accounting/core/use-cases/comprobante-egreso.use-case";
+import {ComprobanteEgresoUseCase} from "@accounting/domain/use-cases/comprobante-egreso.use-case";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',

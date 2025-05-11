@@ -9,7 +9,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { ControlCaja } from '@accounting/core/models/cashbox.model';
+import { ControlCaja } from '@accounting/domain/models/cashbox.model';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 
 import {
@@ -24,13 +24,10 @@ import { FormsModule } from '@angular/forms';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { ControlCajaUseCase } from '@accounting/core/use-cases/control-caja.use-case';
+import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import {MatMenu, MatMenuItem, MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCheckbox} from "@angular/material/checkbox";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
@@ -40,27 +37,21 @@ import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DialogService} from "@core/services/dialog.service";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
   selector: 'app-control-caja-modal',
   imports: [
     FormsModule,
-
     DateRangeSelectionComponent,
     SendMailDialogDirective,
-    MatMenu,
-    MatIcon,
-    MatMenuTrigger,
-    MatButton,
-    MatMenuItem,
+    MatMenuModule,
     ThemeButtonComponent,
-    MatCheckbox,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatSelectModule,
+    MatIconModule,
     MatDynamicTableComponent,
-    MatIconButton,
-    MatMenuModule
   ],
   templateUrl: './control-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,

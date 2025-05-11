@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
-import {ComprobanteEgresoRepository} from "@accounting/core/repositories/comprobante-egreso.repository";
+import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
+import {ComprobanteEgresoRepository} from "@accounting/domain/repositories/comprobante-egreso.repository";
 import {map, Observable} from "rxjs";
-import {CuotaPorPagarLista} from "@accounting/core/models/cuota-por-pagar.interface";
+import {CuotaPorPagarLista} from "@accounting/domain/models/cuota-por-pagar.interface";
 
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import {EntidadFinanciera} from "@accounting/core/models/entidad-financiera.interface";
-import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/core/models/subentidad-financiera.interface";
-import {BancoSelectOnly} from "@accounting/core/models/banco.interface";
-import {EstadoPago} from "@accounting/core/models/estado-pago.interface";
+import {EntidadFinanciera} from "@accounting/domain/models/entidad-financiera.interface";
+import {SubEntidadFinancieraSelectHtmlOnly} from "@accounting/domain/models/subentidad-financiera.interface";
+import {BancoSelectOnly} from "@accounting/domain/models/banco.interface";
+import {EstadoPago} from "@accounting/domain/models/estado-pago.interface";
 import {ProvinciaCiudad} from "@shared/models/ciudad.interface";
 import {ApiResponse} from "@core/models/api-response";
 import {ComprobanteEgresoMapper} from "@accounting/data/comprobante-egreso/comprobante-egreso.mapper";
@@ -19,7 +19,7 @@ import {groupEstabUtil} from "@core/utils/group-estab.util";
 import {
   ComprobanteEgresoDeleteParams, ComprobanteEgresoFilterResponse,
   ComprobanteEgresoResponse
-} from '@modules/accounting/core/models/comprobante-egreso.model';
+} from '@accounting/domain/models/comprobante-egreso.model';
 import {ListComprobanteEgresoMapper} from "@accounting/data/comprobante-egreso/list-comprobante-egreso.mapper";
 import {
   DataFilterComprobanteEgresoMapper

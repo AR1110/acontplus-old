@@ -1,6 +1,6 @@
 import {ApiResponse} from "@core/models/api-response";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {FilterDataCuentaPorPagarResponse} from "@accounting/core/models/cuenta-por-pagar.model";
+import {FilterDataCuentaPorPagarResponse} from "@accounting/domain/models/cuenta-por-pagar.model";
 
 export class GetFilterDataCuentaPorPagarMapper {
   static toJson(){

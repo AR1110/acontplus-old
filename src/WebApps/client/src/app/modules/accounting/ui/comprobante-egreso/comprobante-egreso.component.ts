@@ -3,8 +3,8 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { ListComprobanteEgresoUseCase } from '@accounting/core/use-cases/comprobante-egreso/list-comprobante-egreso.use-case';
-import { DataFilterComprobanteEgresoUseCase } from '@accounting/core/use-cases/comprobante-egreso/data-filter-comprobante-egreso.use-case';
+import { ListComprobanteEgresoUseCase } from '@accounting/domain/use-cases/comprobante-egreso/list-comprobante-egreso.use-case';
+import { DataFilterComprobanteEgresoUseCase } from '@accounting/domain/use-cases/comprobante-egreso/data-filter-comprobante-egreso.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -14,15 +14,14 @@ import {
 } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import {  MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { formatDateToString } from '@core/utils/date.util';
-import { ComprobanteEgresoList } from '@accounting/core/models/comprobante-egreso.model';
+import { ComprobanteEgresoList } from '@accounting/domain/models/comprobante-egreso.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { PageEvent } from '@angular/material/paginator';
-import { ActionAperturaCajaDirective } from '@shared/directives/permission/action-apertura-caja.directive';
 import { ActionDeleteDirective } from '@shared/directives/permission/action-delete.directive';
 import { ActionEditDirective } from '@shared/directives/permission/action-edit.directive';
 import { ActionMovCajaDirective } from '@shared/directives/permission/action-mov-caja.directive';
@@ -48,10 +47,6 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatDynamicCardComponent,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
-    ActionAperturaCajaDirective,
-    ActionDeleteDirective,
-    ActionEditDirective,
-    ActionMovCajaDirective,
     MatMenu,
     MatMenuItem,
     UserSearchComponent,
@@ -60,7 +55,6 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     //Directives
     ActionComprobanteEgresoReportDirective,
     ActionComprobanteEgresoAnularDirective,
-    SendMailDialogDirective,
     SupplierSearchComponent,
   ],
   templateUrl: './comprobante-egreso.component.html',

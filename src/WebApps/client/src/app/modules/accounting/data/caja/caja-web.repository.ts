@@ -1,10 +1,10 @@
 import {inject, Injectable} from "@angular/core";
 import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_PATHS} from "@accounting/domain/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {CajaMapper} from "@accounting/data/caja/caja.mapper";
-import {CajaRepository} from "@accounting/core/repositories/caja.repository";
+import {CajaRepository} from "@accounting/domain/repositories/caja.repository";
 import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({

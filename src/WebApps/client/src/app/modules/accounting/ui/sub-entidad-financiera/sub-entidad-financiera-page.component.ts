@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 
-import { SubEntidadFinancieraRead } from '@accounting/core/models/subentidad-financiera.model';
+import { SubEntidadFinancieraRead } from '@accounting/domain/models/subentidad-financiera.model';
 import { SubEntidadFinancieraDialogComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-modal/sub-entidad-financiera-dialog.component';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
-import { EntidadFinanciera } from '@accounting/core/models/entidad-financiera.interface';
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -14,7 +14,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { SubEntidadFinancieraUseCase } from '@accounting/core/use-cases/sub-entidad-financiera.use-case';
+import { SubEntidadFinancieraUseCase } from '@accounting/domain/use-cases/sub-entidad-financiera.use-case';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({

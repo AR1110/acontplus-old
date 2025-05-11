@@ -1,11 +1,11 @@
 import {inject, Injectable} from "@angular/core";
 import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_PATHS} from "@accounting/domain/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
-import {ResumenContableRepository} from "@accounting/core/repositories/resumen-contable.repository";
-import {SubCategorySelectHtmlOnly} from "@accounting/core/models/subcategory";
+import {ResumenContableRepository} from "@accounting/domain/repositories/resumen-contable.repository";
+import {SubCategorySelectHtmlOnly} from "@accounting/domain/models/subcategory";
 
 
 @Injectable({

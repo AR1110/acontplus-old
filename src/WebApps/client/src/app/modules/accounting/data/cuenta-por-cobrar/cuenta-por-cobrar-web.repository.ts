@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
-import {CuentaPorCobrarRepository} from "@accounting/core/repositories/cuenta-por-cobrar.repository";
+import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
+import {CuentaPorCobrarRepository} from "@accounting/domain/repositories/cuenta-por-cobrar.repository";
 
 import {CuentaPorCobrarMapper} from "@accounting/data/cuenta-por-cobrar/cuenta-por-cobrar.mapper";
 

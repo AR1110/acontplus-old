@@ -1,4 +1,4 @@
-import {ComprobanteEgresoDeleteResponse} from "@accounting/core/models/comprobante-egreso.model";
+import {ComprobanteEgresoDeleteResponse} from "@accounting/domain/models/comprobante-egreso.model";
 
 
 export class GetComprobanteEgresoForDeletionMapper   {

@@ -14,7 +14,6 @@ import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 
 import { isValidField } from '@core/utils/utils';
-import { UserCustomerRequest } from '@modules/config/domain/models/user-customer/user-customer-request.model';
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -36,7 +35,6 @@ import {
   FilterSolicitudAutorizacionUseCase
 } from "@modules/config/domain/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case";
 import {SolicitudAutorizacionList} from "@modules/config/domain/models/solicitud-autorizacion.model";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {DialogService} from "@core/services/dialog.service";
 import {
   SolicitudAutorizacionDetalleComponent
@@ -59,7 +57,6 @@ import {
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
-    ThemeButtonComponent,
   ],
   templateUrl: './solicitud-autorizacion.component.html',
 })

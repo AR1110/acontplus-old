@@ -6,9 +6,9 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
-import { ACCOUNTING_CODE_REPORT } from '@accounting/core/enums/accounting.constants';
+import { ACCOUNTING_CODE_REPORT } from '@accounting/domain/enums/accounting.constants';
 import { formatDateToString } from '@core/utils/date.util';
-import { MovimientoCajaUseCase } from '@accounting/core/use-cases/movimiento-caja.use-case';
+import { MovimientoCajaUseCase } from '@accounting/domain/use-cases/movimiento-caja.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -27,8 +27,8 @@ import {
   EgresoIngresoDialogComponent
 } from "@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
 import {CompanyCustomer} from "@customer/domain/models/company-customer";
-import {ListMovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja/list-movimiento-caja.use-case";
-import {MovimientoCajaList} from "@accounting/core/models/movimiento-caja.model";
+import {ListMovimientoCajaUseCase} from "@accounting/domain/use-cases/movimiento-caja/list-movimiento-caja.use-case";
+import {MovimientoCajaList} from "@accounting/domain/models/movimiento-caja.model";
 
 @Component({
   selector: 'app-egreso-ingreso-caja',

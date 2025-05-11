@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { Category } from '@technical-support/models/category';
 import { ApiResponse } from '@core/models/api-response';
-import { CategoryUseCase } from '@accounting/core/use-cases/category.use-case';
+import { CategoryUseCase } from '@accounting/domain/use-cases/category.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

@@ -1,6 +1,6 @@
 import { PURCHASE_CODE_REPORT } from "@purchase/domain/enums/purchase.constants";
 import { REPORT_FORMAT } from "@core/constants/global.constants";
-import { ACCOUNTING_CODE_REPORT } from "@accounting/core/enums/accounting.constants";
+import { ACCOUNTING_CODE_REPORT } from "@accounting/domain/enums/accounting.constants";
 
 export interface ReportOptions {
   id: number;

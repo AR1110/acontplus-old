@@ -1,9 +1,9 @@
 import {inject, Injectable} from "@angular/core";
 import {PATHS_API} from "@core/constants/global.constants";
-import {ACCOUNTING_PATHS} from "@accounting/core/enums/accounting.constants";
+import {ACCOUNTING_PATHS} from "@accounting/domain/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
-import {SubEntidadFinancieraRepository} from "@accounting/core/repositories/sub-entidad-financiera.repository";
+import {SubEntidadFinancieraRepository} from "@accounting/domain/repositories/sub-entidad-financiera.repository";
 import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({
