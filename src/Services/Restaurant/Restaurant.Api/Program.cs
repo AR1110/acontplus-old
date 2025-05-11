@@ -32,6 +32,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+{
+    app.Urls.Add("http://*:8004");
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -56,6 +61,12 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapControllers().RequireAuthorization();
+
+app.UseStaticFiles();
+
+app.UseDefaultFiles();
+
+app.MapFallbackToFile("/index.html");
 
 // using var scope = app.Services.CreateScope();
 // var services = scope.ServiceProvider;
