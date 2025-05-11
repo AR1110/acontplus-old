@@ -76,9 +76,9 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 var app = builder.Build();
 
 // Handle Port Configuration for Different Environments (consider a configuration or environment variable)
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
-    app.Urls.Add("http://*:5001"); // Linux Port
+    app.Urls.Add("http://*:5001");
 }
 
 app.UseResponseCompression();

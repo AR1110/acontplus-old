@@ -1,6 +1,6 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://acontplus.com/gateway",
+    "BaseUrl": "https://acontplus.com/gateway/",
     "RateLimitOptions": {
       "ClientIdHeader": "X-Client-Id",
       "ClientWhitelist": [
@@ -41,8 +41,8 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "identity-api.acontplus-services",
-          "Port": 80
+          "Host": "172.31.10.147",
+          "Port": 5007
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -166,8 +166,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "restaurant-api.acontplus-services",
-          "Port": 80
+          "Host": "172.31.10.147",
+          "Port": 5011
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -182,8 +182,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "vet-api.acontplus-services",
-          "Port": 80
+          "Host": "172.31.10.147",
+          "Port": 5014
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -231,147 +231,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "172.31.10.147",
-          "Port": 5008
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v2{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Inventario{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
-          "Port": 5013
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v2/Cliente{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Cliente{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
-          "Port": 5006
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v2/Factura{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Factura{everything}"
-    },
-    {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
-          "Port": 5006
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Consultas/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Consultas/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
           "Port": 5002
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Dashboard{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Dashboard{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
-          "Port": 5013
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Estadisticas{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get", "Post"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Estadisticas{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.41.52",
-          "Port": 5000
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/Download",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Post"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/Reporte/Download"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
-          "Port": 5006
-        }
-      ],
-      "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/FactElect{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.10.147",
-          "Port": 5004
-        }
-      ],
-      "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
-      "UpstreamPathTemplate": "/gateway/app-mobile/WhatsappMessage{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "common-api.acontplus-services",
-          "Port": 80
         }
       ],
       "DownstreamPathTemplate": "/{everything}",
@@ -386,8 +246,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "tech-support-api.acontplus-services",
-          "Port": 80
+          "Host": "172.31.10.147",
+          "Port": 5012
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -402,8 +262,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "mechanical-api.acontplus-services",
-          "Port": 80
+          "Host": "172.31.10.147",
+          "Port": 5009
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",

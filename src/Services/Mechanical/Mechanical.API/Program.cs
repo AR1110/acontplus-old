@@ -22,7 +22,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !builder.Environment.IsProduction())
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
     app.Urls.Add("http://*:5009"); // Linux Port
 }
