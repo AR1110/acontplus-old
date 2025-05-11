@@ -237,7 +237,7 @@
       "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete", "Options"],
-      "UpstreamPathTemplate": "/gateway/Common{everything}"
+      "UpstreamPathTemplate": "/gateway/Common/{everything}"
     },
     {
       "AuthenticationOptions": {
