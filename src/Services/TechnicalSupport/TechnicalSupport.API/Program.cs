@@ -38,8 +38,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseStaticFiles();
-
 app.MapControllers().RequireAuthorization();
 
 //using var scope = app.Services.CreateScope();
