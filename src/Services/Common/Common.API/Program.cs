@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
 
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 {
-    app.Urls.Add("http://*:5002"); // Linux Port
+    app.Urls.Add("http://*:5002");
 }
 
 app.UseResponseCompression();
