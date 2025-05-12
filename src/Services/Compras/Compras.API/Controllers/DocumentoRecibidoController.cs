@@ -64,9 +64,6 @@ public class DocumentoRecibidoController(
             return BadRequest(ApiResponse.Error(code: "0", message: "Formato de archivo no soportado"));
         }
 
-
-        var path = configuration.GetSection("ImportacionTxt").Value;
-        FileData.SaveFile(path, file);
         var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
         if (!DataValidation.DataTableIsNull(dt))
         {
@@ -226,10 +223,6 @@ public class DocumentoRecibidoController(
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await docRecibidoSvc.DownloadAsync(parameters);
-        if (response == null)
-        {
-            return BadRequest();
-        }
 
         return File(response, "text/xml");
     }
