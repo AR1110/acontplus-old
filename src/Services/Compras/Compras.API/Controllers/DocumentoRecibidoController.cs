@@ -110,11 +110,9 @@ public class DocumentoRecibidoController(
     [HttpPost("CheckExistenceXml")]
     public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
     {
-        var response = await webServiceSri.CheckExistenceAsync(claveAcceso,
-            "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl");
+        var response = await webServiceSri.CheckExistenceAsync(claveAcceso, configuration["UrlSriComprobantes"]);
         return Ok(response);
     }
-
 
     [HttpPost("Post")]
     public async Task<IActionResult> Post(ApiRequest request)

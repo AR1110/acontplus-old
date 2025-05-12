@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using Common.FactElect.Services.External;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -63,6 +64,8 @@ public static class ApplicationServicesExtensions
             .WithTransientLifetime()
         );
 
+        services.AddTransient<IWebServiceSri, WebServiceSri>();
+        services.AddTransient<IXmlSriFileService, XmlSriFileService>();
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
 
         return services;
