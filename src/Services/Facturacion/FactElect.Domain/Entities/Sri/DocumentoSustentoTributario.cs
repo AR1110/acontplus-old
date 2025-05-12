@@ -3,8 +3,8 @@
 [Table("DocumentoSustentoTributario", Schema = "Sri")]
 public class DocumentoSustentoTributario : BaseEntity
 {
-    public TipoComprobante TipoComprobante { get; set; }
-    public int TipoComprobanteId { get; set; }
-    public SustentoTributario SustentoTributario { get; set; }
-    public int SustentoTributarioId { get; set; }
+    public required TipoComprobante TipoComprobante { get; init; }
+    public int TipoComprobanteId { get; init; }
+    public required SustentoTributario SustentoTributario { get; init; }
+    public int SustentoTributarioId { get; init; }
 }

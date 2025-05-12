@@ -3,8 +3,8 @@
 [Table("FormaPago", Schema = "Sri")]
 public class FormaPago : BaseEntity
 {
-    [Required, MaxLength(5)] public string Codigo { get; set; }
-    [Required, MaxLength(200)] public string Descripcion { get; set; }
-    public DateOnly? FechaInicio { get; set; }
-    public DateOnly? FechaFin { get; set; }
+    [Required, MaxLength(5)] public required string Codigo { get; init; }
+    [Required, MaxLength(200)] public required string Descripcion { get; init; }
+    public DateOnly? FechaInicio { get; init; }
+    public DateOnly? FechaFin { get; init; }
 }

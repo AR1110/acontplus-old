@@ -2,10 +2,10 @@
 
 public class Vehiculo
 {
-    public int idVehiculo { get; set; }
-    public string placa { get; set; }
-    public string marca { get; set; }
-    public string modelo { get; set; }
-    public string observacion { get; set; }
-    public bool estado { get; set; }
+    public int idVehiculo { get; init; }
+    public string placa { get; init; }
+    public string marca { get; init; }
+    public string modelo { get; init; }
+    public string observacion { get; init; }
+    public bool estado { get; init; }
 }

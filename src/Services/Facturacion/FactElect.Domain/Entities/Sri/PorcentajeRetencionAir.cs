@@ -3,12 +3,12 @@
 [Table("PorcentajeRetencionAir", Schema = "Sri")]
 public class PorcentajeRetencionAir : BaseEntity
 {
-    public DateOnly? FechaInicio { get; set; }
-    public ConceptoRetencionAir ConceptoRetencionAir { get; set; }
-    public int ConceptoRetencionAirId { get; set; }
+    public DateOnly? FechaInicio { get; init; }
+    public required ConceptoRetencionAir ConceptoRetencionAir { get; init; }
+    public int ConceptoRetencionAirId { get; init; }
 
     [Column(TypeName = "numeric(6,2), null")]
-    public Decimal Porcentaje { get; set; }
+    public decimal Porcentaje { get; init; }
 
-    public bool IsDefault { get; set; }
+    public bool IsDefault { get; init; }
 }

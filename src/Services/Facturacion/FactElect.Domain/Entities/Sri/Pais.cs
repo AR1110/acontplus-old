@@ -3,9 +3,9 @@
 [Table("Pais", Schema = "Sri")]
 public class Pais : BaseEntity
 {
-    [Required, MaxLength(5)] public string Codigo { get; set; }
+    [Required, MaxLength(5)] public required string Codigo { get; init; }
 
-    [Required, MaxLength(150)] public string Descripcion { get; set; }
+    [Required, MaxLength(150)] public required string Descripcion { get; init; }
 
-    public ICollection<ParaisoFiscal> ParaisosFiscales { get; set; }
+    public required ICollection<ParaisoFiscal> ParaisosFiscales { get; init; }
 }
