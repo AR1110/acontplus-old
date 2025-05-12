@@ -1,53 +1,44 @@
 @if (inputGroupDateChecked) {
-<div class="input-group">
-  <div class="input-group-text">
+  <div class="input-group">
+    <div class="input-group-text">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [(ngModel)]="requiredDate"
+        (change)="onChangeRequiredDate()"
+        aria-label="Checkbox for following text input"
+      />
+    </div>
     <input
-      class="form-check-input"
-      type="checkbox"
-      [(ngModel)]="requiredDate"
-      (change)="onChangeRequiredDate()"
-      aria-label="Checkbox for following text input"
+      type="text"
+      class="form-control"
+      id="date-range-selection-input-checked"
+      #dateRangeInput
+      [id]="uniqueId"
     />
   </div>
-  <input
-    type="text"
-    class="form-control"
-    id="date-range-selection-input-checked"
-    #dateRangeInput
-    [id]="uniqueId"
-  />
-</div>
-} @else if(showInputMaterial()){
-<mat-form-field class="w-100" [floatLabel]="'always'">
-  <mat-label>Rango Fecha</mat-label>
-  @if(showMatPrefix()){
-  <mat-checkbox
-    matPrefix
-    [(ngModel)]="checkbox"
-    (click)="onCheckboxClick($event)"
-    (change)="onCheckboxChange.emit()"
-  ></mat-checkbox>
-  }
-  <input
-    matInput
-    placeholder="Placeholder"
-    [id]="uniqueId"
-    #dateRangeInput
-  />
-  @if(showMatSuffix()){
-  <mat-checkbox
-    matSuffix
-    [(ngModel)]="checkbox"
-    (click)="onCheckboxClick($event)"
-    (change)="onCheckboxChange.emit()"
-  ></mat-checkbox>
-  }
-</mat-form-field>
+} @else if (showInputMaterial()) {
+  <mat-form-field class="w-100" [floatLabel]="'always'">
+    <mat-label>Rango Fecha</mat-label>
+    @if (showMatPrefix()) {
+      <mat-checkbox
+        matPrefix
+        [(ngModel)]="checkbox"
+        (click)="onCheckboxClick($event)"
+        (change)="onCheckboxChange.emit()"
+      ></mat-checkbox>
+    }
+    <input matInput placeholder="Placeholder" [id]="uniqueId" #dateRangeInput />
+    @if (showMatSuffix()) {
+      <mat-checkbox
+        matSuffix
+        [(ngModel)]="checkbox"
+        (click)="onCheckboxClick($event)"
+        (change)="onCheckboxChange.emit()"
+      ></mat-checkbox>
+    }
+  </mat-form-field>
 } @else {
-<input
-  type="text"
-  class="form-control"
-  [id]="uniqueId"
-  #dateRangeInput
-/>
+  <label for="{{ uniqueId }}">Rango de Fechas</label>
+  <input type="text" class="form-control" [id]="uniqueId" #dateRangeInput />
 }
