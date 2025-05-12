@@ -15,7 +15,7 @@ public static class ApplicationServicesExtensions
 
         services.AddDbContextPool<ConfigContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-        
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

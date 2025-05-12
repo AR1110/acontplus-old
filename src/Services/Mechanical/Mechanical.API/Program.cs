@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Common.Services.Middleware;
+﻿using Common.Services.Middleware;
 using Mechanical.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,10 +21,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5009"); // Linux Port
-}
 
 app.UseResponseCompression();
 

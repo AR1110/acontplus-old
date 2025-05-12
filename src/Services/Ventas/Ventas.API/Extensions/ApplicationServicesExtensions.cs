@@ -24,7 +24,7 @@ public static class ApplicationServicesExtensions
         {
             options.Level = System.IO.Compression.CompressionLevel.Optimal;
         });
-        
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {

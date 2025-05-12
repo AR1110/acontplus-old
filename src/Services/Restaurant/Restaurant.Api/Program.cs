@@ -32,11 +32,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5011");
-}
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

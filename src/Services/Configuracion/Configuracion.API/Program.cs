@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Configuracion.API.Extensions.Endpoints;
+﻿using Configuracion.API.Extensions.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,14 +31,7 @@ app.MapPrinterEndpoints();
 
 app.UseRouting();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5004"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseForwardedHeaders();
 

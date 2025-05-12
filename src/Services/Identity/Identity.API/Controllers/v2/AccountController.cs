@@ -75,7 +75,7 @@ public class AccountController(
         };
 
         await loginHistoryService.AddAsync(logingHistory);
-        user.Token = token.Token; 
+        user.Token = token.Token;
         return Ok(ApiResponse.Success(payload: user, message: "Login Correcto"));
     }
 

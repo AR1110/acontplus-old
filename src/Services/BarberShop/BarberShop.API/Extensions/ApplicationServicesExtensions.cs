@@ -16,7 +16,7 @@ public static class ApplicationServicesExtensions
             opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("BarberShop.Infrastructure"));
         });
-        
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

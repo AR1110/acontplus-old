@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Common.Logging;
+﻿using Common.Logging;
 using Common.Services.Configuration;
 using Common.Services.Extensions;
 using Common.Services.Middleware;
@@ -43,7 +42,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicy, policy =>
     {
-        policy 
+        policy
             .WithOrigins(safeOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -74,12 +73,6 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 });
 
 var app = builder.Build();
-
-// Handle Port Configuration for Different Environments (consider a configuration or environment variable)
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5001");
-}
 
 app.UseResponseCompression();
 

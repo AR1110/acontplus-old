@@ -10,7 +10,7 @@ public static class ApplicationServicesExtensions
         IConfiguration configuration)
     {
         services.AddAdvancedLogging(configuration);
-        
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

@@ -1,5 +1,4 @@
-﻿using Common.Core.Time;
-using Microsoft.AspNetCore.ResponseCompression;
+﻿using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace Common.API.Extensions;
@@ -55,7 +54,7 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        ); 
+        );
         string[] nameTrascientSpaces =
         [
             "Common.Infrastructure.Data.Repository.Implementations",

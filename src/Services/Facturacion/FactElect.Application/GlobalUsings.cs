@@ -1,4 +1,7 @@
-﻿global using System.Data;
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.Data;
+global using System.Text;
+global using System.Web;
 global using Common.Core.Data;
 global using Common.Core.Models;
 global using Common.Core.Validation;
@@ -9,8 +12,3 @@ global using FactElect.Application.Interfaces.RetencionAts;
 global using FactElect.Application.Interfaces.Sri;
 global using FactElect.Domain.Entities;
 global using FactElect.Infrastructure.Data;
-global using System.ComponentModel.DataAnnotations;
-global using System.ComponentModel.DataAnnotations.Schema;
-global using System.Text;
-global using System.Web;
-global using FactElect.Application.DTOs.RetencionAts;

@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Common.Logging;
 using Microsoft.AspNetCore.Http.Features;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 

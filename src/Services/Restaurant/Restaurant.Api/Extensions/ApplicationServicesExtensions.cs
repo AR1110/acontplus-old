@@ -66,7 +66,7 @@ public static class ApplicationServicesExtensions
                 await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", token);
             };
         });
-        
+
         services.AddDbContextPool<RestaurantContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
