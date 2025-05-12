@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
     <UserSecretsId>c26bfe81-a88e-4c8e-96c9-a872a5994058</UserSecretsId>
