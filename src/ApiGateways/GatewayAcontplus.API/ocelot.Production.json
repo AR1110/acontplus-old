@@ -41,7 +41,7 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5007
         }
       ],
@@ -58,7 +58,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5004
         }
       ],
@@ -74,7 +74,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5006
         }
       ],
@@ -86,7 +86,7 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5006
         }
       ],
@@ -102,7 +102,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5008
         }
       ],
@@ -118,7 +118,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5004
         }
       ],
@@ -134,7 +134,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5005
         }
       ],
@@ -150,7 +150,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5013
         }
       ],
@@ -166,7 +166,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5011
         }
       ],
@@ -182,7 +182,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5014
         }
       ],
@@ -198,7 +198,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5006
         }
       ],
@@ -214,7 +214,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5003
         }
       ],
@@ -230,7 +230,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5002
         }
       ],
@@ -246,7 +246,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5012
         }
       ],
@@ -262,7 +262,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.31.10.147",
+          "Host": "localhost",
           "Port": 5009
         }
       ],
