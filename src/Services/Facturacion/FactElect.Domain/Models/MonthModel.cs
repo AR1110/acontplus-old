@@ -2,6 +2,6 @@
 
 public class MonthModel
 {
-    public short Month { get; init; }
-    public required string Name { get; init; }
+    public short Month { get; set; }
+    public required string Name { get; set; }
 }

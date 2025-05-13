@@ -2,5 +2,5 @@
 
 public class YearModel
 {
-    public int Year { get; init; }
+    public int Year { get; set; }
 }

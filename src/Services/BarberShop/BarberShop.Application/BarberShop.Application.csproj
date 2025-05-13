@@ -10,4 +10,8 @@
     <ProjectReference Include="..\BarberShop.Infrastructure\BarberShop.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Mappers\" />
+  </ItemGroup>
+
 </Project>

@@ -25,10 +25,6 @@
       {
         "Path": "src\\Services\\BarberShop\\BarberShop.API\\BarberShop.API.csproj",
         "Action": "Start"
-      },
-      {
-        "Path": "src\\Services\\Mechanical\\Mechanical.API\\Mechanical.API.csproj",
-        "Action": "Start"
       }
     ]
   },

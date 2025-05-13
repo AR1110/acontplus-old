@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Core.Context;
-using Common.Infrastructure.Core.Entity;
 
-namespace BarberShop.Infrastructure.Persistense;
+namespace BarberShop.Infrastructure.Persistence;
 
 public class BarberShopContext(DbContextOptions<BarberShopContext> options) : BaseContext(options)
 {
