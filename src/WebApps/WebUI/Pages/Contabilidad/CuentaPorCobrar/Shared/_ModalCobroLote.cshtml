@@ -136,13 +136,13 @@
                                 <th md-column>#</th>
                                 <th md-column>Fecha Vcto.</th>
                                 <th md-column>Cuota</th>
-                                <th md-column>Mora</th> 
-                                <th md-column>Abono</th> 
-                                <th md-column>Saldo</th>
                                 <th md-column>Dias Mora</th>
-                                <th md-column>Interes</th>
-                                <th md-column>Mora a cobrar</th>
-                                <th md-column>Valor a cobrar</th>
+                                <th md-column>Mora a Cobrar</th> 
+                                <th md-column>Total a cobrar</th>
+                                <th md-column>Abono Anterior</th> 
+                                <th md-column>Saldo Anterior</th>
+                                <th md-column>Abono Actual</th>
+                                <th md-column>Saldo Actual</th>
                                 <th md-column>Estado</th>
                             </tr>
                         </thead>
@@ -181,15 +181,14 @@
                                 <td md-cell>{{cuota.nroCuota}}</td>
                                 <td md-cell>{{cuota.fechaVencimiento | date:'dd/MM/yyyy'}}</td>
                                 <td md-cell>{{cuota.cuota}}</td>
-                                <td md-cell>{{cuota.mora}}</td> 
-                                <td md-cell>{{cuota.abono}}</td> 
-                                <td md-cell>{{cuota.saldo}}</td>
                                 <td md-cell>{{cuota.diasMoraActual}}</td>
+                                <td md-cell>{{cuota.mora}}</td> 
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.abono}}</td> 
+                                <td md-cell>{{cuota.saldo}}</td> 
                                 <td md-cell>{{cuota.interesActual}}</td> 
                                 <td md-cell>{{cuota.interesPorMoraActual}}</td> 
-                                <td md-cell class="bg-warning">
-                                     <span class="font-weight-bold">{{cuota.saldoTotalActual}}</span>
-                                </td> 
+                                 
                                 <td md-cell>{{cuota.estado}}</td>
                             </tr>
                         </tbody>

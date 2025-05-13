@@ -23,7 +23,11 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\Services\\BarberShop\\BarberShop.API\\BarberShop.API.csproj",
+        "Path": "docker-compose.dcproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Contabilidad\\Contabilidad.API\\Contabilidad.API.csproj",
         "Action": "Start"
       }
     ]
@@ -61,10 +65,6 @@
       },
       {
         "Path": "src\\Services\\Inventario\\Inventario.API\\Inventario.API.csproj",
-        "Action": "Start"
-      },
-      {
-        "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
         "Action": "Start"
       }
     ]
