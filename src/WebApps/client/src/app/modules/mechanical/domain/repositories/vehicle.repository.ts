@@ -1,8 +1,9 @@
 import {Observable} from "rxjs";
 import {ApiResponse} from "@core/models/api-response";
+import {ListVehicleParams, ListVehicleResponse} from "@mechanical/domain/models/vehicle.model";
 
 export abstract class VehicleRepository {
-  abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
+  abstract getAll(obj:ListVehicleParams): Observable<ListVehicleResponse>;
 
   abstract getDataForm():Observable<any>
 

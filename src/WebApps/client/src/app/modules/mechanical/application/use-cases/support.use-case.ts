@@ -12,10 +12,6 @@ export class SupportUseCase{
     return this.repo.getAll(obj)
   }
 
-  getDataFilter(){
-    return this.repo.getDataFilter();
-  }
-
   getDataForm(){
     return this.repo.getDataForm();
   }

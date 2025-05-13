@@ -15,7 +15,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { isValidField } from '@core/utils/utils';
+import {getValidId, isValidField} from '@core/utils/utils';
 
 import {
   MECHANICAL_CODE_REPORT,
@@ -32,7 +32,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
-import { SupportUseCase } from '@modules/mechanical/domain/use-cases/support.use-case';
+import { SupportUseCase } from '@mechanical/application/use-cases/support.use-case';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,6 +44,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
 
 @Component({
   selector: 'app-support-page',
@@ -68,10 +69,8 @@ import { CompanyCustomer } from '@customer/domain/models/company-customer';
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent {
+  $store = inject(MechanicalStore)
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
-
-  @Input() valueStatus: MECHANICAL_STATUS | null = null;
-  @Input() supportStatus: any[] = [];
 
   modalSvc = inject(ModalService);
   dialogSvc = inject(DialogService);
@@ -82,16 +81,6 @@ export class SupportPageComponent {
   visibleColumns: string[] = [];
 
   dataSource: any = [];
-
-  statusDoc = [
-    { status: null, description: 'Todos' },
-    { status: 0, description: 'En proceso' },
-    { status: 1, description: 'Entregado' },
-    { status: 2, description: 'Aprobado' },
-    { status: 3, description: 'Anulado' },
-  ];
-
-  statusTab = MECHANICAL_STATUS;
   dataSearch = {
     ckDate: true,
     fromDate: formatDateToString(new Date()),
@@ -99,7 +88,7 @@ export class SupportPageComponent {
     customerId: null as number | null,
     licensePlate: null as string | null,
     assigned: false,
-    supportStatusId: null as number | null,
+    supportStatusId: 0,
   };
 
   columnsDefs: ColumnDefinition[] = [
@@ -123,7 +112,7 @@ export class SupportPageComponent {
 
   pagination = signal(new MatPagination());
 
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
 
   openModal(id?: number) {
     const modalRef = this.dialogSvc.open(SupportAddEditModalComponent, {
@@ -175,17 +164,17 @@ export class SupportPageComponent {
         ckDate: this.dataSearch.ckDate,
         pageIndex: this.pagination().pageIndex + 1,
         pageSize: this.pagination().pageSize,
-        supportStatusId: this.dataSearch.supportStatusId,
+        supportStatusId: getValidId(this.dataSearch.supportStatusId),
         fromDate: this.dataSearch.fromDate,
         toDate: this.dataSearch.toDate,
         customerId: this.dataSearch.customerId,
         licensePlate: isValidField(this.dataSearch.licensePlate),
       };
       this.dataSource = [];
-      this.isLoadingResults = true;
+      this.isLoadingResults.set(true)
       this.supportUseCase
         .getAll(params)
-        .pipe(finalize(() => (this.isLoadingResults = false)))
+        .pipe(finalize(() => (this.isLoadingResults.set(false))))
         .subscribe((response) => {
           this.dataSource = response;
           if (this.dataSource.length > 0) {
@@ -198,26 +187,10 @@ export class SupportPageComponent {
   }
 
   ngOnInit(): void {
-    let dataStatus = this.supportStatus.find(
-      (s) => this.valueStatus === s.code,
-    );
+    const dataStatus = this.$store.supportStatus().find(st=>st.code===this.$store.valueStatus());
+    this.dataSearch.supportStatusId = dataStatus?.id || 0;
 
-    if (dataStatus) {
-      this.dataSearch.supportStatusId = dataStatus.id;
-    } else {
-      this.supportStatus.unshift({
-        id: null,
-        name: 'TODOS',
-      });
-      let dataStatus = this.supportStatus.find(
-        (s) => s.code === MECHANICAL_STATUS.PENDIENTE,
-      );
-      this.dataSearch.supportStatusId = dataStatus?.id;
-    }
-
-    // this.dataSearch.supportStatusId = this.supportStatusId;
-
-    if (this.valueStatus === MECHANICAL_STATUS.DASHBOARD) {
+    if (this.$store.isDashboard()) {
       this.visibleColumns = [
         'position',
         'op',
@@ -373,7 +346,7 @@ export class SupportPageComponent {
 
   //Status Support
   putState(id: number) {
-    let supportStatusId = this.supportStatus.find(
+    let supportStatusId = this.$store.supportStatus().find(
       (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
     )?.id;
     if (!(supportStatusId > 0)) {
@@ -385,7 +358,6 @@ export class SupportPageComponent {
     }
     try {
       Swal.fire({
-        // title: "Are you sure?",
         text: '¿Estás seguro de Entregar este documento?',
         icon: 'warning',
         showCancelButton: true,

@@ -1,30 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
-import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { SupportUseCase } from '@mechanical/domain/use-cases/support.use-case';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
+import { SupportUseCase } from '@mechanical/application/use-cases/support.use-case';
+import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatIcon} from "@angular/material/icon";
 Chart.register(...registerables);
 @Component({
   selector: 'app-mechanical-dashboard',
   imports: [
-    CommonModule,
-    MatIcon,
-    MatDynamicCardComponent,
     SupportPageComponent,
-    MatCard,
-    MatCardContent,
+    MatDynamicCardComponent,
+    MatIcon
   ],
   templateUrl: './mechanical-dashboard.component.html',
 })
 export class MechanicalDashboardComponent {
-  @Input() valueStatus: MECHANICAL_STATUS | null = null;
-  @Input() supportStatus: any[] = [];
-
+  $store = inject(MechanicalStore);
   chartSupports: any;
   data = {
     quantitySupport: 0,

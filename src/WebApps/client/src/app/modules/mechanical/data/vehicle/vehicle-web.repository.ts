@@ -8,6 +8,8 @@ import { ApiResponse } from "@core/models/api-response";
 import {VehicleRepository} from "@mechanical/domain/repositories/vehicle.repository";
 import {VehicleMapper} from "@mechanical/data/vehicle/vehicle.mapper";
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
+import {ListVehicleParams} from "@mechanical/domain/models/vehicle.model";
+import {ListVehicleMapper} from "@mechanical/data/vehicle/list-vehicle.mapper";
 
 @Injectable({
   providedIn: 'root'
@@ -16,15 +18,12 @@ export class VehicleWebRepository extends VehicleRepository{
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.VEHICLE}`
   #http = inject(HttpClient);
 
-  getAll<T>(obj: T): Observable<any[]> {
-    let json = JSON.stringify({
-      ...obj,
-      tipo: 1
-    })
+  getAll(obj: ListVehicleParams)  {
+    const json = ListVehicleMapper.toJson(obj)
     return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
-      map((response) =>   VehicleMapper.fromApiGetAll(response))
+      map((response) =>   ListVehicleMapper.fromJson(response))
     )
   }
 

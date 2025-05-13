@@ -2,18 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
-import { roundNumber } from '@core/utils/round-number.utils';
-import { isValidField } from '@core/utils/utils';
-import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import {map, Observable} from 'rxjs';
 import { ApiResponse } from "@core/models/api-response";
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
-import { SupportDetail } from '@mechanical/domain/models/support.model';
 import {SupportRepository} from "@mechanical/domain/repositories/support.repository";
-import {MedidaProducto} from "@inventory/domain/models/measure.model";
 import {SupportMapper} from "@mechanical/data/support/support.mapper";
+import {FilterDataSupportMapper} from "@mechanical/data/support/filter-data-support.mapper";
 
 @Injectable({
   providedIn: 'root'
@@ -36,11 +30,9 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   getDataFilter(){
-    let json = JSON.stringify({
-      tipo: 8
-    })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response: any) => SupportMapper.fromApiFilter(response))
+    const json = FilterDataSupportMapper.toJson()
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
+      map((response) => FilterDataSupportMapper.fromJson(response))
     )
   }
 

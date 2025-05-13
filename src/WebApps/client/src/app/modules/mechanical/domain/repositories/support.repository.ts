@@ -1,10 +1,11 @@
 import {Observable} from "rxjs";
 import {ApiResponse} from "@core/models/api-response";
+import {FilterDataSupportResponse} from "@mechanical/domain/models/support.model";
 
 export abstract  class SupportRepository{
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
 
-  abstract getDataFilter():Observable<{ supportStatus: any[]  }>
+  abstract getDataFilter():Observable<FilterDataSupportResponse>
 
   abstract getDataForm():Observable<any>
 

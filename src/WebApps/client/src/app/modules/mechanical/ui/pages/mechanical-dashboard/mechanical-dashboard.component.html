@@ -3,8 +3,7 @@
     class="row row-cols-4 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3"
   >
     <div class="col">
-      <mat-card appearance="outlined">
-        <mat-card-content>
+      <app-mat-dynamic-card>
           <div class="row">
             <div class="col-md-12">
               <div class="d-flex no-block align-items-center">
@@ -34,12 +33,10 @@
               </div>
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
+      </app-mat-dynamic-card>
     </div>
     <div class="col">
-      <mat-card appearance="outlined">
-        <mat-card-content>
+      <app-mat-dynamic-card>
           <div class="row">
             <div class="col-md-12">
               <div class="d-flex no-block align-items-center">
@@ -69,12 +66,10 @@
               </div>
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
+      </app-mat-dynamic-card>
     </div>
     <div class="col">
-      <mat-card>
-        <mat-card-content>
+      <app-mat-dynamic-card>
           <div class="row">
             <div class="col-md-12">
               <div class="d-flex no-block align-items-center">
@@ -104,25 +99,17 @@
               </div>
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
+      </app-mat-dynamic-card>
     </div>
 
-    <div class="col-2">
-      <mat-card appearance="outlined">
-        <mat-card-content>
+    <div class="col">
+      <app-mat-dynamic-card>
           <canvas id="chartSupports" height="200px"></canvas>
-        </mat-card-content>
-      </mat-card>
+      </app-mat-dynamic-card>
     </div>
   </div>
 
   <div class="row row-xxl-1">
-    <app-mat-dynamic-card>
-      <app-support-page
-        [valueStatus]="valueStatus"
-        [supportStatus]="supportStatus"
-      />
-    </app-mat-dynamic-card>
+      <app-support-page  />
   </div>
 </div>
