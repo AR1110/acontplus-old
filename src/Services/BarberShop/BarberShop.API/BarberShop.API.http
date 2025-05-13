@@ -30,14 +30,14 @@ Content-Type: application/json
 Authorization: {{Token}}
 
 ###
-
+@id=1
 PUT {{BarberShop.API_HostAddress}}/seat/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 {
-  id: 1
-  "SeatNumber": 1,
-  "Code": "A1",
-  "Name": "Asiento 1"
+  "Id": 1,
+  "SeatNumber": 2,
+  "Code": "A2",
+  "Name": "Asiento 2"
 }
 ###

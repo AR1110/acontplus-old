@@ -23,11 +23,7 @@
         "Action": "Start"
       },
       {
-        "Path": "docker-compose.dcproj",
-        "Action": "Start"
-      },
-      {
-        "Path": "src\\Services\\Compras\\Compras.API\\Compras.API.csproj",
+        "Path": "src\\Services\\BarberShop\\BarberShop.API\\BarberShop.API.csproj",
         "Action": "Start"
       }
     ]

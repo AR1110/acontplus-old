@@ -4,13 +4,13 @@
 public class TicketDetail : BaseEntity
 {
     public int TicketId { get; set; }
-    public Ticket Ticket { get; set; }
+    public required Ticket Ticket { get; set; }
 
     public int? ProductId { get; set; }
 
     public int LineNumber { get; set; }
 
-    [MaxLength(300)] public string Description { get; set; }
+    [MaxLength(300)] public string? Description { get; set; }
 
     [Column(TypeName = "numeric(18,5)")] public decimal Quantity { get; set; }
 
@@ -27,5 +27,5 @@ public class TicketDetail : BaseEntity
     [Column(TypeName = "numeric(18,5)")] public decimal Total { get; set; }
 
 
-    [MaxLength(500)] public string Obs { get; set; }
+    [MaxLength(500)] public string? Obs { get; set; }
 }

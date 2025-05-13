@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using BarberShop.Infrastructure.Persistence;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 

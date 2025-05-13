@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using BarberShop.API.Extensions;
+﻿using BarberShop.API.Extensions;
 using BarberShop.API.Extensions.Endpoints;
 using Common.Services.Configuration;
 using Common.Services.Middleware;
@@ -25,14 +24,7 @@ app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5015"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

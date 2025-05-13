@@ -1,7 +1,6 @@
-﻿using Common.Infrastructure.Core.Entity;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BarberShop.Infrastructure.Persistense.Configurations;
+namespace BarberShop.Infrastructure.Persistence.Configurations;
 
 public class WorkSessionConfiguration : BaseEntityTypeConfiguration<WorkSession>
 {

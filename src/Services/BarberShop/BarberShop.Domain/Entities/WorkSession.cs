@@ -14,7 +14,7 @@ public class WorkSession : BaseEntity
 
     [Column(TypeName = "numeric(18,5)")] public decimal TotalAdvances { get; set; }
 
-    public ICollection<Ticket> Tickets { get; set; }
+    public ICollection<Ticket>? Tickets { get; set; }
 
-    public ICollection<BarberPayment> Payments { get; set; }
+    public ICollection<BarberPayment>? Payments { get; set; }
 }
