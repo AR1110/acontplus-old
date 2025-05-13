@@ -11,7 +11,7 @@
       <!-- (matSortChange)="sortData($event)" -->
 
       @if (columnDefinitions) {
-      <!-- Checkbox Column *ngIf="showSelectBox" -->
+        <!-- Checkbox Column (optional) -->
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox
@@ -34,24 +34,35 @@
         </td>
         <td *matFooterCellDef mat-footer-cell></td>
       </ng-container>
-      @for (col of columnDefinitions; track $index) {
 
+        <!-- Dynamic columns based on column definitions -->
+      @for (col of columnDefinitions; track $index) {
+        <!-- Column header -->
       <ng-container [matColumnDef]="col.key">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>
           {{ col.label }}
         </th>
+
+        <!-- Column cell -->
         <td
           mat-cell
           *matCellDef="let element; let i = index"
           [ngClass]="{ highlighted: highlightRowIndex === i }"
         >
+
+          <!-- Operations column with custom template -->
           @if(col.key==='op'){
           <div class="d-flex flex-row gap-1">
             <ng-container
               *ngTemplateOutlet="templateOp; context: { item: element }"
             ></ng-container>
           </div>
-          } @if (showExpand && col.key==="expand") {
+          }
+
+
+
+          <!-- Expandable row toggle button -->
+          @if (showExpand && col.key==="expand") {
           <button
             mat-icon-button
             aria-label="expand row"
@@ -75,13 +86,35 @@
           } @case ('date') {
           <div>{{ element[col.key] | date : "dd.MM.yyyy" }}</div>
           } @case ("template") {
-          <ng-container
-            *ngTemplateOutlet="
-              col.templateOutlet;
-              context: { $implicit: element }
-            "
-          ></ng-container>
-          } @default {
+            <ng-container
+              *ngTemplateOutlet="
+                col.templateOutlet;
+                context: { $implicit: element }
+              "
+            />
+          }
+          @case ("custom"){
+            <!-- Dynamic component column -->
+            @if(col.columnType==='component'){
+              <ng-container
+                *ngComponentOutlet="col.body; injector: createInjector(element)"
+              />
+            }
+            @if(col.columnType==='html'){
+              <!-- HTML content column -->
+              <div [innerHTML]="col.body(element)"></div>
+            }
+            @if(col.columnType==='template'){
+              <ng-container
+                *ngTemplateOutlet="
+                col.body;
+                context: { $implicit: element }
+              "
+              />
+            }
+          }
+
+          @default {
           <div>{{ element[col.key] }}</div>
 
           } }

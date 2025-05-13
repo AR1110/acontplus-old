@@ -40,7 +40,6 @@ export enum GlobalRoutes {
   ConfigWizardConfig = 'config/wizard-config',
   ConfigTiempoCredito = 'config/tiempo-credito',
   InventarioReporte = 'inventory/report',
-  ContabilidadCarteraCliente = 'accounting/cartera-cliente',
   VentasReportVentaReporte = 'sale/reports/sale-report',
   FactElectReport = 'billing/fact-elect-report',
 
@@ -84,6 +83,9 @@ export enum GlobalRoutes {
   ContabilidadAccountingSummary = 'accounting/reports/resumen-contable',
   ContabilidadMovimientoCajaReport = 'accounting/reports/movimiento-caja-report',
   ContabilidadComprobanteEgreso = 'accounting/comprobante-egreso',
+  ContabilidadCarteraCliente = 'accounting/reports/cartera-cliente',
+  ContabilidadPaymentsReport='accounting/reports/payments',
+
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',
 

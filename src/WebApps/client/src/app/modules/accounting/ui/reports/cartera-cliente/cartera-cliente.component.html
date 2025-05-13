@@ -1,5 +1,6 @@
 <app-breadcrumb />
 <app-mat-dynamic-card>
+  <h1>Car</h1>
   <mat-tab-group>
     <!-- Pestaña Cartera Cliente -->
     <mat-tab label="Cartera Cliente">
@@ -162,9 +163,7 @@
             </div>
           }
         </div>
-      </div>
-
-        <div class="vstack gap-1">
+        <div class="hstack gap-1">
           <!-- In your parent component template -->
           <app-report-buttons
             [fileType]="REPORT_FORMAT.PDF"
@@ -178,6 +177,8 @@
             (exportReport)="handleFileDownload($event, 1)"
           />
         </div>
+      </div>
+
     </mat-tab>
 
     <!-- Pestaña Deudores -->

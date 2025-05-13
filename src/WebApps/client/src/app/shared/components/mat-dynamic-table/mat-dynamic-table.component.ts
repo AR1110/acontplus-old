@@ -1,8 +1,8 @@
 import {
   Component,
   ContentChild,
-  ContentChildren,
-  EventEmitter,
+  ContentChildren, EmbeddedViewRef,
+  EventEmitter, inject, Injector,
   input,
   Input,
   output,
@@ -42,6 +42,7 @@ import {
 import { Pagination } from '@shared/models/pagination.model';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
+import {DYNAMIC_INPUT} from "@shared/input/dynamic-input";
 
 @Component({
   selector: 'app-mat-dynamic-table',
@@ -73,6 +74,10 @@ import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/c
   styleUrl: `./mat-dynamic-table.component.scss`,
 })
 export class MatDynamicTableComponent<T> {
+  private viewContainerRef = inject(ViewContainerRef);
+  private injector = inject(Injector);
+  private embeddedViews: EmbeddedViewRef<any>[] = [];
+
   @Input() showExpand = false;
   @Input() showFooter: boolean = false;
   @Input() locale: string = '';
@@ -158,6 +163,42 @@ export class MatDynamicTableComponent<T> {
     }
   }
 
+  public createInjector = (element: any): Injector =>
+    Injector.create({
+      providers: [
+        {
+          //please note that the STATUS_INPUT is a token that we define in the status-input.ts file
+          provide: DYNAMIC_INPUT,
+          // here we pass the element that we want to use
+          useValue: element,
+        },
+      ],
+      parent: this.injector,
+    });
+
+
+  createEmbeddedView(column: any, element: any): void {
+    console.log(column)
+      const templateRef = column.body as TemplateRef<any>;
+
+      // Create context for the template
+      const context = {
+        $implicit: element,
+        ...column.body
+      };
+
+      // Create the embedded view
+      const viewRef = templateRef.createEmbeddedView(context);
+      this.embeddedViews.push(viewRef);
+
+      // Attach to the view container
+      this.viewContainerRef.insert(viewRef);
+
+  }
+
+
+
+
   moveNextRow(cell: TableCellIndex): void {
     console.log('moveNextRow(): ' + JSON.stringify(cell));
   }
@@ -240,5 +281,10 @@ export class MatDynamicTableComponent<T> {
     } else {
       this.hideExpanded.emit(element);
     }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up components and views to prevent memory leaks
+    this.embeddedViews.forEach(view => view.destroy());
   }
 }

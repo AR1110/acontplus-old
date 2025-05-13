@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import {Component, inject, model, signal, TemplateRef, ViewChild} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -22,14 +22,10 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteEgresoList } from '@accounting/domain/models/comprobante-egreso.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { PageEvent } from '@angular/material/paginator';
-import { ActionDeleteDirective } from '@shared/directives/permission/action-delete.directive';
-import { ActionEditDirective } from '@shared/directives/permission/action-edit.directive';
-import { ActionMovCajaDirective } from '@shared/directives/permission/action-mov-caja.directive';
 import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { ActionComprobanteEgresoReportDirective } from '@accounting/ui/directives/action-comprobante-egreso-report.directive';
 import { ActionComprobanteEgresoAnularDirective } from '@accounting/ui/directives/action-comprobante-egreso-anular.directive';
-import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
@@ -64,6 +60,7 @@ export class ComprobanteEgresoComponent {
   private $listUseCase = inject(ListComprobanteEgresoUseCase);
   private $dataFilterUseCase = inject(DataFilterComprobanteEgresoUseCase);
 
+  @ViewChild('actionTemplate', { static: true }) actionTemplate!: TemplateRef<any>;
   dataSource = signal<ComprobanteEgresoList[]>([]);
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
@@ -73,7 +70,7 @@ export class ComprobanteEgresoComponent {
     { key: 'nomPersona', label: 'Persona', type: 'string' },
     { key: 'total', label: 'Total', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
-    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
+    { key: 'nomUsuario', label: 'Usuario', type: 'custom', columnType: 'html' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
@@ -81,6 +78,7 @@ export class ComprobanteEgresoComponent {
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
+  users = signal<any[]>([])
 
   dataSearch = model({
     codEstab: '',
@@ -90,7 +88,7 @@ export class ComprobanteEgresoComponent {
     toDate: formatDateToString(new Date()),
     userId: 0,
     nroSecuencial: null,
-    nameSupplier: null,
+    nameSupplier: "",
     byPersona: 0,
   });
 
@@ -163,6 +161,7 @@ export class ComprobanteEgresoComponent {
     this.$dataFilterUseCase.execute().subscribe((response) => {
       console.log(response);
       this.estabs = response.estabs;
+      this.users.set(response.users)
       const dataEstab = this.estabs.find((item) => item.defaultEstab);
       if (dataEstab) {
         this.dataSearch.update((i) => ({
@@ -174,6 +173,16 @@ export class ComprobanteEgresoComponent {
     });
   }
 
+  ngAfterViewInit(){
+    this.columnsDefs = this.columnsDefs.map(col => {
+      if (col.type==='custom' && col.key === 'nomUsuario') {
+        return { ...col, body: (ele:any)=>`<strong>${ele.nomUsuario}-Emilio</strong>` };
+      }
+      return col;
+    });
+    console.log(this.columnsDefs);
+  }
+
   onChangeDateRange($event: any) {
     this.dataSearch.update((item) => ({
       ...item,
@@ -181,20 +190,6 @@ export class ComprobanteEgresoComponent {
       toDate: $event.to,
     }));
     this.refresh();
-  }
-
-  onUserSelected(data: any) {
-    this.dataSearch.update((item) => ({
-      ...item,
-      userId: data.idUsuario,
-    }));
-  }
-
-  onEmptyInputUserSearch() {
-    this.dataSearch.update((item) => ({
-      ...item,
-      userId: 0,
-    }));
   }
 
   onSupplierSelected(data: any) {
@@ -209,6 +204,7 @@ export class ComprobanteEgresoComponent {
     this.dataSearch.update((item) => ({
       ...item,
       byPersona: 0,
+
     }));
   }
 

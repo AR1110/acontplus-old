@@ -17,7 +17,8 @@ export class DataFilterComprobanteEgresoMapper {
       isGroupPuntoEmision: true
     })
     return {
-      estabs
+      estabs,
+      users: response.users || []
     }
   }
 }

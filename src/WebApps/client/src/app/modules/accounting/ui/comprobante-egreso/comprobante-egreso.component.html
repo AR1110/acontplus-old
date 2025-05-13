@@ -59,13 +59,26 @@
         class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
       >
         <div class="col">
-          <app-supplier-search [isSimpleMode]="true" />
+          <app-supplier-search
+            [isSimpleMode]="true"
+            (supplierSelected)="onSupplierSelected($event)"
+            (clearSearch)="supplierclearSearch($event)"
+            [(textSearch)]="dataSearch().nameSupplier"
+          />
         </div>
         <div class="col">
-          <app-user-search
-            (userSelected)="onUserSelected($event)"
-            (clearSearch)="onEmptyInputUserSearch()"
-          />
+          <mat-form-field class="w-100">
+            <mat-label>Usuario</mat-label>
+            <mat-select
+              [(ngModel)]="dataSearch().userId"
+              (selectionChange)="refresh()"
+            >
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of users(); track $index){
+              <mat-option [value]="item.idUsuario">{{ item.nombreUsuario }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field>
@@ -86,6 +99,10 @@
       (pageEvent)="handlePageEvent($event)"
     />
   </div>
+
+  <ng-template #actionTemplate>
+    <button>Hola</button>
+  </ng-template>
 
   <ng-template #templateOp let-item="item">
     <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">

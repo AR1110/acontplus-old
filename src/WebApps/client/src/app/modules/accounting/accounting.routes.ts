@@ -17,6 +17,7 @@ import {
 import {CarteraClienteComponent} from "@accounting/ui/reports/cartera-cliente/cartera-cliente.component";
 import {ComprobanteIngresoComponent} from "@accounting/ui/comprobante-ingreso/comprobante-ingreso.component";
 import {ComprobanteEgresoComponent} from "@accounting/ui/comprobante-egreso/comprobante-egreso.component";
+import {PaymentsReportComponent} from "@accounting/ui/reports/payments-report/payments-report.component";
 
 export const routes: Routes = [
   {
@@ -146,6 +147,14 @@ export const routes: Routes = [
           breadcrumb: 'Cartera Cliente',
         },
       },
+      {
+        path: 'payments',
+        title: 'Reporte de Pagos',
+        component: PaymentsReportComponent,
+        data: {
+          breadcrumb: 'Reporte de Pagos'
+        }
+      }
     ]
   }
 ];

@@ -19,15 +19,16 @@ export class ListComprobanteEgresoMapper {
         "idComprobanteEgreso": item.idComprobanteEgreso,
         "total": item.total,
         "codEstab": item.codEstab,
-        "fechaRegistro": item.fechaRegistro,
-        "nroDoc": item.nroDoc,
-        nomPersona: item.persona,
+        fechaRegistro: item.fechaRegistro,
+        nroDoc: item.nroDoc,
+        nomPersona: item.nomPersona,
         "nroIdentificacion": item.nroIdentificacion,
-        nomCaja: item.caja,
+        nomCaja: item.nomCaja,
         "color": item.color,
-        nomEstado: item.estado,
-        nomUsuario:item.usuario,
-        totalRecords: item.totalRecords
+        nomEstado: item.nomEstado,
+        nomUsuario:item.nomUsuario,
+        totalRecords: item.totalRecords,
+        estado: item.estado
       }
     })
     const totalRecords = data.length>0? data[0].totalRecords : 0

@@ -18,7 +18,20 @@ interface ComprobanteEgreso {
 }
 
 export interface ComprobanteEgresoList {
-
+  index: number
+  idComprobanteEgreso: number
+  total: number
+  codEstab: string
+  fechaRegistro: string
+  nroDoc: string
+  nomPersona: string
+  nroIdentificacion: string
+  nomCaja: string
+  color: string
+  nomEstado: string
+  nomUsuario:string
+  totalRecords:number
+  estado: boolean
 }
 export interface ComprobanteEgresoResponse {
   data: ComprobanteEgresoList[]
@@ -27,6 +40,7 @@ export interface ComprobanteEgresoResponse {
 
 export interface ComprobanteEgresoFilterResponse {
   estabs: GroupedEstab[]
+  users: any[]
 }
 
 export interface ComprobanteEgresoDeleteResponse {
