@@ -14,7 +14,7 @@ WORKDIR /app
 COPY . .
 
 # Build server side bundles
-RUN npm run prod
+RUN npm run production
 
 # Stage 2: Serve app with nginx server
 

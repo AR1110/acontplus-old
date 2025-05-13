@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "WebUI": {
+    "https": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
@@ -8,15 +8,6 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7166;http://localhost:5167"
-    },
-    "http": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5168"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

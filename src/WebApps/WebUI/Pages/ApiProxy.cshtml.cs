@@ -41,7 +41,7 @@ public class ApiProxyModel : PageModel
     {
         try
         {
-            var apiBaseUrl = _config["ApiGateways:ApiBaseUrl"];
+            var apiBaseUrl = _config["ApiGateways:Acontplus"];
             if (string.IsNullOrEmpty(apiBaseUrl))
             {
                 _logger.LogError("API base URL not configured");
