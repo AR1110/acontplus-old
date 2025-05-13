@@ -43,6 +43,7 @@ import {
   MatDatepickerToggle,
 } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
+import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -91,6 +92,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
   private readonly _tS = inject(ToasterService);
+  private readonly _documentoReceivedUseCase = inject(DocumentReceivedUseCase);
 
   setPanelOpen(index: number) {
     this.panelOpenState = index;
@@ -229,7 +231,12 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
     const doc = this.docSustentoArray().controls[index]
       .value as RetAtsDocSustento;
     if (doc.isAutomatic) {
-      console.log(doc);
+      if (!doc.idDocumento) return;
+      this._documentoReceivedUseCase
+        .previewXml(doc.idDocumento)
+        .subscribe((response) => {
+          console.log(response);
+        });
     } else {
       this._tS.toastr({
         type: 'info',

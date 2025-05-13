@@ -19,4 +19,5 @@ export abstract class DocumentReceivedRepository {
   abstract update<T>(id: number, data: T): Observable<ApiResponse>;
   abstract delete<T>(id: number): Observable<ApiResponse>;
   abstract uploadXml<T>(parameters: T, file: any): Observable<ApiResponse>;
+  abstract previewXml(id: number): Observable<ApiResponse>;
 }

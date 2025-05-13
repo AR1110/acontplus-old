@@ -33,4 +33,8 @@ export class DocumentReceivedUseCase {
   uploadXml<T>(parameters: T, file: any) {
     return this._documentReceivedRepository.uploadXml(parameters, file);
   }
+
+  previewXml(id: number) {
+    return this._documentReceivedRepository.previewXml(id);
+  }
 }

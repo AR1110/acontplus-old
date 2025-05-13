@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
 import { DocumentReceivedRepository } from '@purchase/domain/repositories/document-received.repository';
@@ -76,6 +76,11 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
     return this._http.delete<ApiResponse>(`${this._url}${id}`);
   }
 
+  previewXml(id: number): Observable<ApiResponse> {
+    return this._http
+      .get<ApiResponse>(`Preview/${id}`)
+      .pipe(map((response: ApiResponse) => response));
+  }
   update(id: number, data: any) {
     return this._http.put<ApiResponse>(`${this._url}${id}`, data);
   }
