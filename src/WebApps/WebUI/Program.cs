@@ -104,7 +104,7 @@ app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
     builder.Run(async context =>
     {
         context.Response.ContentType = "text/html";
-        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "modern", "index.html"));
+        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
     });
 });
 
