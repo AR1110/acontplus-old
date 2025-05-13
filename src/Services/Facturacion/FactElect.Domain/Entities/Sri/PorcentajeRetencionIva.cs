@@ -3,14 +3,14 @@
 [Table("PorcentajeRetencionIva", Schema = "Sri")]
 public class PorcentajeRetencionIva : BaseEntity
 {
-    [Required, MaxLength(5)] public required string Codigo { get; init; }
+    [Required, MaxLength(5)] public required string Codigo { get; set; }
 
-    [Required, MaxLength(50)] public required string Descripcion { get; init; }
+    [Required, MaxLength(50)] public required string Descripcion { get; set; }
 
     [Column(TypeName = "numeric(6,2), null")]
-    public decimal Porcentaje { get; init; }
+    public decimal Porcentaje { get; set; }
 
-    public DateOnly? FechaInicio { get; init; }
+    public DateOnly? FechaInicio { get; set; }
 
-    public DateOnly? FechaFin { get; init; }
+    public DateOnly? FechaFin { get; set; }
 }
