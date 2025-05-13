@@ -412,7 +412,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     └── company-demo-step.service.ts
 |  |  |  |  └── store
 |  |  |  |     └── user-customer
-|  |  |  |        └── user-customer-role-state.service.ts
 |  |  |  ├── customer
 |  |  |  |  ├── core
 |  |  |  |  |  ├── domain

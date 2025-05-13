@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import {Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { MECHANICAL_CODE_REPORT } from '@mechanical/domain/enums/mechanical.enum';
-import {MatPagination, Pagination} from '@shared/models/pagination.model';
+import {MatPagination} from '@shared/models/pagination.model';
 
 import { InspectionModalComponent } from './components/inspection-modal/inspection-modal.component';
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
@@ -13,8 +12,9 @@ import {PageEvent} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
-import {InspectionUseCase} from "@mechanical/domain/use-cases/inspection.use-case";
+import {InspectionUseCase} from "@mechanical/application/use-cases/inspection.use-case";
 import {finalize} from "rxjs/operators";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
     selector: 'app-inspection-page',
@@ -31,11 +31,11 @@ import {finalize} from "rxjs/operators";
 export class InspectionPageComponent {
   sharedSvc = inject(SharedService);
   private _inspectionUseCase = inject(InspectionUseCase);
-  private modalSvc = inject(ModalService);
+  private _dialogSvc = inject(DialogService)
 
   dataSource: any[] = [];
   dataSearch = {};
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
 
@@ -58,13 +58,13 @@ export class InspectionPageComponent {
   }
 
   openModal(id: number, supportId: number) {
-    let modalRef = this.modalSvc.open(InspectionModalComponent, {
+    this._dialogSvc.open(InspectionModalComponent, {
       size: 'xl',
+      data: {
+        inspectionId: id,
+        supportId,
+      }
     });
-    modalRef.componentInstance.params = {
-      inspectionId: id,
-      supportId,
-    };
   }
 
   getInspections() {
@@ -74,10 +74,10 @@ export class InspectionPageComponent {
       status: 1,
     };
 
-    this.isLoadingResults = true;
+    this.isLoadingResults.set(true);
     this._inspectionUseCase.getAll(params)
       .pipe(
-        finalize(()=>this.isLoadingResults=false)
+        finalize(()=>this.isLoadingResults.set(false))
       )
       .subscribe((response) => {
       this.dataSource = response;

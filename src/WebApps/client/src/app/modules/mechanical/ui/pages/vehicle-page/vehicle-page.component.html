@@ -18,11 +18,11 @@
             aria-label="Editar"
             (resultModalHandler)="resultModal($event)"
             appVehicleAddEdit
-            [disabled]="isLoading"
+            [disabled]="isLoading()"
           >
             <mat-icon>add</mat-icon>
           </button>
-          <button mat-icon-button (click)="refresh()" [disabled]="isLoading">
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoading()">
             <mat-icon>refresh</mat-icon>
           </button>
         </div>
@@ -30,16 +30,15 @@
     </div>
 
     <app-mat-dynamic-table
-      [tableData]="dataSource"
-      [isLoadingData]="isLoading"
+      [tableData]="dataSource()"
+      [isLoadingData]="isLoading()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [templateOp]="templateOp"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
-    >
-    </app-mat-dynamic-table>
+    />
 
     <ng-template #templateOp let-item="item">
       <button

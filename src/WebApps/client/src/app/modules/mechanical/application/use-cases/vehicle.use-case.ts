@@ -8,9 +8,6 @@ import {VehicleRepository} from "@mechanical/domain/repositories/vehicle.reposit
 export class VehicleUseCase {
   constructor(private repo : VehicleRepository) {}
 
-  getAll<T extends { pageIndex: number; pageSize: number }>(obj:T) {
-    return this.repo.getAll(obj)
-  }
 
   getDataForm(){
     return this.repo.getDataForm();

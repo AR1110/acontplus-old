@@ -7,8 +7,8 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import Swal from "sweetalert2";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
-import {CreateSeatUseCase} from "@barber-shop/domain/use-cases/seat/create-seat.use-case";
-import {UpdateSeatUseCase} from "@barber-shop/domain/use-cases/seat/update-seat.use-case";
+import {CreateSeatUseCase} from "@barber-shop/application/use-cases/seat/create-seat.use-case";
+import {UpdateSeatUseCase} from "@barber-shop/application/use-cases/seat/update-seat.use-case";
 import {SeatList} from "@barber-shop/domain/models/seat.model";
 import {getValidId} from "@core/utils/utils";
 

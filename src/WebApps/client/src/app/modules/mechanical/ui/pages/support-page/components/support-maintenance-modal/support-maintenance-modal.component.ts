@@ -31,7 +31,7 @@ import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { ConsolidacionBodega } from '@inventory/domain/models/consolidacion-bodega.model';
 import { Tarifa } from '@inventory/domain/models/tarifa.model';
 import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
-import { SupportDetailUseCase } from '@modules/mechanical/domain/use-cases/support-detail.use-case';
+import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatButton} from "@angular/material/button";

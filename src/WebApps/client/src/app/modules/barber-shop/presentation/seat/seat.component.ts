@@ -4,7 +4,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { DialogService } from '@core/services/dialog.service';
 import { AddEditSeatComponent } from '@barber-shop/presentation/seat/add-edit-seat/add-edit-seat.component';
-import { ListSeatUseCase } from '@barber-shop/domain/use-cases/seat/list-seat.use-case';
+import { ListSeatUseCase } from '@barber-shop/application/use-cases/seat/list-seat.use-case';
 import { SeatList } from '@barber-shop/domain/models/seat.model';
 
 @Component({
