@@ -10,12 +10,6 @@ GO
 -- Create date: 2024-12-17
 -- Description:	sp for notification insert
 -- =============================================
-DROP PROC IF EXISTS App.Notificacion_Serv_Get
-GO
-DROP PROC IF EXISTS App.Notificacion_Serv_Insert
-GO
-DROP PROC IF EXISTS App.Notificacion_Serv_Update
-GO
 
 CREATE OR ALTER PROCEDURE Common.Notification_Insert @userRoleId INT,
 	@json VARCHAR(MAX),
@@ -30,7 +24,7 @@ BEGIN
     --> Data Json
     DECLARE @codDoc VARCHAR(5),
         @params NVARCHAR(MAX),
-        @receptor VARCHAR(200),
+        @receptor VARCHAR(254),
         @codigo VARCHAR(5),
         @id INT; 
 
@@ -42,9 +36,9 @@ BEGIN
 
 	--> Email 
 	DECLARE @body VARCHAR(MAX)
-	       ,@template VARCHAR(50) = 'EmailTemplate.html'
+	       ,@template VARCHAR(50)
 	       ,@subject VARCHAR(100)
-           ,@cc VARCHAR(100)
+           ,@cc VARCHAR(100);
 
 	BEGIN TRY
             -- Set values for reusable constants
@@ -86,7 +80,7 @@ BEGIN
             serieComprobante	VARCHAR(50)		'$.serieComprobante',
             codigo				VARCHAR(5)		'$.params.reportParams.codigo',
             id					INT				'$.params.spParams.id',
-            receptor			VARCHAR(100)	'$.receptor',
+            receptor			VARCHAR(254)	'$.receptor',
             params				NVARCHAR(MAX)	'$.params' AS JSON,
             subjectJson			VARCHAR(500)	'$.subject'
 
@@ -95,10 +89,7 @@ BEGIN
 
         --> Tipo para reportes 
 		IF EXISTS (SELECT 1 FROM Config.Reporte WITH (NOLOCK) WHERE codigo = @codigo)
-			BEGIN 
-                
-                SELECT TOP 1 @receptor = email FROM dbo.Entidad WHERE idEntidad = @idEntidad
-
+			BEGIN
                 SET @template = 'ReporteGenerado.html'
 
 				SET @body = (

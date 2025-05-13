@@ -63,10 +63,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-{
-    app.UseHttpsRedirection();
-}
+
+app.UseHttpsRedirection();
+
+app.UseDefaultFiles();
 
 app.UseStaticFiles();
 
@@ -96,8 +96,17 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-
 app.MapRazorPages();
+
+app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
+{
+    builder.UseStaticFiles();
+    builder.Run(async context =>
+    {
+        context.Response.ContentType = "text/html";
+        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
+    });
+});
 
 
 await app.RunAsync();

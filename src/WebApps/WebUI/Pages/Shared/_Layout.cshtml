@@ -1,28 +1,20 @@
-﻿@*@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv*@
+﻿@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @using System.Text.Json
 
 @{
-    @* var facebook = Configuration["SocialNetworks:Facebook"];
-var googlePlay = Configuration["SocialNetworks:GooglePlay"];
-var businessUrl = Configuration["SocialNetworks:BusinessUrl"];
-var userManual = "/Common/UserManual/Index";
-var whatsapp = Configuration["SocialNetworks:Whatsapp"];
-var youtube = Configuration["SocialNetworks:Youtube"]; *@
-
-}
-@{
     var socialLinks = new Dictionary<string, string>
-{
-{ "Facebook", Configuration["SocialNetworks:Facebook"] },
-{ "GooglePlay", Configuration["SocialNetworks:GooglePlay"] },
-{ "BusinessUrl", Configuration["SocialNetworks:BusinessUrl"] },
-{ "UserManual", "/Common/UserManual/Index" },
-{ "Whatsapp", Configuration["SocialNetworks:Whatsapp"] },
-{ "Youtube", Configuration["SocialNetworks:Youtube"] }
-};
+    {
+        { "Facebook", Configuration["SocialNetworks:Facebook"] },
+        { "GooglePlay", Configuration["SocialNetworks:GooglePlay"] },
+        { "BusinessUrl", Configuration["SocialNetworks:BusinessUrl"] },
+        { "UserManual", "/Common/UserManual/Index" },
+        { "Whatsapp", Configuration["SocialNetworks:Whatsapp"] },
+        { "Youtube", Configuration["SocialNetworks:Youtube"] }
+    };
 }
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -285,9 +277,7 @@ var youtube = Configuration["SocialNetworks:Youtube"]; *@
 
 
     <script>
-        window.apiProxyUrl = '/ApiProxy?path=';
-
-        console.log(window.apiProxyUrl);
+        window.apiProxyUrl = @Html.Raw(JsonSerializer.Serialize(Configuration["ApiGateways:Proxy"]));;
 
         $(document).on({
             'show.bs.modal': function () {
@@ -322,38 +312,10 @@ var youtube = Configuration["SocialNetworks:Youtube"]; *@
                 });
             location.href = '/Login';
         };
-        const angularApp = @Html.Raw(JsonSerializer.Serialize(Configuration["UrlApps:AngularApp"]));
-        window.angularAppUrl = angularApp;
+        window.angularAppUrl = '@(hostingEnv.IsDevelopment() ? Configuration["AngularClient:DevelopmentUrl"] : Configuration["AngularClient:ProductionUrl"])';
     </script>
 
-    @* <script>
-    function loadScript(url) {
-    return fetch(url)
-    .then(response => {
-    if (!response.ok) {
-    throw new Error('Network response was not ok');
-    }
-    return response.text();
-    })
-    .then(scriptText => {
-    const script = document.createElement('script');
-    script.text = scriptText;
-    document.head.appendChild(script);
-    });
-    }
-
-    // Cargar un script específico
-    loadScript('/js/inventario/articulo/articuloService.js')
-    .then(() => {
-    console.log("articuloService.js cargado");
-    // Cargar el siguiente script o ejecutar otra lógica aquí
-    })
-    .catch(error => console.error('Error al cargar el script:', error));
-
-    </script> *@
-
     @await RenderSectionAsync("Scripts", required: false)
-    <!-- Esta sección se cargará después de que todos los scripts anteriores se hayan cargado -->
 </body>
 
 </html>
