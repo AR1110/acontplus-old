@@ -1,42 +1,31 @@
-
-import {patchState, signalStore, withComputed, withMethods, withState} from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 
 export interface UserCustomerState {
-   userRoleId: number
+  userRoleId: number;
 }
 
 const initialUserCustomerState: UserCustomerState = {
-  userRoleId: 0
-}
+  userRoleId: 0,
+};
 
 export const UserCustomerStore = signalStore(
-  {providedIn: 'root'},
+  { providedIn: 'root' },
   withState(initialUserCustomerState),
-  withComputed(store=>({
+  withComputed((store) => ({})),
 
-
-
-
-  })),
-
-
-  withMethods(store=>({
-
-    setUserRoleId(userRoleId: number){
-      patchState(store, ()=>{
+  withMethods((store) => ({
+    setUserRoleId(userRoleId: number) {
+      patchState(store, () => {
         return {
-          userRoleId
-        }
-      })
-    }
-
-
-
-
-
-
-
-
+          userRoleId,
+        };
+      });
+    },
   }))
-
-)
+);
