@@ -113,9 +113,9 @@ export class SupplierAccountsComponent {
         }
       }
       this.tiposDoc.set(response.tiposDoc);
-      this.searchFilters.documentCode =
-        this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
-          ?.codDoc || '';
+      // this.searchFilters.documentCode =
+      //   this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
+      //     ?.codDoc || '';
       this.estadosDoc.set(response.estadosDoc);
     })
 
