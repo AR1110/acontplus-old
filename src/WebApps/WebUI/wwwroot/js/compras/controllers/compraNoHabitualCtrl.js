@@ -47,7 +47,7 @@
         $scope.recordsQuantity = [25, 50, 100]
         $scope.dataSearch = {
             checkBoxFecha: true, 
-            idEstadoDocumento: 0,
+            codEstado: 0,
             pageIndex: 1,
             pageSize: 25,
             maxSize: 5,
@@ -133,17 +133,16 @@
 
 
         $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
+            $scope.dataSearch.fechaInicio = item.startDate;
                 $scope.dataSearch.fechaFin = item.endDate
             $scope.getComprasNoHabitual();
         }
 
         //====================Cliente===========
-        $scope.onKeyupProveedor = function () {
-
+        $scope.onKeyupProveedor = function () { 
             $scope.dataSearch.idProveedor = 0;
-
         }
+
         $scope.onSelectProveedor = function (item) {
             $scope.dataSearch.idProveedor = item.idProveedor;
             $scope.getComprasNoHabitual();
@@ -191,7 +190,7 @@
                     if (!($scope.dataSearch.idProveedor > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
-                }
+                } 
 
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
@@ -199,7 +198,7 @@
                     idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
                     dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    idEstadoDocumento: fS.getValidId($scope.dataSearch.idEstadoDocumento),
+                    codEstado:  $scope.dataSearch.codEstado? $scope.dataSearch.codEstado : null,
                     secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.secuencial),
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -229,7 +228,7 @@
             try {
                 compraNoHabSvc.getDataFilter().then(
                     response => {
-                        const { estabs, estadosDoc, subcategories } = response;
+                        const { estabs, estadosDoc, subcategories } = response; 
                         $scope.establecimientos = estabs;
                         $scope.estadosDoc = estadosDoc; 
                         $scope.subcategories = subcategories;
