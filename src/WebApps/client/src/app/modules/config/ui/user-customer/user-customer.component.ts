@@ -2,7 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ListUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/list-user-customer.use-case";
+import {ListUserCustomerUseCase} from "@modules/config/application/use-cases/user-customer/list-user-customer.use-case";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {MatPagination} from "@shared/models/pagination.model";
 import { MatIconModule} from "@angular/material/icon";

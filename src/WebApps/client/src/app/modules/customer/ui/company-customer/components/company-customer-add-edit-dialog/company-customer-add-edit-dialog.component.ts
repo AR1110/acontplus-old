@@ -248,7 +248,7 @@ export class CompanyCustomerAddEditDialogComponent {
     }
   }
 
-  onSave() { ;
+  onSave() {
 
     this.customerForm.patchValue({
       telefono: this.telephones.length > 0 ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH) : null,

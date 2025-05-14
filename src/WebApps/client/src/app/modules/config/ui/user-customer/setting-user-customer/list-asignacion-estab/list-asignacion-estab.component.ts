@@ -1,8 +1,8 @@
 import {Component, inject, signal, TemplateRef, ViewChild} from '@angular/core';
 import {
   ListAsignacionEstabUseCase
-} from "@modules/config/domain/use-cases/asignacion-estab/list-asignacion-estab.use-case";
-import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+} from "@modules/config/application/use-cases/asignacion-estab/list-asignacion-estab.use-case";
+import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {MatPagination} from "@shared/models/pagination.model";
 import {AsignacionEstabList} from "@modules/config/domain/models/user-customer/asignacion-estab.model";
@@ -14,12 +14,12 @@ import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {FormsModule} from "@angular/forms";
 import {
   UpdateAsignacionEstabUseCase
-} from "@modules/config/domain/use-cases/asignacion-estab/update-asignacion-estab.use-case";
+} from "@modules/config/application/use-cases/asignacion-estab/update-asignacion-estab.use-case";
 import {ToasterService} from "@core/services/toaster.service";
 import Swal from "sweetalert2";
 import {
   CreateAsignacionEstabUseCase
-} from "@modules/config/domain/use-cases/asignacion-estab/create-asignacion-estab.use-case";
+} from "@modules/config/application/use-cases/asignacion-estab/create-asignacion-estab.use-case";
 import {DialogService} from "@core/services/dialog.service";
 import {
   AsignacionBodegaPuntoEmisionDialogComponent

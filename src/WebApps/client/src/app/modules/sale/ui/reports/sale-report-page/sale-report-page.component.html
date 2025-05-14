@@ -28,7 +28,7 @@
               (selectionChange)="onChangeTipoDoc()"
               [(ngModel)]="dataSearch.codDoc"
             >
-              @for (item of tiposDoc; track $index) {
+              @for (item of tiposDoc(); track $index) {
                 <mat-option [value]="item.codigo">
                   {{ item.descripcion }}
                 </mat-option>
@@ -43,7 +43,7 @@
               (selectionChange)="onChangeEstab()"
               [(ngModel)]="dataSearch.idEstablecimiento"
             >
-              @for (item of establecimientos; track $index) {
+              @for (item of establecimientos(); track $index) {
                 <mat-option [value]="item.idEstablecimiento">
                   {{ item.nombreComercial }}
                 </mat-option>
@@ -55,7 +55,7 @@
           <mat-form-field class="w-100">
             <mat-label>Punto Emisión: </mat-label>
             <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
-              @for (item of puntosEmision; track $index) {
+              @for (item of puntosEmision(); track $index) {
                 <mat-option [value]="item.idPuntoEmision">
                   {{ item.ptoEmi }}
                 </mat-option>
@@ -68,7 +68,7 @@
             <mat-label>Ciudad</mat-label>
             <mat-select [(ngModel)]="dataSearch.idCiudad">
               <mat-option [value]="0">-- Ninguna --</mat-option>
-              @for (group of provinciasAgrupadas; track $index) {
+              @for (group of provinciasAgrupadas(); track $index) {
                 <mat-optgroup [label]="group.nombre">
                   @for (sg of group.ciudades; track sg.idCiudad) {
                     <mat-option [value]="sg.idCiudad">{{
@@ -103,7 +103,7 @@
             <mat-label>Estado: </mat-label>
             <mat-select [(ngModel)]="dataSearch.idEstadoDocumento">
               <mat-option [value]="0">Todos</mat-option>
-              @for (item of estadosDoc; track $index) {
+              @for (item of estadosDoc(); track $index) {
                 <mat-option [value]="item.idEstadoPago">
                   {{ item.descripcion }}
                 </mat-option>

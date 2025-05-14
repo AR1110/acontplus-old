@@ -10,8 +10,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {
   ListUserCustomerPermissionUseCase
-} from "@modules/config/domain/use-cases/user-customer-permission/list-user-customer-permission.use-case";
-import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+} from "@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case";
+import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
 
 // Estructura de nodo jerárquico
 interface TreeNode {

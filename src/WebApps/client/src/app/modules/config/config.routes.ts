@@ -3,7 +3,7 @@ import { DocConfigPageComponent } from '@modules/config/ui/doc-config/doc-config
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
 import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
 import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
-import { CompanyPageComponent } from '@modules/config/ui/company-page/company-page.component';
+import { CompanyComponent } from '@modules/config/ui/company/company.component';
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
 import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
@@ -63,7 +63,7 @@ export const routes: Routes = [
   {
     path: 'company',
     title: 'Entidad',
-    component: CompanyPageComponent,
+    component: CompanyComponent,
     data: {
       breadcrumb: 'Entidad',
     },

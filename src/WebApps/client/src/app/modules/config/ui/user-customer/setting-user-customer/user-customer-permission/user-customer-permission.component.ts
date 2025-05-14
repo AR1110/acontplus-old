@@ -1,8 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {
   ListUserCustomerPermissionUseCase
-} from "@modules/config/domain/use-cases/user-customer-permission/list-user-customer-permission.use-case";
-import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+} from "@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case";
+import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
 import {  MatTableModule
 } from "@angular/material/table";
 import {FlatTreeControl} from "@angular/cdk/tree";
@@ -14,13 +14,13 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {
   CreateUserCustomerPermissionUseCase
-} from "@modules/config/domain/use-cases/user-customer-permission/create-user-customer-permission.use-case";
+} from "@modules/config/application/use-cases/user-customer-permission/create-user-customer-permission.use-case";
 import {ApiResponse} from "@core/models/api-response";
 import Swal from "sweetalert2";
 import {UserCustomerPermission} from "@modules/config/domain/models/user-customer/user-customer-permission.model";
 import {
   UpdateUserCustomerPermissionUseCase
-} from "@modules/config/domain/use-cases/user-customer-permission/update-user-customer-permission.use-case";
+} from "@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case";
 import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";

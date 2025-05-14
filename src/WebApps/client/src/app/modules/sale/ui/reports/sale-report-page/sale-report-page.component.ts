@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -9,12 +9,12 @@ import {
   CODE_ESTADO,
   DOC_TYPE,
   DOC_TYPE_SRI,
-  REPORT_FORMAT,
+  REPORT_FORMAT, SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
-import { isValidField } from '@core/utils/utils';
+import {isValidEmail, isValidField} from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCardModule } from '@angular/material/card';
@@ -31,7 +31,6 @@ import { ActionEnviarCorreoDirective } from '@shared/directives/permission/actio
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
 import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
 const imports = [
@@ -56,7 +55,6 @@ const imports = [
   selector: 'app-sale-report-page',
   imports,
   templateUrl: './sale-report-page.component.html',
-  styles: ``,
 })
 export class SaleReportPageComponent {
   isSelectedNotaEntrega = false;
@@ -78,13 +76,16 @@ export class SaleReportPageComponent {
     identificacion: null,
     idCiudad: 0,
   };
-  establecimientos: GroupedEstab[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  estadosDoc: any[] = [];
-  tiposDoc: any[] = [];
-  empresas: any[] = [];
+  establecimientos = signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([])
+  estadosDoc  = signal<any[]>([]);
+
+  tiposDoc = signal<any[]>([]);
+  empresas = signal<any[]>([]);
+  provinciasAgrupadas = signal<any[]>([]);
+
+  estabCorreo = null as string|null|undefined
   format: any;
-  provinciasAgrupadas: any[] = [];
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
   private tS = inject(ToasterService);
@@ -96,9 +97,9 @@ export class SaleReportPageComponent {
     this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades } = response;
 
-      this.establecimientos = estabs;
-      this.estadosDoc = estadosDoc;
-      this.tiposDoc = [
+      this.establecimientos.set(estabs)
+      this.estadosDoc.set(estadosDoc);
+      this.tiposDoc.set([
         ...tiposDoc,
         {
           idTipoDocumento: 0,
@@ -106,9 +107,10 @@ export class SaleReportPageComponent {
           codigoSri: '',
           codigo: DOC_TYPE.CDV,
         },
-      ];
-      this.empresas = empresas;
-      this.provinciasAgrupadas = ciudades.reduce(
+      ])
+      this.empresas.set(empresas);
+
+      const provinciasAgrupadas = ciudades.reduce(
         (agrupador: any, ciudad: any) => {
           const provinciaIndex = agrupador.findIndex(
             (p: any) => p.nombre === ciudad.provincia,
@@ -125,22 +127,26 @@ export class SaleReportPageComponent {
         },
         [],
       );
+      this.provinciasAgrupadas.set(provinciasAgrupadas)
 
-      let dataEstab = this.establecimientos.find((estab) => estab.defaultEstab);
-      this.puntosEmision = dataEstab?.puntosEmision ?? [];
-      let dataPuntoEmision = this.puntosEmision.find(
+      let dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
+      let dataPuntoEmision = this.puntosEmision().find(
         (ptoEmi) => ptoEmi.defaultPtoEmi,
       );
+
+      this.estabCorreo = dataEstab?.correo || null;
+
       this.dataSearch.idEstablecimiento = dataEstab?.idEstablecimiento ?? 0;
       this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision ?? 0;
 
-      if (this.estadosDoc.length > 0) {
+      if (this.estadosDoc().length > 0) {
         this.dataSearch.codEstado = estadosDoc.find(
           (estado: any) => estado.codigo === CODE_ESTADO.NCBR,
         )?.codigo;
       }
 
-      const dataTipoDoc = this.tiposDoc.find(
+      const dataTipoDoc = this.tiposDoc().find(
         (tipoDoc) => tipoDoc.codigo === DOC_TYPE.CDV,
       );
       this.dataSearch.codDoc = dataTipoDoc.codigo;
@@ -156,14 +162,15 @@ export class SaleReportPageComponent {
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos.find(
+    let dataEstab = this.establecimientos().find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
-      this.puntosEmision = dataEstab.puntosEmision;
+      this.estabCorreo = dataEstab.correo;
+      this.puntosEmision.set(dataEstab.puntosEmision);
       this.dataSearch.idPuntoEmision = 0;
     } else {
-      this.puntosEmision = [];
+      this.puntosEmision.set([]);
       this.dataSearch.idPuntoEmision = 0;
     }
   }
@@ -198,10 +205,10 @@ export class SaleReportPageComponent {
   }
 
   private getDataParams() {
-    let dataEstab = this.establecimientos.find(
+    let dataEstab = this.establecimientos().find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
-    let dataEstado = this.estadosDoc.find(
+    let dataEstado = this.estadosDoc().find(
       (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
 
@@ -215,7 +222,7 @@ export class SaleReportPageComponent {
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
 
-    let dataParams = {
+    return  {
       tipo: 2,
       ckFecha: true,
       codDoc: this.getTipoDoc(),
@@ -231,7 +238,6 @@ export class SaleReportPageComponent {
 
       userRoleId: this._tokenUseCase.getUserRoleId(),
     };
-    return dataParams;
   }
 
   private isValidDataSearch() {
@@ -290,18 +296,49 @@ export class SaleReportPageComponent {
   }
 
   async askToSendMail() {
+    const correos = this.estabCorreo?.split(SEPARADORES_REGEX) || []
+    if(!isValidField(this.estabCorreo)){
+      Swal.fire({
+        icon: 'warning',
+        text: 'El establecimiento no tiene agregado el correo'
+      })
+      return
+    }
+
+    // Validar formato de cada correo
+    const correosInvalidos = correos.filter(correo => !isValidEmail(correo.trim()));
+
+    if (correosInvalidos.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(', ')}`
+      });
+      return;
+    }
+
     if (!this.isValidDataSearch()) return;
 
-    let { isConfirmed } = await Swal.fire({
+
+
+    const result = await Swal.fire({
+      title: 'Confirmación',
       icon: 'warning',
-      html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
+      html: `
+        <p>¿Deseas <strong>enviar el reporte</strong> al correo electrónico asignado al establecimiento?</p>
+        <p>Esta acción enviará la información automáticamente.</p>
+      `,
+      confirmButtonText: 'Sí, enviar',
+      cancelButtonText: 'Cancelar',
       showCancelButton: true,
-      showConfirmButton: true,
+      reverseButtons: true, // Pone Cancelar a la izquierda, más común en UX
+      focusCancel: true
     });
 
-    if (!isConfirmed) return;
+    if (!result.isConfirmed) {
+      return;
+    }
+
+
 
     const params = {
       subject: 'Reporte Ventas',
@@ -317,20 +354,21 @@ export class SaleReportPageComponent {
         withTableNames: true,
       },
       codigo: SALE_CODE_REPORT.FG,
+      receptor: this.estabCorreo
     };
 
     this.appNotifiSvc.post(params).subscribe((response) => {
       if (response.code === '0') {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message,
-        });
+        Swal.fire({
+          icon: 'warning',
+          text: response.message
+        })
       }
       if (response.code === '1') {
-        this.tS.toastr({
-          type: 'success',
-          message: response.message,
-        });
+        Swal.fire({
+          icon: 'success',
+          text: response.message
+        })
       }
     });
   }

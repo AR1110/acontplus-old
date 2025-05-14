@@ -5,9 +5,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
-import { UserCustomerStore } from '@modules/config/ui/store/user-customer.store';
-import { ListUserCustomerPermissionUseCase } from '@modules/config/domain/use-cases/user-customer-permission/list-user-customer-permission.use-case';
-import { UpdateUserCustomerPermissionUseCase } from '@modules/config/domain/use-cases/user-customer-permission/update-user-customer-permission.use-case';
+import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
+import { ListUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case';
+import { UpdateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case';
 import Swal from 'sweetalert2';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';

@@ -21,30 +21,30 @@ import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 import {
   ListAsignacionPuntoEmisionUseCase
-} from "@modules/config/domain/use-cases/asignacion-punto-emision/list-asignacion-punto-emision.use-case";
+} from "@modules/config/application/use-cases/asignacion-punto-emision/list-asignacion-punto-emision.use-case";
 import {
   ListAsignacionBodegaUseCase
-} from "@modules/config/domain/use-cases/asignacion-bodega/list-asignacion-bodega.use-case";
+} from "@modules/config/application/use-cases/asignacion-bodega/list-asignacion-bodega.use-case";
 import {AsignacionEstabList} from "@modules/config/domain/models/user-customer/asignacion-estab.model";
 import {
   CreateAsignacionPuntoEmisionUseCase
-} from "@modules/config/domain/use-cases/asignacion-punto-emision/create-asignacion-punto-emision.use-case";
+} from "@modules/config/application/use-cases/asignacion-punto-emision/create-asignacion-punto-emision.use-case";
 import {
   CreateAsignacionBodegaUseCase
-} from "@modules/config/domain/use-cases/asignacion-bodega/create-asignacion-bodega.use-case";
+} from "@modules/config/application/use-cases/asignacion-bodega/create-asignacion-bodega.use-case";
 import {
   UpdateAsignacionBodegaUseCase
-} from "@modules/config/domain/use-cases/asignacion-bodega/update-asignacion-bodega.use-case";
+} from "@modules/config/application/use-cases/asignacion-bodega/update-asignacion-bodega.use-case";
 import {
   UpdateAsignacionPuntoEmisionUseCase
-} from "@modules/config/domain/use-cases/asignacion-punto-emision/update-asignacion-punto-emision.use-case";
+} from "@modules/config/application/use-cases/asignacion-punto-emision/update-asignacion-punto-emision.use-case";
 
 
 @Component({
     selector: 'app-user-bodega-punto-emision-modal',
   imports: [
     MatSlideToggleModule,
-    
+
     FormsModule,
     MatCustomDialogComponent,
     MatDynamicCardComponent,

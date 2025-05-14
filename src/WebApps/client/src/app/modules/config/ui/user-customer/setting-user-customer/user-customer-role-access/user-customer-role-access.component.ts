@@ -15,11 +15,11 @@ import {isApiResponse} from "@core/models/api-response";
 import { FormsModule } from '@angular/forms';
 import {
   ListAccessUserCustomerRoleUseCase
-} from "@modules/config/domain/use-cases/user-customer-role/list-access-user-customer-role.use-case";
-import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+} from "@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case";
+import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
 import {
   UpdateAccessUserCustomerRoleUseCase
-} from "@modules/config/domain/use-cases/user-customer-role/update-access-user-customer-role.use-case";
+} from "@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 interface MenuNode {

@@ -5,7 +5,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {
   GetFormDataImportacionUseCase
-} from "@modules/config/domain/use-cases/importacion/get-form-data-importacion.use-case";
+} from "@modules/config/application/use-cases/importacion/get-form-data-importacion.use-case";
 import {MatInput} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";

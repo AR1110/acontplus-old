@@ -47,6 +47,7 @@ export interface GroupedEstab
   nombreEstab: string;
   puntosEmision: GroupedEstabPuntoEmision[];
   bodegas: GroupedEstabBodega[];
+  correo?: string
 }
 
 export interface EstablecimientoSelectHtmlOnly

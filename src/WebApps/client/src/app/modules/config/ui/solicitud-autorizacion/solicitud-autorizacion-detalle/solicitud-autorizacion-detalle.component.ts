@@ -9,7 +9,7 @@ import {
 } from "@modules/config/domain/models/solicitud-autorizacion.model";
 import {
   ListSolicitudAutorizacionDetalleUseCase
-} from "@modules/config/domain/use-cases/solicitud-autorizacion/list-solicitud-autorizacion-detalle.use-case";
+} from "@modules/config/application/use-cases/solicitud-autorizacion/list-solicitud-autorizacion-detalle.use-case";
 
 @Component({
   selector: 'app-solicitud-autorizacion-detalle',

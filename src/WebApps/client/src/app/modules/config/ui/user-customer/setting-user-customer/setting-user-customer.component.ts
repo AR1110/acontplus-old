@@ -3,8 +3,8 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ListAsignacionEstabComponent } from '@modules/config/ui/user-customer/setting-user-customer/list-asignacion-estab/list-asignacion-estab.component';
-import { UserCustomerStore } from '@modules/config/ui/store/user-customer.store';
-import { ListUserCustomerRoleUseCase } from '@modules/config/domain/use-cases/user-customer-role/list-user-customer-role.use-case';
+import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
+import { ListUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/list-user-customer-role.use-case';
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 import { MatListModule } from '@angular/material/list';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';

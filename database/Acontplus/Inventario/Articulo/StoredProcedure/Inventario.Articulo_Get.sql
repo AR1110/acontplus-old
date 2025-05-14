@@ -643,7 +643,7 @@ BEGIN
             BEGIN
                 SET @tableNames = 'warehouses,subcategories,brands,documentTypes,fees,taxes'
 
-                SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+                SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega,correo FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
            
                 SELECT sf.idSubFamilia
                       ,sf.descripcion                    as subFamilia

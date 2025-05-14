@@ -7,7 +7,7 @@ import {
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ListGeneralConfigUseCase } from '@modules/config/domain/use-cases/general-config/list-general-config.use-case';
+import { ListGeneralConfigUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { isValidEmail, isValidField } from '@core/utils/utils';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
-import { UpdateGeneralConfigUseCase } from '@modules/config/domain/use-cases/general-config/update-general-config.use-case';
+import { UpdateGeneralConfigUseCase } from '@modules/config/application/use-cases/general-config/update-general-config.use-case';
 import { DecimalSelectComponent } from '@modules/config/ui/general-config/decimal-select/decimal-select.component';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';

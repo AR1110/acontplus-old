@@ -12,7 +12,7 @@ import { PrinterDocService } from '@modules/config/services/printer-doc.service'
 import { isApiResponse } from '@core/models/api-response';
 import { isValidField } from '@core/utils/utils';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { PrinterUseCase } from '@modules/config/domain/use-cases/printer.use-case';
+import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

@@ -9,6 +9,7 @@ import {
 import {solicitudAutorizacionProvider} from "@modules/config/providers/solicitud-autorizacion.provider";
 import {generalConfigProvider} from "@modules/config/providers/general-config.provider";
 import {importacionProvider} from "@modules/config/providers/importacion.provider";
+import {companyProvider} from "@modules/config/providers/company.provider";
 
 
 export const configProvider = [
@@ -22,5 +23,6 @@ export const configProvider = [
   userCustomerPermissionProvider,
   solicitudAutorizacionProvider,
   generalConfigProvider,
-  importacionProvider
+  importacionProvider,
+  companyProvider
 ];

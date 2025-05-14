@@ -8,7 +8,7 @@ import { PrinterAddEditModalComponent } from '@modules/config/ui/printer/compone
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import Swal from 'sweetalert2';
-import { PrinterUseCase } from '@modules/config/domain/use-cases/printer.use-case';
+import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent } from '@angular/material/card';

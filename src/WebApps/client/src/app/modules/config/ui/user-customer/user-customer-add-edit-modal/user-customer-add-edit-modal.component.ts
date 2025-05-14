@@ -16,11 +16,11 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CreateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/create-user-customer.use-case";
-import {UpdateUserCustomerUseCase} from "@modules/config/domain/use-cases/user-customer/update-user-customer.use-case";
+import {CreateUserCustomerUseCase} from "@modules/config/application/use-cases/user-customer/create-user-customer.use-case";
+import {UpdateUserCustomerUseCase} from "@modules/config/application/use-cases/user-customer/update-user-customer.use-case";
 import {
   GetUserCustomerFormDataUseCase
-} from "@modules/config/domain/use-cases/user-customer/get-user-customer-form-data.use-case.";
+} from "@modules/config/application/use-cases/user-customer/get-user-customer-form-data.use-case.";
 import {MatRadioModule} from "@angular/material/radio";
 
 @Component({

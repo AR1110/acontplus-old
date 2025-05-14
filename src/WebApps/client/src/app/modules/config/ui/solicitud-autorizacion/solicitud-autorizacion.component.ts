@@ -18,7 +18,7 @@ import { UserCustomerRole } from '@modules/config/domain/models/user-customer/us
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
-import { SolicitudUsuarioUseCase } from '@modules/config/domain/use-cases/solicitud-usuario.use-case';
+import { SolicitudUsuarioUseCase } from '@modules/config/application/use-cases/solicitud-usuario.use-case';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -30,10 +30,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import {
   ListSolicitudAutorizacionUseCase
-} from "@modules/config/domain/use-cases/solicitud-autorizacion/list-solicitud-autorizacion.use-case";
+} from "@modules/config/application/use-cases/solicitud-autorizacion/list-solicitud-autorizacion.use-case";
 import {
   FilterSolicitudAutorizacionUseCase
-} from "@modules/config/domain/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case";
+} from "@modules/config/application/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case";
 import {SolicitudAutorizacionList} from "@modules/config/domain/models/solicitud-autorizacion.model";
 import {DialogService} from "@core/services/dialog.service";
 import {
@@ -41,7 +41,7 @@ import {
 } from "@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion-detalle/solicitud-autorizacion-detalle.component";
 import {
   UpdateSolicitudAutorizacionUseCase
-} from "@modules/config/domain/use-cases/solicitud-autorizacion/update-solicitud-autorizacion.use-case";
+} from "@modules/config/application/use-cases/solicitud-autorizacion/update-solicitud-autorizacion.use-case";
 
 @Component({
   selector: 'app-solicitud-autorizacion',

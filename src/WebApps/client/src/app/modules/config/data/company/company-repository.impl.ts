@@ -1,0 +1,41 @@
+import {inject, Injectable, OnInit} from "@angular/core";
+import {CompanyRepository} from "@modules/config/domain/repositories/company.repository";
+import {HttpClient} from "@angular/common/http";
+import {PATHS_API, SEPARADORES_REGEX} from "@core/constants/global.constants";
+import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
+import { ApiResponse } from "@core/models/api-response";
+import { ListCompanyResponse, CompanyList } from "@modules/config/domain/models/company.model";
+import {map, Observable} from "rxjs";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CompanyRepositoryImpl implements CompanyRepository {
+  list(): Observable<ListCompanyResponse> {
+    let json = JSON.stringify({
+      tipo: 1
+    })
+
+    return this.http.get(`${this.url}?json=${json}`).pipe(
+      map((response:any)=>{
+        let {companies=[]} = response;
+        return {
+          data: companies.map((item:any, index:number)=>{
+            return {
+              ...item,
+              index: index+1,
+              nomEstado: item.estado?'Activo': 'Inactivo',
+              emails: item.email? item.email.split(SEPARADORES_REGEX): [],
+              telefonos: item.telefono? item.telefono.split(SEPARADORES_REGEX): []
+            }
+          })
+        }
+      })
+    )
+  }
+   update(params: Partial<CompanyList>): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.url}${params.idEntidad}`, {data: params})
+  }
+  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.COMPANY}`
+  private http = inject(HttpClient)
+}

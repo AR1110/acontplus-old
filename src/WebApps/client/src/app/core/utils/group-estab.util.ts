@@ -28,6 +28,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           nombreEstab: item.nombreComercial,
           codEstab: item.codEstab,
           defaultEstab: item.defaultEstab,
+          correo: item.correo,
           puntosEmision: [
             {
               idPuntoEmision: item.idPuntoEmision,
@@ -75,6 +76,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           codEstab: item.codEstab,
           defaultEstab: item.defaultEstab,
           puntosEmision: [],
+          correo: item.correo,
           bodegas: [
             {
               idEstablecimiento: item.idEstablecimiento,

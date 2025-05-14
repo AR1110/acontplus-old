@@ -7,11 +7,11 @@ import {SelectionModel} from "@angular/cdk/collections";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {
   ListAccessUserCustomerRoleUseCase
-} from "@modules/config/domain/use-cases/user-customer-role/list-access-user-customer-role.use-case";
+} from "@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case";
 import {
   UpdateAccessUserCustomerRoleUseCase
-} from "@modules/config/domain/use-cases/user-customer-role/update-access-user-customer-role.use-case";
-import {UserCustomerStore} from "@modules/config/ui/store/user-customer.store";
+} from "@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case";
+import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
 import {isApiResponse} from "@core/models/api-response";
 import Swal from "sweetalert2";
 

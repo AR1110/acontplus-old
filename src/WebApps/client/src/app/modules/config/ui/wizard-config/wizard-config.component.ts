@@ -51,7 +51,7 @@ import { FirmaElectronicaService } from '@modules/config/services/firma-electron
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
-import { UpdateUserCustomerUseCase } from '@modules/config/domain/use-cases/user-customer/update-user-customer.use-case';
+import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
