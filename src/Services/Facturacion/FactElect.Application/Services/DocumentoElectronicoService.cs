@@ -45,9 +45,6 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        var result = await adoRepository.ExecuteNonQueryAsync("FactElect.Doc_Elect_Update", parameters);
-        return result > 0
-            ? new ApiResponse { Code = "1", Message = "Update successful" }
-            : new ApiResponse { Code = "0", Message = "Update failed" };
+        return await adoRepository.SpExecuteAsync<ApiResponse>("FactElect.Doc_Elect_Update", parameters);
     }
 }

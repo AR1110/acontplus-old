@@ -42,7 +42,7 @@
     <ng-template #templateOp let-item="item">
       <mat-menu #menu="matMenu">
         @if (
-          !item.isAutomatic && (item.codEstado !== 4 || item.codEstado !== 6)
+          !item.isAutomatic && item.codEstado !== 4 && item.codEstado !== 6
         ) {
           <button mat-menu-item (click)="edit(item)">
             <mat-icon>edit</mat-icon>

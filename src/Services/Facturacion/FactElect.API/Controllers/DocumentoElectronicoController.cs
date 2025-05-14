@@ -55,7 +55,7 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     public async Task<IActionResult> Put(int id)
     {
         var parameters = new Dictionary<string, object> {
-            { "idRol", User.GetClaimValue<int>(UserRoleId) },
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) },
             { "id", id }
         };
         return Ok(await documentoElectronicoService.UpdateAsync(parameters));

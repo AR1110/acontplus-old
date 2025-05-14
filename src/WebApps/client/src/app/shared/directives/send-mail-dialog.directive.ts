@@ -21,7 +21,7 @@ export class SendMailDialogDirective {
     if (!(this.notificationAcontPlus() || this.notificationSri())) {
       this._tS.toastr({
         type: 'warning',
-        message: 'No Definido el tipo de notificación',
+        message: 'No ha definido el tipo de notificación',
       });
       return;
     }

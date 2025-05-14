@@ -187,22 +187,8 @@ export class RetencionAtsComponent implements OnInit {
 
   sendEmail(item: RetencionAtsList) {
     return {
-      subject: 'Retencion ATS',
       receptor: item.emailReceptor,
-      params: {
-        hasFile: true,
-        isReport: 'SI',
-        reportParams: {
-          hasParams: true,
-          codEstab: item.codEstab,
-          codigo: REPORT_CODE.RRC,
-          format: 'pdf',
-        },
-        spParams: {
-          tipo: 1,
-          id: item.idDocumentoElectronico,
-        },
-      },
+      idDocumentoElectronico: item.idDocumentoElectronico,
     };
   }
 
