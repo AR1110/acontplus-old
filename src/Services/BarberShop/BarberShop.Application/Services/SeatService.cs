@@ -1,7 +1,9 @@
-﻿using BarberShop.Infrastructure.Persistense;
+﻿using BarberShop.Infrastructure.Data.Repositories.Interfaces;
+using BarberShop.Infrastructure.Persistense;
 
 namespace BarberShop.Application.Services;
-public class SeatService(BarberShopContext context) : ISeatService
+
+public class SeatService(BarberShopContext context, ISeatRepository seatRepository) : ISeatService
 {
     public async Task<ApiResponse> CreateSeatAsync(SeatDto seatDto)
     {
@@ -29,6 +31,7 @@ public class SeatService(BarberShopContext context) : ISeatService
                 Message = "Asiento no encontrado"
             };
         }
+
         context.Seats.Remove(seat);
         await context.SaveChangesAsync();
         return new ApiResponse
@@ -38,24 +41,18 @@ public class SeatService(BarberShopContext context) : ISeatService
         };
     }
 
-    public async Task<ApiResponse> GetAllSeatsAsync()
+    public async Task<PagedResult<SeatDto>> GetAllSeatsAsync(PaginationDto paginationDto)
     {
-        var seats = await context.Seats.ToListAsync();
+        var pagedSeats = await seatRepository.GetSeatsAsync(paginationDto);
 
-        if (seats.Count == 0)
-        {
-            return new ApiResponse
-            {
-                Code = "0",
-                Message = "Data not found!"
-            };
-        }
+        var seats = pagedSeats.Items.Select(ObjectMapper.Map<Seat, SeatDto>).ToList();
 
-        return new ApiResponse
+        return new PagedResult<SeatDto>
         {
-            Code = "1",
-            Message = "Asientos obtenidos exitosamente",
-            Payload = seats
+            Items = seats,
+            PageIndex = pagedSeats.PageIndex,
+            PageSize = pagedSeats.PageSize,
+            TotalCount = pagedSeats.TotalCount
         };
     }
 
@@ -70,6 +67,7 @@ public class SeatService(BarberShopContext context) : ISeatService
                 Message = "Asiento no encontrado"
             };
         }
+
         return new ApiResponse
         {
             Code = "1",
@@ -89,6 +87,7 @@ public class SeatService(BarberShopContext context) : ISeatService
                 Message = "Asiento no encontrado"
             };
         }
+
         seat.Name = seatDto.Name;
         seat.Description = seatDto.Description;
         seat.Enabled = seatDto.Enabled;

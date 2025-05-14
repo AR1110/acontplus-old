@@ -39,7 +39,8 @@ public static class ApplicationServicesExtensions
 
         services.AddOpenApi();
 
-        string[] scopedNameSpaces = [
+        string[] scopedNameSpaces =
+        [
             "BarberShop.API.Endpoints.Implementations",
             "BarberShop.Application.Services"
         ];
@@ -51,9 +52,12 @@ public static class ApplicationServicesExtensions
             .WithScopedLifetime()
         );
 
-        string[] trascientNameSpaces = [
+        string[] trascientNameSpaces =
+        [
             "Common.Infrastructure.Data.Repository.Implementations",
-             "Common.Services.Extensions"
+            "Common.Infrastructure.Repositories",
+            "BarberShop.Infrastructure.Data.Repositories.Implementations",
+            "Common.Services.Extensions"
         ];
         services.Scan(scan => scan
             .FromApplicationDependencies()

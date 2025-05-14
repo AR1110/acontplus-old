@@ -1,5 +1,7 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
 using BarberShop.Application.Interfaces;
+using Common.Core.DTOs;
+using Common.Core.Models;
 
 namespace BarberShop.API.Endpoints.Implementations;
 
@@ -16,9 +18,10 @@ public class SeatEndpoints(IUserContext userContext, ISeatService seatService) :
         return Results.Ok(await seatService.DeleteSeatAsync(id));
     }
 
-    public async Task<IResult> GetAllSeatsAsync()
+    public async Task<IResult> GetAllSeatsAsync(PaginationDto paginationDto)
     {
-        return Results.Ok(await seatService.GetAllSeatsAsync());
+        var result = await seatService.GetAllSeatsAsync(paginationDto);
+        return Results.Ok(ApiResponse<PagedResult<SeatDto>>.Success(result));
     }
 
     public async Task<IResult> GetSeatByIdAsync(int id)

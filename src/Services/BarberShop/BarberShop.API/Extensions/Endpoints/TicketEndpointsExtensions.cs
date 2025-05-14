@@ -1,4 +1,6 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
+using Common.Core.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BarberShop.API.Extensions.Endpoints;
 
@@ -12,8 +14,11 @@ public static class TicketEndpointsExtensions
             .WithTags("Seat");
 
 
-        seatGroup.MapGet("/", async (ISeatEndpoints seatEndpoints) =>
-            await seatEndpoints.GetAllSeatsAsync());
+        seatGroup.MapGet("/", async (ISeatEndpoints seatEndpoints, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
+        {
+            var paginationDto = new PaginationDto { PageIndex = pageIndex, PageSize = pageSize };
+            return await seatEndpoints.GetAllSeatsAsync(paginationDto);
+        });
 
         seatGroup.MapGet("/{id}", async (ISeatEndpoints seatEndpoints, int id) =>
             await seatEndpoints.GetSeatByIdAsync(id));
@@ -30,4 +35,3 @@ public static class TicketEndpointsExtensions
         return builder;
     }
 }
-
