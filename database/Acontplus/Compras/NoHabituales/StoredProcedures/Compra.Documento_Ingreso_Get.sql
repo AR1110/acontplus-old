@@ -131,6 +131,7 @@ BEGIN
 					SET @sql = @sql + 'AND idProveedor = @idProveedor  '
 				END 
 
+
             IF @subcategoryId > 0
                 BEGIN
                     SET @sql = @sql + 'AND subcategoryId = @subcategoryId '

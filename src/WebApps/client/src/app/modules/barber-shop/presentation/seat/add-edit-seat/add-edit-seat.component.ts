@@ -11,6 +11,7 @@ import {CreateSeatUseCase} from "@barber-shop/application/use-cases/seat/create-
 import {UpdateSeatUseCase} from "@barber-shop/application/use-cases/seat/update-seat.use-case";
 import {SeatList} from "@barber-shop/domain/models/seat.model";
 import {getValidId} from "@core/utils/utils";
+import {ApiResponse} from "@core/models/api-response";
 
 @Component({
   selector: 'app-add-edit-seat',
@@ -37,11 +38,45 @@ export class AddEditSeatComponent {
 
   dataForm = new FormGroup({
     name: new FormControl("", [Validators.required]),
-    description: new FormControl(null),
-    seatNumber: new FormControl(null, [Validators.required]),
+    description: new FormControl<string|null>(null),
+    seatNumber: new FormControl<number|null>(null, [Validators.required]),
     code: new FormControl<string|null>(null, [Validators.required]),
   })
 
+  ngOnInit(){
+    console.log(this.params)
+    if(this.params && this.params.id){
+      this.btnText = 'Actualizar'
+      this.btnIcon = 'edit';
+      this.title = 'Editar Asiento';
+
+      this.dataForm.patchValue({
+        name: this.params.name,
+        description: this.params.description,
+        seatNumber: this.params.seatNumber,
+        code: this.params.code
+      })
+    }
+  }
+
+  private successResponse = (response:ApiResponse)=>{
+    if(response.code==="0"){
+      Swal.fire({
+        icon: "warning",
+        text: response.message,
+      })
+    }
+    if(response.code==="1"){
+      Swal.fire({
+        icon: "success",
+        text: response.message,
+        timer: 1000
+      })
+      setTimeout(()=>{
+        this.dialogRef.close(response)
+      }, 1000)
+    }
+  }
 
   save(){
     console.log(this.dataForm)
@@ -56,27 +91,15 @@ export class AddEditSeatComponent {
       code: `${this.dataForm.value.name?.slice(0,3)}${this.dataForm.value.seatNumber}`
     })
 
+    const sendData = {
+      ...this.dataForm.value,
+      id: this.params.id
+    }
     if(getValidId(this.params.id)){
-
+      this.$updateUseCase.execute(sendData as any).subscribe(this.successResponse)
     }
     if(!getValidId(this.params.id)){
-
-      this.$createUseCase.execute(this.dataForm.value as any).subscribe(response=>{
-        if(response.code==="0"){
-          Swal.fire({
-            icon: "warning",
-            text: response.message,
-          })
-        }
-        if(response.code==="1"){
-          Swal.fire({
-            icon: "success",
-            text: response.message,
-            timer: 1000
-          })
-        }
-      })
-    console.log(this.dataForm.invalid)
+      this.$createUseCase.execute(sendData as any).subscribe(this.successResponse)
     }
   }
 

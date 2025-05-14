@@ -24,8 +24,14 @@ export interface SeatCreateDto {
 
 
 export interface SeatUpdateDto {
-
+  id: number;
+  seatNumber: number;
+  code: string;
+  name: string;
+  description?: string;
 }
+
+
 export interface SeatUpdateParams {
   data: SeatUpdateDto;
   id: number;

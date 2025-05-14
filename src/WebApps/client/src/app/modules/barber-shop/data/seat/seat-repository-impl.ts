@@ -15,10 +15,11 @@ export class SeatRepositoryImpl implements SeatRepository {
      create(params: SeatCreateDto): Observable<ApiResponse> {
        console.log(params)
        return this.http.post<ApiResponse>(`${this.url}`, params)
-    }
+     }
+
      update(params: SeatUpdateParams): Observable<ApiResponse> {
-        throw new Error("Method not implemented.");
-    }
+       return this.http.put<ApiResponse>(`${this.url}${params.id}`, params)
+     }
     // override create(): Observable<ApiResponse> {
     //     throw new Error("Method not implemented.");
     // }
