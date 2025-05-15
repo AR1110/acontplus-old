@@ -126,7 +126,7 @@ function modalSendMailCtrl($scope, $uibModalInstance, $injector, sharedSvc, fS, 
                     idDocumentoElectronico: $scope.data.idDocumentoElectronico,
                     receptor: $scope.correos.join(',')
                 }
-                mS.getData('post', 'FactElect/NotificacionTributaria/', { data }, true)
+                mS.getData('post', 'FactElect/NotificacionTributaria/', data)
                 .then($scope.successResponse) 
             }
 
