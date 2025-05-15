@@ -29,6 +29,8 @@ app.UseHttpsRedirection();
 
 app.MapRetencionAtsEndpoints();
 
+app.MapFactElectEndpoints();
+
 app.UseRouting();
 
 app.UseAuthentication();
