@@ -7,7 +7,18 @@ export class ListElectronicSignatureMapper {
     let result = new ElectronicSignatureListResponse();
     if(response.code==="1"){
       const [signatures]= JSON.parse(response.payload as any);
-      result.data = signatures
+      result.data = signatures.map((item:any, index: number)=>{
+        return {
+          index: index+1,
+          idFirmaElectronica: item.idFirmaElectronica,
+          nomEntidad: item.razonSocial,
+          contrasenia: item.contrasenia,
+          nombreArchivo: item.nombreArchivo,
+          mimeType: item.mimeType,
+          fechaCaducidad: item.fechaCaducidad,
+          firma: item.firma,
+        }
+      })
     }
 
     return result;

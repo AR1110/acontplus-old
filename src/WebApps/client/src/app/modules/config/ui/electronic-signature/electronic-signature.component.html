@@ -1,1 +1,48 @@
-<p>electronic-signature works!</p>
+<app-breadcrumb/>
+<app-mat-dynamic-card>
+  <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+
+    <div class="col">
+
+    </div>
+    <div class="col  ">
+      <div class="d-flex flex-row gap-2 justify-content-end">
+        <button mat-flat-button    (click)="openModalAddUpdate()" >
+          <mat-icon>add</mat-icon>
+          Nuevo
+        </button>
+        <button mat-icon-button (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+  />
+
+  <ng-template #templateOp let-item="item">
+    <app-theme-button
+      type="button"
+      variant="info"
+      matStyle="icon"
+      icon="edit"
+      (handleClick)="openModalAddUpdate(item)"
+    />
+<!--    <app-theme-button-->
+<!--      type="button"-->
+<!--      variant="danger"-->
+<!--      matStyle="icon"-->
+<!--      icon="delete"-->
+<!--      (handleClick)="askToEnabled(item)"-->
+<!--    />-->
+  </ng-template>
+
+
+</app-mat-dynamic-card>

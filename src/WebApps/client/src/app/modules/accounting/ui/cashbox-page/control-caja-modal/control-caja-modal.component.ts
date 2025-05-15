@@ -38,6 +38,7 @@ import {PageEvent} from "@angular/material/paginator";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DialogService} from "@core/services/dialog.service";
 import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-control-caja-modal',
@@ -51,6 +52,7 @@ import {MatIconModule} from "@angular/material/icon";
     MatFormFieldModule,
     MatSelectModule,
     MatIconModule,
+    MatButtonModule,
     MatDynamicTableComponent,
   ],
   templateUrl: './control-caja-modal.component.html',

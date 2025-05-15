@@ -11,7 +11,7 @@
       <div class="col py-2">
         <mat-form-field class="w-100">
           <mat-label>{{ item.descripcion }}</mat-label>
-          <input matInput
+          <input type="number" matInput
                  [(ngModel)]="item.cantidad"
                  (input)="onChangeQuantity()"
                  onclick="select();"

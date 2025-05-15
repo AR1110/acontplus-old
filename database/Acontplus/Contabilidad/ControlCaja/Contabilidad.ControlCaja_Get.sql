@@ -275,14 +275,14 @@ BEGIN
 
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
-            SELECT mo.descripcion  
-                  ,JSON_VALUE(dt.[value],'$.cantidad')                                   as cantidad
-                  ,mo.valor
-                  ,CAST(JSON_VALUE(dt.[value],'$.cantidad') * mo.valor as numeric(18,2)) as total
-            FROM dbo.ControlCaja                cc WITH (NOLOCK)
-            CROSS APPLY OPENJSON(cc.arqueoCaja) dt
-            INNER JOIN dbo.Moneda               mo WITH (NOLOCK) ON mo.idMoneda = JSON_VALUE(dt.[value],'$.idMoneda')
-            WHERE cc.idControlCaja = @id
+             SELECT mo.descripcion,
+				   JSON_VALUE(dt.[value], '$.cantidad') as cantidad,
+				   mo.valor,
+				   CAST(CAST(JSON_VALUE(dt.[value], '$.cantidad') AS FLOAT) * mo.valor AS NUMERIC(18,2)) AS total
+			FROM dbo.ControlCaja cc WITH (NOLOCK)
+			CROSS APPLY OPENJSON(cc.arqueoCaja) dt
+			INNER JOIN dbo.Moneda mo WITH (NOLOCK) ON mo.idMoneda = JSON_VALUE(dt.[value], '$.idMoneda')
+			WHERE cc.idControlCaja = @id
 
             RETURN 
         END 

@@ -10,6 +10,7 @@ export enum GlobalRoutes {
   ConfigUserCustomer = 'config/user-customer',
   ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
   ConfigImportacion = 'config/importacion',
+  FirmaElectronica='config/electronic-signature',
   //Configuration End
 
   //Facturación start
