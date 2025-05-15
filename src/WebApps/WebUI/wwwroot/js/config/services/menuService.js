@@ -9,7 +9,7 @@
         const service = {};
 
         service.get = function (query) {
-            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -34,7 +34,7 @@
 
         //SubMenu 
         service.findByIdMenu = function(idMenu){
-            return mS.getData('get', URL_SUBMENU + 'FindByIdMenu/' + idMenu, null, true).then(response => {
+            return mS.getData('get', URL_SUBMENU + 'FindByIdMenu/' + idMenu).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }

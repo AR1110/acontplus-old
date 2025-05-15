@@ -298,7 +298,7 @@
             })
 
             if (isConfirmed) {
-                mS.getData('put', 'Inventario/Stock/' + item.idArticulo, null, true).then(
+                mS.getData('put', 'Inventario/Stock/' + item.idArticulo).then(
                     response => {
                         if (response.id === '0' || response.code === '0') {
                             form.sweetAlert('warning', response.message, response.titleSms);

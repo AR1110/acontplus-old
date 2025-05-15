@@ -856,7 +856,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                 let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                 if (idRetAtsDocSustento > 0) {
                     $scope.tax.uniqueIdDoc = uniqueIdDoc
-                    mS.getData('post', `${PATH_FACT_ELECT}` + 'DocSustImpuesto/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.tax), null, true).then(
+                    mS.getData('post', `${PATH_FACT_ELECT}` + 'DocSustImpuesto/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.tax)).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -923,7 +923,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.updateTax = (uniqueIdDoc) => {
         if ($scope.taxValid()) {
             if ($scope.tax.idRetAtsImpDocSustento > 0) {
-                mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustImpuesto/' + $scope.tax.idRetAtsImpDocSustento + '?json=' + JSON.stringify($scope.tax), null, true).then(
+                mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustImpuesto/' + $scope.tax.idRetAtsImpDocSustento + '?json=' + JSON.stringify($scope.tax)).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1007,7 +1007,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.removeTax = (index, item, d) => {
         if (item.idRetAtsImpDocSustento > 0) {
             try {
-                mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustImpuesto/' + item.idRetAtsImpDocSustento, null, true).then(
+                mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustImpuesto/' + item.idRetAtsImpDocSustento).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1130,7 +1130,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                 let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                 if (idRetAtsDocSustento > 0) {
                     $scope.retencion.uniqueIdDoc = uniqueIdDoc
-                    mS.getData('post', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.retencion), null, true).then(
+                    mS.getData('post', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.retencion)).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1186,7 +1186,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.updateRet = (uniqueIdDoc, idElement) => {
         if ($scope.retencionValid()) {
             if ($scope.retencion.idRetencionAtsRet > 0) {
-                mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + $scope.retencion.idRetencionAtsRet + '?json=' + JSON.stringify($scope.retencion), null, true).then(
+                mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + $scope.retencion.idRetencionAtsRet + '?json=' + JSON.stringify($scope.retencion)).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1255,7 +1255,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.removeRet = (index, item) => {
         if (item.idRetencionAtsRet > 0) {
             try {
-                mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + item.idRetencionAtsRet, null, true).then(
+                mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + item.idRetencionAtsRet).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1330,7 +1330,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                 // }
                 let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                 if (idRetAtsDocSustento > 0) {
-                    mS.getData('post', `${PATH_FACT_ELECT}` + 'DocSustPago/' + idRetAtsDocSustento + '?json=' + JSON.stringify(data), null, true).then(
+                    mS.getData('post', `${PATH_FACT_ELECT}` + 'DocSustPago/' + idRetAtsDocSustento + '?json=' + JSON.stringify(data)).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1365,7 +1365,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
         if ($scope.paymentValid()) {
             try {
                 if ($scope.payment.idRetencionAtsPago > 0) {
-                    mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustPago/' + $scope.payment.idRetencionAtsPago + '?json=' + JSON.stringify($scope.payment), null, true).then(
+                    mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustPago/' + $scope.payment.idRetencionAtsPago + '?json=' + JSON.stringify($scope.payment)).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1429,7 +1429,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
 
         if (item.idRetencionAtsPago > 0) {
             try {
-                mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustPago/' + item.idRetencionAtsPago, null, true).then(
+                mS.getData('delete', `${PATH_FACT_ELECT}` + 'DocSustPago/' + item.idRetencionAtsPago).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1463,7 +1463,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.updateDocSustento = () => {
         if ($scope.validateDocSust()) {
             if ($scope.docSustento.idRetAtsDocSustento > 0) {
-                mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento + '?json=' + JSON.stringify($scope.docSustento), null, true).then(
+                mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento + '?json=' + JSON.stringify($scope.docSustento)).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1612,7 +1612,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                         nombre: $scope.additionalInfo.nombre,
                         valor: $scope.additionalInfo.valor
                     }
-                    mS.getData('post', `${PATH_FACT_ELECT}` + 'RetAtsInfoAdicional/?json=' + JSON.stringify(data), null, true).then(
+                    mS.getData('post', `${PATH_FACT_ELECT}` + 'RetAtsInfoAdicional/?json=' + JSON.stringify(data)).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1650,7 +1650,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
                     nombre: $scope.additionalInfo.nombre,
                     valor: $scope.additionalInfo.valor
                 }
-                mS.getData('put', `${PATH_FACT_ELECT}` + 'RetAtsInfoAdicional/' + $scope.additionalInfo.idRetAtsInfoAdicional + '?json=' + JSON.stringify(data), null, true).then(
+                mS.getData('put', `${PATH_FACT_ELECT}` + 'RetAtsInfoAdicional/' + $scope.additionalInfo.idRetAtsInfoAdicional + '?json=' + JSON.stringify(data)).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1701,7 +1701,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     $scope.removeAdditionalInfo = (index, item) => {
         if (item.idRetAtsInfoAdicional > 0) {
             try {
-                mS.getData('delete', `${PATH_FACT_ELECT}` + 'RetAtsInfoAdicional/' + item.idRetAtsInfoAdicional, null, true).then(
+                mS.getData('delete', `${PATH_FACT_ELECT}` + 'RetAtsInfoAdicional/' + item.idRetAtsInfoAdicional).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -1869,7 +1869,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, $q, FileSav
     //
     $scope.exportPdf = (item) => {
         try {
-            mS.getFile('get', `${PATH_FACT_ELECT}` + 'DocumentoRecibido/Export/' + item, null, true).then(response => {
+            mS.getFile('get', `${PATH_FACT_ELECT}` + 'DocumentoRecibido/Export/' + item).then(response => {
                 if (response.id == 0) {
                     tS.toastr('warning', response.message)
                     return

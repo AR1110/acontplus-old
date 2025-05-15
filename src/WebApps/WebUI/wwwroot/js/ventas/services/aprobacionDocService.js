@@ -1,4 +1,4 @@
-
+//@ts-check
 (function () {
 
     'use strict';
@@ -17,7 +17,7 @@
             let spParms = {
                 tipo: 3
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParms), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParms)).then(response => {
                 if (response.code == "0") {
                     throw response;
                 }
@@ -44,7 +44,7 @@
                 tipo: 2,
 
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParms), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParms)).then(response => {
                 if (response.code == "0") {
                     throw response;
                 }
@@ -127,7 +127,7 @@
         }
 
         service.findById = function (id) {
-            return mS.getData('get', url + 'GetId/' + id, null, true).then(response => {
+            return mS.getData('get', url + 'GetId/' + id).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -218,7 +218,6 @@
                             idTarifa: restItem.idTarifa,
                             idTipoIva: restItem.idTipoIva,
                             llevaInventario: restItem.llevaInventario,
-                            nota: restItem.nota,
                             porcentajeDescuento: restItem.porcentajeDescuento || 0,
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: dataMedida.precioCosto,
@@ -279,7 +278,7 @@
                 tipo: 4,
                 id
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
@@ -393,7 +392,6 @@
                     llevaInventario: item.llevaInventario,
                     idBodega: item.idBodega,
                     fechaEmision: fS.formatDateTimeZone(item.fechaEmision),
-                    nota: item.nota,
                     estado: item.estado
                 }
                 tempDetail.push(obj);
@@ -519,7 +517,7 @@
         }
 
         service.getHistorialConversionDoc = function (id) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 8, id }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 8, id })).then(response => {
                 let results = [];
                 if (response.code === "1") {
                     let [historialConversion] = JSON.parse(response.payload)

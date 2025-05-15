@@ -8,7 +8,7 @@
         const service = {};
 
         service.get = function (query) {
-            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }

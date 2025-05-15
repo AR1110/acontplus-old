@@ -27,7 +27,7 @@
             let params = JSON.stringify({
                 codEstab_Asig: obj.codEstab_Asig
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let bodegasAsignadas = [];
                 if (response !== null && typeof response === 'object') {
                     bodegasAsignadas = response.
@@ -86,7 +86,7 @@ app.factory('puntoEmisionAsignacionService', ['$injector', function ($injector) 
         let params = JSON.stringify({
             codEstab_Asig: obj.codEstab_Asig
         })
-        return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+        return mS.getData('get', `${url}?json=${params}`).then(response => {
             let puntosEmisionAsignadas = [];
             if (response !== null && typeof response === 'object') {
                 puntosEmisionAsignadas = response.puntosEmisionAsignadas;

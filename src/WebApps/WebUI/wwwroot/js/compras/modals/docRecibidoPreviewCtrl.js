@@ -10,7 +10,7 @@ function docRecibidoPreviewCtrl($scope, $uibModalInstance, mS, params){
     initiload();
     function initiload (){
         showLoader()
-        mS.getData('get', 'Compra/DocumentoRecibido/Preview/' + params.idDocumento, null, true).then(
+        mS.getData('get', 'Compra/DocumentoRecibido/Preview/' + params.idDocumento).then(
             response => { 
                 $('#facturaModal').modal('show')
                 $('#bodyFactura').html(response.payload)

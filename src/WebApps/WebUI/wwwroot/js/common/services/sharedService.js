@@ -14,7 +14,7 @@ function sharedService($injector, mS){
             ...params
         })
         showLoader();
-        return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
+        return mS.getData('get', `${url}Get?json=${json}`).then(response => {
             let data = {
                 correos: [],
                 telefonos: [],

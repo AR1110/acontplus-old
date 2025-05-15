@@ -69,7 +69,7 @@ public class ApiProxyModel : PageModel
                 RequestUri = new Uri(targetUrl)
             };
 
-            await CopyRequestHeadersAsync(requestMessage);
+            CopyRequestHeaders(requestMessage);
             await CopyRequestBodyAsync(requestMessage);
 
             // Cambiar a StreamContent para mejor manejo de respuestas grandes
@@ -80,7 +80,7 @@ public class ApiProxyModel : PageModel
 
             // Copiar status code y headers
             Response.StatusCode = (int)response.StatusCode;
-            await CopyResponseHeadersAsync(response);
+            CopyResponseHeaders(response);
 
             // Para respuestas no exitosas, enviar como texto
             if (!response.IsSuccessStatusCode)
@@ -154,7 +154,7 @@ public class ApiProxyModel : PageModel
         return finalUrl;
     }
 
-    private async Task CopyRequestHeadersAsync(HttpRequestMessage requestMessage)
+    private void CopyRequestHeaders(HttpRequestMessage requestMessage)
     {
         foreach (var header in Request.Headers)
         {
@@ -258,7 +258,7 @@ public class ApiProxyModel : PageModel
         }
     }
 
-    private async Task CopyResponseHeadersAsync(HttpResponseMessage response)
+    private void CopyResponseHeaders(HttpResponseMessage response)
     {
         // Copiar headers de la respuesta, excluyendo los que causan problemas
         foreach (var header in response.Headers)

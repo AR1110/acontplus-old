@@ -59,7 +59,7 @@
 
         function getAll(query) {
             let data = { ...query, tipo: 1 }
-            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
+            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`).then(
                 response => {
                     if (!response) return [];
                     if (response.code === "0") {
@@ -104,7 +104,7 @@
 
         function getDataForm() {
             let data = { tipo: 3 }
-            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
+            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -128,7 +128,7 @@
         }
 
         function getTempDetails(idDocumento) {
-            return mS.getData('get', 'Compra/DocRecDetailTemp/' + idDocumento, null, true).then(
+            return mS.getData('get', 'Compra/DocRecDetailTemp/' + idDocumento).then(
                 response => {
                     if (response.code === "0") {
                         throw response;
@@ -184,7 +184,7 @@
         function getDatoAdicionalArticulo(idDocumento) {
             return mS.getData('get', 'Compra/DatoAdicionalArticulo/Get?json=' + JSON.stringify({
                 idDocumento
-            }), null, true).then(response => {
+            })).then(response => {
                 if (response.code == '0') {
                     //console.log(response)
                     throw response;
@@ -215,7 +215,7 @@
 
         function getDocRelacionado(query) {
             let params = { ...query, tipo: 4 }
-            return mS.getData('get', `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
+            return mS.getData('get', `${URL}?json=${JSON.stringify(params)}`).then(response => {
                 if (!response) return [];
 
                 if (response.code === '0') {

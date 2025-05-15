@@ -14,7 +14,7 @@
          * @returns array
          */
         service.getDataForm = function (query) {
-            return mS.getData('get', 'Venta/CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', 'Venta/CatalogoVenta/?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -208,7 +208,7 @@
             let json = JSON.stringify({
                 tipo: 3
             })
-            return mS.getData('get', url + 'Get?json=' + json, null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + json).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -232,7 +232,7 @@
         }
 
         service.getDataForm = () => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 })).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -311,7 +311,7 @@
          */
 
         service.get = (params) => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -359,7 +359,7 @@
 
         service.getAll = function (query) {
 
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 }))).then(response => {
 
                 if (!response || response.code === "0") {
                     throw response;
@@ -414,7 +414,7 @@
         }
 
         service.generateSerieComprobante = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 }))).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -734,7 +734,7 @@
         }
 
         service.getId = function (id) {
-            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+            return mS.getData('get', `${url}GetId/${id}`).then(response => {
                 if (response.code === "0") {
                     console.log(response)
                 }
@@ -899,7 +899,7 @@
                 tipo: 5,
                 id
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
@@ -942,7 +942,7 @@
 
 
         service.getDetalleDoc = function (id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 6, id })}`, null, true).then(response => {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 6, id })}`).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1023,7 +1023,7 @@
         }
 
         // service.delete = function (id) {
-        //     return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+        //     return mS.getData('delete', url + 'Delete/' + id).then(response => {
         //         if (response.code === "0") {
         //             return response;
         //         }
@@ -1065,7 +1065,7 @@
             let json = JSON.stringify({
                 tipo: 9
             })
-            return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}Get?json=${json}`).then(response => {
                 let result = {
                     tiemposCredito: [],
                     formasPagoSri: [],
@@ -1187,7 +1187,7 @@
         }
 
         service.getHistorialConversionDoc = function (id) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 8, id }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 8, id })).then(response => {
                 let results = [];
                 if (response.code === "1") {
                     let [historialConversion] = JSON.parse(response.payload)
@@ -1215,7 +1215,7 @@
         let service = {};
 
         service.getDataForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 })).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1284,7 +1284,7 @@
             if (!("tipo" in params)) {
                 throw "Requiere propiedad tipo"
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1314,7 +1314,7 @@
         //se a mas de listar en modulo de proformas en Aprobacion Documento 
         service.getAll = function (query) {
 
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 }))).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1368,7 +1368,7 @@
         }
 
         service.generateSerieComprobante = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 5 })), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 5 }))).then(response => {
                 if (response.code === "0") {
                     throw `Generar Serie comprobante: ${JSON.stringify(response)}`;
                 }
@@ -1387,7 +1387,7 @@
         }
 
         service.getId = function (id) {
-            return mS.getData('get', url + 'GetId/' + id, null, true).then(response => {
+            return mS.getData('get', url + 'GetId/' + id).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1488,7 +1488,7 @@
                 tipo: 4,
                 id
             }
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`).then(response => {
                 if (response.code === "0") {
                     console.log("Get Data Info", response)
                     throw response;
@@ -1531,7 +1531,7 @@
         }
 
         service.getDetalleDoc = function (id) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 6, id }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 6, id })).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -1704,7 +1704,7 @@
             let json = JSON.stringify({
                 tipo: 8
             })
-            return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}Get?json=${json}`).then(response => {
                 let result = {
                     tiemposCredito: [],
                     formasPagoSri: [],
@@ -1812,7 +1812,7 @@
         }
 
         service.getHistorialConversionDoc = function (id) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 7, id }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 7, id })).then(response => {
                 let results = [];
                 if (response.code === "1") {
                     let [historialConversion] = JSON.parse(response.payload)
@@ -1943,7 +1943,7 @@
         }
 
         service.findById = function (id) {
-            return mS.getData('get', url + 'GetId/' + id, null, true).then(response => {
+            return mS.getData('get', url + 'GetId/' + id).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -2010,7 +2010,7 @@
                 textSearch: text
             }
 
-            return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(obj)), null, true).then(response => {
+            return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(obj))).then(response => {
                 if (response.code === '0') {
                     return response;
                 }
@@ -2112,7 +2112,7 @@
                 textSearch: query.textSearch,
                 codigoIdentificacion
             }
-            mS.getData('get', url + '?json=' + JSON.stringify(params), null, true).then(response => {
+            mS.getData('get', url + '?json=' + JSON.stringify(params)).then(response => {
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
                     // return response;
@@ -2215,7 +2215,7 @@
                 ...query,
                 tipo: 1,
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -2237,7 +2237,7 @@
             let spParams = {
                 tipo: 2,
             }
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -2291,7 +2291,7 @@
         let service = {}
 
         service.get = (query) => {
-            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -2332,7 +2332,7 @@
                 tipo: 1,
                 ...obj
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let results = [];
                 if (response.code === "1") {
                     let { empresa } = JSON.parse(response.payload);
@@ -2345,7 +2345,7 @@
             let json = JSON.stringify({
                 tipo: 2,
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let results = {
                     tiposIdentificacion: []
                 }
@@ -2362,7 +2362,7 @@
                 tipo: 1,
                 id
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let data = {};
                 if (response.code === "1") {
                     let { empresa } = JSON.parse(response.payload);
@@ -2423,7 +2423,7 @@
                 tipo: 3,
                 ...obj
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let result = {
                     guarantors: []
                 }

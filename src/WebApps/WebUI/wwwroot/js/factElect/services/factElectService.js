@@ -560,7 +560,7 @@
         };
 
         service.getId = function (id) {
-            return mS.getData("get", `${url}${id}`, null, true).then((response) => {
+            return mS.getData("get", `${url}${id}`).then((response) => {
                 if (response.code === "0") {
                     throw new Error(response);
                 }
