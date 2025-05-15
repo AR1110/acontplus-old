@@ -26,7 +26,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let cuentasPorPagar = [];
                 if (response.code === "1") {
                     const [tempData] = JSON.parse(response.payload);
@@ -68,7 +68,7 @@
                 ...obj,
                 tipo: ('tipo' in obj) ? obj.tipo : 1
             }
-            return mS.getData('get', `${url}?json=${JSON.stringify(params)}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify(params)}`).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -107,7 +107,7 @@
         }
 
         function getDataFilter() {
-            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 6 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 6 })}`).then(response => {
                 if (response.code === "0") {
                     console.log(response)
                     return {}
@@ -143,7 +143,7 @@
             const json = JSON.stringify({
                 tipo: 5,
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const data = {
                     tiemposCredito: [],
                 }
@@ -164,7 +164,7 @@
                 idCuentaPorPagar: id,
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
 
                 let cuentaPorPagar = {},
                     comprobantesEgreso = [],
@@ -262,7 +262,7 @@
          */
         function getCuotas(id) {
             let json = JSON.stringify({ idCuentaPorPagar: id, tipo: 2 });
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let cuotas = [];
                 if (response.code === "0") {
                     console.log(response)
@@ -309,7 +309,7 @@
             let params = JSON.stringify({
                 tipo: 2
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let estabs = [];
                 if (response !== null && typeof response === 'object') {
                     let tempEstabs = response.estabs;
@@ -329,7 +329,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let comprobantesEgreso = [];
                 if (response !== null && typeof response === 'object') {
                     const items = response.comprobantesEgreso;
@@ -359,7 +359,7 @@
                 idCuentaPorPagar: id,
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let results = [];
                 if (response && typeof response === 'object') {
                     const { cuotas } = response;
@@ -393,7 +393,7 @@
                 tipo: 3,
                 idProveedor
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const data = {
                     entidadesFinancieras: [],
                     bancos: [],
@@ -468,7 +468,7 @@
                 tipo: 5,
                 id
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let resultData = {};
                 if (response && typeof response === 'object') {
 
@@ -491,7 +491,7 @@
                 pageIndex: obj && obj.pageIndex || 1,
                 pageSize: obj && obj.pageSize || 25
             })
-            mS.getData('get', `${url}?json=${json}`, null, true).then(async response => {
+            mS.getData('get', `${url}?json=${json}`).then(async response => {
                 let results = {
                     cheques: []
                 };
@@ -673,7 +673,7 @@
             let params = JSON.stringify({
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let resultData = {
                     estabs: []
                 }
@@ -697,7 +697,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let results = [];
 
                 if (response.code === "1") {
@@ -735,7 +735,7 @@
             const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
             try {
 
-                return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                return mS.getData('get', `${url}?json=${params}`).then(response => {
                     // Inicializa el objeto resultante con estructuras vacías
                     const resultData = {
                         entidadesFinanciera: [],
@@ -822,7 +822,7 @@
 
         function getCuotasByIdCuentaPorCobrar(id) {
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 6 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let results = [];
                 if (response.code === "1") {
                     let { cuotas } = JSON.parse(response.payload);
@@ -835,7 +835,7 @@
         //obtiene datos para anular el comprobante de ingreso 
         function getDataForDelete(id) {
             const params = JSON.stringify({ id, tipo: 7 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let resultData = {};
                 if (response.code === "1") {
 
@@ -955,7 +955,7 @@
 
         function getHistorialCobrosById(idComprobanteIngreso) {
             let params = JSON.stringify({ idComprobanteIngreso, tipo: 2 })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let resultData = {
                     comprobante: [],
                     cobros: [],
@@ -986,7 +986,7 @@
         }
         function getHistorialCobrosByDoc(idCuentaPorCobrar) {
             let params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let result = {
                     comprobante: [],
                     cobroDetalles: [],
@@ -1032,7 +1032,7 @@
                 pageIndex: obj && obj.pageIndex || 1,
                 pageSize: obj && obj.pageSize || 25
             })
-            mS.getData('get', `${url}?json=${json}`, null, true).then(async response => {
+            mS.getData('get', `${url}?json=${json}`).then(async response => {
                 let results = {
                     cheques: []
                 };
@@ -1101,7 +1101,7 @@
 
         function getDataFilter() {
             const params = JSON.stringify({ tipo: 6 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw response;
 
                 const { establecimientos, estadoPago, tipoDocumento, empresas } = response;
@@ -1121,7 +1121,7 @@
 
         function getAll(obj) {
             const params = JSON.stringify({ ...obj, tipo: 1 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw response
 
                 const { cuentasPorCobrar } = response;
@@ -1170,7 +1170,7 @@
 
         function getCuotasById(id) {
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let results = [];
                 if (response && typeof response === 'object') {
 
@@ -1199,7 +1199,7 @@
         //sirve para traer datos para cobro por lote y por documento
         function getDataForm(idCuentaPorCobrar, idCliente) {
             const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 3 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) return {};
 
                 const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia } = response;
@@ -1274,7 +1274,7 @@
         //Obtener cuotas para generar cuotas 
         function getCuotaByToGenerate(idCuentaPorCobrar) {
             const params = JSON.stringify({ idCuentaPorCobrar, tipo: 2 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw response;
 
                 let { cuentaPorCobrar, cuotas, tiempoCredito } = response;
@@ -1333,7 +1333,7 @@
 
         function applyMora(obj) {
             const params = JSON.stringify({ ...obj, tipo: 4 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw "No se completo el proceso!";
 
                 let { cuotas } = response;

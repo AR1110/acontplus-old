@@ -2225,7 +2225,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
             mS.getData('get', `${URL}Get?json=${JSON.stringify({
                 tipo: 3,
                 idArticulo: params.idArticulo
-            })}`, null, true).then(
+            })}`).then(
                 response => {
                     if (!response.payload) {
                         tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
@@ -2347,7 +2347,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
 
     function init() {
         showLoader();
-        mS.getData('GET', `${url}${params.idArticulo}`, null, true).then(
+        mS.getData('GET', `${url}${params.idArticulo}`).then(
             response => {
                 if (response.code == "1") {
                     $scope.photos = response.payload;

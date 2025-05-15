@@ -14,7 +14,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let cheques = [];
                 if (response !== null && typeof response === 'object') {
                     let itemsTemp = response.cheques;
@@ -33,7 +33,7 @@
             let params = JSON.stringify({
                 tipo: 2
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let estabs = [];
                 if (response !== null && typeof response === 'object') {
                     let tempEstabs = response.estabs;

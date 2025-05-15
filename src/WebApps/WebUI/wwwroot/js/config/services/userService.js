@@ -9,7 +9,7 @@
         const service = {};
 
         service.getAll = function (query) { 
-            return mS.getData('get', URL + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', URL + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -34,7 +34,7 @@
 
         //Acceso 
         service.getAcceso = (query) => {
-            return mS.getData('get', URL_ACCESO + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', URL_ACCESO + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }

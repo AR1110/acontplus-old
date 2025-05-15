@@ -37,7 +37,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     $scope.initialLoad = function () {
         showLoader();
         $scope.firmas = [];
-        mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 1 }), null, true).then(function (response) {
+        mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 1 })).then(function (response) {
             hideLoader();
             if (response.code == 0) {
                 console.log(response)
@@ -87,7 +87,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
             tS.toastr('warning', 'Por seleccione la fecha caducidad');
             return;
         }
-        mS.getDataFile(url + 'Post/?json='+JSON.stringify($scope.firma), file, null, true).then(response => {
+        mS.getDataFile(url + 'Post/?json='+JSON.stringify($scope.firma), file).then(response => {
             if (response.code == 0) {
                 hideLoader();
                 tS.toastr('warning', response.message, response.titleSms);
@@ -120,7 +120,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
             estado: $scope.firma.estado
         }
         showLoader();
-        mS.getData('put', url + 'Put/?json=' + JSON.stringify(query), null, true).then(function (response) {
+        mS.getData('put', url + 'Put/?json=' + JSON.stringify(query)).then(function (response) {
             hideLoader();
             if (response.code == 0) {
                 tS.toastr('warning', response.message, response.titleSms);
@@ -160,7 +160,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
                   return
               }
               showLoader();
-              mS.getDataFile(url + 'UpdateSignature/' + item.idFirmaElectronica,  file, null, true).then(function (response) {
+              mS.getDataFile(url + 'UpdateSignature/' + item.idFirmaElectronica,  file).then(function (response) {
                 hideLoader();
                   if (response.code == 0) {
                       tS.toastr('warning', response.message, response.titleSms);
