@@ -13,7 +13,6 @@ import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
 import { mechanicalProvider } from '@mechanical/providers';
 import { restaurantProvider } from '@restaurant/providers';
-import { configProvider } from '@modules/config/providers';
 import { saleProvider } from '@sale/providers';
 import { billingProviders } from '@modules/billing/providers';
 import { DatePipe } from '@angular/common';
@@ -21,6 +20,7 @@ import { importProvidersFrom } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import {barberShopProviders} from "@barber-shop/providers";
 import {DATA_INVENTORY_IOC} from "@inventory/data/inventory.ioc";
+import {DATA_CONFIG_IOC} from "@modules/config/data/data-config.ioc";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -57,7 +57,7 @@ export const featureProviders = [
   ...commonProviders,
   ...mechanicalProvider,
   ...restaurantProvider,
-  ...configProvider,
+  ...DATA_CONFIG_IOC,
   ...saleProvider,
   ...billingProviders,
   ...barberShopProviders

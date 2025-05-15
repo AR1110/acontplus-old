@@ -1,0 +1,26 @@
+import {inject, Injectable} from "@angular/core";
+import {ElectronicSignatureRepository} from "@modules/config/domain/repositories/electronic-signature.repository";
+import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
+import {HttpClient} from "@angular/common/http";
+import { ElectronicSignatureListResponse } from "@modules/config/domain/models/electronic-signature.model";
+import {map, Observable} from "rxjs";
+import {PATHS_API} from "@core/constants/global.constants";
+import {ApiResponse} from "@core/models/api-response";
+import {
+  ListElectronicSignatureMapper
+} from "@modules/config/data/electronic-signature/list-electronic-signature.mapper";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ElectronicSignatureRepoImpl implements ElectronicSignatureRepository {
+   list(): Observable<ElectronicSignatureListResponse> {
+      const json = JSON.stringify({tipo: 1})
+      return this._http.get<ApiResponse>(`${this._url}/Get?json=${json}`).pipe(
+        map(response=>ListElectronicSignatureMapper.fromJson(response))
+      )
+  }
+  private _url =`${PATHS_API.CONFIG}${CONFIG_PATHS.ELECTRONIC_SIGNATURE}`;
+  private _http = inject(HttpClient)
+
+}

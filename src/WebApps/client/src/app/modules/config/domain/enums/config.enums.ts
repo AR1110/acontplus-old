@@ -20,5 +20,6 @@ export const enum CONFIG_PATHS {
   FIRMA_ELECTRONICA = 'FirmaElectronica/',
   TIEMPO_CREDITO = 'TiempoCredito/',
   SOLICITUD_AUTORIZACION = 'SolicitudAutorizacion',
-  IMPORTACION = 'Importacion'
+  IMPORTACION = 'Importacion',
+  ELECTRONIC_SIGNATURE ='FirmaElectronica'
 }
