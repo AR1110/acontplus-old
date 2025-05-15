@@ -21,6 +21,83 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 
+
+    //Columns  
+    $scope.columnDefs = [
+        { name: '#', field: "index", width: 50, },
+        { name: 'Tipo Doc.', field: "codDoc", width: 100, },
+        { name: 'Número', field: "serieComprobante", width: 200, },
+        { name: 'Cliente', field: "razonSocialComprador", width: 425, },
+        { name: 'Fecha', field: "fechaEmision", width: 150, },
+        { name: 'Total', field: "importeTotal", width: 100, },
+    ];
+    //Used to bind ui-grid  
+    //$scope.selectedItem = null;  
+    $scope.gridOptions = {
+        //For inline filter  
+        enableGridMenu: false,
+        enableRowHeaderSelection: false,
+        treeRowHeaderAlwaysVisible: false,
+        enableColumnMenus: false,
+        enableColumnReordering: false,
+        showGridFooter: false,
+
+        // This code used to expand the grid  
+        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"  ></div>',
+        //expandableRowHeight: 150,  
+        //subGridVariable will be available in subGrid scope  
+        expandableRowScope: {
+            subGridVariable: 'subGridScopeVariable'
+        },
+        //End here  
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+            gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                console.log($scope)
+                console.log(row)
+                if (row.isExpanded) {
+                    row.entity.subGridOptions = {
+                        enableGridMenu: false,
+                        enableRowHeaderSelection: false,
+                        treeRowHeaderAlwaysVisible: false,
+                        enableColumnMenus: false,
+                        enableColumnReordering: false,
+                        showGridFooter: false,
+                        columnDefs: [
+                            { name: 'nroCuota', field: 'Nro' },
+                            { name: 'Fecha Vcto', field: 'fechaVencimiento' },
+                            { name: 'Cuota', field: 'cuota' },
+                            { name: 'Días Mora', field: 'diasMora' },
+                            { name: 'Mora a Cobrar', field: 'fechaVencimiento' },
+                            { name: 'Total', field: 'fechaVencimiento' },
+                            { name: 'Abono', field: 'fechaVencimiento' },
+                            { name: 'Saldo', field: 'fechaVencimiento' },
+                            { name: 'Abono Actual', field: 'fechaVencimiento' },
+                            { name: 'Saldo Actual', field: 'fechaVencimiento' },
+                            { name: 'Estado', field: 'nombreEstado' },
+                        ]
+                    };
+                    row.entity.subGridOptions.data = row.entity.cuotasCalculadas;
+
+                }
+            });
+        },
+        //end here  
+        columnDefs: $scope.columnDefs,
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
     let dataFormaCobro = {};
 
     $scope.data = {};
@@ -62,7 +139,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             }
 
             showLoader();
-            comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
+            comprobanteIngresoSvc.paymentFormData(idCuentaPorCobrar, idCliente).then(response => {
 
                 dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
@@ -72,8 +149,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     let selectedDocsTemp = modalCobroSvc.calcularInteresMora(selectedDocumentos)
 
-                    $scope.selectedDocumentos = structuredClone(selectedDocsTemp);
-                    $scope.selectedDocumentosClone = structuredClone(selectedDocsTemp);
+                    setDocs(selectedDocsTemp)
 
 
                     let dataSelectedDoc = selectedDocumentos[0];
@@ -89,8 +165,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 //Cuando Proviene de Factura o Nota Entrega (Cobro Rápido)
                 if (idCuentaPorCobrar > 0) {
                     let selectedDocsTemp = modalCobroSvc.calcularInteresMora(response.cuentaPorCobrar);
-                    $scope.selectedDocumentos = structuredClone(selectedDocsTemp);
-                    $scope.selectedDocumentosClone = structuredClone(selectedDocsTemp);
+                    setDocs(selectedDocsTemp)
 
                     if ($scope.selectedDocumentos.some(item => [null, undefined, []].includes(item.cuotasCalculadas))) {
                         fS.sweetAlert('warning', 'No posee cuotas');
@@ -127,10 +202,16 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
-        } catch (error) {
-            hideLoader();
+        } catch (error) { 
             console.log(error)
         }
+    }
+
+    function setDocs(docs) {
+        $scope.selectedDocumentos = structuredClone(docs);
+        $scope.selectedDocumentosClone = structuredClone(docs);
+        $scope.gridOptions.data = $scope.selectedDocumentos;
+        console.log($scope.gridOptions.data)
     }
 
 
@@ -261,7 +342,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
             modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
             modalCobroSvc.setUniqueIndex($scope.datosCobro.length + 1)
-         //   modalCobroSvc.setEsAbonoPosfechado(posfechado);
+            //   modalCobroSvc.setEsAbonoPosfechado(posfechado);
             modalCobroSvc.setValorAbono(valorAbono);
 
             //--------agregando abono ---
@@ -363,7 +444,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         modalCobroSvc.setUniqueIndex(uniqueIndex);
 
                         modalCobroSvc.setValorAbono(item.valorAbono);
-                      //  modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
+                        //  modalCobroSvc.setEsAbonoPosfechado(item.posfechado);
 
                         //--------agregando abono ---
                         modalCobroSvc.aplicarAbono();
@@ -534,23 +615,23 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                 let params = comprobanteIngresoSvc.mapperTo(data);
- 
-               
-                
+
+
+
                 const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
-                
+
                 managedRegister(params).then((response) => {
-                    if(!response) return;
-                  
+                    if (!response) return;
+
                     if (response.code === '0') {
                         fS.sweetAlert('warning', response.message)
                     }
                     if (response.code === '1') {
-                        fS.sweetAlert('success', response.message, '', 1000);                        
+                        fS.sweetAlert('success', response.message, '', 1000);
                         $uibModalInstance.close(response);
 
                     }
-                }).catch(error => { 
+                }).catch(error => {
                     console.log(error)
                 })
 

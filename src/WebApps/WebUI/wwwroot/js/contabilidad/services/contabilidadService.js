@@ -643,7 +643,8 @@
             update,
             cancel,
             getCuotasByIdCuentaPorCobrar,
-            getDataForDelete
+            getDataForDelete,
+            paymentFormData
         }
 
         function newGenerateQuota(cuotas) {
@@ -668,6 +669,28 @@
             })
             return resultsCuotas;
         }
+
+
+        function transformarCuotas(cuotas) {
+            return cuotas.map(item => ({
+                idCuotaPorCobrar: item.idCuotaPorCobrar,
+                idCuentaPorCobrar: item.idCuentaPorCobrar,
+                fechaVencimiento: item.fechaVencimiento,
+                nroCuota: item.nroCuota,
+                cuota: item.cuota,
+                mora: item.mora,
+                interes: item.interes,
+                diasMora: item.diasMora,
+                abono: item.abono,
+                saldoCta: item.saldoCta,
+                saldo: item.saldo,
+                nombreEstado: item.estado,
+                saldoOriginal: item.saldo,
+                valorSaldoLectura: item.saldo
+            }));
+        }
+
+
 
         function getDataFilter() {
             let params = JSON.stringify({
@@ -729,6 +752,78 @@
                 return results;
             })
         }
+
+
+        async function paymentFormData({ idCuentaPorCobrar, idCliente }) {
+            const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
+
+            try {
+                const response = await mS.getData('get', `${url}?json=${params}`, null, true);
+
+                const cobroFormData = {
+                    entidadesFinanciera: [],
+                    bancos: [],
+                    documentos: [],
+                    ciudades: [],
+                    cuentaPorCobrar: [],
+                    estadosPago: [],
+                    configCobro: {}
+                };
+
+                if (response.code === "1") {
+                    const {
+                        entidadFinanciera,
+                        banco,
+                        documentos,
+                        subEntidadFinanciera,
+                        provincia,
+                        cuentaPorCobrar,
+                        estadoPago,
+                        config
+                    } = JSON.parse(response.payload);
+                    console.log(JSON.parse(response.payload))
+
+                    // Subentidades agrupadas por entidad
+                    cobroFormData.entidadesFinanciera = entidadFinanciera.map(ef => ({
+                        idEntidadFinanciera: ef.idEntidadFinanciera,
+                        descripcion: ef.descripcion,
+                        detalle: ef.detalle,
+                        codigo: ef.codigo,
+                        subEntidadesFinanciera: subEntidadFinanciera.filter(
+                            sef => sef.idEntidadFinanciera === ef.idEntidadFinanciera
+                        )
+                    }));
+
+                    // Documentos de cuenta por cobrar (si aplica)
+                    if (Array.isArray(cuentaPorCobrar)) {
+                        cobroFormData.cuentaPorCobrar = cuentaPorCobrar.map((cxc, index) => {
+                            const cuotas = JSON.parse(cxc.cuotas || '[]');
+                            const cuotasCalculadas = transformarCuotas(cuotas);
+                            return {
+                                ...cxc,
+                                saldoTemporal: cxc.saldo,
+                                valorSaldoLectura: cxc.saldo,
+                                cuotas: structuredClone(cuotasCalculadas),
+                                cuotasOriginal: structuredClone(cuotasCalculadas)
+                            };
+                        });
+                    }
+
+                    cobroFormData.bancos = banco;
+                    cobroFormData.documentos = documentos;
+                    cobroFormData.ciudades = provincia;
+                    cobroFormData.estadosPago = estadoPago;
+                    cobroFormData.configCobro = config[0] || {};
+                }
+                console.log('Cobro Form Data:', cobroFormData);
+
+                return cobroFormData;
+            } catch (error) {
+                console.error('Error al obtener datos del formulario de cobro:', error);
+                throw error;
+            }
+        }
+
 
         function getDataForm(idCuentaPorCobrar, idCliente) {
 
@@ -1164,7 +1259,7 @@
                     totalSaldo: dataFiltered && dataFiltered.totalSaldo || 0,
                 };
 
-                
+
             })
         }
 
@@ -1673,13 +1768,13 @@
                         // Inicialización de variables
                         let interesPorMoraActual = cuota.interes;
                         let diasMoraActual = cuota.diasMora;
-                        let interesActual = cuota.interes ;
+                        let interesActual = cuota.interes;
                         let saldoTotalActual = cuota.saldo;
 
 
                         // Calcular interés y mora si hay días de mora
                         // if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
-                            
+
                         //     diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
 
                         //     if (diasMoraActual > 0) {

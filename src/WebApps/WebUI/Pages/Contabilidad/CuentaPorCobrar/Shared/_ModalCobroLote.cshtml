@@ -19,17 +19,8 @@
     <div class="card mb-3">
         <div class="card-body py-3">
             <div class="row">
-                <!-- Información del cliente -->
-                <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <h6 class="mb-1"><strong>Cliente:</strong></h6>
-                    <p class="mb-0"><i>{{dataCuentaPorCobrar.razonSocialComprador}}</i></p>
-                    <p class="mb-0"><strong>RUC/C.I.:</strong> {{dataCuentaPorCobrar.identificacionComprador}}</p>
-                    @* <p class="mb-0"><strong>Dirección:</strong> Av. Principal 123</p>
-                    <p class="mb-0"><strong>Teléfono:</strong> 0991234567</p> *@
-                </div>
-
                 <!-- Totales -->
-                <div class="col-12 col-md-8">
+                <div class="col-12 ">
                     <div class="d-flex flex-wrap justify-content-start justify-content-md-end">
                         <div class="pr-3 mb-2">
                             <small class="text-muted">Total</small>
@@ -78,6 +69,9 @@
         </div>
     </div>
 
+
+    <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns ui-grid-auto-resize ui-grid-expandable>
+    </div>
 
 
     <div class="row">
