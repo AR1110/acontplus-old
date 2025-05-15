@@ -682,14 +682,39 @@
                 interes: item.interes,
                 diasMora: item.diasMora,
                 abono: item.abono,
-                saldoCta: item.saldoCta,
+                saldoCta: item.saldoCta, //resta de cuota - saldo
                 saldo: item.saldo,
-                nombreEstado: item.estado,
-                saldoOriginal: item.saldo,
-                valorSaldoLectura: item.saldo
+                nombreEstado: item.estado, 
+                saldoAnterior: item.saldoCta, //saldo anterior
             }));
         }
 
+        function transformarCuentaPorCobrar(cuentas) { 
+            
+            return cuentas.map(item => {
+                const cuotas = JSON.parse(item.cuotas || '[]');
+                const cuotasTransformada = transformarCuotas(cuotas); 
+                return{
+                idCuentaPorCobrar: item.idCuentaPorCobrar,
+                idCliente: item.idCliente,
+                codEstab: item.codEstab,
+                identificacionComprador: item.identificacionComprador,
+                razonSocialComprador: item.razonSocialComprador,
+                serieComprobante: item.serieComprobante,
+                codDoc: item.codDoc,
+                fechaEmision: item.fechaEmision,
+                fechaVencimiento: item.fechaVencimiento,
+                importeTotal: item.importeTotal,
+                diasMora: item.diasMora,
+                mora: item.mora,
+                abono: item.abono,
+                saldo: item.saldo,
+                saldoAnterior: item.saldoDoc, //resta de importe total - abono 
+                nombreEstado: item.descripcion, //nombre del estado de pago
+                cuotas: structuredClone(cuotasTransformada),
+                cuotasOriginal: structuredClone(cuotasTransformada)
+            }});
+        }
 
 
         function getDataFilter() {
@@ -796,17 +821,7 @@
 
                     // Documentos de cuenta por cobrar (si aplica)
                     if (Array.isArray(cuentaPorCobrar)) {
-                        cobroFormData.cuentaPorCobrar = cuentaPorCobrar.map((cxc, index) => {
-                            const cuotas = JSON.parse(cxc.cuotas || '[]');
-                            const cuotasCalculadas = transformarCuotas(cuotas);
-                            return {
-                                ...cxc,
-                                saldoTemporal: cxc.saldo,
-                                valorSaldoLectura: cxc.saldo,
-                                cuotas: structuredClone(cuotasCalculadas),
-                                cuotasOriginal: structuredClone(cuotasCalculadas)
-                            };
-                        });
+                        cobroFormData.cuentaPorCobrar = transformarCuentaPorCobrar(cuentaPorCobrar);
                     }
 
                     cobroFormData.bancos = banco;
@@ -816,7 +831,6 @@
                     cobroFormData.configCobro = config[0] || {};
                 }
                 console.log('Cobro Form Data:', cobroFormData);
-
                 return cobroFormData;
             } catch (error) {
                 console.error('Error al obtener datos del formulario de cobro:', error);
@@ -1760,6 +1774,56 @@
                 const diasMora = Math.floor((hoy.getTime() - formatearFechaVcto.getTime()) / (1000 * 60 * 60 * 24)); // Diferencia en días
                 return diasMora;
             }
+
+            
+            prepararParaCobro(cuentasPorCobrar) {
+                 let resultados = cuentasPorCobrar.map(cuenta => {
+                    let { cuotas, cuotasOriginal, ...documento } = cuenta;
+                    let cuotasCalculadas = cuotas.map(cuota => {
+                        // Inicialización de variables 
+                        let saldoAnterior = cuota.saldoAnterior; 
+                        return {
+                            ...cuota,
+                            saldoTotalActual: fS.instanceDecimal(saldoAnterior, 5),
+                            saldoTotalOriginal: fS.instanceDecimal(saldoAnterior, 5),
+                            saldoTotalLectura: fS.instanceDecimal(saldoAnterior, 5),
+                            abonoActual: 0,
+                            saldoActual: 0,
+                        };
+                    });
+
+                    let saldoActualDoc = 0;
+                    let diasMoraActual = 0;
+                    let interesPorMoraActual = fS.instanceDecimal(0);
+                    let interesActual = fS.instanceDecimal(0);
+                    let saldoAnterior = fS.instanceDecimal(0); 
+                    for (let cc of cuotasCalculadas) {
+                        saldoActualDoc = fS.plus(saldoActualDoc, cc.saldoTotalActual, 5);
+                        diasMoraActual += cc.diasMora;
+                        interesPorMoraActual = interesPorMoraActual.plus(cc.interes);
+                        interesActual = interesActual.plus(cc.interes),
+
+                        //nuevo 
+                        saldoAnterior = saldoAnterior.plus(cc.saldoAnterior, 5);
+
+                    } 
+                    return {
+                        ...documento,
+                        saldoActualDoc: fS.roundNumber(saldoActualDoc, 2),
+                        cuotasCalculadas: structuredClone(cuotasCalculadas),
+                        cuotasCalculadasClone: structuredClone(cuotasCalculadas),
+                        diasMoraActual,
+                        interesPorMoraActual: fS.roundNumber(interesPorMoraActual.toNumber(), 2),
+                        interesActual: fS.roundNumber(interesActual.toNumber(), 2),
+                        saldoAnterior: fS.roundNumber(saldoAnterior.toNumber(), 2),
+
+                    };
+                });
+
+                return resultados;
+            }
+
+
 
             calcularInteresMora(documentosCuotas) {
                 let resultados = documentosCuotas.map(x => {

@@ -68,12 +68,12 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                             { name: 'Fecha Vcto', field: 'fechaVencimiento' },
                             { name: 'Cuota', field: 'cuota' },
                             { name: 'Días Mora', field: 'diasMora' },
-                            { name: 'Mora a Cobrar', field: 'fechaVencimiento' },
-                            { name: 'Total', field: 'fechaVencimiento' },
-                            { name: 'Abono', field: 'fechaVencimiento' },
-                            { name: 'Saldo', field: 'fechaVencimiento' },
-                            { name: 'Abono Actual', field: 'fechaVencimiento' },
-                            { name: 'Saldo Actual', field: 'fechaVencimiento' },
+                            { name: 'Mora a Cobrar', field: 'mora' },
+                            { name: 'Total a Cobrar', field: 'saldo' },
+                            { name: 'Abono Anterior', field: 'abono' },
+                            { name: 'Saldo Anterior', field: 'saldoAnterior' },
+                            { name: 'Abono Actual', field: 'abonoActual' },
+                            { name: 'Saldo Actual', field: 'saldoActual' },
                             { name: 'Estado', field: 'nombreEstado' },
                         ]
                     };
@@ -139,7 +139,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             }
 
             showLoader();
-            comprobanteIngresoSvc.paymentFormData(idCuentaPorCobrar, idCliente).then(response => {
+            comprobanteIngresoSvc.paymentFormData({idCuentaPorCobrar, idCliente}).then(response => {
 
                 dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
@@ -149,15 +149,14 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
                     let selectedDocsTemp = modalCobroSvc.calcularInteresMora(selectedDocumentos)
 
-                    setDocs(selectedDocsTemp)
-
-
-                    let dataSelectedDoc = selectedDocumentos[0];
+                    setDocs(selectedDocsTemp) 
+                    let {serieComprobante, idCliente, razonSocialComprador, codEstab, identificacionComprador} = selectedDocumentos[0];
                     $scope.dataCuentaPorCobrar = {
-                        idCliente: dataSelectedDoc.idCliente,
-                        razonSocialComprador: dataSelectedDoc.razonSocialComprador,
-                        codEstab: dataSelectedDoc.codEstab,
-                        identificacionComprador: dataSelectedDoc.identificacionComprador
+                        idCliente,
+                        razonSocialComprador,
+                        codEstab,
+                        identificacionComprador,
+                        serieComprobante
                     }
 
                 }
@@ -178,10 +177,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         identificacionComprador,
                         razonSocialComprador,
                         serieComprobante,
-                        fechaEmision,
-                        importeTotal,
-                        saldo,
-                        abono
+                        fechaEmision, 
                     } = $scope.selectedDocumentos[0];
 
                     $scope.dataCuentaPorCobrar = {
@@ -190,10 +186,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         identificacionComprador,
                         razonSocialComprador,
                         serieComprobante,
-                        fechaEmision: fS.formatDateMoment(fS.formatDate(fechaEmision)),
-                        importeTotal,
-                        saldo,
-                        abono
+                        fechaEmision: fS.formatDateMoment(fS.formatDate(fechaEmision)), 
+                       
                     }
                 }
 
