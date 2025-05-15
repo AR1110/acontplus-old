@@ -33,9 +33,6 @@ BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
-    SELECT '0' code, 'Funcionalidad no disponible, registre por clave de acceso!' as 'message' return
-
-
     --> Global
     DECLARE @idEntidad INT ,@idUsuario INT
 
