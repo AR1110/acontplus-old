@@ -6,7 +6,6 @@ import { injectSessionInterceptor } from '@core/interceptors/inject-session.inte
 import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
 import { accountingProvider } from '@modules/accounting/providers';
 import { customerMainProviders } from '@modules/customer/providers';
-import { inventoryProviders } from '@modules/inventory/providers';
 import { purchaseProviders } from '@modules/purchase/providers';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { provideToastr } from 'ngx-toastr';
@@ -21,6 +20,7 @@ import { DatePipe } from '@angular/common';
 import { importProvidersFrom } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import {barberShopProviders} from "@barber-shop/providers";
+import {DATA_INVENTORY_IOC} from "@inventory/data/inventory.ioc";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -51,7 +51,7 @@ export const uiProviders = [
 export const featureProviders = [
   ...customerMainProviders,
   ...accountingProvider,
-  ...inventoryProviders,
+  ...DATA_INVENTORY_IOC,
   ...purchaseProviders,
   ...authMainProvider,
   ...commonProviders,

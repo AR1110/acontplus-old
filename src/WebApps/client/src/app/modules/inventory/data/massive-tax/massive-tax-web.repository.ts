@@ -8,7 +8,7 @@ import { MassiveTaxRepository } from '@inventory/domain/repositories/massive-tax
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { SubCategorySelectHtmlOnly } from '@inventory/domain/models/sub-category.model';
-import { groupSubCategoryUtil } from '@inventory/utils/group-sub-category.util';
+import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
 import { getValidId } from '@core/utils/utils';
 
 @Injectable({

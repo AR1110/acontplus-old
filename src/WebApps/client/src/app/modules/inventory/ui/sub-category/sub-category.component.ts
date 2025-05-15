@@ -10,7 +10,7 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive';
-import { SubCategoryService } from '@inventory/services/sub-category.service';
+import { SubCategoryService } from '@inventory/data/services/sub-category.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';

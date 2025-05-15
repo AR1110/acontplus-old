@@ -1,5 +1,5 @@
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {groupSubCategoryUtil} from "@inventory/utils/group-sub-category.util";
+import {groupSubCategoryUtil} from "@inventory/domain/utils/group-sub-category.util";
 import {ApiResponse} from "@core/models/api-response";
 
 

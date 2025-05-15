@@ -10,7 +10,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
-import { TransactionService } from '@inventory/services/transaction.service';
+import { TransactionService } from '@inventory/data/services/transaction.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import Swal from 'sweetalert2';

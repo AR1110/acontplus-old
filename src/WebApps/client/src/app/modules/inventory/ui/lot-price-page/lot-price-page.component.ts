@@ -18,7 +18,7 @@ import {
 } from '@inventory/domain/models/lot-price.model';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
-import { LotPriceService } from '@inventory/services/lot-price.service';
+import { LotPriceService } from '@inventory/data/services/lot-price.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';

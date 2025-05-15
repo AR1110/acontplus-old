@@ -2,9 +2,11 @@
 @model WebUI.Pages.FirmaElectronica.IndexModel
 @{
     ViewData["Title"] = "Firma E";
-    
+
 }
-<div ng-controller="firmaElectronicaCtrl">
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+
+@* <div ng-controller="firmaElectronicaCtrl">
     <div>
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
@@ -209,4 +211,4 @@
 @section Scripts{
     <script src="~/js/config/controllers/firmaElectronicaCtrl.min.js"
             asp-append-version="true"></script>
-}
+} *@

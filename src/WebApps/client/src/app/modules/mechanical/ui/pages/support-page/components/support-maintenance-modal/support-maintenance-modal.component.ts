@@ -10,7 +10,7 @@ import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/
 import {
   getCantidadStock,
   mergeProductStock,
-} from '@modules/inventory/utils/product-stock.util';
+} from '@inventory/domain/utils/product-stock.util';
 import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail,

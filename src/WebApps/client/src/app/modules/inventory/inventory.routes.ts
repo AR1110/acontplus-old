@@ -13,6 +13,7 @@ import { TagsComponent } from '@inventory/ui/tags/tags.component';
 import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
 import { ProductComponent } from '@inventory/ui/product/product.component';
 import {TransferenciaBodegaComponent} from "@inventory/ui/transferencia-bodega/transferencia-bodega.component";
+import {WarehouseComponent} from "@inventory/ui/warehouse/warehouse.component";
 
 export const routes: Route[] = [
   {
@@ -118,6 +119,13 @@ export const routes: Route[] = [
     component: TransferenciaBodegaComponent,
     data: {
       breadcrumb: 'Transferencia de Mercaderia',
+    },
+  },
+  {
+    path: 'warehouse',
+    component: WarehouseComponent,
+    data: {
+      breadcrumb: 'Bodega',
     },
   },
 ];

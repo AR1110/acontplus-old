@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { TarifaService } from '@inventory/services/tarifa.service';
+import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatButton } from '@angular/material/button';

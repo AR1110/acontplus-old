@@ -5,7 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import { pricingCalculateUtil } from "@core/utils/pricing-calculate.util";
 import { roundNumber } from "@core/utils/round-number.utils";
-import { groupSubCategoryUtil } from "../utils/group-sub-category.util";
+import { groupSubCategoryUtil } from "@inventory/domain/utils/group-sub-category.util";
 import {ApiResponse} from "@core/models/api-response";
 
 

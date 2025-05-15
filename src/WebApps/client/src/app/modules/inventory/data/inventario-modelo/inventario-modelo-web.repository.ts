@@ -4,9 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {ApiResponse } from "@core/models/api-response";
 import {map, Observable} from "rxjs";
 import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
-import {TagRepository} from "@inventory/domain/repositories/tag.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import {TagMapper} from "@inventory/data/tag/tag.mapper";
 import {InventarioModeloRepository} from "@inventory/domain/repositories/inventario-modelo.repository";
 import {InventarioModeloMapper} from "@inventory/data/inventario-modelo/inventario-modelo.mapper";
 

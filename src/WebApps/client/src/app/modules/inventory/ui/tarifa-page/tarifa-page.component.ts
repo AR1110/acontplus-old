@@ -8,7 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ModalService } from '@core/services/modal.service';
-import { TarifaService } from '@inventory/services/tarifa.service';
+import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { TarifaEditModalComponent } from '@inventory/ui/tarifa-page/tarifa-edit-modal/tarifa-edit-modal.component';
 

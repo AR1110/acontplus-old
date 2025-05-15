@@ -28,7 +28,7 @@ import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
 import { ProductKardexModalDirective } from '@inventory/ui/product/directives/product-kardex-modal.directive';
-import { StockService } from '@inventory/services/stock.service';
+import { StockService } from '@inventory/data/services/stock.service';
 import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
 
 import { MatPagination } from '@shared/models/pagination.model';

@@ -53,6 +53,7 @@ export enum GlobalRoutes {
   Etiqueta = 'inventory/tags',
   ArticuloFraccionado = 'inventory/fracc-product',
   TransferenciaBodega = 'inventory/transferencia-bodega',
+  Bodega='inventory/warehouse',
 
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',

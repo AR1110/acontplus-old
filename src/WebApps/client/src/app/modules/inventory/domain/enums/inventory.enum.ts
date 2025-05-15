@@ -18,6 +18,7 @@ export const enum INVENTORY_PATHS {
   PRODUCT_UBICATION = 'ArticuloUbicacion',
   PRODUCT_BARCODE='ArticuloCodigoBarra',
   FRACTIONAL_PRODUCT = 'ArticuloFraccionado',
+  WAREHOUSE='Bodega'
 }
 
 

@@ -24,7 +24,7 @@ import { OpenModalProductService } from '@inventory/ui/product/services/open-mod
 import {
   getCantidadStock,
   mergeProductStock,
-} from '@modules/inventory/utils/product-stock.util';
+} from '@inventory/domain/utils/product-stock.util';
 import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 import { orderMaintenanceAdapter } from '@modules/technical-support/adapters/order-maintenance.adapter';
 import {

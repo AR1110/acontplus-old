@@ -1,6 +1,6 @@
 import { ApiResponse } from "@core/models/api-response";
 import {formatDate} from "@core/utils/date.util";
-import {mergeMeasureUtil} from "@inventory/utils/merge-measure.util";
+import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
 import {MedidaProducto} from "@inventory/domain/models/measure.model";
 import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 import {SupportDetail} from "@mechanical/domain/models/support.model";
