@@ -1,4 +1,6 @@
-﻿namespace BarberShop.Application.Interfaces;
+﻿using Common.Infrastructure.Data.Repository.Models;
+
+namespace BarberShop.Application.Interfaces;
 
 public interface ISeatService
 {

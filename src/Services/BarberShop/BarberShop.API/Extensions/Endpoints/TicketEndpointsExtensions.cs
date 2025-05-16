@@ -1,5 +1,6 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
 using Common.Core.DTOs;
+using Common.Infrastructure.Data.Repository.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BarberShop.API.Extensions.Endpoints;

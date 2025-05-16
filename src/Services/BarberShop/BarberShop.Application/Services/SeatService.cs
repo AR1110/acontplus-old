@@ -1,5 +1,6 @@
 ﻿using BarberShop.Infrastructure.Data.Repositories.Interfaces;
 using BarberShop.Infrastructure.Persistense;
+using Common.Infrastructure.Data.Repository.Models;
 
 namespace BarberShop.Application.Services;
 
