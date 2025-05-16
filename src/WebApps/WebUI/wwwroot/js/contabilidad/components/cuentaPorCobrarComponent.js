@@ -294,7 +294,7 @@
                     return {
                         ...cxc,
                         saldoOriginal: cxc.saldo,
-                        valorSaldoLectura: cxc.saldo,
+                        valorSaldoLectura: cxc.saldo, 
                         cuotas: structuredClone(cuotasFiltradas),
                         cuotasOriginal: structuredClone(cuotasFiltradas)
                     };

@@ -29,7 +29,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         { name: 'Número', field: "serieComprobante", width: 200, },
         { name: 'Cliente', field: "razonSocialComprador", width: 425, },
         { name: 'Fecha', field: "fechaEmision", width: 150, },
-        { name: 'Total', field: "importeTotal", width: 100, },
+        { name: 'Total', field: "importeTotal" },
     ];
     //Used to bind ui-grid  
     //$scope.selectedItem = null;  
@@ -43,7 +43,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         showGridFooter: false,
 
         // This code used to expand the grid  
-        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"  ></div>',
+        expandableRowTemplate: '<div class="subgrid-wrapper" ui-grid="row.entity.subGridOptions"  ></div>',
         //expandableRowHeight: 150,  
         //subGridVariable will be available in subGrid scope  
         expandableRowScope: {
@@ -57,6 +57,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 console.log(row)
                 if (row.isExpanded) {
                     row.entity.subGridOptions = {
+                        appScopeProvider: $scope, // ← 🔥 Esto es clave
                         enableGridMenu: false,
                         enableRowHeaderSelection: false,
                         treeRowHeaderAlwaysVisible: false,
@@ -64,17 +65,54 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         enableColumnReordering: false,
                         showGridFooter: false,
                         columnDefs: [
-                            { name: 'nroCuota', field: 'Nro' },
+                            {
+                                cellTemplate: '<div class="ui-grid-cell-contents" ng-if="row.entity.esCuotaAfectada"><button class="btn btn-info btn-xs" ng-click="grid.appScope.showCobroDetalle(row.entity)"><i class="fa fa-info-circle"></i></button></div>',
+                                name: '',
+                                field: "op",
+                                minWidth: 50, width: 50, enableColumnResizing: false,
+
+                            },
+                            {
+                                name: 'Nro.', field: 'nroCuota', minWidth: 50, width: 50, enableColumnResizing: false,
+
+                            },
                             { name: 'Fecha Vcto', field: 'fechaVencimiento' },
-                            { name: 'Cuota', field: 'cuota' },
-                            { name: 'Días Mora', field: 'diasMora' },
-                            { name: 'Mora a Cobrar', field: 'mora' },
-                            { name: 'Total a Cobrar', field: 'saldo' },
-                            { name: 'Abono Anterior', field: 'abono' },
-                            { name: 'Saldo Anterior', field: 'saldoAnterior' },
-                            { name: 'Abono Actual', field: 'abonoActual' },
-                            { name: 'Saldo Actual', field: 'saldoActual' },
-                            { name: 'Estado', field: 'nombreEstado' },
+                            {
+                                name: 'Cuota', field: 'cuota', minWidth: 75, width: 75, enableColumnResizing: false,
+
+                            },
+                            {
+                                name: 'Días Mora', field: 'diasMora', minWidth: 80, width: 80, enableColumnResizing: false,
+
+                            },
+                            {
+                                name: 'Mora a Cobrar', field: 'mora',
+
+                            },
+                            {
+                                name: 'Total a Cobrar', field: 'totalCobrar',
+
+                            },
+                            {
+                                name: 'Abono Anterior', field: 'abonoAnterior', minWidth: 120, width: 120, enableColumnResizing: false,
+
+                            },
+                            {
+                                name: 'Saldo Anterior', field: 'saldoAnterior'
+                            },
+                            {
+                                name: 'Abono Actual', field: 'abonoActual'
+                            },
+                            // {
+                            //     name: 'Saldo Actual', field: 'saldoActual'
+                            // },
+                            {
+                                name: 'Saldo Actual', field: 'saldoTotalActual'
+                            },
+
+                            {
+                                name: 'Estado', field: 'nombreEstado'
+                            },
                         ]
                     };
                     row.entity.subGridOptions.data = row.entity.cuotasCalculadas;
@@ -139,7 +177,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             }
 
             showLoader();
-            comprobanteIngresoSvc.paymentFormData({idCuentaPorCobrar, idCliente}).then(response => {
+            comprobanteIngresoSvc.paymentFormData({ idCuentaPorCobrar, idCliente }).then(response => {
 
                 dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
@@ -147,10 +185,10 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                 //Cuando proviene de Cuentas por Cobrar
                 if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
-                    let selectedDocsTemp = modalCobroSvc.calcularInteresMora(selectedDocumentos)
+                    let selectedDocsTemp = modalCobroSvc.prepararParaCobro(selectedDocumentos)
 
-                    setDocs(selectedDocsTemp) 
-                    let {serieComprobante, idCliente, razonSocialComprador, codEstab, identificacionComprador} = selectedDocumentos[0];
+                    setDocs(selectedDocsTemp)
+                    let { serieComprobante, idCliente, razonSocialComprador, codEstab, identificacionComprador } = selectedDocumentos[0];
                     $scope.dataCuentaPorCobrar = {
                         idCliente,
                         razonSocialComprador,
@@ -163,7 +201,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                 //Cuando Proviene de Factura o Nota Entrega (Cobro Rápido)
                 if (idCuentaPorCobrar > 0) {
-                    let selectedDocsTemp = modalCobroSvc.calcularInteresMora(response.cuentaPorCobrar);
+                    let selectedDocsTemp = modalCobroSvc.prepararParaCobro(response.cuentaPorCobrar);
                     setDocs(selectedDocsTemp)
 
                     if ($scope.selectedDocumentos.some(item => [null, undefined, []].includes(item.cuotasCalculadas))) {
@@ -177,7 +215,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         identificacionComprador,
                         razonSocialComprador,
                         serieComprobante,
-                        fechaEmision, 
+                        fechaEmision,
                     } = $scope.selectedDocumentos[0];
 
                     $scope.dataCuentaPorCobrar = {
@@ -186,8 +224,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         identificacionComprador,
                         razonSocialComprador,
                         serieComprobante,
-                        fechaEmision: fS.formatDateMoment(fS.formatDate(fechaEmision)), 
-                       
+                        fechaEmision: fS.formatDateMoment(fS.formatDate(fechaEmision)),
+
                     }
                 }
 
@@ -196,7 +234,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
-        } catch (error) { 
+        } catch (error) {
             console.log(error)
         }
     }
@@ -205,7 +243,6 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         $scope.selectedDocumentos = structuredClone(docs);
         $scope.selectedDocumentosClone = structuredClone(docs);
         $scope.gridOptions.data = $scope.selectedDocumentos;
-        console.log($scope.gridOptions.data)
     }
 
 
@@ -421,11 +458,21 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     $scope.datosCobro.splice(index, 1);
 
                     //Todas las cuotas en su estado original                     
-                    for (let item of $scope.selectedDocumentos) {
+                    // for (let item of $scope.selectedDocumentos) {
+                    //     item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
+                    // }
+
+                    // modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
+
+                    for (let item of $scope.gridOptions.data) {
                         item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
+                        console.log(item)
+                        if (item.subGridOptions) {
+                            item.subGridOptions.data = structuredClone(item.cuotasCalculadasClone);
+                        }
                     }
 
-                    modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
+                    modalCobroSvc.setCuentasPorCobrar($scope.gridOptions.data);
 
                     getTotalesCuota();
 

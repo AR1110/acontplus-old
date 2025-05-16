@@ -8,6 +8,16 @@
         background-color: #FF9999 !important;
         color: #000 !important;
     }
+
+    .subgrid-wrapper .ui-grid-cell {
+        font-size: 12px !important
+            /* filas */
+    }
+
+    .subgrid-wrapper .ui-grid-header-cell {
+        font-size: 11px !important
+            /* encabezados */
+    }
 </style>
 <div class="modal-header">
     <h5 class="modal-title">Cobro por Lote</h5>
@@ -21,7 +31,7 @@
             <div class="row">
                 <!-- Totales -->
                 <div class="col-12 ">
-                    <div class="d-flex flex-wrap justify-content-start justify-content-md-end">
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-center">
                         <div class="pr-3 mb-2">
                             <small class="text-muted">Total</small>
                             <div class="h6 text-dark mb-0">{{data.importeTotal}}</div>
@@ -75,201 +85,139 @@
     </div>
 
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card border border">
-                <div class="card-header">
-                    <span class="card-title">Cuotas</span>
-                </div>
+    <div class="d-flex flex-column">
+        @* <div class="card border border">
+            <div class="card-header">
+                <span class="card-title">Cuotas</span>
+            </div>
 
-                <div class="card-body">
-                    <md-table-container style=" max-height: 400px;">
-                        <table md-table>
-                            <thead md-head>
-                                <tr md-row>
-                                    <th md-column></th>
-                                    <th md-column>#</th>
-                                    <th md-column>Fecha Vcto.</th>
-                                    <th md-column>Cuota</th>
-                                    <th md-column>Dias Mora</th>
-                                    <th md-column>Mora a Cobrar</th>
-                                    <th md-column>Total a cobrar</th>
-                                    <th md-column>Abono Anterior</th>
-                                    <th md-column>Saldo Anterior</th>
-                                    <th md-column>Abono Actual</th>
-                                    <th md-column>Saldo Actual</th>
-                                    <th md-column>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody md-body>
-                                <tr md-row ng-repeat-start="group in selectedDocumentos">
-                                    <td md-cell colspan="1" class="text-left" ng-click="expandShowCuota(group)">
-                                        <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
-                                        <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
-                                    </td>
-                                    <td md-cell colspan="5" class="align-left">
-                                        <div class="d-flex flex-row">
-                                            <div class="p-1">
-                                                {{group.codDoc}}
-                                            </div>
-                                            <div class="p-1">
-                                                - {{group.serieComprobante}}
-                                            </div>
-                                            <div class="p-1">
-                                                - {{group.fechaEmision}}
-                                            </div>
-                                            <div class="p-1">
-                                                <span class="font-weight-bold">${{group.importeTotal}}</span>
-                                            </div>
+            <div class="card-body">
+                <md-table-container style=" max-height: 400px;">
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column></th>
+                                <th md-column>#</th>
+                                <th md-column>Fecha Vcto.</th>
+                                <th md-column>Cuota</th>
+                                <th md-column>Dias Mora</th>
+                                <th md-column>Mora a Cobrar</th>
+                                <th md-column>Total a cobrar</th>
+                                <th md-column>Abono Anterior</th>
+                                <th md-column>Saldo Anterior</th>
+                                <th md-column>Abono Actual</th>
+                                <th md-column>Saldo Actual</th>
+                                <th md-column>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat-start="group in selectedDocumentos">
+                                <td md-cell colspan="1" class="text-left" ng-click="expandShowCuota(group)">
+                                    <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
+                                    <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
+                                </td>
+                                <td md-cell colspan="5" class="align-left">
+                                    <div class="d-flex flex-row">
+                                        <div class="p-1">
+                                            {{group.codDoc}}
                                         </div>
-                                    </td>
-                                    <td md-cell colspan="3"></td>
-                                    <td md-cell colspan="1"></td>
-                                    <td md-cell colspan="3"></td>
-                                </tr>
-                                <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotasCalculadas"
-                                    ng-show="group.display" class="shadow rounded">
-                                    <td md-cell>
-                                        <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada"
-                                            ng-click="showCobroDetalle(cuota)">
-                                            <i class="ti-eye"></i>
-                                        </button>
-                                    </td>
-                                    <td md-cell>{{cuota.nroCuota}}</td>
-                                    <td md-cell>{{cuota.fechaVencimiento | date:'dd/MM/yyyy'}}</td>
-                                    <td md-cell>{{cuota.cuota}}</td>
-                                    <td md-cell>{{cuota.diasMoraActual}}</td>
-                                    <td md-cell>{{cuota.mora}}</td>
-                                    <td md-cell>{{cuota.saldo}}</td>
-                                    <td md-cell>{{cuota.abono}}</td>
-                                    <td md-cell>{{cuota.saldo}}</td>
-                                    <td md-cell>{{cuota.interesActual}}</td>
-                                    <td md-cell>{{cuota.interesPorMoraActual}}</td>
+                                        <div class="p-1">
+                                            - {{group.serieComprobante}}
+                                        </div>
+                                        <div class="p-1">
+                                            - {{group.fechaEmision}}
+                                        </div>
+                                        <div class="p-1">
+                                            <span class="font-weight-bold">${{group.importeTotal}}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td md-cell colspan="3"></td>
+                                <td md-cell colspan="1"></td>
+                                <td md-cell colspan="3"></td>
+                            </tr>
+                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotasCalculadas"
+                                ng-show="group.display" class="shadow rounded">
+                                <td md-cell>
+                                    <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada"
+                                        ng-click="showCobroDetalle(cuota)">
+                                        <i class="ti-eye"></i>
+                                    </button>
+                                </td>
+                                <td md-cell>{{cuota.nroCuota}}</td>
+                                <td md-cell>{{cuota.fechaVencimiento | date:'dd/MM/yyyy'}}</td>
+                                <td md-cell>{{cuota.cuota}}</td>
+                                <td md-cell>{{cuota.diasMoraActual}}</td>
+                                <td md-cell>{{cuota.mora}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.abono}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.interesActual}}</td>
+                                <td md-cell>{{cuota.interesPorMoraActual}}</td>
 
-                                    <td md-cell>{{cuota.estado}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </md-table-container>
-                </div>
+                                <td md-cell>{{cuota.estado}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
             </div>
+        </div> *@
 
-            <div class="card border border">
-                <div class="card-header">
-                    <span class="card-title">Datos de cobro</span>
-                </div>
-                <div class="card-body">
-                    <md-table-container style=" max-height: 400px;">
-                        <table md-table>
-                            <thead md-head>
-                                <tr md-row>
-                                    <th md-column><span>Op.</span></th>
-                                    <th md-column><span>N°</span></th>
-                                    <th md-column><span>F. Emisión</span></th>
-                                    <th md-column><span>Sub Entidad</span></th>
-                                    <th md-column><span>Valor</span></th>
-                                    <th md-column><span>Tipo Doc.</span></th>
-                                    <th md-column><span>Nro.</span></th>
-                                    <th md-column><span>Abono</span></th>
-                                </tr>
-                            </thead>
-                            <tbody md-body>
-                                <tr md-row ng-repeat="item in datosCobro">
-                                    <td md-cell>
-                                        <button class="btn btn-danger btn-xs" ng-click="askToDeleteFormaCobro(item)">
-                                            <i class="mdi mdi-delete"></i>
-                                        </button>
-                                        <button class="btn btn-info btn-xs" ng-click="showInfoCobro(item)">
-                                            <i class="fas fa-info-circle"></i>
-                                        </button>
-
-
-                                    </td>
-                                    <td md-cell>{{$index+1}}</td>
-                                    <td md-cell>{{item.fechaEmision | date:'dd/MM/yyyy h:mma'}}</td>
-                                    <td md-cell>{{item.subEntidadFinanciera}}</td>
-                                    <td md-cell>{{item.valorAbono | currency}}</td>
-                                    <td md-cell>{{item.tipoDocumento}}</td>
-                                    <td md-cell>{{item.nro}}</td>
-                                    <td md-cell>{{item.abonoCuota | currency}}</td>
-                                </tr>
-                                <tr class="text-center" ng-if="datosPago.length === 0">
-                                    <td colspan="8">No hay datos</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </md-table-container>
-                </div>
-
+        <div class="card border border mt-3 mb-3">
+            <div class="card-header">
+                <span class="card-title">Datos de cobro</span>
             </div>
+            <div class="card-body">
+                <md-table-container style=" max-height: 400px;">
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column><span>Op.</span></th>
+                                <th md-column><span>N°</span></th>
+                                <th md-column><span>F. Emisión</span></th>
+                                <th md-column><span>Sub Entidad</span></th>
+                                <th md-column><span>Valor</span></th>
+                                <th md-column><span>Tipo Doc.</span></th>
+                                <th md-column><span>Nro.</span></th>
+                                <th md-column><span>Abono</span></th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="item in datosCobro">
+                                <td md-cell>
+                                    <button class="btn btn-danger btn-xs" ng-click="askToDeleteFormaCobro(item)">
+                                        <i class="mdi mdi-delete"></i>
+                                    </button>
+                                    <button class="btn btn-info btn-xs" ng-click="showInfoCobro(item)">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
 
 
-
-            <div class="form-group ">
-                <label for="observacion">Observación: </label>
-                <input type="text" class="form-control border-select" ng-model="dataCuentaPorCobrar.observacion"
-                    placeholder="...">
+                                </td>
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.fechaEmision | date:'dd/MM/yyyy h:mma'}}</td>
+                                <td md-cell>{{item.subEntidadFinanciera}}</td>
+                                <td md-cell>{{item.valorAbono | currency}}</td>
+                                <td md-cell>{{item.tipoDocumento}}</td>
+                                <td md-cell>{{item.nro}}</td>
+                                <td md-cell>{{item.abonoCuota | currency}}</td>
+                            </tr>
+                            <tr class="text-center" ng-if="datosPago.length === 0">
+                                <td colspan="8">No hay datos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
             </div>
 
         </div>
 
-        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12" ng-if="false">
-            <div class="card">
-                <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaCobro()">
-                    <i class="ti-plus"></i> Nuevo Abono
-                </button>
 
-                <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Total:
-                        <span>
-                            <h5>
-                                {{data.importeTotal | currency}}
-                            </h5>
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-info"
-                        ng-if="data.totalAbonoAnterior>0">
-                        Abono Anterior:
-                        <span>
-                            {{data.totalAbonoAnterior | currency}}
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Abono
-                        <span>
-                            {{data.totalValorAbono | currency}}
-                        </span>
-                    </li>
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Saldo Doc
-                        <span>
-                            {{data.totalSaldoDoc | currency}}
-                        </span>
-
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Mora
-                        <span>
-                            {{data.totalMora | currency}}
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Saldo:
-                        <span>
-                            {{data.totalSaldo | currency}}
-                        </span>
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">
-                        Cambio:
-                        <span>
-                            {{data.valorCambio | currency}}
-                        </span>
-                    </li>
-                </ul>
-
-            </div>
+        <div class="form-group ">
+            <label for="observacion">Observación: </label>
+            <input type="text" class="form-control border-select" ng-model="dataCuentaPorCobrar.observacion"
+                placeholder="...">
         </div>
     </div>
 </div>

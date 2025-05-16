@@ -684,36 +684,37 @@
                 abono: item.abono,
                 saldoCta: item.saldoCta, //resta de cuota - saldo
                 saldo: item.saldo,
-                nombreEstado: item.estado, 
-                saldoAnterior: item.saldoCta, //saldo anterior
+                nombreEstado: item.estado,
             }));
         }
 
-        function transformarCuentaPorCobrar(cuentas) { 
-            
-            return cuentas.map(item => {
+        function transformarCuentaPorCobrar(cuentas) {
+
+            return cuentas.map((item, index) => {
                 const cuotas = JSON.parse(item.cuotas || '[]');
-                const cuotasTransformada = transformarCuotas(cuotas); 
-                return{
-                idCuentaPorCobrar: item.idCuentaPorCobrar,
-                idCliente: item.idCliente,
-                codEstab: item.codEstab,
-                identificacionComprador: item.identificacionComprador,
-                razonSocialComprador: item.razonSocialComprador,
-                serieComprobante: item.serieComprobante,
-                codDoc: item.codDoc,
-                fechaEmision: item.fechaEmision,
-                fechaVencimiento: item.fechaVencimiento,
-                importeTotal: item.importeTotal,
-                diasMora: item.diasMora,
-                mora: item.mora,
-                abono: item.abono,
-                saldo: item.saldo,
-                saldoAnterior: item.saldoDoc, //resta de importe total - abono 
-                nombreEstado: item.descripcion, //nombre del estado de pago
-                cuotas: structuredClone(cuotasTransformada),
-                cuotasOriginal: structuredClone(cuotasTransformada)
-            }});
+                const cuotasTransformada = transformarCuotas(cuotas);
+                return {
+                    index: index + 1,
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    idCliente: item.idCliente,
+                    codEstab: item.codEstab,
+                    identificacionComprador: item.identificacionComprador,
+                    razonSocialComprador: item.razonSocialComprador,
+                    serieComprobante: item.serieComprobante,
+                    codDoc: item.codDoc,
+                    fechaEmision: item.fechaEmision,
+                    fechaVencimiento: item.fechaVencimiento,
+                    importeTotal: item.importeTotal,
+                    diasMora: item.diasMora,
+                    mora: item.mora,
+                    abono: item.abono,
+                    saldo: item.saldo,
+                    saldoDoc: item.saldoDoc, //resta de importe total - abono 
+                    nombreEstado: item.descripcion, //nombre del estado de pago
+                    cuotas: structuredClone(cuotasTransformada),
+                    cuotasOriginal: structuredClone(cuotasTransformada)
+                }
+            });
         }
 
 
@@ -779,12 +780,9 @@
         }
 
 
-        async function paymentFormData({ idCuentaPorCobrar, idCliente }) {
+        function paymentFormData({ idCuentaPorCobrar, idCliente }) {
             const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
-
-            try {
-                const response = await mS.getData('get', `${url}?json=${params}`, null, true);
-
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 const cobroFormData = {
                     entidadesFinanciera: [],
                     bancos: [],
@@ -832,10 +830,8 @@
                 }
                 console.log('Cobro Form Data:', cobroFormData);
                 return cobroFormData;
-            } catch (error) {
-                console.error('Error al obtener datos del formulario de cobro:', error);
-                throw error;
-            }
+
+            })
         }
 
 
@@ -935,7 +931,7 @@
                 let results = [];
                 if (response.code === "1") {
                     let { cuotas } = JSON.parse(response.payload);
-                    results = newGenerateQuota(cuotas);
+                    results = transformarCuotas(cuotas);
                 }
                 return results;
             })
@@ -1775,18 +1771,23 @@
                 return diasMora;
             }
 
-            
+
             prepararParaCobro(cuentasPorCobrar) {
-                 let resultados = cuentasPorCobrar.map(cuenta => {
+                let resultados = cuentasPorCobrar.map(cuenta => {
                     let { cuotas, cuotasOriginal, ...documento } = cuenta;
                     let cuotasCalculadas = cuotas.map(cuota => {
                         // Inicialización de variables 
-                        let saldoAnterior = cuota.saldoAnterior; 
+                        let saldoAnterior = cuota.saldoCta;
                         return {
                             ...cuota,
                             saldoTotalActual: fS.instanceDecimal(saldoAnterior, 5),
                             saldoTotalOriginal: fS.instanceDecimal(saldoAnterior, 5),
                             saldoTotalLectura: fS.instanceDecimal(saldoAnterior, 5),
+
+                            //nuevos
+                            totalCobrar: saldoAnterior,
+                            abonoAnterior: cuota.abono,
+                            saldoAnterior,
                             abonoActual: 0,
                             saldoActual: 0,
                         };
@@ -1796,17 +1797,17 @@
                     let diasMoraActual = 0;
                     let interesPorMoraActual = fS.instanceDecimal(0);
                     let interesActual = fS.instanceDecimal(0);
-                    let saldoAnterior = fS.instanceDecimal(0); 
+                    let saldoAnterior = fS.instanceDecimal(0);
                     for (let cc of cuotasCalculadas) {
                         saldoActualDoc = fS.plus(saldoActualDoc, cc.saldoTotalActual, 5);
                         diasMoraActual += cc.diasMora;
                         interesPorMoraActual = interesPorMoraActual.plus(cc.interes);
                         interesActual = interesActual.plus(cc.interes),
 
-                        //nuevo 
-                        saldoAnterior = saldoAnterior.plus(cc.saldoAnterior, 5);
+                            //nuevo 
+                            saldoAnterior = saldoAnterior.plus(cc.saldoAnterior, 5);
 
-                    } 
+                    }
                     return {
                         ...documento,
                         saldoActualDoc: fS.roundNumber(saldoActualDoc, 2),
@@ -2166,10 +2167,19 @@
                 } else {
                     let totalAbonoCuota = fS.plus(dataCuota.abono, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
 
-                    if (fS.roundNumber(totalAbonoCuota, 2) === fS.roundNumber(dataCuota.saldo, 2)) {
+                    const abonoRedondeado = fS.roundNumber(totalAbonoCuota, 2);
+                    const saldoRedondeado = fS.roundNumber(dataCuota.saldo, 2);
+                    const comparacionIgual = abonoRedondeado === saldoRedondeado;
+
+                    if (comparacionIgual) {
                         dataCuota.abono = dataCuota.saldo;
+
+                        //dato real que se presenta en la UI 
+                        dataCuota.abonoActual = dataCuota.saldo;
                     } else {
-                        dataCuota.abono = totalAbonoCuota;
+                        dataCuota.abono = this.getValorAbono();
+
+
                     }
 
                 }
@@ -2204,6 +2214,9 @@
                     dataCuota.abonoPosfechado = fS.plus(dataCuota.abonoPosfechado, dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
                 } else {
                     dataCuota.abono = fS.plus(dataCuota.abono, dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
+
+                    //valor real que se presenta en la UI
+                    dataCuota.abonoActual = dataCuota.saldoTotalActual;
                 }
 
                 // Agrega un detalle de cobro con el saldoTotalActual como valor del abono
@@ -2241,6 +2254,10 @@
              */
             handleFullAbono(dataCuota) {
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
+
+                //abono actual es el que se presenta en la UI
+                dataCuota.abonoActual = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
+
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? this.getValorAbono() : 0;
                 dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
                 this.addCobroDetalle(dataCuota, this.getValorAbono(), dataCuota.saldoTotalActual);
@@ -2253,6 +2270,9 @@
              */
             handlePartialAbono(dataCuota) {
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
+
+                //valor real que se presenta en la UI
+                dataCuota.abonoActual = this.getEsAbonoPosfechado() ? 0 : fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
 
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT) : 0;
 
@@ -2341,6 +2361,7 @@
                     abono: dataCuota.abono
                 });
                 dataCuota.estado = dataEstadoPago.descripcion;
+                dataCuota.nombreEstado = dataEstadoPago.descripcion;
             }
 
 
