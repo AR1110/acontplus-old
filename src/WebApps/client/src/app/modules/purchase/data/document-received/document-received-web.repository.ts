@@ -78,7 +78,7 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
 
   previewXml(id: number): Observable<ApiResponse> {
     return this._http
-      .get<ApiResponse>(`Preview/${id}`)
+      .get<ApiResponse>(`${this._url}Preview/${id}`)
       .pipe(map((response: ApiResponse) => response));
   }
   update(id: number, data: any) {

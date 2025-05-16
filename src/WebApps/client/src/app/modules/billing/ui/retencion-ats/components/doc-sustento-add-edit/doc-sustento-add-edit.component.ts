@@ -44,6 +44,10 @@ import {
 } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
+import { RetencionAtsAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-add-edit/retencion-ats-add-edit.component';
+import { isApiResponse } from '@core/models/api-response';
+import { DialogService } from '@core/services/dialog.service';
+import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -93,6 +97,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
   private readonly _tS = inject(ToasterService);
   private readonly _documentoReceivedUseCase = inject(DocumentReceivedUseCase);
+  private readonly _dialogService = inject(DialogService);
 
   setPanelOpen(index: number) {
     this.panelOpenState = index;
@@ -235,7 +240,10 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       this._documentoReceivedUseCase
         .previewXml(doc.idDocumento)
         .subscribe((response) => {
-          console.log(response);
+          const dialogRef = this._dialogService.open(DocElectViewerComponent, {
+            size: 'xxl',
+            data: response.payload,
+          });
         });
     } else {
       this._tS.toastr({
