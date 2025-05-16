@@ -1,5 +1,6 @@
 import {ApiResponse} from "@core/models/api-response";
 import {ElectronicSignatureListResponse} from "@modules/config/domain/models/electronic-signature.model";
+import {formatDateToString} from "@core/utils/date.util";
 
 export class ListElectronicSignatureMapper {
 
@@ -15,7 +16,7 @@ export class ListElectronicSignatureMapper {
           contrasenia: item.contrasenia,
           nombreArchivo: item.nombreArchivo,
           mimeType: item.mimeType,
-          fechaCaducidad: item.fechaCaducidad,
+          fechaCaducidad: formatDateToString(new Date(item.fechaCaducidad)),
           firma: item.firma,
         }
       })

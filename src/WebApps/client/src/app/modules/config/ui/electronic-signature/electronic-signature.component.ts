@@ -15,6 +15,13 @@ import {DialogService} from "@core/services/dialog.service";
 import {
   AddEditElectronicSignatureComponent
 } from "@modules/config/ui/electronic-signature/add-edit-electronic-signature/add-edit-electronic-signature.component";
+import Swal from "sweetalert2";
+import {getValidId} from "@core/utils/utils";
+import {
+  UpdateSignatureElectronicSignatureUseCase
+} from "@modules/config/application/use-cases/electronic-signature/update-signature-electronic-signature.use-case";
+import {ApiResponse} from "@core/models/api-response";
+import {SvgIconComponent} from "@shared/components/svg-icon/svg-icon.component";
 
 @Component({
   selector: 'app-electronic-signature',
@@ -25,7 +32,8 @@ import {
     MatButtonModule,
     MatIconModule,
     MatDynamicTableComponent,
-    ThemeButtonComponent
+    ThemeButtonComponent,
+    SvgIconComponent
   ],
   templateUrl: './electronic-signature.component.html',
   styles: ``
@@ -33,6 +41,7 @@ import {
 export class ElectronicSignatureComponent {
 
   private $listUseCase = inject(ListElectronicSignatureUseCase)
+  private $updateSignature = inject(UpdateSignatureElectronicSignatureUseCase)
   private _dialogSvc = inject(DialogService)
 
   dataSource = signal<ElectronicSignatureList[]>([])
@@ -69,12 +78,61 @@ export class ElectronicSignatureComponent {
 
   private  getList(){
     this.$listUseCase.execute().subscribe(response=>{
-      console.log(response)
       this.dataSource.set(response.data)
     })
   }
 
   ngOnInit(){
     this.refresh()
+  }
+
+
+
+  async updateSignature(item:ElectronicSignatureList){
+      const { value: file } = await Swal.fire({
+        title: 'Seleccione el arhivo',
+        input: 'file',
+        inputAttributes: {
+          'accept': '.p12',
+          'aria-label': 'Update Signature'
+        },
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Actualizar',
+        cancelButtonText: 'Cancelar'
+      })
+
+      if(!file) return;
+
+      if(!getValidId(item.idFirmaElectronica)){
+        Swal.fire({
+          icon: 'warning',
+          text:  'El id es:'  + item.idFirmaElectronica
+        })
+        return
+      }
+
+     this.$updateSignature.execute({
+       idFirmaElectronica: item.idFirmaElectronica,
+       file
+     }).subscribe(this.successResponse)
+
+  }
+
+  successResponse = (response:ApiResponse)=>{
+    if(response.code==="0"){
+      Swal.fire({
+        icon: 'warning',
+        text: response.message
+      })
+    }
+    if(response.code==="1"){
+      Swal.fire({
+        icon: 'success',
+        text: response.message,
+        timer: 1000
+      })
+      this.refresh()
+    }
   }
 }

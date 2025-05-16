@@ -1783,6 +1783,10 @@
                             saldoTotalActual: fS.instanceDecimal(saldoAnterior, 5),
                             saldoTotalOriginal: fS.instanceDecimal(saldoAnterior, 5),
                             saldoTotalLectura: fS.instanceDecimal(saldoAnterior, 5),
+                            interesActual: cuota.interes||0,
+
+                            diasMoraActual: cuota.diasMora,
+                            interesPorMoraActual:cuota.mora,
 
                             //nuevos
                             totalCobrar: saldoAnterior,

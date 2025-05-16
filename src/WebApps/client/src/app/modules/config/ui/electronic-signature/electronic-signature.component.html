@@ -28,20 +28,14 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button
-      type="button"
-      variant="info"
-      matStyle="icon"
-      icon="edit"
-      (handleClick)="openModalAddUpdate(item)"
-    />
-<!--    <app-theme-button-->
-<!--      type="button"-->
-<!--      variant="danger"-->
-<!--      matStyle="icon"-->
-<!--      icon="delete"-->
-<!--      (handleClick)="askToEnabled(item)"-->
-<!--    />-->
+
+    <button type="button" mat-icon-button (click)="openModalAddUpdate(item)">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button type="button" mat-icon-button (click)="updateSignature(item)">
+      <app-svg-icon id="icon-file-pencil" ></app-svg-icon>
+    </button>
   </ng-template>
 
 

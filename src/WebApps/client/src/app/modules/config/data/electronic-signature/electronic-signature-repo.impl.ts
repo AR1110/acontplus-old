@@ -2,7 +2,9 @@ import {inject, Injectable} from "@angular/core";
 import {ElectronicSignatureRepository} from "@modules/config/domain/repositories/electronic-signature.repository";
 import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
 import {HttpClient} from "@angular/common/http";
-import { ElectronicSignatureListResponse } from "@modules/config/domain/models/electronic-signature.model";
+import {
+  ElectronicSignatureListResponse, ElectronicSignatureParam
+} from "@modules/config/domain/models/electronic-signature.model";
 import {map, Observable} from "rxjs";
 import {PATHS_API} from "@core/constants/global.constants";
 import {ApiResponse} from "@core/models/api-response";
@@ -14,6 +16,25 @@ import {
   providedIn: 'root'
 })
 export class ElectronicSignatureRepoImpl implements ElectronicSignatureRepository {
+      updateSignature(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
+        const formData = new FormData();
+        if (params.file) {
+          formData.append('file', params.file);
+        }
+        return this._http.post<ApiResponse>(`${this._url}/UpdateSignature/${params.idFirmaElectronica}`, formData);
+      }
+      create(params: ElectronicSignatureParam): Observable<ApiResponse> {
+        const formData = new FormData();
+        if (params.file) {
+          formData.append('file', params.file);
+        }
+        const jsonParam = encodeURIComponent(JSON.stringify(params));
+        return this._http.post<ApiResponse>(`${this._url}/Post?json=${jsonParam}`, formData);
+    }
+    update(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
+      const jsonParam = encodeURIComponent(JSON.stringify(params));
+      return this._http.put<ApiResponse>(`${this._url}/Put?json=${jsonParam}`, "");
+    }
    list(): Observable<ElectronicSignatureListResponse> {
       const json = JSON.stringify({tipo: 1})
       return this._http.get<ApiResponse>(`${this._url}/Get?json=${json}`).pipe(

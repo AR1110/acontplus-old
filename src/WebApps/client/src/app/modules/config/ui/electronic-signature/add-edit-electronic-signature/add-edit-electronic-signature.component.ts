@@ -12,7 +12,15 @@ import {provideNativeDateAdapter} from "@angular/material/core";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
-import {isValidField} from "@core/utils/utils";
+import {getValidId, isValidField} from "@core/utils/utils";
+import {ElectronicSignatureList} from "@modules/config/domain/models/electronic-signature.model";
+import {
+  CreateElectronicSignatureUseCase
+} from "@modules/config/application/use-cases/electronic-signature/create-electronic-signature.use-case";
+import {
+  UpdateElectronicSignatureUseCase
+} from "@modules/config/application/use-cases/electronic-signature/update-electronic-signature.use-case";
+import {formatDateToString} from "@core/utils/date.util";
 
 @Component({
   selector: 'app-add-edit-electronic-signature',
@@ -31,7 +39,12 @@ import {isValidField} from "@core/utils/utils";
 })
 export class AddEditElectronicSignatureComponent {
   private dialogRef = inject(MatDialogRef<AddEditElectronicSignatureComponent>);
-  private params = inject<WarehouseList>(MAT_DIALOG_DATA);
+   params = inject<ElectronicSignatureList>(MAT_DIALOG_DATA);
+
+
+  private $createUseCase = inject(CreateElectronicSignatureUseCase)
+  private $updateUseCase = inject(UpdateElectronicSignatureUseCase)
+
   title = 'Nueva Firma Electrónica';
   btnText = 'Guardar';
   btnIcon = 'save';
@@ -39,8 +52,21 @@ export class AddEditElectronicSignatureComponent {
   fileSign:File|undefined=undefined
 
   data = {
-    contrasenia: null as string| null,
-    fechaCaducidad: null as Date|null
+    idFirmaElectronica: 0,
+    contrasenia: "" ,
+    fechaCaducidad: null as Date | null,
+    estado: true
+  }
+
+  ngOnInit(){
+    if(this.params.idFirmaElectronica>0){
+      this.title = 'Editar Firma Electrónica';
+      this.btnText = 'Actualizar';
+      this.btnIcon = 'edit';
+      this.data.idFirmaElectronica = this.params.idFirmaElectronica;
+      this.data.contrasenia = this.params.contrasenia;
+      this.data.fechaCaducidad = new Date(this.params.fechaCaducidad)
+    }
   }
 
   addEventDate( event: MatDatepickerInputEvent<Date>) {
@@ -50,11 +76,29 @@ export class AddEditElectronicSignatureComponent {
   onFileSelected(event:Event){
     const file = (event.target as HTMLInputElement).files?.[0];
     this.fileSign = file;
-    console.log(this.fileSign)
   }
 
+
+
   save(){
-    if(isValidField(this.fileSign)){
+
+
+    if (!isValidField(this.data.contrasenia)) {
+      Swal.fire({
+        icon: 'warning',
+        text:  'Ingrese la contraseña'
+      })
+      return;
+    }
+    if (!isValidField(this.data.fechaCaducidad)) {
+      Swal.fire({
+        icon: 'warning',
+        text:  'Ingrese la fecha de caducidad'
+      })
+      return;
+    }
+
+    if(!getValidId(this.params.idFirmaElectronica) && !isValidField(this.fileSign)){
       Swal.fire({
         icon: 'warning',
         text:  'Selecionele el archivo de la firma!'
@@ -62,20 +106,21 @@ export class AddEditElectronicSignatureComponent {
       return
     }
 
-    if (isValidField(this.data.contrasenia)) {
-      Swal.fire({
-        icon: 'warning',
-        text:  'Ingrese la contraseña'
-      })
+    const fechaCaducidad = formatDateToString(this.data.fechaCaducidad as Date);
+
+    if(getValidId(this.params.idFirmaElectronica)){
+      this.$updateUseCase.execute({
+        ...this.data,
+        fechaCaducidad
+      }).subscribe(this.successResponse);
       return;
     }
-    if (isValidField(this.data.fechaCaducidad)) {
-      Swal.fire({
-        icon: 'warning',
-        text:  'Ingrese la fecha de caducidad'
-      })
-      return;
-    }
+    this.$createUseCase.execute({
+      ...this.data,
+      fechaCaducidad,
+      file: this.fileSign
+    }).subscribe(this.successResponse)
+
   }
 
   successResponse = (response:ApiResponse)=>{

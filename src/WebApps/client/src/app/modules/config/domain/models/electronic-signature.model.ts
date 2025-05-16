@@ -13,3 +13,9 @@ export interface ElectronicSignatureList {
 export class ElectronicSignatureListResponse {
   data: ElectronicSignatureList[]=[]
 }
+
+
+export interface ElectronicSignatureParam extends Pick<ElectronicSignatureList, "idFirmaElectronica"|"contrasenia"> {
+  file?:File
+  fechaCaducidad:string
+}
