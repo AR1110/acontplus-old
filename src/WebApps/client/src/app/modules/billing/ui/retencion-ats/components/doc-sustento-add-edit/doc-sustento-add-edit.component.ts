@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -48,6 +55,8 @@ import { RetencionAtsAddEditComponent } from '@billing/ui/retencion-ats/componen
 import { isApiResponse } from '@core/models/api-response';
 import { DialogService } from '@core/services/dialog.service';
 import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
+import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -72,7 +81,7 @@ import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,
 })
-export class DocSustentoAddEditComponent implements AfterViewInit {
+export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
@@ -92,7 +101,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   sustentosFiltered = signal<SustentoTributario[]>([]);
   isPagoResidente = true;
   uniqueIdDoc = input.required<string>();
-
+  private readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
   private readonly _tS = inject(ToasterService);
@@ -138,6 +147,31 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.selectSustento(this.indexDoc());
   }
+  ngOnInit(): void {
+    const parsedData = {
+      ...this._data,
+      documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
+      infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
+    };
+
+    parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
+      if (doc.taxes) {
+        doc.taxes.forEach((tax) => {
+          this.createTax(this.indexDoc(), tax);
+        });
+      }
+      if (doc.retenciones) {
+        doc.retenciones.forEach((retencion) => {
+          this.createRetencion(this.indexDoc(), retencion);
+        });
+      }
+      if (doc.payments) {
+        doc.payments.forEach((payment) => {
+          this.createPayment(this.indexDoc(), payment);
+        });
+      }
+    });
+  }
 
   createTaxGroup(): FormGroup {
     return this._fb.group({
@@ -164,7 +198,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       codigoRetencion: ['', Validators.required],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
-      valorRetenido: [0, [Validators.required, Validators.min(0)]],
+      valorRetenido: [0, [Validators.required]],
     });
   }
 

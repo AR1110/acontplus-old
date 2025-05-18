@@ -75,8 +75,8 @@ import { ToasterService } from '@core/services/toaster.service';
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
   private datePipe = inject(DatePipe);
-  readonly data = inject<RetencionAts>(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject(
+  private readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
+  private readonly _dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
@@ -188,7 +188,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   // Add a docSustento with predefined values
   addDocSustento(doc: RetAtsDocSustento) {
-    console.log(doc);
     const docGroup = this.createDocSustentoGroup();
 
     let formattedFecha = '';
@@ -213,6 +212,11 @@ export class RetencionAtsAddEditComponent implements OnInit {
     this.infoAdicionalArray.push(this.createInfoAdicional());
   }
 
+  addInfoAdicionalWithValues(infoAdicional: RetAtsInfoAdicional) {
+    const infoAdicionalGroup = this.createInfoAdicional();
+    infoAdicionalGroup.patchValue(infoAdicional);
+    this.infoAdicionalArray.push(infoAdicionalGroup);
+  }
   initialLoad() {
     this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
       this.estabs = groupEstabUtil({
@@ -245,12 +249,25 @@ export class RetencionAtsAddEditComponent implements OnInit {
 
   ngOnInit() {
     this.initialLoad();
-    console.log(this.data);
-    if (this.data && this.data.idRetencionAts > 0) {
-      this.retencionAtsForm.patchValue(this.data);
+    if (this._data && this._data.idRetencionAts > 0) {
+      const parsedData = {
+        ...this._data,
+        documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
+        infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
+      };
+      // console.log(parsedData);
+      this.retencionAtsForm.patchValue(parsedData);
       this.retencionAtsForm.get('idEstablecimiento')?.disable();
       this.retencionAtsForm.get('idPuntoEmision')?.disable();
       this.getPeriod();
+      this.retAtsDocSustentos = parsedData.documentosSustento;
+      this.retAtsDocSustentos.forEach((doc) => {
+        this.addDocSustento(doc);
+      });
+      this.infoAdicional = parsedData.infoAdicional;
+      this.infoAdicional.forEach((info) => {
+        this.addInfoAdicionalWithValues(info);
+      });
     } else {
       this.retencionAtsForm
         .get('fechaEmision')
@@ -260,10 +277,9 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   onClose() {
-    this.dialogRef.close();
+    this._dialogRef.close();
   }
   onSave() {
-    console.log(this.retencionAtsForm.value);
     this._retencionAtsUseCase
       .create(this.retencionAtsForm.value)
       .subscribe((response) => {
@@ -272,7 +288,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
           message: response.message,
         });
         if (response.code === '1') {
-          this.dialogRef.close(response);
+          this._dialogRef.close(response);
         }
       });
   }

@@ -23,6 +23,8 @@ export interface RetAtsDocSustento {
   totalSinImpuestos?: number;
   importeTotal: number;
   taxes?: any[];
+  retenciones?: any[];
+  payments?: any[];
   estado?: boolean;
   isAutomatic?: boolean;
 }
