@@ -1,6 +1,6 @@
-﻿using Restaurant.API.Entities;
+﻿using Restaurant.Api.Entities;
 
-namespace Restaurant.API.Interfaces
+namespace Restaurant.Api.Interfaces
 {
     public interface IProductionAreaService
     {

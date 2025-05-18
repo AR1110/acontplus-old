@@ -1,4 +1,6 @@
-﻿public class OrderMaintenanceService : IOrderMaintenanceService
+﻿namespace TechnicalSupport.API.Services;
+
+public class OrderMaintenanceService : IOrderMaintenanceService
 {
     private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;

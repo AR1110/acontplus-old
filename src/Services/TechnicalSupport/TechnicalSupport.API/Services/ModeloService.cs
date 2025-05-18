@@ -1,4 +1,6 @@
-﻿public class ModeloService : IModeloService
+﻿namespace TechnicalSupport.API.Services;
+
+public class ModeloService : IModeloService
 {
     private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;

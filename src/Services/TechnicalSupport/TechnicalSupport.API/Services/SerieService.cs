@@ -1,4 +1,6 @@
-﻿public class SerieService : ISerieService
+﻿namespace TechnicalSupport.API.Services;
+
+public class SerieService : ISerieService
 {
     private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;

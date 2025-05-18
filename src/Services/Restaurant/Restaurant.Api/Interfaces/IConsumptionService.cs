@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Interfaces
+﻿namespace Restaurant.Api.Interfaces
 {
     public interface IConsumptionService
     {

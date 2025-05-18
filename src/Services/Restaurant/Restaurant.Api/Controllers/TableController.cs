@@ -1,9 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Entities;
-using Restaurant.API.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using Restaurant.Api.Entities;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class TableController(IAppTableService tableService) : BaseApiController
 {

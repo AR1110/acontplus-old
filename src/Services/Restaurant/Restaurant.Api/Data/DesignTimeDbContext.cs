@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 
-namespace Restaurant.API.Data
+namespace Restaurant.Api.Data
 {
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<RestaurantContext>
     {
         private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "Restaurant.API";
+        private const string _migrationAssembly = "Restaurant.Api";
 
         public RestaurantContext CreateDbContext(string[] args)
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             IConfiguration configuration = new ConfigurationBuilder()
-                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.API
+                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.Api
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
                 .Build();
 

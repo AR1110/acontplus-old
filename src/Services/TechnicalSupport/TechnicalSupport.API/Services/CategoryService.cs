@@ -1,4 +1,6 @@
-﻿public class CategoryService : ICategoryService
+﻿namespace TechnicalSupport.API.Services;
+
+public class CategoryService : ICategoryService
 {
     private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;

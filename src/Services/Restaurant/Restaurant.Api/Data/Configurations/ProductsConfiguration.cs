@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Restaurant.API.Entities;
+using Restaurant.Api.Entities;
 
-namespace Restaurant.API.Data.Configurations;
+namespace Restaurant.Api.Data.Configurations;
 
 public class IngredientTypeConfiguration : BaseEntityTypeConfiguration<IngredientType>
 {

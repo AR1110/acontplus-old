@@ -1,8 +1,9 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.API.Entities;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Data;
+using Restaurant.Api.Entities;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Services;
+namespace Restaurant.Api.Services;
 
 public class IngredientService(IAdoRepository adoRepository, RestaurantContext context) : IIngredientService
 {

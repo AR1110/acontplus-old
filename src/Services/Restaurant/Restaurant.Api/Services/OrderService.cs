@@ -1,7 +1,8 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Data;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Services;
+namespace Restaurant.Api.Services;
 
 public class OrderService(
     IAdoRepository repository,

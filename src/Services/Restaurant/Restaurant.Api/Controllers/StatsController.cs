@@ -1,8 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using Restaurant.Api.Services;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 public class StatsController(IStatsService statsService) : BaseApiController
 {
     [HttpGet]

@@ -1,4 +1,5 @@
 ﻿using Common.Services.Middleware;
+using Restaurant.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

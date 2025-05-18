@@ -1,8 +1,8 @@
 ﻿using Common.S3Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Services;
+using Restaurant.Api.Services;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class PromotionController(
     IPromotionService promotionService,

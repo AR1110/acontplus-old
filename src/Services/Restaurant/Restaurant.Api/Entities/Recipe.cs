@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace Restaurant.API.Entities
+namespace Restaurant.Api.Entities
 {
     [Table("Recipe", Schema = "Restaurant")]
     public class Recipe : BaseEntity

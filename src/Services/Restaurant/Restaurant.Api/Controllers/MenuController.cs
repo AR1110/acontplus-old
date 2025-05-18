@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class MenuController(IMenuService menuService) : BaseApiController
 {

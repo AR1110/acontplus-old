@@ -1,4 +1,6 @@
-﻿public class DeviceCustomerService : IDeviceCustomerService
+﻿namespace TechnicalSupport.API.Services;
+
+public class DeviceCustomerService : IDeviceCustomerService
 {
     private readonly IAdoRepository _adoRepository;
 

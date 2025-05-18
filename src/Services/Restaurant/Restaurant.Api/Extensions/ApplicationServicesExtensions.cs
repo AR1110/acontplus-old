@@ -1,9 +1,10 @@
 ﻿using System.Threading.RateLimiting;
 using Common.Logging;
 using Newtonsoft.Json.Serialization;
+using Restaurant.Api.Data;
 using Scrutor;
 
-namespace Restaurant.API.Extensions;
+namespace Restaurant.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -72,7 +73,7 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
            [
-                "Restaurant.API.Services"
+                "Restaurant.Api.Services"
            ];
 
         services.Scan(scan => scan

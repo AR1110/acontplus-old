@@ -1,7 +1,7 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Services
+namespace Restaurant.Api.Services
 {
     public class ConsumptionConfigService(IAdoRepository adoRepository) : IConsumptionConfigService
     {

@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Text.Json;
-using Restaurant.API.Entities;
+using Restaurant.Api.Entities;
 
-namespace Restaurant.API.Data
+namespace Restaurant.Api.Data
 {
     public class RestaurantContextSeed
     {

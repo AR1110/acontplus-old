@@ -1,6 +1,6 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
 
-namespace Restaurant.API.Services;
+namespace Restaurant.Api.Services;
 public interface IPromotionMenuService
 {
     public Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters);

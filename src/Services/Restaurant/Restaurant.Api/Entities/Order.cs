@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace Restaurant.API.Entities
+namespace Restaurant.Api.Entities
 {
     [Table("Order", Schema = "Restaurant")]
     public class Order : BaseEntity

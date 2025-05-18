@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Services;
+using Restaurant.Api.Services;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class ConfigurationController(IConfigurationService configurationService) : BaseApiController
 {

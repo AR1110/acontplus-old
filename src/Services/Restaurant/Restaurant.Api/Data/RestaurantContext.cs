@@ -3,9 +3,9 @@ using Common.Infrastructure.Core.Context;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Restaurant.API.Entities;
+using Restaurant.Api.Entities;
 
-namespace Restaurant.API.Data;
+namespace Restaurant.Api.Data;
 
 public class RestaurantContext(DbContextOptions<RestaurantContext> options) : BaseContext(options)
 {
