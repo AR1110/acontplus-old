@@ -14,13 +14,12 @@ public class CuentaPorCobrarService(IAdoRepository adoRepository) : ICuentaPorCo
     //Cuotas
     public async Task<ApiResponse> UpdateCuotaAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"Contabilidad.CuotaPorCobrar_Update", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>("Contabilidad.CuotaPorCobrar_Update", parameters);
     }
 
     // Credito Garante
     public async Task<ApiResponse> AddGaranteAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"Ventas.CreditoGarante_Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>("Ventas.CreditoGarante_Insert", parameters);
     }
-
 }

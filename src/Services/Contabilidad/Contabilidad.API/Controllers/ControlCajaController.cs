@@ -11,10 +11,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
         };
 
         var response = await controlCajaService.GetAsync(parameters);
-        if (response == null)
-        {
-            return NoContent();
-        }
+        if (response == null) return NoContent();
 
         return Ok(response);
     }
@@ -29,7 +26,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await controlCajaService.AddAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         ;
         return Ok(response);
@@ -45,7 +42,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
         var response = await controlCajaService.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         ;
         return Ok(response);

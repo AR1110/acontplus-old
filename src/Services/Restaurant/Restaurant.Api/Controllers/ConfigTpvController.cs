@@ -9,7 +9,8 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     public async Task<IActionResult> Get()
     {
         var response =
-            await configService.GetAsync(new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") } });
+            await configService.GetAsync(new Dictionary<string, object>
+                { { "idRol", User.GetClaimValue<int>("userRoleId") } });
 
         return Ok(response);
     }

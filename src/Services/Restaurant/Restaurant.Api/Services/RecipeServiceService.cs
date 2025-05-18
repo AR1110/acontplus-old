@@ -1,5 +1,4 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.Api.Data;
 using Restaurant.Api.Entities;
 using Restaurant.Api.Interfaces;
 
@@ -33,10 +32,7 @@ public class RecipeServiceService(IAdoRepository adoRepository, RestaurantContex
     public async Task<ApiResponse> UpdateAsync(int id, Recipe recipe)
     {
         var recipeFound = await context.Recipes.FindAsync(id);
-        if (recipeFound == null)
-        {
-            return new ApiResponse { Code = "1", Message = "Recipe not found!" };
-        }
+        if (recipeFound == null) return new ApiResponse { Code = "1", Message = "Recipe not found!" };
 
         recipeFound.ItemId = recipe.ItemId;
         recipeFound.IngredientId = recipe.IngredientId;
@@ -55,10 +51,7 @@ public class RecipeServiceService(IAdoRepository adoRepository, RestaurantContex
     public async Task<ApiResponse> RemoveAsync(int userId, int id)
     {
         var recipe = await context.Recipes.FindAsync(id);
-        if (recipe == null)
-        {
-            return new ApiResponse { Code = "1", Message = "Recipe not found!" };
-        }
+        if (recipe == null) return new ApiResponse { Code = "1", Message = "Recipe not found!" };
 
         recipe.Enabled = false;
         recipe.Deleted = true;

@@ -10,7 +10,8 @@ public class PromotionMenuController(IPromotionMenuService promotionMenuService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }, { "id", id }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) },
+            { "id", id }
         };
 
         return Ok(await promotionMenuService.GetByIdAsync(parameters));

@@ -2,8 +2,7 @@
 
 public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
 {
-
-    [HttpGet()]
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var response = await _svc.GetAsync(new Dictionary<string, object>
@@ -11,10 +10,9 @@ public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
-
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
         request.UserRoleId = User.GetClaimValue<int>("userRoleId");
@@ -27,9 +25,9 @@ public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var response = await _svc.GetByIdAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
-            });
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
+        });
         return Ok(response);
     }
 
@@ -38,14 +36,14 @@ public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
     {
         var response = await _svc.UpdateAsync(id, request);
         return Ok(response);
-
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await _svc.DeleteAsync(parameters);
         return Ok(response);
     }

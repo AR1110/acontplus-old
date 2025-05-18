@@ -23,9 +23,7 @@ public class SubFamiliaController(
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
         if (file != null)
-        {
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
-        }
 
         var parameters = new Dictionary<string, object>
         {
@@ -37,14 +35,10 @@ public class SubFamiliaController(
 
         var response = await service.AddAsync(parameters);
 
-        if (response.Code == "1" && file != null)
-        {
-            await storageService.UploadAsync(s3ObjectCustom);
-        }
+        if (response.Code == "1" && file != null) await storageService.UploadAsync(s3ObjectCustom);
 
         if (file != null)
         {
-
         }
 
         ;
@@ -71,7 +65,8 @@ public class SubFamiliaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await service.UpdateAsync(parameters);
@@ -81,7 +76,8 @@ public class SubFamiliaController(
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         var response = await service.DeleteAsync(parameters);
         return Ok(response);

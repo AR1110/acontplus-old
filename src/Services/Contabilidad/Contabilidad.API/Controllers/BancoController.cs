@@ -29,7 +29,8 @@ public class BancoController(IBancoService bancoService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await bancoService.GetAsync(parameters));
     }
@@ -37,7 +38,8 @@ public class BancoController(IBancoService bancoService) : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await bancoService.GetAsync(parameters));
     }
 }

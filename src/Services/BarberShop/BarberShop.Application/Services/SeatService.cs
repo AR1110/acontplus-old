@@ -1,5 +1,4 @@
 ﻿using BarberShop.Infrastructure.Data.Repositories.Interfaces;
-using BarberShop.Infrastructure.Persistense;
 using Common.Infrastructure.Data.Repository.Models;
 
 namespace BarberShop.Application.Services;
@@ -25,13 +24,11 @@ public class SeatService(BarberShopContext context, ISeatRepository seatReposito
     {
         var seat = await context.Seats.FindAsync(id);
         if (seat == null)
-        {
             return new ApiResponse
             {
                 Code = "0",
                 Message = "Asiento no encontrado"
             };
-        }
 
         context.Seats.Remove(seat);
         await context.SaveChangesAsync();
@@ -61,13 +58,11 @@ public class SeatService(BarberShopContext context, ISeatRepository seatReposito
     {
         var seat = await context.Seats.FindAsync(id);
         if (seat == null)
-        {
             return new ApiResponse
             {
                 Code = "0",
                 Message = "Asiento no encontrado"
             };
-        }
 
         return new ApiResponse
         {
@@ -81,13 +76,11 @@ public class SeatService(BarberShopContext context, ISeatRepository seatReposito
     {
         var seat = await context.Seats.FindAsync(id);
         if (seat == null)
-        {
             return new ApiResponse
             {
                 Code = "0",
                 Message = "Asiento no encontrado"
             };
-        }
 
         seat.Name = seatDto.Name;
         seat.Description = seatDto.Description;

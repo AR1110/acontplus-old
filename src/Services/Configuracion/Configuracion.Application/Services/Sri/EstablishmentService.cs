@@ -13,10 +13,7 @@ public class EstablishmentService : IEstablishmentService
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
+        if (ds.Tables.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }
@@ -35,10 +32,7 @@ public class EstablishmentService : IEstablishmentService
     {
         var query = @"UPDATE Sri.Establecimiento SET autoSriAuth = @autoSriAuth WHERE idEstablecimiento = @id";
         var affectedRows = await _repository.ExecuteNonQueryAsync(query, parameters, false);
-        if (affectedRows > 0)
-        {
-            return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
-        }
+        if (affectedRows > 0) return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
 
         return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
     }

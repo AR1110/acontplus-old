@@ -9,7 +9,8 @@ public class OrderController(IOrderService orderService) : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+            new Dictionary<string, object>
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
 
         return Ok(await orderService.GetAsync(parameters));
     }
@@ -32,7 +33,7 @@ public class OrderController(IOrderService orderService) : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (id == 0) { return BadRequest("Id Incorrecto"); }
+        if (id == 0) return BadRequest("Id Incorrecto");
 
         return Ok(await orderService.DeleteAsync(User.GetUserId(), id));
     }
@@ -41,7 +42,8 @@ public class OrderController(IOrderService orderService) : BaseApiController
     public async Task<IActionResult> Print(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+            new Dictionary<string, object>
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await orderService.PrintAsync(parameters));
     }
 }

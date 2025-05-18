@@ -8,11 +8,11 @@ public class StockController(IStockService stockService) : BaseApiController
         var response =
             await stockService.UpdateAsync(new Dictionary<string, object>
             {
-                    { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
-        if (response == null) { return BadRequest("Error on put"); }
+        if (response == null) return BadRequest("Error on put");
 
-            ;
+        ;
         return Ok(response);
     }
 }

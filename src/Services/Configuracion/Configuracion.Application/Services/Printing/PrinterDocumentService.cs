@@ -11,10 +11,7 @@ public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentSer
 
     public async Task<ApiResponse> UpdateAsync(int id, PrinterDocument printerDocument)
     {
-        if (id != printerDocument.Id)
-        {
-            return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
-        }
+        if (id != printerDocument.Id) return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
 
         var document = await context.PrinterDocuments.FindAsync(id);
         document!.UserId = printerDocument.UserId;

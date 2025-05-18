@@ -1,5 +1,4 @@
-﻿using Restaurant.Api.Data;
-using Restaurant.Api.Entities;
+﻿using Restaurant.Api.Entities;
 using Restaurant.Api.Interfaces;
 
 namespace Restaurant.Api.Services;
@@ -70,10 +69,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var appTable = await context.Tables.FindAsync(id);
-        if (appTable == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Ingredient not found" };
-        }
+        if (appTable == null) return new ApiResponse { Code = "0", Message = "Ingredient not found" };
         //var orderExists = await context.Orders
         //           .Join(context.Tables,
         //                 order => order.TableId,

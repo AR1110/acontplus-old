@@ -2,8 +2,8 @@
 
 public class CategoryController : BaseApiController
 {
-    private readonly ICategoryService _categoryService;
     private const string CompanyId = "companyId";
+    private readonly ICategoryService _categoryService;
 
     public CategoryController(ICategoryService categoryService)
     {
@@ -17,7 +17,7 @@ public class CategoryController : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) { return BadRequest("Can't Get brand"); }
+        if (response == null) return BadRequest("Can't Get brand");
 
         ;
         return Ok(response);

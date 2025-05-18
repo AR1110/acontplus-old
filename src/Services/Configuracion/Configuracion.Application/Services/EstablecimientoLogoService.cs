@@ -21,7 +21,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
     public async Task<object> DeleteAsync(int id)
     {
         var logo = await _context.EstablecimientoLogos.FindAsync(id);
-        if (logo == null) { return null; }
+        if (logo == null) return null;
         _context.Remove(logo);
         await _context.SaveChangesAsync();
         return new { code = "1", message = "Eliminado Exitosamente" };
@@ -29,14 +29,11 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
 
     public async Task<EstablecimientoLogo> GetAsync(int establecimientoId)
     {
-        var logo = await _context.EstablecimientoLogos.FirstOrDefaultAsync(
-            x => x.EstablecimientoId == establecimientoId);
-        if (logo == null) { return null; }
+        var logo =
+            await _context.EstablecimientoLogos.FirstOrDefaultAsync(x => x.EstablecimientoId == establecimientoId);
+        if (logo == null) return null;
 
-        if (logo.IsCompressed == true)
-        {
-            logo.Content = CompressionUtils.DecompressDeflate(logo.Content);
-        }
+        if (logo.IsCompressed == true) logo.Content = CompressionUtils.DecompressDeflate(logo.Content);
 
         return logo;
     }
@@ -44,7 +41,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
     public async Task<object> UpdateAsync(int id, EstablecimientoLogo data)
     {
         var logo = await _context.EstablecimientoLogos.FindAsync(id);
-        if (logo == null) { return null; }
+        if (logo == null) return null;
 
         ;
         logo.Content = data.Content;

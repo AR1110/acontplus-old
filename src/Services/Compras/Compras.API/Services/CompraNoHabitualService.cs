@@ -3,10 +3,11 @@
 public class CompraNoHabitualService(IAdoRepository _repository) : ICompraNoHabitualService
 {
     private const string moduleName = "Compra.Documento_Ingreso_";
+
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync($"{moduleName}Get", parameters);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
+        if (ds.Tables[0].Rows.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }

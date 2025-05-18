@@ -24,16 +24,10 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
 
     public async Task<ApiResponse> UpdateAsync(int id, Printer printer)
     {
-        if (id != printer.Id)
-        {
-            return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
-        }
+        if (id != printer.Id) return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
 
         var printerFound = await context.Printers.FindAsync(id);
-        if (printerFound == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Item not found!" };
-        }
+        if (printerFound == null) return new ApiResponse { Code = "0", Message = "Item not found!" };
 
         printerFound.PrinterTypeId = printer.PrinterTypeId;
         printerFound.Name = printer.Name;
@@ -54,10 +48,7 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
     public async Task<ApiResponse> DeleteAsync(int id, int userId)
     {
         var printerFound = await context.Printers.FindAsync(id);
-        if (printerFound == null)
-        {
-            return null;
-        }
+        if (printerFound == null) return null;
 
         context.Remove(printerFound);
         await context.SaveChangesAsync();

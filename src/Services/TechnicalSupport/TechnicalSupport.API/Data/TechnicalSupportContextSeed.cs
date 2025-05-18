@@ -15,9 +15,6 @@ public class TechnicalSupportContextSeed
             context.OrderStatuses.AddRange(statuses);
         }
 
-        if (context.ChangeTracker.HasChanges())
-        {
-            await context.SaveChangesAsync();
-        }
+        if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
     }
 }

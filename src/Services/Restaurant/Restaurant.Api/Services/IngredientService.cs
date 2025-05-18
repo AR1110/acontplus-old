@@ -1,5 +1,4 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.Api.Data;
 using Restaurant.Api.Entities;
 using Restaurant.Api.Interfaces;
 
@@ -17,7 +16,7 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
 
     public async Task<ApiResponse> GetByIdAsync(int id)
     {
-        var parameters = new Dictionary<string, object> { { "id", id }, };
+        var parameters = new Dictionary<string, object> { { "id", id } };
         var ds = await adoRepository.GetDataSetAsync("Restaurant.Ingredient_GetById", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { Code = "0", Message = "Data not found" }
@@ -36,10 +35,7 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
     public async Task<ApiResponse> UpdateAsync(int id, Ingredient ingredient)
     {
         var ingredientFound = await context.Ingredients.FindAsync(id);
-        if (ingredientFound == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Ingredient not found" };
-        }
+        if (ingredientFound == null) return new ApiResponse { Code = "0", Message = "Ingredient not found" };
         ingredientFound.IngredientTypeId = ingredient.IngredientTypeId;
         ingredientFound.Quantity = ingredient.Quantity;
         ingredientFound.Summary = ingredient.Summary;
@@ -55,10 +51,7 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var ingredient = await context.Ingredients.FindAsync(id);
-        if (ingredient == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Ingredient not found" };
-        }
+        if (ingredient == null) return new ApiResponse { Code = "0", Message = "Ingredient not found" };
 
         ingredient.Enabled = false;
         ingredient.Deleted = true;

@@ -17,10 +17,7 @@ public class BreedController(IBreedService breedService) : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Breed breed)
     {
-        if (id != breed.Id)
-        {
-            return BadRequest();
-        }
+        if (id != breed.Id) return BadRequest();
 
         breed.UserId = User.GetUserId();
         return Ok(await breedService.UpdateAsync(id, breed));

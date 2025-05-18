@@ -16,6 +16,7 @@ Authorization: {{Token}}
 {
   "data": "{\"subject\":\"Reporte Control Caja\",\"receptor\":\"zaratec@acontplus.com.ec\",\"params\":{\"hasFile\":true,\"isReport\":\"SI\",\"reportParams\":{\"hasParams\":true,\"codigo\":\"RCC\",\"format\":\"pdf\"},\"spParams\":{\"tipo\":1,\"id\":15675}}}"
 }
+
 ###
 
 GET {{Common.API_HostAddress}}/release

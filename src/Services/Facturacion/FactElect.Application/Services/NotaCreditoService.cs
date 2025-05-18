@@ -24,6 +24,6 @@ public class NotaCreditoService(IAdoRepository adoRepository) : INotaCreditoServ
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters, timeout: false);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters, false);
     }
 }

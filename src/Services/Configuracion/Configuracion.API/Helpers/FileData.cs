@@ -19,10 +19,7 @@ public static class FileData
         bool result;
         try
         {
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             var filePath = Path.Combine(path, file.FileName);
             using (var stream = File.Create(filePath))

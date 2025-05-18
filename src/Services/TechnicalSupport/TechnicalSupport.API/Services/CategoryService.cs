@@ -2,8 +2,8 @@
 
 public class CategoryService : ICategoryService
 {
-    private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;
+    private readonly TechnicalSupportContext _context;
 
     public CategoryService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
@@ -22,10 +22,8 @@ public class CategoryService : ICategoryService
     {
         var category = await _context.Categories.FindAsync(id);
         if (category == null)
-        {
             // Handle case where category not found
             return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
-        }
 
         category.Enabled = false;
         category.Deleted = true;
@@ -37,16 +35,10 @@ public class CategoryService : ICategoryService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        if (!await _context.Categories.AnyAsync())
-        {
-            return new ApiResponse { Code = "0", Message = "No data" };
-        }
+        if (!await _context.Categories.AnyAsync()) return new ApiResponse { Code = "0", Message = "No data" };
 
         var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
-        if (DataValidation.DataTableIsNull(dt))
-        {
-            return new ApiResponse { Code = "0", Message = "No data" };
-        }
+        if (DataValidation.DataTableIsNull(dt)) return new ApiResponse { Code = "0", Message = "No data" };
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
@@ -56,10 +48,8 @@ public class CategoryService : ICategoryService
     {
         var categoryFound = await _context.Categories.FindAsync(id);
         if (categoryFound == null)
-        {
             // Handle case where category not found
             return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
-        }
 
         categoryFound.CompanyId = category.CompanyId;
         categoryFound.Code = category.Code;

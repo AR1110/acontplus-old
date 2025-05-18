@@ -2,17 +2,13 @@
 
 public class StockFisicoService(IAdoRepository _repository) : IStockFisicoService
 {
-
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("Inventario.StockFisico_Get", parameters);
 
         if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
         {
-            if (ds.Tables.Count > 0)
-            {
-                ds = new DataSet();
-            }
+            if (ds.Tables.Count > 0) ds = new DataSet();
 
             return null;
         }

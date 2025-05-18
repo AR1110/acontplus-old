@@ -10,7 +10,7 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await lotPriceService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(response);
     }
@@ -24,7 +24,7 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
         };
         var response = await lotPriceService.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(response);
     }

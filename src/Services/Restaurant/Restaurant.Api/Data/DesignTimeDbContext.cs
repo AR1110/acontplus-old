@@ -1,27 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 
-namespace Restaurant.Api.Data
+namespace Restaurant.Api.Data;
+
+public class DesignTimeDbContext : IDesignTimeDbContextFactory<RestaurantContext>
 {
-    public class DesignTimeDbContext : IDesignTimeDbContextFactory<RestaurantContext>
+    private const string _databaseName = "DefaultConnection";
+    private const string _migrationAssembly = "Restaurant.Api";
+
+    public RestaurantContext CreateDbContext(string[] args)
     {
-        private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "Restaurant.Api";
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        public RestaurantContext CreateDbContext(string[] args)
-        {
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.Api
+            .AddJsonFile("sharedsettings.Development.json", true, true)
+            .Build();
 
-            IConfiguration configuration = new ConfigurationBuilder()
-                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.Api
-                .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
-                .Build();
+        var connectionString = configuration.GetConnectionString(_databaseName);
 
-            var connectionString = configuration.GetConnectionString(_databaseName);
+        var dbContextOptionsBuilder = new DbContextOptionsBuilder<RestaurantContext>()
+            .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));
 
-            var dbContextOptionsBuilder = new DbContextOptionsBuilder<RestaurantContext>()
-                .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));
-
-            return new RestaurantContext(dbContextOptionsBuilder.Options);
-        }
+        return new RestaurantContext(dbContextOptionsBuilder.Options);
     }
 }

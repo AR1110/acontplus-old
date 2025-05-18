@@ -9,7 +9,8 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await ingredientService.GetAsync(parameters));
     }
 

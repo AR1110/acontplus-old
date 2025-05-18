@@ -1,9 +1,8 @@
-﻿namespace Mechanical.API.Helpers
+﻿namespace Mechanical.API.Helpers;
+
+public enum Env
 {
-    public enum Env
-    {
-        Development,
-        Staging,
-        Production
-    }
+    Development,
+    Staging,
+    Production
 }

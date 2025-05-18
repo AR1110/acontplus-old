@@ -16,6 +16,7 @@ Authorization: {{Token}}
   "Code": "A1",
   "Name": "Asiento 1"
 }
+
 ###
 
 @id=0
@@ -40,4 +41,5 @@ Authorization: {{Token}}
   "Code": "A2",
   "Name": "Asiento 2"
 }
+
 ###

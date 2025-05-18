@@ -15,9 +15,6 @@ public class ConfigContextSeed
             context.PrinterTypes.AddRange(printerTypes);
         }
 
-        if (context.ChangeTracker.HasChanges())
-        {
-            await context.SaveChangesAsync();
-        }
+        if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
     }
 }

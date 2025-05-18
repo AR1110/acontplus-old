@@ -28,10 +28,7 @@ public class AtsController(IAtsService atsService) : BaseApiController
 
             var actualYear = DateTime.Now.Year;
 
-            for (var i = 0; i < totalYears; i++)
-            {
-                years.Add(new YearModel { Year = actualYear - i });
-            }
+            for (var i = 0; i < totalYears; i++) years.Add(new YearModel { Year = actualYear - i });
 
             periods = [years, months];
         }

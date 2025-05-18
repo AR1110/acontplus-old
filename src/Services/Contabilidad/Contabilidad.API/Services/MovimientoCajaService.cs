@@ -12,10 +12,7 @@ public class MovimientoCajaService : IMovimientoCajaService
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("Contabilidad.MovimientoCaja_Get", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
+        if (ds.Tables.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }

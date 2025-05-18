@@ -12,12 +12,11 @@ public class SubcategoryPhotoController(
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-
         var response = await subcategoryPhoto.GetAsync(new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-            });
-        if (response == null) { return BadRequest($"Cant get data: {json}"); }
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        if (response == null) return BadRequest($"Cant get data: {json}");
 
         return Ok(response);
     }
@@ -30,9 +29,7 @@ public class SubcategoryPhotoController(
             var data = new SubcategoryPhoto();
             data.UserId = User.GetUserId();
             if (file != null)
-            {
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
-            }
 
             data.SubcategoryId = subcategoryId;
             data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
@@ -41,7 +38,6 @@ public class SubcategoryPhotoController(
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-
             }
 
             return Ok(response);
@@ -50,8 +46,8 @@ public class SubcategoryPhotoController(
         {
             if (file != null)
             {
-
             }
+
             return BadRequest(ex.Message);
         }
     }
@@ -65,16 +61,14 @@ public class SubcategoryPhotoController(
             data = JsonConvert.DeserializeObject<SubcategoryPhoto>(json);
             data.UserId = User.GetUserId();
             if (file != null)
-            {
-                await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file, data.S3ObjectKey,
+                await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file,
+                    data.S3ObjectKey,
                     data.S3ObjectUrl);
-            }
 
             var response = await subcategoryPhoto.UpdateAsync(id, data);
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
-
             }
 
             return Ok(response);
@@ -83,8 +77,8 @@ public class SubcategoryPhotoController(
         {
             if (file != null)
             {
-
             }
+
             return BadRequest(ex.Message);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.Api.Data;
 using Restaurant.Api.Interfaces;
 
 namespace Restaurant.Api.Services;
@@ -41,7 +40,7 @@ public class OrderService(
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var order = await context.Orders.FindAsync(id);
-        if (order == null) { return new ApiResponse { Code = "0", Message = "Order not found" }; }
+        if (order == null) return new ApiResponse { Code = "0", Message = "Order not found" };
 
         order.Enabled = false;
         context.Update(order);

@@ -52,19 +52,19 @@ public class FileTextService : IFileTextService
             switch (items.Length)
             {
                 case 12:
+                {
+                    switch (dt.Rows.Count)
                     {
-                        switch (dt.Rows.Count)
-                        {
-                            case 1:
-                                dt.Rows[0]["importeTotal"] = items[11];
-                                break;
-                            case > 1:
-                                dt.Rows[positionDr - 1]["importeTotal"] = items[11];
-                                break;
-                        }
-
-                        break;
+                        case 1:
+                            dt.Rows[0]["importeTotal"] = items[11];
+                            break;
+                        case > 1:
+                            dt.Rows[positionDr - 1]["importeTotal"] = items[11];
+                            break;
                     }
+
+                    break;
+                }
                 //
                 case 1 when items[0] != "IMPORTE_TOTAL":
                     dt.Rows[positionDr - 1]["importeTotal"] = items[0];

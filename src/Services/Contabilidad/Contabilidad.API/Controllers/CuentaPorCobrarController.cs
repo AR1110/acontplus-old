@@ -11,7 +11,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await cuentaPorCobrarService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(response);
     }
@@ -20,7 +20,6 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     [HttpPut("Update/Cuota")]
     public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
     {
-
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
@@ -33,7 +32,6 @@ public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarSe
     [HttpPost("Insert/Garante")]
     public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
     {
-
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },

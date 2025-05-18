@@ -3,9 +3,9 @@
 [Table("PorcentajeRetencionIva", Schema = "Sri")]
 public class PorcentajeRetencionIva : BaseEntity
 {
-    [Required, MaxLength(5)] public required string Codigo { get; set; }
+    [Required] [MaxLength(5)] public required string Codigo { get; set; }
 
-    [Required, MaxLength(50)] public required string Descripcion { get; set; }
+    [Required] [MaxLength(50)] public required string Descripcion { get; set; }
 
     [Column(TypeName = "numeric(6,2), null")]
     public decimal Porcentaje { get; set; }

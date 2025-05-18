@@ -47,7 +47,8 @@ public class ModeloController(IModeloService modeloService) : BaseApiController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         var response = await modeloService.DeleteAsync(parameters);
         return Ok(response);

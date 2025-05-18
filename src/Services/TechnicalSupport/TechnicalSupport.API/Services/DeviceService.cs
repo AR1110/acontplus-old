@@ -2,8 +2,8 @@
 
 public class DeviceService : IDeviceService
 {
-    private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;
+    private readonly TechnicalSupportContext _context;
 
     public DeviceService(IAdoRepository adoRepository, TechnicalSupportContext context)
     {
@@ -15,7 +15,7 @@ public class DeviceService : IDeviceService
     {
         if (device.Customers.Count > 0)
         {
-            foreach (var product in device.Customers) { product.UserId = device.UserId; }
+            foreach (var product in device.Customers) product.UserId = device.UserId;
 
             ;
         }
@@ -30,10 +30,7 @@ public class DeviceService : IDeviceService
     public async Task<ApiResponse> DeleteAsync(int id, int userId)
     {
         var device = await _context.Devices.FindAsync(id);
-        if (device == null)
-        {
-            return new ApiResponse { Code = "0", Message = "No existe el equipo" };
-        }
+        if (device == null) return new ApiResponse { Code = "0", Message = "No existe el equipo" };
 
         device.Enabled = false;
         device.Deleted = true;
@@ -47,19 +44,14 @@ public class DeviceService : IDeviceService
     {
         var ds = await _adoRepository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, Device device)
     {
-        if (id != device.Id)
-        {
-            return new ApiResponse { Code = "0", Message = "El id no coincide" };
-        }
+        if (id != device.Id) return new ApiResponse { Code = "0", Message = "El id no coincide" };
 
         var productFounded = await _context.Devices.FindAsync(id);
         productFounded.ModeloId = device.ModeloId;

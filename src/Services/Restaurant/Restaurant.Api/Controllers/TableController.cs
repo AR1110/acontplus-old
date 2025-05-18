@@ -31,6 +31,7 @@ public class TableController(IAppTableService tableService) : BaseApiController
 
         return Ok(await tableService.UpdateAsync(id, appTable));
     }
+
     [HttpPut("Unassign/{id}")]
     public async Task<IActionResult> Unassign(int id)
     {

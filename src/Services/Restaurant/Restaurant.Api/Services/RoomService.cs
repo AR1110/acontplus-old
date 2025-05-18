@@ -1,5 +1,4 @@
-﻿using Restaurant.Api.Data;
-using Restaurant.Api.Entities;
+﻿using Restaurant.Api.Entities;
 using Restaurant.Api.Interfaces;
 
 namespace Restaurant.Api.Services;
@@ -18,25 +17,20 @@ public class RoomService(RestaurantContext context) : IRoomService
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var room = await context.Rooms.FindAsync(id);
-        if (room == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Room not found" };
-        }
+        if (room == null) return new ApiResponse { Code = "0", Message = "Room not found" };
         var orderExists = await context.Orders
-                    .Join(context.Tables,
-                          order => order.TableId,
-                          table => table.Id,
-                          (order, table) => new { order, table })
-                    .Join(context.Rooms,
-                          combined => combined.table.RoomId,
-                          room => room.Id,
-                          (combined, room) => new { combined.order, room })
-                    .AnyAsync(f => f.room.Id == id);
+            .Join(context.Tables,
+                order => order.TableId,
+                table => table.Id,
+                (order, table) => new { order, table })
+            .Join(context.Rooms,
+                combined => combined.table.RoomId,
+                room => room.Id,
+                (combined, room) => new { combined.order, room })
+            .AnyAsync(f => f.room.Id == id);
 
         if (orderExists)
-        {
             return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
-        }
 
         context.Remove(room);
         await context.SaveChangesAsync();
@@ -66,10 +60,7 @@ public class RoomService(RestaurantContext context) : IRoomService
     public async Task<ApiResponse> UpdateAsync(int id, Room room)
     {
         var roomFound = await context.Rooms.FindAsync(id);
-        if (roomFound == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Room not found" };
-        }
+        if (roomFound == null) return new ApiResponse { Code = "0", Message = "Room not found" };
 
         roomFound.Code = room.Code;
         roomFound.Capacity = room.Capacity;

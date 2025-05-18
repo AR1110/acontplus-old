@@ -13,9 +13,7 @@ public class UserService : IUserService
     {
         var ds = await _repository.GetDataSetAsync("Seguridad.User_Get", parameters);
         if (DataValidation.DataSetIsNull(ds))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }

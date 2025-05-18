@@ -1,4 +1,5 @@
-﻿using BarberShop.Infrastructure.Persistence;
+﻿using System.IO.Compression;
+using BarberShop.Infrastructure.Persistence;
 using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
@@ -25,15 +26,9 @@ public static class ApplicationServicesExtensions
             options.Providers.Add<GzipCompressionProvider>();
         });
 
-        services.Configure<BrotliCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.Configure<GzipCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddHttpContextAccessor();
 

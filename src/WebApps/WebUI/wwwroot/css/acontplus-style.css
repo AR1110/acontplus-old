@@ -31,15 +31,13 @@
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-    .floating-results .list-group-item {
-        cursor: pointer;
-    }
+.floating-results .list-group-item {
+    cursor: pointer;
+}
 
-        .floating-results .list-group-item:hover {
-            background-color: #f8f9fa;
-        }
-
-
+.floating-results .list-group-item:hover {
+    background-color: #f8f9fa;
+}
 
 
 /*Diseño de la Tabla md-table*/
@@ -67,18 +65,17 @@ table.md-table tr td.md-cell {
 }
 
 
-
 /*Kardex Colores de una columna de una Tabla */
 .table-entradas {
     background-color: rgb(229 194 233 / 25%);
 }
 
 .table-salidas {
-    background-color: rgba(219,125,125,0.25);
+    background-color: rgba(219, 125, 125, 0.25);
 }
 
 .table-saldos {
-    background-color: rgba(46,155,92,.34);
+    background-color: rgba(46, 155, 92, .34);
 }
 
 
@@ -98,14 +95,14 @@ table.md-table tr td.md-cell {
     padding: 6px;
 }
 
-    .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
-        color: rgba(0, 0, 0, 0.54);
-        padding: 6px;
-        font-weight: bold;
-        /* font-size: 400; */
-        text-align: center;
-        white-space: nowrap;
-    }
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+    color: rgba(0, 0, 0, 0.54);
+    padding: 6px;
+    font-weight: bold;
+    /* font-size: 400; */
+    text-align: center;
+    white-space: nowrap;
+}
 
 
 /*botones personalizados */
@@ -115,17 +112,15 @@ table.md-table tr td.md-cell {
     border-color: #007bff;
 }
 
-    .btn-primary-1:hover {
-        color: #fff;
-    }
+.btn-primary-1:hover {
+    color: #fff;
+}
 
 .btn-warning-1 {
     color: #212529;
     background-color: #ffc107;
     border-color: #ffc107;
 }
-
-
 
 
 /* .suggestion-codigo {
@@ -143,7 +138,6 @@ table.md-table tr td.md-cell {
         min-width: 200px;    
         max-width: 200px;             
     }; */
-
 
 
 /* #sidebarnav {
@@ -167,7 +161,6 @@ table.md-table tr td.md-cell {
 }
 
 
-
 .suggestion-codigo {
     width: 100px;
     min-width: 100px;
@@ -189,17 +182,17 @@ table.md-table tr td.md-cell {
     color: rgb(265, 64, 129);
 }
 
-    .text-rojo:hover {
-        color: rgb(265, 64, 129);
-    }
+.text-rojo:hover {
+    color: rgb(265, 64, 129);
+}
 
 .text-azul {
     color: rgb(63, 81, 181);
 }
 
-    .text-azul:hover {
-        color: rgb(63, 81, 181);
-    }
+.text-azul:hover {
+    color: rgb(63, 81, 181);
+}
 
 
 .ui-grid,
@@ -270,7 +263,6 @@ table.md-table tr td.md-cell {
 }
 
 
-
 /*forma de pago*/
 .precio-cobro {
     border: 2px solid #304FFE;
@@ -297,7 +289,6 @@ table.md-table tr td.md-cell {
 }
 
 
-
 .detail {
     font-size: 22px;
     font-weight: 500
@@ -309,12 +300,10 @@ table.md-table tr td.md-cell {
     border: 2px solid #eee
 }
 
-    .input-valor:focus {
-        box-shadow: none;
-        border: 2px solid #304FFE
-    }
-
-
+.input-valor:focus {
+    box-shadow: none;
+    border: 2px solid #304FFE
+}
 
 
 /*Estilo para busqueda de articulo en el detalle*/
@@ -351,34 +340,34 @@ table.md-table tr td.md-cell {
     white-space: nowrap;
 }
 
-    .rtable tbody {
-        background-size: 5px 100%, 5px 100%;
-        background-attachment: scroll, scroll;
-        background-repeat: no-repeat;
-    }
+.rtable tbody {
+    background-size: 5px 100%, 5px 100%;
+    background-attachment: scroll, scroll;
+    background-repeat: no-repeat;
+}
 
-    /* .rtable tbody>tr:hover {
-    cursor: pointer;
-    background-color: #0088cc;
-    color: white;
+/* .rtable tbody>tr:hover {
+cursor: pointer;
+background-color: #0088cc;
+color: white;
 } */
 
-    .rtable th {
-        color: #161515;
-        font-size: 10px;
-        text-align: center;
-        text-transform: uppercase;
-        /* background: #f2f0e6; */
-    }
+.rtable th {
+    color: #161515;
+    font-size: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    /* background: #f2f0e6; */
+}
 
-    .rtable th,
-    .rtable td {
-        border-bottom: 1px solid #d9d7ce;
-    }
+.rtable th,
+.rtable td {
+    border-bottom: 1px solid #d9d7ce;
+}
 
-    .rtable td {
-        font-size: 10px;
-    }
+.rtable td {
+    font-size: 10px;
+}
 
 .suggestion-name {
     font-size: 12px;
@@ -419,9 +408,9 @@ table.md-table tr td.md-cell {
     white-space: normal;
 }
 
-    .autocomplete-custom-template .md-autocomplete-suggestion:last-child {
-        border-bottom-width: 0;
-    }
+.autocomplete-custom-template .md-autocomplete-suggestion:last-child {
+    border-bottom-width: 0;
+}
 
 .autocomplete-custom-template .item-title,
 .autocomplete-custom-template .item-metadata {
@@ -429,12 +418,10 @@ table.md-table tr td.md-cell {
     line-height: 2;
 }
 
-    .autocomplete-custom-template .item-title md-icon {
-        height: 18px;
-        width: 18px;
-    }
-
-
+.autocomplete-custom-template .item-title md-icon {
+    height: 18px;
+    width: 18px;
+}
 
 
 /*Autocomplete uib-typeahead*/
@@ -447,21 +434,21 @@ table.md-table tr td.md-cell {
     white-space: normal;
 }
 
-    .autocomplete-suggestion-uib-typeahead:hover {
-        background-color: #0088cc !important;
-        color: white !important;
-        cursor: pointer !important;
-    }
+.autocomplete-suggestion-uib-typeahead:hover {
+    background-color: #0088cc !important;
+    color: white !important;
+    cursor: pointer !important;
+}
 
-    .autocomplete-suggestion-uib-typeahead:last-child {
-        border-bottom-width: 0;
-    }
+.autocomplete-suggestion-uib-typeahead:last-child {
+    border-bottom-width: 0;
+}
 
-    .autocomplete-suggestion-uib-typeahead .item-title,
-    .autocomplete-suggestion-uib-typeahead .item-metadata {
-        display: block;
-        line-height: 2;
-    }
+.autocomplete-suggestion-uib-typeahead .item-title,
+.autocomplete-suggestion-uib-typeahead .item-metadata {
+    display: block;
+    line-height: 2;
+}
 
 
 /**/
@@ -603,9 +590,9 @@ input.card {
     color: #1976d2
 }
 
-    .bg.btn.btn-primary:hover {
-        color: #539ee9
-    }
+.bg.btn.btn-primary:hover {
+    color: #539ee9
+}
 
 /*Modulo Cobro */
 /*Buscador Cliente */
@@ -618,11 +605,11 @@ input.card {
     white-space: normal;
 }
 
-    .autocomplete-suggestion-cliente:hover {
-        background-color: #0088cc !important;
-        color: white !important;
-        cursor: pointer !important;
-    }
+.autocomplete-suggestion-cliente:hover {
+    background-color: #0088cc !important;
+    color: white !important;
+    cursor: pointer !important;
+}
 
 /* .autocomplete-suggestion-cliente:last-child {
     border-bottom-width: 0;
@@ -643,7 +630,6 @@ input.card {
     margin: 0.8em 0 .8em;
     max-width: 300px;
 } */
-
 
 
 /*Articulo*/
@@ -673,8 +659,6 @@ input.card {
     max-width: none;
     height: 90%;
 }
-
-
 
 
 .full-height-payment {
@@ -724,39 +708,37 @@ input.card {
     font-size: 12px;
 }
 
-    .btn.btn-app > .fa,
-    .btn.btn-app > .glyphicon,
-    .btn.btn-app > .ion {
-        font-size: 20px;
-        display: block;
-    }
+.btn.btn-app > .fa,
+.btn.btn-app > .glyphicon,
+.btn.btn-app > .ion {
+    font-size: 20px;
+    display: block;
+}
 
-    .btn.btn-app:hover {
-        background: #f4f4f4;
-        color: #444;
-        border-color: #aaa;
-    }
+.btn.btn-app:hover {
+    background: #f4f4f4;
+    color: #444;
+    border-color: #aaa;
+}
 
-    .btn.btn-app:active,
-    .btn.btn-app:focus {
-        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    }
+.btn.btn-app:active,
+.btn.btn-app:focus {
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
 
-    .btn.btn-app > .badge {
-        position: absolute;
-        top: -3px;
-        right: -10px;
-        font-size: 10px;
-        font-weight: 400;
-    }
+.btn.btn-app > .badge {
+    position: absolute;
+    top: -3px;
+    right: -10px;
+    font-size: 10px;
+    font-weight: 400;
+}
 
 
 .uibModalFullScreen .modal-dialog {
     max-width: 1300px;
 }
-
-
 
 
 * {
@@ -806,29 +788,28 @@ input.card {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
 }
 
-    .Rtable.Rtable-row {
-        width: 100%;
-        display: flex;
-    }
+.Rtable.Rtable-row {
+    width: 100%;
+    display: flex;
+}
 
-        .Rtable.Rtable-row.Rtable-cell {
-            box-sizing: border-box;
-            flex-grow: 1;
-            padding: 0.8em 1.2em;
-            overflow: hidden;
-            list-style: none;
-        }
+.Rtable.Rtable-row.Rtable-cell {
+    box-sizing: border-box;
+    flex-grow: 1;
+    padding: 0.8em 1.2em;
+    overflow: hidden;
+    list-style: none;
+}
 
-            .Rtable.Rtable-row.Rtable-cell.column-heading {
-                background-color: #43bac0;
-                color: white;
-                padding: 1em;
-            }
+.Rtable.Rtable-row.Rtable-cell.column-heading {
+    background-color: #43bac0;
+    color: white;
+    padding: 1em;
+}
 
-        .Rtable.Rtable-row.Rtable-cell--heading {
-            display: none;
-        }
-
+.Rtable.Rtable-row.Rtable-cell--heading {
+    display: none;
+}
 
 
 /* Responsive
@@ -845,48 +826,48 @@ input.card {
         box-shadow: none;
     }
 
-        .Rtable--collapse.Rtable-row {
-            box-sizing: border-box;
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 2em;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-        }
+    .Rtable--collapse.Rtable-row {
+        box-sizing: border-box;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 2em;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    }
 
-            .Rtable--collapse.Rtable-row.Rtable-cell {
-                width: 100% !important;
-                display: flex;
-                align-items: center;
-            }
+    .Rtable--collapse.Rtable-row.Rtable-cell {
+        width: 100% !important;
+        display: flex;
+        align-items: center;
+    }
 
-            .Rtable--collapse.Rtable-row.Rtable-cell--heading {
-                display: inline-block;
-                flex: 1;
-                max-width: 120px;
-                min-width: 120px;
-                color: #43bac0;
-                font-weight: 700;
-                border-right: 1px solid #ccc;
-                margin-right: 1em;
-            }
+    .Rtable--collapse.Rtable-row.Rtable-cell--heading {
+        display: inline-block;
+        flex: 1;
+        max-width: 120px;
+        min-width: 120px;
+        color: #43bac0;
+        font-weight: 700;
+        border-right: 1px solid #ccc;
+        margin-right: 1em;
+    }
 
-            .Rtable--collapse.Rtable-row.Rtable-cell--content {
-                flex: 2;
-                padding-left: 1em;
-            }
+    .Rtable--collapse.Rtable-row.Rtable-cell--content {
+        flex: 2;
+        padding-left: 1em;
+    }
 
 
-        .Rtable--collapse.topic-cell {
-            background-color: #43bac0;
-            color: white;
-            font-weight: 700;
-            order: -1;
-        }
+    .Rtable--collapse.topic-cell {
+        background-color: #43bac0;
+        color: white;
+        font-weight: 700;
+        order: -1;
+    }
 
-            .Rtable--collapse.topic-cell.Rtable-cell--content {
-                padding-left: 0 !important;
-            }
+    .Rtable--collapse.topic-cell.Rtable-cell--content {
+        padding-left: 0 !important;
+    }
 
 
     .Rtable-row--head {
@@ -898,12 +879,10 @@ input.card {
         display: block;
     }
 
-        .no-flexbox .Rtable.Rtable-cell {
-            width: 100%;
-        }
+    .no-flexbox .Rtable.Rtable-cell {
+        width: 100%;
+    }
 }
-
-
 
 
 /*Used in invoice*/

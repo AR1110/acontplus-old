@@ -1,7 +1,6 @@
-﻿namespace Compras.API.Interfaces
+﻿namespace Compras.API.Interfaces;
+
+public interface IArticuloService
 {
-    public interface IArticuloService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

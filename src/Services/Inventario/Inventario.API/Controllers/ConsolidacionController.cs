@@ -6,24 +6,25 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+        };
         var response = await consolidacionService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
-            ;
+        ;
         return Ok(response);
     }
 
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await consolidacionService.GetIdAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
-            ;
+        ;
         return Ok(response);
     }
 
@@ -32,10 +33,10 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     public async Task<IActionResult> Post(ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json",SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
 
 
         var response = await consolidacionService.AddAsync(parameters);
@@ -46,11 +47,11 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
         var response = await consolidacionService.UpdateAsync(parameters);
         return Ok(response);
     }
@@ -58,7 +59,8 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await consolidacionService.DeleteAsync(parameters);
         return Ok(response);
     }
@@ -68,14 +70,12 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
     public async Task<IActionResult> Importacion(ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-                { "json", DataConverters.SerializeDictionary(data.Data) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", DataConverters.SerializeDictionary(data.Data) }
+        };
 
         var response = await consolidacionService.GetAsync(parameters);
         return Ok(response);
     }
-
-
 }

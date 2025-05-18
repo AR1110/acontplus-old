@@ -30,13 +30,12 @@ public class RetencionAtsService(IAdoRepository adoRepository) : IRetencionAtsSe
     public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}GetById", parameters);
-        return !DataValidation.DataSetIsNull(ds, removeEmptyDt: true)
+        return !DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
 
         //var response = await adoRepository.SpExecuteAsync<RetencionAtsDto>($"{ModuleName}GetById", parameters);
         //return new ApiResponse { Code = "1", Payload = response };
-
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)

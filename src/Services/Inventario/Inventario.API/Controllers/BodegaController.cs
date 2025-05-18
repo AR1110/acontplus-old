@@ -21,7 +21,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json",  SqlStringParam.Sanitize(json) },
+            { "json", SqlStringParam.Sanitize(json) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
@@ -37,7 +37,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
         {
             { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json",  SqlStringParam.Sanitize(json) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await bodegaService.UpdateAsync(parameters);
@@ -50,7 +50,7 @@ public class BodegaController(IBodegaService bodegaService) : BaseApiController
         var parameters = new Dictionary<string, object>
         {
             { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
+            { "id", id }
         };
 
         var response = await bodegaService.DeleteAsync(parameters);

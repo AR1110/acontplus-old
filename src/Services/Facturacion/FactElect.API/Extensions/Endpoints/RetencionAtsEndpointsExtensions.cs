@@ -15,8 +15,9 @@ public static class RetencionAtsEndpointsExtensions
         retencionAtsGroup.MapGet("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.GetRetencionAtsByIdAsync(id));
 
-        retencionAtsGroup.MapPost("/", async (IRetencionAtsEndpoints retencionAtsEndpoints, RetencionAtsDto retencionAtsDto) =>
-            await retencionAtsEndpoints.CreateRetencionAtsAsync(retencionAtsDto));
+        retencionAtsGroup.MapPost("/",
+            async (IRetencionAtsEndpoints retencionAtsEndpoints, RetencionAtsDto retencionAtsDto) =>
+                await retencionAtsEndpoints.CreateRetencionAtsAsync(retencionAtsDto));
 
         retencionAtsGroup.MapPut("/{id}",
             async (IRetencionAtsEndpoints retencionAtsEndpoints, int id, RetencionAtsDto retencionAtsDto) =>

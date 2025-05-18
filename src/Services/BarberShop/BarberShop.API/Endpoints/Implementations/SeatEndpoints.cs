@@ -1,6 +1,5 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
 using BarberShop.Application.Interfaces;
-using Common.Core.DTOs;
 using Common.Core.Models;
 using Common.Infrastructure.Data.Repository.Models;
 

@@ -2,6 +2,7 @@
 using Restaurant.Api.Services;
 
 namespace Restaurant.Api.Controllers;
+
 public class StatsController(IStatsService statsService) : BaseApiController
 {
     [HttpGet]
@@ -9,8 +10,8 @@ public class StatsController(IStatsService statsService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            {"userRoleId", User.GetClaimValue<int>("userRoleId") },
-            {"json", SqlStringParam.Sanitize(json)}
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await statsService.GetAsync(parameters));
     }

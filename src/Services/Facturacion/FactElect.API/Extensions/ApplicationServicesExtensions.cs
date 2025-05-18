@@ -1,4 +1,6 @@
-﻿using Common.FactElect.Services.Conversion;
+﻿using System.IO.Compression;
+using System.Text.Json.Serialization;
+using Common.FactElect.Services.Conversion;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -20,15 +22,9 @@ public static class ApplicationServicesExtensions
             options.Providers.Add<GzipCompressionProvider>();
         });
 
-        services.Configure<BrotliCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.Configure<GzipCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>
@@ -41,8 +37,8 @@ public static class ApplicationServicesExtensions
         {
             options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
             options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         });
         services.Configure<JsonOptions>(options =>
         {
@@ -51,12 +47,12 @@ public static class ApplicationServicesExtensions
         });
 
         services.AddDbContextPool<FactElectContext>(options =>
-        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                x => x.MigrationsAssembly("FactElect.Infrastructure")) //Migrations in infrastructure library
-            .EnableSensitiveDataLogging(environment.IsDevelopment()) // Enable only in Development
-            .EnableDetailedErrors(environment.IsDevelopment())
-            .LogTo(Log.Warning, LogLevel.Warning) // Log EF Core queries using Serilog
-);
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                        x => x.MigrationsAssembly("FactElect.Infrastructure")) //Migrations in infrastructure library
+                    .EnableSensitiveDataLogging(environment.IsDevelopment()) // Enable only in Development
+                    .EnableDetailedErrors(environment.IsDevelopment())
+                    .LogTo(Log.Warning, LogLevel.Warning) // Log EF Core queries using Serilog
+        );
 
         string[] scopedNameSpaces =
         [
@@ -64,7 +60,7 @@ public static class ApplicationServicesExtensions
             "FactElect.Application.Services.Logistica",
             "FactElect.Application.Services.RetencionAts",
             "FactElect.Application.Services.Sri",
-            "FactElect.API.Endpoints.Implementations",
+            "FactElect.API.Endpoints.Implementations"
         ];
 
         services.Scan(scan => scan

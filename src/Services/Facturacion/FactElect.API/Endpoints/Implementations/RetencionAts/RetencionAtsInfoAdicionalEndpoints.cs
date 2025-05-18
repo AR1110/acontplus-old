@@ -41,7 +41,7 @@ public class RetencionAtsInfoAdicionalEndpoints(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) }, { "id", id },
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) }, { "id", id }
         };
         return Results.Ok(await retencionAtsInfoAdicionalService.DeleteAsync(parameters));
     }

@@ -1,6 +1,7 @@
 ﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
-public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserContext userContext) : IDocSustentoEndpoints
+public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserContext userContext)
+    : IDocSustentoEndpoints
 {
     private const string UserRoleClaimType = "userRoleId";
 
@@ -16,7 +17,8 @@ public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserC
 
     public async Task<IResult> DeleteDocSustento(int id)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id }
         };

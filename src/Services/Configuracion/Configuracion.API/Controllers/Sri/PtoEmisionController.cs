@@ -19,7 +19,7 @@ public class PtoEmisionController : ControllerBase
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await _service.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         ;
         return Ok(response);
@@ -53,7 +53,8 @@ public class PtoEmisionController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await _service.DeleteAsync(parameters);
         return Ok(response);
     }

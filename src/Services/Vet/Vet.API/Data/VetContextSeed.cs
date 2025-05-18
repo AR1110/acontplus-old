@@ -58,9 +58,6 @@ public class VetContextSeed
             context.Behaviors.AddRange(behaviors);
         }
 
-        if (context.ChangeTracker.HasChanges())
-        {
-            await context.SaveChangesAsync();
-        }
+        if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
     }
 }

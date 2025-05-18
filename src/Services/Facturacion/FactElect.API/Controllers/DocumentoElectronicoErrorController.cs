@@ -8,10 +8,7 @@ public class DocumentoElectronicoErrorController(IDocumentoElectronicoErrorServi
         var parameters = new Dictionary<string, object> { { "id", id } };
         var orders = await docElect.GetAsync(parameters);
 
-        if ((orders == null) | string.IsNullOrEmpty(orders))
-        {
-            return NotFound();
-        }
+        if ((orders == null) | string.IsNullOrEmpty(orders)) return NotFound();
 
         return Ok(orders);
     }

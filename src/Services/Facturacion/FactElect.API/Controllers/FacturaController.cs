@@ -12,7 +12,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
         {
             { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });
     }
@@ -49,7 +49,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
         {
             { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
         });
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });
     }

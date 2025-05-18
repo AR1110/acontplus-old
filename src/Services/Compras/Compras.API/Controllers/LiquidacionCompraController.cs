@@ -2,8 +2,7 @@
 
 public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseApiController
 {
-
-    [HttpGet()]
+    [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         try
@@ -12,7 +11,7 @@ public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseA
             {
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
-            if (response == null) { return NoContent(); }
+            if (response == null) return NoContent();
 
             ;
             return Ok(new { code = "1", payload = response });
@@ -23,7 +22,7 @@ public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseA
         }
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> Insert(ApiRequest request)
     {
         request.UserRoleId = User.GetClaimValue<int>("userRoleId");
@@ -37,8 +36,9 @@ public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseA
         {
             var response =
                 await _svc.GetByIdAsync(
-                    new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
-            if (response == null) { return NoContent(); }
+                    new Dictionary<string, object>
+                        { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
+            if (response == null) return NoContent();
 
             ;
             return Ok(new { code = "1", payload = response });
@@ -54,14 +54,14 @@ public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseA
     {
         request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         return Ok(await _svc.UpdateAsync(id, request));
-
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await _svc.DeleteAsync(parameters));
     }
 }

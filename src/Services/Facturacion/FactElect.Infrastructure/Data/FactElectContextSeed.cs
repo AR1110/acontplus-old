@@ -59,6 +59,7 @@ public abstract class FactElectContextSeed
                 JsonConvert.DeserializeObject<List<TipoRegimenFiscalExterior>>(jsonList);
             context.TiposRegimenFiscalExterior.AddRange(regimenes);
         }
+
         if (!context.FormasPago.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/FormasPago.json");
@@ -67,9 +68,6 @@ public abstract class FactElectContextSeed
             context.FormasPago.AddRange(formasPago);
         }
 
-        if (context.ChangeTracker.HasChanges())
-        {
-            await context.SaveChangesAsync();
-        }
+        if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
     }
 }
