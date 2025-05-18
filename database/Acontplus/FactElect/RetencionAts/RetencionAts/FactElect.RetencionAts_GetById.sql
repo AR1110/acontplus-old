@@ -65,7 +65,7 @@ BEGIN
 			                    FROM FactElect.RetAtsDocSustento rads WITH (NOLOCK) 
 			                    WHERE idRetencionAts = @id FOR JSON PATH
                                 )
-                ,InfoAdicionalDoc = (
+                ,InfoAdicional = (
                 SELECT * FROM FactElect.RetAtsInfoAdicional WITH (NOLOCK)  WHERE idRetencionAts = @id FOR JSON PATH)
                 FROM FactElect.RetencionAts         ra WITH (NOLOCK) 
                 INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = ra.idDocumentoElectronico
