@@ -140,18 +140,7 @@ BEGIN
 			    SELECT '0' code, 'No se encontro proveedor' as 'message'
 			    RETURN
 		    END
-
-        IF EXISTS (SELECT 1 FROM @tblInfoCompRet WHERE tipoIdentificacionSujetoRetenido = '04' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 13)
-		    BEGIN
-			    SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
-			    RETURN
-		    END
-
-		IF EXISTS (SELECT 1 FROM @tblInfoCompRet WHERE tipoIdentificacionSujetoRetenido = '05' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 10)
-			BEGIN
-				SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
-				RETURN
-			END
+	 
 
         IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
             BEGIN
