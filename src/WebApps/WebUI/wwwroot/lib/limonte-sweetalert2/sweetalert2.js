@@ -1,5 +1,5 @@
 /*!
-* sweetalert2 v11.15.10
+* sweetalert2 v11.16.1
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -819,6 +819,7 @@
       addClass(container, swalClasses['no-transition']);
     }
     setInnerHtml(container, sweetHTML);
+    container.dataset['swal2Theme'] = params.theme;
     const targetElement = getTarget(params.target);
     targetElement.appendChild(container);
     setupAccessibility(params);
@@ -1445,6 +1446,10 @@
 
     // Animate icon
     addClass(icon, params.showClass && params.showClass.icon);
+
+    // Re-adjust the success icon on system theme change
+    const colorSchemeQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+    colorSchemeQueryList.addEventListener('change', adjustSuccessIconBackgroundColor);
   };
 
   /**
@@ -1853,7 +1858,7 @@
    */
   const clickConfirm = () => {
     var _dom$getConfirmButton;
-    return (_dom$getConfirmButton = getConfirmButton()) === null || _dom$getConfirmButton === void 0 ? void 0 : _dom$getConfirmButton.click();
+    return (_dom$getConfirmButton = getConfirmButton()) === null || _dom$getConfirmButton === undefined ? undefined : _dom$getConfirmButton.click();
   };
 
   /*
@@ -1861,7 +1866,7 @@
    */
   const clickDeny = () => {
     var _dom$getDenyButton;
-    return (_dom$getDenyButton = getDenyButton()) === null || _dom$getDenyButton === void 0 ? void 0 : _dom$getDenyButton.click();
+    return (_dom$getDenyButton = getDenyButton()) === null || _dom$getDenyButton === undefined ? undefined : _dom$getDenyButton.click();
   };
 
   /*
@@ -1869,7 +1874,7 @@
    */
   const clickCancel = () => {
     var _dom$getCancelButton;
-    return (_dom$getCancelButton = getCancelButton()) === null || _dom$getCancelButton === void 0 ? void 0 : _dom$getCancelButton.click();
+    return (_dom$getCancelButton = getCancelButton()) === null || _dom$getCancelButton === undefined ? undefined : _dom$getCancelButton.click();
   };
 
   /** @typedef {'cancel' | 'backdrop' | 'close' | 'esc' | 'timer'} DismissReason */
@@ -1936,7 +1941,7 @@
       return;
     }
     // no visible focusable elements, focus the popup
-    (_dom$getPopup = getPopup()) === null || _dom$getPopup === void 0 || _dom$getPopup.focus();
+    (_dom$getPopup = getPopup()) === null || _dom$getPopup === undefined || _dom$getPopup.focus();
   };
   const arrowKeysNextButton = ['ArrowRight', 'ArrowDown'];
   const arrowKeysPreviousButton = ['ArrowLeft', 'ArrowUp'];
@@ -2399,7 +2404,7 @@
     if (typeof innerParams.willClose === 'function') {
       innerParams.willClose(popup);
     }
-    (_globalState$eventEmi = globalState.eventEmitter) === null || _globalState$eventEmi === void 0 || _globalState$eventEmi.emit('willClose', popup);
+    (_globalState$eventEmi = globalState.eventEmitter) === null || _globalState$eventEmi === undefined || _globalState$eventEmi.emit('willClose', popup);
     if (animationIsSupported) {
       animatePopup(instance, popup, container, innerParams.returnFocus, innerParams.didClose);
     } else {
@@ -2423,7 +2428,7 @@
     const swalCloseAnimationFinished = function (e) {
       if (e.target === popup) {
         var _globalState$swalClos;
-        (_globalState$swalClos = globalState.swalCloseEventFinishedCallback) === null || _globalState$swalClos === void 0 || _globalState$swalClos.call(globalState);
+        (_globalState$swalClos = globalState.swalCloseEventFinishedCallback) === null || _globalState$swalClos === undefined || _globalState$swalClos.call(globalState);
         delete globalState.swalCloseEventFinishedCallback;
         popup.removeEventListener('animationend', swalCloseAnimationFinished);
         popup.removeEventListener('transitionend', swalCloseAnimationFinished);
@@ -2443,7 +2448,7 @@
       if (typeof didClose === 'function') {
         didClose.bind(instance.params)();
       }
-      (_globalState$eventEmi2 = globalState.eventEmitter) === null || _globalState$eventEmi2 === void 0 || _globalState$eventEmi2.emit('didClose');
+      (_globalState$eventEmi2 = globalState.eventEmitter) === null || _globalState$eventEmi2 === undefined || _globalState$eventEmi2.emit('didClose');
       // instance might have been destroyed already
       if (instance._destroy) {
         instance._destroy();
@@ -3054,6 +3059,7 @@
     toast: false,
     draggable: false,
     animation: true,
+    theme: 'light',
     showClass: {
       popup: 'swal2-show',
       backdrop: 'swal2-backdrop-show',
@@ -3133,7 +3139,7 @@
     didDestroy: undefined,
     scrollbarPadding: true
   };
-  const updatableParams = ['allowEscapeKey', 'allowOutsideClick', 'background', 'buttonsStyling', 'cancelButtonAriaLabel', 'cancelButtonColor', 'cancelButtonText', 'closeButtonAriaLabel', 'closeButtonHtml', 'color', 'confirmButtonAriaLabel', 'confirmButtonColor', 'confirmButtonText', 'currentProgressStep', 'customClass', 'denyButtonAriaLabel', 'denyButtonColor', 'denyButtonText', 'didClose', 'didDestroy', 'draggable', 'footer', 'hideClass', 'html', 'icon', 'iconColor', 'iconHtml', 'imageAlt', 'imageHeight', 'imageUrl', 'imageWidth', 'preConfirm', 'preDeny', 'progressSteps', 'returnFocus', 'reverseButtons', 'showCancelButton', 'showCloseButton', 'showConfirmButton', 'showDenyButton', 'text', 'title', 'titleText', 'willClose'];
+  const updatableParams = ['allowEscapeKey', 'allowOutsideClick', 'background', 'buttonsStyling', 'cancelButtonAriaLabel', 'cancelButtonColor', 'cancelButtonText', 'closeButtonAriaLabel', 'closeButtonHtml', 'color', 'confirmButtonAriaLabel', 'confirmButtonColor', 'confirmButtonText', 'currentProgressStep', 'customClass', 'denyButtonAriaLabel', 'denyButtonColor', 'denyButtonText', 'didClose', 'didDestroy', 'draggable', 'footer', 'hideClass', 'html', 'icon', 'iconColor', 'iconHtml', 'imageAlt', 'imageHeight', 'imageUrl', 'imageWidth', 'preConfirm', 'preDeny', 'progressSteps', 'returnFocus', 'reverseButtons', 'showCancelButton', 'showCloseButton', 'showConfirmButton', 'showDenyButton', 'text', 'title', 'titleText', 'theme', 'willClose'];
 
   /** @type {Record<string, string | undefined>} */
   const deprecatedParams = {
@@ -3208,6 +3214,9 @@
     if (params.backdrop === false && params.allowOutsideClick) {
       warn('"allowOutsideClick" parameter requires `backdrop` parameter to be set to `true`');
     }
+    if (params.theme && !['light', 'dark', 'auto'].includes(params.theme)) {
+      warn(`Invalid theme "${params.theme}". Expected "light", "dark", or "auto"`);
+    }
     for (const param in params) {
       checkIfParamIsValid(param);
       if (params.toast) {
@@ -3223,6 +3232,7 @@
    * @param {SweetAlertOptions} params
    */
   function update(params) {
+    const container = getContainer();
     const popup = getPopup();
     const innerParams = privateProps.innerParams.get(this);
     if (!popup || hasClass(popup, innerParams.hideClass.popup)) {
@@ -3231,6 +3241,8 @@
     }
     const validUpdatableParams = filterValidParams(params);
     const updatedParams = Object.assign({}, innerParams, validUpdatableParams);
+    showWarningsForParams(updatedParams);
+    container.dataset['swal2Theme'] = updatedParams.theme;
     render(this, updatedParams);
     privateProps.innerParams.set(this, updatedParams);
     Object.defineProperties(this, {
@@ -4278,7 +4290,7 @@
       /**
        * @type {Promise<SweetAlertResult>}
        */
-      _classPrivateFieldInitSpec(this, _promise, void 0);
+      _classPrivateFieldInitSpec(this, _promise, undefined);
       // Prevent run in Node env
       if (typeof window === 'undefined') {
         return;
@@ -4586,7 +4598,7 @@
     };
   });
   SweetAlert.DismissReason = DismissReason;
-  SweetAlert.version = '11.15.10';
+  SweetAlert.version = '11.16.1';
 
   const Swal = SweetAlert;
   // @ts-ignore
