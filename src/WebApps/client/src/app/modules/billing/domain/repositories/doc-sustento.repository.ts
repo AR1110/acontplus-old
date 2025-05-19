@@ -1,6 +1,4 @@
 import { Observable } from 'rxjs';
-import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 import { ApiResponse } from '@core/models/api-response';
 
 export abstract class DocSustentoRepository {
@@ -9,8 +7,8 @@ export abstract class DocSustentoRepository {
     taxes: [];
     payments: [];
   }>;
-  abstract getById(id: number): Observable<RetAtsDocSustento>;
-  abstract create(data: RetencionAts): Observable<RetAtsDocSustento>;
-  abstract update(data: RetencionAts): Observable<RetAtsDocSustento>;
+  abstract getById(id: number): Observable<ApiResponse>;
+  abstract create<T>(data: T): Observable<ApiResponse>;
+  abstract update<T>(id: number, data: T): Observable<ApiResponse>;
   abstract delete(id: number): Observable<ApiResponse>;
 }

@@ -51,7 +51,6 @@ import {
 } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
-import { isApiResponse } from '@core/models/api-response';
 import { DialogService } from '@core/services/dialog.service';
 import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
 import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
@@ -330,5 +329,36 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   addPayment(indexDoc: number) {
     const payment = {};
     this.createPayment(indexDoc, payment as RetencionAtsDocPayment);
+  }
+
+  onSave(index: number) {
+    const docSustento = this.docSustentoArray().controls[index]
+      .value as RetAtsDocSustento;
+
+    const taxes = this.getTaxesArray(index).controls.map((tax) => tax.value);
+    const retenciones = this.getRetencionesArray(index).controls.map(
+      (retencion) => retencion.value,
+    );
+    const payments = this.getPaymentsArray(index).controls.map(
+      (payment) => payment.value,
+    );
+
+    docSustento.taxes = taxes;
+    docSustento.retenciones = retenciones;
+    docSustento.payments = payments;
+
+    this.docSustentoGroup().patchValue(docSustento);
+
+    if (docSustento.idRetAtsDocSustento > 0) {
+      this._docSustentoUseCase
+        .update(docSustento.idRetAtsDocSustento, docSustento)
+        .subscribe((response) => {
+          console.log(response);
+        });
+    } else {
+      this._docSustentoUseCase.create(docSustento).subscribe((response) => {
+        console.log(response);
+      });
+    }
   }
 }

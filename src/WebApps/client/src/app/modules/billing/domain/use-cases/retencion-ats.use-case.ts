@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { RetencionAtsRepository } from '../repositories/retencion-ats.repository';
+import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +30,9 @@ export class RetencionAtsUseCase {
 
   create<T>(data: T) {
     return this._retencionAtsRepository.create(data);
+  }
+
+  update(id: number, data: RetencionAts) {
+    return this._retencionAtsRepository.update(id, data);
   }
 }

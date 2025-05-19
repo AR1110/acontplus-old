@@ -148,6 +148,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   // Create a new docSustento FormGroup
   createDocSustentoGroup() {
     return this._fb.group({
+      idRetencionAts: [0],
       idRetAtsDocSustento: [0],
       idDocumento: [0],
       uniqueIdDoc: [generateUuidv4(), [Validators.required]],
@@ -287,19 +288,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
   onClose() {
     this._dialogRef.close();
   }
-  onSave() {
-    this._retencionAtsUseCase
-      .create(this.retencionAtsForm.value)
-      .subscribe((response) => {
-        this._tS.toastr({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
-        if (response.code === '1') {
-          this._dialogRef.close(response);
-        }
-      });
-  }
 
   onSelectEstablecimiento(): void {
     const idEstablecimiento =
@@ -381,7 +369,34 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
   }
 
-  editDocSust(index: number): void {
-    // Edit document logic
+  onSave() {
+    if (this._data.idRetencionAts > 0) {
+      this._retencionAtsUseCase
+        .update(
+          this._data.idRetencionAts,
+          this.retencionAtsForm.value as RetencionAts,
+        )
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code === '1') {
+            this._dialogRef.close(response);
+          }
+        });
+    } else {
+      this._retencionAtsUseCase
+        .create(this.retencionAtsForm.value)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code === '1') {
+            this._dialogRef.close(response);
+          }
+        });
+    }
   }
 }

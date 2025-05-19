@@ -323,7 +323,12 @@
         variant="success"
         icon="save"
         type="submit"
-        [disabled]="!docSustentoArray().get('idRetAtsDocSustento')?.value"
+        [disabled]="
+          !docSustentoArray().get('idRetencionAts')?.value &&
+          !docSustentoArray().get('idRetAtsDocSustento')?.value &&
+          docSustentoGroup().invalid
+        "
+        (handleClick)="onSave(indexDoc())"
       >
       </app-theme-button>
       <app-theme-button
