@@ -151,6 +151,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.cobros = [];
     $scope.datosCobro = [];
 
+    $scope.configCobro = {}
+
 
     $scope.expandShowCuota = expandShowCuota;
     $scope.showCobroDetalle = showCobroDetalle;
@@ -178,7 +180,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
             showLoader();
             comprobanteIngresoSvc.paymentFormData({ idCuentaPorCobrar, idCliente }).then(response => {
-
+                $scope.configCobro = response.configCobro;
                 dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
                 modalCobroSvc.setConfigCobro(dataFormaCobro.configCobro);

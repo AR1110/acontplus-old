@@ -28,6 +28,22 @@
 
     <div class="card mb-3">
         <div class="card-body py-3">
+
+
+            <div class="d-flex justify-content-center" ng-if="configCobro.configDeuda">
+                <div class="d-flex ">
+                    <div class="p-2 flex-fill ">
+                        Mora
+                    </div>
+                    <div class="p-2 flex-fill bd-highlight">
+                        <p><strong>Interes:</strong>{{configCobro.interes}} </p>
+                    </div>
+                    <div class="p-2 flex-fill bd-highlight">
+                        {{configCobro.interes}} x día
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <!-- Totales -->
                 <div class="col-12 ">
