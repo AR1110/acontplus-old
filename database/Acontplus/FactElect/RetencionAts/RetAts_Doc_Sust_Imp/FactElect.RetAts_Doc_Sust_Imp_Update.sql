@@ -18,7 +18,7 @@ BEGIN
 	SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
-	DECLARE @idUsuario INT 
+	DECLARE @userId INT 
 	,@idRetAtsDocSustento INT
 	,@totalSinImpuestos NUMERIC(18,2) = 0
 	,@totalImpuestos NUMERIC(18,2) = 0
@@ -26,7 +26,7 @@ BEGIN
 
 	BEGIN TRY
         
-        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+        SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
 		BEGIN TRAN  
 
@@ -45,7 +45,7 @@ BEGIN
 			WHERE rid.idRetAtsImpDocSustento = @id
 			
 			--OBTENGO EL id del documento de sustento para actualizar totales
-			SET @idRetAtsDocSustento = (SELECT idRetAtsDocSustento FROM FactElect.RetAtsImpDocSustento  
+			SET @idRetAtsDocSustento = (SELECT idRetAtsDocSustento FROM FactElect.RetAtsImpDocSustento WITH(NOLOCK)
 																	WHERE idRetAtsImpDocSustento = @id)
 
 			SELECT @totalSinImpuestos = SUM(baseImponible), @totalImpuestos = SUM(valorImpuesto) FROM FactElect.RetAtsImpDocSustento WITH(NOLOCK)
@@ -90,11 +90,11 @@ BEGIN
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+	    SELECT '0' code, 'Error en el procedimiento!' as 'message'
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/PUT', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES ('DocSustentoImpuesto/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
 	END CATCH
 END
 GO
