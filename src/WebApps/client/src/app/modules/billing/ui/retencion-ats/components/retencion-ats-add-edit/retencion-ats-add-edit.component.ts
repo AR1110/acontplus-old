@@ -169,13 +169,13 @@ export class RetencionAtsAddEditComponent implements OnInit {
       totalImpuestoReembolso: [0],
       totalSinImpuestos: [0],
       importeTotal: [0],
-      taxes: this._fb.array([]),
-      retenciones: this._fb.array([]),
+      taxes: this._fb.array([], [Validators.required]),
+      retenciones: this._fb.array([], [Validators.required]),
       reembolsos: this._fb.group({
         id: [0],
         taxes: this._fb.array([]),
       }),
-      payments: this._fb.array([]),
+      payments: this._fb.array([], [Validators.required]),
       isAutomatic: [false],
     });
   }
