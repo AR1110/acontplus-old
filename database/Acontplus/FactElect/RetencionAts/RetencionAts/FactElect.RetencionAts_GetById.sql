@@ -38,6 +38,7 @@ BEGIN
                       ,cu.IDCard         as identificacionSujetoRetenido
                       ,cu.BusinessName   as razonSocialSujetoRetenido
                       ,ti.codigoSri      as tipoIdentificacionSujetoRetenido
+                      ,de.fechaEmision
                       ,documentosSustento = (
                       
                       			    SELECT rads.*
@@ -73,7 +74,7 @@ BEGIN
                 INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
                 INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
                 INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
-			     LEFT JOIN SubContribuyente         sb WITH (NOLOCK) ON sb.idSubContribuyente     = pr.idSubContribuyente
+			    LEFT JOIN SubContribuyente         sb WITH (NOLOCK) ON sb.idSubContribuyente     = pr.idSubContribuyente
                 INNER JOIN dbo.TipoIdentificacion   ti WITH (NOLOCK) ON ti.idTipoIdentificacion   = cu.IdTypeId
 			    WHERE idRetencionAts = @id	    
     END TRY

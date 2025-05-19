@@ -1,8 +1,8 @@
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
-
 export interface RetencionAts {
   idRetencionAts: number;
+  fechaEmision: string;
   idDocumentoElectronico: number;
+  razonSocialSujetoRetenido: string;
   codEstab?: string;
   versionComp?: string;
   documentosSustento?: string;

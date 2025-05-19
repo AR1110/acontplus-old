@@ -51,12 +51,12 @@ import {
 } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
-import { RetencionAtsAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-add-edit/retencion-ats-add-edit.component';
 import { isApiResponse } from '@core/models/api-response';
 import { DialogService } from '@core/services/dialog.service';
 import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
 import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -148,29 +148,31 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     this.selectSustento(this.indexDoc());
   }
   ngOnInit(): void {
-    const parsedData = {
-      ...this._data,
-      documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
-      infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
-    };
+    if (this._data) {
+      const parsedData = {
+        ...this._data,
+        documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
+        infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
+      };
 
-    parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
-      if (doc.taxes) {
-        doc.taxes.forEach((tax) => {
-          this.createTax(this.indexDoc(), tax);
-        });
-      }
-      if (doc.retenciones) {
-        doc.retenciones.forEach((retencion) => {
-          this.createRetencion(this.indexDoc(), retencion);
-        });
-      }
-      if (doc.payments) {
-        doc.payments.forEach((payment) => {
-          this.createPayment(this.indexDoc(), payment);
-        });
-      }
-    });
+      parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
+        if (doc.taxes) {
+          doc.taxes.forEach((tax) => {
+            this.createTax(this.indexDoc(), tax);
+          });
+        }
+        if (doc.retenciones) {
+          doc.retenciones.forEach((retencion) => {
+            this.createRetencion(this.indexDoc(), retencion);
+          });
+        }
+        if (doc.payments) {
+          doc.payments.forEach((payment) => {
+            this.createPayment(this.indexDoc(), payment);
+          });
+        }
+      });
+    }
   }
 
   createTaxGroup(): FormGroup {
@@ -274,7 +276,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       this._documentoReceivedUseCase
         .previewXml(doc.idDocumento)
         .subscribe((response) => {
-          const dialogRef = this._dialogService.open(DocElectViewerComponent, {
+          this._dialogService.open(DocElectViewerComponent, {
             size: 'xxl',
             data: response.payload,
           });
@@ -288,7 +290,40 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   }
 
   // Remove a docSustento at a specific index
-  removeDocSustento(index: number) {
+  async removeDocSustento(index: number) {
+    const doc = this.docSustentoArray().controls[index]
+      .value as RetAtsDocSustento;
+
+    if (doc.idRetAtsDocSustento > 0) {
+      const { isConfirmed } = await Swal.fire({
+        title: 'Eliminar documento',
+        icon: 'warning',
+        text: `Esta seguro(a) de eliminar el documento nro. ${doc.numDocSustento} de esta retención, de manera permanente?`,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      });
+      if (isConfirmed) {
+        this._docSustentoUseCase
+          .delete(doc.idRetAtsDocSustento)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.removeByIndex(index);
+            }
+          });
+      }
+    } else {
+      await this.removeByIndex(index);
+    }
+  }
+
+  async removeByIndex(index: number) {
     this.docSustentoArray().removeAt(index);
   }
 
