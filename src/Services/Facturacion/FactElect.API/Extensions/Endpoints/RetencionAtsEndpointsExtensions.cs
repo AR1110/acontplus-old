@@ -40,12 +40,12 @@ public static class RetencionAtsEndpointsExtensions
         doctSustentoGroup.MapGet("/{id}", async (IDocSustentoEndpoints docSustentoEndpoints, int id) =>
             await docSustentoEndpoints.GetDocSustentoById(id));
 
-        doctSustentoGroup.MapPost("/", async (IDocSustentoEndpoints printerEndpoints, ApiRequest apiRequest) =>
-            await printerEndpoints.CreateDocSustento(apiRequest));
+        doctSustentoGroup.MapPost("/", async (IDocSustentoEndpoints printerEndpoints, RetAtsDocSustentoDto retAtsDocSustento) =>
+            await printerEndpoints.CreateDocSustento(retAtsDocSustento));
 
         doctSustentoGroup.MapPut("/{id}",
-            async (IDocSustentoEndpoints printerEndpoints, int id, ApiRequest apiRequest) =>
-                await printerEndpoints.UpdateDocSustento(id, apiRequest));
+            async (IDocSustentoEndpoints printerEndpoints, int id, RetAtsDocSustentoDto retAtsDocSustento) =>
+                await printerEndpoints.UpdateDocSustento(id, retAtsDocSustento));
 
         doctSustentoGroup.MapDelete("/{id}", async (IDocSustentoEndpoints printerEndpoints, int id) =>
             await printerEndpoints.DeleteDocSustento(id));
@@ -64,12 +64,12 @@ public static class RetencionAtsEndpointsExtensions
                 await docSustImpuestoEndpoints.GetDocSustentoImpuestoByIdAsync(id));
 
         docSustentoImpuestoGroup.MapPost("/",
-            async (IDocSustentoImpuestoEndpoints docSustImpuestoEndpoints, string json) =>
-                await docSustImpuestoEndpoints.CreateDocSustentoImpuestoAsync(json));
+            async (IDocSustentoImpuestoEndpoints docSustImpuestoEndpoints, RetAtsImpDocSustentoDto retAtsImpDocSustentoDto) =>
+                await docSustImpuestoEndpoints.CreateDocSustentoImpuestoAsync(retAtsImpDocSustentoDto));
 
         docSustentoImpuestoGroup.MapPut("/{id}",
-            async (IDocSustentoImpuestoEndpoints docSustImpuestoEndpoints, int id, string json) =>
-                await docSustImpuestoEndpoints.UpdateDocSustentoImpuestoAsync(id, json));
+            async (IDocSustentoImpuestoEndpoints docSustImpuestoEndpoints, int id, RetAtsImpDocSustentoDto retAtsImpDocSustentoDto) =>
+                await docSustImpuestoEndpoints.UpdateDocSustentoImpuestoAsync(id, retAtsImpDocSustentoDto));
 
         docSustentoImpuestoGroup.MapDelete("/{id}",
             async (IDocSustentoImpuestoEndpoints docSustImpuestoEndpoints, int id) =>
@@ -89,12 +89,12 @@ public static class RetencionAtsEndpointsExtensions
                 await docSustentoRetencionEndpoints.GetDocSustentoRetencionByIdAsync(id));
 
         docSustentoRetencionGroup.MapPost("/",
-            async (IDocSustentoRetencionEndpoints docSustentoRetencionEndpoints, string json) =>
-                await docSustentoRetencionEndpoints.CreateDocSustentoRetencionAsync(json));
+            async (IDocSustentoRetencionEndpoints docSustentoRetencionEndpoints, RetencionAtsRetDto retencionAtsRetDto) =>
+                await docSustentoRetencionEndpoints.CreateDocSustentoRetencionAsync(retencionAtsRetDto));
 
         docSustentoRetencionGroup.MapPut("/{id}",
-            async (IDocSustentoRetencionEndpoints docSustentoRetencionEndpoints, int id, string json) =>
-                await docSustentoRetencionEndpoints.UpdateDocSustentoRetencionAsync(id, json));
+            async (IDocSustentoRetencionEndpoints docSustentoRetencionEndpoints, int id, RetencionAtsRetDto retencionAtsRetDto) =>
+                await docSustentoRetencionEndpoints.UpdateDocSustentoRetencionAsync(id, retencionAtsRetDto));
 
         docSustentoRetencionGroup.MapDelete("/{id}",
             async (IDocSustentoRetencionEndpoints docSustentoRetencionEndpoints, int id) =>
@@ -114,12 +114,12 @@ public static class RetencionAtsEndpointsExtensions
                 await docSustentoPagoEndpoints.GetDocSustentoRetencionByIdAsync(id));
 
         docSustentoPagoGroup.MapPost("/",
-            async (IDocSustentoPagoEndpoints docSustentoPagoEndpoints, string json) =>
-                await docSustentoPagoEndpoints.CreateDocSustentoRetencionAsync(json));
+            async (IDocSustentoPagoEndpoints docSustentoPagoEndpoints, RetencionAtsPagoDto retencionAtsPagoDto) =>
+                await docSustentoPagoEndpoints.CreateDocSustentoRetencionAsync(retencionAtsPagoDto));
 
         docSustentoPagoGroup.MapPut("/{id}",
-            async (IDocSustentoPagoEndpoints docSustentoPagoEndpoints, int id, string json) =>
-                await docSustentoPagoEndpoints.UpdateDocSustentoRetencionAsync(id, json));
+            async (IDocSustentoPagoEndpoints docSustentoPagoEndpoints, int id, RetencionAtsPagoDto retencionAtsPagoDto) =>
+                await docSustentoPagoEndpoints.UpdateDocSustentoRetencionAsync(id, retencionAtsPagoDto));
 
         docSustentoPagoGroup.MapDelete("/{id}",
             async (IDocSustentoPagoEndpoints docSustentoPagoEndpoints, int id) =>
@@ -139,12 +139,12 @@ public static class RetencionAtsEndpointsExtensions
                 await retencionAtsInfoAdicionalEndpoints.GetRetencionAtsInfoAdicionalById(id));
 
         retencionAtsInfoAdicionalGroup.MapPost("/",
-            async (IRetencionAtsInfoAdicionalEndpoints retencionAtsInfoAdicionalEndpoints, string json) =>
-                await retencionAtsInfoAdicionalEndpoints.CreateRetencionAtsInfoAdicional(json));
+            async (IRetencionAtsInfoAdicionalEndpoints retencionAtsInfoAdicionalEndpoints, RetAtsInfoAdicionalDto retAtsInfoAdicionalDto) =>
+                await retencionAtsInfoAdicionalEndpoints.CreateRetencionAtsInfoAdicional(retAtsInfoAdicionalDto));
 
         retencionAtsInfoAdicionalGroup.MapPut("/{id}",
-            async (IRetencionAtsInfoAdicionalEndpoints retencionAtsInfoAdicionalEndpoints, int id, string json) =>
-                await retencionAtsInfoAdicionalEndpoints.UpdateRetencionAtsInfoAdicional(id, json));
+            async (IRetencionAtsInfoAdicionalEndpoints retencionAtsInfoAdicionalEndpoints, int id, RetAtsInfoAdicionalDto retAtsInfoAdicionalDto) =>
+                await retencionAtsInfoAdicionalEndpoints.UpdateRetencionAtsInfoAdicional(id, retAtsInfoAdicionalDto));
 
         retencionAtsInfoAdicionalGroup.MapDelete("/{id}",
             async (IRetencionAtsInfoAdicionalEndpoints retencionAtsInfoAdicionalEndpoints, int id) =>

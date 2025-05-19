@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
+﻿using FactElect.Application.DTOs.RetencionAts;
+
+namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class DocSustentoImpuestoEndpoints(
     IDocSustentoImpuestoService docSustentoImpuestoService,
@@ -17,23 +19,23 @@ public class DocSustentoImpuestoEndpoints(
         throw new NotImplementedException();
     }
 
-    public async Task<IResult> CreateDocSustentoImpuestoAsync(string json)
+    public async Task<IResult> CreateDocSustentoImpuestoAsync(RetAtsImpDocSustentoDto retAtsImpDocSustentoDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", DataConverters.SerializeObjectCustom<RetAtsImpDocSustentoDto>(retAtsImpDocSustentoDto) }
         };
         return Results.Ok(await docSustentoImpuestoService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateDocSustentoImpuestoAsync(int id, string json)
+    public async Task<IResult> UpdateDocSustentoImpuestoAsync(int id, RetAtsImpDocSustentoDto retAtsImpDocSustentoDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", DataConverters.SerializeObjectCustom<RetAtsImpDocSustentoDto>(retAtsImpDocSustentoDto) }
         };
         return Results.Ok(await docSustentoImpuestoService.UpdateAsync(parameters));
     }

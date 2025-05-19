@@ -4,7 +4,7 @@ public interface IDocSustentoEndpoints
 {
     Task<IResult> GetDocSustentos(string json);
     Task<IResult> GetDocSustentoById(int id);
-    Task<IResult> CreateDocSustento(ApiRequest data);
-    Task<IResult> UpdateDocSustento(int id, ApiRequest data);
+    Task<IResult> CreateDocSustento(RetAtsDocSustentoDto data);
+    Task<IResult> UpdateDocSustento(int id, RetAtsDocSustentoDto data);
     Task<IResult> DeleteDocSustento(int id);
 }

@@ -2,6 +2,7 @@
 
 public class RetAtsDocSustentoDto
 {
+    public int IdRetencionAts { get; set; }
     public int IdRetAtsDocSustento { get; set; }
     public Guid UniqueIdDoc { get; set; }
     public int DocumentoSustentoTributarioId { get; set; }

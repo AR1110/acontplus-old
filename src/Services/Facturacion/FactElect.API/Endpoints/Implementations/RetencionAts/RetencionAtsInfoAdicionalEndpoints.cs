@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
+﻿using FactElect.Application.DTOs.RetencionAts;
+
+namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class RetencionAtsInfoAdicionalEndpoints(
     IRetencionAtsInfoAdicionalService retencionAtsInfoAdicionalService,
@@ -16,23 +18,23 @@ public class RetencionAtsInfoAdicionalEndpoints(
         throw new NotImplementedException();
     }
 
-    public async Task<IResult> CreateRetencionAtsInfoAdicional(string json)
+    public async Task<IResult> CreateRetencionAtsInfoAdicional(RetAtsInfoAdicionalDto retAtsInfoAdicionalDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", DataConverters.SerializeObjectCustom<RetAtsInfoAdicionalDto>(retAtsInfoAdicionalDto)}
         };
         return Results.Ok(await retencionAtsInfoAdicionalService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateRetencionAtsInfoAdicional(int id, string json)
+    public async Task<IResult> UpdateRetencionAtsInfoAdicional(int id, RetAtsInfoAdicionalDto retAtsInfoAdicionalDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", DataConverters.SerializeObjectCustom<RetAtsInfoAdicionalDto>(retAtsInfoAdicionalDto)}
         };
         return Results.Ok(await retencionAtsInfoAdicionalService.UpdateAsync(parameters));
     }
