@@ -11,7 +11,6 @@ GO
 -- =============================================
 
 CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Insert @userRoleId INT  
-,@idRetencionAts INT
 ,@json VARCHAR(MAX)
 ,@errorCode INT = 0 OUT
 ,@errorMessage NVARCHAR(MAX) = '' OUT
@@ -31,11 +30,12 @@ BEGIN
 			    ,numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			    ,totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal, idUsuario)
 
-			SELECT @idRetencionAts idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
+			SELECT idRetencionAts idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
 			    ,numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
 			    ,numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			    ,totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal, @userId
-			FROM OPENJSON(@json) WITH (uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
+			FROM OPENJSON(@json) WITH ( idRetencionAts INT
+                                ,uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
 								,documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
 								,numDocSustento VARCHAR(15) '$.numDocSustento'
 								,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
@@ -116,7 +116,7 @@ BEGIN
                 END
 
 		COMMIT TRAN
-        SELECT '1' code, 'Documento de sustento guardado con exito'  as 'message';
+        SELECT '1' code, 'Documento de sustento guardado con exito'  as 'message', payload = (SELECT @id idRetAtsDocSustento FOR JSON PATH);
 	END TRY
 	BEGIN CATCH
 	    SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message';
