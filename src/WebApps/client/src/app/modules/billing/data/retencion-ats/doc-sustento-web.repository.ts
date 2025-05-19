@@ -3,7 +3,7 @@ import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RETENCION_ATS_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
-import { isApiResponse } from '@core/models/api-response';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { DocSustentoRepository } from '@billing/domain/repositories/doc-sustento.repository';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 
@@ -50,7 +50,9 @@ export class DocSustentoWebRepository implements DocSustentoRepository {
   update(data: any): Observable<RetAtsDocSustento> {
     throw new Error('Method not implemented.');
   }
-  delete(id: number): Observable<RetAtsDocSustento> {
-    throw new Error('Method not implemented.');
+  delete(id: number) {
+    return this._http
+      .delete<ApiResponse>(`${this._url}${id}`)
+      .pipe(map((response) => response));
   }
 }

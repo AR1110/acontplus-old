@@ -10,4 +10,8 @@ export class DocSustentoUseCase {
   getTaxes(parameters: unknown) {
     return this._docSustentoRepository.getTaxes(parameters);
   }
+
+  delete(id: number) {
+    return this._docSustentoRepository.delete(id);
+  }
 }

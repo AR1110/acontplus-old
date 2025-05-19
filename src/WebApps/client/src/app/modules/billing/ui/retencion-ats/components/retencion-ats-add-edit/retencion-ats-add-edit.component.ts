@@ -49,6 +49,7 @@ import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
+import { formatDate } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -75,7 +76,7 @@ import { ToasterService } from '@core/services/toaster.service';
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
   private datePipe = inject(DatePipe);
-  private readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
+  readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly _dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
   );
@@ -124,6 +125,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   itemsPerPage = 10;
   // Info adicional
   infoAdicional: RetAtsInfoAdicional[] = [];
+  supplierSelected = '';
 
   // Computed properties
   dialogIcon = signal('add');
@@ -187,6 +189,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   // Add a docSustento with predefined values
+
   addDocSustento(doc: RetAtsDocSustento) {
     const docGroup = this.createDocSustentoGroup();
 
@@ -250,6 +253,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   ngOnInit() {
     this.initialLoad();
     if (this._data && this._data.idRetencionAts > 0) {
+      this.supplierSelected = this._data.razonSocialSujetoRetenido;
       const parsedData = {
         ...this._data,
         documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
@@ -259,6 +263,10 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.retencionAtsForm.patchValue(parsedData);
       this.retencionAtsForm.get('idEstablecimiento')?.disable();
       this.retencionAtsForm.get('idPuntoEmision')?.disable();
+      const formatedDate = formatDate(this._data.fechaEmision);
+      this.retencionAtsForm
+        .get('fechaEmision')
+        ?.setValue(formatedDate.toISOString());
       this.getPeriod();
       this.retAtsDocSustentos = parsedData.documentosSustento;
       this.retAtsDocSustentos.forEach((doc) => {
@@ -271,7 +279,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     } else {
       this.retencionAtsForm
         .get('fechaEmision')
-        ?.setValue(this.datePipe.transform(new Date(), 'yyyy-MM-dd'));
+        ?.setValue(formatDate(new Date()).toISOString());
       this.getPeriod();
     }
   }
@@ -346,7 +354,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     // }
   }
 
-  supplierclearSearch() {
+  clearSupplierSearch() {
     this.retencionAtsForm.get('identificacionSujetoRetenido')?.setValue('');
   }
 
