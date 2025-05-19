@@ -1,14 +1,8 @@
 import { Observable } from 'rxjs';
-import { GroupedEstab } from '@core/models/estab.model';
+import {DataFilterCuentaPorCobrarResponse} from "@accounting/domain/models/cuenta-por-cobrar.model";
 
 export abstract class CuentaPorCobrarRepository {
-  abstract getDataFilter(): Observable<{
-    estabs: GroupedEstab[];
-    estadosDoc: any[];
-    tiposDoc: any[];
-    empresas: any[];
-    ciudades: any[];
-  }>;
+  abstract getDataFilter(): Observable<DataFilterCuentaPorCobrarResponse>;
   abstract getAll<T>(obj: T): Observable<{ data: any[] }>;
   abstract getDataForm(
     idCuentaPorCobrar: number,
