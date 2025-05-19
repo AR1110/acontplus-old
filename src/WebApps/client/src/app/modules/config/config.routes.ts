@@ -11,6 +11,7 @@ import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-cus
 import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
 import {ImportacionComponent} from "@modules/config/ui/importacion/importacion.component";
 import {ElectronicSignatureComponent} from "@modules/config/ui/electronic-signature/electronic-signature.component";
+import {CreditTimeComponent} from "@modules/config/ui/credit-time/credit-time.component";
 
 export const routes: Routes = [
   {
@@ -106,6 +107,13 @@ export const routes: Routes = [
     component:ElectronicSignatureComponent,
     data: {
       breadcrumb: 'Firma Eletrónica'
+    }
+  },
+  {
+    path: 'credit-time',
+    component: CreditTimeComponent,
+    data: {
+      breadcrumb: 'Tiempo Crédito'
     }
   }
 ];

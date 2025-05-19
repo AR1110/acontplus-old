@@ -37,6 +37,8 @@ import {
 } from "@modules/config/data/user-customer-permission/user-customer-permission-repository-impl";
 import {ElectronicSignatureRepository} from "@modules/config/domain/repositories/electronic-signature.repository";
 import {ElectronicSignatureRepoImpl} from "@modules/config/data/electronic-signature/electronic-signature-repo.impl";
+import {CreditTimeRepository} from "@modules/config/domain/repositories/credit-time.repository";
+import {CreditTimeRepositoryImpl} from "@modules/config/data/credit-time/credit-time-repository.impl";
 
 
 const DATA_USER_CUSTOMER_IOC:Provider[]=[
@@ -94,6 +96,10 @@ export const DATA_CONFIG_IOC:Provider[]=[
   {
     provide: ElectronicSignatureRepository,
     useClass: ElectronicSignatureRepoImpl
+  },
+  {
+    provide: CreditTimeRepository,
+    useClass: CreditTimeRepositoryImpl
   },
   //user-customer
   ...DATA_USER_CUSTOMER_IOC
