@@ -3,27 +3,6 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 export class CuentaPorCobrarMapper {
 
-  static fromApiDataFilter(response: any) {
-    const {
-      establecimientos,
-      estadoPago,
-      tipoDocumento,
-      empresas,
-      ciudades,
-    } = response;
-    let estabs = groupEstabUtil({
-      estabs: establecimientos || [],
-      isGroupPuntoEmision: true,
-    });
-
-    return {
-      estabs,
-      estadosDoc: estadoPago || [],
-      tiposDoc: tipoDocumento || [],
-      empresas: empresas || [],
-      ciudades: ciudades || [],
-    };
-  }
 
   static fromApiGetAll(response: any) {
     const cuentasPorCobrar = response.cuentasPorCobrar || []

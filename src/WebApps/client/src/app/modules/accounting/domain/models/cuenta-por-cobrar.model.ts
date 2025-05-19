@@ -1,5 +1,7 @@
- 
+
 // De Api
+import {GroupedEstab} from "@core/models/estab.model";
+
 export interface CuotaAPI {
     idCuotaPorCobrar: number
     idCuentaPorCobrar: number
@@ -87,4 +89,14 @@ export interface CuentaPorCobrarComprobante {
 export interface CuentaPorCobrarProps {
     idCuentaPorCobrar: number
     codEstab: string
+}
+
+
+export class DataFilterCuentaPorCobrarResponse {
+  estabs: GroupedEstab[]=[]
+  estadosDoc: any[]=[]
+  tiposDoc: any[]=[]
+  empresas: any[]=[]
+  ciudades: any[]=[]
+  users:any[]=[]
 }

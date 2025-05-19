@@ -1,5 +1,5 @@
 import { ACCOUNTING_CODE_REPORT } from '@accounting/domain/enums/accounting.constants';
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -17,7 +17,7 @@ import {
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
-import { isValidField } from '@core/utils/utils';
+import {getValidId, isValidField} from '@core/utils/utils';
 import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatSelectModule} from '@angular/material/select';
@@ -59,14 +59,14 @@ export class CarteraClienteComponent {
 
   isSelectedNotaEntrega = false;
   dataSearch = {
-    ckFecha: false,
+    ckFecha: true,
     checkboxCompanyCustomer: false,
     ckCxcVencida: false,
     ckCuotas: false,
     codEstab: '',
     idPuntoEmision: 0,
-    codEstado: null as string | null,
-    codDoc: null as string | null,
+    codEstado: 0 as string | number,
+    codDoc: 0 as string | number,
     idEmpresa: 0,
     convertToDoc: false,
     fromDate: formatDateToString(new Date()),
@@ -78,25 +78,28 @@ export class CarteraClienteComponent {
     userId: 0,
   };
 
-  establecimientos: GroupedEstab[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  estadosDoc: any[] = [];
-  tiposDoc: any[] = [];
-  empresas: any[] = [];
-  provinciasAgrupadas: any[] = [];
+  establecimientos= signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([])
+  estadosDoc = signal<any[]>([]);
+  tiposDoc = signal<any[]>([])
+  empresas = signal< any[]>([])
+  provinciasAgrupadas = signal<any[]>([])
+  users = signal<any[]>([])
 
   format: any;
 
   getDataFilter() {
     this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
-      const { estabs, estadosDoc, tiposDoc, empresas, ciudades } = response;
+      const { estabs, estadosDoc, tiposDoc, empresas, ciudades, users } = response;
 
-      this.establecimientos = estabs;
-      this.estadosDoc = estadosDoc;
-      this.tiposDoc = tiposDoc;
-      this.empresas = empresas;
+      this.establecimientos.set(estabs);
+      this.estadosDoc.set(estadosDoc)
+      this.tiposDoc.set(tiposDoc)
+      this.empresas.set(empresas)
+      this.users.set(users)
 
-      this.provinciasAgrupadas = ciudades.reduce(
+
+      const provinciasAgrupadas = ciudades.reduce(
         (agrupador: any, ciudad: any) => {
           const provinciaIndex = agrupador.findIndex(
             (p: any) => p.nombre === ciudad.provincia,
@@ -113,17 +116,18 @@ export class CarteraClienteComponent {
         },
         [],
       );
+      this.provinciasAgrupadas.set(provinciasAgrupadas)
 
-      let dataEstab = this.establecimientos.find((estab) => estab.defaultEstab);
-      this.puntosEmision = dataEstab?.puntosEmision ?? [];
-      let dataPuntoEmision = this.puntosEmision.find(
+      let dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
+      let dataPuntoEmision = this.puntosEmision().find(
         (ptoEmi) => ptoEmi.defaultPtoEmi,
       );
       this.dataSearch.codEstab = dataEstab?.codEstab ?? '';
       this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision ?? 0;
 
-      if (this.estadosDoc.length > 0) {
-        this.dataSearch.codEstado = estadosDoc.find(
+      if (this.estadosDoc().length > 0) {
+        this.dataSearch.codEstado = this.estadosDoc().find(
           (estado: any) => estado.codigo === CODE_ESTADO.NCBR,
         )?.codigo;
       }
@@ -135,13 +139,13 @@ export class CarteraClienteComponent {
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos.find(
+    let dataEstab = this.establecimientos().find(
       (estab) => estab.codEstab === this.dataSearch.codEstab,
     );
-    this.puntosEmision = dataEstab?.puntosEmision ?? [];
-    if (this.puntosEmision.length > 0) {
+    this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
+    if (this.puntosEmision().length > 0) {
       this.dataSearch.idPuntoEmision =
-        this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ??
+        this.puntosEmision().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ??
         0;
     } else {
       this.tS.toastr({
@@ -166,13 +170,6 @@ export class CarteraClienteComponent {
 
   onChangeTipoDoc() {
     this.isSelectedNotaEntrega = this.dataSearch.codDoc === DOC_TYPE.NE;
-  }
-  emptyInputUser() {
-    this.dataSearch.userId = 0;
-  }
-
-  onUserSelected(data: any) {
-    this.dataSearch.userId = data.idUsuario;
   }
 
   getReportPdf(tipo: number) {
@@ -207,14 +204,12 @@ export class CarteraClienteComponent {
 
   // Cartera Cliente
   private getReport() {
-    if (this.dataSearch.checkboxCompanyCustomer) {
-      if (!(this.dataSearch.companyCustomerId > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el Cliente',
-        });
-        return;
-      }
+    if (this.dataSearch.checkboxCompanyCustomer && !getValidId(this.dataSearch.companyCustomerId)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el Cliente',
+      });
+      return;
     }
 
     let idCliente = this.dataSearch.checkboxCompanyCustomer

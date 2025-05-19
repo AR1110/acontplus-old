@@ -305,7 +305,7 @@ BEGIN
     --> Filter 
     IF @tipo = 6
         BEGIN
-            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas,ciudades'
+            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas,ciudades,users'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -338,6 +338,12 @@ BEGIN
             FROM dbo.Ciudad          ci WITH (NOLOCK)																							         
             INNER JOIN dbo.Provincia pr WITH (NOLOCK) ON pr.idProvincia = ci.idProvincia
             WHERE ci.estado = 1
+
+            SELECT 
+                idUsuario
+                ,nombreCompleto
+                ,nombreUsuario
+            FROM v_usuario WHERE idEntidad = @idEntidad AND estadoUsuario=1
 
             RETURN 
         END
