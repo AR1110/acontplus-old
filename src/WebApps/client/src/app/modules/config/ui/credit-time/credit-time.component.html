@@ -25,13 +25,24 @@
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
   />
 
   <ng-template #templateOp let-item="item">
-
-    <button type="button" mat-icon-button (click)="openModalAddUpdate(item)">
-      <mat-icon>edit</mat-icon>
-    </button>
+    <app-theme-button
+      variant="info"
+      [icon]="'edit'"
+      [matStyle]="'icon'"
+      (handleClick)="openModalAddUpdate(item)"
+    />
+    <app-theme-button
+      variant="danger"
+      [icon]="'delete'"
+      [matStyle]="'icon'"
+      (handleClick)="askToDelete(item)"
+    />
 
   </ng-template>
 

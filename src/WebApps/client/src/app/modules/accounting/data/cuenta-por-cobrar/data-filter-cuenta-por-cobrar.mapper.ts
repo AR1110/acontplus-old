@@ -14,7 +14,7 @@ export class DataFilterCuentaPorCobrarMapper {
       empresas,
       ciudades,
       users
-    } = response; 
+    } = response;
     let estabs = groupEstabUtil({
       estabs: establecimientos || [],
       isGroupPuntoEmision: true,
