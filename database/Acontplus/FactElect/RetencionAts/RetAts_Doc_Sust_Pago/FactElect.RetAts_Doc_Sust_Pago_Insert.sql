@@ -12,20 +12,25 @@ GO
 
 CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Insert @userRoleId INT  
 ,@json VARCHAR(MAX)
+,@errorCode INT = 0 OUT
+,@errorMessage NVARCHAR(MAX) = '' OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
-	DECLARE @idUsuario INT
-	,@idRetencionAts INT
-	,@totalOld NUMERIC (18,2)
-    ,@idRetAtsDocSustento INT;
+	DECLARE @userId INT
+	    ,@idRetencionAts INT
+	    ,@totalOld NUMERIC (18,2)
+        ,@idRetAtsDocSustento INT;
 
+     DECLARE @code CHAR(1),
+		@message VARCHAR(MAX),
+		@trancount BIT = 0;
 
 	BEGIN TRY
 
-            SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+            SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
             SET @idRetAtsDocSustento = (SELECT TOP 1 idRetAtsDocSustento FROM OPENJSON(@json) WITH (idRetAtsDocSustento INT))
 
@@ -36,10 +41,14 @@ BEGIN
 					SET @totalOld = (SELECT SUM(importeTotal) FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @idRetencionAts)
 				END
 
-		BEGIN TRAN
+		IF (@@TRANCOUNT = 0)
+			BEGIN
+				BEGIN TRANSACTION;
+				SET @trancount = 1;
+			END
 
 			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total, idUsuario)
-			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total, @idUsuario
+			SELECT @idRetencionAts, @idRetAtsDocSustento, uniqueIdDoc, formaPagoId, total, @userId
 			FROM OPENJSON(@json)
 			WITH	( 
 				uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
@@ -47,15 +56,38 @@ BEGIN
 				total  NUMERIC(18,5) '$.total'
 			)
 
-			SELECT '1' code, 'Forma de pago guardada con exito'  as 'message'
-		COMMIT TRAN
+		IF (@@ROWCOUNT > 0)
+			BEGIN
+				SET @code = '1'; 
+                SET @message = 'Pago del documento, registrado exitosamente!'
+			END
+		ELSE
+			BEGIN
+				SET @code = '0';
+                SET @message = 'No se ejecuto ninguna transacción';
+			END
+
+	  IF (@trancount = 1)
+		BEGIN
+			COMMIT;
+			SELECT @code as code, @message as 'message';
+		 END
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
-		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/POST', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+	    IF (@trancount = 1)
+			BEGIN
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRAN;  
+
+		    INSERT INTO dbo.ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		    VALUES ('DocSustentoPago/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
+            SELECT '0' code, 'Error en el procedimiento!' as 'message'
+         END
+		ELSE
+            BEGIN
+			    SET @errorCode = ERROR_NUMBER()
+			    SET @errorMessage = ERROR_MESSAGE()
+            END
 	END CATCH
 END
 GO
