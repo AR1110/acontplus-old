@@ -6,19 +6,28 @@ public static class FactElectEndpointsExtensions
 {
     public static IEndpointRouteBuilder MapFactElectEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        var retencionAtsGroup = endpointRouteBuilder.MapGroup("/api/notificaciontributaria")
+        var notificacionTributariaGroup = endpointRouteBuilder.MapGroup("/api/notificaciontributaria")
             .RequireAuthorization()
             .WithOpenApi()
             .WithTags("NotificacionTributaria");
 
-        retencionAtsGroup.MapGet("/{id}",
+        notificacionTributariaGroup.MapGet("/{id}",
             async (INotificacionTributariaEndpoints notificacionTributariaEndpoints, int id) =>
                 await notificacionTributariaEndpoints.GetNotificacionTributariaByIdAsync(id));
 
-        retencionAtsGroup.MapPost("/",
+        notificacionTributariaGroup.MapPost("/",
             async (INotificacionTributariaEndpoints notificacionTributariaEndpoints,
                     NotificacionTributariaDto notificacionTributariaDto) =>
                 await notificacionTributariaEndpoints.CreateNotificacionTributariaAsync(notificacionTributariaDto));
+
+        var documentoElectronicoErrorGroup = endpointRouteBuilder.MapGroup("/api/documentoelectronicoerror")
+            .RequireAuthorization()
+            .WithOpenApi()
+            .WithTags("DocumentoElectronicoError");
+
+        documentoElectronicoErrorGroup.MapGet("/{id}",
+            async (IDocumentoElectronicoErrorEndpoints documentoElectronicoErrorEndpoints, int id) =>
+                await documentoElectronicoErrorEndpoints.GetDocumentoElectronicoErrorByIdAsync(id));
 
         return endpointRouteBuilder;
     }
