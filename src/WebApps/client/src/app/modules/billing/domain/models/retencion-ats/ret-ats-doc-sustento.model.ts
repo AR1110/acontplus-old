@@ -3,6 +3,7 @@ export interface RetAtsDocSustento {
   documentName?: string;
   idRetAtsDocSustento: number;
   idRetencionAts?: number;
+  tipoComprobanteId?: number;
   uniqueIdDoc?: string;
   codSustento?: string;
   codDocSustento?: string;

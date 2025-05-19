@@ -84,6 +84,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
+  dataLoaded = input.required<boolean>();
   tiposComprobante = input.required<TipoComprobante[]>();
   sustentosTributarios = input.required<SustentoTributario[]>();
   tiposPago = input.required<TipoPago[]>();
