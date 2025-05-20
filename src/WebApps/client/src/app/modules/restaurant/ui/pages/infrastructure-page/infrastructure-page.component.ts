@@ -5,6 +5,7 @@ import { MatTab, MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { RoomListComponent } from '@restaurant/ui/room/room-list/room-list.component';
 import { FloorListComponent } from '@restaurant/ui/floor/floor-list/floor-list.component';
 import { TableListComponent } from '@restaurant/ui/table/table-list/table-list.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 
 @Component({
@@ -16,6 +17,8 @@ import { TableListComponent } from '@restaurant/ui/table/table-list/table-list.c
         RoomListComponent,
         FloorListComponent,
         TableListComponent,
+        MatCard,
+        MatCardContent,
     ],
     templateUrl: './infrastructure-page.component.html',
     styles: ``

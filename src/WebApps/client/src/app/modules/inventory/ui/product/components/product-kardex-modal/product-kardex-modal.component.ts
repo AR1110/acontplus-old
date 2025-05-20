@@ -6,11 +6,11 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TransactionService } from '@inventory/services/transaction.service';
+
+import { TransactionService } from '@inventory/data/services/transaction.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import Swal from 'sweetalert2';
@@ -18,20 +18,21 @@ import { SharedService } from '@core/services/shared.service';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { monthEnd, monthStart } from '@formkit/tempo';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-product-kardex-modal',
-    imports: [
-        FontAwesomeModule,
-        FormsModule,
-        MatSlideToggleModule,
-        MatChipsModule,
-        ProductSearchComponent,
-        DateRangeSelectionComponent,
-        TabulatorComponent,
-    ],
-    templateUrl: './product-kardex-modal.component.html',
-    styles: ``
+  selector: 'app-product-kardex-modal',
+  imports: [
+    FormsModule,
+    MatSlideToggleModule,
+    MatChipsModule,
+    ProductSearchComponent,
+    DateRangeSelectionComponent,
+    TabulatorComponent,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './product-kardex-modal.component.html',
+  styles: ``,
 })
 export class ProductKardexModalComponent {
   @Input() params = {
@@ -293,10 +294,8 @@ export class ProductKardexModalComponent {
   }
 
   ngOnInit() {
-    showLoader();
     this.transactionSvc.getDataFilter().subscribe({
       next: (response) => {
-        hideLoader();
         this.establecimientos = response.estabs;
         this.tiposTransaccion = response.tiposTransaccion;
         let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
@@ -316,7 +315,6 @@ export class ProductKardexModalComponent {
       },
       error(err) {
         console.log(err);
-        hideLoader();
       },
     });
   }
@@ -350,7 +348,6 @@ export class ProductKardexModalComponent {
 
   getDataKardex() {
     try {
-      showLoader();
       let params = {
         checkBoxFecha: this.dataSearch.option === 1,
         checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
@@ -364,7 +361,6 @@ export class ProductKardexModalComponent {
       };
       this.transactionSvc.getDataKardex(params).subscribe({
         next: (response) => {
-          hideLoader();
           this.dataArticulo = response.dataArticulo || {};
           this.transacciones = response.kardex || [];
           if (this.transacciones.length === 0) {
@@ -392,7 +388,6 @@ export class ProductKardexModalComponent {
       });
     } catch (error) {
       console.log(error);
-      hideLoader();
     }
   }
 

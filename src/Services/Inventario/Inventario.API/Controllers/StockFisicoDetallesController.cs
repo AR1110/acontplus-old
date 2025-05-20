@@ -6,10 +6,7 @@ public class StockFisicoDetallesController(InventarioContext context) : BaseApiC
     [HttpGet]
     public async Task<ActionResult<IEnumerable<StockFisicoDetalle>>> GetStockFisicoDetalles()
     {
-        if (context.StockFisicoDetalles == null)
-        {
-            return NotFound();
-        }
+        if (context.StockFisicoDetalles == null) return NotFound();
 
         return await context.StockFisicoDetalles.ToListAsync();
     }
@@ -18,17 +15,11 @@ public class StockFisicoDetallesController(InventarioContext context) : BaseApiC
     [HttpGet("{id}")]
     public async Task<ActionResult<StockFisicoDetalle>> GetStockFisicoDetalle(int id)
     {
-        if (context.StockFisicoDetalles == null)
-        {
-            return NotFound();
-        }
+        if (context.StockFisicoDetalles == null) return NotFound();
 
         var stockFisicoDetalle = await context.StockFisicoDetalles.FindAsync(id);
 
-        if (stockFisicoDetalle == null)
-        {
-            return NotFound();
-        }
+        if (stockFisicoDetalle == null) return NotFound();
 
         return stockFisicoDetalle;
     }
@@ -38,10 +29,7 @@ public class StockFisicoDetallesController(InventarioContext context) : BaseApiC
     [HttpPut("{id}")]
     public async Task<IActionResult> PutStockFisicoDetalle(int id, StockFisicoDetalle stockFisicoDetalle)
     {
-        if (id != stockFisicoDetalle.Id)
-        {
-            return BadRequest();
-        }
+        if (id != stockFisicoDetalle.Id) return BadRequest();
 
         context.Entry(stockFisicoDetalle).State = EntityState.Modified;
 
@@ -51,10 +39,7 @@ public class StockFisicoDetallesController(InventarioContext context) : BaseApiC
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!StockFisicoDetalleExists(id))
-            {
-                return NotFound();
-            }
+            if (!StockFisicoDetalleExists(id)) return NotFound();
 
             throw;
         }
@@ -68,9 +53,7 @@ public class StockFisicoDetallesController(InventarioContext context) : BaseApiC
     public async Task<ActionResult<StockFisicoDetalle>> PostStockFisicoDetalle(StockFisicoDetalle stockFisicoDetalle)
     {
         if (context.StockFisicoDetalles == null)
-        {
             return Problem("Entity set 'InventarioContext.StockFisicoDetalles'  is null.");
-        }
 
         context.StockFisicoDetalles.Add(stockFisicoDetalle);
         await context.SaveChangesAsync();
@@ -82,16 +65,10 @@ public class StockFisicoDetallesController(InventarioContext context) : BaseApiC
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStockFisicoDetalle(int id)
     {
-        if (context.StockFisicoDetalles == null)
-        {
-            return NotFound();
-        }
+        if (context.StockFisicoDetalles == null) return NotFound();
 
         var stockFisicoDetalle = await context.StockFisicoDetalles.FindAsync(id);
-        if (stockFisicoDetalle == null)
-        {
-            return NotFound();
-        }
+        if (stockFisicoDetalle == null) return NotFound();
 
         context.StockFisicoDetalles.Remove(stockFisicoDetalle);
         await context.SaveChangesAsync();

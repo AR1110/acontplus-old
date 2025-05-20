@@ -8,21 +8,25 @@ import { ToasterService } from '@core/services/toaster.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
 import { Item } from '@restaurant/domain/models/item.model';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-menu-add-edit-modal',
+  selector: 'app-menu-add-edit-modal',
     imports: [
         ReactiveFormsModule,
         MatSlideToggle,
         ItemSearchComponent,
-        FaIconComponent,
+        MatIcon,
         TabulatorSemanticUiComponent,
+        MatButton,
+        ThemeButtonComponent,
     ],
-    templateUrl: './menu-add-edit-modal.component.html',
-    styles: ``
+  templateUrl: './menu-add-edit-modal.component.html',
+  styles: ``,
 })
 export class MenuAddEditModalComponent {
   menuForm = new FormGroup({
@@ -33,7 +37,7 @@ export class MenuAddEditModalComponent {
   });
   data = {} as Menu;
   menuTypes: MenuType[] = [];
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle: string = 'Registrar Menu';
   productsAdded: any[] = [];
 

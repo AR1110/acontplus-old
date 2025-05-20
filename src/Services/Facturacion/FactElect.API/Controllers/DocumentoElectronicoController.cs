@@ -28,8 +28,10 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     [HttpGet("GetDataForm")]
     public async Task<IActionResult> GetDataForm()
     {
-        var parameters = new Dictionary<string, object> {
-            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId)
+        var parameters = new Dictionary<string, object>
+        {
+            {
+                "idUsuarioRol", User.GetClaimValue<int>(UserRoleId)
             }
         };
         return Ok(await documentoElectronicoService.GetDataFormAsync(parameters));
@@ -38,15 +40,13 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     [HttpGet("GetXmlSri/{id}")]
     public async Task<IActionResult> GetXmlSri(int id)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId) },
             { "id", id }
         };
         var response = await documentoElectronicoService.GetXmlSriAsync(parameters);
-        if (response == null)
-        {
-            return BadRequest("No se encontro xml");
-        }
+        if (response == null) return BadRequest("No se encontro xml");
 
         return File(response.Content, "text/xml", response.FileName);
     }
@@ -54,8 +54,9 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id)
     {
-        var parameters = new Dictionary<string, object> {
-            { "idRol", User.GetClaimValue<int>(UserRoleId) },
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) },
             { "id", id }
         };
         return Ok(await documentoElectronicoService.UpdateAsync(parameters));

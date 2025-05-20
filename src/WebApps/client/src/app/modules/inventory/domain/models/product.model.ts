@@ -1,6 +1,9 @@
 import { TAX_RATE_CODE } from "@core/constants/global.constants";
 
 import { TarifaProductSearch } from "./tarifa.model";
+import {ProductRepository} from "@inventory/domain/repositories/product.repository";
+import {GroupedEstab} from "@core/models/estab.model";
+import {GroupedSubFamilia} from "@inventory/domain/models/sub-category.model";
 
 export interface ProductList {
   position: number;
@@ -75,4 +78,20 @@ export interface ProductSale {
 }
 
 
+export class ProductDataForm {
+  categorias: any[] = [];
+  decimal: Record<string, any> = {};
+  estabs: GroupedEstab[] = [];
+  etiquetas: any[] = [];
+  marcas: any[] = [];
+  medidas: any[] = [];
+  modelos: any[] = [];
+  subCategorias: any[] = [];
+  subCategoriasGroup: GroupedSubFamilia[] = [];
+  tarifas: any[] = [];
+  tiposArticulo: any[] = [];
+  tiposIce: any[] = [];
+  tiposIva: any[] = [];
 
+  constructor() {}
+}

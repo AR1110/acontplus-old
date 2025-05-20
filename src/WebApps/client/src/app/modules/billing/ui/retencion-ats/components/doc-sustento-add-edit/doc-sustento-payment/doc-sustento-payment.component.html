@@ -1,0 +1,45 @@
+<form [formGroup]="paymentGroup()">
+  <div class="row">
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-10">
+      <mat-form-field class="w-100">
+        <mat-label>Forma Pago</mat-label>
+        <mat-select
+          id="formaPagoId-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
+          formControlName="formaPagoId"
+        >
+          <mat-option>-- Seleccione una forma de pago --</mat-option>
+          @for (item of formasPago(); track item.id) {
+            <mat-option [value]="item.id">
+              {{ item.codigo }} -
+              {{ item.descripcion }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Total</mat-label>
+        <input
+          matInput
+          type="number"
+          id="total-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
+          onclick="this.select()"
+          placeholder="0.00"
+          formControlName="total"
+          step="any"
+          min="0"
+        />
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <app-theme-button
+        variant="danger"
+        icon="delete"
+        matStyle="icon"
+        id="btnDeletePayment-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
+        (handleClick)="removePayment()"
+      ></app-theme-button>
+    </div>
+  </div>
+</form>

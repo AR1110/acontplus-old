@@ -1,0 +1,10 @@
+﻿global using Common.Core.Data;
+global using Common.Core.Models;
+global using Common.Core.Validation;
+global using Common.Infrastructure.Core.Entity;
+global using Common.S3Application.Models;
+global using Common.Services.Configuration;
+global using Common.Services.Extensions;
+global using Microsoft.AspNetCore.ResponseCompression;
+global using Microsoft.EntityFrameworkCore;
+global using Restaurant.Api.Data;

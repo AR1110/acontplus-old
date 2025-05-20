@@ -1,15 +1,29 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  ViewEncapsulation,
+} from '@angular/core';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
+import {
+  PageModule,
+  ReactiveDataModule,
+  TabulatorFull as Tabulator,
+} from 'tabulator-tables';
 
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
-    selector: 'app-tabulator',
-    imports: [],
-    templateUrl: './tabulator.component.html',
-    styleUrls: ['./tabulator.component.scss'],
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-tabulator',
+  imports: [],
+  templateUrl: './tabulator.component.html',
+  styleUrls: ['./tabulator.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() tableData: any[] = [];
@@ -34,18 +48,15 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData'] && !changes['tableData'].isFirstChange()) {
-      console.log('ngOnChanges tabulator ')
+      console.log('ngOnChanges tabulator ');
       // Efficiently update the data without redrawing the table
       this.updateTableData();
     }
   }
 
   ngAfterViewInit(): void {
-      this.initializeTable();
+    this.initializeTable();
   }
-
-
-
 
   private initializeTable(): void {
     const tableElement = document.getElementById(this.uniqueIdTabulator);
@@ -68,7 +79,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
       reactiveData: true,
       autoResize: true, // prevent auto resizing of table
       placeholder: 'Sin registro',
-      selectable: true,
+      selectableRows: true,
       ...this.options,
     });
     // Append the Tabulator DOM element to the parent container
@@ -96,7 +107,6 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
       this.refTabulator.replaceData(this.tableData);
     }
   }
-
 
   ngOnDestroy(): void {
     if (this.refTabulator) {

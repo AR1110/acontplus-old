@@ -1,7 +1,9 @@
-﻿public class OrderMaintenanceService : IOrderMaintenanceService
+﻿namespace TechnicalSupport.API.Services;
+
+public class OrderMaintenanceService : IOrderMaintenanceService
 {
-    private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;
+    private readonly TechnicalSupportContext _context;
 
     public OrderMaintenanceService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
@@ -14,9 +16,7 @@
         var ds = await _adoRepository.GetDataSetAsync("TechnicalSupport.OrderMantenaince_Get", parameters);
 
         if (DataValidation.DataSetIsNull(ds, true))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
@@ -38,10 +38,8 @@
         var orderMaintenance = await _context.OrderMaintenances.FindAsync(id);
 
         if (orderMaintenance == null)
-        {
             // Handle case where order not found
             return new ApiResponse { Code = "0", Message = "No se encontró orden para eliminar" };
-        }
 
         orderMaintenance.Enabled = false;
         orderMaintenance.Deleted = true;

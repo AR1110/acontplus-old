@@ -16,7 +16,7 @@ public class NotaEntregaController : BaseApiController
         {
             { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });
     }
@@ -25,8 +25,9 @@ public class NotaEntregaController : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var response =
-            await _svc.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
-        if (response == null) { return NoContent(); }
+            await _svc.GetByIdAsync(new Dictionary<string, object>
+                { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
+        if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });
     }

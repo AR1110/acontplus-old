@@ -13,10 +13,10 @@ import { ApiResponse  } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDateToString, isDateValid } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { VehicleWebRepository } from '@mechanical/data/vehicle/vehicle-web.repository';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
-import { SupportUseCase } from '@modules/mechanical/domain/use-cases/support.use-case';
+import { SupportUseCase } from '@mechanical/application/use-cases/support.use-case';
 import { distinctUntilChanged, finalize, Observable,  switchMap,  } from 'rxjs';
 import Swal from 'sweetalert2';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
@@ -43,7 +43,7 @@ interface UserAssigned {
     selector: 'app-support-add-edit-modal',
     imports: [
         CommonModule,
-        FontAwesomeModule,
+
         FormsModule,
         MatButtonModule,
         MatSelectModule,

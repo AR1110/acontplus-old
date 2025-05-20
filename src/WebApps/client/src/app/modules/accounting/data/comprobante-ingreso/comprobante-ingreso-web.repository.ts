@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ComprobanteIngresoRepository } from '@accounting/core/repositories/comprobante-ingreso.repository';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
+import { ComprobanteIngresoRepository } from '@accounting/domain/repositories/comprobante-ingreso.repository';
+import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
 import {ApiResponse} from "@core/models/api-response";
 import {map} from "rxjs";
 import {ComprobanteIngresoMapper} from "@accounting/data/comprobante-ingreso/comprobante-ingreso.mapper";

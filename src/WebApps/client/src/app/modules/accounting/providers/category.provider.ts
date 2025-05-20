@@ -1,6 +1,6 @@
 import {ClassProvider} from "@angular/core";
-import {CategoryRepository} from "@accounting/core/repositories/category.repository";
 import {CategoryWebRepository} from "@accounting/data/category/category-web.repository";
+import {CategoryRepository} from "@accounting/domain/repositories/category.repository";
 
 
 export const categoryProvider:ClassProvider = {

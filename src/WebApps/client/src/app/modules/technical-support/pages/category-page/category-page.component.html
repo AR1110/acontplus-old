@@ -1,14 +1,10 @@
-<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
+<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row mb-3">
       <div class="col-md-2 col-12">
-        <button
-          (click)="onModalOpen()"
-          class="btn btn-primary"
-          type="button"
-        >
-          <fa-icon [icon]="'plus'"></fa-icon>
+        <button (click)="onModalOpen()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
           Nueva
         </button>
       </div>
@@ -16,12 +12,12 @@
     <div class="table-responsive">
       <table class="table">
         <thead>
-        <tr>
-          <th class="text-center">#</th>
-          <th>Código</th>
-          <th>Nombre</th>
-          <th>Opciones</th>
-        </tr>
+          <tr>
+            <th class="text-center">#</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Opciones</th>
+          </tr>
         </thead>
         <tbody>
           @for (item of categories; track $index) {
@@ -30,21 +26,27 @@
               <td>{{ item.code }}</td>
               <td>{{ item.name }}</td>
               <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-warning btn-sm m-r-5"
-                  (click)="onEdit(item)"
+                <app-theme-button
+                  variant="warning"
+                  icon="edit"
+                  matStyle="icon"
+                  title="Editar"
+                  (handleClick)="onEdit(item)"
                 >
-                  <fa-icon [icon]="'edit'"></fa-icon>
-                </button>
-                <button type="button" class="btn btn-outline-danger btn-sm">
-                  <fa-icon [icon]="'trash'"></fa-icon>
-                </button>
+                </app-theme-button>
+                <app-theme-button
+                  variant="danger"
+                  icon="delete"
+                  matStyle="icon"
+                  title="Eliminar"
+                  (handleClick)="onDelete(item)"
+                >
+                </app-theme-button>
               </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

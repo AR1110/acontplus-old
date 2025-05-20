@@ -26,16 +26,17 @@ BEGIN
         @ambiente INT,
         @claveAcceso NVARCHAR(50),
         @secuencial INT,
-        @idEstadoServicio INT,
-        @customerId INT,
+        @idEstadoServicio INT, 
         @idDocumentoElectronico INT,
         @tipoEmision TINYINT = 1,
         @idTipoDocumento INT,
         @idProveedor INT,
-        @idRentencionAts INT
+        @idRentencionAts INT,
+        @customerId INT
 			
 	DECLARE @tblInfoCompRet AS TABLE(
          idRetencionAts INT NOT NULL
+        ,idProveedor INT NOT NULL
         ,idPuntoEmision INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
 		,contribuyentEspecial VARCHAR(13) NULL
@@ -43,23 +44,22 @@ BEGIN
 		,tipoIdentificacionSujetoRetenido VARCHAR(2) NULL
 		,tipoSujetoRetenido VARCHAR(2) NULL
 		,parteRel VARCHAR(2) NOT NULL
-		,idCliente INT NULL
-		,razonSocialSujetoRetenido VARCHAR(300) NULL
-		,identificacionSujetoRetenido VARCHAR(13) NULL
+		,razonSocialSujetoRetenido VARCHAR(300) NULL 
 		,periodoFiscal VARCHAR(8) NULL
 	) 
 
 	BEGIN TRY
         --> Informacion General
-        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+        SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
         --> Info Json
         INSERT INTO @tblInfoCompRet
-              (idRetencionAts,idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal)
-		SELECT @id           ,idPuntoEmision,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+              (idRetencionAts,idPuntoEmision,idProveedor,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,razonSocialSujetoRetenido,periodoFiscal)
+		SELECT @id           ,idPuntoEmision,idProveedor,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,razonSocialSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@json) WITH
         (
              idPuntoEmision                 INT
+            ,idProveedor                        INT
             ,secuencial                       VARCHAR(6)
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
@@ -67,9 +67,7 @@ BEGIN
             ,tipoIdentificacionSujetoRetenido VARCHAR(2)
             ,tipoSujetoRetenido               VARCHAR(2)
             ,parteRel                         VARCHAR(2)
-            ,idCliente                        INT
             ,razonSocialSujetoRetenido        VARCHAR(300)
-            ,identificacionSujetoRetenido     VARCHAR(13)
             ,periodoFiscal                    VARCHAR(8)
 		)
 
@@ -86,10 +84,10 @@ BEGIN
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 
-        SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)
-
-        SELECT TOP 1 @idProveedor = idProveedor FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @CustomerId
-
+        SELECT TOP 1 @customerId = Id FROM Customer.Customer c WITH (NOLOCK) 
+            INNER JOIN dbo.Proveedor p ON c.Id = p.CustomerId AND p.idEntidad = @idEntidad
+            INNER JOIN @tblInfoCompRet r ON p.idProveedor = r.idProveedor
+ 
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
                                                                 dbo.AFTDeleteCero(es.estab)   
 			                                                   ,'07'
@@ -142,18 +140,7 @@ BEGIN
 			    SELECT '0' code, 'No se encontro proveedor' as 'message'
 			    RETURN
 		    END
-
-        IF EXISTS (SELECT 1 FROM @tblInfoCompRet WHERE tipoIdentificacionSujetoRetenido = '04' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 13)
-		    BEGIN
-			    SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
-			    RETURN
-		    END
-
-		IF EXISTS (SELECT 1 FROM @tblInfoCompRet WHERE tipoIdentificacionSujetoRetenido = '05' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 10)
-			BEGIN
-				SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
-				RETURN
-			END
+	 
 
         IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
             BEGIN
@@ -174,7 +161,6 @@ BEGIN
 			UPDATE ret WITH (ROWLOCK)
                SET ret.tipoSujetoRetenido = t.tipoSujetoRetenido 
 			      ,ret.parteRel           = t.parteRel
-			      ,ret.idCliente          = t.idCliente
 			      ,ret.periodoFiscal      = t.periodoFiscal
 			      ,ret.idUsuario          = @idUsuario
 			      ,ret.idProveedor        = @idProveedor

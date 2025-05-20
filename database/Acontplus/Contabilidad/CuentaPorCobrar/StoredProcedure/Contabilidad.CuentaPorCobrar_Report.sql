@@ -10,11 +10,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report 
-   --  @userRoleId INT
-   -- ,
-    @json VARCHAR(MAX)
-	,@tableNames VARCHAR(500) OUTPUT
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report  @json VARCHAR(MAX),@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
     
@@ -51,8 +47,6 @@ BEGIN
            ,@dirViviendaCliente VARCHAR(150);
 
     --> Variables
-    --> Variables
-
     SELECT @tipo = tipo, @userRoleId = userRoleId FROM OPENJSON(@json) WITH (tipo INT, userRoleId INT)
 
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -65,34 +59,36 @@ BEGIN
 
             SET @nombreReporte = 'Cartera de Cliente'
 
-            SELECT @idCliente    = idCliente  
-                  ,@ckFecha      = ckFecha
-                  ,@fechaInicio  = fechaInicio
-                  ,@fechaFin     = fechaFin
-                  ,@codEstab     = codEstab
-                  ,@codEstado    = codEstado
-                  ,@ckCxcVencida = ckCxcVencida
-                  ,@ckCuotas     = ckCuotas
-                  ,@codDoc       = codDoc
-                  ,@idEmpresa    = idEmpresa
+            SELECT @idCliente          = idCliente  
+                  ,@ckFecha            = ckFecha
+                  ,@fechaInicio        = fechaInicio
+                  ,@fechaFin           = fechaFin
+                  ,@codEstab           = codEstab
+                  ,@codEstado          = codEstado
+                  ,@ckCxcVencida       = ckCxcVencida
+                  ,@ckCuotas           = ckCuotas
+                  ,@codDoc             = codDoc
+                  ,@idEmpresa          = idEmpresa
+                  ,@convertToDoc       = convertToDoc
                   ,@dirViviendaCliente = dirViviendaCliente
                   ,@idCiudad = idCiudad
                   ,@idUsuario = userId
             FROM OPENJSON(@json) WITH 
             (
-                idCliente    INT         '$.idCliente'
-               ,ckFecha      BIT         '$.ckFecha'
-               ,fechaInicio  DATETIME2   '$.fechaInicio'
-               ,fechaFin     DATETIME2   '$.fechaFin'
-               ,codEstab     VARCHAR(25) '$.codEstab'
-               ,codEstado    VARCHAR(15) '$.codEstado'
-               ,ckCxcVencida BIT         '$.ckCxcVencida'
-               ,ckCuotas     BIT         '$.ckCuotas'
-               ,codDoc       VARCHAR(10) '$.codDoc'
-               ,idEmpresa    INT         '$.idEmpresa'
+                idCliente          INT         '$.idCliente'
+               ,ckFecha            BIT         '$.ckFecha'
+               ,fechaInicio        DATETIME2   '$.fechaInicio'
+               ,fechaFin           DATETIME2   '$.fechaFin'
+               ,codEstab           VARCHAR(25) '$.codEstab'
+               ,codEstado          VARCHAR(15) '$.codEstado'
+               ,ckCxcVencida       BIT         '$.ckCxcVencida'
+               ,ckCuotas           BIT         '$.ckCuotas'
+               ,codDoc             VARCHAR(10) '$.codDoc'
+               ,idEmpresa          INT         '$.idEmpresa'
                ,dirViviendaCliente VARCHAR(150) 
-               ,idCiudad    INT
-               ,userId      INT
+               ,idCiudad           INT
+               ,userId             INT
+               ,convertToDoc       BIT
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
@@ -101,22 +97,25 @@ BEGIN
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
                               ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
                               ,CAST(importeTotal as numeric(18,2))        as importeTotal
+                              ,CAST(mora as numeric(18,2))                as mora
                               ,CAST(abono as numeric(18,2))               as abono
                               ,CAST(saldo as numeric(18,2))               as saldo
                               ,estado 
+                              ,cc.convertToDoc
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
                         WHERE cc.idEntidad = @idEntidad '
 
-            SET @params = '@idCliente         INT
-                          ,@codEstab  VARCHAR(25)
+            SET @params = '@idCliente    INT
+                          ,@codEstab     VARCHAR(25)
                           ,@fechaInicio  DATETIME
                           ,@fechaFin     DATETIME
-                          ,@codEstado VARCHAR(15)
-                          ,@codDoc    VARCHAR(10)
-                          ,@idEmpresa        INT
-                          ,@idEntidad        INT
-                          ,@idCiudad INT 
-                          ,@idUsuario INT '
+                          ,@codEstado    VARCHAR(15)
+                          ,@codDoc       VARCHAR(10)
+                          ,@idEmpresa    INT
+                          ,@idEntidad    INT
+                          ,@idCiudad     INT 
+                          ,@idUsuario    INT
+                          ,@convertToDoc BIT '
                           
 
 
@@ -129,12 +128,14 @@ BEGIN
                                       ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
                                       ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
                                       ,CAST(cc.importeTotal as numeric(18,2))     as importeTotal
+                                      ,CAST(cc.mora as numeric(18,2))             as mora
                                       ,CAST(cc.abono as numeric(18,2))            as abono
                                       ,CAST(cc.saldo as numeric(18,2))            as saldo
                                       ,cc.estado 
                                       ,cp.idCuotaPorCobrar
 		                              ,cp.nroCuota
 		                              ,CAST(cp.cuota as numeric(8,2))              as cuota
+		                              ,CAST(cp.mora as numeric(8,2))               as moraCuota
 		                              ,FORMAT(cp.fechaVencimiento,''dd/MM/yyyy'')  as fechaVencimientoCuota
                                       ,DATEDIFF(DAY,cp.fechaVencimiento,GETDATE()) as diasMora
 		                              ,CAST(cp.abono as numeric(8,2))              as abonoCuota
@@ -143,7 +144,8 @@ BEGIN
                                 FROM v_CuentaPorCobrar                 cc WITH (NOLOCK) 
                                 INNER JOIN Contabilidad.CuotaPorCobrar cp WITH (NOLOCK) ON cp.idCuentaPorCobrar = cc.idCuentaPorCobrar
                                 INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
-                                WHERE cc.idEntidad = @idEntidad '
+                                WHERE cc.idEntidad = @idEntidad
+                                  AND cp.estado = 1 '
 
                     IF @ckCxcVencida = 1 
                         BEGIN
@@ -171,6 +173,11 @@ BEGIN
             IF @codEstab IS NOT NULL 
                 BEGIN
                     SET @sql = @sql + 'AND cc.codEstab = @codEstab '
+                END
+
+            IF @convertToDoc IN (1,0)
+                BEGIN
+                    SET @sql = @sql + 'AND cc.convertToDoc = @convertToDoc '
                 END
 
             IF @ckFecha = 1
@@ -205,23 +212,24 @@ BEGIN
                     SET @sql = @sql + 'AND idUsuario = @idUsuario '
                 END 
 
+            IF @convertToDoc IN (1,0)
+                BEGIN
+                    SET @sql = @sql + 'AND convertToDoc = @convertToDoc '
+                END
+
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NCBR'
                         BEGIN 
-                            SET @sql = @sql + 'AND cc.codEstado IN (''PE'',''PP'') AND cc.convertToDoc = 0  '
+                            SET @sql = @sql + 'AND codEstado IN (''PE'',''PP'') '
                         END 
                     ELSE
                         BEGIN
-                            SET @sql = @sql + 'AND cc.codEstado = @codEstado AND cc.convertToDoc = 0 '
+                            SET @sql = @sql + 'AND codEstado = @codEstado '
                         END 
-                END 
-            ELSE
-                BEGIN
-                    SET @sql = @sql + 'AND cc.codEstado NOT IN (''A'',''TRA'') AND cc.convertToDoc = 0 '
-                END 
+                END
 
-            SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ASC '
+            SET @sql =  @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ' + IIF(@ckCuotas = 1,',cp.nroCuota ','') + 'ASC ' 
 
             SELECT en.razonSocial
                   ,es.nombreComercial
@@ -237,16 +245,17 @@ BEGIN
 
             EXEC sp_executesql @sql
 						      ,@params 
-                              ,@codEstab    = @codEstab
-                              ,@idCliente   = @idCliente
-                              ,@fechaInicio = @fechaInicio
-                              ,@fechaFin    = @fechaFin
-                              ,@codEstado   = @codEstado
-                              ,@codDoc      = @codDoc
-                              ,@idEmpresa   = @idEmpresa
-                              ,@idEntidad   = @idEntidad
-                              ,@idCiudad    = @idCiudad
-                              ,@idUsuario   = @idUsuario
+                              ,@codEstab     = @codEstab
+                              ,@idCliente    = @idCliente
+                              ,@fechaInicio  = @fechaInicio
+                              ,@fechaFin     = @fechaFin
+                              ,@codEstado    = @codEstado
+                              ,@codDoc       = @codDoc
+                              ,@idEmpresa    = @idEmpresa
+                              ,@idEntidad    = @idEntidad
+                              ,@idCiudad     = @idCiudad
+                              ,@idUsuario    = @idUsuario
+                              ,@convertToDoc = @convertToDoc
 
             RETURN 
 
@@ -306,6 +315,7 @@ BEGIN
                               ,Format(fechaEmision,''dd/MM/yyyy'')                                                 as fechaEmision
                               ,Format(fechaVencimiento,''dd/MM/yyyy'')                                             as fechaVencimiento
                               ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(importeTotal as numeric(18,2))) as importeTotal
+                              ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(mora as numeric(18,2)))         as mora
                               ,CAST(abono as numeric(18,2))                                                        as abono
                               ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(saldo as numeric(18,2)))        as saldo
                               ,estado 
@@ -367,6 +377,7 @@ BEGIN
             IF @idCiudad > 0
                 BEGIN
                     SET @nombreReporte = @nombreReporte + ' - ' + (SELECT descripcion FROM dbo.Ciudad WITH(NOLOCK) WHERE idCiudad = @idCiudad)
+                    
                     SET @sql = @sql + 'AND idCiudad = @idCiudad '
                 END
 
@@ -569,8 +580,8 @@ BEGIN
                            ,@subFamiliasChecked VARCHAR(150)
                            ,@idTarifa           INT'
 
-			SET @sql = 'SELECT cl.numeroIdentificacion											          as rucClienteProveedor
-                              ,cl.nombreFiscal										                      as clienteProveedor
+			SET @sql = 'SELECT cu.IdCard   											                      as rucClienteProveedor
+                              ,cu.BusinessName										                      as clienteProveedor
                               ,td.codigo                                                                  as codDoc
 	                          ,[Common].[ufnGetSerieDocument](es.estab,pe.ptoEmi,se.Secuencial,0)         as serieComprobante
 	                          ,FORMAT(se.FechaEmision,''dd/MM/yyyy'')							          as fechaRegistro
@@ -590,18 +601,19 @@ BEGIN
 	                          ,CAST(se.Cantidad * (se.PrecioUnitario - se.PrecioCosto) as numeric(18,2))  as totalValorRentabilidad
                               ,us.nombreUsuario                                                           as usuario
                         FROM Contabilidad.Servicio          se WITH (NOLOCK)
-                        INNER JOIN dbo.Articulo             ar WITH (NOLOCK) ON ar.idArticulo      = se.ArticuloId
-                        INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = se.TipoDocumentoId
-                        INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision  = se.PuntoEmisionId
-                        INNER JOIN dbo.Cliente              cl WITH (NOLOCK) ON cl.idCliente       = se.ClienteId
-                        INNER JOIN dbo.Medida               me WITH (NOLOCK) ON me.idMedida        = se.MedidaId
-                        INNER JOIN dbo.Bodega               bo WITH (NOLOCK) ON bo.idBodega        = se.BodegaId
-                        INNER JOIN dbo.Tarifa               ta WITH (NOLOCK) ON ta.idTarifa        = se.TarifaId
-                        INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario       = se.UsuarioId
-                        INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimieto  = pe.idEstablecimieto
+                        INNER JOIN dbo.Articulo             ar WITH (NOLOCK) ON ar.idArticulo        = se.ArticuloId
+                        INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento   = se.TipoDocumentoId
+                        INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = se.PuntoEmisionId
+                        INNER JOIN dbo.Cliente              cl WITH (NOLOCK) ON cl.idCliente         = se.ClienteId
+                        INNER JOIN dbo.Medida               me WITH (NOLOCK) ON me.idMedida          = se.MedidaId
+                        INNER JOIN dbo.Bodega               bo WITH (NOLOCK) ON bo.idBodega          = se.BodegaId
+                        INNER JOIN dbo.Tarifa               ta WITH (NOLOCK) ON ta.idTarifa          = se.TarifaId
+                        INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario         = se.UsuarioId
+						INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id			     = cl.CustomerId
+                        INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
                          LEFT JOIN dbo.SubFamilia           sf WITH (NOLOCK) ON sf.idSubFamilia      = ar.idSubFamilia
                         WHERE ar.idEntidad = @idEntidad
-                          AND se.Estado = 1  '
+                          AND se.Estado     = 1  '
 
 			SELECT @ckFecha            = checkBoxFecha
 				  ,@idArticulo         = idArticulo
@@ -732,6 +744,7 @@ BEGIN
             SELECT cx.nroCuota
                   ,FORMAT(cx.fechaVencimiento,'dd/MM/yyyy') as fechaVencimiento
                   ,CAST(cx.cuota as numeric(18,2))          as cuota
+                  ,CAST(cx.mora as numeric(18,2))           as mora
                   ,CAST(cx.abono as numeric(18,2))          as abono
                   ,CAST(cx.saldo as numeric(18,2))          as saldo
             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) 
@@ -955,6 +968,113 @@ BEGIN
             WHERE cx.idCuentaPorCobrar = @id
               AND cx.estado = 1
 
+
+            RETURN 
+        END 
+    
+    --> Reporte de Deudores
+    IF @tipo = 7
+        BEGIN
+            SET @tableNames = 'headerDs,detalleDs'
+
+            SET @nombreReporte = 'Deudores'
+
+            SELECT @codEstab           = codEstab
+                  ,@dirViviendaCliente = dirViviendaCliente
+                  ,@idCiudad           = idCiudad
+            FROM OPENJSON(@json) WITH 
+            (
+                codEstab           VARCHAR(25) 
+               ,dirViviendaCliente VARCHAR(150) 
+               ,idCiudad           INT
+            )
+
+            SET @sql = 'SELECT dt.razonSocial
+                              ,dt.identificacion
+                              ,dt.direccion
+                              ,dt.telefono
+                              ,dt.refDomicilio
+                              ,SUM(dt.importeTotal) as importeTotal
+                              ,SUM(dt.mora)         as mora
+                              ,SUM(dt.abono)        as abono
+                              ,SUM(dt.saldo)        as saldo
+                              ,SUM(dt.diasMora)     as diasMora
+                        FROM
+                        (
+
+                            SELECT cu.BusinessName                                  as razonSocial 
+	                              ,cu.IdCard	                                    as identificacion
+	                              ,cl.direccion
+                                  ,JSON_VALUE(cl.infoCrediticia,''$.dirVivienda'') +  '' | '' + JSON_VALUE(cl.infoCrediticia,''$.refDomicilio'') as refDomicilio
+	                              ,cl.telefono
+	                              ,CAST(cc.importeTotal as numeric(18,2))           as importeTotal
+	                              ,CAST(cc.mora as numeric(18,2))                   as mora
+	                              ,CAST(cc.abono as numeric(18,2))                  as abono
+	                              ,CAST(cc.saldo as numeric(18,2))                  as saldo
+	                              ,cc.diasMora
+                            from contabilidad.cuentaporcobrar cc WITH (NOLOCK)
+                            INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision    = cc.idPuntoEmision
+                            INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente         = cc.idCliente
+                            INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago      = cc.idEstadoPago
+                            INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+                            INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id			       = cl.CustomerId
+                            WHERE es.idEntidad = @idEntidad
+                              AND (ep.codigo = ''PE'' OR ep.codigo = ''PP'')
+                         '
+
+            SET @params = '@codEstab  VARCHAR(25)
+                          ,@idEntidad INT
+                          ,@idCiudad  INT'
+                          
+            IF @codEstab IS NOT NULL 
+                BEGIN
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                END
+
+
+            IF @dirViviendaCliente IS NOT NULL 
+                BEGIN 
+                    SET @sql = @sql + ' AND (
+                                                   JSON_VALUE(cl.infoCrediticia, ''$.refDomicilio'') LIKE ''%' + @dirViviendaCliente + '%'' 
+                                                OR JSON_VALUE(cl.infoCrediticia, ''$.dirVivienda'')  LIKE ''%' + @dirViviendaCliente + '%''
+                                                OR cl.direccion                                      LIKE ''%' + @dirViviendaCliente + '%''
+                                            )
+                                             '
+                END
+
+            IF @idCiudad > 0
+                BEGIN
+                    SET @nombreReporte =  @nombreReporte + (SELECT TOP 1 ' - ' + descripcion FROM dbo.Ciudad WITH (NOLOCK) WHERE idCiudad = @idCiudad )
+
+                    SET @sql = @sql + 'AND idCiudad = @idCiudad '
+                END
+
+           
+
+            SET @sql = @sql + ' ) AS dt GROUP BY dt.razonSocial
+                                                ,dt.identificacion
+                                                ,dt.direccion
+                                                ,dt.telefono
+                                                ,dt.refDomicilio ORDER BY dt.razonSocial ASC '
+            
+            
+
+            SELECT en.razonSocial
+                  ,es.nombreComercial
+                  ,en.ruc
+                  ,es.telefono
+                  ,es.dirEstablecimiento
+                  ,@usuario             as usuario
+                  ,@nombreReporte       as nombreReporte
+            FROM Sri.Establecimiento es WITH (NOLOCK)
+            INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.idEntidad = es.idEntidad
+            WHERE es.codEstab = @codEstab
+
+            EXEC sp_executesql @sql
+						      ,@params 
+                              ,@codEstab  = @codEstab
+                              ,@idEntidad = @idEntidad
+                              ,@idCiudad  = @idCiudad
 
             RETURN 
         END 

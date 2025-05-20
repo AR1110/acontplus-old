@@ -32,7 +32,10 @@ export interface GroupedEstabPuntoEmision
   > {}
 
 export interface GroupedEstabBodega
-  extends Pick<BodegaEstablecimiento, 'idBodega' | 'defaultBodega'> {
+  extends Pick<
+    BodegaEstablecimiento,
+    'idBodega' | 'defaultBodega' | 'idEstablecimiento'
+  > {
   descripcion: string;
 }
 
@@ -41,9 +44,10 @@ export interface GroupedEstab
     Establecimiento,
     'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'defaultEstab'
   > {
-    nombreEstab: string
-  puntosEmision: Array<GroupedEstabPuntoEmision>;
-  bodegas: Array<GroupedEstabBodega>;
+  nombreEstab: string;
+  puntosEmision: GroupedEstabPuntoEmision[];
+  bodegas: GroupedEstabBodega[];
+  correo?: string
 }
 
 export interface EstablecimientoSelectHtmlOnly

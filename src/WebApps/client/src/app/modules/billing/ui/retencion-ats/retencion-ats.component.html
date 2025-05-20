@@ -3,18 +3,20 @@
   <mat-card-content>
     <div class="row mb-3">
       <div class="col-4">
-        <button mat-raised-button type="button" (click)="onDialogOpen()">
-          <mat-icon>add</mat-icon> Registrar
-        </button>
+        <app-theme-button
+          icon="add"
+          text="Registrar"
+          (handleClick)="onDialogOpen()"
+        ></app-theme-button>
       </div>
     </div>
     <div class="row mb-3">
       <div class="col">
-        @if (this.retenciones.length > 0) {
+        @if (this.retenciones().length > 0) {
           <div class="table-responsive">
             <app-mat-dynamic-table
               [templateOp]="templateOp"
-              [tableData]="retenciones"
+              [tableData]="retenciones()"
               [columnDefinitions]="columnsDefs"
               [visibleColumns]="columns"
               [showSelectBox]="true"
@@ -39,18 +41,59 @@
 
     <ng-template #templateOp let-item="item">
       <mat-menu #menu="matMenu">
-        <button (click)="downloadXml(item)" mat-menu-item>
-          <mat-icon>download</mat-icon>
-          Descargar Xml
+        @if (
+          !item.isAutomatic && item.codEstado !== 4 && item.codEstado !== 6
+        ) {
+          <button mat-menu-item (click)="edit(item)">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+
+          <button
+            mat-menu-item
+            (click)="authorize(item)"
+            matTooltip="Autorizar en el SRI"
+          >
+            <mat-icon>send</mat-icon>
+            Autorizar
+          </button>
+        }
+        <button
+          mat-menu-item
+          (click)="getRide(item)"
+          matTooltip="Ver PDF de la retención"
+        >
+          <mat-icon>picture_as_pdf</mat-icon>
+          Ride
         </button>
-        @if (item.codDoc === "01") {
-          <button mat-menu-item (click)="getRide(item)">
-            <mat-icon>picture_as_pdf</mat-icon>
-            Ride
+        @if (item.codEstado === 4) {
+          <button (click)="downloadXml(item)" mat-menu-item>
+            <mat-icon>download</mat-icon>
+            Descargar Xml
+          </button>
+        }
+        <button
+          mat-menu-item
+          appSendMailDialog
+          [data]="sendEmail(item)"
+          [notificationSri]="true"
+          matTooltip="Enviar por correo"
+        >
+          <mat-icon>mail</mat-icon>
+          Correo
+        </button>
+        <button mat-menu-item (click)="sendWhatsApp(item)">
+          <fa-icon [icon]="faWhatsapp"></fa-icon>
+          Whatsapp
+        </button>
+
+        @if (item.codEstado === 4) {
+          <button mat-menu-item (click)="cancel(item)">
+            <mat-icon>undo</mat-icon>
+            Anular
           </button>
         }
       </mat-menu>
-
       <button
         [matMenuTriggerFor]="menu"
         aria-label="Open Options"

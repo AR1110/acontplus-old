@@ -28,6 +28,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           nombreEstab: item.nombreComercial,
           codEstab: item.codEstab,
           defaultEstab: item.defaultEstab,
+          correo: item.correo,
           puntosEmision: [
             {
               idPuntoEmision: item.idPuntoEmision,
@@ -56,6 +57,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           bodega: bodega.bodega,
           descripcion: bodega.bodega,
           defaultBodega: bodega.defaultBodega,
+          idEstablecimiento: bodega.idEstablecimiento,
         })) || [],
       }));
     }
@@ -74,8 +76,10 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
           codEstab: item.codEstab,
           defaultEstab: item.defaultEstab,
           puntosEmision: [],
+          correo: item.correo,
           bodegas: [
             {
+              idEstablecimiento: item.idEstablecimiento,
               idBodega: item.idBodega,
               descripcion: item.bodega,
               defaultBodega: item.defaultBodega,
@@ -84,6 +88,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
         });
       } else {
         existingItem.bodegas?.push({
+          idEstablecimiento: item.idEstablecimiento,
           idBodega: item.idBodega,
           descripcion: item.bodega,
           defaultBodega: item.defaultBodega,

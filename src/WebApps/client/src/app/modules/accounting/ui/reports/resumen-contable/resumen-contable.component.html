@@ -1,0 +1,62 @@
+<app-breadcrumb />
+
+<app-mat-dynamic-card>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Transacción</mat-label>
+          <mat-select
+            (selectionChange)="onChangeTypeTransaccion()"
+            [(ngModel)]="dataSearch.idTipoTransaccion"
+          >
+            <mat-option [value]="0">Todos</mat-option>
+
+            @for (item of transactionTypes(); track $index) {
+              <mat-option [value]="item.idTipoTransaccion">{{item.descripcion}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
+      </div>
+      @if (isPurchase) {
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Subcategoría</mat-label>
+            <mat-select
+              [(ngModel)]="dataSearch.idSubcategoria"
+            >
+              <mat-option [value]="0">Todos</mat-option>
+
+              @for (item of subcategories(); track $index) {
+                <mat-option [value]="item.id">{{item.name}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      }
+    </div>
+
+
+    <div class="hstack gap-1">
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="reportPdf()"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="reportExcel()"
+      />
+    </div>
+  </div>
+</app-mat-dynamic-card>
+

@@ -1,41 +1,52 @@
-<div class="modal-header">
-  <h4 class="modal-title">Filtro Control Caja</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
-</div>
-<div class="modal-body">
-  <div class="row">
-    <div class="col-12">
-      <div class="form-group">
-        <label for="sortByDefault">Ordenar por defecto:</label>
-        <select name="sortByDefault" id="sortByDefault" class="form-select" [(ngModel)]="dataSearch.sortByDefault">
-          @for (item of sortByDefaults; track $index) {
-          <option [ngValue]="item.id">{{item.description}}</option>
-          }
-        </select>
-      </div>
-    </div>
-    <div class="col-12">
-      <div class="form-group">
-        <label for="sortOrder">Criterio de clasificación:</label>
-        <select name="sortOrder" id="sortOrder" class="form-select" [(ngModel)]="dataSearch.sortOrder">
-          @for (item of sortOrders; track $index) {
-          <option [ngValue]="item.codigo">{{item.description}}</option>
-          }
-        </select>
-      </div>
+<app-mat-custom-dialog
+
+  [containerTemplate]="body"
+  (close)="close()"
+  [title]="'Filtro Control Caja'"
+/>
+
+<ng-template #body>
+  <div class="d-grid gap-2">
+    <mat-form-field>
+      <mat-label>Ordenar por defecto:</mat-label>
+      <mat-select
+        [(ngModel)]="dataSearch.sortByDefault"
+      >
+        <mat-option></mat-option>
+        <option [value]="''">--Todos--</option>
+        @for (item of sortByDefaults; track $index) {
+          <mat-option [value]="item.id">{{item.description}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Criterio de clasificación:</mat-label>
+      <mat-select
+        [(ngModel)]="dataSearch.sortOrder"
+      >
+        <mat-option></mat-option>
+        <option [value]="''">--Todos--</option>
+        @for (item of sortOrders; track $index) {
+          <mat-option [value]="item.codigo">{{item.description}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+
+    <div class="hstack gap-1">
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="askToReport('pdf')"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="askToReport('excel')"
+      />
     </div>
   </div>
-  <div class="d-grid gap-2 col-12 mx-auto">
-    <button class="btn btn-warning" type="button" (click)="askToReport('pdf')">
-      <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
-      PDF
-    </button>
-    <button class="btn btn-success" type="button" (click)="askToReport('excel')">
-      <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
-      EXCEL
-    </button>
-  </div>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">&times; Cerrar</button>
-</div>
+</ng-template>

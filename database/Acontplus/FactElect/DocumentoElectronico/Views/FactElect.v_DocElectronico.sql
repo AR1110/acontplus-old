@@ -36,6 +36,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.fechaRegistro
           ,ISNULL(se.telefono, '') as telefonoEstablecimiento
           ,us.nombreUsuario        as usuario
+          ,cs.Email emailReceptor
     FROM dbo.DocumentoElectronico       de WITH (NOLOCK)
     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = de.idPuntoEmision
     INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio  = de.idEstadoServicio

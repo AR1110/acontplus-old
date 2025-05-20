@@ -3,8 +3,8 @@ import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import { imgDefault, isValidField } from "@core/utils/utils";
-import { SubCategoryService } from "@inventory/services/sub-category.service";
-import { SubcategoryPhotoService } from "@inventory/services/subcategory-photo.service";
+import { SubCategoryService } from "@inventory/data/services/sub-category.service";
+import { SubcategoryPhotoService } from "@inventory/data/services/subcategory-photo.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { UploadImageComponent } from "@shared/components/upload-image/upload-image.component";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
@@ -216,7 +216,7 @@ export class SubCategoryDialogComponent {
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.dialogRef.close({
       isRefresh: this.isRefresh()
     });

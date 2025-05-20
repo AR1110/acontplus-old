@@ -748,5 +748,107 @@
     "inputFiles": [
       "wwwroot/js/ventas/controllers/clienteCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/modals/modalSendMailCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/modals/modalSendMailCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/modals/modalSendWhatsAppCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/modals/modalSendWhatsAppCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/services/userPermissionService.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/services/userPermissionService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/services/sharedService.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/services/sharedService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/modals/docRecibidoPreviewCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/modals/docRecibidoPreviewCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/modals/modalDatoAdicionalArticulo.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/modals/modalDatoAdicionalArticulo.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/tipoEntidadCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/tipoEntidadCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/services/configService.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/services/configService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/services/menuService.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/services/menuService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/services/tiempoCreditoService.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/services/tiempoCreditoService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/services/userService.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/services/userService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/services/bancoService.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/services/bancoService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/services/chequeService.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/services/chequeService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/services/reporteFactElectService.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/services/reporteFactElectService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/etiquetaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/etiquetaService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/precioMasivoService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/precioMasivoService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/services/aprobacionDocService.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/services/aprobacionDocService.js"
+    ]
   }
 ]

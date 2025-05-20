@@ -3,15 +3,17 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
+    <UserSecretsId>2c99753e-6cba-4754-b5a2-27bc6ed1021d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Core" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.Notifications" />
     <PackageReference Include="Acontplus.Common.Services" />
-    
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -21,10 +23,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Scrutor" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common.AppSettings\Common.AppSettings.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />

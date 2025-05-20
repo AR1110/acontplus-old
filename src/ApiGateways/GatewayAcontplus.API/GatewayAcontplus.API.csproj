@@ -3,27 +3,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
+    <UserSecretsId>2e74a317-ec3a-4023-be20-eb3b9bb1bafb</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Acontplus.Common.Services" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
-    
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Ocelot" />
-    <PackageReference Include="RabbitMQ.Client" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Services\Common\Common.AppSettings\Common.AppSettings.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />

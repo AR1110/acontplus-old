@@ -14,7 +14,7 @@
         let service = {};
 
         service.getDataFilter = function () {
-            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 11 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 11 })).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -47,7 +47,7 @@
          * @returns 
          */
         service.get = (params) => {
-            return mS.getData('get', url + '?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(params)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -108,7 +108,7 @@
                 tipo: 1,
                 ...query
             }
-            return mS.getData('get', url + '?json=' + JSON.stringify(json), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(json)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -160,7 +160,7 @@
          * @returns 
          */
         service.getDataForForm = function () {
-            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 5 })).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -203,7 +203,7 @@
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true, null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 let results = []
                 if (response.code === "0") {
                     throw response;
@@ -238,7 +238,7 @@
                 checkBoxStock: dataSearch.checkBoxStock,
             };
 
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -293,7 +293,7 @@
             query.tipo = 1;
             query.pageIndex = 1;
             query.pageSize = 50
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -328,7 +328,7 @@
 
         //Se usa en modulo de consolidacion 
         service.getForImportation = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -352,7 +352,7 @@
 
 
         service.search = function (query) {
-            return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(query)), null, true).then(response => {
+            return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(query))).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -396,7 +396,7 @@
                 code: objSearch.isSearchByCode,
                 tipo: 2
             }
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -415,7 +415,7 @@
          * ✅
          */
         service.getForPurchase = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, tipo: 9 }), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...query, tipo: 9 })).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -476,7 +476,7 @@
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
-            return mS.getData('get', url + '?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(params)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -537,7 +537,7 @@
                 throw ''
             }
             query.tipo = 7;
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -554,7 +554,7 @@
 
 
         service.findById = function (id) {
-            return mS.getData("get", `${url}${id}`, null, true).then(response => {
+            return mS.getData("get", `${url}${id}`).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -578,7 +578,7 @@
 
         //Se usa Recepcion documentos (posiblemente eliminar mas adelante)
         service.getId = (id) => {
-            return mS.getData("GET", url + "GetId/" + id, null, true).then(
+            return mS.getData("GET", url + "GetId/" + id).then(
                 response => {
                     if (response.code == "0") {
                         throw response
@@ -590,13 +590,13 @@
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', `${url}/${id}`, null, true);
+            return mS.getData('delete', `${url}${id}`, null, true);
         }
 
 
         //Reports 
         service.getDataFormReport = function () {
-            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 13 }), null, true).then(
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 13 })).then(
                 response => {
                     if (response.code === "0") {
                         throw response
@@ -625,7 +625,7 @@
                 idArticulo: id,
                 tipo: 10,
             })
-            return mS.getData('get', url + '?json=' + json, null, true, null, true).then(response => {
+            return mS.getData('get', url + '?json=' + json, null, true).then(response => {
                 let estabsStock = [];
                 if (response.code === "1") {
                     let { establishments } = JSON.parse(response.payload);
@@ -760,7 +760,7 @@
         }
 
         function getPhotos(id) {
-            return mS.getData('GET', `${url}${id}`, null, true).then(response => {
+            return mS.getData('GET', `${url}${id}`).then(response => {
                 let photos = [];
                 if (response.code === "1") {
                     photos = response.payload;

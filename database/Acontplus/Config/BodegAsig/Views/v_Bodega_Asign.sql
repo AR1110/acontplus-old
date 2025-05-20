@@ -18,6 +18,7 @@ CREATE OR ALTER VIEW v_Bodega_Asign WITH SCHEMABINDING AS (
 	      ,es.nombreComercial
 	      ,es.estab
 	      ,es.estado estadoEstab
+          ,es.correo
 	FROM Config.Bodeg_Asig          ba WITH (NOLOCK)
 	INNER JOIN Config.Estab_Asig    ea WITH(NOLOCK)  ON ea.codEstab_Asig = ba.codEstab_Asig
     INNER JOIN dbo.Bodega               bo WITH (NOLOCK) ON bo.idBodega      = ba.idBodega

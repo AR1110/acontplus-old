@@ -12,25 +12,20 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {FormsModule} from "@angular/forms";
-import {NgbTypeaheadModule} from "@ng-bootstrap/ng-bootstrap";
+import { FormsModule } from '@angular/forms';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-device-search',
-    imports: [
-        FontAwesomeModule,
-        FormsModule,
-        NgbTypeaheadModule
-    ],
-    templateUrl: './device-search.component.html',
-    styles: ``
+  selector: 'app-device-search',
+  imports: [FormsModule, NgbTypeaheadModule, ThemeButtonComponent],
+  templateUrl: './device-search.component.html',
+  styles: ``,
 })
 export class DeviceSearchComponent {
-  @Input() clearInput: boolean = false;
   @Input() textSearch = '';
   @Output() deviceSelected = new EventEmitter<{ data: any }>();
-  @Output() resultEmptyInput = new EventEmitter();
+  @Output() clearSearch = new EventEmitter();
   private modalService = inject(ModalService);
   private deviceService = inject(DeviceService);
 
@@ -41,8 +36,8 @@ export class DeviceSearchComponent {
     color: '',
     id: 0,
   };
-  searching: boolean = false;
-  searchFailed: boolean = false;
+  searching = false;
+  searchFailed = false;
 
   onDeviceSelect($event: any) {
     this.device = $event.item;
@@ -51,7 +46,7 @@ export class DeviceSearchComponent {
   }
   onKeyupSearch() {
     if (!this.textSearch) {
-      this.resultEmptyInput.emit();
+      this.clearSearch.emit();
     }
   }
   openModal() {
@@ -64,8 +59,8 @@ export class DeviceSearchComponent {
       this.setDeviceData(response);
     });
   }
-  search: OperatorFunction<string, Array<DeviceSearch>> = (
-    text$: Observable<string>
+  search: OperatorFunction<string, DeviceSearch[]> = (
+    text$: Observable<string>,
   ) =>
     text$.pipe(
       distinctUntilChanged(),
@@ -80,10 +75,10 @@ export class DeviceSearchComponent {
             console.log(error);
             this.searchFailed = true;
             return of([]);
-          })
+          }),
         );
       }),
-      tap(() => (this.searching = false))
+      tap(() => (this.searching = false)),
     );
   setDeviceData(item: any) {
     this.deviceSelected.emit({
@@ -94,7 +89,7 @@ export class DeviceSearchComponent {
       },
     });
     setTimeout(() => {
-      if (!this.clearInput) {
+      if (!this.clearSearch) {
         this.textSearch = this.device.name;
       } else {
         this.textSearch = '';

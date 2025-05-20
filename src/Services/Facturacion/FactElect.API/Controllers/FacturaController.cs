@@ -1,4 +1,7 @@
-﻿namespace FactElect.API.Controllers;
+﻿//using Newtonsoft.Json.Serialization;
+//using Newtonsoft.Json;
+
+namespace FactElect.API.Controllers;
 
 public class FacturaController(IFacturaService service) : BaseApiController
 {
@@ -9,7 +12,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
         {
             { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });
     }
@@ -46,11 +49,10 @@ public class FacturaController(IFacturaService service) : BaseApiController
         {
             { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
         });
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });
     }
-
 
     [HttpPut("Cancel/{id}")]
     public async Task<IActionResult> Cancel(int id, ApiRequest data)

@@ -9,3 +9,8 @@ export class SupportDetail extends FieldDefinitionDetailSale {
   deleted?: boolean
   precioSinSubsidio = 0;
 }
+
+
+export class FilterDataSupportResponse {
+  supportStatus: any[]=[]
+}

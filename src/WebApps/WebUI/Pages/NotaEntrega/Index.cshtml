@@ -279,7 +279,8 @@
 
 
                                                 <md-menu-item ng-if="ne.enabledHistorialCobro">
-                                                    <md-button btn-historial-cobro params="ne" on-result="refresh()">
+                                                    <md-button btn-historial-cobro params="ne" cod-doc="'NE'"
+                                                        on-result="refresh()">
                                                         <span md-menu-align-target>
                                                             <i class="ti-layout-cta-center"></i>
                                                             Hist. Mov.
@@ -399,6 +400,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/config/services/solicitudAutorizacionService.min.js" asp-append-version="true"></script>
     <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
     <script src="~/js/ventas/controllers/notaEntregaCtrl.min.js" asp-append-version="true"></script>
     <script src="~/js/contabilidad/components/cuentaPorCobrarComponent.min.js" asp-append-version="true"></script>

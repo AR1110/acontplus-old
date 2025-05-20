@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
@@ -24,20 +22,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseResponseCompression();
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
 
 app.UseRouting();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5007"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

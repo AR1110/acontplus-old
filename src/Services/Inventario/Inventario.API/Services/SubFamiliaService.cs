@@ -12,10 +12,7 @@ public class SubFamiliaService : ISubFamiliaService
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataTableAsync("Inventario.Subfamilia_Get", parameters);
-        if (ds.Rows.Count == 0)
-        {
-            return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
-        }
+        if (ds.Rows.Count == 0) return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
 
         return new ApiResponse
         {

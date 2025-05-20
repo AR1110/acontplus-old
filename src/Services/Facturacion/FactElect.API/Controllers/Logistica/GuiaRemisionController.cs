@@ -1,6 +1,4 @@
-﻿using FactElect.API.Services.Logistica;
-
-namespace FactElect.API.Controllers.Logistica;
+﻿namespace FactElect.API.Controllers.Logistica;
 
 public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiController
 {
@@ -12,7 +10,7 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         ;
         return Ok(response);
@@ -21,9 +19,10 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await service.GetByIdAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         ;
         return Ok(new { code = "1", payload = response });
@@ -59,7 +58,8 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await service.DeleteAsync(parameters);
         return Ok(response);
     }

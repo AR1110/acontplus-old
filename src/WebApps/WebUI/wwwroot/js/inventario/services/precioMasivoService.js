@@ -14,7 +14,7 @@
             const json = JSON.stringify({
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const data = {
                     decimal: {},
                     tarifasImpuesto: [],
@@ -86,7 +86,7 @@
                 ...obj,
                 tipo: 2,
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let products = [];
                 if (response !== null && typeof response === 'object') {
                     products = response.articulos.map(item => ({

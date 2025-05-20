@@ -1,8 +1,8 @@
 import {ClassProvider} from "@angular/core";
-import {ComprobanteEgresoRepository} from "@accounting/core/repositories/comprobante-egreso.repository";
 import {
   ComprobanteEgresoWebRepository
 } from "@accounting/data/comprobante-egreso/comprobante-egreso-web.repository";
+import {ComprobanteEgresoRepository} from "@accounting/domain/repositories/comprobante-egreso.repository";
 
 
 export const comprobanteEgresoProvider:ClassProvider = {

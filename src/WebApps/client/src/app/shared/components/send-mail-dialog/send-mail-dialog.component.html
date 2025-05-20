@@ -1,0 +1,23 @@
+<form id="sendMailForm" (ngSubmit)="send()">
+  <app-mat-custom-dialog
+    [containerTemplate]="containerTemplate"
+    [actionsTemplate]="actionsTemplate"
+    icon="email"
+    title="Enviar Correo"
+    (close)="onClose()"
+  />
+</form>
+
+<ng-template #containerTemplate>
+  <app-m3-input-chip [labelText]="'Correo'" [chips]="emails()" />
+</ng-template>
+<ng-template #actionsTemplate>
+  <app-theme-button
+    type="submit"
+    variant="success"
+    icon="email"
+    text="Enviar"
+    form="sendMailForm"
+  >
+  </app-theme-button>
+</ng-template>

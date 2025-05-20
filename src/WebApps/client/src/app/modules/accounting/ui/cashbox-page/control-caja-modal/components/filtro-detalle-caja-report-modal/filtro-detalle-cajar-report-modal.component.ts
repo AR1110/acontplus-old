@@ -1,39 +1,49 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject   } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CODE_REPORT } from '@core/constants/global.constants';
+import { REPORT_CODE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader } from '@core/utils/loader';
+
 import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-  NgbActiveModal,
-  NgbTimepickerModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import {EntidadFinanciera} from "@accounting/core/domain/entidad-financiera.interface";
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
 import { formatDateToString } from '@core/utils/date.util';
-import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
+import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatTimepickerModule} from "@angular/material/timepicker";
+import {provideNativeDateAdapter} from "@angular/material/core";
+import {MatSlideToggle} from "@angular/material/slide-toggle";
 
 @Component({
-    selector: 'app-filtro-detalle-caja-report-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        FontAwesomeModule,
-        NgbTimepickerModule,
-    ],
-    templateUrl: './filtro-detalle-cajar-report-modal.component.html'
+  selector: 'app-filtro-detalle-caja-report-modal',
+  imports: [CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatTimepickerModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent, MatSlideToggle
+  ],
+  templateUrl: './filtro-detalle-cajar-report-modal.component.html',
+  providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FiltroDetalleCajaReportModal {
-  @Input('params') params = {
+  private dialogRef = inject(MatDialogRef<FiltroDetalleCajaReportModal>);
+  params = inject<{
     id: 0,
     fechaApertura: '',
     fechaCierre: '',
-  };
-  activeModal = inject(NgbActiveModal);
+  }>(MAT_DIALOG_DATA);
+
   dataSearch = {
     idEntidadFinanciera: '',
     codDoc: '',
@@ -43,11 +53,8 @@ export class FiltroDetalleCajaReportModal {
   };
   entidadesFinanciera: Array<EntidadFinanciera> = [];
   tipoDocumentos: Array<TipoDoc> = [];
-  dateRangeOptions = {
-    timePicker: true,
-    format: 'YYYY-MM-DD HH:mm',
-  };
-  private _controlCajaUseCase = inject(ControlCajaUseCase)
+
+  private _controlCajaUseCase = inject(ControlCajaUseCase);
 
   private tS = inject(ToasterService);
   private sharedSvc = inject(SharedService);
@@ -68,7 +75,6 @@ export class FiltroDetalleCajaReportModal {
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
-          hideLoader();
           let { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
@@ -77,7 +83,6 @@ export class FiltroDetalleCajaReportModal {
           this.tipoDocumentos = tipoDocumento;
         },
         error(err) {
-          hideLoader();
           console.log(err);
         },
       });
@@ -87,9 +92,11 @@ export class FiltroDetalleCajaReportModal {
   }
 
   onTimeChange(event: Event, fromDate: boolean): void {
+    console.log(event)
     const inputElement = event.target as HTMLInputElement;
-    const timeString = inputElement.value;
-    const [hours, minutes] = timeString.split(':').map(Number);
+    const timeStr = inputElement.value;
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
 
     // Actualiza solo la hora y el minuto manteniendo la fecha actual
     if (fromDate) {
@@ -101,11 +108,6 @@ export class FiltroDetalleCajaReportModal {
     }
   }
 
-  // onDateRangeSelection(range: { from: string, to: string }) {
-
-  //   this.dataSearch.fromDate = range.from;
-  //   this.dataSearch.toDate = range.to;
-  // }
 
   getReport(format: 'pdf' | 'excel') {
     try {
@@ -127,11 +129,10 @@ export class FiltroDetalleCajaReportModal {
         ckHora: this.dataSearch.ckHora,
       };
 
-
       const parameters = {
         hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
         reportParams: JSON.stringify({
-          codigo: CODE_REPORT.CDCC,
+          codigo: REPORT_CODE.CDCC,
           format,
           aditionalParams: [],
         }),
@@ -146,5 +147,9 @@ export class FiltroDetalleCajaReportModal {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  close(){
+    this.dialogRef.close()
   }
 }

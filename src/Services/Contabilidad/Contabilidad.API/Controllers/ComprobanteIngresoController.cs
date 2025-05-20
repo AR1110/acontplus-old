@@ -28,7 +28,8 @@ public class ComprobanteIngresoController(IComprobanteIngresoService comprobante
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", DataConverters.SerializeDictionary(paremeter.Data) }
         };
         return Ok(await comprobanteIngresoService.CancelAsync(parameters));
     }

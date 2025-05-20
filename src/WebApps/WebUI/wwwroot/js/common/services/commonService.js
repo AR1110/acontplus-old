@@ -153,7 +153,7 @@ class CommonService {
 
     //En uso 
     getEstabAsign(json = {}) {
-        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
+        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json)).then(response => {
             if (response.code === "0") {
                 throw response
             }
@@ -198,7 +198,7 @@ class CommonService {
             tipo: 3,
             textSearch: obj.busqueda
         })
-        return this.mS.getData('get', `Config/UserCustomer/?json=${json}`, null, true).then(response => {
+        return this.mS.getData('get', `Config/UserCustomer/?json=${json}`).then(response => {
             if (response.code === "0") {
                 return [];
             }
@@ -302,7 +302,11 @@ class CommonService {
                     screenY=${y}
                     screenX=${x}`
                         )
-                        setTimeout(function () { newWindow.document.title = fileName; }, 1000);
+                        setTimeout(function () { 
+                            if(newWindow && newWindow.document){
+                                newWindow.document.title = fileName; 
+                            }
+                        }, 1000);
                     }
                 } else {
                     let serverData = new Blob([response.data], {
@@ -410,7 +414,7 @@ class CommonService {
         try { 
             let newParams = Object.assign(JSON.parse(parameters), { getUrlPrintServer: true });
             let url = `Config/Print/?json=${JSON.stringify(newParams)}`
-            this.mS.getData('get', url, null, true).then(
+            this.mS.getData('get', url).then(
                 response => {
                     if (response.code === '0') {
                         toastr.warning(response.message)
@@ -549,7 +553,7 @@ class CommonService {
         let result = {};
 
         showLoader();
-        await this.mS.getData('get', 'Config/Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
+        await this.mS.getData('get', 'Config/Solicitud/Check/' + JSON.stringify(jsonParams)).then(response => {
             if (response.code === "0") {
                 hideLoader();
                 this.form.sweetAlert('warning', response.message, response.titleSms);
@@ -599,7 +603,7 @@ class CommonService {
                     motivo: result.value,
                     codigoAccion
                 });
-                this.mS.getData('post', 'Config/Solicitud/Post/' + jsonParams, null, true).then(response => {
+                this.mS.getData('post', 'Config/Solicitud/Post/' + jsonParams).then(response => {
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
@@ -623,7 +627,7 @@ class CommonService {
         this.mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
             codigoAccion,
             typeOperation: 2
-        }), null, true).then(response => {
+        })).then(response => {
             console.log(response)
         })
     }
@@ -632,14 +636,14 @@ class CommonService {
 
     //========================================END POINT EXTERNOS================== 
     checkClientSRIByRUC = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {
+        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion).then(response => {
             return response;
         })
     }
 
 
     checkClientSRIByCedula = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
+        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion).then(response => {
             return response;
         })
     }

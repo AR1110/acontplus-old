@@ -1,5 +1,5 @@
-﻿using Common.API.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace Common.API.Extensions;
@@ -14,28 +14,50 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<CommonContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         services.AddOpenApi();
 
-        string[] nameSpaces =
+        //services.ConfigureHttpJsonOptions(options =>
+        //{
+        //    options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
+        //    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+        //    options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+        //    options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        //});
+
+        string[] scopedNameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
             "Common.API.Endpoints.Implementations",
-            "Common.API.Services",
-            "Common.Services.Extensions",
+            "Common.API.Services"
         ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+        string[] nameTrascientSpaces =
+        [
+            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Services.Extensions"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(nameTrascientSpaces))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()

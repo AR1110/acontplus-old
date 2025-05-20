@@ -3,18 +3,17 @@ import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { TarifaService } from '@inventory/services/tarifa.service';
+import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-tarifa-edit-modal',
-    imports: [
-        FormsModule,
-        ToUpperCaseDirective
-    ],
-    templateUrl: './tarifa-edit-modal.component.html',
-    styles: ``
+  selector: 'app-tarifa-edit-modal',
+    imports: [FormsModule, ToUpperCaseDirective, MatButton, ThemeButtonComponent],
+  templateUrl: './tarifa-edit-modal.component.html',
+  styles: ``,
 })
 export class TarifaEditModalComponent {
   @Input() params = {
@@ -22,81 +21,75 @@ export class TarifaEditModalComponent {
     codigo: null,
     descripcion: null,
     estado: true,
-    ventaPorMayor: false
-  }
+    ventaPorMayor: false,
+  };
   modal = inject(NgbActiveModal);
   tS = inject(ToasterService);
-  tarifaSvc = inject(TarifaService)
+  tarifaSvc = inject(TarifaService);
 
   btnText = 'Actualizar';
-  titleModal = signal('Editar')
+  titleModal = signal('Editar');
 
   data = {
     idTarifa: 0,
     codigo: null,
     descripcion: null,
     estado: true,
-    ventaPorMayor: false
-  }
+    ventaPorMayor: false,
+  };
 
-  marcas = signal<any[]>([])
+  marcas = signal<any[]>([]);
 
   successReponse = {
     next: (response: ApiResponse) => {
-
-      if (response.code === "0") {
+      if (response.code === '0') {
         this.tS.toastr({
           type: 'warning',
-          message: response.message
-        })
+          message: response.message,
+        });
       }
-      if (response.code === "1") {
+      if (response.code === '1') {
         this.tS.toastr({
           type: 'success',
-          message: response.message
-        })
-        this.modal.close(response)
+          message: response.message,
+        });
+        this.modal.close(response);
       }
-
     },
     error(error: any) {
-      console.log(error)
-    }
-  }
+      console.log(error);
+    },
+  };
 
   ngOnInit() {
     this.data = {
-      ...this.params
-    }
-
+      ...this.params,
+    };
   }
-
 
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese la descripción'
-        })
-        return
+          message: 'Ingrese la descripción',
+        });
+        return;
       }
 
       if (!isValidField(this.data.codigo)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese la código'
-        })
-        return
+          message: 'Ingrese la código',
+        });
+        return;
       }
 
-
-      this.tarifaSvc.put(this.data.idTarifa, this.data).subscribe(this.successReponse)
-
-
-
+      this.tarifaSvc
+        .put(this.data.idTarifa, this.data)
+        .subscribe(this.successReponse);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 }

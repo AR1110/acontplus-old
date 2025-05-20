@@ -1,5 +1,10 @@
-import {Component, inject,  ViewChild, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormGroup,  ReactiveFormsModule, Validators} from '@angular/forms';
+import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -11,7 +16,7 @@ import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
-import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -21,35 +26,36 @@ import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
 import {
-  faSave,
-  faTrashAlt,
-} from '@fortawesome/free-regular-svg-icons';
-import { InputDateComponent } from '@shared/components/input-date/input-date.component';
-import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
   formatDate,
   formatDateToString,
   isDateValid,
 } from '@core/utils/date.util';
-import { CommonModule, DatePipe} from '@angular/common';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { CommonModule, DatePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
-    selector: 'app-order-modal',
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        FontAwesomeModule,
-        CompanyCustomerSearchComponent,
-        DeviceSearchComponent,
-        NgbAccordionModule,
-        TabulatorComponent,
-    ],
-    templateUrl: './order-modal.component.html',
-    styles: ``,
-    encapsulation: ViewEncapsulation.None,
-    providers: [DatePipe]
+  selector: 'app-order-modal',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+
+    CompanyCustomerSearchComponent,
+    DeviceSearchComponent,
+    NgbAccordionModule,
+    TabulatorComponent,
+    MatIcon,
+    MatButton,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './order-modal.component.html',
+  styles: ``,
+  encapsulation: ViewEncapsulation.None,
+  providers: [DatePipe],
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
@@ -94,27 +100,27 @@ export class OrderModalComponent {
     {
       formatter: (cell: any) => {
         //let cellEl = cell.getElement();
-        let rowDataMain = cell.getRow().getData();
+        const rowDataMain = cell.getRow().getData();
 
         //create edit button
-        let editBtn = document.createElement('button');
+        const editBtn = document.createElement('button');
         editBtn.type = 'button';
-        editBtn.innerHTML = `${icon(faSave).html.join('')}`;
+        editBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">save</i>`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
         editBtn.title = 'Guardar Detalle';
         editBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           this.editDetail(rowData);
         });
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.title = 'Eliminar detalle';
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           console.log(rowData);
           if (rowData.id > 0) {
             this.askToDeleteDetail(rowData);
@@ -123,7 +129,7 @@ export class OrderModalComponent {
           }
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
         if (rowDataMain.id > 0) {
           buttonHolder.appendChild(editBtn);
@@ -136,19 +142,19 @@ export class OrderModalComponent {
       width: 100,
     },
   ];
-  clearInput = true;
+  clearSearch = true;
   currentDate = new Date();
   customerBusinessName = '';
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
-  establecimientos: Array<GroupedEstab> = [];
+  establecimientos: GroupedEstab[] = [];
   formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Nueva Orden';
   order: any = {};
   orderDetails: OrderDetail[] = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
   users: any = [];
 
   orderForm = new FormGroup({
@@ -215,90 +221,88 @@ export class OrderModalComponent {
       cancelButtonText: 'No',
     }).then((response) => {
       if (response.isConfirmed) {
-        this.oDS.delete(detail.id).subscribe( (response) => {
-            if (isApiResponse(response)) {
-              this.tS.toastr({
-                type: response.code == '1' ? 'success' : 'warning',
-                message: response.message,
-              });
-              if (response.code == '1') {
-                this.orderDetails = this.orderDetails.filter(
-                  (x) => x.id != detail.id
-                );
-              }
+        this.oDS.delete(detail.id).subscribe((response) => {
+          if (isApiResponse(response)) {
+            this.tS.toastr({
+              type: response.code == '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code == '1') {
+              this.orderDetails = this.orderDetails.filter(
+                (x) => x.id != detail.id,
+              );
             }
+          }
         });
       }
     });
   }
 
-  closeModal() {
+  onModalClose() {
     this.modalRef.close();
   }
 
   editDetail(detail: any) {
-
-    this.oDS.put(detail.id, detail).subscribe(  (response) => {
-        if (isApiResponse(response)) {
-          this.tS.toastr({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-        }
+    this.oDS.put(detail.id, detail).subscribe((response) => {
+      if (isApiResponse(response)) {
+        this.tS.toastr({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+      }
     });
   }
 
   get() {
-
-    let parameters = { tipo: 1, id: this.data.id };
+    const parameters = { tipo: 1, id: this.data.id };
     if (this.data.id > 0) {
       this.modalTitle = 'Editar Orden';
       this.modalIcon = 'edit';
     }
-    this.orderService.get(parameters).subscribe( (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '1') {
-            let parsedResponse = JSON.parse(response.payload as string);
-            let { puntosEmision, users } = parsedResponse;
-            this.establecimientos = groupEstabUtil({
-              estabs: puntosEmision,
-              isGroupPuntoEmision: true,
+    this.orderService.get(parameters).subscribe((response) => {
+      if (isApiResponse(response)) {
+        if (response.code == '1') {
+          const parsedResponse = JSON.parse(response.payload as string);
+          const { puntosEmision, users } = parsedResponse;
+          this.establecimientos = groupEstabUtil({
+            estabs: puntosEmision,
+            isGroupPuntoEmision: true,
+          });
+          const dataEstab = this.establecimientos.find(
+            (estab) => estab.defaultEstab,
+          );
+          if (dataEstab) {
+            this.orderForm.patchValue({
+              establecimientoId: dataEstab.idEstablecimiento,
             });
-            const dataEstab = this.establecimientos.find(
-              (estab) => estab.defaultEstab
+            this.order.codEstab = dataEstab.codEstab;
+            this.puntosEmision = dataEstab.puntosEmision;
+            const dataPuntoEmision = this.puntosEmision.find(
+              (ptoEmi) => ptoEmi.defaultPtoEmi,
             );
-            if (dataEstab) {
+            if (dataPuntoEmision) {
               this.orderForm.patchValue({
-                establecimientoId: dataEstab.idEstablecimiento,
+                puntoEmisionId: dataPuntoEmision.idPuntoEmision,
               });
-              this.order.codEstab = dataEstab.codEstab;
-              this.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = this.puntosEmision.find(
-                (ptoEmi) => ptoEmi.defaultPtoEmi
-              );
-              if (dataPuntoEmision) {
-                this.orderForm.patchValue({
-                  puntoEmisionId: dataPuntoEmision.idPuntoEmision,
-                });
-              }
-            }
-            this.users = users;
-            if (this.data.id > 0) {
-              let { order, orderDetails } = parsedResponse;
-              this.order = order[0];
-              this.customerBusinessName = this.order.businessName;
-              this.orderDetails = orderDetails || [];
-              this.orderForm.patchValue(this.order);
             }
           }
+          this.users = users;
+          if (this.data.id > 0) {
+            let { order, orderDetails } = parsedResponse;
+            this.order = order[0];
+            this.customerBusinessName = this.order.businessName;
+            this.orderDetails = orderDetails || [];
+            this.orderForm.patchValue(this.order);
+          }
         }
+      }
     });
   }
 
   getDevices() {
     const modalRef = this.modalService.openModalCustom(
       DeviceListModalComponent,
-      { size: 'lg', centered: true, backdrop: true }
+      { size: 'lg', centered: true, backdrop: true },
     );
     modalRef.componentInstance.data = {
       customerCompanyId: this.order.customerCompanyId,
@@ -323,13 +327,13 @@ export class OrderModalComponent {
     }
   }
   onChangeEstab() {
-    let establecimientoId = this.orderForm.get('establecimientoId')?.value;
+    const establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
-      let estabs = this.establecimientos.find(
-        (x) => x.idEstablecimiento == Number(establecimientoId)
+      const estabs = this.establecimientos.find(
+        (x) => x.idEstablecimiento == Number(establecimientoId),
       );
       this.puntosEmision = estabs?.puntosEmision || [];
-      let puntoEmisionId =
+      const puntoEmisionId =
         this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
           ?.idPuntoEmision || 0;
       this.orderForm.patchValue({
@@ -338,27 +342,24 @@ export class OrderModalComponent {
       });
     }
   }
-  onCustomerSelected($event: any) {
-    let { data } = $event;
+  onCustomerSelected(data: CompanyCustomer) {
     this.order.customerCompanyId = data.idCliente;
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
   onDeviceSelected($event: any) {
     this.addDetail($event.data);
-    this.clearInput = true;
+    this.clearSearch = true;
   }
 
   removeFromList(deviceId: number) {
-    let newArray = this.orderDetails.filter((x) => x.deviceId !== deviceId);
-    this.orderDetails = newArray;
+    this.orderDetails = this.orderDetails.filter(
+      (x) => x.deviceId !== deviceId,
+    );
   }
 
   onChangeDate(event: Event) {
     const inputElement = event.target as HTMLInputElement;
-    const timeString = inputElement.value;
-    console.log(inputElement.value);
-
-    let dateObject: any = timeString;
+    const dateObject: string = inputElement.value;
 
     this.orderForm.patchValue({ fechaEmision: dateObject }); // Emitir el nuevo valor al componente padre
   }
@@ -399,7 +400,7 @@ export class OrderModalComponent {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: fechaEmision,
       setHoursZero: true,
     });
@@ -411,20 +412,16 @@ export class OrderModalComponent {
       fechaEmision: formatDateToString(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
-
       this.orderService.put(this.data.id, dataToSave).subscribe({
         next: this.successResponse,
-
       });
     } else {
-
       this.orderService.post(dataToSave).subscribe({
         next: this.successResponse,
       });
     }
   }
   successResponse = (response: object) => {
-
     if (isApiResponse(response)) {
       this.tS.toastr({
         type: response.code == '1' ? 'success' : 'warning',

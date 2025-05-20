@@ -1,6 +1,4 @@
-﻿using Configuracion.API.Models;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class ImportacionController(IImportacionService importacionService) : BaseApiController
 {

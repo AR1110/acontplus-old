@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [BreadcrumbComponent],
+  imports: [BreadcrumbComponent, MatCard, MatCardContent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

@@ -1,6 +1,4 @@
-﻿using FactElect.API.Services.Sri;
-
-namespace FactElect.API.Controllers.Sri;
+﻿namespace FactElect.API.Controllers.Sri;
 
 public class CatalogoController(ICatalogoService catalogoService) : BaseApiController
 {

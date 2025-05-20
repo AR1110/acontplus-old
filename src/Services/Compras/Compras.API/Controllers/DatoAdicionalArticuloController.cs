@@ -30,7 +30,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoA
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "idInfoAdicional", idInfoAdicional },
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "idInfoAdicional", idInfoAdicional }
         };
         return Ok(await datoAdicionalArticuloService.DeleteAsync(parameters));
     }

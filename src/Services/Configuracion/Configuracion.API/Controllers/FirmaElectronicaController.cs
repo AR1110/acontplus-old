@@ -1,16 +1,16 @@
-﻿using Configuracion.API.Models;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class FirmaElectronicaController(
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController
 {
+    private const string UserRoleId = "userRoleId";
+
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await firmaElectronicaService.GetAsync(parameters));
     }
@@ -19,9 +19,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
         if (file.ContentType != "application/x-pkcs12")
-        {
             return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
-        }
 
         var signFile = new FileModel
         {
@@ -33,7 +31,7 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
             { "contrasenia", data.contrasenia },
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },
@@ -52,7 +50,7 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
             { "id", data.idFirmaElectronica },
             { "contrasenia", data.contrasenia },
             { "fechaCaducidad", data.fechaCaducidad },
@@ -65,9 +63,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
     {
         if (file.ContentType != "application/x-pkcs12")
-        {
             return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
-        }
 
         var signFile = new FileModel
         {
@@ -78,12 +74,26 @@ public class FirmaElectronicaController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
             { "id", id },
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },
             { "contentType", signFile.ContentType }
         };
         return Ok(await firmaElectronicaService.UpdateFileAsync(parameters));
+    }
+
+    [HttpGet("Download/{id}")]
+    public async Task<IActionResult> Download(int id)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) },
+            { "id", id }
+        };
+        var response = await firmaElectronicaService.DownloadAsync(parameters);
+        if (response == null) return BadRequest("No se encontro firma electrónica");
+
+        return File(response.Content, "application/x-pkcs12", response.FileName);
     }
 }

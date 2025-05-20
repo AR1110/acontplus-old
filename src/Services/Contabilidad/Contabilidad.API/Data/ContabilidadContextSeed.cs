@@ -16,9 +16,6 @@ public class ContabilidadContextSeed
             context.Tipos.AddRange(tipos);
         }
 
-        if (context.ChangeTracker.HasChanges())
-        {
-            await context.SaveChangesAsync();
-        }
+        if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
     }
 }

@@ -1,12 +1,14 @@
 import {inject, Injectable} from "@angular/core";
-import {PATHS_API, SEPARADORES_REGEX} from "@core/constants/global.constants";
+import {PATHS_API} from "@core/constants/global.constants";
 import {HttpClient, HttpContext} from "@angular/common/http";
-import {ApiResponse, isApiResponse} from "@core/models/api-response";
-import {map, Observable} from "rxjs";
-import {CompanyCustomerRepository} from "@customer/core/repositories/company-customer.repository";
+import {ApiResponse} from "@core/models/api-response";
+import {map } from "rxjs";
+import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
 import {CompanyCustomerMapper} from "@customer/data/company-customer/company-customer.mapper";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import {CompanyCustomerSearch} from "@customer/core/domain/company-customer";
+import { SearchCompanyCustomerParams} from "@customer/domain/models/company-customer";
+import {SearchCompanyCustomerMapper} from "@customer/data/company-customer/search-company-customer.mapper";
+import {GetIdCompanyCustomerMapper} from "@customer/data/company-customer/get-id-company-customer.mapper";
 
 
 @Injectable({
@@ -77,86 +79,21 @@ export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
 
 
   getId(id: number, noLoader?: boolean) {
-    return this._http.get(`${this._url}GetId/${id}`, {
+    return this._http.get<ApiResponse>(`${this._url}GetId/${id}`, {
         context: noLoader ? getNoLoader() : new HttpContext()
       }
     ).pipe(
-      map((response) => {
-        let result = {} as any;
-        if (isApiResponse(response)) {
-          if (response.code === '0') {
-            console.log(response);
-          }
-          if (response.code === '1') {
-            let dataRepository = JSON.parse(response.payload as string)[0];
-
-            result = {
-              idCliente: dataRepository.idCliente,
-              idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
-              idTipoEntidad: dataRepository.idTipoEntidad,
-              idSubContribuyente: dataRepository.idSubContribuyente,
-              idTiempoCredito: dataRepository.idTiempoCredito,
-              idTipoIdentificacion: dataRepository.idTipoIdentificacion,
-              idCiudad: dataRepository.idCiudad,
-              numeroIdentificacion: dataRepository.numeroIdentificacion,
-              identificacionComprador: dataRepository.numeroIdentificacion,
-              razonSocialComprador: dataRepository.nombreFiscal,
-              nombreFiscal: dataRepository.nombreFiscal,
-              montoCredito: dataRepository.montoCredito,
-              nombreComercial: dataRepository.nombreComercial,
-              direccion: dataRepository.direccion,
-              telefono: dataRepository.telefono,
-              correo: dataRepository.correo,
-              estado: dataRepository.estado,
-              idEmpleado: dataRepository.idEmpleado,
-              diasCredito: dataRepository.diasCredito,
-              empleado: dataRepository.empleado,
-              idEmpresa: dataRepository.idEmpresa,
-              idCargo: dataRepository.idCargo,
-              placa: dataRepository.placa,
-              validationSri: dataRepository.validationSri,
-              codigoSri: dataRepository.codigoSri,
-              correos: dataRepository.correo
-                ? dataRepository.correo.split(SEPARADORES_REGEX)
-                : [],
-              telefonos: dataRepository.telefono
-                ? dataRepository.telefono.split(SEPARADORES_REGEX)
-                : [],
-              placas:
-                dataRepository.placa !== ''
-                  ? dataRepository.placa.split(SEPARADORES_REGEX)
-                  : [],
-              idFormaPagoSri: dataRepository.idFormaPagoSri,
-            };
-          }
-        }
-
-        return result;
-      }),
+      map((response) => GetIdCompanyCustomerMapper.fromJson(response)),
     );
   }
 
-  search<T extends { textSearch: string }>(
-    data: T,
-  ): Observable<Array<CompanyCustomerSearch>> {
-    let query = {
-      textSearch: data.textSearch,
-    };
+  search(obj: SearchCompanyCustomerParams) {
+   const json = SearchCompanyCustomerMapper.toJson(obj)
     return this._http
-      .get<ApiResponse>(`${this._url}Search?json=${JSON.stringify(query)}`, {
+      .get<ApiResponse>(`${this._url}Search?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(
-        map((response) => {
-          let customers = [] as any[];
-          if (response && response.code === "1") {
-            let results = JSON.parse(response.payload as string) || [];
-
-            customers = CompanyCustomerMapper.fromApiSearch(results)
-          }
-          return customers;
-        }),
-      );
+      .pipe(map((response) => SearchCompanyCustomerMapper.fromJson(response)));
   }
 
   checkExistence<T>(params: T) {

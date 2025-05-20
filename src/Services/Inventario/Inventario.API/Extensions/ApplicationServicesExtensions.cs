@@ -1,4 +1,6 @@
-﻿using Common.Logging;
+﻿using System.IO.Compression;
+using Common.Logging;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace Inventario.API.Extensions;
@@ -10,6 +12,17 @@ public static class ApplicationServicesExtensions
     {
         services.AddAdvancedLogging(configuration);
 
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -20,22 +33,34 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<InventarioContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        string[] nameSpaces =
+        string[] scopedNameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.S3Application.Services",
-            "Inventario.API.Services",
+            "Inventario.API.Services"
         ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+
+        string[] trascientNameSpaces =
+        [
+            "Common.S3Application.Services",
+            "Common.Infrastructure.Data.Repository.Implementations"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
 
-        services.AddSingleton<S3ObjectCustom>();
+        services.AddTransient<S3ObjectCustom>();
         return services;
     }
 }

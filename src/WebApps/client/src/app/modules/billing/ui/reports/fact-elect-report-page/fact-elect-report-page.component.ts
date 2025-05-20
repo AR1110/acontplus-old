@@ -1,20 +1,26 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { DOC_TYPE_SRI, FORMAT_REPORT } from '@core/constants/global.constants';
-import { DocElectService } from '@billing/services/doc-elect.service';
+import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
+import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -24,14 +30,23 @@ import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
     UserSearchComponent,
+    MatCardContent,
+    MatCard,
+    ThemeButtonComponent,
+    MatCheckbox,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    MatLabel,
   ],
   templateUrl: './fact-elect-report-page.component.html',
   styles: ``,
 })
-export class FactElectReportPageComponent {
-  private docElectSvc = inject(DocElectService);
-  private tS = inject(ToasterService);
-  private sharedSvc = inject(SharedService);
+export class FactElectReportPageComponent implements OnInit {
+  private readonly _docElectSvc = inject(DocumentoElectronicoWebRepository);
+  private readonly _tS = inject(ToasterService);
+  private readonly _sharedSvc = inject(SharedService);
+
   dataSearch = {
     checkBoxCustomer: false,
     checkBoxUser: false,
@@ -40,7 +55,7 @@ export class FactElectReportPageComponent {
     idPuntoEmision: 0,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
-    codEstado: 0,
+    codEstado: 4,
     codeRetencion: 'ALL',
     codeDevolucion: 'ALL',
     companyCustomerId: 0,
@@ -51,7 +66,7 @@ export class FactElectReportPageComponent {
   establecimientos: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
   estadosDoc: any[] = [];
-  tiposDoc: any[] = [];
+  tiposDoc = signal<any[]>([]);
   empresas: any[] = [];
 
   showField = true;
@@ -88,28 +103,30 @@ export class FactElectReportPageComponent {
   };
 
   onChangeTipoDoc() {
-    let dataTipoDoc = this.tiposDoc.find(
+    const dataTipoDoc = this.tiposDoc().find(
       (td) => td.idTipoDocumento === this.dataSearch.idTipoDocumento,
     );
-    this.showField = false;
 
-    if (dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F) {
-      this.showField = true;
+    this.showField = !!(dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F);
+    if(this.showField){
+      this.dataSearch.codeDevolucion='SD'
+    }else{
+      this.dataSearch.codeDevolucion= 'ALL';
     }
   }
 
   getDataFilter() {
-    this.docElectSvc.getDataFilter().subscribe((response) => {
-      let { estabs, estadosDoc, tiposDoc } = response;
+    this._docElectSvc.getDataFilter().subscribe((response) => {
+      const { estabs, estadosDoc, tiposDoc } = response;
       this.establecimientos = estabs;
       if (this.establecimientos.length > 0) {
-        let dataEstab = this.establecimientos.find(
+        const dataEstab = this.establecimientos.find(
           (estab) => estab.defaultEstab,
         );
         this.puntosEmision = dataEstab?.puntosEmision ?? [];
       }
-      this.tiposDoc = tiposDoc;
-      const dataTipoDoc = this.tiposDoc.find(
+      this.tiposDoc.set(tiposDoc);
+      const dataTipoDoc = this.tiposDoc().find(
         (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
       );
       this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
@@ -122,7 +139,7 @@ export class FactElectReportPageComponent {
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos.find(
+    const dataEstab = this.establecimientos.find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
@@ -139,11 +156,11 @@ export class FactElectReportPageComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
     this.dataSearch.identificacion = null;
   }
-  onCustomerSelected({ data }: any) {
+  onCustomerSelected(data: CompanyCustomer) {
     this.dataSearch.identificacion = data.numeroIdentificacion;
     this.dataSearch.companyCustomerId = data.idCliente;
   }
@@ -157,11 +174,11 @@ export class FactElectReportPageComponent {
   }
 
   getReportPdf() {
-    this.format = FORMAT_REPORT.PDF;
+    this.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
   getReportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 
@@ -171,7 +188,7 @@ export class FactElectReportPageComponent {
         this.dataSearch.checkBoxCustomer &&
         !isValidField(this.dataSearch.identificacion)
       ) {
-        this.tS.toastr({
+        this._tS.toastr({
           type: 'warning',
           message: 'Seleccione el Cliente',
         });
@@ -181,40 +198,40 @@ export class FactElectReportPageComponent {
         this.dataSearch.checkBoxUser &&
         !isValidField(this.dataSearch.userId)
       ) {
-        this.tS.toastr({
+        this._tS.toastr({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
         return;
       }
-      let dataEstab = this.establecimientos.find(
+      const dataEstab = this.establecimientos.find(
         (estab) =>
           estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
       );
       // let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
-      let { codDoc } = this.tiposDoc.find(
+      const { codDoc } = this.tiposDoc().find(
         (item) => item.idTipoDocumento === this.dataSearch.idTipoDocumento,
       );
-      let idCliente = this.dataSearch.checkBoxCustomer
+      const idCliente = this.dataSearch.checkBoxCustomer
         ? this.dataSearch.companyCustomerId
         : null;
-      let identificacion = this.dataSearch.checkBoxCustomer
+      const identificacion = this.dataSearch.checkBoxCustomer
         ? isValidField(this.dataSearch.identificacion)
         : null;
-      let idUsuario = this.dataSearch.checkBoxUser
+      const idUsuario = this.dataSearch.checkBoxUser
         ? isValidField(this.dataSearch.userId)
         : null;
-      let ckRetencion =
+      const ckRetencion =
         this.dataSearch.codeRetencion === 'ALL'
           ? null
           : this.dataSearch.codeRetencion === 'CR';
-      let ckDevolucion =
+      const ckDevolucion =
         this.dataSearch.codeDevolucion === 'ALL'
           ? null
           : this.dataSearch.codeDevolucion === 'CD';
 
-      let getDataReport = this.dataReporte[codDoc];
-      let dataParams = {
+      const getDataReport = this.dataReporte[codDoc];
+      const dataParams = {
         tipo: getDataReport.tipo,
         ckFecha: true,
         codDoc,
@@ -229,7 +246,7 @@ export class FactElectReportPageComponent {
         ckRetencion,
         ckDevolucion,
       };
-      let reportParams = JSON.stringify({
+      const reportParams = JSON.stringify({
         hasParams: false,
         codigo: getDataReport.codigo,
         format: this.format,
@@ -241,7 +258,7 @@ export class FactElectReportPageComponent {
         reportParams,
         dataParams: JSON.stringify(dataParams),
       };
-      this.sharedSvc.getReport({
+      this._sharedSvc.getReport({
         data: parameters,
         format: this.format,
         isOldVersion: true,

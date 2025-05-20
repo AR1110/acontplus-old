@@ -1,24 +1,36 @@
 import { inject, Injectable } from '@angular/core';
-import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats.repository';
+import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats/retencion-ats.repository';
 import { map, Observable } from 'rxjs';
 import {
   RetencionAts,
   RetencionAtsList,
-} from '@billing/domain/models/retencion-ats.model';
+} from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { PATHS_API } from '@core/constants/global.constants';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
+import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 
 @Injectable({ providedIn: 'root' })
 export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private readonly _http = inject(HttpClient);
-  private readonly _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.RETENCION_ATS}`;
+  private readonly _url = `${PATHS_API.RETENCION_ATS}${BILLING_PATHS.RETENCION_ATS}`;
+
+  cancel(id: number) {
+    return this._http
+      .put<ApiResponse>(`${this._url}Cancel/${id}`, '')
+      .pipe(map((response) => response));
+  }
 
   getAll<T>(parameters: T) {
+    const obj = {
+      ...parameters,
+      tipo: 1,
+    };
+
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(parameters)}`)
+      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`)
       .pipe(
         map((response) => {
           if (response.code !== '1') {
@@ -26,7 +38,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
           }
           const { retenciones } = JSON.parse(response.payload as string);
           return {
-            retenciones: retenciones as RetencionAtsList[],
+            retenciones: (retenciones as RetencionAtsList[]) || [],
           };
         }),
       );
@@ -59,33 +71,63 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   private getDefaultData() {
     return {
       tiposIdentificacion: [],
-      sujetoRetenido: [],
-      documentoSustento: [],
-      sustentoTributario: [],
+      tiposIdentificacionProveedor: [],
+      tiposComprobante: [],
+      sustentosTributarios: [],
       tiposPago: [],
       tiposRegimen: [],
       countries: [],
       paraisosFiscales: [],
       taxes: [],
-      tarifasImpuesto: [],
+      tarifaImpuestos: [],
       impuestosRetencion: [],
       porcentajesRetIva: [],
-      codigosRetencion: [],
+      conceptosRetencionAir: [],
       formasPago: [],
       estabs: [],
       infoAdicional: [],
     };
   }
   getById(id: number): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+    return this._http.get<ApiResponse>(`${this._url} ${id}`).pipe(
+      map((response) => {
+        if (response.code !== '1') {
+          return {} as RetencionAts;
+        }
+        const { retencionAts } = JSON.parse(response.payload as string);
+        return retencionAts[0] as RetencionAts;
+      }),
+    );
   }
-  create(data: any): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+  create<T>(data: T): Observable<ApiResponse> {
+    console.log(data);
+    return this._http
+      .post<ApiResponse>(`${this._url}`, data)
+      .pipe(map((response) => response));
   }
-  update(data: any): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+  update<T>(id: number, data: T): Observable<ApiResponse> {
+    return this._http
+      .put<ApiResponse>(`${this._url}${id}`, data)
+      .pipe(map((response) => response));
   }
-  delete(id: number): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+
+  getDocs<T extends { idCard: string }>(parameters: T) {
+    const obj = {
+      ...parameters,
+      tipo: 4,
+    };
+
+    return this._http
+      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`)
+      .pipe(
+        map((response) => {
+          if (response.code !== '1') {
+            return { documents: [] };
+          }
+          const { documents } = JSON.parse(response.payload as string);
+
+          return { documents: documents as RetAtsDocSustento[] };
+        }),
+      );
   }
 }

@@ -1,7 +1,9 @@
-﻿public class SerieService : ISerieService
+﻿namespace TechnicalSupport.API.Services;
+
+public class SerieService : ISerieService
 {
-    private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;
+    private readonly TechnicalSupportContext _context;
 
     public SerieService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
@@ -20,10 +22,8 @@
     {
         var serie = await _context.Series.FindAsync(id);
         if (serie == null)
-        {
             // Handle case where serie not found
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
-        }
 
         serie.Enabled = false;
         serie.Deleted = true;
@@ -36,10 +36,7 @@
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Serie_Get", parameters);
-        if (DataValidation.DataTableIsNull(dt))
-        {
-            return new ApiResponse { Code = "0", Message = "No data" };
-        }
+        if (DataValidation.DataTableIsNull(dt)) return new ApiResponse { Code = "0", Message = "No data" };
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
@@ -48,10 +45,8 @@
     {
         var serieFound = await _context.Series.FindAsync(id);
         if (serieFound == null)
-        {
             // Handle case where serie not found
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
-        }
 
         serieFound.BrandId = serie.BrandId;
         serieFound.Code = serie.Code;

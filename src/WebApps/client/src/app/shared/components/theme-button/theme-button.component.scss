@@ -1,0 +1,174 @@
+/* Icon and text spacing */
+.button-icon {
+  margin-right: 4px;
+}
+
+/* Icon-only button needs no margin */
+[mat-icon-button] .button-icon,
+[mat-fab] .button-icon,
+[mat-mini-fab] .button-icon {
+  margin-right: 0;
+}
+
+/* Custom border radius for non-icon buttons */
+[mat-button],
+[mat-raised-button],
+[mat-flat-button],
+[mat-stroked-button] {
+  border-radius: 20px !important;
+  margin: 0.25rem;
+}
+
+/* Primary Buttons */
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  color: var(--on-primary-color) !important;
+  /* border: 1px solid var(--primary-color) !important; */
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color) !important;
+  color: var(--on-secondary-color) !important;
+  /* border: 1px solid var(--secondary-color) !important; */
+}
+
+.btn-success {
+  background-color: var(--success-color) !important;
+  color: var(--on-success-color) !important;
+  /* border: 1px solid var(--success-color) !important; */
+}
+
+.btn-danger {
+  background-color: var(--danger-color) !important;
+  color: var(--on-danger-color) !important;
+  /* border: 1px solid var(--danger-color) !important; */
+}
+
+.btn-warning {
+  background-color: var(--warning-color) !important;
+  color: var(--on-warning-color) !important;
+  /* border: 1px solid var(--warning-color) !important; */
+}
+
+.btn-info {
+  background-color: var(--info-color) !important;
+  color: var(--on-info-color) !important;
+  /* border: 1px solid var(--info-color) !important; */
+}
+
+.btn-light {
+  background-color: var(--light-color) !important;
+  color: var(--on-light-color) !important;
+  /* border: 1px solid #ddd !important; */
+}
+
+.btn-dark {
+  background-color: var(--dark-color) !important;
+  color: var(--on-dark-color) !important;
+  /* border: 1px solid var(--dark-color) !important; */
+}
+
+/* Outlined Variants */
+.btn-outlined,
+[mat-stroked-button] {
+  background-color: transparent !important;
+}
+
+.btn-primary.btn-outlined,
+[mat-stroked-button].btn-primary {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.btn-secondary.btn-outlined,
+[mat-stroked-button].btn-secondary {
+  color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
+}
+
+.btn-success.btn-outlined,
+[mat-stroked-button].btn-success {
+  color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
+}
+
+.btn-danger.btn-outlined,
+[mat-stroked-button].btn-danger {
+  color: var(--danger-color) !important;
+  border-color: var(--danger-color) !important;
+}
+
+.btn-warning.btn-outlined,
+[mat-stroked-button].btn-warning {
+  color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
+}
+
+.btn-info.btn-outlined,
+[mat-stroked-button].btn-info {
+  color: var(--info-color) !important;
+  border-color: var(--info-color) !important;
+}
+
+.btn-light.btn-outlined,
+[mat-stroked-button].btn-light {
+  color: var(--light-color) !important;
+  border-color: var(--light-color) !important;
+}
+
+.btn-dark.btn-outlined,
+[mat-stroked-button].btn-dark {
+  color: var(--dark-color) !important;
+  border-color: var(--dark-color) !important;
+}
+
+/* Hover Effect */
+button:not([disabled]):hover {
+  filter: brightness(0.9);
+}
+
+/* Disabled Button Styles */
+button[disabled],
+[mat-button][disabled],
+[mat-raised-button][disabled],
+[mat-flat-button][disabled],
+[mat-stroked-button][disabled],
+[mat-icon-button][disabled],
+[mat-fab][disabled],
+[mat-mini-fab][disabled] {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* Additional disabled styles for material buttons */
+.mat-button-disabled,
+.mat-flat-button-disabled,
+.mat-icon-button-disabled,
+.mat-stroked-button-disabled,
+.mat-raised-button-disabled,
+.mat-fab-disabled,
+.mat-mini-fab-disabled {
+  opacity: 0.6 !important;
+}
+
+/* Ensure disabled outlined buttons maintain their style */
+[mat-stroked-button][disabled] {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Color-specific disabled states that preserve button type */
+.btn-primary[disabled] {
+  background-color: var(--primary-color) !important;
+  color: var(--on-primary-color) !important;
+}
+
+.btn-secondary[disabled] {
+  background-color: var(--secondary-color) !important;
+  color: var(--on-secondary-color) !important;
+}
+
+/* Additional styles for outlined disabled buttons */
+.btn-outlined[disabled],
+[mat-stroked-button][disabled] {
+  background-color: transparent !important;
+}

@@ -1,18 +1,21 @@
 import { Routes } from '@angular/router';
-import { GeneralConfigComponent } from './pages/general-config/general-config.component';
-import { DocConfigPageComponent } from './pages/doc-config/doc-config.component';
-import { UserCustomerPageComponent } from './pages/user-customer-page/user-customer-page.component';
-import { UserCustomerRequestPageComponent } from './pages/user-customer-request-page/user-customer-request-page.component';
-import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
-import { EstablishmentPageComponent } from './pages/establishment-page/establishment-page.component';
-import { CompanyPageComponent } from '@modules/config/pages/company-page/company-page.component';
+import { DocConfigPageComponent } from '@modules/config/ui/doc-config/doc-config.component';
+import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
+import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
+import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
+import { CompanyComponent } from '@modules/config/ui/company/company.component';
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
-import { WizardConfigComponent } from '@modules/config/pages/wizard-config/wizard-config.component';
-import { TiempoCreditoPageComponent } from './pages/tiempo-credito-page/tiempo-credito-page.component';
+import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
+import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
+import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
+import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
+import {ExcelImportComponent} from "@modules/config/ui/excel-import/excel-import.component";
+import {ElectronicSignatureComponent} from "@modules/config/ui/electronic-signature/electronic-signature.component";
+import {CreditTimeComponent} from "@modules/config/ui/credit-time/credit-time.component";
 
 export const routes: Routes = [
   {
-    path: 'general-config-page',
+    path: 'general-config',
     title: 'Config. General',
     component: GeneralConfigComponent,
     data: {
@@ -28,17 +31,17 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'user-customer-page',
+    path: 'user-customer',
     title: 'Usuario',
-    component: UserCustomerPageComponent,
+    component: UserCustomerComponent,
     data: {
       breadcrumb: 'Usuario',
     },
   },
   {
-    path: 'user-customer-request-page',
+    path: 'solicitud-autorizacion',
     title: 'Solicitudes de Usuario',
-    component: UserCustomerRequestPageComponent,
+    component: SolicitudAutorizacionComponent,
     data: {
       breadcrumb: 'Solicitudes de Usuario',
     },
@@ -62,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'company',
     title: 'Entidad',
-    component: CompanyPageComponent,
+    component: CompanyComponent,
     data: {
       breadcrumb: 'Entidad',
     },
@@ -91,4 +94,26 @@ export const routes: Routes = [
       breadcrumb: 'Tiempo de Crédito',
     },
   },
+  {
+    path: 'excel-import',
+    title: 'Importación',
+    component: ExcelImportComponent,
+    data: {
+      breadcrumb: 'Importación',
+    },
+  },
+  {
+    path: 'electronic-signature',
+    component:ElectronicSignatureComponent,
+    data: {
+      breadcrumb: 'Firma Eletrónica'
+    }
+  },
+  {
+    path: 'credit-time',
+    component: CreditTimeComponent,
+    data: {
+      breadcrumb: 'Tiempo Crédito'
+    }
+  }
 ];

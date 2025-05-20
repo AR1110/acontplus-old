@@ -17,15 +17,9 @@ public class AccountController(
     {
         var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
 
-        if (string.IsNullOrEmpty(authRequest.Username))
-        {
-            return BadRequest("Usuario no puede estar vacio");
-        }
+        if (string.IsNullOrEmpty(authRequest.Username)) return BadRequest("Usuario no puede estar vacio");
 
-        if (string.IsNullOrEmpty(authRequest.Password))
-        {
-            return BadRequest("Contraseña no puede estar vacia");
-        }
+        if (string.IsNullOrEmpty(authRequest.Password)) return BadRequest("Contraseña no puede estar vacia");
 
         var response = await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password);
 
@@ -36,55 +30,52 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1:
+                {
+                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                    var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                    if (token == null || string.IsNullOrEmpty(token.Token))
+                        return BadRequest("Error al iniciar session");
+
+                    userData.ForEach(x => x.Token = token.Token);
+
+                    var logingHistory = new LoginHistory
                     {
-                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+                        UserId = userData[0].UserId,
+                        Username = userData[0].Username,
+                        UserRoleId = userData[0].UserRoleId,
+                        UserAgent = authRequest.UserAgent,
+                        Token = token.Token,
+                        TokenExpiration = token.Expires,
+                        FromMobile = fromMobile
+                    };
 
-                        var token = tokenService.CreateToken(userData.FirstOrDefault());
+                    await loginHistoryService.AddAsync(logingHistory);
 
-                        if (token == null || string.IsNullOrEmpty(token.Token))
-                        {
-                            return BadRequest("Error al iniciar session");
-                        }
-
-                        userData.ForEach(x => x.Token = token.Token);
-
-                        var logingHistory = new LoginHistory
-                        {
-                            UserId = userData[0].UserId,
-                            Username = userData[0].Username,
-                            UserRoleId = userData[0].UserRoleId,
-                            UserAgent = authRequest.UserAgent,
-                            Token = token.Token,
-                            TokenExpiration = token.Expires,
-                            FromMobile = fromMobile
-                        };
-
-                        await loginHistoryService.AddAsync(logingHistory);
-
-                        return Ok(new
-                        {
-                            code = "1",
-                            message = "Login correcto",
-                            payload = JsonConvert.SerializeObject(userData,
-                                new JsonSerializerSettings
-                                {
-                                    ContractResolver =
-                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                    Formatting = Formatting.Indented
-                                })
-                        });
-                    }
+                    return Ok(new
+                    {
+                        code = "1",
+                        message = "Login correcto",
+                        payload = JsonConvert.SerializeObject(userData,
+                            new JsonSerializerSettings
+                            {
+                                ContractResolver =
+                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                    });
+                }
             }
         }
         else
         {
-
             var loginFailed = new LoginFailed
             {
                 UserAgent = authRequest.UserAgent,
                 Username = authRequest.Username,
                 Password = authRequest.Password,
-                FromMobile = fromMobile,
+                FromMobile = fromMobile
             };
             await loginFailedService.AddAsync(loginFailed);
         }
@@ -99,10 +90,7 @@ public class AccountController(
         var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
-        if (token == null || string.IsNullOrEmpty(token.Token))
-        {
-            return BadRequest("Error al iniciar session");
-        }
+        if (token == null || string.IsNullOrEmpty(token.Token)) return BadRequest("Error al iniciar session");
 
         var logingHistory = new LoginHistory
         {

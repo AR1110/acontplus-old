@@ -24,11 +24,11 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
-                        <span for="establecimiento">Establecimiento</span>
+                        <label for="establecimiento">Establecimiento</label>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            class="form-control  border-select" ng-change="refresh()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -37,9 +37,9 @@
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
-                        <span for="puntosEmision">Punto Emisión</span>
+                        <label for="puntosEmision">Punto Emisión</label>
                         <select name="puntosEmision" id="puntosEmision" ng-model="dataSearch.idPuntoEmision"
-                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            class="form-control  border-select" ng-change="refresh()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -48,23 +48,34 @@
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="">Rango de Fechas</span>
-                        @* <div class="input-group"> *@
-                        <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
-                            end-date="dataSearch.endDate"
-                            result-range-date="resultDateRange(result)"></date-range-filter>
+                        <label for="">Rango fecha</label>
+                        <div class="input-group">
 
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <div class="custom-control custom-checkbox mr-sm-2">
+                                        <input type="checkbox" ng-model="dataSearch.ckFecha"
+                                            class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
+                                        <label class="custom-control-label" for="checkBoxFecha"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
+                                end-date="dataSearch.endDate"
+                                result-range-date="resultDateRange(result)"></date-range-filter>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                        ng-click="getTransferenciasBodega()">
+                        ng-click="refresh()">
                         <i class="fas fa-redo"></i>
                     </button>
                 </div>
             </div>
             <div class="row">
-                <div class="col-6 d-flex justify-content-start">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
                             ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
@@ -72,11 +83,23 @@
                     </span>
                 </div>
 
-                <div class="col-6 d-flex justify-content-end">
-                    <!-- <div class="form-group">
-                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                            ng-model="dataSearch.bySearch" placeholder="...">
-                    </div> -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex justify-content-end">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="nroDoc">Número documento</label>
+                                <input type="text" class="form-control border-select"
+                                    ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123 o 1-30">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="nroDoc">Buscar por observación</label>
+                                <input type="text" class="form-control border-select" ng-model="dataSearch.textSearch"
+                                    placeholder="...">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -91,6 +114,7 @@
                             <th md-column>Origen</th>
                             <th md-column>Destino</th>
                             <th md-column>Total</th>
+                            <th md-column>Observación</th>
                             <th md-column>Estado</th>
                         </tr>
                     </thead>
@@ -122,10 +146,11 @@
                             <td md-cell>{{item.bodegaOrigen}}</td>
                             <td md-cell>{{item.bodegaDestino}}</td>
                             <td md-cell>${{item.total}}</td>
+                            <td md-cell>{{item.observacion}}</td>
                             <td md-cell>{{item.estadoDesc}}</td>
                         </tr>
                         <tr ng-if="transferenciasBodegas.length===0" class="text-center">
-                            <td colspan="8">No hay registros en esta tabla</td>
+                            <td colspan="9">No hay registros en esta tabla</td>
                         </tr>
                     </tbody>
                     <tfoot md-foot>

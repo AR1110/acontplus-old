@@ -1,8 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-using FactElect.API.Extensions;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
@@ -10,7 +6,7 @@ builder.Configuration.AddConfiguration(configuration);
 
 // Add services to the container.
 
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
 builder.Services.AddIdentityService(builder.Configuration);
 
@@ -18,23 +14,19 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
+
+app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<MobileRequestMiddleware>();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5006"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
+
+app.MapRetencionAtsEndpoints();
+
+app.MapFactElectEndpoints();
 
 app.UseRouting();
 
@@ -44,4 +36,19 @@ app.UseAuthorization();
 
 app.MapControllers().RequireAuthorization();
 
-app.Run();
+//using var scope = app.Services.CreateScope();
+//var services = scope.ServiceProvider;
+//var context = services.GetRequiredService<FactElectContext>();
+//var logger = services.GetRequiredService<ILogger<Program>>();
+
+//try
+//{
+//    await context.Database.MigrateAsync();
+//    await FactElectContextSeed.SeedAsync(context);
+//}
+//catch (Exception ex)
+//{
+//    logger.LogError(ex, "An error occured during migration");
+//}
+
+await app.RunAsync();

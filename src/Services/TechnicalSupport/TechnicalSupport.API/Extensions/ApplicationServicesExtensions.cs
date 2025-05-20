@@ -1,4 +1,6 @@
-﻿using Common.Infrastructure.Repository.Implementations;
+﻿using System.IO.Compression;
+using Common.Infrastructure.Data.Repository.Implementations;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace TechnicalSupport.API.Extensions;
 
@@ -9,6 +11,17 @@ public static class ApplicationServicesExtensions
     {
         services.AddDbContextPool<TechnicalSupportContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>
@@ -29,13 +42,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IOrderMaintenanceService, OrderMaintenanceService>();
         services.AddScoped<ISerieService, SerieService>();
         services.AddScoped<IStatsService, StatsService>();
-        //var config = new AutoMapper.MapperConfiguration(cfg =>
-        //{
-        //    cfg.AddProfile(new MappingProfiles());
-        //});
-        //var mapper = config.CreateMapper();
-        //services.AddSingleton(mapper);
-        services.AddAutoMapper(typeof(MappingProfiles));
+
         return services;
     }
 }

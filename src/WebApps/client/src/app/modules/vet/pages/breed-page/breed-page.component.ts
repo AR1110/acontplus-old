@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Breed } from '@modules/vet/models/breed.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
@@ -9,18 +8,26 @@ import { BreedModalComponent } from '@modules/vet/components/breed-modal/breed-m
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-breed-page',
-    imports: [
-        BreadcrumbComponent,
-        FontAwesomeModule,
-        SecondaryStatusPipe,
-        NgbDropdownModule,
-    ],
-    templateUrl: './breed-page.component.html',
-    styles: ``
+  selector: 'app-breed-page',
+  imports: [
+    BreadcrumbComponent,
+    SecondaryStatusPipe,
+    MatCard,
+    MatCardContent,
+    MatButton,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
+    MatIcon,
+  ],
+  templateUrl: './breed-page.component.html',
+  styles: ``,
 })
 export class BreedPageComponent {
   data = {} as Breed;

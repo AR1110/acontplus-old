@@ -29,6 +29,7 @@ BEGIN
 		   ,@byTipoDocumento INT
 		   ,@byComprobante   INT
 		   ,@byEstado        INT 
+           ,@nroSecuencial VARCHAR(13)
 
     --> Recuperacion de Informacion
 	SELECT @tipo = tipo  FROM OPENJSON(@json) WITH (tipo INT)
@@ -46,12 +47,12 @@ BEGIN
                               ,es.codEstab
                               ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                   as fechaRegistro
                               ,Common.ufnGetSerieDocument(''CE'',es.estab,ce.nroDocumento,0)    as nroDoc
-							  ,UPPER(cu.BusinessName)                                           as persona
+							  ,UPPER(cu.BusinessName)                                           as nomPersona
 							  ,cu.IDCard												        as nroIdentificacion
 							  ,''Ninguna''                                                      as caja
 							  ,CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END      as color
-							  ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as estado
-							  ,us.nombreUsuario                                                 as usuario
+							  ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as nomEstado
+							  ,us.nombreUsuario                                                 as nomUsuario
                               ,COUNT(*) OVER()                                                  as totalRecords
 						FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK) 
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ce.idEstablecimiento
@@ -81,6 +82,7 @@ BEGIN
 				  ,@fechaInicio     = fechaInicio
                   ,@pageSize        = pageSize
 				  ,@pageIndex       = pageIndex
+                  ,@nroSecuencial  = LTRIM(TRIM(nroSecuencial))
 			FROM OPENJSON(@json) WITH 
             (
                  checkBoxFecha     BIT 
@@ -95,11 +97,20 @@ BEGIN
                 ,byEstado          INT
                 ,pageSize          INT
                 ,pageIndex         INT
+                ,nroSecuencial  VARCHAR(13)
             )
  
 		    IF @byTipoDocumento > 0 AND @byComprobante > 0
 			    BEGIN
-				    SET @sql = @sql + 'AND ce.idComprobanteEgreso IN (SELECT pd.idComprobanteEgreso FROM PagoDocumento pd WHERE pd.idTipoDocumento = @idTipoDocumento AND pd.idComprobante = @idComprobante) '
+                    SET @sql = @sql + '
+                    AND ce.idComprobanteEgreso IN (
+                        SELECT pd.idComprobanteEgreso 
+                        FROM PagoDocumento pd 
+                        WHERE pd.idTipoDocumento = @idTipoDocumento 
+                        AND pd.idComprobante = @idComprobante
+                    ) '
+
+
 			    END 
 
 		    IF @byEstado IS NOT NULL
@@ -121,6 +132,11 @@ BEGIN
 			    BEGIN
 				    SET @sql = @sql + 'AND ce.idUsuario = @idUsuario '
 			    END 
+
+             IF @nroSecuencial IS NOT NULL
+				BEGIN
+					SET @sql = @sql + ' AND ce.nroDocumento BETWEEN ' + REPLACE(@nroSecuencial,'-',' AND ')
+				END  
 
 		    SET @sql = @sql + 'ORDER BY ce.idComprobanteEgreso DESC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
@@ -144,7 +160,7 @@ BEGIN
     --> Filters
     IF @tipo = 2
         BEGIN
-            SET @tableNames = 'estabs,tipoDocumento,subEntidadFinanciera,banco'
+            SET @tableNames = 'estabs,tipoDocumento,subEntidadFinanciera,banco,users'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -179,6 +195,8 @@ BEGIN
             WHERE idEntidad = @idEntidad
             
             SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
+
+            SELECT nombreCompleto, idUsuario, nombreUsuario FROM v_usuario WHERE idEntidad = @idEntidad
             RETURN 
         END 
     
@@ -202,10 +220,10 @@ BEGIN
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','PA')
 
-            SELECT   cp.idCuentaPorPagar as idComprobante
+            SELECT cp.idCuentaPorPagar as idComprobante
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
-                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retenci�n')                                     as tipoDocumento
+                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
                   ,importeTotal                                                                                     as saldo
                   ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
                                   WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)
@@ -215,7 +233,7 @@ BEGIN
             INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cp.idEstadoPago
             WHERE cp.codDoc IN ('04','07')
               AND cp.importeTotal > 0
-             AND cp.idProveedor = @idProveedor
+              AND cp.idProveedor = @idProveedor
               AND ep.codigo = 'PE'
 
             RETURN 

@@ -9,31 +9,33 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for delete pago sustentos
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Pago_Delete', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Delete
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Delete @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Delete @userRoleId INT 
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+    SET XACT_ABORT ON;
+
+	DECLARE @userId INT;
+
 	BEGIN TRY
+        SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId);
+
 		BEGIN TRAN 
 			
 			DELETE FROM FactElect.RetencionAtsPago  
-			WHERE idRetencionAtsPago = @id
+			WHERE idRetencionAtsPago = @id;
 
-			SELECT '1' code, 'Pago del sustento eliminado con exito'  as 'message'
 		COMMIT TRAN
+        SELECT '1' code, 'Pago del sustento eliminado con exito'  as 'message';
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+	    SELECT '0' code, 'Error en el procedimiento!' as 'message';
 		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/DELETE', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+			ROLLBACK TRAN;
+		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES ('DocSustentoPago/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId);
 	END CATCH
 END
 GO

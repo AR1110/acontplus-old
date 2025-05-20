@@ -28,10 +28,7 @@ public class PetController(IPetService petService) : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Pet pet)
     {
-        if (id != pet.Id)
-        {
-            return BadRequest();
-        }
+        if (id != pet.Id) return BadRequest();
 
         pet.UserId = User.GetUserId();
         return Ok(await petService.UpdateAsync(id, pet));
@@ -47,7 +44,8 @@ public class PetController(IPetService petService) : BaseApiController
     [HttpGet("search")]
     public async Task<ActionResult<ApiResponse>> Search(string json)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "companyId", User.GetClaimValue<int>("companyId") },
             { "json", json }
         };

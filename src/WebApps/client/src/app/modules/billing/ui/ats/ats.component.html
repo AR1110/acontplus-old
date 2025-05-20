@@ -1,14 +1,23 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-<div class="row">
-  <div class="col-6 offset-lg-3 offset-md-3 offset-sm-3 offset-3">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Anexo Transaccional Simplificado - ATS</h4>
-        <div class="form-group">
-          <label>Rango Fechas</label>
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" [from]="dataSearch.fromDate"
-                                    [to]="dataSearch.toDate"/>
+<div class="row mt-5">
+  <div
+    class="col-12 col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 offset-xl-3 offset-xxl-3 offset-lg-3 offset-md-3 offset-sm-3"
+  >
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>ATS</mat-card-title>
+        <mat-card-subtitle>Anexo Transaccional Simplificado</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row mt-3 mb-3">
+          <div class="col">
+            <app-date-range-selection
+              (onChangeDateRange)="onDateRangeSelection($event)"
+              [from]="dataSearch.fromDate"
+              [to]="dataSearch.toDate"
+            />
+          </div>
         </div>
         <!-- <div class="form-group">
             <label for="year">Año:</label>
@@ -30,10 +39,15 @@
         <!--          </div>-->
         <!--        </div>-->
 
-        <button (click)="getAts()" class="btn btn-success" type="button">
-          <i class="ti-download"></i> Descargar
-        </button>
-      </div>
-    </div>
+        <app-theme-button
+          variant="success"
+          icon="download"
+          text="Descargar"
+          title="Descargar Ats"
+          ariaLabel="Descargar Ats Button"
+          (handleClick)="getAts()"
+        ></app-theme-button>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

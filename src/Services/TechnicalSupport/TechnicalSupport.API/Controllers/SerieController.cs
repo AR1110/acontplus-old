@@ -16,7 +16,7 @@ public class SerieController : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) { return BadRequest("Can't Get Data"); }
+        if (response == null) return BadRequest("Can't Get Data");
 
         ;
         return Ok(response);

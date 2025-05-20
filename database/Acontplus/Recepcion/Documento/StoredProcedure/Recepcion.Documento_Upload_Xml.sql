@@ -64,9 +64,12 @@ BEGIN
         SELECT TOP 1 @idUsuario = idUsuario ,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
         --> Info Xml
-        SELECT @xmlQuery =  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))) 
+        --SELECT @xmlQuery =  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))) 
+        SELECT @xmlQuery = @xmlDoc.value('(/autorizacion/comprobante)[1]', 'NVARCHAR(MAX)')
 
-        SELECT @fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
+        --SELECT @fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
+
+        SET @fechaAutorizacion = @xmlDoc.value('(/autorizacion/fechaAutorizacion)[1]', 'VARCHAR(MAX)')
 
         SELECT @xmlCompressed = COMPRESS(CONVERT(VARBINARY(MAX), @xmlDoc))
 
@@ -128,6 +131,35 @@ BEGIN
                       ,'Notas de Crédito'
                 FROM @xmlQuery.nodes('//notaCredito') x(y)
 			END
+        
+        --> Nota de debito
+        IF @codDoc = '05'
+            BEGIN 
+                INSERT INTO @tbDocumento 
+                (
+                     razonSocialEmisior
+                    ,nombreComercial
+                    ,rucEmisor
+                    ,dirMatriz
+                    ,estab
+                    ,ptoEmi
+                    ,secuencial
+                    ,identificacionReceptor
+                    ,importeTotal
+                    ,comprobante
+                )
+                SELECT x.y.value('(infoTributaria/razonSocial)[1]','VARCHAR(300)')             as razonSocialEmisor
+                      ,x.y.value('(infoTributaria/nombreComercial)[1]','VARCHAR(300)')         as nombreComercial
+                      ,x.y.value('(infoTributaria/ruc)[1]','VARCHAR(13)')			           as rucEmisor
+                      ,x.y.value('(infoTributaria/dirMatriz)[1]','VARCHAR(300)')               as dirMatriz
+                      ,x.y.value('(infoTributaria/estab)[1]','VARCHAR(25)')                    as estab
+                      ,x.y.value('(infoTributaria/ptoEmi)[1]','VARCHAR(25)')                   as ptoEmi
+                      ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')               as secuencial
+                      ,x.y.value('(infoNotaDebito/identificacionComprador)[1]','VARCHAR(300)') as identificacionComprador
+                      ,x.y.value('(infoNotaDebito/valorTotal)[1]','NUMERIC(18,5)')             as importeTotal
+                      ,'Notas de Crédito'
+                FROM @xmlQuery.nodes('//notaDebito') x(y)
+            END 
 
         --> Retenciones
 		IF @codDoc = '07'
@@ -182,7 +214,8 @@ BEGIN
 
         
         --> Validacion de informacion 
-        IF @codDoc NOT IN ('01','04','07')
+        
+        IF @codDoc NOT IN ('01','04','07','05')
             BEGIN
                 SELECT '0' code, 'Comprobante no disponible' as 'message'
                 RETURN 
@@ -235,7 +268,7 @@ BEGIN
 			SET @idDocumento = SCOPE_IDENTITY()
 
             --> Procesos Internos de la empresa
-			IF @codDoc IN ('01','04')
+			IF @codDoc IN ('01','04','05')
 				BEGIN	
                     --> Proveedor
 					IF NOT EXISTS(SELECT 1 FROM dbo.Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND CustomerId = @customerId )
@@ -256,8 +289,8 @@ BEGIN
                     IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					    BEGIN 
 						    INSERT INTO Contabilidad.CuentaPorPagar
-							       (idDocumento,idEstablecimiento,codDoc,serieComprobante,idUsuario, idProveedor, idEstadoPago,uniqueId,fechaEmision,importeTotal,idEntidad,subcategoryId)
-						    SELECT @idDocumento,@idEstablecimiento,@codDoc,serieComprobante,@idUsuario,@idProveedor,@idEstadoPago,@claveAcceso,@fechaEmision,ISNULL(importeTotal,@importeTotal),@idEntidad,@subcategoryId
+							       (idDocumento,idEstablecimiento,codDoc,serieComprobante,idUsuario, idProveedor, idEstadoPago,uniqueId,fechaEmision,importeTotal,subcategoryId, idEntidad)
+						    SELECT @idDocumento,@idEstablecimiento,@codDoc,serieComprobante,@idUsuario,@idProveedor,@idEstadoPago,@claveAcceso,@fechaEmision,ISNULL(importeTotal,@importeTotal),@subcategoryId, @idEntidad
 						    FROM @tbDocumento
 					    END 
 				END
@@ -297,7 +330,7 @@ BEGIN
 
 		INSERT INTO ErroresSistema WITH (ROWLOCK)
               (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/DocumentoService/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() + @fechaEmision,GETDATE(),@idUsuario
+		SELECT NEWID(),'/DocumentoRecibido/UploadXml',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() + @fechaEmision,GETDATE(),@idUsuario
 
         SELECT '0' code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH 

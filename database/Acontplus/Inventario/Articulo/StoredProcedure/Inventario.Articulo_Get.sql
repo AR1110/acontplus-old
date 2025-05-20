@@ -617,8 +617,15 @@ BEGIN
         IF @tipo = 11
             BEGIN
                 SET @tableNames = 'subcategories,measures,brands,models,taxes'
-
-                SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY descripcion ASC
+                 
+                 SELECT idFamilia    = f.idFamilia
+				      ,idSubFamilia = sf.idSubFamilia
+				      ,familia      = ISNULL(f.descripcion,'Ninguna')
+				      ,sf.descripcion  
+			    FROM dbo.SubFamilia sf  WITH (NOLOCK)
+			     LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
+			    WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
+                ORDER BY sf.descripcion ASC
 
 			    SELECT idMedida,descripcion,codigo FROM Medida WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
@@ -636,7 +643,7 @@ BEGIN
             BEGIN
                 SET @tableNames = 'warehouses,subcategories,brands,documentTypes,fees,taxes'
 
-                SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+                SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega,correo FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
            
                 SELECT sf.idSubFamilia
                       ,sf.descripcion                    as subFamilia

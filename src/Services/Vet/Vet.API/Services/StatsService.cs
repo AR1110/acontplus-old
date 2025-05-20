@@ -1,13 +1,12 @@
-﻿namespace Vet.API.Services
+﻿namespace Vet.API.Services;
+
+public class StatsService(IAdoRepository repository) : IStatsService
 {
-    public class StatsService(IAdoRepository repository) : IStatsService
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await repository.GetDataSetAsync("Vet.Stats_Get", parameters);
-            return DataValidation.DataSetIsNull(ds, true)
-                ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }
-                : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
-        }
+        var ds = await repository.GetDataSetAsync("Vet.Stats_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

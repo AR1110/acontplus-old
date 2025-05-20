@@ -6,13 +6,13 @@ public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : 
     public async Task<ActionResult<ApiResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+        };
         var response = await precioMasivoService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
-            ;
+        ;
         return Ok(response);
     }
 
@@ -44,14 +44,14 @@ public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : 
     public async Task<ActionResult> Put(ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+        };
         var response = await precioMasivoService.UpdateAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
-            ;
+        ;
         return Ok(response);
     }
 }

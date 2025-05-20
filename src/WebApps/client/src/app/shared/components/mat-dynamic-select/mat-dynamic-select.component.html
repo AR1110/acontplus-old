@@ -1,0 +1,17 @@
+<mat-form-field class="w-100">
+  <mat-label>{{ label() }}</mat-label>
+  <mat-select [formControl]="selectControl" #singleSelect>
+    <mat-option>
+      <ngx-mat-select-search
+        placeholderLabel="Buscar..."
+        noEntriesFoundLabel="No se encontraron resultados"
+        [formControl]="selectFilterControl"
+      ></ngx-mat-select-search>
+    </mat-option>
+    @for (option of filteredOptions | async; track $index) {
+      <mat-option [value]="option">
+        {{ option.viewValue }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

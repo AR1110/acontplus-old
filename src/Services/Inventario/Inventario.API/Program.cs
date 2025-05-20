@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-using Inventario.API.Extensions;
+﻿using Inventario.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,10 +21,9 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
+
+app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -34,14 +31,7 @@ app.UseMiddleware<MobileRequestMiddleware>();
 
 app.UseRouting();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5008"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

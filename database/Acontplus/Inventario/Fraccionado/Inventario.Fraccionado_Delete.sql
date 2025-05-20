@@ -32,7 +32,7 @@ BEGIN
 		BEGIN TRAN 
 			DELETE FROM ArticuloFraccionado WHERE idArticuloFraccionado = @id
 		COMMIT TRAN 
-		SELECT '0'code, 'Eliminado Correctamente'[message]
+		SELECT '1'code, 'Eliminado Correctamente'[message]
 	END TRY
 
 

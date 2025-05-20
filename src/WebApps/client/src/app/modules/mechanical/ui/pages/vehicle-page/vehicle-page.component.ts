@@ -3,11 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { VehicleRead } from '@mechanical/domain/models/vehicle.model';
+
+
+import {VehicleList} from '@mechanical/domain/models/vehicle.model';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
@@ -17,15 +16,16 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { VehicleUseCase } from '@modules/mechanical/domain/use-cases/vehicle.use-case';
+import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { finalize } from 'rxjs';
+import {ListVehicleUseCase} from "@mechanical/application/use-cases/vehicle/list-vehicle.use-case";
 
 @Component({
   selector: 'app-vehicle-page',
   imports: [
     FormsModule,
     MatTableModule,
-    FontAwesomeModule,
+
     MatSlideToggleModule,
     MatIconModule,
     MatButtonModule,
@@ -40,14 +40,16 @@ import { finalize } from 'rxjs';
 })
 export class VehiclePageComponent {
   private vehicleUseCase = inject(VehicleUseCase)
+  private $listUseCase = inject(ListVehicleUseCase)
   tS = inject(ToasterService);
 
-  dataSource: VehicleRead[] = [];
+  dataSource = signal<VehicleList[]>([])
 
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   columnsDefs: ColumnDefinition[] = [
 
+    { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'vehicleType', label: 'Tipo Vehiculo', type: 'string' },
     { key: 'licensePlate', label: 'Placa', type: 'string' },
@@ -59,7 +61,7 @@ export class VehiclePageComponent {
 
   pagination = signal(new MatPagination());
 
-  isLoading = false
+  isLoading = signal(false)
 
   resultModal(result?: any) {
     this.refresh()
@@ -70,29 +72,30 @@ export class VehiclePageComponent {
     this.getVehicles()
   }
 
-
   private getVehicles() {
     try {
       let params = {
         pageIndex: this.pagination().pageIndex,
         pageSize: this.pagination().pageSize,
       }
-      if(this.isLoading) return;
+      if(this.isLoading()) return;
 
       // showLoader();
-      this.isLoading = true;
-      this.vehicleUseCase.getAll(params)
+      this.isLoading.set(true);
+      this.$listUseCase.execute(params)
       .pipe(
-        finalize(()=>this.isLoading=false)
+        finalize(()=>this.isLoading.set(false))
       )
       .subscribe( (response) => {
-          this.dataSource = response;
+          this.dataSource.set(response.data);
+          this.pagination.update(p=>{
+            return {
+              ...p,
+              totalRecords: response.totalRecords
+            }
+          })
 
-          if (this.dataSource.length > 0) {
-            this.pagination().totalRecords = this.dataSource[0].totalRecords;
-          }
-
-        }  )
+        })
     } catch (error) {
       // hideLoader();
     }
@@ -135,10 +138,8 @@ export class VehiclePageComponent {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.isConfirmed) {
-        showLoader();
-        this.vehicleUseCase.remove(id).subscribe({
-          next: (response) => {
-            if (isApiResponse(response)) {
+
+        this.vehicleUseCase.remove(id).subscribe((response) => {
               if (response.code === "0") {
                 this.tS.toastr({
                   type: 'warning',
@@ -152,13 +153,8 @@ export class VehiclePageComponent {
                 })
                 this.getVehicles();
               }
-            }
-          },
-          error(err) {
-            console.log(err)
-            hideLoader();
-          },
-        })
+          }
+        )
       }
     });
   };
@@ -166,10 +162,9 @@ export class VehiclePageComponent {
 
   //Status Vehicle
   putState(id: number, state: boolean) {
-    showLoader();
-    this.vehicleUseCase.putState(id, state).subscribe({
-      next: (response) => {
-        hideLoader();
+
+    this.vehicleUseCase.putState(id, state).subscribe(  (response) => {
+
         if (response) {
           this.tS.toastr({
             type: 'success',
@@ -184,7 +179,6 @@ export class VehiclePageComponent {
           })
         }
         this.getVehicles()
-      },
     })
   };
 

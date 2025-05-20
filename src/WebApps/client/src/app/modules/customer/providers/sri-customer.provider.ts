@@ -1,5 +1,5 @@
-import {ClassProvider} from "@angular/core"; 
-import {SriCustomerRepository} from "@customer/core/repositories/sri-customer.repository";
+import {ClassProvider} from "@angular/core";
+import {SriCustomerRepository} from "@customer/domain/repositories/sri-customer.repository";
 import {SriCustomerWebRepository} from "@customer/data/sri-customer/sri-customer-web.repository";
 
 

@@ -8,10 +8,10 @@
       </div>
       <div class="col  ">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button mat-icon-button (click)="openDialog()"  [disabled]="isLoadingResults">
+          <button mat-icon-button (click)="openDialog()"  [disabled]="isLoadingResults()">
             <mat-icon>add</mat-icon>
           </button>
-          <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
             <mat-icon>refresh</mat-icon>
           </button>
         </div>
@@ -21,12 +21,12 @@
 
 
     <app-mat-dynamic-table
-      [tableData]="dataSource"
+      [tableData]="dataSource()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
-      [isLoadingData]="isLoadingResults"
+      [isLoadingData]="isLoadingResults()"
     >
     </app-mat-dynamic-table>
 

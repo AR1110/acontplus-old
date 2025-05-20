@@ -1,6 +1,4 @@
-﻿using Configuracion.API.Interfaces.WizardConfig;
-
-namespace Configuracion.API.Controllers.WizardConfig;
+﻿namespace Configuracion.API.Controllers.WizardConfig;
 
 public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepService) : BaseApiController
 {

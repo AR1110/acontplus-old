@@ -1,6 +1,6 @@
 
 import { inject, Injectable } from "@angular/core";
-import { FacturaFisicaRepository } from "../../core/repositories/factura-fisica.repository";
+import { FacturaFisicaRepository } from "@purchase/domain/repositories/factura-fisica.repository";
 
 @Injectable({
   providedIn: 'root'

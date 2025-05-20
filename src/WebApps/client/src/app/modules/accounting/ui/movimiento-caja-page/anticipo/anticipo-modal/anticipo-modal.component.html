@@ -1,7 +1,7 @@
 <form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
   <div class="modal-header">
     <h5 class="modal-title">Anticipo</h5>
-    <button type="button" class="btn-close" (click)="closeModal()"></button>
+    <button type="button" class="btn-close" (click)="onModalClose()"></button>
   </div>
   <div class="modal-body">
     <div class="form-group">
@@ -15,20 +15,17 @@
         formControlName="codEstab"
       >
         @for (item of establecimientos; track $index) {
-        <option [ngValue]="item.codEstab">
-          {{ item.nombreComercial }}
-        </option>
+          <option [ngValue]="item.codEstab">
+            {{ item.nombreComercial }}
+          </option>
         }
       </select>
     </div>
 
     <div class="form-group">
-      <label
-        >Cliente: <span class="text-danger">*</span></label
-      >
       <app-company-customer-search
-        [isSearchSimple]="isSearchSimpleCompanyCustomer"
-        (onCustomerSelected)="onCustomerSelected($event)"
+        [isSimpleMode]="isSimpleModeCompanyCustomer"
+        (customerSelected)="onCustomerSelected($event)"
       />
     </div>
 
@@ -45,10 +42,9 @@
         required
       >
         @for (item of entidadesFinanciera; track $index) {
-
-        <option [ngValue]="item.idEntidadFinanciera">
-          {{ item.descripcion }}
-        </option>
+          <option [ngValue]="item.idEntidadFinanciera">
+            {{ item.descripcion }}
+          </option>
         }
       </select>
     </div>
@@ -63,9 +59,9 @@
         required
       >
         @for (item of subEntidadesFinanciera; track $index) {
-        <option [ngValue]="item.idSubEntidadFinanciera">
-          {{ item.descripcion }}
-        </option>
+          <option [ngValue]="item.idSubEntidadFinanciera">
+            {{ item.descripcion }}
+          </option>
         }
       </select>
     </div>
@@ -95,10 +91,15 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-success">
+    <button type="submit" mat-raised-button>
       <i class="ti-{{ iconBtn }}"></i>
       {{ textBtn }}
     </button>
-    <button type="button" class="btn btn-dark" (click)="closeModal()">&times; Cerrar</button>
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
+    ></app-theme-button>
   </div>
 </form>

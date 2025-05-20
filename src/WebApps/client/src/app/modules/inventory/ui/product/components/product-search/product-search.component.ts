@@ -5,7 +5,7 @@ import {
   Output,
   inject,
   input,
-  signal,
+  signal, SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -25,10 +25,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
 
 type ProductSearchProps = {
-  isSearchSimple?: boolean;
+  isSimpleMode?: boolean;
   isSearchAdvanced?: boolean;
   nameProduct?: string;
-  clearInput?: boolean;
+  clearSearch?: boolean;
 };
 
 /**
@@ -51,12 +51,12 @@ type ProductSearchProps = {
 })
 export class ProductSearchComponent {
   @Input() props: ProductSearchProps = {
-    isSearchSimple: false,
+    isSimpleMode: false,
     isSearchAdvanced: false,
     nameProduct: '',
-    clearInput: false,
+    clearSearch: false,
   };
-  @Input() isSearchSimple = true;
+  @Input() isSimpleMode = true;
   @Input() textSearch = '';
   isInputMat = input(false)
 
@@ -345,7 +345,7 @@ export class ProductSearchComponent {
 
   ngOnInit() {
     this.filteredProducts = this.control.valueChanges.pipe(
-      distinctUntilChanged(),
+
       switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
@@ -355,6 +355,13 @@ export class ProductSearchComponent {
         return [];
       })
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["textSearch"]) {
+      this.control.setValue(this.textSearch)
+    }
+
   }
 
   private _filter(value: string) {
@@ -373,7 +380,7 @@ export class ProductSearchComponent {
   }
 
   onSelectionChange(product: ProductSearch) {
-    if (this.props.clearInput) {
+    if (this.props.clearSearch) {
       this.control.patchValue('');
     }
     this.onProductSelected.emit({ data: product });

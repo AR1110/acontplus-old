@@ -2,9 +2,9 @@
 
 public class OrderService : IOrderService
 {
+    private readonly IAdoRepository _adoRepository;
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.Order_";
-    private readonly IAdoRepository _adoRepository;
 
     public OrderService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
@@ -35,9 +35,7 @@ public class OrderService : IOrderService
     {
         var ds = await _adoRepository.GetDataSetAsync($"{_module}Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }

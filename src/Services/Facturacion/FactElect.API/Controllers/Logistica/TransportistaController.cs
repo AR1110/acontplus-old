@@ -1,7 +1,4 @@
-﻿using FactElect.API.Models;
-using FactElect.API.Services.Logistica;
-
-namespace FactElect.API.Controllers.Logistica;
+﻿namespace FactElect.API.Controllers.Logistica;
 
 public class TransportistaController(ITransportistaService transportistaService) : BaseApiController
 {
@@ -51,7 +48,8 @@ public class TransportistaController(ITransportistaService transportistaService)
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await transportistaService.DeleteAsync(parameters));
     }
 }

@@ -64,6 +64,8 @@ BEGIN
                  [Description], 
                  [Floor], 
                  roomDescription ,
+                 vt.RoomId,
+                 vt.FloorId,
                  vt.Assigned
              FROM Restaurant.v_Table vt 
              INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc 
@@ -88,10 +90,13 @@ BEGIN
             ORDER BY sf.idSubFamilia DESC  
 
             SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
-	        SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
-            INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto 
+	        --SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
+         --   INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto
+         
+          SELECT i.idImpuesto, ti.idTarifaImpuesto, codImpuesto=i.codigo, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
+          INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.idImpuesto = ti.idImpuesto
           
-
+   
              --CUSTOMER DEFAULT      
 	        SELECT TOP 1 cl.idCliente,
                    cu.IDCard       AS numeroIdentificacion,
@@ -135,6 +140,7 @@ BEGIN
             WHERE se.idEntidad = @idEntidad 
                 AND se.codEstab = @codEstab 
                 AND CAST(ro.CreatedAt AS DATE) = CAST(GETDATE() AS DATE)
+                AND ro.Enabled = 1
                 AND ro.Deleted IS NULL 
                 AND ro.Finished = 0
                 AND ro.Divided = 0

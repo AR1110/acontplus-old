@@ -1,7 +1,4 @@
-﻿using FactElect.API.Models;
-using FactElect.API.Services.Sri;
-
-namespace FactElect.API.Controllers.Sri;
+﻿namespace FactElect.API.Controllers.Sri;
 
 public class AtsController(IAtsService atsService) : BaseApiController
 {
@@ -20,24 +17,20 @@ public class AtsController(IAtsService atsService) : BaseApiController
     [HttpGet("Get")]
     public IActionResult GetPeriods()
     {
-        object[] periods = null;
+        object[]? periods = null;
         try
         {
-            var years = new List<Year>();
-            var months = Enum.GetValues(typeof(Calendar.Months))
-                .Cast<Calendar.Months>()
-                .Select(t => new Month { month = (short)t, name = t.ToString() });
+            var years = new List<YearModel>();
+            var months = Enum.GetValues<Calendar.Months>()
+                .Select(t => new MonthModel { Month = (short)t, Name = t.ToString() });
 
-            var totalYears = 13;
+            const int totalYears = 13;
 
             var actualYear = DateTime.Now.Year;
 
-            for (var i = 0; i < totalYears; i++)
-            {
-                years.Add(new Year { year = actualYear - i });
-            }
+            for (var i = 0; i < totalYears; i++) years.Add(new YearModel { Year = actualYear - i });
 
-            periods = new object[] { years, months };
+            periods = [years, months];
         }
         catch (Exception ex)
         {
@@ -56,21 +49,13 @@ public class AtsController(IAtsService atsService) : BaseApiController
         };
 
         var ds = await atsService.GetAsync(parameters);
-        if (!ds.Tables[0].Columns.Contains("code"))
-        {
-            byte[] xmlAts = null;
-            if (_atsXml.Create(ref ds, ref xmlAts))
-            {
-                var fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"]
-                                      + "_" + ds.Tables[0].Rows[0]["numEstabRuc"]
-                                      + "_" + ds.Tables[0].Rows[0]["anio"] + "_"
-                                      + ds.Tables[0].Rows[0]["mes"];
-                return File(xmlAts, "text/xml", fileName + ".xml");
-            }
-
-            return BadRequest("No se pudo generar el ats");
-        }
-
-        return BadRequest(ds.Tables[0].Rows[0].Field<string>("message"));
+        if (ds.Tables[0].Columns.Contains("code")) return BadRequest(ds.Tables[0].Rows[0].Field<string>("message"));
+        byte[]? xmlAts = null;
+        if (!_atsXml.Create(ref ds, ref xmlAts)) return BadRequest("No se pudo generar el ats");
+        var fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"]
+                              + "_" + ds.Tables[0].Rows[0]["numEstabRuc"]
+                              + "_" + ds.Tables[0].Rows[0]["anio"] + "_"
+                              + ds.Tables[0].Rows[0]["mes"];
+        return File(xmlAts, "text/xml", fileName + ".xml");
     }
 }

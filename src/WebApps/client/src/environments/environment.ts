@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  API_URL: 'https://localhost:7060/gateway/',
+  API_URL: 'https://localhost:7060/gateway',
 };

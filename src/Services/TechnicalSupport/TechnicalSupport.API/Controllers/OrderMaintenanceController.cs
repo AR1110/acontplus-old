@@ -18,7 +18,7 @@ public class OrderMaintenanceController : BaseApiController
         };
 
         var response = await _service.GetAsync(parameters);
-        if (response == null) { return BadRequest("Can't get Data"); }
+        if (response == null) return BadRequest("Can't get Data");
 
         return Ok(response);
     }
@@ -33,7 +33,7 @@ public class OrderMaintenanceController : BaseApiController
         };
         var response = await _service.AddAsync(parameters);
 
-        if (response == null) { return BadRequest("No response"); }
+        if (response == null) return BadRequest("No response");
 
         return Ok(response);
     }
@@ -50,7 +50,7 @@ public class OrderMaintenanceController : BaseApiController
 
         var response = await _service.UpdateAsync(parameters);
 
-        if (response == null) { return BadRequest("No response"); }
+        if (response == null) return BadRequest("No response");
 
         return Ok(response);
     }

@@ -6,13 +6,13 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+        };
         var response = await articuloCodigoBarraService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
-            ;
+        ;
         return Ok(response);
     }
 
@@ -20,10 +20,10 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
         var response = await articuloCodigoBarraService.AddAsync(parameters);
         return Ok(response);
     }
@@ -33,11 +33,11 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
         var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-            };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
         var response = await articuloCodigoBarraService.UpdateAsync(parameters);
         return Ok(response);
     }
@@ -46,7 +46,8 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await articuloCodigoBarraService.DeleteAsync(parameters);
         return Ok(response);
     }

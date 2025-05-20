@@ -1242,7 +1242,7 @@
                     }
                     //===================================
 
-                    mainService.getData('GET', 'Config/WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
+                    mainService.getData('GET', 'Config/WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 })).then(
                         async response => {
                             if (response.code == '0') {
                                 toastService.toastr('warning', response.message)
@@ -1977,7 +1977,8 @@
             restrict: 'A',
             scope: {
                 params: '=',
-                onResult: '&'
+                onResult: '&',
+                codDoc:'='
             },
             link: function (scope, element) {
                 element.on('click', async function () {
@@ -1993,6 +1994,7 @@
                         params: {
                             idComprobanteIngreso: scope.params.idComprobanteIngreso,
                             idCuentaPorCobrar: scope.params.idCuentaPorCobrar,
+                            codDoc: scope.codDoc
 
                         },
                         isRenderRazorPartial: true

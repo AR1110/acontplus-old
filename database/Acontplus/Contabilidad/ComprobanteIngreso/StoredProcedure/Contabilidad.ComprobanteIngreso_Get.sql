@@ -375,8 +375,9 @@ BEGIN
 	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Crédito'
                                   WHEN '07' THEN 'Comprobante de Retención'
                                   WHEN 'A'  THEN 'Anticipo'
-	               END				                    as codDoc 
+	               END				                    as nomDoc 
 	              ,FORMAT(cc.fechaEmision,'MM/dd/yyyy') as fechaEmision
+                  ,cc.codDoc
             FROM v_CuentaPorCobrar cc WITH (NOLOCK)
             WHERE cc.codDoc IN ('A','04','07')
               AND cc.idCliente = @idCliente
@@ -410,7 +411,6 @@ BEGIN
 								    ,cx.mora
 								    ,cx.diasMora
 								    ,cx.abono
-								    ,cx.cuota - cx.abono as saldoCta
 								    ,cx.saldo
 								    ,estado = ep.descripcion
 						       FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
@@ -453,7 +453,6 @@ BEGIN
 				  ,cx.mora
 				  ,cx.diasMora
 				  ,cx.abono
-				  ,cx.cuota - cx.abono as saldoCta
 				  ,cx.saldo
 				  ,ep.descripcion      as estado
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)

@@ -1,4 +1,6 @@
-﻿using Common.Logging;
+﻿using System.IO.Compression;
+using Common.Logging;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace Configuracion.API.Extensions;
@@ -15,6 +17,16 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<ConfigContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -23,16 +35,15 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddAutoMapper(typeof(MappingProfiles));
 
         // Services that should be scoped (have dependencies on ConfigContext)
         string[] scopedNamespaces =
         [
-            "Configuracion.API.Services.Printing",
             "Configuracion.API.Endpoints.Implementations",
-            "Configuracion.API.Services",
-            "Configuracion.API.Services.Sri",
-            "Configuracion.API.Services.WizardConfig"
+            "Configuracion.Application.Services",
+            "Configuracion.Application.Services.Printing",
+            "Configuracion.Application.Services.Sri",
+            "Configuracion.Application.Services.WizardConfig"
         ];
 
         // Register scoped services
@@ -46,7 +57,7 @@ public static class ApplicationServicesExtensions
         // Other services that can be transient
         string[] transientNamespaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Common.Infrastructure.Data.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

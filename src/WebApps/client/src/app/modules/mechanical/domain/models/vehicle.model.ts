@@ -9,6 +9,15 @@ export interface Vehicle {
   enabled: boolean
 }
 
-export interface VehicleRead extends Vehicle {
-  totalRecords: number
+export interface VehicleList extends Vehicle {
+
+ }
+
+export interface ListVehicleParams {
+  pageIndex: number;
+  pageSize: number;
+}
+ export class ListVehicleResponse {
+  data: VehicleList[]=[]
+   totalRecords: number=0;
  }

@@ -257,12 +257,12 @@
             </div>
           </ng-template>
 
-          <button type="button" class="btn btn-secondary btn-sm" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
-            <fa-icon [icon]="'plus'"></fa-icon>
+          <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+            <mat-icon>add</mat-icon>
           </button>
           @if (data.vehicleCompanyId>0) {
-            <button type="button" class="btn btn-secondary btn-sm" appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
-              <fa-icon [icon]="'pencil'"></fa-icon>
+            <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
+              <mat-icon>edit</mat-icon>
             </button>
           }
         </div>
@@ -303,10 +303,10 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-success" (click)="save()">
+  <button type="button" mat-raised-button (click)="save()">
     {{btnText}}
   </button>
-  <button type="button" class="btn btn-dark" (click)="modal.close()">
+  <app-theme-button variant="dark" icon="close" text="Cancelar" (handleClick)="" (click)="modal.close()">
     &times; Cerrar
   </button>
 </div> -->

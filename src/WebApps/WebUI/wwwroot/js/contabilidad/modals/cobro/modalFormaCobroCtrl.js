@@ -137,19 +137,23 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 
     function getDataPago(item = {}) {
         try {
-            let entidadFinanciera = $scope.entidadesFinanciera.find(item => item.idEntidadFinanciera === $scope.data.idEntidadFinanciera);
-            let subEntidadFinanciera = entidadFinanciera.subEntidadesFinanciera.find(item => item.idSubEntidadFinanciera === $scope.data.idSubEntidadFinanciera);
+            let entidadFinanciera = $scope.entidadesFinanciera.find(dt => dt.idEntidadFinanciera === $scope.data.idEntidadFinanciera);
+            let subEntidadFinanciera = entidadFinanciera.subEntidadesFinanciera.find(dt => dt.idSubEntidadFinanciera === $scope.data.idSubEntidadFinanciera);
 
-            let ciudad = $scope.ciudades.find(item => item.idCiudad === $scope.data.idCiudad);
-            let banco = $scope.bancos.find(item => item.idBanco === $scope.data.idBanco);
+            let ciudad = $scope.ciudades.find(dt => dt.idCiudad === $scope.data.idCiudad);
+            let banco = $scope.bancos.find(dt => dt.idBanco === $scope.data.idBanco);
 
             let formattedDateTime = fS.formatDateMoment($scope.data.fechaEmision);
 
             let infoCobro = [{
-                nro: $scope.data.nro,
+                nro: item.serieComprobante || $scope.data.nro,
                 lote: $scope.data.lote,
                 aprobacion: $scope.data.aprobacion,
-                referencia: $scope.data.referencia
+                referencia: $scope.data.referencia,
+                codDoc: item? item.codDoc: null,
+                nomDoc: item? item.nomDoc: null,
+                nroDoc: item? item.serieComprobante: null
+
             }]
 
             return {
@@ -178,7 +182,7 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
                 nro: item.serieComprobante || $scope.data.nro,
                 idTipoDocumento: item.idTipoDocumento,
                 idComprobante: item.idDocumento,
-                tipoDocumento: item.tipoDocumento || item.codDoc,
+                tipoDocumento: item.nomDoc,
                 valorAbono: item.saldo || $scope.data.valorAbono,
                 controlCaja: subEntidadFinanciera.controlCaja,
                 observacion: $scope.data.observacion,
@@ -197,14 +201,14 @@ function modalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
             return
         }
 
-        if (datosCobro.some(dataCobro => dataCobro.idTipoDocumento === item.idTipoDocumento && dataCobro.idComprobante === item.idDocumento)) {
+        if (datosCobro.some(dataCobro => dataCobro.idComprobante === item.idDocumento)) {
             $scope.selectedDocElectronico = [];
             fS.sweetAlert('warning', 'Este documento ya fue aplicado al cobro');
             $(".swal2-container").css("z-index", "999999");
             return
         }
         Swal.fire({
-            html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.codDoc == 'A' ? item.serieComprobante : item.tipoDoc}?</small>`,
+            html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.nomDoc}?</small>`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

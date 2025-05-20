@@ -13,7 +13,7 @@
         }
 
         get(params) {
-            return this.mS.getData('get', `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
+            return this.mS.getData('get', `${URL}?json=${JSON.stringify(params)}`).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }

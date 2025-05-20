@@ -29,7 +29,8 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.UpdateAsync(parameters));
     }
@@ -37,7 +38,8 @@ public class CompraHabitualController(
     [HttpDelete("Delete")]
     public async Task<IActionResult> Delete(string json)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };

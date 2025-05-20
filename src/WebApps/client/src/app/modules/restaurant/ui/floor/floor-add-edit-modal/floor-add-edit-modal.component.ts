@@ -6,33 +6,34 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { FloorService } from '@restaurant/data/services/floor.service';
 import { SharedService } from '@core/services/shared.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { Room } from '@restaurant/domain/models/room.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { MatButton } from '@angular/material/button';
 import { ApiResponse } from '@core/models/api-response';
-import { faSave, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { RoomService } from '@restaurant/data/services/room.service';
-import {FloorUseCase} from "@restaurant/domain/use-cases/floor.use-case";
+import { FloorUseCase } from '@restaurant/domain/use-cases/floor.use-case';
+import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-floor-add-edit-modal',
-    imports: [
-        ReactiveFormsModule,
-        FaIconComponent,
-        TabulatorSemanticUiComponent,
-        MatButton,
-        MatSlideToggle,
-    ],
-    templateUrl: './floor-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-floor-add-edit-modal',
+  imports: [
+    ReactiveFormsModule,
+    MatIcon,
+    TabulatorSemanticUiComponent,
+    MatButton,
+    MatSlideToggle,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './floor-add-edit-modal.component.html',
+  styles: ``,
 })
 export class FloorAddEditModalComponent {
   data = {} as Floor;
@@ -74,7 +75,7 @@ export class FloorAddEditModalComponent {
         //create edit button
         let editBtn = document.createElement('button');
         editBtn.type = 'button';
-        editBtn.innerHTML = `${icon(faSave).html.join('')}`;
+        editBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">save</i>`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
         editBtn.title = 'Guardar Sala';
         editBtn.addEventListener('click', () => {
@@ -85,7 +86,7 @@ export class FloorAddEditModalComponent {
         //create delete button
         let delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.title = 'Eliminar Sala';
         delBtn.addEventListener('click', () => {
@@ -117,11 +118,11 @@ export class FloorAddEditModalComponent {
     capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
     enabled: new FormControl(true),
   });
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle: string = 'Registrar Piso';
   rooms: Room[] = [];
 
-  private _floorUseCase = inject(FloorUseCase)
+  private _floorUseCase = inject(FloorUseCase);
   _modalRef = inject(NgbActiveModal);
   _roomService = inject(RoomService);
   _sharedService = inject(SharedService);

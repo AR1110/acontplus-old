@@ -424,18 +424,26 @@ function modalArticuloCtrl(
 
                     //Disabled Column
                     for (let item of $scope.gridOptions.columnDefs) {
+                        if(["ganancia", "porcentajeUtilidad"].includes(item.field)){
+                            item.visible = $scope.articlePermission.isUpdatePrice;
+                        }
+
                         if (
-                            ["precioConIva", "porcentajeUtilidad", "ganancia"].includes(
+                            ["precioVenta", "precioConIva", "porcentajeUtilidad"].includes(
                                 item.field
                             )
                         ) {
-                            item.visible = $scope.articlePermission.isUpdatePrice;
+                          //  item.visible = $scope.articlePermission.isUpdatePrice;
+
+                          item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                          item.enableCellEditOnFocus =    $scope.articlePermission.isUpdatePrice;
+
                         }
-                        if (item.field === "precioVenta") {
-                            item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
-                            item.enableCellEditOnFocus =
-                                $scope.articlePermission.isUpdatePrice;
-                        }
+                        // if (item.field === "precioVenta") {
+                        //     item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                        //     item.enableCellEditOnFocus =
+                        //         $scope.articlePermission.isUpdatePrice;
+                        // }
                     }
                 }
             }) 
@@ -1072,7 +1080,9 @@ function modalArticuloCtrl(
                     setResponse(dataRepository)
                 }
             });
-        } 
+        } else{
+            setResponse(dataRepository)
+        }
     }
 
     $scope.uploadFile = () => {
@@ -1857,6 +1867,15 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
     }
 
+    $scope.refreshMedida = async function () {
+        try {  
+            const { medidas } = await articuloSvc.getDataForForm();
+            $scope.medidas = medidas; 
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     $scope.save = function () {
         if (!($scope.data.idArticulo > 0)) {
             tS.toastr('warning', "Seleccione el Articulo");
@@ -2206,7 +2225,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
             mS.getData('get', `${URL}Get?json=${JSON.stringify({
                 tipo: 3,
                 idArticulo: params.idArticulo
-            })}`, null, true).then(
+            })}`).then(
                 response => {
                     if (!response.payload) {
                         tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
@@ -2328,7 +2347,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
 
     function init() {
         showLoader();
-        mS.getData('GET', `${url}${params.idArticulo}`, null, true).then(
+        mS.getData('GET', `${url}${params.idArticulo}`).then(
             response => {
                 if (response.code == "1") {
                     $scope.photos = response.payload;

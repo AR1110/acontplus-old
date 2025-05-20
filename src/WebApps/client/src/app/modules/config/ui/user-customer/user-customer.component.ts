@@ -1,0 +1,125 @@
+import {Component, inject, signal} from '@angular/core';
+import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {ListUserCustomerUseCase} from "@modules/config/application/use-cases/user-customer/list-user-customer.use-case";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatPagination} from "@shared/models/pagination.model";
+import { MatIconModule} from "@angular/material/icon";
+import {MatButtonModule } from "@angular/material/button";
+import {PageEvent} from "@angular/material/paginator";
+import {ToasterService} from "@core/services/toaster.service";
+import {UserCustomerList} from "@modules/config/domain/models/user-customer/user-customer.model";
+import {finalize} from "rxjs/operators";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {DialogService} from "@core/services/dialog.service";
+import {
+  UserCustomerAddEditModalComponent
+} from "@modules/config/ui/user-customer/user-customer-add-edit-modal/user-customer-add-edit-modal.component";
+import {
+  SettingUserCustomerComponent
+} from "@modules/config/ui/user-customer/setting-user-customer/setting-user-customer.component";
+
+@Component({
+  selector: 'app-user-customer',
+  imports: [
+    BreadcrumbComponent,
+    MatDynamicCardComponent,
+    MatDynamicTableComponent,
+    MatIconModule,
+    MatButtonModule,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './user-customer.component.html',
+  styles: ``
+})
+export class UserCustomerComponent {
+  private $listUserCustomerUseCase = inject(ListUserCustomerUseCase)
+  private _tS = inject(ToasterService)
+  private _dialogSvc = inject(DialogService)
+
+  $loading = signal(false)
+
+  dataSource = signal<UserCustomerList[]>([])
+
+  columnsDefs: ColumnDefinition[] = [
+
+    { key: 'index', label: '#', type: 'string' },
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'nroIdentificacion', label: 'Nro. Identificacion', type: 'string' },
+    { key: 'nombreCompleto', label: 'Nombre Completo', type: 'string' },
+    { key: 'username', label: 'Usuario', type: 'string' },
+    { key: 'email', label: 'Correo', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  pagination = signal(new MatPagination());
+
+  refresh(){
+    this.refresh()
+  }
+
+  private getList(){
+    let params = {
+      pageIndex: this.pagination().pageIndex+1,
+      pageSize: this.pagination().pageSize
+    }
+    if(this.$loading()) {
+      this._tS.toastr({
+        type: 'warning',
+        message: 'Hay proceso pendiente'
+      })
+      return
+    }
+    this.$loading.set(true)
+    this.$listUserCustomerUseCase.execute(params)
+      .pipe(
+        finalize(()=>this.$loading.set(false))
+      )
+
+      .subscribe(response => {
+        this.dataSource.set(response.data)
+        this.pagination.update(item=>({
+          ...item,
+          totalRecords: response.totalRecords
+        }))
+    })
+  }
+
+  ngOnInit() {
+    this.getList()
+  }
+
+  openAddEdit(item?: UserCustomerList){
+    const  ref = this._dialogSvc.open(UserCustomerAddEditModalComponent, {
+      size: 'md',
+      data: item ? structuredClone(item) : {}
+    })
+    ref.subscribe(result=>{
+      if(result && typeof  result==='object'){
+        this.refresh()
+      }
+    })
+  }
+
+  openSetting(item: UserCustomerList){
+    const ref = this._dialogSvc.open(SettingUserCustomerComponent, {
+      size: 'xxl',
+      data: structuredClone(item)
+    })
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
+  }
+
+}

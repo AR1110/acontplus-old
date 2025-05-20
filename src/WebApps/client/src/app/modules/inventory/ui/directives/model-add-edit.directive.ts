@@ -14,7 +14,9 @@ export class ModelAddEditDirective {
   onResult = output<any>();
   params = input({});
 
-  @HostListener('click') onClick() {
+  @HostListener('click', ['$event'])
+  onClick($event: MouseEvent) {
+    $event.stopPropagation();
     const modalRef = this._dialogSvc.open(ModelAddEditComponent, {
       data: this.params() || {}
     });

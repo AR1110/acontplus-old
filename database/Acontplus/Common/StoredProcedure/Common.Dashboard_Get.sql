@@ -179,13 +179,20 @@ BEGIN
                   --AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
                   AND ur.estado = 1
 
-      SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
-                    FROM  AcontplusAdmin.Config.DemoStep ds
-                    INNER JOIN AcontplusAdmin.Config.CompanyDemoStep cds ON ds.Id = cds.DemoStepId
-                    INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
-                    WHERE ds.Id NOT IN (SELECT DemoStepId 
-                    FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) WHERE Uuid = @uuid)
-                    AND c.Uuid = @uuid
+            SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
+            FROM AcontplusAdmin.Config.DemoStep ds
+            WHERE ds.Id NOT IN (
+                SELECT cds.DemoStepId 
+                FROM AcontplusAdmin.Config.CompanyDemoStep cds
+                INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                WHERE c.Uuid = @uuid
+            )
+            AND EXISTS (
+                SELECT 1
+                FROM AcontplusAdmin.Config.CompanyDemoStep cds
+                INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                WHERE c.Uuid = @uuid
+            )
 
        SELECT nombreArchivo,
                 CASE 

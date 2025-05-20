@@ -1,23 +1,17 @@
-import { Component, inject, Input, ViewEncapsulation } from '@angular/core';
+import {Component, inject, signal, ViewEncapsulation} from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
   CODE_ESTADO,
-  CODE_REPORT,
-  FORMAT_REPORT,
-  FORMAT_TYPE,
+  REPORT_CODE,
+  REPORT_FORMAT,
 } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { ControlCaja } from '@accounting/core/domain/cashbox.model';
+import { ControlCaja } from '@accounting/domain/models/cashbox.model';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import {
-  NgbActiveModal,
-  NgbDropdownModule,
-  NgbPagination,
-} from '@ng-bootstrap/ng-bootstrap';
+
 import {
   PermissionCashAccounting,
   UserRoleStateService,
@@ -25,34 +19,52 @@ import {
 import Swal from 'sweetalert2';
 
 import { CierreCajaModalComponent } from '@accounting/ui/cashbox-page/cierre-caja-modal/cierre-caja-modal.component';
-import { FiltroControlCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 import { FiltroDetalleCajaReportModal } from '@accounting/ui/cashbox-page/control-caja-modal/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
-import { SendMailModalDirective } from '@shared/directives/send-mail-modal.directive';
+import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { MatMenuModule } from '@angular/material/menu';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatPagination} from "@shared/models/pagination.model";
+import {PageEvent} from "@angular/material/paginator";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {DialogService} from "@core/services/dialog.service";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-control-caja-modal',
   imports: [
     FormsModule,
-    FontAwesomeModule,
-    NgbPagination,
-    NgbDropdownModule,
     DateRangeSelectionComponent,
-    SendMailModalDirective,
+    SendMailDialogDirective,
+    MatMenuModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDynamicTableComponent,
   ],
   templateUrl: './control-caja-modal.component.html',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class ControlCajaModalComponent {
-  @Input('params') params = {
-    idCaja: 0,
-    idUsuario: 0,
-  };
+
+  private dialogRef = inject(MatDialogRef<ControlCajaModalComponent>)
+  readonly params = inject<{
+    idCaja:number
+    idUsuario: number
+  }>(MAT_DIALOG_DATA);
   dataPermisosCaja: PermissionCashAccounting = {
     cerrarCaja: false,
     verOtrasCajas: false,
@@ -74,8 +86,7 @@ export class ControlCajaModalComponent {
   };
   page = 1;
   totalRecords = 0;
-  recordsQuantity = [25, 50, 100, 200, 500];
-  movimientosCaja: Array<ControlCaja> = [];
+  movimientosCaja  = signal<ControlCaja[]>([]);
   estadosMovimiento = [
     {
       estado: false,
@@ -88,15 +99,30 @@ export class ControlCajaModalComponent {
   ];
   dataMovientoControCaja = {} as ControlCaja;
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
-  private activeModal = inject(NgbActiveModal);
-  private _controlCajaUseCase = inject(ControlCajaUseCase)
-  private modalSvc = inject(ModalService);
+  private _controlCajaUseCase = inject(ControlCajaUseCase);
+  private dialogSvc = inject(DialogService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private pS = inject(UserRoleStateService);
-  private _tokenUseCase = inject(TokenUseCase)
-  private format = FORMAT_REPORT.PDF;
+  private _tokenUseCase = inject(TokenUseCase);
+  private format = REPORT_FORMAT.PDF;
+
+
+  columnsDefs: ColumnDefinition[] = [
+
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'index', label: '#', type: 'string' },
+    { key: 'fechaApertura', label: 'Fecha Apertura', type: 'string' },
+    { key: 'fechaCierre', label: 'Fecha Cierre', type: 'string' },
+    { key: 'faltante', label: 'Faltante', type: 'string' },
+    { key: 'sobrante', label: 'Sobrante', type: 'string' },
+    { key: 'totalArqueo', label: 'Total', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  pagination = signal(new MatPagination());
 
   getMovimientosCaja() {
     let dataSearch = {
@@ -110,19 +136,24 @@ export class ControlCajaModalComponent {
         ? null
         : this.dataSearch.statusMovement,
     };
-    this._controlCajaUseCase.getAll(dataSearch).subscribe({
-      next: (response) => {
-        const { movimientos } = response as { movimientos: Array<ControlCaja> };
-
-        this.movimientosCaja = movimientos;
-        this.totalRecords =
-          this.movimientosCaja.length > 0
-            ? this.movimientosCaja[0].totalRecords
-            : 0;
-      },
-      error(err) {
-        console.log(err);
-      },
+    this._controlCajaUseCase.getAll(dataSearch).subscribe( (response) => {
+        const { movimientos=[] } = response as { movimientos: Array<ControlCaja> };
+        const movimientosCaja = movimientos.map((item:any, index: number)=>{
+          return {
+            ...item,
+            index: index+1,
+            nomEstado: item.estado ? 'ABIERTO': 'CERRADO',
+          }
+        })
+        this.movimientosCaja.set(movimientosCaja);
+        this.pagination.update(item=>{
+          return {
+            ...item,
+            totalRecords: this.movimientosCaja.length > 0
+              ? this.movimientosCaja()[0].totalRecords
+              : 0
+          }
+        })
     });
   }
 
@@ -134,8 +165,7 @@ export class ControlCajaModalComponent {
         this.dataPermisosCaja = response.cashAccounting;
       });
 
-      this._controlCajaUseCase.getDataFilter().subscribe({
-        next: (response) => {
+      this._controlCajaUseCase.getDataFilter().subscribe(  (response) => {
           const estados = response.estados;
           const dataEstado = estados.find(
             (estado: any) => estado.codEstado === CODE_ESTADO.NCBR,
@@ -143,10 +173,6 @@ export class ControlCajaModalComponent {
           if (dataEstado) {
             this.dataSearch.codEstado = dataEstado.codEstado;
           }
-        },
-        error(err) {
-          console.log(err);
-        },
       });
     } catch (error) {
       console.log(error);
@@ -156,15 +182,6 @@ export class ControlCajaModalComponent {
   onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
-    this.getMovimientosCaja();
-  }
-
-  pageChanged(): void {
-    this.getMovimientosCaja();
-  }
-
-  changePageSize(): void {
-    this.dataSearch.pageIndex = 1;
     this.getMovimientosCaja();
   }
 
@@ -193,7 +210,7 @@ export class ControlCajaModalComponent {
         reportParams: {
           hasParams: true,
           codEstab: item.codEstab,
-          codigo: CODE_REPORT.RCC,
+          codigo: REPORT_CODE.RCC,
           format: 'pdf',
         },
         spParams: {
@@ -230,8 +247,8 @@ export class ControlCajaModalComponent {
               const response = await this.userPermissionSvc
                 .checkHasPermission(obj)
                 .toPromise();
+              if(!response) return
 
-              if (isApiResponse(response)) {
                 if (response.code === '0') {
                   Swal.showValidationMessage(`${response.message}`);
                 }
@@ -239,7 +256,6 @@ export class ControlCajaModalComponent {
                   isOpenModal = true;
                   return response.code;
                 }
-              }
 
               return true;
             } catch (err) {
@@ -257,13 +273,14 @@ export class ControlCajaModalComponent {
       }
 
       if (isOpenModal) {
-        const modalRef = this.modalSvc.openModalCustom(
+        const modalRef = this.dialogSvc.open(
           CierreCajaModalComponent,
-          { size: 'lg', centered: true },
+          {
+            data: params || {}
+          }
         );
-        modalRef.componentInstance.params = params || {};
-        modalRef.result.then((result) => {
-          if (typeof result === 'object') {
+        modalRef.subscribe(result => {
+          if (result && typeof result === 'object') {
             this.isReloadCaja = true;
             this.getMovimientosCaja();
           }
@@ -324,7 +341,7 @@ export class ControlCajaModalComponent {
     }
   }
 
-  generateReport(idControlCaja: number, format: FORMAT_TYPE) {
+  generateReport(idControlCaja: number, format: REPORT_FORMAT) {
     let dataParms = {
       tipo: 1,
       id: idControlCaja,
@@ -332,7 +349,7 @@ export class ControlCajaModalComponent {
     const parameters = {
       hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
       reportParams: JSON.stringify({
-        codigo: CODE_REPORT.RCC,
+        codigo: REPORT_CODE.RCC,
         format,
         aditionalParams: [],
       }),
@@ -344,23 +361,23 @@ export class ControlCajaModalComponent {
       isOldVersion: true,
     });
   }
-
-  openModalFiltroReporteDetalleCaja(data: ControlCaja) {
-    try {
-      const modalRef = this.modalSvc.openModalCustom(
-        FiltroControlCajaReportModal,
-        {
-          size: 'sm',
-        },
-      );
-      modalRef.componentInstance.params = {
-        id: data.id,
-        enterKey: this.dataPermisosCaja.enterKey,
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //
+  // openModalFiltroReporteDetalleCaja(data: ControlCaja) {
+  //   try {
+  //     const modalRef = this.modalSvc.openModalCustom(
+  //       FiltroControlCajaReportModal,
+  //       {
+  //         size: 'sm',
+  //       },
+  //     );
+  //     modalRef.componentInstance.params = {
+  //       id: data.id,
+  //       enterKey: this.dataPermisosCaja.enterKey,
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   async askToReportType(data: ControlCaja, buttonType?: string) {
     const { isConfirmed, value } = await Swal.fire({
@@ -384,10 +401,10 @@ export class ControlCajaModalComponent {
     if (isConfirmed) {
       this.dataMovientoControCaja = data;
       if (value === 'pdf') {
-        this.format = FORMAT_REPORT.PDF;
+        this.format = REPORT_FORMAT.PDF;
       }
       if (value === 'excel') {
-        this.format = FORMAT_REPORT.EXCEL;
+        this.format = REPORT_FORMAT.EXCEL;
       }
 
       if (buttonType === this.BUTTON_TRANSACTION_PENDING) {
@@ -446,15 +463,14 @@ export class ControlCajaModalComponent {
         idUsuario: this.params.idUsuario,
         idCliente: null,
 
-        userRoleId: this._tokenUseCase.getUserRoleId()
-
+        userRoleId: this._tokenUseCase.getUserRoleId(),
       };
 
       const parameters = {
         hasService: true,
         reportParams: JSON.stringify({
           hasParams: false,
-          codigo: CODE_REPORT.FG,
+          codigo: REPORT_CODE.FG,
           format,
           aditionalParams: [],
         }),
@@ -472,29 +488,42 @@ export class ControlCajaModalComponent {
 
   // --> Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
-    try {
-      const modalRef = this.modalSvc.openModalCustom(
+       this.dialogSvc.open(
         FiltroDetalleCajaReportModal,
+        {
+          data: params || {},
+        }
       );
-      modalRef.componentInstance.params = params || {};
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   // --> Modal Detalle ArqueoCaja
   openModalDetalleArqureoCaja(params: ControlCaja) {
     try {
-      const modalRef = this.modalSvc.openModalCustom(
+       this.dialogSvc.open(
         DetalleArqueoControlCajaModalComponent,
-      );
-      modalRef.componentInstance.params = params || {};
+        {
+          data: params || {}
+        }
+      )
     } catch (error) {
       console.log(error);
     }
   }
 
-  closeModal() {
-    this.activeModal.close(this.isReloadCaja);
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
+  }
+
+  close() {
+    this.dialogRef.close(this.isReloadCaja);
   }
 }

@@ -8,29 +8,30 @@ import { ThemeClass } from '@core/theme/types';
 import { getEnumValueByKey } from '@core/utils/constant-value';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fab } from '@fortawesome/free-brands-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
-import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
+import {
+  UserPermission,
+  UserRoleStateService,
+} from '@shared/store/user-role-state.service';
+import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 @Component({
-    selector: 'app-root',
-    imports: [CommonModule, RouterOutlet],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  imports: [CommonModule, RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title = 'client';
+  title = 'Acontplus';
   //temporalmente
   themeOptions = THEME_OPTIONS;
   //end temporalmente
   userRoleState = inject(UserRoleStateService);
   //temporalmente
-  #themeService = inject(ThemeService);
-  #document = inject(DOCUMENT);
-  #renderer = inject(Renderer2);
-  private _tokenUseCase = inject(TokenUseCase)
+  private readonly _themeService = inject(ThemeService);
+  private readonly _document = inject(DOCUMENT);
+  private readonly _renderer = inject(Renderer2);
+  private readonly _tokenUseCase = inject(TokenUseCase);
   //end temporalmente
 
   constructor(
@@ -39,48 +40,45 @@ export class AppComponent implements OnInit {
     private _authUseCase: AuthUseCase,
     library: FaIconLibrary,
   ) {
-    library.addIconPacks(fab, fas, far);
+    library.addIconPacks(fab);
     effect(() => {
-      this.#renderer.setAttribute(
-        this.#document.documentElement,
+      this._renderer.setAttribute(
+        this._document.documentElement,
         'class',
-        this.#themeService.theme(),
+        this._themeService.theme(),
       );
     });
   }
 
   //temporalmente
   changeTheme(newTheme: ThemeClass) {
-    this.#themeService.changeTheme(newTheme);
+    this._themeService.changeTheme(newTheme);
   }
 
   //end temporalmente
 
   ngOnInit() {
-    let self = this;
+    const self = this;
     Object.keys(sessionStorage).forEach(function (key) {
       sessionStorage.removeItem(key);
     });
 
     this.route.queryParams.subscribe((params) => {
-
-      let { token, route, permission: dataPermission, userRoleData } = params;
+      const { token, route, permission: dataPermission, userRoleData } = params;
 
       console.log(route);
-
       if (dataPermission) {
         localStorage.setItem('permisos', dataPermission);
         localStorage.setItem('userRoleData', userRoleData);
-        let getPermission = localStorage.getItem('permisos');
-        let getUserRoleData = localStorage.getItem('userRoleData');
+        const getPermission = localStorage.getItem('permisos');
+        const getUserRoleData = localStorage.getItem('userRoleData');
         if (getPermission && getUserRoleData) {
-          let { acciones } = JSON.parse(getPermission);
+          const { acciones } = JSON.parse(getPermission);
 
+          const permission = JSON.parse(dataPermission);
+          const userRoleData = JSON.parse(getUserRoleData);
 
-          let permission = JSON.parse(dataPermission);
-          let userRoleData = JSON.parse(getUserRoleData);
-
-          let instancePermission = new UserPermission();
+          const instancePermission = new UserPermission();
           this.userRoleState.setState({
             permission: {
               ...instancePermission,
@@ -108,7 +106,7 @@ export class AppComponent implements OnInit {
         if (!this._tokenUseCase.isTokenExpired()) {
           localStorage.removeItem('access_token');
         }
-        let route_page = getEnumValueByKey(GlobalRoutes, route);
+        const route_page = getEnumValueByKey(GlobalRoutes, route);
 
         localStorage.setItem('access_token', token);
         self.router.navigate(['/', ...route_page.split('/')]);

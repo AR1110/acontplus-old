@@ -1,146 +1,123 @@
 <app-breadcrumb />
 
-<div class="card">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
-        <div class="icheck-primary">
-          <input
-            [(ngModel)]="dataSearch.supplierChecked"
-            id="supplierChecked"
-            name="supplierChecked"
-            type="checkbox"
-          />
-          <label for="supplierChecked">Proveedor</label>
-        </div>
+<app-mat-dynamic-card>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <mat-checkbox
+          [(ngModel)]="dataSearch.supplierChecked"
+        >Proveedor</mat-checkbox>
       </div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
-        <div class="icheck-primary">
-          <input
-            [(ngModel)]="dataSearch.userChecked"
-            id="userChecked"
-            name="userChecked"
-            type="checkbox"
-          />
-          <label for="userChecked">Usuario</label>
-        </div>
+      <div class="col">
+        <mat-checkbox
+          [(ngModel)]="dataSearch.userChecked"
+        >Usuario</mat-checkbox>
       </div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
-    <hr />
-    <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-12 col-12">
-        <div class="form-group">
-          <label for="tipoComprobante">Tipo comprobante</label>
-          <select
-            (change)="onChangeDocType()"
+    <mat-divider/>
+
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Documento</mat-label>
+          <mat-select
+            (selectionChange)="onChangeDocType()"
             [(ngModel)]="dataSearch.codDoc"
-            class="form-select"
-            id="tipoComprobante"
-            name="tipoComprobante"
           >
-            @for (item of documentTypes; track $index) {
-            <option [ngValue]="item.codigoSri">{{ item.descripcion }}</option>
+            @for (item of documentTypes(); track $index) {
+              <mat-option [value]="item.codigoSri">{{item.descripcion}}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="col-xl-3 col-lg-3 col-md-12 col-12">
-        <div class="form-group">
-          <label for="establecimiento">Establecimiento: </label>
-          <select
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select
             [(ngModel)]="dataSearch.codEstab"
-            class="form-select"
-            id="establecimiento"
-            name="establecimiento"
           >
-            <option value="">Todos</option>
-            @for (item of establecimientos; track $index) {
-            <option [ngValue]="item.codEstab">
-              {{ item.nombreComercial }}
-            </option>
+            <mat-option [value]="''">Todos</mat-option>
+
+            @for (item of establecimientos(); track $index) {
+              <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-        <div class="form-group">
-          <label>Rango Fechas</label>
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-          />
-        </div>
+      <div class="col">
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
       @if (dataSearch.codDoc === "01") {
-      <div class="col-lg-2 col-md-2 col-sm-6 col-12" ng-if="showField">
-        <div class="form-group">
-          <label for="retencion">Retencion</label>
-          <select
-            id="retencion"
-            class="form-select"
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Retencion</mat-label>
+          <mat-select
             [(ngModel)]="dataSearch.ckRetencion"
           >
+
             @for (item of estadosRetencion; track $index) {
-            <option [ngValue]="item.estado">
-              {{ item.descripcion }}
-            </option>
+              <mat-option [value]="item.estado">{{item.descripcion}}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
-      }
+        }
     </div>
-    <div class="row">
+
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
       @if (dataSearch.supplierChecked) {
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-        <div class="form-group">
-          <label>Proveedor</label>
-          <app-supplier-search
-            [isSearchSimple]="isSearchSupplierSimple"
-            (supplierSelected)="onSupplierSelected($event)"
-            [textSearch]="dataSearch.supplierName"
-            (clearEmpty)="supplierResultEmptyInput($event)"
-          ></app-supplier-search>
-        </div>
-      </div>
-      } @if (dataSearch.userChecked) {
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
-        <div class="form-group">
-          <label>Usuario: </label>
-          <app-user-search
-            (onUserSelected)="onUserSelected($event)"
-            [textSearch]="dataSearch.userName"
-            (emptyInput)="userResultEmptyInput($event)"
-          ></app-user-search>
-        </div>
+      <div class="col">
+        <app-supplier-search
+          [isSimpleMode]="isSearchSupplierSimple"
+          (supplierSelected)="onSupplierSelected($event)"
+          [textSearch]="dataSearch.supplierName"
+          (clearSearch)="supplierclearSearch($event)"
+        />
       </div>
       }
-      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="subcategoryId">Subcategoría:</label>
-          <select
-            [(ngModel)]="dataSearch.subcategoryId"
-            class="form-select border-select"
-            id="subcategoryId"
-          >
-            <option [ngValue]="0">Todas</option>
-            @for (item of subcategories; track $index) {
-            <option [ngValue]="item.id">
-              {{ item.name }}
-            </option>
-            }
-          </select>
-        </div>
+      @if (dataSearch.userChecked) {
+      <div class="col">
+        <app-user-search
+          (userSelected)="onUserSelected($event)"
+          [textSearch]="dataSearch.userName"
+          (clearSearch)="userclearSearch($event)"
+        />
       </div>
+      }
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>SubCategoría</mat-label>
+          <mat-select
+            [(ngModel)]="dataSearch.subcategoryId"
+          >
+            <mat-option [value]="0">--Todos--</mat-option>
+
+            @for (item of subcategories(); track $index) {
+              <mat-option [value]="item.id">{{item.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+
+    <div class="hstack gap-1">
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="pdf()"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="excel()"
+      />
     </div>
   </div>
-  <div class="card-body">
-    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <button (click)="pdf()" class="btn btn-danger" type="button">PDF</button>
-      <button (click)="excel()" class="btn btn-success" type="button">
-        EXCEL
-      </button>
-    </div>
-  </div>
-</div>
+</app-mat-dynamic-card>

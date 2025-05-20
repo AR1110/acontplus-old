@@ -1,4 +1,6 @@
-﻿using Common.Infrastructure.Repository.Implementations;
+﻿using System.IO.Compression;
+using Common.Infrastructure.Data.Repository.Implementations;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace Identity.API.Extensions;
 
@@ -9,6 +11,17 @@ public static class ApplicationServicesExtensions
     {
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>

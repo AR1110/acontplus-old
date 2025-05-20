@@ -5,7 +5,7 @@ import { Tarifa } from '@inventory/domain/models/tarifa.model';
 import { Impuesto } from '@shared/models/impuesto.model';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { GenericStoreSignalService } from '@shared/services/generic-store-signal.service';
-import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
+import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 
 
 export interface OrderMaintenanceState {

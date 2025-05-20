@@ -9,29 +9,36 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { Pagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import {CompanyCustomerUseCase} from "@customer/core/usecases/company-customer.use-case";
+import { CompanyCustomerUseCase } from '@customer/domain/usecases/company-customer.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatButton} from "@angular/material/button";
 
 @Component({
-    selector: 'app-company-customer',
-    imports: [
-        CommonModule,
-        FormsModule,
-        FontAwesomeModule,
-        MatTableModule,
-        FontAwesomeModule,
-        MatPaginatorModule,
-        BreadcrumbComponent,
-        CompanyCustomerAddEditDirective,
-        PrimaryStatusPipe,
-    ],
-    templateUrl: './company-customer.component.html'
+  selector: 'app-company-customer',
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTableModule,
+    MatIcon,
+    MatPaginatorModule,
+    BreadcrumbComponent,
+    CompanyCustomerAddEditDirective,
+    PrimaryStatusPipe,
+    MatCardContent,
+    MatCard,
+    ThemeButtonComponent,
+    MatButton,
+  ],
+  templateUrl: './company-customer.component.html',
 })
 export class CompanyCustomerComponent {
-  private _companyCustomerUseCase = inject(CompanyCustomerUseCase)
+  private _companyCustomerUseCase = inject(CompanyCustomerUseCase);
   tS = inject(ToasterService);
   sharedSvc = inject(SharedService);
 
@@ -72,14 +79,14 @@ export class CompanyCustomerComponent {
         textSearch: isValidField(this.dataSearch.textSearch),
       };
 
-      this._companyCustomerUseCase.getAll(params).subscribe(response=>{
+      this._companyCustomerUseCase.getAll(params).subscribe((response) => {
         this.dataSource = response;
 
         if (this.dataSource.length > 0) {
           let dataResult = this.dataSource[0];
           this.pagination.totalRecords = dataResult.totalRecords;
         }
-      })
+      });
     } catch (error) {
       console.log(error);
     }
@@ -117,19 +124,19 @@ export class CompanyCustomerComponent {
         this._companyCustomerUseCase
           .updateState(item.idCliente)
           .subscribe((response) => {
-              if (response.code === '0') {
-                this.tS.toastr({
-                  type: 'warning',
-                  message: response.message,
-                });
-              }
-              if (response.code === '1') {
-                this.tS.toastr({
-                  type: 'success',
-                  message: response.message,
-                });
-                this.getCompanyCustomers();
-              }
+            if (response.code === '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code === '1') {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+              this.getCompanyCustomers();
+            }
           });
       }
     } catch (e) {

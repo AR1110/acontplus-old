@@ -7,10 +7,10 @@ import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
   providedIn: 'root',
 })
 export class NotificacionTributariaService {
-  #url = `${PATHS_API.BILLING}${BILLING_PATHS.NOTIFICACION_TRIBUTARIA}`;
-  #http = inject(HttpClient);
+  private readonly _url = `${PATHS_API.BILLING}${BILLING_PATHS.NOTIFICACION_TRIBUTARIA}`;
+  private readonly _http = inject(HttpClient);
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, data);
+    return this._http.post(`${this._url}`, data);
   }
 }

@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
-  CODE_REPORT,
+  REPORT_CODE,
   DOC_TYPE,
   PATHS_API,
 } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
+import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
@@ -16,23 +16,35 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { FormsModule } from '@angular/forms';
+import {FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/domain/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatDivider} from "@angular/material/divider";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
-    selector: 'app-reports',
-    imports: [
-        FormsModule,
-        BreadcrumbComponent,
-        SupplierSearchComponent,
-        DateRangeSelectionComponent,
-    ],
-    templateUrl: './reports.component.html',
-    styles: ``
+  selector: 'app-reports',
+  imports: [
+    FormsModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    BreadcrumbComponent,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+    ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatDivider
+  ],
+  templateUrl: './reports.component.html',
+  styles: ``,
 })
 export class ReportsComponent {
   http = inject(HttpClient);
@@ -62,12 +74,12 @@ export class ReportsComponent {
     this.initialed();
   }
 
-  onSupplierSelected  ($event: any) {
+  onSupplierSelected($event: any) {
     this.dataSearch.supplierName = $event.name;
     this.dataSearch.idProveedor = $event.idProveedor;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.idProveedor = 0;
   }
 
@@ -139,7 +151,7 @@ export class ReportsComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: CODE_REPORT.RCP,
+        codigo: REPORT_CODE.RCP,
         format,
         aditionalParams: [],
       }),

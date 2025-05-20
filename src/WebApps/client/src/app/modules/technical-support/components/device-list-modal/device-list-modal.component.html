@@ -1,12 +1,10 @@
 <div class="modal-header">
-  <h5 class="modal-title">
-    <fa-icon [icon]="'search'"></fa-icon> Dispositivos
-  </h5>
+  <h5 class="modal-title"><mat-icon>search</mat-icon> Dispositivos</h5>
   <button
     type="button"
     class="btn-close"
     aria-hidden="false"
-    (click)="closeModal()"
+    (click)="onModalClose()"
   ></button>
 </div>
 <div class="modal-body">
@@ -25,22 +23,22 @@
           </thead>
           <tbody>
             @for (item of devices; track $index) {
-            <tr>
-              <td>{{ item.name }}</td>
-              <td>{{ item.model }}</td>
-              <td>{{ item.year }}</td>
-              <td>{{ item.deviceWarranty }}</td>
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-info btn-sm"
-                  title="Seleccionar Equipo"
-                  (click)="select(item)"
-                >
-                  <fa-icon [icon]="'hand-point-right'"></fa-icon>
-                </button>
-              </td>
-            </tr>
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.model }}</td>
+                <td>{{ item.year }}</td>
+                <td>{{ item.deviceWarranty }}</td>
+                <td>
+                  <app-theme-button
+                    matStyle="icon"
+                    variant="info"
+                    icon="arrow_forward"
+                    text="Seleccionar Equipo"
+                    (handleClick)="select(item)"
+                  >
+                  </app-theme-button>
+                </td>
+              </tr>
             }
           </tbody>
         </table>
@@ -49,11 +47,11 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button
-    type="button"
-    class="btn btn-outline-dark btn-sm"
-    (click)="closeModal()"
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cerrar"
+    (handleClick)="onModalClose()"
   >
-    &times; Cerrar
-  </button>
+  </app-theme-button>
 </div>

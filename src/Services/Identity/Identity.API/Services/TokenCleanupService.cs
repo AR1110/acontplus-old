@@ -3,9 +3,9 @@
 public class TokenCleanupService(IServiceScopeFactory scopeFactory, IConfiguration configuration) : BackgroundService
 {
     private readonly TimeSpan _checkInterval =
-        TimeSpan.FromMinutes(configuration.GetValue<int>("TokenCleanup:CheckInterval", 8));
+        TimeSpan.FromMinutes(configuration.GetValue("TokenCleanup:CheckInterval", 8));
 
-    private readonly int _topExpiredTokens = configuration.GetValue<int>("TokenCleanup:TopExpiredTokens", 50);
+    private readonly int _topExpiredTokens = configuration.GetValue("TokenCleanup:TopExpiredTokens", 50);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -20,7 +20,7 @@ public class TokenCleanupService(IServiceScopeFactory scopeFactory, IConfigurati
                                 (!x.TokenExpiration.HasValue || x.TokenExpiration <= DateTime.UtcNow))
                     .OrderBy(x => x.LoginDate)
                     .Take(_topExpiredTokens)
-                    .ToListAsync(cancellationToken: stoppingToken);
+                    .ToListAsync(stoppingToken);
 
                 if (expiredTokens.Count != 0)
                 {

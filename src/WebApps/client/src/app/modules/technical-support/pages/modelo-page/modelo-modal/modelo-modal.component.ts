@@ -7,9 +7,6 @@ import {
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Modelo } from '@modules/technical-support/models/modelo';
 import { Serie } from '@modules/technical-support/models/serie';
@@ -17,12 +14,15 @@ import { BrandService } from '@modules/technical-support/services/brand.service'
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-modelo-modal',
-    imports: [FontAwesomeModule, ReactiveFormsModule],
-    templateUrl: './modelo-modal.component.html',
-    styles: ``
+  selector: 'app-modelo-modal',
+  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  templateUrl: './modelo-modal.component.html',
+  styles: ``,
 })
 export class ModeloModalComponent {
   private modeloService = inject(ModeloService);
@@ -55,7 +55,7 @@ export class ModeloModalComponent {
     brandId: 0,
     brandName: '',
   };
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Modelo';
   series: Serie[] = [];
 
@@ -75,7 +75,6 @@ export class ModeloModalComponent {
     this.onBrandGet($event.target.value);
   }
   onBrandGet(brandId: number) {
-    showLoader();
     this.series = [];
     this.serieService.get({ tipo: 2, brandId }).subscribe({
       next: (response) => {
@@ -88,16 +87,11 @@ export class ModeloModalComponent {
           this.modeloForm.get('serieId')?.disable();
         }
       },
-      error(err) {
-        hideLoader();
-      },
-      complete() {
-        hideLoader();
-      },
+      error(err) {},
+      complete() {},
     });
   }
   onGet() {
-    showLoader();
     this.brandService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -107,19 +101,15 @@ export class ModeloModalComponent {
         }
       },
       error(err) {
-        hideLoader();
         console.log(err);
       },
-      complete() {
-        hideLoader();
-      },
+      complete() {},
     });
   }
   onModalClose() {
     this.modalRef.close();
   }
   onSave() {
-    showLoader();
     const dataToSave = {
       ...this.modeloForm.value,
     };
@@ -128,22 +118,16 @@ export class ModeloModalComponent {
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
         },
-        complete() {
-          hideLoader();
-        },
+        complete() {},
       });
     } else {
       this.modeloService.post(dataToSave).subscribe({
         next: this.successResponse,
         error(err) {
           console.error(err);
-          hideLoader();
         },
-        complete() {
-          hideLoader();
-        },
+        complete() {},
       });
     }
   }

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { Component, inject, OnInit } from '@angular/core';
+
 import {
   FormControl,
   FormGroup,
@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
@@ -17,25 +17,34 @@ import { PetService } from '@modules/vet/services/pet.service';
 import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
-    selector: 'app-pet-modal',
-    imports: [
-        FaIconComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        CompanyCustomerSearchComponent,
-    ],
-    templateUrl: './pet-modal.component.html',
-    styles: ``
+  selector: 'app-pet-modal',
+  imports: [
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    CompanyCustomerSearchComponent,
+    MatCard,
+    MatCardContent,
+    MatButton,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './pet-modal.component.html',
+  styles: ``,
 })
-export class PetModalComponent {
+export class PetModalComponent implements OnInit {
   breeds: Breed[] = [];
   breedsFiltered: Breed[] = [];
   customerBusinessName = '';
   data = {} as Pet;
   genders: Gender[] = [];
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle = 'Registrar Mascota';
   petTypes: PetType[] = [];
   petForm = new FormGroup({
@@ -71,6 +80,7 @@ export class PetModalComponent {
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Mascota';
+      console.log(this.data);
       if (this.data?.customer != null) {
         this.customerBusinessName = this.data?.customer;
       }
@@ -78,8 +88,7 @@ export class PetModalComponent {
     }
   }
 
-  onCustomerSelected($event: any) {
-    const { data } = $event;
+  onCustomerSelected(data: CompanyCustomer) {
     this.petForm.patchValue({ customerCompanyId: data.idCliente });
   }
 

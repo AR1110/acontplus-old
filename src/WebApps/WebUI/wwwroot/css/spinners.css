@@ -16,7 +16,7 @@
     left: 0rem;
     bottom: 0rem;
     z-index: 2147483647;
-    background-color: rgba(0,0,0,0.3) !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
 }
 
 
@@ -38,7 +38,7 @@
     border-top: 10px solid #D61672;
     border-right: 10px solid #D61672;
     border-bottom: 10px solid #D61672;
-    border-left: 10px solid rgba(255,255,255,1);
+    border-left: 10px solid rgba(255, 255, 255, 1);
     transform: translateZ(0);
     animation-iteration-count: infinite;
     animation-timing-function: linear;

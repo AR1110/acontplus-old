@@ -3,10 +3,10 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
-import { SupplierRepository } from '@customer/core/repositories/supplier.repository';
-import { CUSTOMER_PATHS } from '@customer/core/enums/customer.enum';
+import { SupplierRepository } from '@customer/domain/repositories/supplier.repository';
+import { CUSTOMER_PATHS } from '@customer/domain/enums/customer.enum';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { SupplierMapper } from '@customer/data/supplier/supplier.mapper';
 
 @Injectable({

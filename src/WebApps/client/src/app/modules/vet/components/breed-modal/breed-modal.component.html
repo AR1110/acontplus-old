@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="breedForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -69,20 +69,26 @@
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
           <label for="enabled">Estado:</label>
-          <input class="form-check" formControlName="enabled" id="enabled" type="checkbox"/>
+          <input
+            class="form-check"
+            formControlName="enabled"
+            id="enabled"
+            type="checkbox"
+          />
         </div>
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success btn-sm" type="submit">
-      <i class="ti-save"></i> Guardar
+    <button mat-raised-button type="submit">
+      <mat-icon>save</mat-icon>Guardar
     </button>
-    <button (click)="onModalClose()"
-            class="btn btn-dark btn-sm"
-            type="button"
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cerrar"
+      (handleClick)="onModalClose()"
     >
-      <i class="ti-close"></i> Cancelar
-    </button>
+    </app-theme-button>
   </div>
 </form>

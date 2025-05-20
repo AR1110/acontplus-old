@@ -105,7 +105,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  ├── cashbox.model.ts
 |  |  |  |  |  |  ├── category.ts
 |  |  |  |  |  |  ├── comp-ingreso.model.ts
-|  |  |  |  |  |  ├── comprobante-egreso.interface.ts
+|  |  |  |  |  |  ├── comprobante-egreso.model.ts
 |  |  |  |  |  |  ├── comprobante-ingreso.model.ts
 |  |  |  |  |  |  ├── comprobante-ingreso.ts
 |  |  |  |  |  |  ├── cuenta-por-cobrar.model.ts
@@ -318,7 +318,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  └── services
 |  |  |  |     ├── ats.service.ts
 |  |  |  |     ├── credit-note.service.ts
-|  |  |  |     ├── doc-elect.service.ts
+|  |  |  |     ├── documento-electronico-web.repository.ts
 |  |  |  |     ├── invoice.service.ts
 |  |  |  |     └── notificacion-tributaria.service.ts
 |  |  |  ├── common
@@ -348,9 +348,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── tiempo-credito.model.ts
 |  |  |  |  |  ├── user-customer
 |  |  |  |  |  |  ├── user-customer-request.model.ts
-|  |  |  |  |  |  ├── user-customer-role-bodega.model.ts
-|  |  |  |  |  |  ├── user-customer-role-estab.model.ts
-|  |  |  |  |  |  ├── user-customer-role-punto-emision.model.ts
+|  |  |  |  |  |  ├── asignacion-bodega.model.ts
+|  |  |  |  |  |  ├── asignacion-punto-emision.model.ts
 |  |  |  |  |  |  ├── user-customer-role.model.ts
 |  |  |  |  |  |  └── user-customer.model.ts
 |  |  |  |  |  └── wizard-config
@@ -358,8 +357,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     └── roman-to-index.ts
 |  |  |  |  ├── pages
 |  |  |  |  |  ├── company-page
-|  |  |  |  |  |  ├── company-page.component.html
-|  |  |  |  |  |  ├── company-page.component.ts
+|  |  |  |  |  |  ├── company.component.html
+|  |  |  |  |  |  ├── company.component.ts
 |  |  |  |  |  |  └── components
 |  |  |  |  |  ├── doc-config
 |  |  |  |  |  |  ├── components
@@ -385,10 +384,9 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── user-customer-page
 |  |  |  |  |  |  ├── components
 |  |  |  |  |  |  ├── user-customer-page.component.html
-|  |  |  |  |  |  └── user-customer-page.component.ts
 |  |  |  |  |  ├── user-customer-request-page
-|  |  |  |  |  |  ├── user-customer-request-page.component.html
-|  |  |  |  |  |  └── user-customer-request-page.component.ts
+|  |  |  |  |  |  ├── solicitud-autorizacion.component.html
+|  |  |  |  |  |  └── solicitud-autorizacion.component.ts
 |  |  |  |  |  ├── user-profile-page
 |  |  |  |  |  |  ├── user-profile-page.component.html
 |  |  |  |  |  |  └── user-profile-page.component.ts
@@ -396,10 +394,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     ├── wizard-config.component.html
 |  |  |  |  |     └── wizard-config.component.ts
 |  |  |  |  ├── services
-|  |  |  |  |  ├── company.service.ts
 |  |  |  |  |  ├── doc-config.service.ts
 |  |  |  |  |  ├── firma-electronica.service.ts
-|  |  |  |  |  ├── general-config.service.ts
 |  |  |  |  |  ├── printer-doc.service.ts
 |  |  |  |  |  ├── sri
 |  |  |  |  |  |  ├── establishment-logo.service.ts
@@ -409,18 +405,12 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── user-customer
 |  |  |  |  |  |  ├── user-customer-permission.service.ts
 |  |  |  |  |  |  ├── user-customer-request.service.ts
-|  |  |  |  |  |  ├── user-customer-role-bodega.service.ts
-|  |  |  |  |  |  ├── user-customer-role-estab.service.ts
-|  |  |  |  |  |  ├── user-customer-role-punto-emision.service.ts
-|  |  |  |  |  |  ├── user-customer-role.service.ts
-|  |  |  |  |  |  ├── user-customer.service.ts
 |  |  |  |  |  |  └── user-permission.service.ts
 |  |  |  |  |  ├── user-profile.service.ts
 |  |  |  |  |  └── wizard-config
 |  |  |  |  |     └── company-demo-step.service.ts
 |  |  |  |  └── store
 |  |  |  |     └── user-customer
-|  |  |  |        └── user-customer-role-state.service.ts
 |  |  |  ├── customer
 |  |  |  |  ├── core
 |  |  |  |  |  ├── domain
@@ -501,7 +491,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── product
 |  |  |  |  |  |  ├── product-deprecated.mapper.ts
 |  |  |  |  |  |  ├── product-deprecated.repository.ts
-|  |  |  |  |  |  ├── product-web.repository.ts
+|  |  |  |  |  |  ├── product-repository-impl.ts
 |  |  |  |  |  |  └── product.mapper.ts
 |  |  |  |  |  └── tag
 |  |  |  |  |     ├── tag-web.repository.ts
@@ -515,7 +505,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── category.service.ts
 |  |  |  |  |  ├── lot-price.service.ts
 |  |  |  |  |  ├── massive-tax.service.ts
-|  |  |  |  |  ├── product-photo.service.ts
 |  |  |  |  |  ├── stock.service.ts
 |  |  |  |  |  ├── sub-category.service.ts
 |  |  |  |  |  ├── subcategory-photo.service.ts
@@ -948,8 +937,8 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |     |  |  ├── pdf-viewer.component.html
 |  |     |  |  └── pdf-viewer.component.ts
 |  |     |  ├── send-mail-modal
-|  |     |  |  ├── send-mail-modal.component.html
-|  |     |  |  └── send-mail-modal.component.ts
+|  |     |  |  ├── send-mail-dialog.component.html
+|  |     |  |  └── send-mail-dialog.component.ts
 |  |     |  ├── tabla-resumen-totales
 |  |     |  |  ├── tabla-resumen-totales.component.html
 |  |     |  |  └── tabla-resumen-totales.component.ts
@@ -969,7 +958,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |     |  |  ├── action-mov-caja.directive.ts
 |  |     |  |  ├── action-report.directive.ts
 |  |     |  |  └── is-admin.directive.ts
-|  |     |  ├── send-mail-modal.directive.ts
+|  |     |  ├── send-mail-dialog.directive.ts
 |  |     |  ├── time-input-format-directive.directive.ts
 |  |     |  └── ui
 |  |     |     ├── input-number.directive.ts

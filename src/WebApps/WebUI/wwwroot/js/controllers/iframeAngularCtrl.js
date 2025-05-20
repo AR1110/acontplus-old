@@ -108,20 +108,6 @@
 
             let urlClient = `${frontend}?token=${token}&route=${route}&permission=${JSON.stringify({ ...permissions, acciones: $scope.accion || {} })}&userRoleData=${JSON.stringify(userRoleData)}`
 
-            //// Ajuste horizontal
-            //let x = parseInt((screen.width - 1200) / 2);
-            //// Ajustae vertical
-            //let y = parseInt((screen.height - 650) / 4);
-            //window.open(
-            //    urlClient,
-            //    "_blank",
-            //    `resizable=yes
-            //        width=1200
-            //        height=650
-            //        screenY=${y}
-            //        screenX=${x}`
-            //)
-            //return;
             iframe.src = urlClient;
 
             // Get the div element

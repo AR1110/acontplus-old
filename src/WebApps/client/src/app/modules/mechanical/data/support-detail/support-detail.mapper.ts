@@ -3,7 +3,7 @@ import {GroupedEstab} from "@core/models/estab.model";
 import {SupportMaintenanceDetail} from "@mechanical/domain/models/support-maintenance.model";
 import {formatDate} from "@core/utils/date.util";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {mergeMeasureUtil} from "@inventory/utils/merge-measure.util";
+import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
 import {MedidaProducto} from "@inventory/domain/models/measure.model";
 import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 import {generateUuidv4} from "@core/utils/generate-uuidv4";

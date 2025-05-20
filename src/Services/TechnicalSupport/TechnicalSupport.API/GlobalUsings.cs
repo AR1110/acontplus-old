@@ -1,10 +1,9 @@
-﻿global using AutoMapper;
-global using Common.Core.Data;
+﻿global using Common.Core.Data;
 global using Common.Core.Entities;
 global using Common.Core.Models;
 global using Common.Core.Validation;
-global using Common.Infrastructure.Data.Configurations;
-global using Common.Infrastructure.Repository.Interfaces;
+global using Common.Infrastructure.Core.Context;
+global using Common.Infrastructure.Data.Repository.Interfaces;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
 global using Common.Services.Middleware;

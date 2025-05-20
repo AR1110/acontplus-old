@@ -1,9 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {
-  NgbActiveModal,
-} from '@ng-bootstrap/ng-bootstrap';
+
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   FormControl,
   FormGroup,
@@ -27,17 +24,25 @@ import { ToasterService } from '@core/services/toaster.service';
 import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-medical-history-modal',
+  selector: 'app-medical-history-modal',
     imports: [
-        FaIconComponent,
         FormsModule,
         ReactiveFormsModule,
         PetSearchComponent,
+        MatCard,
+        MatCardContent,
+        MatIcon,
+        MatButton,
+        ThemeButtonComponent,
     ],
-    templateUrl: './medical-history-modal.component.html',
-    styles: ``
+  templateUrl: './medical-history-modal.component.html',
+  styles: ``,
 })
 export class MedicalHistoryModalComponent {
   behaviors: Behavior[] = [];
@@ -48,7 +53,7 @@ export class MedicalHistoryModalComponent {
   diseasesStatuses: DiseaseStatus[] = [];
   establecimientos: Array<GroupedEstab> = [];
   healthChecks: HealthCheck[] = [];
-  modalIcon: IconProp = 'plus';
+  modalIcon = 'add';
   modalTitle: string = 'Registrar Nuevo';
   medicalHistoryForm = new FormGroup({
     id: new FormControl(0),

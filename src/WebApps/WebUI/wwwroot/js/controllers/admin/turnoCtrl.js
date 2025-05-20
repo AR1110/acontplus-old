@@ -29,7 +29,7 @@
 
         //Read Turno
         $scope.getTurnos = function() {
-            mS.getData('get', 'Config/Turno/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize, null, true).then(response => {
+            mS.getData('get', 'Config/Turno/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {
                 if (response.id == 0) {
                     toast.toastr('warning', response.message, response.titleSms);
                     return;
@@ -52,7 +52,7 @@
     
 
         $scope.getDayAll = function() {
-            mS.getData('get', 'Config/Horario/GetDays', null, true).then(response => {
+            mS.getData('get', 'Config/Horario/GetDays').then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -176,7 +176,7 @@
 
 
         $scope.editarTurno = function(data){           
-            mS.getData('get', 'Config/Horario/GetByTurno/' + data.turno.idTurno, null, true).then(response => {
+            mS.getData('get', 'Config/Horario/GetByTurno/' + data.turno.idTurno).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -191,7 +191,7 @@
         };
 
         $scope.viewHorarioPoper = function(data) {
-            mS.getData('get', 'Config/Horario/GetByTurno/' + data.turno.idTurno, null, true).then(response => {
+            mS.getData('get', 'Config/Horario/GetByTurno/' + data.turno.idTurno).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
@@ -219,7 +219,7 @@
 
         //Delete Turno 
         $scope.delete = function(item) {
-            mS.getData('post', 'Config/Turno/Delete/' + item.turno.idTurno, null, true).then(response => {
+            mS.getData('post', 'Config/Turno/Delete/' + item.turno.idTurno).then(response => {
                 if (response.id == "0") {
                     toast.toastr('warning', response.message, response.titleSms);
                     return

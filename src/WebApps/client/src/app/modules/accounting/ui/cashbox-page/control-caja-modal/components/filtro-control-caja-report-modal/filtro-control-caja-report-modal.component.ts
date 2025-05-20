@@ -1,27 +1,30 @@
-import { Component, inject, Input } from '@angular/core';
-import { CODE_REPORT, FORMAT_REPORT } from '@core/constants/global.constants';
+import { Component, inject } from '@angular/core';
+import { REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import {
-  NgbActiveModal,
-  NgbTimepickerModule,
-} from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-filtro-control-caja-modal-report-modal',
-  imports: [FormsModule, FontAwesomeModule, NgbTimepickerModule],
+  imports: [FormsModule, ThemeButtonComponent, MatCustomDialogComponent,
+  MatFormFieldModule,
+    MatSelectModule,
+  ],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {
-  @Input('params') params = {
+  private dialogRef = inject(MatDialogRef<FiltroControlCajaReportModal>)
+  params = inject<{
     id: 0,
     enterKey: false,
-  };
-  activeModal = inject(NgbActiveModal);
+  }>(MAT_DIALOG_DATA)
   dataSearch = {
     sortByDefault: 0,
     sortOrder: 'ASC',
@@ -36,14 +39,14 @@ export class FiltroControlCajaReportModal {
   ];
   private sharedSvc = inject(SharedService);
   private userPermissionSvc = inject(UserPermissionService);
-  private format = FORMAT_REPORT.PDF;
+  private format = REPORT_FORMAT.PDF;
 
   askToReport(format: string) {
     try {
-      if (format === FORMAT_REPORT.PDF) {
-        this.format = FORMAT_REPORT.PDF;
+      if (format === REPORT_FORMAT.PDF) {
+        this.format = REPORT_FORMAT.PDF;
       } else {
-        this.format = FORMAT_REPORT.EXCEL;
+        this.format = REPORT_FORMAT.EXCEL;
       }
       if (this.params.enterKey) {
         Swal.fire({
@@ -103,7 +106,7 @@ export class FiltroControlCajaReportModal {
     const parameters = {
       hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
       reportParams: JSON.stringify({
-        codigo: CODE_REPORT.RCC,
+        codigo: REPORT_CODE.RCC,
         format: this.format,
         aditionalParams: [],
       }),
@@ -114,5 +117,9 @@ export class FiltroControlCajaReportModal {
       format: this.format,
       isOldVersion: true,
     });
+  }
+
+  close(){
+    this.dialogRef.close()
   }
 }

@@ -1,0 +1,53 @@
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="title"
+  (close)="close()"
+/>
+
+<ng-template #body>
+  <div class="d-grid gap-3 my-2">
+    <mat-form-field class="example-full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput [(ngModel)]="data.contrasenia">
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <mat-label>Fecha Caducidad</mat-label>
+      <input
+        matInput
+        [value]="data.fechaCaducidad"
+        [matDatepicker]="picker"
+        (dateInput)="addEventDate(  $event)"
+        (dateChange)="addEventDate( $event)"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    @if(!(params.idFirmaElectronica>0)){
+        <mat-form-field class="w-100">
+          <mat-label>Seleccionar archivo: <span class="text-info">.p12</span></mat-label>
+          <input #fileInput type="file" hidden (change)="onFileSelected($event)"  accept=".p12" >
+          <input matInput class="cursor-pointer"  readonly (click)="fileInput.click()">
+
+          <ng-container matSuffix>
+            <button mat-icon-button (click)="fileInput.click()">
+              <mat-icon>attach_file</mat-icon>
+            </button>
+          </ng-container>
+        </mat-form-field>
+    }
+  </div>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    type="button"
+    variant="success"
+    [icon]="btnIcon"
+    (handleClick)="save()"
+    [text]="btnText"
+  />
+</ng-template>

@@ -37,8 +37,8 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-              { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
         var response = await etiquetaService.UpdateAsync(parameters);
@@ -51,7 +51,7 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
+            { "id", id }
         };
 
         var response = await etiquetaService.DeleteAsync(parameters);

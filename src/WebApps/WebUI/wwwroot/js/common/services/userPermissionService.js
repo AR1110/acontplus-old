@@ -141,7 +141,7 @@ angular.module('acontPlusApp')
             })
             let resultReponse = {};
             showLoader();
-            await mS.getData('get', `${urlUserRequest}?json=${json}`, null, true).then(result => {
+            await mS.getData('get', `${urlUserRequest}?json=${json}`).then(result => {
                 if (result !== null && typeof result === 'object') {
                     const [response] = result.response;
                     console.log(response)
@@ -171,7 +171,7 @@ angular.module('acontPlusApp')
             })
             let resultReponse = {};
             showLoader();
-            await mS.getData('get', `${urlUserRequest}?json=${json}`, null, true).then(result => {
+            await mS.getData('get', `${urlUserRequest}?json=${json}`).then(result => {
                 if (result !== null && typeof result === 'object') {
                     const [response] = result.response;
                     console.log(response)
@@ -256,7 +256,7 @@ angular.module('acontPlusApp')
         }
 
         function fetchUserPermission() {
-            return mS.getData('get', `${urlUserPermission}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+            return mS.getData('get', `${urlUserPermission}?json=${JSON.stringify({ tipo: 2 })}`).then(response => {
                 if (response) {
                     const {detalle} = response.sales[0]
                      return {

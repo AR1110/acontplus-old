@@ -1,7 +1,7 @@
 <form (ngSubmit)="onSave()" [formGroup]="petForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
     <button (click)="onModalClose()" class="btn-close" type="button"></button>
@@ -10,33 +10,40 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label>Cliente: </label>
           <app-company-customer-search
-            (onCustomerSelected)="onCustomerSelected($event)"
+            (customerSelected)="onCustomerSelected($event)"
             [textSearch]="customerBusinessName"
+            [isAdvancedMode]="true"
           ></app-company-customer-search>
         </div>
       </div>
     </div>
-    <div class="card border border-1">
-      <div class="card-body">
+    <mat-card appearance="outlined">
+      <mat-card-content>
         <h5 class="card-subtitle">Datos de la mascota</h5>
         <div class="row">
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="name">Nombre</label>
-              <input class="form-control" formControlName="name" id="name" placeholder="Nombre" required
-                     type="text"/>
+              <input
+                class="form-control"
+                formControlName="name"
+                id="name"
+                placeholder="Nombre"
+                required
+                type="text"
+              />
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="petTypeId">Especie:</label>
-              <select (change)="onPetTypeChange($event)"
-                      class="form-select"
-                      formControlName="petTypeId"
-                      id="petTypeId"
-                      required
+              <select
+                (change)="onPetTypeChange($event)"
+                class="form-select"
+                formControlName="petTypeId"
+                id="petTypeId"
+                required
               >
                 <option disabled selected>Seleccione la especie</option>
                 @for (item of petTypes; track $index) {
@@ -49,7 +56,12 @@
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
               <div class="form-group">
                 <label for="breedId">Raza:</label>
-                <select class="form-select" id="breedId" formControlName="breedId" required>
+                <select
+                  class="form-select"
+                  id="breedId"
+                  formControlName="breedId"
+                  required
+                >
                   <option disabled selected>Seleccione la raza</option>
                   @for (item of breedsFiltered; track $index) {
                     <option [value]="item.id">{{ item.name }}</option>
@@ -64,7 +76,11 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="genderId">Sexo:</label>
-              <select class="form-select" formControlName="genderId" id="genderId">
+              <select
+                class="form-select"
+                formControlName="genderId"
+                id="genderId"
+              >
                 <option disabled selected>Seleccione el sexo</option>
                 @for (item of genders; track $index) {
                   <option [value]="item.id">{{ item.name }}</option>
@@ -75,30 +91,41 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="color">Color:</label>
-              <input class="form-control" formControlName="color" id="color" placeholder="blanco" required
-                     type="text"/>
+              <input
+                class="form-control"
+                formControlName="color"
+                id="color"
+                placeholder="blanco"
+                required
+                type="text"
+              />
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="birthdate">Fecha de Nacimiento:</label>
-              <input class="form-control" formControlName="birthdate" id="birthdate"
-                     type="date"/>
+              <input
+                class="form-control"
+                formControlName="birthdate"
+                id="birthdate"
+                type="date"
+              />
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
   <div class="modal-footer">
-    <button [disabled]="petForm.invalid" class="btn btn-success btn-sm" type="submit">
-      <i class="ti-save"></i> Guardar
+    <button [disabled]="petForm.invalid" mat-raised-button type="submit">
+      <mat-icon>save</mat-icon>Guardar
     </button>
-    <button (click)="onModalClose()"
-            class="btn btn-dark btn-sm"
-            type="button"
+    <app-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="onModalClose()"
     >
-      &times; Cancelar
-    </button>
+    </app-theme-button>
   </div>
 </form>

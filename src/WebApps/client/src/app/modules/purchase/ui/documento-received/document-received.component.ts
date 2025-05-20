@@ -5,10 +5,8 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/domain/models/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { ToasterService } from '@core/services/toaster.service';
@@ -16,7 +14,7 @@ import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
-import { DocumentReceived } from '@purchase/core/domain/document-received.model';
+import { DocumentReceived } from '@purchase/domain/document-received.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
@@ -25,34 +23,34 @@ import { RetencionHtmlComponent } from '@billing/ui/shared/components/retencion-
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
-
 import { DialogService } from '@core/services/dialog.service';
-import { SubCategoryUseCase } from '@accounting/core/use-cases/sub-category.use-case';
-import { DocumentReceivedUseCase } from '@purchase/core/use-cases/document-received.use-case';
+import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-documento-received',
-  imports: [
-    MatDynamicTableComponent,
-    BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
-    DateRangeSelectionComponent,
-    SupplierSearchComponent,
-    FormsModule,
-    MatTooltip,
-    FaIconComponent,
-    InputNumberDirective,
-    MatPaginator,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    MatButton,
-  ],
+    imports: [
+        MatDynamicTableComponent,
+        BreadcrumbComponent,
+        MatCard,
+        MatCardContent,
+        DateRangeSelectionComponent,
+        SupplierSearchComponent,
+        FormsModule,
+        MatTooltip,
+        InputNumberDirective,
+        MatPaginator,
+        MatIcon,
+        MatIconButton,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+        MatButton,
+        ThemeButtonComponent,
+    ],
   templateUrl: './document-received.component.html',
   styles: ``,
 })
@@ -70,7 +68,7 @@ export class DocumentReceivedComponent {
     { key: 'fechaAutorizacion', label: 'F. Aut.', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-
+  textSearch = '';
   dataSearch = {
     codDoc: '',
     codEstab: '',
@@ -82,9 +80,9 @@ export class DocumentReceivedComponent {
     rucProveedor: '',
   };
   documentTypes: TipoDoc[] = [];
-  extraOptionsIcon: IconProp = 'eye';
-  extraOptionsTooltip: string = 'Ver más filtros';
-  moreOptionsFilter: boolean = false;
+  extraOptionsIcon = 'visibility';
+  extraOptionsTooltip = 'Ver más filtros';
+  moreOptionsFilter = false;
   subcategories: Subcategory[] = [];
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   pagination = signal(new MatPagination());

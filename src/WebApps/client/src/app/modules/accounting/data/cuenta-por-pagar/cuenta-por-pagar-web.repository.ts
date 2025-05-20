@@ -3,18 +3,18 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
-import { GroupedEstab } from '@core/models/estab.model';
 import { CuentaPorPagarMapper } from './cuenta-por-pagar.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ComprobanteEgresoLista } from '@accounting/core/domain/comprobante-egreso.interface';
-import { HistorialPagoLista } from '@accounting/core/domain/historial-pago.model';
-import { ACCOUNTING_PATHS } from '@accounting/core/enums/accounting.constants';
+import { ComprobanteEgresoLista } from '@accounting/domain/models/comprobante-egreso.model';
+import { HistorialPagoLista } from '@accounting/domain/models/historial-pago.model';
+import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
+
+import { TiempoCreditoSelectHtmlOnly } from '@accounting/domain/models/tiempo-credito.interface';
+import {CuentaPorPagarRepository} from "@accounting/domain/repositories/cuenta-por-pagar.repository";
 import {
-  CuentaPorPagarCuotaConfig,
-  CuentaPorPagarLista,
-} from '../../core/domain/cuenta-por-pagar.model';
-import { TiempoCreditoSelectHtmlOnly } from '@accounting/core/domain/tiempo-credito.interface';
-import {CuentaPorPagarRepository} from "@accounting/core/repositories/cuenta-por-pagar.repository";
+  GetFilterDataCuentaPorPagarMapper
+} from "@accounting/data/cuenta-por-pagar/get-filter-data-cuenta-por-pagar.mapper";
+import {CuentaPorPagarCuotaConfig, CuentaPorPagarLista} from "@accounting/domain/models/cuenta-por-pagar.model";
 
 @Injectable({
   providedIn: 'root',
@@ -24,29 +24,13 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   getDataFilter() {
-    let json = JSON.stringify({
-      tipo: 6,
-    });
+    const json = GetFilterDataCuentaPorPagarMapper.toJson()
     return this.http
       .get<ApiResponse>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
-          let resultData = {
-            estabs: [] as GroupedEstab[],
-            estadosDoc: [] as any[],
-            tiposDoc: [] as any[],
-            categorias: [] as any[],
-          };
-
-          if (response.code === '1') {
-            resultData =
-              CuentaPorPagarMapper.fromApiDataFilter(response);
-          }
-
-          return resultData;
-        }),
+        map((response) => GetFilterDataCuentaPorPagarMapper.fromJson(response)),
       );
   }
 

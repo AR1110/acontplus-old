@@ -16,6 +16,7 @@ export interface PuntoEmisionEstablecimiento {
     ptoEmi: string
     defaultEstab: boolean
     defaultPtoEmi: boolean
+  correo?: string
 }
 
 export interface PuntoEmisionRead{

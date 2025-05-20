@@ -1,0 +1,14 @@
+﻿[
+  {
+    "Codigo": "1",
+    "Descripcion": "Renta"
+  },
+  {
+    "Codigo": "2",
+    "Descripcion": "IVA"
+  },
+  {
+    "Codigo": "3",
+    "Descripcion": "ISD"
+  }
+]

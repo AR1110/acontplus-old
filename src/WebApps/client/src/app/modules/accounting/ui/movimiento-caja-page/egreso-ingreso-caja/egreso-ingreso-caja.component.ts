@@ -1,102 +1,99 @@
-import {Component, inject, signal} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MovimientoCajaRead } from '@accounting/core/domain/movimiento-caja.model';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-
-import { ModalEgresoIngresoComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/modal-egreso-ingreso/modal-egreso-ingreso.component';
-import {
-  CompanyCustomerSearchComponent
-} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
-import {ACCOUNTING_CODE_REPORT} from "@accounting/core/enums/accounting.constants";
-import { ActionAnularDirective } from '@shared/directives/permission/action-anular.directive';
-import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import { ACCOUNTING_CODE_REPORT } from '@accounting/domain/enums/accounting.constants';
 import { formatDateToString } from '@core/utils/date.util';
-import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.use-case";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputModule} from "@angular/material/input";
+import { MovimientoCajaUseCase } from '@accounting/domain/use-cases/movimiento-caja.use-case';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatPagination } from '@shared/models/pagination.model';
+import { PageEvent } from '@angular/material/paginator';
+import { finalize } from 'rxjs/operators';
+import { MatMenuModule } from '@angular/material/menu';
+import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
+import { DialogService } from '@core/services/dialog.service';
 import {
-  CompanyCustomerSearchMatComponent
-} from "@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatPagination} from "@shared/models/pagination.model";
-import {PageEvent} from "@angular/material/paginator";
-import {finalize} from "rxjs/operators";
-import {MatMenuModule} from "@angular/material/menu";
+  EgresoIngresoDialogComponent
+} from "@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {ListMovimientoCajaUseCase} from "@accounting/domain/use-cases/movimiento-caja/list-movimiento-caja.use-case";
+import {MovimientoCajaList} from "@accounting/domain/models/movimiento-caja.model";
 
 @Component({
-    selector: 'app-egreso-ingreso-caja',
-    imports: [
-        FormsModule,
-      MatFormFieldModule,
-      MatSelectModule,
-      MatInputModule,
-      MatIconModule,
-      MatButtonModule,
-      MatMenuModule,
-        DateRangeSelectionComponent,
-        CompanyCustomerSearchComponent,
-      CompanyCustomerSearchMatComponent,
-        ActionAnularDirective,
-        ActionReportDirective,
-      MatDynamicTableComponent
-    ],
-    templateUrl: './egreso-ingreso-caja.component.html'
+  selector: 'app-egreso-ingreso-caja',
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    DateRangeSelectionComponent,
+    CompanyCustomerSearchComponent,
+    MatDynamicTableComponent,
+  ],
+  templateUrl: './egreso-ingreso-caja.component.html',
 })
-export class EgresoIngresoCajaComponent {
+export class EgresoIngresoCajaComponent implements OnInit {
   dataSearch = {
     codEstab: '',
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
     customerId: 0,
     codEstado: '',
+    enableDateFilter: true
   };
-  establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
-  private modalSvc = inject(ModalService);
+  establecimientos: EstablecimientoSelectHtmlOnly[] = [];
+  private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
-  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase)
+  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
+  private $listUseCase = inject(ListMovimientoCajaUseCase)
+  $userRoleStateManager = inject(UserRoleStateManager);
 
-  dataSource: MovimientoCajaRead[] = [];
+  dataSource: MovimientoCajaList[] = [];
 
   isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: 'Nro.', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'caja', label: 'Caja', type: 'string' },
+    { key: 'nomCaja', label: 'Caja', type: 'string' },
     { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
     { key: 'nroDoc', label: 'Nro. Doc', type: 'string' },
-    { key: 'subEntidadFinanciera', label: 'Entidad Financiera', type: 'string' },
+    {
+      key: 'nomSubEntidadFinanciera',
+      label: 'Entidad Financiera',
+      type: 'string',
+    },
     { key: 'valor', label: 'Valor', type: 'string' },
     { key: 'observaciones', label: 'Obs.', type: 'string' },
-    { key: 'empleado', label: 'Empleado', type: 'string' },
-    { key: 'estado', label: 'Estado', type: 'string' },
-
+    { key: 'nomEmpleado', label: 'Cliente', type: 'string' },
+    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
+    { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
   getMovimientosCaja() {
-    let params = {
+    const params = {
+      checkBoxFecha: this.dataSearch.enableDateFilter,
       codEstab: this.dataSearch.codEstab,
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      checkBoxFecha: true,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       customerId: isValidField(this.dataSearch.customerId),
@@ -104,36 +101,34 @@ export class EgresoIngresoCajaComponent {
     };
     this.dataSource = [];
 
-    if(this.isLoadingResults())return
+    if (this.isLoadingResults()) return;
 
-    this.isLoadingResults.set(true)
-    this._movimientoCajaUseCase.getAll(params)
-      .pipe(
-        finalize(()=>this.isLoadingResults.set(false))
-      )
+    this.isLoadingResults.set(true);
+    this.$listUseCase.execute(params)
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe(response=>{
-      this.dataSource = response || [];
-      this.pagination.update(e=>{
+      this.dataSource = response.data;
+      this.pagination.update((e) => {
         return {
           ...e,
-          totalRecords: this.dataSource.length > 0  ? this.dataSource[0].totalRecords : 0
-        }
-      })
+          totalRecords: response.totalRecords
+        };
+      });
     })
   }
 
   ngOnInit() {
-    this._movimientoCajaUseCase.getDataFilter().subscribe( (response) => {
-        this.establecimientos = response.establecimientos;
-        if (this.establecimientos.length > 0) {
-          let dataEstab = this.establecimientos.find(
-            (item) => item.predeterminado,
-          );
-          if (dataEstab) {
-            this.dataSearch.codEstab = dataEstab.codEstab;
-            this.getMovimientosCaja();
-          }
+    this._movimientoCajaUseCase.getDataFilter().subscribe((response) => {
+      this.establecimientos = response.establecimientos;
+      if (this.establecimientos.length > 0) {
+        const dataEstab = this.establecimientos.find(
+          (item) => item.predeterminado
+        );
+        if (dataEstab) {
+          this.dataSearch.codEstab = dataEstab.codEstab;
+          this.getMovimientosCaja();
         }
+      }
     });
   }
 
@@ -147,9 +142,9 @@ export class EgresoIngresoCajaComponent {
     this.getMovimientosCaja();
   }
 
-  onSelectCustomer ($event: any) {
+  onSelectCustomer($event: CompanyCustomer) {
     this.dataSearch.customerId = $event.customerId;
-    this.getMovimientosCaja()
+    this.getMovimientosCaja();
   }
 
   onEmptyCustomer() {
@@ -157,20 +152,19 @@ export class EgresoIngresoCajaComponent {
   }
 
   openModal(params?: any) {
-    const modalRef = this.modalSvc.openModalCustom(
-      ModalEgresoIngresoComponent,
-      { size: 'lg', backdrop: 'static' },
-    );
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then((result) => {
+    const modalRef = this.dialogSvc.open(EgresoIngresoDialogComponent, {
+      size: 'lg',
+      data: params || {},
+    });
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getMovimientosCaja();
       }
     });
   }
 
-  getPrint(item: MovimientoCajaRead) {
-    let parameters = {
+  getPrint(item: MovimientoCajaList) {
+    const parameters = {
       idDocument: item.idMovimientoCaja,
       idTipoDocumento: item.idTipoDocumento,
       codEstab: item.codEstab,
@@ -183,10 +177,10 @@ export class EgresoIngresoCajaComponent {
     });
   }
 
-  getReport(item: MovimientoCajaRead) {
+  getReport(item: MovimientoCajaList) {
     try {
-      let format = 'pdf';
-      let dataParms = {
+      const format = 'pdf';
+      const dataParms = {
         tipo: 1,
         id: item.idMovimientoCaja,
       };
@@ -210,7 +204,7 @@ export class EgresoIngresoCajaComponent {
     }
   }
 
-  askToDelete(item: MovimientoCajaRead) {
+  askToDelete(item: MovimientoCajaList) {
     try {
       Swal.fire({
         icon: 'warning',
@@ -222,22 +216,23 @@ export class EgresoIngresoCajaComponent {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this._movimientoCajaUseCase.delete(item.idMovimientoCaja).subscribe( (response) => {
-
-                if (response.code === '0') {
-                  this.tS.toastr({
-                    type: 'warning',
-                    message: response.message,
-                  });
-                }
-                if (response.code === '1') {
-                  this.tS.toastr({
-                    type: 'success',
-                    message: response.message,
-                  });
-                  this.getMovimientosCaja();
-                }
-          });
+          this._movimientoCajaUseCase
+            .delete(item.idMovimientoCaja)
+            .subscribe((response) => {
+              if (response.code === '0') {
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message,
+                });
+              }
+              if (response.code === '1') {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message,
+                });
+                this.getMovimientosCaja();
+              }
+            });
         }
       });
     } catch (error) {
@@ -255,6 +250,4 @@ export class EgresoIngresoCajaComponent {
     });
     this.refresh();
   }
-
 }
-

@@ -32,20 +32,15 @@ public class TechnicalSupportContext : BaseContext
             var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
 
             foreach (var property in properties)
-            {
                 builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
-            }
         }
 
         foreach (var property in builder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
-                     .Where(
-                         p => p.ClrType == typeof(string)
-                              && p.GetColumnType() == null
+                     .Where(p => p.ClrType == typeof(string)
+                                 && p.GetColumnType() == null
                      ))
-        {
             property.SetIsUnicode(false);
-        }
         builder.Entity<Brand>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
         builder.Entity<Brand>().Property(x => x.Enabled).HasDefaultValue(true);
         builder.Entity<Brand>().HasMany(x => x.Series).WithOne(x => x.Brand).HasForeignKey(x => x.BrandId);

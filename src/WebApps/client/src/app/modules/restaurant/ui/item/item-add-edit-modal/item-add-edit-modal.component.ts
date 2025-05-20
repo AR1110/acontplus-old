@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import {
   FormControl,
   FormGroup,
@@ -10,31 +9,34 @@ import {
 import { Item } from '@restaurant/domain/models/item.model';
 import { Recipe } from '@restaurant/domain/models/recipe.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import {
-  NgbActiveModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { ItemService } from '@restaurant/data/services/item.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
-    selector: 'app-item-add-edit-modal',
-    imports: [
-        FaIconComponent,
-        ReactiveFormsModule,
-        TabulatorSemanticUiComponent,
-        IngredientSearchComponent,
-    ],
-    templateUrl: './item-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-item-add-edit-modal',
+  imports: [
+    ReactiveFormsModule,
+    TabulatorSemanticUiComponent,
+    IngredientSearchComponent,
+    MatIcon,
+    MatButton,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './item-add-edit-modal.component.html',
+  styles: ``,
 })
 export class ItemAddEditModalComponent {
   data = {} as Item;
-  modalIcon: IconProp = 'plus';
-  modalTitle: string = 'Registrar Item';
+  modalIcon = 'add';
+  modalTitle = 'Registrar Item';
   itemForm = new FormGroup({
     id: new FormControl(0),
     summary: new FormControl('', [Validators.required]),

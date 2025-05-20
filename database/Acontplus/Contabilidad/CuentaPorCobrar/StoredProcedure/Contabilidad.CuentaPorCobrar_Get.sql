@@ -21,8 +21,6 @@ BEGIN
     --> Global
     DECLARE @idEntidad INT ,@tipo INT 
 
-    --> Sql
-	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     -->Filters
     DECLARE @idCliente INT ,@idCuentaPorCobrar INT
@@ -36,6 +34,11 @@ BEGIN
     --> Get 
     IF @tipo = 1
         BEGIN
+            --> Sql
+	        DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
+
+            --> Filter
             DECLARE @codEstab VARCHAR(50) 
                    ,@ckFecha BIT
                    ,@fechaInicio DATETIME2 
@@ -101,14 +104,15 @@ BEGIN
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')                          as fechaEmision
                               ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'')                      as fechaVencimiento
                               ,CAST(importeTotal as numeric(18,2))                             as importeTotal
+                              ,CAST(mora as numeric(18,2))                                     as mora
                               ,CAST(abono as numeric(18,2))                                    as abono
                               ,CAST(saldo as numeric(18,2))                                    as saldo
                               ,cc.diasMora
-                              ,cc.mora
                               ,tipoTiempoCredito                                               as tiempoCredito
                               ,estado
                               ,COUNT(*)                                                 OVER() as totalRecords
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,importeTotal)) OVER() as totalVenta
+                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,mora))         OVER() as totalMora
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
                               ,codEstado
@@ -250,6 +254,32 @@ BEGIN
             RETURN 
 		END
 	
+    --> Garantes 
+    IF @tipo = 3
+        BEGIN 
+            SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH(idCuentaPorCobrar INT)
+
+            SET @tableNames='guarantors'
+
+	        SELECT cg.idCreditoGarante
+				  ,cg.idCuentaPorCobrar
+				  ,cl.idCliente
+				  ,cu.BusinessName as razonSocialComprador
+				  ,cu.TradeName    as nombreComercial
+				  ,cu.IDCard       as identificacionComprador
+				  ,cl.direccion
+				  ,cl.correo
+				  ,cl.telefono
+                  ,tipoAccion = 'U'
+	         FROM Ventas.CreditoGarante   cg WITH (NOLOCK)
+			 INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente  = cg.idCliente
+             INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id         = cl.CustomerId
+	         WHERE cg.estado = 1 
+               AND cg.idCuentaPorCobrar = @idCuentaPorCobrar
+
+             RETURN
+        END 
+
     --> Notificacion para deudas del cliente 
     IF @tipo = 5
         BEGIN
@@ -275,7 +305,7 @@ BEGIN
     --> Filter 
     IF @tipo = 6
         BEGIN
-            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas,ciudades'
+            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas,ciudades,users'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -284,6 +314,7 @@ BEGIN
                   ,ptoEmi + '-' + estab as ptoEmi
                   ,defaultEstab
                   ,defaultPtoEmi 
+                  ,correo
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
             ORDER BY defaultEstab DESC
 
@@ -307,6 +338,12 @@ BEGIN
             FROM dbo.Ciudad          ci WITH (NOLOCK)																							         
             INNER JOIN dbo.Provincia pr WITH (NOLOCK) ON pr.idProvincia = ci.idProvincia
             WHERE ci.estado = 1
+
+            SELECT 
+                idUsuario
+                ,nombreCompleto
+                ,nombreUsuario
+            FROM v_usuario WHERE idEntidad = @idEntidad AND estadoUsuario=1
 
             RETURN 
         END

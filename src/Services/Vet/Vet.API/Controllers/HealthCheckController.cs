@@ -5,10 +5,7 @@ public class HealthCheckController(IHealthCheckService healthCheckService) : Bas
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] HealthCheck healthCheck)
     {
-        if (id != healthCheck.Id)
-        {
-            return BadRequest("Id no coincide");
-        }
+        if (id != healthCheck.Id) return BadRequest("Id no coincide");
 
         healthCheck.UserId = User.GetUserId();
 

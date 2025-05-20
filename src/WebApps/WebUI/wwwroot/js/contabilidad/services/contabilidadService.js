@@ -26,7 +26,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let cuentasPorPagar = [];
                 if (response.code === "1") {
                     const [tempData] = JSON.parse(response.payload);
@@ -68,7 +68,7 @@
                 ...obj,
                 tipo: ('tipo' in obj) ? obj.tipo : 1
             }
-            return mS.getData('get', `${url}?json=${JSON.stringify(params)}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify(params)}`).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -107,7 +107,7 @@
         }
 
         function getDataFilter() {
-            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 6 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 6 })}`).then(response => {
                 if (response.code === "0") {
                     console.log(response)
                     return {}
@@ -143,7 +143,7 @@
             const json = JSON.stringify({
                 tipo: 5,
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const data = {
                     tiemposCredito: [],
                 }
@@ -164,7 +164,7 @@
                 idCuentaPorPagar: id,
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
 
                 let cuentaPorPagar = {},
                     comprobantesEgreso = [],
@@ -262,7 +262,7 @@
          */
         function getCuotas(id) {
             let json = JSON.stringify({ idCuentaPorPagar: id, tipo: 2 });
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let cuotas = [];
                 if (response.code === "0") {
                     console.log(response)
@@ -309,7 +309,7 @@
             let params = JSON.stringify({
                 tipo: 2
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let estabs = [];
                 if (response !== null && typeof response === 'object') {
                     let tempEstabs = response.estabs;
@@ -329,7 +329,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let comprobantesEgreso = [];
                 if (response !== null && typeof response === 'object') {
                     const items = response.comprobantesEgreso;
@@ -359,7 +359,7 @@
                 idCuentaPorPagar: id,
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let results = [];
                 if (response && typeof response === 'object') {
                     const { cuotas } = response;
@@ -393,7 +393,7 @@
                 tipo: 3,
                 idProveedor
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const data = {
                     entidadesFinancieras: [],
                     bancos: [],
@@ -468,7 +468,7 @@
                 tipo: 5,
                 id
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let resultData = {};
                 if (response && typeof response === 'object') {
 
@@ -491,7 +491,7 @@
                 pageIndex: obj && obj.pageIndex || 1,
                 pageSize: obj && obj.pageSize || 25
             })
-            mS.getData('get', `${url}?json=${json}`, null, true).then(async response => {
+            mS.getData('get', `${url}?json=${json}`).then(async response => {
                 let results = {
                     cheques: []
                 };
@@ -643,7 +643,8 @@
             update,
             cancel,
             getCuotasByIdCuentaPorCobrar,
-            getDataForDelete
+            getDataForDelete,
+            paymentFormData
         }
 
         function newGenerateQuota(cuotas) {
@@ -658,8 +659,7 @@
                     mora: item.mora,
                     interes: item.interes,
                     diasMora: item.diasMora,
-                    abono: item.abono,
-                    saldoCta: item.saldoCta,
+                    abono: item.abono, 
                     saldo: item.saldo,
                     estado: item.estado,
                     saldoOriginal: item.saldo,
@@ -669,11 +669,57 @@
             return resultsCuotas;
         }
 
+
+        function transformarCuotas(cuotas) {
+            return cuotas.map(item => ({
+                idCuotaPorCobrar: item.idCuotaPorCobrar,
+                idCuentaPorCobrar: item.idCuentaPorCobrar,
+                fechaVencimiento: item.fechaVencimiento,
+                nroCuota: item.nroCuota,
+                cuota: item.cuota,
+                mora: item.mora,
+                interes: item.interes,
+                diasMora: item.diasMora,
+                abono: item.abono, 
+                saldo: item.saldo,
+                nombreEstado: item.estado,
+            }));
+        }
+
+        function transformarCuentaPorCobrar(cuentas) {
+
+            return cuentas.map((item, index) => {
+                const cuotas = JSON.parse(item.cuotas || '[]');
+                const cuotasTransformada = transformarCuotas(cuotas);
+                return {
+                    index: index + 1,
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
+                    idCliente: item.idCliente,
+                    codEstab: item.codEstab,
+                    identificacionComprador: item.identificacionComprador,
+                    razonSocialComprador: item.razonSocialComprador,
+                    serieComprobante: item.serieComprobante,
+                    codDoc: item.codDoc,
+                    fechaEmision: item.fechaEmision,
+                    fechaVencimiento: item.fechaVencimiento,
+                    importeTotal: item.importeTotal,
+                    diasMora: item.diasMora,
+                    mora: item.mora,
+                    abono: item.abono,
+                    saldo: item.saldo, 
+                    nombreEstado: item.descripcion, //nombre del estado de pago
+                    cuotas: structuredClone(cuotasTransformada),
+                    cuotasOriginal: structuredClone(cuotasTransformada)
+                }
+            });
+        }
+
+
         function getDataFilter() {
             let params = JSON.stringify({
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let resultData = {
                     estabs: []
                 }
@@ -697,7 +743,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let results = [];
 
                 if (response.code === "1") {
@@ -730,12 +776,68 @@
             })
         }
 
+
+        function paymentFormData({ idCuentaPorCobrar, idCliente }) {
+            const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                const cobroFormData = {
+                    entidadesFinanciera: [],
+                    bancos: [],
+                    documentos: [],
+                    ciudades: [],
+                    cuentaPorCobrar: [],
+                    estadosPago: [],
+                    configCobro: {}
+                };
+
+                if (response.code === "1") {
+                    const {
+                        entidadFinanciera,
+                        banco,
+                        documentos,
+                        subEntidadFinanciera,
+                        provincia,
+                        cuentaPorCobrar,
+                        estadoPago,
+                        config
+                    } = JSON.parse(response.payload);
+                    console.log(JSON.parse(response.payload))
+
+                    // Subentidades agrupadas por entidad
+                    cobroFormData.entidadesFinanciera = entidadFinanciera.map(ef => ({
+                        idEntidadFinanciera: ef.idEntidadFinanciera,
+                        descripcion: ef.descripcion,
+                        detalle: ef.detalle,
+                        codigo: ef.codigo,
+                        subEntidadesFinanciera: subEntidadFinanciera.filter(
+                            sef => sef.idEntidadFinanciera === ef.idEntidadFinanciera
+                        )
+                    }));
+
+                    // Documentos de cuenta por cobrar (si aplica)
+                    if (Array.isArray(cuentaPorCobrar)) {
+                        cobroFormData.cuentaPorCobrar = transformarCuentaPorCobrar(cuentaPorCobrar);
+                    }
+
+                    cobroFormData.bancos = banco;
+                    cobroFormData.documentos = documentos;
+                    cobroFormData.ciudades = provincia;
+                    cobroFormData.estadosPago = estadoPago;
+                    cobroFormData.configCobro = config[0] || {};
+                }
+                console.log('Cobro Form Data:', cobroFormData);
+                return cobroFormData;
+
+            })
+        }
+
+
         function getDataForm(idCuentaPorCobrar, idCliente) {
 
             const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 5 });
             try {
 
-                return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                return mS.getData('get', `${url}?json=${params}`).then(response => {
                     // Inicializa el objeto resultante con estructuras vacías
                     const resultData = {
                         entidadesFinanciera: [],
@@ -822,11 +924,11 @@
 
         function getCuotasByIdCuentaPorCobrar(id) {
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 6 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let results = [];
                 if (response.code === "1") {
                     let { cuotas } = JSON.parse(response.payload);
-                    results = newGenerateQuota(cuotas);
+                    results = transformarCuotas(cuotas);
                 }
                 return results;
             })
@@ -835,7 +937,7 @@
         //obtiene datos para anular el comprobante de ingreso 
         function getDataForDelete(id) {
             const params = JSON.stringify({ id, tipo: 7 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let resultData = {};
                 if (response.code === "1") {
 
@@ -955,7 +1057,7 @@
 
         function getHistorialCobrosById(idComprobanteIngreso) {
             let params = JSON.stringify({ idComprobanteIngreso, tipo: 2 })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let resultData = {
                     comprobante: [],
                     cobros: [],
@@ -986,7 +1088,7 @@
         }
         function getHistorialCobrosByDoc(idCuentaPorCobrar) {
             let params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let result = {
                     comprobante: [],
                     cobroDetalles: [],
@@ -1032,7 +1134,7 @@
                 pageIndex: obj && obj.pageIndex || 1,
                 pageSize: obj && obj.pageSize || 25
             })
-            mS.getData('get', `${url}?json=${json}`, null, true).then(async response => {
+            mS.getData('get', `${url}?json=${json}`).then(async response => {
                 let results = {
                     cheques: []
                 };
@@ -1101,7 +1203,7 @@
 
         function getDataFilter() {
             const params = JSON.stringify({ tipo: 6 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw response;
 
                 const { establecimientos, estadoPago, tipoDocumento, empresas } = response;
@@ -1121,9 +1223,8 @@
 
         function getAll(obj) {
             const params = JSON.stringify({ ...obj, tipo: 1 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw response
-
 
                 const { cuentasPorCobrar } = response;
 
@@ -1160,16 +1261,18 @@
                     cuentasPorCobrar: results,
                     totalRecords: dataFiltered && dataFiltered.totalRecords || 0,
                     totalVenta: dataFiltered && dataFiltered.totalVenta || 0,
+                    totalMora: dataFiltered && dataFiltered.totalMora || 0,
                     totalAbono: dataFiltered && dataFiltered.totalAbono || 0,
                     totalSaldo: dataFiltered && dataFiltered.totalSaldo || 0,
                 };
+
 
             })
         }
 
         function getCuotasById(id) {
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 let results = [];
                 if (response && typeof response === 'object') {
 
@@ -1198,7 +1301,7 @@
         //sirve para traer datos para cobro por lote y por documento
         function getDataForm(idCuentaPorCobrar, idCliente) {
             const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 3 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) return {};
 
                 const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia } = response;
@@ -1273,7 +1376,7 @@
         //Obtener cuotas para generar cuotas 
         function getCuotaByToGenerate(idCuentaPorCobrar) {
             const params = JSON.stringify({ idCuentaPorCobrar, tipo: 2 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw response;
 
                 let { cuentaPorCobrar, cuotas, tiempoCredito } = response;
@@ -1332,7 +1435,7 @@
 
         function applyMora(obj) {
             const params = JSON.stringify({ ...obj, tipo: 4 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${params}`).then(response => {
                 if (!response) throw "No se completo el proceso!";
 
                 let { cuotas } = response;
@@ -1665,32 +1768,91 @@
                 return diasMora;
             }
 
+
+            prepararParaCobro(cuentasPorCobrar) {
+                let resultados = cuentasPorCobrar.map(cuenta => {
+                    let { cuotas, cuotasOriginal, ...documento } = cuenta;
+                    let cuotasCalculadas = cuotas.map(cuota => {
+                        // Inicialización de variables 
+                        let saldoAnterior = cuota.saldo;
+                        return {
+                            ...cuota,
+                            saldoTotalActual: fS.instanceDecimal(saldoAnterior, 5),
+                            saldoTotalOriginal: fS.instanceDecimal(saldoAnterior, 5),
+                            saldoTotalLectura: fS.instanceDecimal(saldoAnterior, 5),
+                            interesActual: cuota.interes||0,
+
+                            diasMoraActual: cuota.diasMora,
+                            interesPorMoraActual:cuota.mora,
+
+                            //nuevos
+                            totalCobrar: saldoAnterior,
+                            abonoAnterior: cuota.abono,
+                            saldoAnterior,
+                            abonoActual: 0,
+                            saldoActual: 0,
+                        };
+                    });
+
+                    let saldoActualDoc = 0;
+                    let diasMoraActual = 0;
+                    let interesPorMoraActual = fS.instanceDecimal(0);
+                    let interesActual = fS.instanceDecimal(0);
+                    let saldoAnterior = fS.instanceDecimal(0);
+                    for (let cc of cuotasCalculadas) {
+                        saldoActualDoc = fS.plus(saldoActualDoc, cc.saldoAnterior, 5);
+                        diasMoraActual += cc.diasMora;
+                        interesPorMoraActual = interesPorMoraActual.plus(cc.interes);
+                        interesActual = interesActual.plus(cc.interes),
+
+                            //nuevo 
+                            saldoAnterior = saldoAnterior.plus(cc.saldoAnterior, 5);
+
+                    }
+                    return {
+                        ...documento,
+                        saldoActualDoc: fS.roundNumber(saldoActualDoc, 2),
+                        cuotasCalculadas: structuredClone(cuotasCalculadas),
+                        cuotasCalculadasClone: structuredClone(cuotasCalculadas),
+                        diasMoraActual,
+                        interesPorMoraActual: fS.roundNumber(interesPorMoraActual.toNumber(), 2),
+                        interesActual: fS.roundNumber(interesActual.toNumber(), 2),
+                        saldoAnterior: fS.roundNumber(saldoAnterior.toNumber(), 2),
+
+                    };
+                });
+
+                return resultados;
+            }
+
+
+
             calcularInteresMora(documentosCuotas) {
                 let resultados = documentosCuotas.map(x => {
                     let { cuotas, cuotasOriginal, ...documento } = x;
                     let cuotasCalculadas = cuotas.map(cuota => {
                         // Inicialización de variables
-                        let interesPorMoraActual = 0;
-                        let diasMoraActual = 0;
-                        let interesActual = 0;
+                        let interesPorMoraActual = cuota.interes;
+                        let diasMoraActual = cuota.diasMora;
+                        let interesActual = cuota.interes;
                         let saldoTotalActual = cuota.saldo;
 
 
                         // Calcular interés y mora si hay días de mora
-                        if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
-                            // Calcular días de mora 
-                            diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
+                        // if (this._configCobro.configDeuda && this._configCobro.tipoConfig === "PI") {
 
-                            if (diasMoraActual > 0) {
+                        //     diasMoraActual = this.obtenerDiferenciaDias(cuota.fechaVencimiento);
 
-                                interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
-                                interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
-                                saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
+                        //     if (diasMoraActual > 0) {
 
-                            } else {
-                                diasMoraActual = 0;
-                            }
-                        }
+                        //         interesActual = fS.div(fS.mul(cuota.saldo, this._configCobro.interes, 5), 100, 5);
+                        //         interesPorMoraActual = fS.mul(interesActual, diasMoraActual, 5);
+                        //         saldoTotalActual = fS.plus(saldoTotalActual, interesPorMoraActual, 5)
+
+                        //     } else {
+                        //         diasMoraActual = 0;
+                        //     }
+                        // }
 
                         return {
                             idCuotaPorCobrar: cuota.idCuotaPorCobrar,
@@ -1792,13 +1954,13 @@
                         })
                         return
                     }
-                    if (!fS.isValidField(data.nro)) {
-                        tS.toastr({
-                            type: 'warning',
-                            message: 'Ingrese el Número'
-                        })
-                        return
-                    }
+                    // if (!fS.isValidField(data.nro)) {
+                    //     tS.toastr({
+                    //         type: 'warning',
+                    //         message: 'Ingrese el Número'
+                    //     })
+                    //     return
+                    // }
                 }
 
                 // =================== CHEQUES  =================================== //
@@ -2006,10 +2168,19 @@
                 } else {
                     let totalAbonoCuota = fS.plus(dataCuota.abono, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
 
-                    if (fS.roundNumber(totalAbonoCuota, 2) === fS.roundNumber(dataCuota.saldo, 2)) {
+                    const abonoRedondeado = fS.roundNumber(totalAbonoCuota, 2);
+                    const saldoRedondeado = fS.roundNumber(dataCuota.saldo, 2);
+                    const comparacionIgual = abonoRedondeado === saldoRedondeado;
+
+                    if (comparacionIgual) {
                         dataCuota.abono = dataCuota.saldo;
+
+                        //dato real que se presenta en la UI 
+                        dataCuota.abonoActual = dataCuota.saldo;
                     } else {
-                        dataCuota.abono = totalAbonoCuota;
+                        dataCuota.abono = this.getValorAbono();
+
+
                     }
 
                 }
@@ -2044,6 +2215,9 @@
                     dataCuota.abonoPosfechado = fS.plus(dataCuota.abonoPosfechado, dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
                 } else {
                     dataCuota.abono = fS.plus(dataCuota.abono, dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
+
+                    //valor real que se presenta en la UI
+                    dataCuota.abonoActual = dataCuota.saldoTotalActual;
                 }
 
                 // Agrega un detalle de cobro con el saldoTotalActual como valor del abono
@@ -2081,6 +2255,10 @@
              */
             handleFullAbono(dataCuota) {
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
+
+                //abono actual es el que se presenta en la UI
+                dataCuota.abonoActual = this.getEsAbonoPosfechado() ? 0 : this.getValorAbono();
+
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? this.getValorAbono() : 0;
                 dataCuota.saldoTotalActual = fS.minus(dataCuota.saldoTotalActual, this.getValorAbono(), this.MAX_DECIMALS.DEFAULT);
                 this.addCobroDetalle(dataCuota, this.getValorAbono(), dataCuota.saldoTotalActual);
@@ -2093,6 +2271,9 @@
              */
             handlePartialAbono(dataCuota) {
                 dataCuota.abono = this.getEsAbonoPosfechado() ? 0 : fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
+
+                //valor real que se presenta en la UI
+                dataCuota.abonoActual = this.getEsAbonoPosfechado() ? 0 : fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
 
                 dataCuota.abonoPosfechado = this.getEsAbonoPosfechado() ? fS.instanceDecimal(dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT) : 0;
 
@@ -2181,6 +2362,7 @@
                     abono: dataCuota.abono
                 });
                 dataCuota.estado = dataEstadoPago.descripcion;
+                dataCuota.nombreEstado = dataEstadoPago.descripcion;
             }
 
 

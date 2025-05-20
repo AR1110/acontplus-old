@@ -1,14 +1,14 @@
 
 
 <app-mat-dynamic-table
-  [isLoadingData]="isLoadingResults"
+  [isLoadingData]="isLoadingResults()"
   [tableData]="dataSource"
   [columnDefinitions]="columnsDefs"
   [visibleColumns]="columns"
   [templateOp]="templateOp"
   [paginationConfig]="pagination()"
   [enablePagination]="true"
-  (onPageEvent)="handlePageEvent($event)"
+  (pageEvent)="handlePageEvent($event)"
 >
 </app-mat-dynamic-table>
 

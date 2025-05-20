@@ -17,9 +17,10 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     {
         var response = await companyCustomer.AddAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", DataConverters.SerializeDictionary(request.Data) }
         });
-        if (response == null) { return BadRequest("Cant Save"); }
+        if (response == null) return BadRequest("Cant Save");
 
         return Ok(response);
     }
@@ -33,7 +34,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         });
-        if (response == null) { return BadRequest("Cant Save"); }
+        if (response == null) return BadRequest("Cant Save");
 
         return Ok(response);
     }
@@ -60,7 +61,8 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await companyCustomer.DeleteAsync(parameters);
         return Ok(response);
     }

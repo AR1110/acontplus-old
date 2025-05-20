@@ -4,9 +4,12 @@ import {
   inject,
   model,
   QueryList,
-  signal, TemplateRef,
+  signal,
+  TemplateRef,
   ViewChild,
   ViewChildren,
+  OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,41 +22,33 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
 import { ProductKardexModalDirective } from '@inventory/ui/product/directives/product-kardex-modal.directive';
-import { ProductAddEditDirective } from '@inventory/ui/product/directives/product-list.directive';
-import { StockService } from '@inventory/services/stock.service';
+import { StockService } from '@inventory/data/services/stock.service';
 import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
 
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
-import {ProductList} from "@inventory/domain/models/product.model";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {ActionAperturaCajaDirective} from "@shared/directives/permission/action-apertura-caja.directive";
-import {ActionDeleteDirective} from "@shared/directives/permission/action-delete.directive";
-import {ActionEditDirective} from "@shared/directives/permission/action-edit.directive";
-import {ActionMovCajaDirective} from "@shared/directives/permission/action-mov-caja.directive";
-import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
-import {DialogService} from "@core/services/dialog.service";
-
-
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductList } from '@inventory/domain/models/product.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
+import { AddEditProductDirective } from '@inventory/ui/product/directives/add-edit-product.directive';
+import { DialogService } from '@core/services/dialog.service';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
-    selector: 'inventory-product',
+  selector: 'inventory-product',
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -68,23 +63,16 @@ import {DialogService} from "@core/services/dialog.service";
     MatTooltipModule,
     MatCheckboxModule,
     MatSelectModule,
-    CustomTableContainerComponent,
     SubCategoryGroupComponent,
     MatDynamicTableComponent,
+    MatDynamicCardComponent,
     AddEditProductDirective,
-
-    ProductAddEditDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
-    ActionAperturaCajaDirective,
-    ActionDeleteDirective,
-    ActionEditDirective,
-    ActionMovCajaDirective,
-    MatSlideToggle,
   ],
-    templateUrl: './product.component.html'
+  templateUrl: './product.component.html',
 })
-export class ProductComponent {
+export class ProductComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChildren('selectElement') selectElements!: QueryList<
@@ -96,6 +84,7 @@ export class ProductComponent {
   isLoadingResults = false;
   pageEvent!: PageEvent;
   dataSearch = model({
+    filterMode: 4,
     textSearch: null as string | null,
     checkBoxFraccionado: false,
     checkBoxInventario: false,
@@ -115,14 +104,13 @@ export class ProductComponent {
   tiposIva = signal<any[]>([]);
   stocks = signal<any[]>([]);
   estados = signal<any[]>([]);
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
   private stockSvc = inject(StockService);
   private tS = inject(ToasterService);
   private $dialogSvc = inject(DialogService);
-  private wasEmptyBefore: boolean = false; // Indica si alguna vez el campo estuvo vacío
+  private wasEmptyBefore = false; // Indica si alguna vez el campo estuvo vacío
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 's3ObjectUrl', label: 'Imagen', type: 'image' },
@@ -133,13 +121,11 @@ export class ProductComponent {
     { key: 'stock', label: 'Stock', type: 'string' },
     { key: 'status', label: 'Estado', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
-
-
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
     key: K,
-    value: ReturnType<typeof this.dataSearch>[K],
+    value: ReturnType<typeof this.dataSearch>[K]
   ) {
     this.dataSearch.update((ds) => {
       return {
@@ -156,7 +142,7 @@ export class ProductComponent {
         finalize(() => {
           this.isLoadingResults = false;
           this.toggleSelectsState();
-        }),
+        })
       )
       .subscribe({
         next: (response) => {
@@ -182,7 +168,12 @@ export class ProductComponent {
         col.templateOutlet = this.statusTemplate;
       }
     });
+  }
 
+  onEnter($event: Event){
+    if( isValidField(this.dataSearch().textSearch)){
+      this.refresh()
+    }
   }
 
   onSearch(event: Event): void {
@@ -241,7 +232,7 @@ export class ProductComponent {
 
   async askToUpdateStatus(item: ProductList) {
     try {
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         icon: 'warning',
         html: `<small>Está seguro de elimiar este Artículo: <strong>${item.descripcion}</strong> ahora</small>`,
         confirmButtonText: 'Sí',
@@ -261,7 +252,7 @@ export class ProductComponent {
   }
 
   async updateStock(item: ProductList) {
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: `<small>Está seguro de actualizar el Stock del articulo: <b>${item.descripcion}</b></small>`,
       confirmButtonText: 'Sí',
@@ -276,9 +267,9 @@ export class ProductComponent {
   }
 
   onPhotoModal(data: ProductList) {
-    let modalRef = this.$dialogSvc.open(ProductPhotoComponent, {
+    const modalRef = this.$dialogSvc.open(ProductPhotoComponent, {
       size: 'lg',
-      data
+      data,
     });
 
     modalRef.subscribe((result) => {
@@ -289,8 +280,8 @@ export class ProductComponent {
   }
 
   private setResponseGetAll(response: any) {
-    let results: Array<ProductList> = response.products;
-    let products = results.map((product, index) => ({
+    const results: ProductList[] = response.products;
+    const products = results.map((product, index) => ({
       ...product,
       position: index + 1,
     }));
@@ -308,7 +299,7 @@ export class ProductComponent {
   }
 
   private getDataParams() {
-    let params = {
+    const params = {
       bySubFamilia: getValidId(this.dataSearch().bySubFamilia),
       byMedida: getValidId(this.dataSearch().idMedida),
       byMarca: getValidId(this.dataSearch().idMarca),
@@ -353,7 +344,7 @@ export class ProductComponent {
         finalize(() => {
           this.isLoadingResults = false;
           this.toggleSelectsState();
-        }),
+        })
       )
       .subscribe((response) => {
         this.setResponseGetAll(response);

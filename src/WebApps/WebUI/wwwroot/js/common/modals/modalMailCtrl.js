@@ -73,7 +73,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     receptor: $scope.correos.join('|')
                 }
 
-                mS.getData('post', url + JSON.stringify(data), null, true).then($scope.successResponse).catch(error => {
+                mS.getData('post', url + JSON.stringify(data)).then($scope.successResponse).catch(error => {
                     Swal.close();
                     console.log(error)
                 })
@@ -135,7 +135,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
             $scope.estadoCorreos = $scope.data.comprobantes.map(item => {
                 item.statusEmail = [];
                 item.isStatusMail = true;
-                mS.getData('get', 'FactElect/NotificacionTributaria/' + item.idDocumentoElectronico, null, true).then(
+                mS.getData('get', 'FactElect/NotificacionTributaria/' + item.idDocumentoElectronico).then(
                     response => {
                         const tempEmails = JSON.parse(response.payload) || [];
                         item.statusEmail = tempEmails.map(item => {
@@ -152,7 +152,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
         }
 
         $scope.showStatusMailByComp = true;
-        mS.getData('get', 'FactElect/NotificacionTributaria/' + $scope.data.idDocumentoElectronico, null, true).then(
+        mS.getData('get', 'FactElect/NotificacionTributaria/' + $scope.data.idDocumentoElectronico).then(
             response => {
                 if (response.code === '0') {
                     tS.toastr('warning', response.message)

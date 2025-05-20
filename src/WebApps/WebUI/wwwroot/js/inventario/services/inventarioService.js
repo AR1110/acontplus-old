@@ -10,7 +10,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -52,7 +52,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -104,7 +104,7 @@
         }
 
         service.listForSelect = function (query) {
-            return mS.getData('get', url + 'ListForSelect?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'ListForSelect?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -132,7 +132,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -163,7 +163,7 @@
         }
 
         service.listForSelect = function (query) {
-            return mS.getData('get', url + 'ListForSelect?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'ListForSelect?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -192,7 +192,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -241,7 +241,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -286,7 +286,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -334,7 +334,7 @@
 
         service.get = (params) => {
             let json = JSON.stringify({ ...params, tipo: 2 })
-            return mS.getData('get', URL + '?json=' + json, null, true).then(response => {
+            return mS.getData('get', URL + '?json=' + json).then(response => {
                 return {
                     dataArticulo: response.dataArticulo[0],
                     kardex: response.kardex
@@ -343,7 +343,7 @@
         }
 
         service.getDataFilters = () => {
-            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 3 })).then(response => {
                 return {
                     estabs: fS.groupEstabBodega(response.bodegas),
                     tiposTransaccion: response.tipoTransaccion
@@ -412,7 +412,7 @@
 
         function getDataForm() {
             const json = JSON.stringify({ tipo: 2 })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const data = {
                     estabs: [],
                     subFamilias: [],
@@ -443,7 +443,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let consolidaciones = []
                 if (response !== null && typeof response === 'object') {
                     consolidaciones = response.consolidaciones;
@@ -495,7 +495,7 @@
                 ...obj,
                 tipo: 4
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let articulos = [];
                 if (response !== null && typeof response === 'object') {
                     let mainData = response.articulos;
@@ -560,7 +560,7 @@
                 ...obj,
                 tipo: 5
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let serieComprobante = null;
                 if (response !== null && typeof response === "object") {
                     serieComprobante = response.serieComprobante[0].serieComprobante;
@@ -622,7 +622,7 @@
         }
 
         function getId(id) {
-            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+            return mS.getData('get', `${url}GetId/${id}`).then(response => {
                 const data = {
                     comprobante: {},
                     detalles: [],
@@ -665,8 +665,7 @@
                             estado: restItem.estado,
                             conversion,
                             medidas,
-                            total: fS.roundNumber(restItem.cantidad * restItem.precioUnitario, 5),
-                            estado: true
+                            total: fS.roundNumber(restItem.cantidad * restItem.precioUnitario, 5)
                         };
 
                     })
@@ -680,7 +679,7 @@
                 id,
                 tipo: 3
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let { comprobante, detalles } = response;
                 let tempComprobante = comprobante[0];
 
@@ -763,7 +762,7 @@
 
 
         function getDataFilter() {
-            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 2 })}`).then(response => {
                 const data = {
                     estabs: []
                 }
@@ -779,7 +778,7 @@
 
 
         function getDataForm() {
-            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 3 })}`).then(response => {
                 const data = {
                     estabs: [],
                     tiposTransaccion: [],
@@ -832,7 +831,7 @@
                 subFamilias: obj.subFamilias,
                 bodegaId: obj.bodegaId
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let result = {
                     articulos: []
                 };
@@ -869,7 +868,7 @@
         }
 
         function generateSerieComprobante(query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 }))).then(response => {
                 let value = null;
                 if (response !== null && typeof response === 'object') {
                     const { serieComprobante } = response;
@@ -883,7 +882,7 @@
                 ...obj,
                 tipo: 1
             })
-            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let transferenciasBodega = [];
                 if (response !== null && typeof response === 'object') {
                     const tempData = response.tranferencias;
@@ -900,7 +899,8 @@
                             bodegaOrigen: item.bodegaOrigen,
                             bodegaDestino: item.bodegaDestino,
                             rowColor: item.rowColor,
-                            totalRecords: item.totalRecords
+                            totalRecords: item.totalRecords,
+                            observacion: item.observacion
                         }
                     })
                 }
@@ -1022,7 +1022,7 @@
 
         function getId(id) {
 
-            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+            return mS.getData('get', `${url}GetId/${id}`).then(response => {
                 const data = {
                     comprobante: {},
                     detalles: []
@@ -1060,7 +1060,7 @@
         }
 
         function getIdDetalle(id) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign({ id }, { tipo: 5 })), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign({ id }, { tipo: 5 }))).then(response => {
                 const data = {
                     dataDocumento: {},
                     detalleDocumento: []

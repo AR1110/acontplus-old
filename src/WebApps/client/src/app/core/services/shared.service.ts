@@ -3,8 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS, PATHS_API } from '@core/constants/global.constants';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
 import { isApiResponse } from '@core/models/api-response';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { SendMailModalComponent } from '@shared/components/send-mail-modal/send-mail-modal.component';
+
 import FileSaver from 'file-saver';
 import { map } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -12,7 +11,7 @@ import Swal from 'sweetalert2';
 import { ModalService } from './modal.service';
 import { ToasterService } from './toaster.service';
 import * as XLSX from 'xlsx';
-import {PdfViewerComponent} from "@shared/components/pdf-viewer/pdf-viewer.component";
+import { PdfViewerComponent } from '@shared/components/pdf-viewer/pdf-viewer.component';
 
 interface ReportParams<T> {
   data: T;
@@ -30,15 +29,28 @@ export class SharedService {
   private tS = inject(ToasterService);
   private modalSvc = inject(ModalService);
 
-  saveFile(response: any, format?: string, downloadOnly: boolean = false) {
-    let contentDisposition = response.headers.get('content-disposition');
-    let fileName = contentDisposition
-      ?.split(';')[1]
-      .split('filename')[1]
-      .split('=')[1]
-      .trim();
-    fileName = fileName?.replaceAll('+', ' ');
+  saveFile(response: any, format?: string, downloadOnly = false) {
+    const contentDisposition = response.headers.get('content-disposition');
+    let fileName = 'download';
 
+    if (contentDisposition) {
+      // Extract filename safely using regex
+      const filenameMatch = contentDisposition.match(
+        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
+      );
+      if (filenameMatch && filenameMatch[1]) {
+        fileName = filenameMatch[1].replace(/['"]/g, '');
+
+        // Decode URL encoded characters
+        fileName = decodeURIComponent(fileName);
+
+        // Replace problematic characters
+        fileName = fileName.replaceAll('+', ' ');
+
+        // Additional sanitization if needed
+        fileName = fileName.replace(/[\/\?<>\\:\*\|"]/g, '_');
+      }
+    }
     if (format === 'pdf') {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
       const ie = navigator.userAgent.match(/.NET/g); // IE 11+
@@ -53,7 +65,7 @@ export class SharedService {
       }
     } else {
       if (response.body) {
-        let serverData = new Blob([response.body], {
+        const serverData = new Blob([response.body], {
           type: response.body.type,
         });
         FileSaver.saveAs(serverData, fileName);
@@ -71,7 +83,7 @@ export class SharedService {
       format = 'pdf',
       isOldVersion = false,
       downloadOnly = false,
-      openInModal
+      openInModal,
     } = obj;
 
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
@@ -82,7 +94,6 @@ export class SharedService {
         responseType: 'blob',
       })
       .subscribe((response) => {
-
         if (format === 'pdf' && openInModal && response.body) {
           // this.openPdfInModal(response.body)
         } else {
@@ -92,23 +103,18 @@ export class SharedService {
   }
 
   private openPdfInModal(blob: Blob) {
+    const blobURL = URL.createObjectURL(blob);
 
+    const modalRef = this.modalSvc.open(PdfViewerComponent, {
+      size: 'xl',
+    });
 
-    var blobURL = URL.createObjectURL(blob);
-
-
-    let modalRef = this.modalSvc.open(PdfViewerComponent, {
-        size: 'xl'
-      });
-
-    modalRef.componentInstance.params =   { pdfSrc: blobURL };
-
+    modalRef.componentInstance.params = { pdfSrc: blobURL };
   }
-
 
   async askToPrint<T extends { parameters: string }>(obj: T) {
     const { parameters } = obj;
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: `<small>Desea Imprimir este comprobante?</small>`,
       confirmButtonText:
@@ -118,16 +124,15 @@ export class SharedService {
       allowOutsideClick: false,
     });
     if (isConfirmed) {
-      let url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
+      const url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
       console.log(parameters);
-      showLoader();
+
       this.http
         .post(url, JSON.parse(parameters), {
           context: customUrl(),
         })
         .subscribe({
           next: (response) => {
-            hideLoader();
             if (isApiResponse(response)) {
               if (response.code === '1') {
                 this.tS.toastr({
@@ -143,7 +148,6 @@ export class SharedService {
             }
           },
           error(err) {
-            hideLoader();
             console.log('Hubo un problema al imprimir:' + err?.message);
           },
         });
@@ -153,7 +157,7 @@ export class SharedService {
 
   getPrinter<T>(parameters: T) {
     try {
-      let url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
+      const url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
       this.http.get(url).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
@@ -190,16 +194,14 @@ export class SharedService {
     },
   >(params: T[]) {
     try {
-      let urlPrinter = `${params[0].urlPrinter}?rdlcProps=${
+      const urlPrinter = `${params[0].urlPrinter}?rdlcProps=${
         params[0].rdlcProps
       }&dataSources=${encodeURIComponent(params[0].dataSources)}&rdlcParams=${
         params[0].rdlcParams
       }`;
 
-      showLoader();
       this.http.post(urlPrinter, null).subscribe({
         next: (response) => {
-          hideLoader();
           if (isApiResponse(response)) {
             if (response.code === '1') {
               this.tS.toastr({
@@ -215,12 +217,10 @@ export class SharedService {
           }
         },
         error(err) {
-          hideLoader();
           console.log('Hubo un problema al imprimir:' + err?.message);
         },
       });
     } catch (error) {
-      hideLoader();
       console.log(error);
     }
   }
@@ -251,17 +251,10 @@ export class SharedService {
       );
   }
 
-  async openModalSendMail<T>(params: T) {
-    const modalRef = this.modalSvc.openModalCustom(SendMailModalComponent);
-    modalRef.componentInstance.params = params || {};
-  }
-
-
   exportToExcel(data: any[], fileName: string): void {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   }
-
 }

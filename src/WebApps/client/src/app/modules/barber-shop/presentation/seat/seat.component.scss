@@ -1,0 +1,113 @@
+.container-seat {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+  padding: 20px 0 20px 0;
+  justify-content: start;
+  margin: 0 auto;
+}
+
+
+
+.seat-card {
+
+  border-radius: 12px;
+  overflow: visible; /* Ensure absolutely positioned children aren’t clipped */
+  box-shadow:  0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &__header {
+  //  position: absolute;
+    top: 20px;
+    left: 15px;
+   // padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__svg-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+  }
+
+  &__svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding: 10px;
+    border-radius: 50%;
+  }
+
+  &__info {
+    padding: 10px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__tag {
+    position: absolute;
+    top: 20px;
+    left: 15px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tag-text);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &--popular {
+      background-color: var(--tag-bg-popular);
+    }
+
+    &--offer {
+      background-color: var(--tag-bg-offer);
+    }
+
+    &-icon {
+      width: 12px;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::before {
+        content: "•";
+        font-size: 18px;
+      }
+    }
+  }
+
+
+}

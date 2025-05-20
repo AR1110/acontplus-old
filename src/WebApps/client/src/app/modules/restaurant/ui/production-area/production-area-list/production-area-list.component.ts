@@ -6,7 +6,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import swal from 'sweetalert2';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { ProductionAreaAddEditModalComponent } from '@restaurant/ui/production-area/production-area-add-edit-modal/production-area-add-edit-modal.component';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -15,15 +15,20 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { NgClass } from '@angular/common';
+import {MatCard, MatCardContent} from "@angular/material/card";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-production-area-list',
     imports: [
-        FaIconComponent,
+
         FormsModule,
         MatButton,
         NgbAccordionModule,
         NgClass,
+        MatCardContent,
+        MatCard,
+        ThemeButtonComponent,
     ],
     templateUrl: './production-area-list.component.html',
     styles: ``

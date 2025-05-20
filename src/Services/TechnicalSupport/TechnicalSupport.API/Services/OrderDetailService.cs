@@ -2,9 +2,9 @@
 
 public class OrderDetailService : IOrderDetailService
 {
+    private readonly IAdoRepository _adoRepository;
     private readonly TechnicalSupportContext _context;
     private readonly string _module = "TechnicalSupport.OrderDetail";
-    private readonly IAdoRepository _adoRepository;
 
     public OrderDetailService(IAdoRepository adoRepository, TechnicalSupportContext context)
     {
@@ -24,13 +24,11 @@ public class OrderDetailService : IOrderDetailService
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         if (await _context.OrderMaintenances.AnyAsync(x => x.OrderDetailId == id && x.Deleted == null))
-        {
             return new ApiResponse
             {
                 Code = "0",
                 Message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
             };
-        }
 
         var detailFound = await _context.OrderDetails.FindAsync(id);
         detailFound.Enabled = false;

@@ -135,7 +135,7 @@ BEGIN
 		        BEGIN
                     IF @codEstado = 8 
                         BEGIN
-                            SET @sql = @sql +  'AND de.codEstado <> 4 AND de.codEstado <> 6 '
+                            SET @sql = @sql +  'AND de.codEstado <> 4 AND de.codEstado <> 6 AND de.codEstado <> 8 '
                         END 
                     ELSE 
                         BEGIN

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PATHS_API, SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
 import { map } from 'rxjs';
-import {SriCustomerRepository} from "@customer/core/repositories/sri-customer.repository";
+import {SriCustomerRepository} from "@customer/domain/repositories/sri-customer.repository";
 
 @Injectable({
   providedIn: 'root',

@@ -1,8 +1,8 @@
 import {ApiResponse} from "@core/models/api-response";
-import {groupSubCategoryUtil} from "@inventory/utils/group-sub-category.util";
+import {groupSubCategoryUtil} from "@inventory/domain/utils/group-sub-category.util";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
 import {ProductSearch} from "@inventory/domain/models/product.model";
-import {mergeMeasureUtil} from "@inventory/utils/merge-measure.util";
+import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
 
 
 export class ProductMapper {
@@ -18,48 +18,6 @@ export class ProductMapper {
       marcas: brands,
       modelos: models,
       tiposIva: taxes
-    }
-  }
-
-  static fromApiDataForm(response:ApiResponse){
-
-    const {
-      brands,
-      categories,
-      decimal,
-      fees,
-      ice,
-      measures,
-      models,
-      productTypes,
-      subcategories,
-      tags,
-      taxes,
-      warehouses
-
-    } = JSON.parse(response.payload as string);
-    const estabs = groupEstabUtil({
-      bodegas: warehouses,
-      isGroupBodega: true
-    })
-
-    return {
-      categorias : categories,
-      decimal : decimal[0],
-      estabs   ,
-
-      etiquetas : tags,
-      marcas : brands,
-      medidas : measures,
-      modelos : models,
-      subCategorias : subcategories,
-
-      subCategoriasGroup : groupSubCategoryUtil(subcategories),
-
-      tarifas: fees,
-      tiposArticulo: productTypes ,
-      tiposIce : ice,
-      tiposIva: taxes ,
     }
   }
 

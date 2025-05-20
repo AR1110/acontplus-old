@@ -1,20 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
- import { finalize  } from 'rxjs';
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {MatCardModule} from "@angular/material/card";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatPagination} from "@shared/models/pagination.model";
-import {PageEvent} from "@angular/material/paginator";
-import {ComprobanteIngresoUseCase} from "@accounting/core/use-cases/comprobante-ingreso.use-case";
-import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
-import {ComprobanteIngreso} from "@accounting/core/domain/comp-ingreso.model";
-import {formatDateToString} from "@core/utils/date.util";
-import {SharedService} from "@core/services/shared.service";
-import {ToasterService} from "@core/services/toaster.service";
-import {isValidField} from "@core/utils/utils";
+import { finalize } from 'rxjs';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPagination } from '@shared/models/pagination.model';
+import { PageEvent } from '@angular/material/paginator';
+import { ComprobanteIngresoUseCase } from '@accounting/domain/use-cases/comprobante-ingreso.use-case';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { ComprobanteIngreso } from '@accounting/domain/models/comp-ingreso.model';
+import { formatDateToString } from '@core/utils/date.util';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { isValidField } from '@core/utils/utils';
 
 @Component({
   selector: 'app-comprobante-ingreso',
@@ -23,20 +23,18 @@ import {isValidField} from "@core/utils/utils";
     MatButtonModule,
     MatIconModule,
     BreadcrumbComponent,
-    MatDynamicTableComponent
+    MatDynamicTableComponent,
   ],
   templateUrl: './comprobante-ingreso.component.html',
-  styles: ``
+  styles: ``,
 })
 export class ComprobanteIngresoComponent {
-
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
 
-  loading = signal(false)
+  loading = signal(false);
   pagination = signal(new MatPagination());
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'nroDoc', label: 'Nro. Doc', type: 'string' },
     { key: 'fechaRegistro', label: 'Fecha Registro', type: 'string' },
@@ -48,7 +46,7 @@ export class ComprobanteIngresoComponent {
     { key: 'nomEstado', label: 'Estado', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
   comprobantesIngreso: Array<ComprobanteIngreso> = [];
   dataSearch = {
@@ -78,12 +76,11 @@ export class ComprobanteIngresoComponent {
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
 
-
-  refresh(){
-    this.getComprobantesIngreso()
+  refresh() {
+    this.getComprobantesIngreso();
   }
   getComprobantesIngreso() {
-    if(this.loading()) return;
+    if (this.loading()) return;
 
     let checkBoxEstado = typeof this.dataSearch.byEstado === 'number';
     let checkBoxPersona = typeof this.dataSearch.byTipoPersona === 'number';
@@ -100,14 +97,13 @@ export class ComprobanteIngresoComponent {
     };
     this.comprobantesIngreso = [];
 
-    this.loading.set(true)
-    this._comprobanteIngresoUseCase.getAll(params)
-      .pipe(
-        finalize(()=>this.loading.set(false))
-      )
+    this.loading.set(true);
+    this._comprobanteIngresoUseCase
+      .getAll(params)
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe((response) => {
-      this.comprobantesIngreso = response.data;
-    });
+        this.comprobantesIngreso = response.data;
+      });
   }
 
   ngOnInit() {
@@ -195,13 +191,9 @@ export class ComprobanteIngresoComponent {
     this.companyCustomerSearchName = data.nombreCompleto;
   }
 
-  employeeResultEmptyInput($event: any) {
+  employeeclearSearch($event: any) {
     this.dataSearch.identificacionComprador = null;
     this.companyCustomerSearchName = '';
-  }
-
-  sendMail() {
-    this.sharedSvc.openModalSendMail({});
   }
 
   handlePageEvent(e: PageEvent) {
@@ -215,6 +207,4 @@ export class ComprobanteIngresoComponent {
     });
     this.refresh();
   }
-
-
 }

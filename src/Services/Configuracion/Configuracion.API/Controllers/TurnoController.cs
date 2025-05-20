@@ -1,15 +1,14 @@
-﻿using Configuracion.API.Models;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class TurnoController(ITurnoService turnoSvc) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+        var parameters = new Dictionary<string, object>
+            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         var response = await turnoSvc.GetAsync(parameters);
-        if (response == null) { return BadRequest("No Data"); }
+        if (response == null) return BadRequest("No Data");
 
         return Ok(response);
     }

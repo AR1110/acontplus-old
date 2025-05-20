@@ -17,10 +17,7 @@ public class DeviceCustomerController : BaseApiController
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await _service.GetAsync(parameters);
-        if (response == null)
-        {
-            return BadRequest("Can't Get Data");
-        }
+        if (response == null) return BadRequest("Can't Get Data");
 
         return Ok(response);
     }

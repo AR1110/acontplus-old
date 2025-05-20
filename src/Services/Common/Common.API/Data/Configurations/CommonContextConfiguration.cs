@@ -1,7 +1,5 @@
 ﻿using Common.API.Entities;
-using Common.Infrastructure.Data.Configurations;
 using Common.Notifications.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Common.API.Data.Configurations;
@@ -30,6 +28,7 @@ public class HousingTypeConfiguration : BaseEntityTypeConfiguration<HousingType>
             .IsUnique();
     }
 }
+
 public class MaritalStatusConfiguration : BaseEntityTypeConfiguration<MaritalStatus>
 {
     public override void Configure(EntityTypeBuilder<MaritalStatus> builder)

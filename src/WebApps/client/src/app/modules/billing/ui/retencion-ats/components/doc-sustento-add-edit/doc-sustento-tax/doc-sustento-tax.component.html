@@ -1,0 +1,94 @@
+<div class="row g-2 align-items-center" [formGroup]="taxGroup()">
+  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+    <mat-form-field class="w-100">
+      <mat-label>Impuesto</mat-label>
+      <mat-select
+        formControlName="idImpuesto"
+        id="idImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+        (selectionChange)="selectTax(taxGroup().value)"
+      >
+        <mat-option>Seleccione un impuesto</mat-option>
+        @for (sriTax of taxes(); track $index) {
+          <mat-option [value]="sriTax.idImpuesto">
+            {{ sriTax.descripcion }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+    <mat-form-field class="w-100">
+      <mat-label>Tarifa</mat-label>
+      <mat-select
+        formControlName="idTarifaImpuesto"
+        id="idTarifaImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+        (change)="selectTarifa(taxGroup().value)"
+      >
+        <mat-option>Seleccione una tarifa</mat-option>
+        @for (tarifaImpuesto of tarifaImpuestosFiltered(); track $index) {
+          <mat-option [value]="tarifaImpuesto.idTarifaImpuesto">
+            {{ tarifaImpuesto.descripcion }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
+    <mat-form-field class="w-100">
+      <mat-label>Base Imponible</mat-label>
+      <input
+        matInput
+        formControlName="baseImponible"
+        id="baseImponible-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+        type="number"
+        step="any"
+        placeholder="Base imponible"
+      />
+    </mat-form-field>
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
+    <mat-form-field class="w-100">
+      <mat-label>Por. Tarifa</mat-label>
+      <input
+        matInput
+        formControlName="tarifa"
+        id="tarifa-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+        type="number"
+        step="any"
+        readonly
+        placeholder="Tarifa"
+      />
+    </mat-form-field>
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-4 col-sm-4">
+    <mat-form-field class="w-100">
+      <mat-label>Valor</mat-label>
+      <input
+        matInput
+        formControlName="valorImpuesto"
+        id="valorImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+        type="number"
+        step="any"
+        readonly
+        placeholder="Valor impuesto"
+      />
+    </mat-form-field>
+  </div>
+  <div class="col-auto">
+    <app-theme-button
+      variant="danger"
+      icon="delete"
+      matStyle="icon"
+      id="btnDeleteTax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+      (handleClick)="removeTax()"
+    ></app-theme-button>
+  </div>
+</div>
+
+<!--  <div class="col-auto mt-3">-->
+<!--    <app-theme-button-->
+<!--      text="Añadir Impuestos Manualmente"-->
+<!--      icon="add"-->
+<!--      (handleClick)="createTax(indexDoc(), {})"-->
+<!--    ></app-theme-button>-->
+<!--  </div>-->

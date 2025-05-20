@@ -17,10 +17,7 @@ public class DeviceController : BaseApiController
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await _deviceService.GetAsync(parameters);
-        if (response == null)
-        {
-            return BadRequest("Can't Get Data");
-        }
+        if (response == null) return BadRequest("Can't Get Data");
 
         return Ok(response);
     }
@@ -30,10 +27,7 @@ public class DeviceController : BaseApiController
     {
         device.UserId = User.GetUserId();
         var response = await _deviceService.AddAsync(device);
-        if (response == null)
-        {
-            return BadRequest("Cant Save");
-        }
+        if (response == null) return BadRequest("Cant Save");
 
         return Ok(response);
     }
@@ -43,10 +37,7 @@ public class DeviceController : BaseApiController
     {
         device.UserId = User.GetUserId();
         var response = await _deviceService.UpdateAsync(id, device);
-        if (response == null)
-        {
-            return BadRequest("Cant Update");
-        }
+        if (response == null) return BadRequest("Cant Update");
 
         return Ok(response);
     }
@@ -55,10 +46,7 @@ public class DeviceController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var response = await _deviceService.DeleteAsync(id, User.GetUserId());
-        if (response == null)
-        {
-            return BadRequest("Cant Delete");
-        }
+        if (response == null) return BadRequest("Cant Delete");
 
         return Ok(response);
     }

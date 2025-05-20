@@ -3,6 +3,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
@@ -137,7 +138,7 @@ BEGIN
                 END 
 
             IF @rucProveedor IS NOT NULL
-	            BEGIN print 'inside prove'
+	            BEGIN 
 		            SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
 	            END
 
@@ -145,6 +146,10 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
                 END
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND dr.estado = 1 '
+                END 
 
 
             IF @serieComprobante IS NOT NULL
@@ -184,7 +189,7 @@ BEGIN
 
             SELECT idEstablecimiento,codEstab,nombreComercial FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 
-            SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
+            SELECT descripcion,codigoSri as codDoc, codigoSri FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07','05') ORDER BY codigoSri
 
             SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND Enabled = 1
 
@@ -228,7 +233,7 @@ BEGIN
                     
                     SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @id
 
-			        SELECT 'Retención'                                                           as comprobante
+			        SELECT 'Retenciï¿½n'                                                           as comprobante
 				           ,de.serieComprobante
 				           ,cu.IDCard                                                            as rucEmisor
 				           ,cu.TradeName                                                         as razonSocialEmisor

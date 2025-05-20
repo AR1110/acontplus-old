@@ -12,10 +12,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var pet = await context.Pets.FindAsync(id);
-        if (pet == null)
-        {
-            return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
-        }
+        if (pet == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
         pet.UserId = userId;
         pet.Deleted = true;
@@ -29,9 +26,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
     {
         var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
-        {
             return new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
@@ -46,10 +41,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
     public async Task<ApiResponse> UpdateAsync(int id, Pet pet)
     {
         var petFound = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
-        if (petFound == null)
-        {
-            return new ApiResponse { Code = "0", Message = "No se encontro mascota para editar" };
-        }
+        if (petFound == null) return new ApiResponse { Code = "0", Message = "No se encontro mascota para editar" };
 
         petFound.UserId = pet.UserId;
         petFound.Name = pet.Name;
@@ -68,9 +60,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
     {
         var ds = await repository.GetDataSetAsync("Vet.Pet_Get", parameters);
         if (DataValidation.DataSetIsNull(ds, true))
-        {
             return new ApiResponse { Code = "0", Message = "La transacción no devolvio respuesta" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }

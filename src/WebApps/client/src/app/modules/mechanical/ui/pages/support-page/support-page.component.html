@@ -1,4 +1,4 @@
-@if (valueStatus===statusTab.DASHBOARD) {
+@if ($store.isDashboard()) {
 <div class="row">
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
     <app-date-range-selection
@@ -10,12 +10,12 @@
     />
   </div>
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-    <app-company-customer-search-mat
-      (clearInput)="searchEmptyCompanyCustomer()"
-      (onSelect)="onCustomerSelected($event)"
+    <app-company-customer-search
+      (clearSearch)="searchEmptyCompanyCustomer()"
+      (customerSelected)="onCustomerSelected($event)"
       [isSimpleMode]="true"
     >
-    </app-company-customer-search-mat>
+    </app-company-customer-search>
   </div>
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
     <mat-form-field class="w-100">
@@ -39,7 +39,8 @@
         [(ngModel)]="dataSearch.supportStatusId"
         (selectionChange)="refresh()"
       >
-        @for (item of supportStatus; track $index) {
+        <mat-option [value]="0">--Todos--</mat-option>
+        @for (item of $store.supportStatus(); track $index) {
         <mat-option [value]="item.id">{{ item.name }}</mat-option>
         }
       </mat-select>
@@ -50,14 +51,13 @@
     <div class="d-flex flex-row gap-1 justify-content-end">
       <button
         mat-icon-button
-        appProductAddEdit
-        (onResultModal)="refresh()"
-        [disabled]="isLoadingResults"
+
+        [disabled]="isLoadingResults()"
         (click)="openModal()"
       >
         <mat-icon>add</mat-icon>
       </button>
-      <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
+      <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
@@ -79,12 +79,12 @@
     />
   </div>
   <div class="col">
-    <app-company-customer-search-mat
-      (clearInput)="searchEmptyCompanyCustomer()"
-      (onSelect)="onCustomerSelected($event)"
+    <app-company-customer-search
+      (clearSearch)="searchEmptyCompanyCustomer()"
+      (customerSelected)="onCustomerSelected($event)"
       [isSimpleMode]="true"
     >
-    </app-company-customer-search-mat>
+    </app-company-customer-search>
   </div>
   <div class="col">
     <mat-form-field class="w-100">
@@ -93,7 +93,6 @@
         matInput
         name="licensePlate"
         autocomplete="off"
-        id="licensePlate"
         [(ngModel)]="dataSearch.licensePlate"
       />
     </mat-form-field>
@@ -102,14 +101,12 @@
     <div class="d-flex flex-row gap-1 justify-content-end">
       <button
         mat-icon-button
-        appProductAddEdit
-        (onResultModal)="refresh()"
-        [disabled]="isLoadingResults"
+        [disabled]="isLoadingResults()"
         (click)="openModal()"
       >
         <mat-icon>add</mat-icon>
       </button>
-      <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
+      <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
@@ -118,14 +115,14 @@
 }
 
 <app-mat-dynamic-table
-  [isLoadingData]="isLoadingResults"
+  [isLoadingData]="isLoadingResults()"
   [tableData]="dataSource"
   [columnDefinitions]="columnsDefs"
   [visibleColumns]="columns"
   [templateOp]="templateOp"
   [paginationConfig]="pagination()"
   [enablePagination]="true"
-  (onPageEvent)="handlePageEvent($event)"
+  (pageEvent)="handlePageEvent($event)"
 >
 </app-mat-dynamic-table>
 
@@ -140,42 +137,39 @@
       <span>Reporte</span>
     </button>
 
-    @if (valueStatus===statusTab.PENDIENTE){
+    @if ($store.isPending()){
 
     <button mat-menu-item (click)="openModal(item.id)">
       <mat-icon>edit</mat-icon>
       <span>Editar</span>
     </button>
-    } @if (valueStatus===statusTab.PENDIENTE ||
-    valueStatus===statusTab.INSPECCION) {
+    } @if ($store.isPending() || $store.isInspection()) {
 
     <button mat-menu-item (click)="askToDelete(item.id)">
       <mat-icon>delete</mat-icon>
       <span>Anular</span>
     </button>
-    } @if (valueStatus===statusTab.PENDIENTE ||
-    valueStatus===statusTab.EN_PROCESO) {
+    } @if ($store.isPending() ||$store.isProcessing()) {
 
     <button mat-menu-item (click)="openMaintenance(item.id)">
       <mat-icon>build</mat-icon>
       <span>Mantenimiento</span>
     </button>
 
-    } @if ((valueStatus===statusTab.PENDIENTE ||
-    valueStatus===statusTab.EN_PROCESO ) && !item.existsInsp) {
+    } @if (($store.isPending() || $store.isProcessing() ) && !item.existsInsp) {
 
     <button mat-menu-item (click)="openModalInspection(item.id)">
       <mat-icon>engineering</mat-icon>
       <span>Inspección</span>
     </button>
-    } @if (valueStatus===statusTab.POR_ENTREGAR) {
+    } @if ($store.isToDeliver()) {
 
     <button mat-menu-item (click)="askToConvertToDoc(item.id)">
       <mat-icon>show_chart</mat-icon>
       <span> Convertir a Aprobación</span>
     </button>
 
-    } @if (valueStatus===statusTab.APROBADO) {
+    } @if ($store.isApproved()) {
 
     <button mat-menu-item (click)="getDocView(item.id)">
       <mat-icon>file</mat-icon>
@@ -187,7 +181,7 @@
 </ng-template>
 
 <ng-template #statusTemplate let-item>
-  @if (valueStatus===statusTab.EN_PROCESO){
+  @if ($store.isProcessing()){
   <mat-slide-toggle
     (change)="putState(item.id)"
     [(ngModel)]="item.enabled"

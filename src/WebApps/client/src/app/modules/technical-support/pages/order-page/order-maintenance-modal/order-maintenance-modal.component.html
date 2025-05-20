@@ -1,6 +1,6 @@
 <div class="modal-header">
-  <h5 class="modal-title"><fa-icon [icon]="'cogs'"></fa-icon> Reparaciones</h5>
-  <button type="button" class="btn-close" (click)="closeModal()"></button>
+  <h5 class="modal-title"><mat-icon>settings</mat-icon> Reparaciones</h5>
+  <button type="button" class="btn-close" (click)="onModalClose()"></button>
 </div>
 <div class="modal-body">
   <div class="row">
@@ -17,9 +17,9 @@
           (change)="onChangeEstablecimiento()"
         >
           @for (item of establecimientos; track $index) {
-          <option [ngValue]="item.idEstablecimiento">
-            {{ item.nombreComercial }}
-          </option>
+            <option [ngValue]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </option>
           }
         </select>
       </div>
@@ -36,7 +36,7 @@
           [(ngModel)]="order.puntoEmisionId"
         >
           @for (item of puntosEmision; track $index) {
-          <option [ngValue]="item.idPuntoEmision">{{ item.ptoEmi }}</option>
+            <option [ngValue]="item.idPuntoEmision">{{ item.ptoEmi }}</option>
           }
         </select>
       </div>
@@ -62,7 +62,7 @@
           (change)="onChangeBodega()"
         >
           @for (item of bodegas; track $index) {
-          <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
+            <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
           }
         </select>
       </div>
@@ -78,7 +78,7 @@
           [(ngModel)]="order.feeId"
         >
           @for (item of feeds; track $index) {
-          <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
+            <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
           }
         </select>
       </div>
@@ -86,49 +86,56 @@
   </div>
 
   @if (!detailCustom) {
-  <div class="row">
-    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="orderDetails"
-          >Detalle (Equipo): <span class="text-danger">*</span></label
-        >
-        <select
-          name="orderDetails"
-          id="orderDetails"
-          class="form-select"
-          [(ngModel)]="order.orderDetailId"
-          (change)="onChangeOrderDetail()"
-        >
-          @for (item of orderDetails; track $index) {
-          <option [ngValue]="item.orderDetailId">
-            {{ item.deviceName }}
-          </option>
-          }
-        </select>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="orderDetails"
+            >Detalle (Equipo): <span class="text-danger">*</span></label
+          >
+          <select
+            name="orderDetails"
+            id="orderDetails"
+            class="form-select"
+            [(ngModel)]="order.orderDetailId"
+            (change)="onChangeOrderDetail()"
+          >
+            @for (item of orderDetails; track $index) {
+              <option [ngValue]="item.orderDetailId">
+                {{ item.deviceName }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-12">
+        <div class="form-group">
+          <label for="warranty">Garantía: </label>
+          <input
+            type="text"
+            name="warranty"
+            id="warranty"
+            [value]="order.deviceWarranty"
+            class="form-control"
+            disabled
+          />
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-12">
+        <div class="form-group">
+          <label for="obs-detalle-reparacion"
+            >Solicitud de Reparación: <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            id="obs-detalle-reparacion"
+            name="obs-detalle-reparacion"
+            class="form-control"
+            [(ngModel)]="order.obs"
+            disabled
+          />
+        </div>
       </div>
     </div>
-    <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-12">
-      <div class="form-group">
-        <label for="warranty">Garantía: </label>
-        <input type="text" name="warranty" id="warranty" [value]="order.deviceWarranty" class="form-control" disabled>
-      </div>
-    </div>
-    <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-12">
-      <div class="form-group">
-        <label for="obs-detalle-reparacion"
-          >Solicitud de Reparación: <span class="text-danger">*</span></label
-        >
-        <input
-          type="text"
-          id="obs-detalle-reparacion"
-          name="obs-detalle-reparacion"
-          class="form-control"
-          [(ngModel)]="order.obs"
-          disabled
-        />
-      </div>
-    </div>
-  </div>
   }
   <div class="row">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
@@ -136,7 +143,10 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <div class="form-group">
             <label for="productSearch">Buscar producto o servicio: </label>
-            <app-product-search-overlay (optionSelected)="onProductSelected($event)" [searchSale]="true" />
+            <app-product-search-overlay
+              (optionSelected)="onProductSelected($event)"
+              [searchSale]="true"
+            />
           </div>
         </div>
       </div>
@@ -156,29 +166,24 @@
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
       <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-        <button
-          type="button"
-          class="btn btn-outline-dark"
-          (click)="saveOptions(factura)"
+        <app-theme-button
+          variant="dark"
+          icon="receipt_long"
+          text="Cancelar"
+          (handleClick)="saveOptions(factura)"
         >
-          <fa-icon [icon]="'file-pdf'"></fa-icon> Factura
-        </button>
+        </app-theme-button>
         @if (!detailCustom) {
-        <button
-          type="button"
-          class="btn btn-outline-info"
-          (click)="saveOptions(notaEntrega)"
-        >
-          <fa-icon [icon]="'dot-circle'"></fa-icon> Nota de Entrega
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-success"
-          (click)="saveOptions()"
-        >
-          <fa-icon [icon]="'save'"></fa-icon> Guardar
-        </button>
-
+          <app-theme-button
+            variant="info"
+            icon="check_circle"
+            text="Nota de Entrega"
+            (handleClick)="saveOptions(notaEntrega)"
+          >
+          </app-theme-button>
+          <button type="button" mat-raised-button (click)="saveOptions()">
+            <mat-icon>save</mat-icon> Guardar
+          </button>
         }
       </div>
     </div>
@@ -209,7 +214,11 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="closeModal()">
-    &times; Cancelar
-  </button>
+  <app-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="onModalClose()"
+  >
+  </app-theme-button>
 </div>

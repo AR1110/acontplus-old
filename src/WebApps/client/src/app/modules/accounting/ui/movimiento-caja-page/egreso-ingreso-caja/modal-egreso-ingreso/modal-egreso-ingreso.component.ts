@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { CashboxSelectHtmlOnly } from '@accounting/core/domain/cashbox.model';
-import { SubEntidadFinanciera } from '@accounting/core/domain/subentidad-financiera.model';
+import { CashboxSelectHtmlOnly } from '@accounting/domain/models/cashbox.model';
+import { SubEntidadFinanciera } from '@accounting/domain/models/subentidad-financiera.model';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   AbstractControl,
@@ -12,12 +12,16 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { EmployeeService } from '@sale/services/employee.service';
+import { EmployeeService } from '@sale/data/services/employee.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { EntidadFinanciera } from '@accounting/core/domain/entidad-financiera.interface';
-import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.use-case";
+import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
+import { MovimientoCajaUseCase } from '@accounting/domain/use-cases/movimiento-caja.use-case';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Component({
   selector: 'app-modal-egreso-ingreso',
@@ -25,6 +29,9 @@ import {MovimientoCajaUseCase} from "@accounting/core/use-cases/movimiento-caja.
     ReactiveFormsModule,
     NgbTypeaheadModule,
     CompanyCustomerSearchComponent,
+    MatIcon,
+    MatButton,
+    ThemeButtonComponent,
   ],
   templateUrl: './modal-egreso-ingreso.component.html',
 })
@@ -66,7 +73,7 @@ export class ModalEgresoIngresoComponent {
     customerName: new FormControl(''),
   });
   private activeModal = inject(NgbActiveModal);
-  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase)
+  private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
 
   private employeeSvc = inject(EmployeeService);
   private tS = inject(ToasterService);
@@ -126,9 +133,9 @@ export class ModalEgresoIngresoComponent {
     }
   }
 
-  onSelectCustomer(params: any) {
-    if ('data' in params) {
-      this.dataForm.get('customerId')?.setValue(params.data.customerId);
+  onSelectCustomer(data: CompanyCustomer) {
+    if (data && data.customerId) {
+      this.dataForm.get('customerId')?.setValue(data.customerId);
     }
   }
 
@@ -182,27 +189,26 @@ export class ModalEgresoIngresoComponent {
       }
 
       this._movimientoCajaUseCase.create(params).subscribe((response) => {
-
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
-          if (response.code === '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
-            this.activeModal.close(response);
-          }
+        if (response.code === '0') {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message,
+          });
+        }
+        if (response.code === '1') {
+          this.tS.toastr({
+            type: 'success',
+            message: response.message,
+          });
+          this.activeModal.close(response);
+        }
       });
     } catch (error) {
       console.log(error);
     }
   }
 
-  closeModal() {
+  onModalClose() {
     this.activeModal.close();
   }
 }

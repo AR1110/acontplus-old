@@ -1,10 +1,10 @@
-﻿<app-breadcrumb/>
-<div class="card">
-  <div class="card-body">
+﻿<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-content>
     <div class="row mb-3">
       <div class="col">
-        <button (click)="onModalOpen()" class="btn btn-info" type="button">
-          <fa-icon [icon]="'plus'"></fa-icon>
+        <button (click)="onModalOpen()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
           Nuevo
         </button>
       </div>
@@ -12,30 +12,28 @@
     <div class="table-responsive">
       <table class="table table-bordered">
         <thead>
-        <tr>
-          <th>Opciones</th>
-          <th class="text-center">#</th>
-          <th>Tipo</th>
-          <th>Código</th>
-          <th>Nombre</th>
-          <th>Estado</th>
-        </tr>
+          <tr>
+            <th>Opciones</th>
+            <th class="text-center">#</th>
+            <th>Tipo</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+          </tr>
         </thead>
         <tbody>
           @for (item of categories; track $index) {
             <tr>
               <td class="text-center">
-                <div ngbDropdown class="d-inline-block">
-                  <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
-                    <fa-icon [icon]="'bars'"></fa-icon>
+                <button mat-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="edit(item)">
+                    <mat-icon>edit</mat-icon>
+                    Editar
                   </button>
-                  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                    <button ngbDropdownItem (click)="edit(item)">
-                      <fa-icon [icon]="'edit'"></fa-icon>
-                      Editar
-                    </button>
-                  </div>
-                </div>
+                </mat-menu>
               </td>
               <td class="text-center">{{ $index + 1 }}</td>
               <td>{{ item.tipoName }}</td>
@@ -49,5 +47,5 @@
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

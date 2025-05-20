@@ -104,7 +104,8 @@ BEGIN
                                ,ro.[Enabled]
                                ,ro.[Deleted]
                                ,us.nombreUsuario                           as UserName
-                               ,ISNULL(cu.TradeName,''CONSUMIDOR FINAL'')                  as nameFiscal
+                               ,ISNULL(cu.BusinessName,''CONSUMIDOR FINAL'')                  as nameFiscal
+                               ,ISNULL(cu.IdCard, ''9999999999999'') as IdCard
                                ,ta.[Description]                           as tableName
                                ,COUNT(*) OVER()                            as totalRecords
                          FROM Restaurant.[Order]         ro WITH (NOLOCK)
@@ -228,7 +229,7 @@ BEGIN
             )
 
             
-            SELECT cu.TradeName as customerName
+            SELECT ISNULL(cu.BusinessName,'CONSUMIDOR FINAL')   as customerName
                   ,tableName = rm.[description] + ' - ' + ISNULL(ta.[Description], '') 
                   ,numberTable = numberTable
                   ,tipoIdentificacionSri= ti.codigoSri
@@ -236,8 +237,10 @@ BEGIN
              FROM Restaurant.[Order]           ro WITH (NOLOCK)
              LEFT JOIN Cliente                cl WITH (NOLOCK) ON cl.idCliente            = ro.CustomerCompanyId
               LEFT JOIN Restaurant.[Table]     ta WITH (NOLOCK) ON ta.Id                   = ro.TableId
-             LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
              LEFT JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
+        --     LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
+             LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
+             
               LEFT JOIN Restaurant.Room        rm WITH (NOLOCK) ON rm.Id                   = ta.RoomId
              WHERE ro.Id = @id 
             
@@ -389,6 +392,8 @@ BEGIN
                   ,[Description]
                   ,[Floor]
                   ,roomDescription 
+                  ,vt.FloorId
+                  ,vt.RoomId
             FROM Restaurant.v_Table vt 
             WHERE vt.idEntidad = @idEntidad
 

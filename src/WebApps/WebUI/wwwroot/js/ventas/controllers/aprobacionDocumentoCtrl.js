@@ -58,39 +58,7 @@
 
  
         $scope.dataUserSearch = {}
-
-        let OPTION_APROBACION = Object.freeze({
-            0: Object.freeze({
-                docOrigen: {
-                    descripcion: 'Nota de Entrega',
-                    codDoc: DOC_TYPE.NE,
-                },
-                docDestino: {
-                    descripcion: 'Factura',
-                    codDoc: DOC_TYPE.FV_SRI,
-                }
-            }),
-            1: Object.freeze({
-                docOrigen: {
-                    descripcion: 'Proforma',
-                    codDoc: DOC_TYPE.PR
-                },
-                docDestino: {
-                    descripcion: 'Factura',
-                    codDoc: DOC_TYPE.FV_SRI,
-                }
-            }),
-            2: Object.freeze({
-                docOrigen: {
-                    descripcion: 'Proforma',
-                    codDoc: DOC_TYPE.PR,
-                },
-                docDestino: {
-                    descripcion: 'Nota de Entrega',
-                    codDoc: DOC_TYPE.NE,
-                }
-            })
-        });
+ 
 
         $scope.askToOpenModalOption = async function () {
             try {
@@ -110,56 +78,7 @@
                     }
                 })
 
-                // const swalWithBootstrapButtons = Swal.mixin({
-                //     customClass: {
-                //         confirmButton: 'btn btn-success',
-                //         cancelButton: 'btn btn-danger m-l-5'
-                //     },
-                //     buttonsStyling: false
-                // })
-
-                // swalWithBootstrapButtons.fire({
-                //     title: 'Opción Aprobación Documento',
-                //     input: 'select',
-                //     inputOptions: {
-                //         0: 'NOTA DE ENTREGA A FACTURA',
-                //         1: 'PROFORMA A FACTURA',
-                //         2: 'PROFORMA A NOTA DE ENTREGA'
-                //     },
-                //     inputPlaceholder: 'Seleccionar...',
-                //     showCancelButton: true,
-                //     confirmButtonText: 'Continuar <i class="fa fa-arrow-right"></i>',
-                //     cancelButtonText: '<small>&times; Cerrar</small>',
-                //     reverseButtons: false,
-                //     allowOutsideClick: false,
-                //     focusConfirm: true,
-                //     inputValidator: (value) => {
-                //         return !value && 'Seleccione la opción de aprobación'
-                //     }
-                // }).then(result => {
-                //     if (result.isConfirmed) {
-                //         showLoader();
-                //         let modalRef = modalSvc.openModalCustom({
-                //             controller: 'ModalSelectDocCtrl',
-                //             template: URL_TEMPLATE + '_ModalSelectDocumento.cshtml',
-                //             size: 'xl',
-                //             windowClass: 'uibModalFullScreen',
-                //             params: OPTION_APROBACION[result.value],
-                //             isRenderRazorPartial: true
-                //         })
-
-                //         modalRef.rendered.then(() => {
-                //             hideLoader();
-                //         })
-
-                //         modalRef.result.then(result => {
-                //             if (typeof result === 'object') {
-                //                 $scope.getAprobComprobantes();
-                //             }
-                //         })
-
-                //     }
-                // })
+                
 
             } catch (error) {
                 console.log(error);
@@ -386,17 +305,25 @@
             try {
                 showLoader();
                 aprobacionDocSvc.findById(item.idAprob_Document).then(response => { 
-                    let modalRef = modalSvc.openModalCustom({
+                    let modalRef = modalSvc.open({
                         controller: 'ModalApproveDocCtrl',
                         template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',
                         size: 'xl',
+                        // windowClass: 'uibModalFullScreen',
+
+                   //     component:'aprobarDocumentoComponente',  
+                    //    size: 'xl',
                         windowClass: 'uibModalFullScreen',
+                        // params: {
+                        //     mainDataForm
+                        // }
+
                         params: {
                             docOrigenDesc: item.docOrigenDesc,
                             docDestinoDesc: item.docDestinoDesc,
-                            data: response
-                        },
-                        isRenderRazorPartial: true
+                            data: response,
+                            mainDataForm
+                        }, 
                     })
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {

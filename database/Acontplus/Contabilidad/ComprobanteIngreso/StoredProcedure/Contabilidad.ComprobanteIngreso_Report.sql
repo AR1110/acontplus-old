@@ -505,6 +505,7 @@ BEGIN
 			      ,CAST(co.abono AS NUMERIC(18,2))                       as abono
 			      ,CAST(co.vuelto AS NUMERIC(18,2))                      as cambio
 			      ,IIF(co.posfechado = 1,'SI','NO')                      as posfechado
+                  ,JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nomDoc') as nomDoc
 		    FROM dbo.ComprobanteIngreso         ci WITH (NOLOCK)
 		    INNER JOIN dbo.Cobro                co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
 		    INNER JOIN dbo.EntidadFinanciera    ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
@@ -524,59 +525,6 @@ BEGIN
                     INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
                     WHERE an.idComprobanteIngreso = @id
                 END 
-
-       --     IF @byIngreso = 1
-			    --BEGIN
-				   -- --SELECT td.codigo as tipoDoc
-					  -- --   ,CASE td.codigo WHEN 'A'  THEN (
-							--	--						    SELECT 'A' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(an.nroDoc)
-							--	--						    FROM dbo.Anticipo an WITH (NOLOCK) 
-							--	--						    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = an.codEstab
-							--	--						    WHERE an.idAnticipo = cd.idComprobante
-							--	--						 )  
-							--	--		 WHEN 'IC' THEN  (
-							--	--						    SELECT 'IC' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(mc.nroDoc)
-							--	--						    FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-							--	--						    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = mc.codEstab
-							--	--						    WHERE mc.idMovimientoCaja = cd.idComprobante
-							--	--						 ) 
-       -- --                    END as nroDoc
-
-       -- --                   ,CASE td.codigo WHEN 'A'  THEN (
-							--	--						    SELECT an.fechaEmision FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
-							--	--						  )  
-							--	--		   WHEN 'IC' THEN (
-							--	--						    SELECT mc.fechaEmision FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
-							--	--						  )
-						 -- --  END as fechaEmision
-					       
-       -- --                   ,CASE td.codigo WHEN 'A'  THEN (
-							--	--						    SELECT CAST(an.valor as numeric(18,2)) FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
-							--	--						  )  
-							--	--		   WHEN 'IC' THEN (
-							--	--						    SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
-							--	--						  )
-       -- --                   END as total
-
-					  -- --   ,CASE td.codigo WHEN 'A'  THEN (
-							--	--						    SELECT sf.descripcion
-							--	--						    FROM dbo.Anticipo an WITH (NOLOCK) 
-							--	--						    INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
-							--	--						    WHERE an.idAnticipo = cd.idComprobante
-							--	--						 )  
-							--	--		  WHEN 'IC' THEN (
-							--	--						    SELECT sf.descripcion
-							--	--						    FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-							--	--						    INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-							--	--						    WHERE mc.idMovimientoCaja = cd.idComprobante
-							--	--						 )                              
-       -- --                   END as formaCobro
-				   -- --FROM CobroDocumento               cd WITH (NOLOCK)
-				   -- --INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
-				   -- --INNER JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = cd.idTipoDocumento
-				   -- --WHERE ci.idComprobanteIngreso = @id 
-       -- --              AND td.codigo IN ('A','IC')
-			    --END 
             ELSE
                 BEGIN
                     SELECT IIF(cc.codDoc = '01','FV','NE')                                as tipoDoc
@@ -592,36 +540,7 @@ BEGIN
 		            INNER JOIN Contabilidad.CuentaPorCobrar              cc WITH(NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar 
 		            WHERE ci.idComprobanteIngreso = @id
                 END
-		    
 
-		   /** SELECT cc.idCuentaPorCobrar
-                  ,ci.idComprobanteIngreso
-                  ,cu.idCuotaPorCobrar
-                  ,cd.idCobroDetalle
-                  ,FORMAT(cc.fechaEmision, 'dd/MM/yyyy hh:mm')                                                                    as fechaEmisionDoc
-                  ,FORMAT(cc.fechaVencimiento, 'dd/MM/yyyy')                                                                      as fechaVcto
-                  ,IIF(cc.codDoc = '01','FV','NE')                                                                                as tipoDoc
-		          ,cc.serieComprobante
-			      ,cu.nroCuota
-			      ,CAST(cu.cuota as numeric(18,2))                                                                                as cuota
-			      ,CAST(cc.importeTotal as numeric(18,2))                                                                         as importeTotal
-			      ,CAST(hc.abono as numeric(18,2))                                                                                as abonoDoc
-			      ,CAST(hc.saldo - hc.abono as numeric(18,2))                                                                     as saldoDoc
-			      ,CAST(cd.interes as numeric(18,2))                                                                              as interes
-			      ,cd.diasMora
-			      ,CAST(cd.mora as numeric(18,2))                                                                                 as mora
-			      ,CAST(cd.abono as numeric(18,2))                                                                                as abono
-			      ,CAST(cd.saldo - cd.abono as numeric(18,2))																	  as saldo
-			      ,ISNULL(sf.descripcion,ef.descripcion) + '-' + ISNULL(JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro'),'') as ingreso
-		    FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
-			INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
-			INNER JOIN dbo.Cobro				    co WITH (NOLOCK) ON co.idCobro		          = hc.idCobro
-		    INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro                = co.idCobro
-			INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera 
-		     LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
-		    INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuotaPorCobrar       = cd.idCuotaPorCobrar
-		    WHERE ci.idComprobanteIngreso = @id*/
             SELECT 
 	            cuota_pc.idCuentaPorCobrar
                 ,co.idComprobanteIngreso

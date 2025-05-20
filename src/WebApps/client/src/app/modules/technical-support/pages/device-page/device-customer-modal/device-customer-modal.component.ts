@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { DeviceCustomerService } from '@modules/technical-support/services/device.customer.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -27,7 +27,7 @@ export class DeviceCustomerModalComponent implements OnInit {
   }
 
   get() {
-    showLoader();
+    
     this.deviceCustomerService.get(JSON.stringify({
       tipo: 1,
       deviceId: this.params.deviceId
@@ -38,11 +38,11 @@ export class DeviceCustomerModalComponent implements OnInit {
         }
       },
       complete() {
-        hideLoader();
+        
       },
       error(error) {
         console.log(error);
-        hideLoader();
+        
       },
     });
   }

@@ -1,4 +1,3 @@
-
 <style>
     .cellPenditeParcial {
         background-color: rgb(247, 150, 26) !important;
@@ -9,125 +8,106 @@
         background-color: #FF9999 !important;
         color: #000 !important;
     }
-</style> 
+
+    .subgrid-wrapper .ui-grid-cell {
+        font-size: 12px !important
+            /* filas */
+    }
+
+    .subgrid-wrapper .ui-grid-header-cell {
+        font-size: 11px !important
+            /* encabezados */
+    }
+</style>
 <div class="modal-header">
     <h5 class="modal-title">Cobro por Lote</h5>
     <button class="close" ng-click="closeModal()">&times;</button>
 </div>
-<div class="modal-body">  
-    <div class="row">
-        <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
-            <div class="card border rounded">
-                <div class="card-body">
-                     <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                        <dl class="row">
-                            <dt class="col-sm-7">Total Doc.</dt>
-                            <dd class="col-sm-5">
-                                <h5>{{data.importeTotal}}</h5>
-                            </dd> 
-
-                            <dt class="col-sm-7">Abono Anterior:</dt>
-                            <dd class="col-sm-5">
-                                <h5 class="text-success">{{data.totalAbonoAnterior}}</h5>
-                            </dd>  
+<div class="modal-body">
 
 
-                            <dt class="col-sm-7">Saldo Doc</dt>
-                            <dd class="col-sm-5">
-                                <h5>{{data.totalSaldoDoc}}</h5>
-                            </dd> 
+    <div class="card mb-3">
+        <div class="card-body py-3">
 
-                            <dt class="col-sm-7" >Mora</dt>
-                            <dd class="col-sm-5" >
-                                <h5>{{data.totalMora}}</h5>
-                            </dd>
 
-                            <dt class="col-sm-7">Saldo Doc + Mora</dt>
-                            <dd class="col-sm-5">
-                                <h5>{{data.saldoActualDoc}}</h5>
-                            </dd>   
-
-                              
-                        </dl>                
-                    
+            <div class="d-flex justify-content-center" ng-if="configCobro.configDeuda">
+                <div class="d-flex ">
+                    <div class="p-2 flex-fill ">
+                        Mora
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                        <dl class="row">
-                        
-
-                            <dt class="col-sm-7">Saldo</dt>
-                            <dd class="col-sm-5">
-                                <h5> {{data.totalSaldo}}</h5> 
-                            </dd>
-
-                            <dt class="col-sm-7">Abono</dt>
-                            <dd class="col-sm-5">
-                                <h5> {{data.totalValorAbono}}   </h5> 
-                            </dd> 
-
-                            <dt class="col-sm-7" >Cambio</dt>
-                            <dd class="col-sm-5">
-                                <h4> {{data.valorCambio | currency}}</h4> 
-                            </dd>  
-                        </dl>    
+                    <div class="p-2 flex-fill bd-highlight">
+                        <p><strong>Interes:</strong>{{configCobro.interes}} </p>
                     </div>
-                    <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div> -->
-                </div> 
+                    <div class="p-2 flex-fill bd-highlight">
+                        {{configCobro.interes}} x día
+                    </div>
                 </div>
-               
             </div>
-            
 
-           
-            <!-- <div class="d-flex flex-row">
-                <ul class="list-inline">
-                    <li class="list-inline-item">Total</li>
-                    <li class="list-inline-item">
-                        <h5><b>{{data.importeTotal | currency}}</b></h5>
-                    </li> 
-                </ul>
-
-                <ul class="list-inline">
-                    <li class="list-inline-item">Total</li>
-                    <li class="list-inline-item">
-                        <h5><b>{{data.importeTotal | currency}}</b></h5>
-                    </li> 
-                </ul>
-                <ul class="list-inline">
-                    <li class="list-inline-item">Total</li>
-                    <li class="list-inline-item">
-                        <h5><b>{{data.importeTotal | currency}}</b></h5>
-                    </li> 
-                </ul>
-            </div> -->
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            <div class="card border   rounded">
-                <div class="card-header">
-                    <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaCobro()">
-                        <i class="ti-plus"></i> Nuevo Abono
-                    </button>
-                </div>            
-                <div class="card-body d-flex flex-column"> 
-                    <div class="pb-1">
-                        {{dataCuentaPorCobrar.identificacionComprador}}
+            <div class="row">
+                <!-- Totales -->
+                <div class="col-12 ">
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-center">
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Total</small>
+                            <div class="h6 text-dark mb-0">{{data.importeTotal}}</div>
+                        </div>
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Abono Anterior</small>
+                            <div class="h6 text-success mb-0">{{data.totalAbonoAnterior}}</div>
+                        </div>
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Saldo</small>
+                            <div class="h6 text-warning mb-0">{{data.totalSaldoDoc}}</div>
+                        </div>
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Mora</small>
+                            <div class="h6 text-danger mb-0">{{data.totalMora}}</div>
+                        </div>
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Saldo + Mora</small>
+                            <div class="h6 text-danger font-weight-bold mb-0">{{data.saldoActualDoc}}</div>
+                        </div>
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Saldo Actual</small>
+                            <div class="h6 text-dark mb-0">{{data.totalSaldo}}</div>
+                        </div>
+                        <div class="pr-3 mb-2">
+                            <small class="text-muted">Abono Actual</small>
+                            <div class="h6 text-primary mb-0">{{data.totalValorAbono}}</div>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Diferencia</small>
+                            <div class="h6 text-success mb-0">{{data.valorCambio | currency}}</div>
+                        </div>
                     </div>
-                    <div >
-                        {{dataCuentaPorCobrar.razonSocialComprador}}
-                    </div>                    
-                </div>                            
-            </div>        
-        </div> 
-    </div>    
-    <div class="row">
-        <div class="col-12">
-            <div class="card border border"> 
-                <div class="card-header">
-                    <span class="card-title">Cuotas</span>
                 </div>
+            </div>
 
-                <div class="card-body">
+            <!-- Botón "Nuevo Abono" -->
+            <div class="row mt-3">
+                <div class="col-12 text-right">
+                    <button class="btn btn-success btn-sm" ng-click="openModalFormaCobro()">
+                        <i class="fa fa-plus"></i> Nuevo Abono
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+        ui-grid-expandable>
+    </div>
+
+
+    <div class="d-flex flex-column">
+        @* <div class="card border border">
+            <div class="card-header">
+                <span class="card-title">Cuotas</span>
+            </div>
+
+            <div class="card-body">
                 <md-table-container style=" max-height: 400px;">
                     <table md-table>
                         <thead md-head>
@@ -136,18 +116,18 @@
                                 <th md-column>#</th>
                                 <th md-column>Fecha Vcto.</th>
                                 <th md-column>Cuota</th>
-                                <th md-column>Mora</th> 
-                                <th md-column>Abono</th> 
-                                <th md-column>Saldo</th>
                                 <th md-column>Dias Mora</th>
-                                <th md-column>Interes</th>
-                                <th md-column>Mora a cobrar</th>
-                                <th md-column>Valor a cobrar</th>
+                                <th md-column>Mora a Cobrar</th>
+                                <th md-column>Total a cobrar</th>
+                                <th md-column>Abono Anterior</th>
+                                <th md-column>Saldo Anterior</th>
+                                <th md-column>Abono Actual</th>
+                                <th md-column>Saldo Actual</th>
                                 <th md-column>Estado</th>
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat-start="group in selectedDocumentos"  >
+                            <tr md-row ng-repeat-start="group in selectedDocumentos">
                                 <td md-cell colspan="1" class="text-left" ng-click="expandShowCuota(group)">
                                     <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
                                     <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
@@ -158,52 +138,53 @@
                                             {{group.codDoc}}
                                         </div>
                                         <div class="p-1">
-                                           - {{group.serieComprobante}}
+                                            - {{group.serieComprobante}}
                                         </div>
                                         <div class="p-1">
-                                           - {{group.fechaEmision}}
+                                            - {{group.fechaEmision}}
                                         </div>
-                                         <div class="p-1">
+                                        <div class="p-1">
                                             <span class="font-weight-bold">${{group.importeTotal}}</span>
                                         </div>
-                                    </div>                                   
+                                    </div>
                                 </td>
                                 <td md-cell colspan="3"></td>
                                 <td md-cell colspan="1"></td>
                                 <td md-cell colspan="3"></td>
                             </tr>
-                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotasCalculadas" ng-show="group.display" class="shadow rounded">
+                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotasCalculadas"
+                                ng-show="group.display" class="shadow rounded">
                                 <td md-cell>
-                                    <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada" ng-click="showCobroDetalle(cuota)">
+                                    <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada"
+                                        ng-click="showCobroDetalle(cuota)">
                                         <i class="ti-eye"></i>
                                     </button>
                                 </td>
                                 <td md-cell>{{cuota.nroCuota}}</td>
                                 <td md-cell>{{cuota.fechaVencimiento | date:'dd/MM/yyyy'}}</td>
                                 <td md-cell>{{cuota.cuota}}</td>
-                                <td md-cell>{{cuota.mora}}</td> 
-                                <td md-cell>{{cuota.abono}}</td> 
-                                <td md-cell>{{cuota.saldo}}</td>
                                 <td md-cell>{{cuota.diasMoraActual}}</td>
-                                <td md-cell>{{cuota.interesActual}}</td> 
-                                <td md-cell>{{cuota.interesPorMoraActual}}</td> 
-                                <td md-cell class="bg-warning">
-                                     <span class="font-weight-bold">{{cuota.saldoTotalActual}}</span>
-                                </td> 
+                                <td md-cell>{{cuota.mora}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.abono}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.interesActual}}</td>
+                                <td md-cell>{{cuota.interesPorMoraActual}}</td>
+
                                 <td md-cell>{{cuota.estado}}</td>
                             </tr>
                         </tbody>
                     </table>
                 </md-table-container>
-                </div>   
             </div>
+        </div> *@
 
-            <div class="card border border">
-                <div class="card-header">
-                        <span class="card-title">Datos de cobro</span>
-                </div>
-                <div class="card-body">
-                    <md-table-container style=" max-height: 400px;">
+        <div class="card border border mt-3 mb-3">
+            <div class="card-header">
+                <span class="card-title">Datos de cobro</span>
+            </div>
+            <div class="card-body">
+                <md-table-container style=" max-height: 400px;">
                     <table md-table>
                         <thead md-head>
                             <tr md-row>
@@ -214,11 +195,11 @@
                                 <th md-column><span>Valor</span></th>
                                 <th md-column><span>Tipo Doc.</span></th>
                                 <th md-column><span>Nro.</span></th>
-                                <th md-column><span>Abono</span></th> 
+                                <th md-column><span>Abono</span></th>
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="item in datosCobro" >
+                            <tr md-row ng-repeat="item in datosCobro">
                                 <td md-cell>
                                     <button class="btn btn-danger btn-xs" ng-click="askToDeleteFormaCobro(item)">
                                         <i class="mdi mdi-delete"></i>
@@ -227,94 +208,36 @@
                                         <i class="fas fa-info-circle"></i>
                                     </button>
 
-                                    
+
                                 </td>
                                 <td md-cell>{{$index+1}}</td>
-                                <td md-cell>{{item.fechaEmision | date:'dd/MM/yyyy  h:mma'}}</td>
+                                <td md-cell>{{item.fechaEmision | date:'dd/MM/yyyy h:mma'}}</td>
                                 <td md-cell>{{item.subEntidadFinanciera}}</td>
                                 <td md-cell>{{item.valorAbono | currency}}</td>
                                 <td md-cell>{{item.tipoDocumento}}</td>
                                 <td md-cell>{{item.nro}}</td>
-                                <td md-cell>{{item.abonoCuota | currency}}</td> 
-                            </tr> 
+                                <td md-cell>{{item.abonoCuota | currency}}</td>
+                            </tr>
                             <tr class="text-center" ng-if="datosPago.length === 0">
                                 <td colspan="8">No hay datos</td>
                             </tr>
                         </tbody>
                     </table>
                 </md-table-container>
-                </div>
-
-            </div>
-
-
-
-            <div class="form-group ">
-                <label for="observacion">Observación: </label>
-                <input type="text" class="form-control border-select" ng-model="dataCuentaPorCobrar.observacion" placeholder="...">
             </div>
 
         </div>
 
-        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12" ng-if="false">
-            <div class="card">
-                <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaCobro()">
-                    <i class="ti-plus"></i> Nuevo Abono
-                </button>
 
-                <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Total:
-                        <span>
-                            <h5>
-                                {{data.importeTotal | currency}}
-                            </h5>
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-info" ng-if="data.totalAbonoAnterior>0">
-                        Abono Anterior:
-                        <span>
-                            {{data.totalAbonoAnterior | currency}}
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Abono
-                        <span>
-                            {{data.totalValorAbono | currency}}
-                        </span>
-                    </li>
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Saldo Doc
-                        <span>
-                            {{data.totalSaldoDoc | currency}}
-                        </span>
-
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Mora
-                        <span>
-                            {{data.totalMora | currency}}
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Saldo:
-                        <span>
-                            {{data.totalSaldo | currency}}
-                        </span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">
-                        Cambio:
-                        <span>
-                            {{data.valorCambio | currency}}
-                        </span>
-                    </li>
-                </ul>
-
-            </div>
+        <div class="form-group ">
+            <label for="observacion">Observación: </label>
+            <input type="text" class="form-control border-select" ng-model="dataCuentaPorCobrar.observacion"
+                placeholder="...">
         </div>
-    </div>  
+    </div>
 </div>
-<div class="modal-footer"> 
+<div class="modal-footer">
     <button type="button" class="btn btn-success" ng-click="save()"> <i class="ti-save"></i> Guardar</button>
-    <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>  
-</div> 
+    <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>
+</div>

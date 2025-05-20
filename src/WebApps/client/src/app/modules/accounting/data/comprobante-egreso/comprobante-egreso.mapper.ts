@@ -1,16 +1,16 @@
-import { EntidadFinanciera } from "@accounting/core/domain/entidad-financiera.interface";
-import { SubEntidadFinancieraSelectHtmlOnly } from "@accounting/core/domain/subentidad-financiera.interface";
-import { BancoSelectOnly } from "@accounting/core/domain/banco.interface";
-import { EstadoPago } from "@accounting/core/domain/estado-pago.interface";
+import { EntidadFinanciera } from "@accounting/domain/models/entidad-financiera.interface";
+import { SubEntidadFinancieraSelectHtmlOnly } from "@accounting/domain/models/subentidad-financiera.interface";
+import { BancoSelectOnly } from "@accounting/domain/models/banco.interface";
+import { EstadoPago } from "@accounting/domain/models/estado-pago.interface";
 import { groupCitiesByProvinceUtil } from "@shared/utils/group-cities-by-province.util";
-import { CuotaPorPagarLista } from "@accounting/core/domain/cuota-por-pagar.interface";
-import {CuentaPorPagarLista} from "@accounting/core/domain/cuenta-por-pagar.model";
+import { CuotaPorPagarLista } from "@accounting/domain/models/cuota-por-pagar.interface";
+import {CuentaPorPagarLista} from "@accounting/domain/models/cuenta-por-pagar.model";
 import {
   CuentaPorPagarEstado, CuentaPorPagarHistorial,
   CuotaPorPagarEstado,
   FormaPago
-} from "@accounting/core/domain/comprobante-egreso.interface";
-import {PagoDetalle} from "@accounting/core/domain/pago-detalle.model";
+} from "@accounting/domain/models/comprobante-egreso.model";
+import {PagoDetalle} from "@accounting/domain/models/pago-detalle.model";
 import {getValidId, isValidField} from "@core/utils/utils";
 import {formatDateToString} from "@core/utils/date.util";
 

@@ -15,4 +15,5 @@ export interface BodegaEstablecimiento {
     bodega: string
     defaultEstab:  boolean
     defaultBodega: boolean
+  correo?: string
 }

@@ -9,7 +9,7 @@
         let service = {}
         
         service.getAll = function(query){
-            return mainService.getData('get', url + 'Get/' + query , null, true).then(response => {
+            return mainService.getData('get', url + 'Get/' + query ).then(response => {
                 if(response.code==="0"){
                     throw response
                 }
@@ -26,7 +26,7 @@
         }
 
         service.create = function(data){
-            return mainService.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true).then(response => {
+            return mainService.getData('post', url + 'Insert?json=' + JSON.stringify(data)).then(response => {
                 if(response.code==="0"){
                     return response;
                 }
@@ -38,7 +38,7 @@
         }
 
         service.update = function(id, data){
-            return mainService.getData('put', url + 'Update/' + id +'/?json=' + JSON.stringify(data), null, true).then(response => {
+            return mainService.getData('put', url + 'Update/' + id +'/?json=' + JSON.stringify(data)).then(response => {
                 if(response.code==="0"){
                     return response;
                 }
@@ -50,7 +50,7 @@
         }
 
         service.delete = function(id){
-            return mainService.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+            return mainService.getData('delete', url + 'Delete/' + id).then(response => {
                 if(response.code==="0"){
                     return response;
                 }

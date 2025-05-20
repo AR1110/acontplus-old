@@ -7,18 +7,20 @@ import { ValorAbonoComponent } from '@accounting/ui/comprobante-ingreso/componen
 import { FechaEmisionComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/fecha-emision/fecha-emision.component';
 import { BancoSelectComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/banco-select/banco-select.component';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { PaymentTypeCode } from '@accounting/core/enums/accounting.constants';
+import { PaymentTypeCode } from '@accounting/domain/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
 import {
   PaymentSubType,
   PaymentType,
-} from '@accounting/core/domain/payment-type.model';
-import { PaymentData } from '@accounting/core/domain/comprobante-ingreso';
+} from '@accounting/domain/models/payment-type.model';
+import { PaymentData } from '@accounting/domain/models/comprobante-ingreso';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import Swal from 'sweetalert2';
+import { MatButton } from '@angular/material/button';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
@@ -30,21 +32,23 @@ export const _filter = (opt: any[], value: string): string[] => {
 };
 
 @Component({
-    selector: 'app-forma-cobro-modal',
-    imports: [
-        ReactiveFormsModule,
-        NgbAccordionModule,
-        FormsModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        SubEntidadFinancieraComponent,
-        ValorAbonoComponent,
-        FechaEmisionComponent,
-        BancoSelectComponent,
-        AsyncPipe,
-    ],
-    templateUrl: './forma-cobro-modal.component.html',
-    styles: ``
+  selector: 'app-forma-cobro-modal',
+  imports: [
+    ReactiveFormsModule,
+    NgbAccordionModule,
+    FormsModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    SubEntidadFinancieraComponent,
+    ValorAbonoComponent,
+    FechaEmisionComponent,
+    BancoSelectComponent,
+    AsyncPipe,
+    MatButton,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './forma-cobro-modal.component.html',
+  styles: ``,
 })
 export class FormaCobroModalComponent {
   @Input() params = {

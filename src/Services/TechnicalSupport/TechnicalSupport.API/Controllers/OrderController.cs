@@ -2,12 +2,10 @@
 
 public class OrderController : BaseApiController
 {
-    private readonly IMapper _mapper;
     private readonly IOrderService _orderService;
 
-    public OrderController(IOrderService orderService, IMapper mapper)
+    public OrderController(IOrderService orderService)
     {
-        _mapper = mapper;
         _orderService = orderService;
     }
 
@@ -18,7 +16,7 @@ public class OrderController : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) { return BadRequest("Cant get Data"); }
+        if (response == null) return BadRequest("Cant get Data");
 
         return Ok(response);
     }
@@ -41,7 +39,7 @@ public class OrderController : BaseApiController
                 )
             }
         });
-        if (response == null) { return BadRequest("No response"); }
+        if (response == null) return BadRequest("No response");
 
         return Ok(response);
     }
@@ -64,7 +62,7 @@ public class OrderController : BaseApiController
                 )
             }
         });
-        if (response == null) { return BadRequest("No response"); }
+        if (response == null) return BadRequest("No response");
 
         return Ok(response);
     }

@@ -1,14 +1,24 @@
 export enum GlobalRoutes {
   ComprasReportes = 'purchase/reports',
   ComprasReportesRecepcion = 'purchase/reception-reports',
+
+  //Configuration Start
   ConfigDocConfig = 'config/doc-config-page',
   ConfigEstablishment = 'config/establishment',
-  ConfigGeneralConfig = 'config/general-config-page',
+  ConfigGeneralConfig = 'config/general-config',
   ConfigUserProfile = 'config/user-profile-page',
-  ConfigUserCustomer = 'config/user-customer-page',
-  ConfigUserCustomerRequest = 'config/user-customer-request-page',
+  ConfigUserCustomer = 'config/user-customer',
+  ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
+  ConfigImportacion = 'config/excel-import',
+  FirmaElectronica='config/electronic-signature',
+  TiempoCredito='config/credit-time',
+  //Configuration End
 
+  //Facturación start
   FactElectAts = 'billing/ats',
+  FactElectGuiaRemision='billing/guia-remision',
+  //Facturacion end
+
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
   InventarioMeasure = 'inventory/measure',
@@ -32,7 +42,6 @@ export enum GlobalRoutes {
   ConfigWizardConfig = 'config/wizard-config',
   ConfigTiempoCredito = 'config/tiempo-credito',
   InventarioReporte = 'inventory/report',
-  ContabilidadCarteraCliente = 'accounting/cartera-cliente',
   VentasReportVentaReporte = 'sale/reports/sale-report',
   FactElectReport = 'billing/fact-elect-report',
 
@@ -46,6 +55,7 @@ export enum GlobalRoutes {
   Etiqueta = 'inventory/tags',
   ArticuloFraccionado = 'inventory/fracc-product',
   TransferenciaBodega = 'inventory/transferencia-bodega',
+  Bodega='inventory/warehouse',
 
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',
@@ -73,8 +83,11 @@ export enum GlobalRoutes {
   ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
   ContabilidadCaja = 'accounting/cashbox-page',
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
-  ContabilidadAccountingSummary = 'accounting/resumen-contable',
-  ContabilidadMovimientoCajaReport = 'accounting/movimiento-caja-report',
+  ContabilidadAccountingSummary = 'accounting/reports/resumen-contable',
+  ContabilidadMovimientoCajaReport = 'accounting/reports/movimiento-caja-report',
+  ContabilidadComprobanteEgreso = 'accounting/comprobante-egreso',
+  ContabilidadCarteraCliente = 'accounting/reports/cartera-cliente',
+  ContabilidadPaymentsReport='accounting/reports/payments',
 
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',
@@ -82,4 +95,8 @@ export enum GlobalRoutes {
   //Customer
   Cliente = 'customer/company-customer',
   CommonEmailQueue = 'common/email-queue',
+
+  //BarberShop
+  BarberShopSeat = 'barber-shop/seat',
+  BarberShopTicket = 'barber-shop/ticket',
 }

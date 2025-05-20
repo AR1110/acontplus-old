@@ -12,7 +12,17 @@
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [showSelectBox]="true"
+    (rowSelected)="onRowSelected($event)"
   ></app-mat-dynamic-table>
 </ng-template>
 <ng-template #templateOp let-item="item"></ng-template>
-<ng-template #actionsTemplate></ng-template>
+<ng-template #actionsTemplate>
+  @if (this.documentsSelected.length > 0) {
+    <button mat-raised-button (click)="selectDocuments()">
+      <mat-icon aria-hidden="false" aria-label="Check Icon" fontIcon="check"
+        ></mat-icon
+      >
+      Seleccionar Documentos
+    </button>
+  }
+</ng-template>

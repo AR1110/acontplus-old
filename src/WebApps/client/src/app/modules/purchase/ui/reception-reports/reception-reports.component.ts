@@ -1,24 +1,33 @@
-import { Component, inject } from '@angular/core';
+
+import { Component, inject, signal } from '@angular/core';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import {
-  CODE_REPORT,
+  REPORT_CODE,
   DOC_TYPE_SRI,
-  FORMAT_REPORT,
+  REPORT_FORMAT,
 } from '@core/constants/global.constants';
-import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/domain/models/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { SupplierSearch } from '@customer/core/domain/supplier.interface';
+import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
+import { MatDynamicCardComponent } from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatCheckbox } from "@angular/material/checkbox";
+import { MatDivider } from "@angular/material/divider";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import {SupplierSearch} from "@customer/domain/models/supplier.interface";
 
+type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
+type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
 @Component({
   selector: 'app-reception-reports',
   imports: [
@@ -27,16 +36,21 @@ import { SupplierSearch } from '@customer/core/domain/supplier.interface';
     DateRangeSelectionComponent,
     UserSearchComponent,
     BreadcrumbComponent,
+    ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatCheckbox,
+    MatDivider,
+    MatFormFieldModule,
+    MatSelectModule
+
   ],
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })
 export class ReceptionReportsComponent {
-  establecimientos: Array<
-    Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
-  > = [];
-  documentTypes: Array<Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>> = [];
-  subcategories: Subcategory[] = [];
+  establecimientos = signal<EstabSelect[]>([])
+  documentTypes = signal<TipoDocSelect[]>([])
+  subcategories = signal<Subcategory[]>([]);
   isSearchSupplierSimple = true;
   dataSearch = {
     codEstab: '',
@@ -73,15 +87,15 @@ export class ReceptionReportsComponent {
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {
       const { establecimientos, documentTypes, subcategories } = response;
-      this.establecimientos = establecimientos;
-      this.documentTypes = documentTypes;
-      this.subcategories = subcategories;
-      if (this.establecimientos.length > 0) {
-        this.dataSearch.codEstab = this.establecimientos[0].codEstab;
+      this.establecimientos.set(establecimientos);
+      this.documentTypes.set(documentTypes);
+      this.subcategories.set(subcategories);
+      if (this.establecimientos().length > 0) {
+        this.dataSearch.codEstab = this.establecimientos()[0].codEstab;
       }
-      if (this.documentTypes.length > 0) {
+      if (this.documentTypes().length > 0) {
         this.dataSearch.codDoc =
-          this.documentTypes.find(
+          this.documentTypes().find(
             (tipoDoc) => tipoDoc.codigoSri === DOC_TYPE_SRI.F,
           )?.codigoSri || '';
       }
@@ -93,7 +107,7 @@ export class ReceptionReportsComponent {
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.numeroIdentificacion = '';
   }
 
@@ -103,7 +117,7 @@ export class ReceptionReportsComponent {
     this.dataSearch.userId = data.idUsuario;
   }
 
-  userResultEmptyInput($event: any) {
+  userclearSearch($event: any) {
     this.dataSearch.userId = 0;
   }
 
@@ -113,27 +127,32 @@ export class ReceptionReportsComponent {
   }
 
   pdf() {
-    this.getReport(FORMAT_REPORT.PDF);
+    this.getReport(REPORT_FORMAT.PDF);
   }
 
   excel() {
-    this.getReport(FORMAT_REPORT.EXCEL);
+    this.getReport(REPORT_FORMAT.EXCEL);
   }
 
   getDataReport() {
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.NC)
       return {
         tipo: 3,
-        codigo: CODE_REPORT.RRNC,
+        codigo: REPORT_CODE.RRNC,
       };
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.R)
       return {
         tipo: 4,
-        codigo: CODE_REPORT.RRG,
+        codigo: REPORT_CODE.RRG,
+      };
+    if (this.dataSearch.codDoc === DOC_TYPE_SRI.ND)
+      return {
+        tipo: 5,
+        codigo: REPORT_CODE.RRND,
       };
     return {
       tipo: 2,
-      codigo: CODE_REPORT.RRF,
+      codigo: REPORT_CODE.RRF,
     }; //Factura por defecto
   }
 
@@ -141,7 +160,7 @@ export class ReceptionReportsComponent {
     this.dataSearch.ckRetencion = null;
   }
 
-  getReport(format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL) {
+  getReport(format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL) {
     if (
       this.dataSearch.supplierChecked &&
       !isValidField(this.dataSearch.numeroIdentificacion)

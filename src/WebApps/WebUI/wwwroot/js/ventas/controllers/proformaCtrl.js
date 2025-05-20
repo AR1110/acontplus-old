@@ -324,15 +324,15 @@
         $scope.openModalEdit = async (item) => {
             try {
 
-                let paramsPermission = getParamsPermission(item, 'E');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+                // let paramsPermission = getParamsPermission(item, 'E');
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
 
-                if (!response) return
+                // if (!response) return
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
-                }
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return
+                // }
 
                 showLoader();
                 proformaSvc.getId(item.idDocumento).then(response => {
@@ -350,9 +350,9 @@
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
                             $scope.getProformas();
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
-                            }
+                            // if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                            //     userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                            // }
 
                         }
                     })
@@ -407,15 +407,15 @@
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
-                let paramsPermission = getParamsPermission(item, 'A');
-                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+                // let paramsPermission = getParamsPermission(item, 'A');
+                // let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
 
-                if (!response) return
+                // if (!response) return
 
-                if (response && response.code === "2") {
-                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
-                    return
-                }
+                // if (response && response.code === "2") {
+                //     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
+                //     return
+                // }
 
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
@@ -448,9 +448,9 @@
 
 
                             //Una vez actualizado el documento  
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
-                            }
+                            // if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                            //     userCustomerPermissionSvc.updateRequestKey(paramsPermission)
+                            // }
 
                             $scope.getProformas();
                         }
@@ -700,11 +700,7 @@
             $scope.gridOptions.data.push(nuevaFilaAgregada)
             setCalculoTotales('precioUnitario', nuevaFilaAgregada, 0);
             focusColumnCantidad(getIndexRow(nuevaFilaAgregada), nuevaFilaAgregada.llevaInventario);
-            updateRefProductoVenta()
-            tS.toastr({
-                type: 'success',
-                message: 'Agregado Correctamente'
-            })
+            updateRefProductoVenta() 
         }
 
         function updateItem(nuevaFilaAgregada) {
@@ -729,12 +725,7 @@
 
             // Actualiza la referencia del producto vendido
             updateRefProductoVenta();
-
-            // Muestra una notificación de éxito
-            tS.toastr({
-                type: 'success',
-                message: 'Fila actualizada correctamente'
-            });
+ 
         }
 
         
@@ -792,6 +783,7 @@
             return items.map(item => {
                 return {
                     ...item,
+                    uniqueRowDetalle: fS.generateUuidv4(),
                     idProformaDetalle: params.action === "DUPLICAR" ? 0 : item.idProformaDetalle,
                     precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                 }
@@ -1759,7 +1751,7 @@
         * @param {*} rowEntity datos del item 
         * @param {*} oldValue valor anterior de la columna
         */
-        function setCalculoTotales(colField, rowEntity, oldValue) {
+        function setCalculoTotales(colField, rowEntity, oldValue) { 
 
             //calculoColDef recibbe params obj: {rowEntity, oldValue, decimal, idTarifa, columnDefs}
             let objCalculo = gridOptionsSvc.calculoColDef({
@@ -1975,6 +1967,14 @@
             if ($scope.data.total  <= 0) {
                 tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                 return
+            }
+
+            if( $scope.infoAdicionalDocumento.some(item=>!fS.isValidField(item.valor))){
+                tS.toastr({
+                    type: 'warning',
+                    message: 'En información adicional del documento una fila no tiene valor'
+                })
+                return 
             }
 
             return true;

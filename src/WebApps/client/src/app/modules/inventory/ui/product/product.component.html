@@ -1,30 +1,36 @@
 <app-breadcrumb />
 
 
-<mat-card appearance="outlined">
-  <mat-card-content>
+<app-mat-dynamic-card>
     <div class="d-grid gap-2">
 
 
     <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
 
       <div class="col">
+        <div class="hstack gap-2">
+          <mat-form-field class="w-100">
+            <mat-label>Modo Filtro</mat-label>
+            <mat-select [(ngModel)]="dataSearch().filterMode"
+                        (selectionChange)="refresh()">
+              <mat-option [value]="4">Descripción</mat-option>
+              <mat-option [value]="2">Código</mat-option>
+              <mat-option [value]="3">Código Barra</mat-option>
+              <mat-option [value]="5">Código Auxiliar</mat-option>
+              <mat-option [value]="1">Todos</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="w-100">
+            <mat-label>Buscar</mat-label>
+            <input matInput  [(ngModel)]="dataSearch().textSearch" (keydown.enter)="onEnter($event)" placeholder="...">
+            <span matSuffix>
+              <button type="button" mat-icon-button (click)="refresh()">
+                <mat-icon  >search</mat-icon>
+              </button>
+            </span>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field>
-          <mat-label>Buscar</mat-label>
-          <input matInput  (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="...">
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-
-<!--        <div class="form-group w-75">-->
-<!--          <div class="input-group mb-3">-->
-<!--            <input type="search"   class="form-control"-->
-<!--                   (keyup)="onSearch($event)" (input)="onSearch($event)" placeholder="Ej: Clavo...">-->
-<!--            <span class="input-group-text" id="basic-addon1">-->
-<!--              <mat-icon>search</mat-icon>-->
-<!--            </span>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
       <div class="col  ">
         <div class="d-flex flex-row gap-1 justify-content-end">
@@ -189,7 +195,7 @@
       [templateOp]="templateOp"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
-      (onPageEvent)="handlePageEvent($event)"
+      (pageEvent)="handlePageEvent($event)"
     >
     </app-mat-dynamic-table>
 
@@ -222,7 +228,7 @@
         </button>
       </mat-menu>
 
-      <button mat-icon-button matTooltip="Editar">
+      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">
@@ -235,5 +241,4 @@
       <div [innerHTML]="item.estado | primaryStatus"></div>
     </ng-template>
 
-  </mat-card-content>
-</mat-card>
+</app-mat-dynamic-card>

@@ -95,9 +95,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
         try {
             showLoader();
             getDataFormProforma().then(response => {
-                const [dataForm, data] = response;
-                console.log(response)
-
+                const [dataForm, data] = response; 
                 const { tiemposCredito, formasPagoSri, config, vendedores } = dataForm;
                 const { cliente, comprobante, items, infoAdicionalDocumento } = data;
 
@@ -137,10 +135,10 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
                 $scope.dataFormaPago.total = $scope.comprobante.total;
 
-                if (!$scope.config.multipleVendedor) { 
+                if (!$scope.config.multipleVendedor) {
                     let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
                     $scope.comprobante.idUsuario = dataUsuario.idUsuario;
-                } 
+                }
 
             }).catch(error => {
                 console.log(error)
@@ -195,13 +193,13 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                     $scope.comprobante.fechaVencimiento = fS.getFechaVencimiento($scope.comprobante.fechaEmision, dataTiempoCredito.diasCredito)
 
-                    $scope.dataFormaPago.total = $scope.comprobante.total; 
+                    $scope.dataFormaPago.total = $scope.comprobante.total;
                 }
 
-                if (!$scope.config.multipleVendedor) { 
+                if (!$scope.config.multipleVendedor) {
                     let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
                     $scope.comprobante.idUsuario = dataUsuario.idUsuario;
-                } 
+                }
 
 
             }).catch(error => {
@@ -426,6 +424,14 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
     }
 
 
+    function setDataChangeFormaPago() {
+        let dataFormaPago = $scope.formasPagoSri.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
+        let el = document.getElementById('infoReferenciaFormaPago')
+        if (el) {
+        //    el.innerHTML = dataFormaPago.infoReferencia;
+        }
+    }
+
     $scope.saveInvoiceOfProforma = async function () {
         try {
 
@@ -435,60 +441,137 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
             if (cuotas && cuotas.length === 0) return
 
-            showLoader();
-            let serieComprobante = await facturaSvc.generateSerieComprobante({
-                idPuntoEmision: $scope.comprobante.idPuntoEmision,
-            })
-                .catch(error => console.log(error))
-                .finally(() => hideLoader())
-            if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
+            Swal.fire({
+                title: '<small>Seleccionar forma de pago: </small>',
+                html: ` 
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Forma de Pago</th>
+                                    <th>Plazo</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select ng-model="dataFormaPago.idFormaPagoSri" id="formaDePago" class="form-control border-select" name="formaDePago">
+                                            ${$scope.formasPagoSri.map((item) => `<option value="${item.idFormaPagoSri}">
+                                                ${item.descripcion}
+                                            </option>`)}
+                                            
+                                        </select>
+                                        <span class="d-flex justify-content-center text-info" id="infoReferenciaFormaPago"></span> 
+                                    </td>
+                                    <td width="100px">
+                                        ${$scope.dataFormaPago.plazo} ${$scope.dataFormaPago.plazo > 1 ? 'Días' : 'Día'}
+                                    </td>
+                                    <td width="100px">
+                                        $${$scope.dataFormaPago.total}
+                                    </td> 
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>  
+                `,
+                didOpen: () => {
+                    let el = document.getElementById('formaDePago');
+                    if ($scope.companyCustomer.idFormaPagoSri > 0) {
+                        $scope.dataFormaPago.idFormaPagoSri = $scope.companyCustomer.idFormaPagoSri;
+                    }
+                    if (el) {
+                        el.value = $scope.dataFormaPago.idFormaPagoSri;
+                        setDataChangeFormaPago();
 
-            const customSwal = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger ml-2'
+                        el.addEventListener('change', () => {
+                            $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                            setDataChangeFormaPago();
+                        })
+                    }
+
                 },
-                buttonsStyling: false
-            })
-
-            let { isConfirmed } = await customSwal.fire({
-                title: '<small>Guardar Factura</small>',
-                html: `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
+                preConfirm: () => {
+                    let idFormaPagoSri = document.getElementById('formaDePago').value;
+                    if (!(idFormaPagoSri > 0)) {
+                        tS.toastr('warning', 'Seleccione la forma de pago!')
+                        return false;
+                    }
+                },
                 allowOutsideClick: false,
-                allowEscapeKey: false
+                allowEscapeKey: false,
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Continuar!',
+                cancelButtonText: 'Cancelar!'
+            }).then(async result => {
+                if (result.isConfirmed) {
+
+                    showLoader();
+                    let serieComprobante = await facturaSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.comprobante.idPuntoEmision,
+                    })
+                        .catch(error => console.log(error))
+                        .finally(() => hideLoader())
+                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+
+
+                    const customSwal = Swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-danger ml-2'
+                        },
+                        buttonsStyling: false
+                    })
+
+                    let { isConfirmed } = await customSwal.fire({
+                        title: '<small>Guardar Factura</small>',
+                        html: `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Guardar',
+                        cancelButtonText: 'No, cancelar!',
+                        reverseButtons: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+
+                    if (!isConfirmed) return
+
+                    let query = proformaSvc.queryMapperConvertToDoc({
+                        id,
+                        codDocDestino: DOC_TYPE.FE, //documento destino
+                        codDoc: DOC_TYPE.FV_SRI,//documento origen 
+                        comprobante: $scope.comprobante,
+                        detalles: $scope.detalles,
+                        infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                        cuotas,
+                        dataFormaPago: $scope.dataFormaPago
+                    })
+
+                    showLoader();
+                    proformaSvc.convertToDoc(query).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $uibModalInstance.close(response)
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
+
+
+
+                }
+
             })
 
-            if (!isConfirmed) return
 
-            let query = proformaSvc.queryMapperConvertToDoc({
-                id,
-                codDocDestino: DOC_TYPE.FE, //documento destino
-                codDoc: DOC_TYPE.FV_SRI,//documento origen 
-                comprobante: $scope.comprobante,
-                detalles: $scope.detalles,
-                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                cuotas,
-                dataFormaPago: $scope.dataFormaPago
-            })
 
-            showLoader();
-            proformaSvc.convertToDoc(query).then(response => {
-                if (response.code === '0') {
-                    fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    $uibModalInstance.close(response)
-                }
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
 
 
         } catch (error) {

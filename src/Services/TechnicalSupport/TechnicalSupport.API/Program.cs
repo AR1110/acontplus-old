@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
@@ -14,21 +12,13 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5012"); // Linux Port
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+app.UseResponseCompression();
+
+app.UseHttpsRedirection();
 
 app.UseStatusCodePages();
 
@@ -37,8 +27,6 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseStaticFiles();
 
 app.MapControllers().RequireAuthorization();
 

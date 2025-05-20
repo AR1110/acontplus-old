@@ -2,7 +2,8 @@ import { Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
 
 import { HttpClient } from "@angular/common/http";
-import { CONFIG_PATHS } from "../../enums/config.enums";
+import { CONFIG_PATHS } from "@modules/config/domain/enums/config.enums";
+import {ApiResponse} from "@core/models/api-response";
 
 
 @Injectable({
@@ -22,7 +23,7 @@ export class UserPermissionService {
   checkHasPermission<T>(params: T) {
 
     let paramsStr = JSON.stringify(params)
-    return this.http.get(`${this.url}CheckHasPermission/${paramsStr}`)
+    return this.http.get<ApiResponse>(`${this.url}CheckHasPermission/${paramsStr}`)
   }
 
 }

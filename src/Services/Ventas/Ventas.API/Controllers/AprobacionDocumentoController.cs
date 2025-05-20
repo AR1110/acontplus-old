@@ -41,7 +41,8 @@ public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiC
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await svc.DeleteAsync(parameters);
         return Ok(response);
     }

@@ -2,28 +2,21 @@
   "profiles": {
     "Mechanical.Api": {
       "commandName": "Project",
-      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7023;http://localhost:5214"
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": false,
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_HTTP_PORTS": "8000"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
     }
   },
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:51708/",
-      "sslPort": 44309
-    }
-  }
+  "$schema": "https://json.schemastore.org/launchsettings.json"
 }

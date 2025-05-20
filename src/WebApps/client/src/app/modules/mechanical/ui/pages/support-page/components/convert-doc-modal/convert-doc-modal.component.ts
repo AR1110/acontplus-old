@@ -8,11 +8,11 @@ import { ToasterService } from '@core/services/toaster.service';
 import { addDayToDate, ajustarFechaEmisionModificada, dateIsAfterCurrentDate, isDateValid } from '@core/utils/date.util';
 
 import { isValidField } from '@core/utils/utils';
-import { isValidGeneratorQuota } from '@accounting/utils/calculate-quota.util';
+import { isValidGeneratorQuota } from '@accounting/domain/utils/calculate-quota.util';
 import { InvoiceService } from '@billing/services/invoice.service';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
-import { notaEntregaAdapter } from '@sale/adapters/nota-entrega/nota-entrega.adapter';
-import { NotaEntregaService } from '@sale/services/nota-entrega.service';
+import { notaEntregaAdapter } from '@sale/data/nota-entrega/nota-entrega.adapter';
+import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormaPagoSri } from '@shared/models/forma-pago-sri';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
@@ -20,13 +20,15 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 
 import Swal from 'sweetalert2';
 import { InvoiceAdapter } from '@billing/data/invoice/mappers/invoice.adapter';
-import { TiempoCredito } from '@accounting/core/domain/tiempo-credito.interface';
+import { TiempoCredito } from '@accounting/domain/models/tiempo-credito.interface';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
     selector: 'app-convert-doc-modal',
     imports: [
         CommonModule,
         TabulatorComponent,
+        ThemeButtonComponent,
     ],
     templateUrl: './convert-doc-modal.component.html'
 })

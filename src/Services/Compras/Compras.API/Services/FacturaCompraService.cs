@@ -3,10 +3,11 @@
 public class FacturaCompraService(IAdoRepository _repository) : IFacturaCompraService
 {
     private const string moduleName = "Compra.Factura_";
+
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync($"{moduleName}Get", parameters);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
+        if (ds.Tables[0].Rows.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }
@@ -23,7 +24,7 @@ public class FacturaCompraService(IAdoRepository _repository) : IFacturaCompraSe
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync($"{moduleName}Get_Id", parameters, false);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
+        if (ds.Tables[0].Rows.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds, true);
     }

@@ -7,16 +7,24 @@ import { AtsService } from '@billing/services/ats.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { addDay, monthStart } from '@formkit/tempo';
+import { MatCardModule } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-ats',
-    imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent],
-    templateUrl: './ats.component.html',
-    styles: ``
+  selector: 'app-ats',
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    MatCardModule,
+    ThemeButtonComponent,
+  ],
+  templateUrl: './ats.component.html',
+  styles: ``,
 })
 export class AtsComponent {
-  fromDate: any =  monthStart(addDay(monthStart(new Date()),-1));
-  toDate: any =  addDay(monthStart(new Date()),-1);
+  fromDate: any = monthStart(addDay(monthStart(new Date()), -1));
+  toDate: any = addDay(monthStart(new Date()), -1);
   dataSearch = {
     fromDate: formatDateToString(this.fromDate),
     toDate: formatDateToString(this.toDate),
@@ -24,8 +32,6 @@ export class AtsComponent {
   };
   private readonly _atsSvc = inject(AtsService);
   private readonly _tS = inject(ToasterService);
-
-  ngOnInit() {}
 
   onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;

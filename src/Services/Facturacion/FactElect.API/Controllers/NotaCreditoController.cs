@@ -39,7 +39,8 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, };
+        var parameters = new Dictionary<string, object>
+            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await notaCreditoService.DeleteAsync(parameters));
     }
 }

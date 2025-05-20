@@ -7,9 +7,9 @@ import { Brand } from '@inventory/domain/models/brand.model';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { FORMAT_REPORT } from '@core/constants/global.constants';
+import {REPORT_FORMAT, SEPARADORES_REGEX} from '@core/constants/global.constants';
 import { ToasterService } from '@core/services/toaster.service';
-import { getValidId, isValidField } from '@core/utils/utils';
+import {getValidId, isValidEmail, isValidField} from '@core/utils/utils';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { SharedService } from '@core/services/shared.service';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
@@ -23,15 +23,18 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatUserSearchComponent } from '@shared/components/mat-user-search/mat-user-search.component';
-import { CompanyCustomerSearchMatComponent } from '@customer/ui/company-customer/components/company-customer-search-mat/company-customer-search-mat.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { FileButtonsComponent } from '@shared/components/file-buttons/file-buttons.component';
+import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
+import { NgTemplateOutlet } from '@angular/common';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {CompanyCustomer} from "@customer/domain/models/company-customer";
 
 const imports = [
   NgbNavModule,
@@ -45,21 +48,22 @@ const imports = [
   MatSelectModule,
   MatFormFieldModule,
   MatInputModule,
+  NgTemplateOutlet,
   BreadcrumbComponent,
   SubCategoryGroupComponent,
   ProductSearchComponent,
   DateRangeSelectionComponent,
   SupplierSearchComponent,
-  MatUserSearchComponent,
-  CompanyCustomerSearchMatComponent,
-  FileButtonsComponent,
+  UserSearchComponent,
+  CompanyCustomerSearchComponent,
+  ReportButtonsComponent,
   //Directives
   ActionEnviarCorreoDirective,
 ];
 
 @Component({
   selector: 'app-inventory-report',
-  imports,
+  imports: [imports, ReportButtonsComponent, ThemeButtonComponent],
   templateUrl: './inventory-report.component.html',
   styles: ``,
 })
@@ -71,6 +75,7 @@ export class InventoryReportComponent {
   private readonly _tokenUseCase = inject(TokenUseCase);
 
   private readonly _productUseCase = inject(ProductUseCase);
+  protected readonly FORMAT_REPORT = REPORT_FORMAT;
 
   isReporting = false;
   isSendingEmail = false;
@@ -80,6 +85,8 @@ export class InventoryReportComponent {
   subCategories: any[] = [];
   marcas: Brand[] = [];
   taxes = signal<any[]>([]);
+
+  correoReceptor = null as string | null | undefined
 
   dataSearch = {
     idEstablecimiento: 0,
@@ -133,7 +140,7 @@ export class InventoryReportComponent {
 
   selected = new FormControl(0);
 
-  private format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL | null = null;
+  private format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL | null = null;
 
   getDatFormReport() {
     this._productUseCase.getDataReport().subscribe((response) => {
@@ -144,7 +151,9 @@ export class InventoryReportComponent {
       this.tarifas = response.tarifas;
       this.taxes.set(response.taxes);
       let dataEstab = this.estabs.find((e) => e.defaultEstab);
+
       if (dataEstab) {
+        this.correoReceptor = dataEstab.correo;
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
         this.bodegas = dataEstab.bodegas;
         this.dataSearch.idBodega =
@@ -180,6 +189,7 @@ export class InventoryReportComponent {
       this.dataSearch.idBodega = 0;
       this.dataSearch.idEstablecimiento = 0;
       this.bodegas = [];
+      this.correoReceptor = this._tokenUseCase.getUserData()?.email
       return;
     }
     let dataEstab = this.estabs.find(
@@ -233,7 +243,7 @@ export class InventoryReportComponent {
     this.dataSearch.nameSupplier = data.name;
   }
 
-  supplierResultEmptyInput($event: any) {
+  supplierclearSearch($event: any) {
     this.dataSearch.numeroIdentificacion = null;
   }
 
@@ -243,12 +253,12 @@ export class InventoryReportComponent {
     }
   }
 
-  resultEmptyInputCustomer() {
+  clearSearchCustomer() {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected(data: any) {
-    this.dataSearch.numeroIdentificacion = data.identificacionComprador;
+  onCustomerSelected(data: CompanyCustomer) {
+    this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 
   private getFilterDate() {
@@ -346,12 +356,12 @@ export class InventoryReportComponent {
   }
 
   getReportPDF() {
-    this.format = FORMAT_REPORT.PDF;
+    this.format = REPORT_FORMAT.PDF;
     this.getReport();
   }
 
   getReportExcel() {
-    this.format = FORMAT_REPORT.EXCEL;
+    this.format = REPORT_FORMAT.EXCEL;
     this.getReport();
   }
 
@@ -665,16 +675,43 @@ export class InventoryReportComponent {
   }
 
   async askToSendMail() {
-    let { isConfirmed } = await Swal.fire({
+
+    const correos = this.correoReceptor?.split(SEPARADORES_REGEX) || []
+    if(!isValidField(this.correoReceptor)){
+      Swal.fire({
+        icon: 'warning',
+        text: 'El establecimiento o la Entidad no tiene agregado el correo'
+      })
+      return
+    }
+
+    // Validar formato de cada correo
+    const correosInvalidos = correos.filter(correo => !isValidEmail(correo.trim()));
+
+    if (correosInvalidos.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(', ')}`
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Confirmación',
       icon: 'warning',
-      html: '¿Estás seguro de enviar el reporte por correo electrónico de la empresa?',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
+      html: `
+        <p>¿Deseas <strong>enviar el reporte</strong> al correo electrónico asignado al establecimiento?</p>
+        <p>Esta acción enviará la información automáticamente.</p>
+      `,
+      confirmButtonText: 'Sí, enviar',
+      cancelButtonText: 'Cancelar',
       showCancelButton: true,
-      showConfirmButton: true,
+      reverseButtons: true, // Pone Cancelar a la izquierda, más común en UX
+      focusCancel: true
     });
 
-    if (!isConfirmed) return;
+
+    if (!result.isConfirmed) return;
 
     const params = {
       subject: 'Reporte Consumo Diario',
@@ -686,26 +723,28 @@ export class InventoryReportComponent {
           codigo: this.dataSearch.checkboxAgruparArticulo
             ? INVENTORY_CODE_REPORT.CDAA
             : INVENTORY_CODE_REPORT.CDA,
-          format: FORMAT_REPORT.PDF,
+          format: REPORT_FORMAT.PDF,
         },
         spParams: this.getDataParamsConsumoDiario(),
         //  withTableNames: true,
       },
+      receptor: this.correoReceptor
     };
 
     this.appNotifiSvc.post(params).subscribe((response) => {
       if (response.code === '0') {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message,
-        });
+        Swal.fire({
+          icon: 'warning',
+          text: response.message
+        })
       }
       if (response.code === '1') {
-        this.tS.toastr({
-          type: 'success',
-          message: response.message,
-        });
+        Swal.fire({
+          icon: 'success',
+          text: response.message
+        })
       }
     });
   }
+
 }

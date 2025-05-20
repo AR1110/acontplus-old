@@ -134,14 +134,31 @@ BEGIN
                     SET @sql = @sql + 'AND f.idUsuario = @idUsuario '
                 END 
 
-            IF @ckDevolucion = 1
+            IF @ckDevolucion IN (0,1)
                 BEGIN
-                    SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
-                END 
+                    IF @ckDevolucion = 1
+                        BEGIN
+                            SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
+                        END 
 
-            IF @ckRetencion = 1
+                    IF @ckDevolucion = 0
+                        BEGIN
+                            SET @sql = @sql + 'AND nc.idNotaCredito IS NULL '
+                        END
+                    
+                END
+             
+
+            IF @ckRetencion IN (1,0)
                 BEGIN
-                    SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
+                    IF @ckRetencion  = 1
+                        BEGIN 
+                            SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
+                        END 
+                    ELSE 
+                        BEGIN
+                            SET @sql = @sql + 'AND dr.idDocRelacionado IS NULL '
+                        END 
                 END 
 
             SET @sql = @sql + 'GROUP BY f.idFactura
@@ -161,7 +178,7 @@ BEGIN
                                        ,nc.total
 		                               ,fi.tax
                                        ,dr.idDocumentoRecibido 
-                                       ORDER BY f.fechaEmision,f.identificacionComprador DESC ' 
+                                       ORDER BY f.serieComprobante,f.fechaEmision,f.identificacionComprador DESC ' 
             
 
             SELECT entidad as razonSocial 

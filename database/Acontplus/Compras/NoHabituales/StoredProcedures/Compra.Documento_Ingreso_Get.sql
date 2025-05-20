@@ -131,6 +131,7 @@ BEGIN
 					SET @sql = @sql + 'AND idProveedor = @idProveedor  '
 				END 
 
+
             IF @subcategoryId > 0
                 BEGIN
                     SET @sql = @sql + 'AND subcategoryId = @subcategoryId '
@@ -366,7 +367,7 @@ BEGIN
                     ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
-            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PA','NPA','A')
+            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PA','NPA','A','PE')
 
             SELECT * FROM Contabilidad.subcategory  WITH (NOLOCK) WHERE companyId = @idEntidad AND [Enabled] = 1
 

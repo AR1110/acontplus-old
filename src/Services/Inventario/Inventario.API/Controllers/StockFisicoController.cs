@@ -18,7 +18,7 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json }
             };
             var response = await stockFisico.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+            if (response == null) return NoContent();
 
             return Ok(response);
         }
@@ -32,17 +32,11 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
     [HttpGet("{id}")]
     public async Task<ActionResult<StockFisico>> GetStockFisico(int id)
     {
-        if (context.StockFisicos == null)
-        {
-            return NotFound();
-        }
+        if (context.StockFisicos == null) return NotFound();
 
         var stockFisico = await context.StockFisicos.FindAsync(id);
 
-        if (stockFisico == null)
-        {
-            return NotFound();
-        }
+        if (stockFisico == null) return NotFound();
 
         return stockFisico;
     }
@@ -52,10 +46,7 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
     [HttpPut("{id}")]
     public async Task<IActionResult> PutStockFisico(int id, StockFisico stockFisico)
     {
-        if (id != stockFisico.Id)
-        {
-            return BadRequest();
-        }
+        if (id != stockFisico.Id) return BadRequest();
 
         context.Entry(stockFisico).State = EntityState.Modified;
 
@@ -65,10 +56,7 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!StockFisicoExists(id))
-            {
-                return NotFound();
-            }
+            if (!StockFisicoExists(id)) return NotFound();
 
             throw;
         }
@@ -97,16 +85,10 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStockFisico(int id)
     {
-        if (context.StockFisicos == null)
-        {
-            return NotFound();
-        }
+        if (context.StockFisicos == null) return NotFound();
 
         var stockFisico = await context.StockFisicos.FindAsync(id);
-        if (stockFisico == null)
-        {
-            return NotFound();
-        }
+        if (stockFisico == null) return NotFound();
 
         context.StockFisicos.Remove(stockFisico);
         await context.SaveChangesAsync();

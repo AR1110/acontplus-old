@@ -27,7 +27,7 @@ export class AtsService {
   }
 
   download<T>(obj: T) {
-    let json = JSON.stringify(obj);
+    const json = JSON.stringify(obj);
     this.#http
       .get(`${this.#url}Download?json=${json}`, {
         responseType: 'blob',

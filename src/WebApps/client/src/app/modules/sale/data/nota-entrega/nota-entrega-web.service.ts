@@ -5,10 +5,10 @@ import {map, Observable} from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
 import {NotaEntregaRepository} from "@sale/domain/repositories/nota-entrega.repository";
-import {SALE_PATHS} from "@sale/enums/sale.enum";
+import {SALE_PATHS} from "@sale/domain/enums/sale.enum";
 import {GroupedEstab} from "@core/models/estab.model";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {NotaEntregaAdapter} from "@sale/adapters/nota-entrega.adapter";
+import {NotaEntregaAdapter} from "@sale/data/nota-entrega.adapter";
 import {NotaEntregaMapper} from "@sale/data/nota-entrega/nota-entrega.mapper";
 
 @Injectable({

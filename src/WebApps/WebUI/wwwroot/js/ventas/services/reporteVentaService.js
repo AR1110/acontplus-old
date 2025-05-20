@@ -12,7 +12,7 @@
         service.getDataForm = function () {
             return mS.getData('get', `${URL}?json=${JSON.stringify({
                 tipo: 6
-            })}`, null, true).then(response => {
+            })}`).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }

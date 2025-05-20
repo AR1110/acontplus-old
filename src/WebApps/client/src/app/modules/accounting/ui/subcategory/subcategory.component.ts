@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import { Subcategory } from '@accounting/core/domain/subcategory';
+import { Subcategory } from '@accounting/domain/models/subcategory';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ModalService } from '@core/services/modal.service';
 import { SubcategoryModalComponent } from '@accounting/ui/subcategory/subcategory-modal/subcategory-modal.component';
@@ -11,7 +11,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
-import {SubCategoryUseCase} from "@accounting/core/use-cases/sub-category.use-case";
+import {SubCategoryUseCase} from "@accounting/domain/use-cases/sub-category.use-case";
 
 @Component({
   selector: 'app-subcategory',

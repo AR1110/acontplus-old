@@ -12,10 +12,7 @@ public class OrderStatusController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        if (!_context.Categories.Any())
-        {
-            return NoContent();
-        }
+        if (!_context.Categories.Any()) return NoContent();
 
         return Ok(await _context.OrderStatuses.ToListAsync());
     }
@@ -24,10 +21,7 @@ public class OrderStatusController : BaseApiController
     public async Task<IActionResult> Put(int id)
     {
         var status = await _context.OrderStatuses.FindAsync(id);
-        if (status == null)
-        {
-            return NotFound("No se encontro dicho estado");
-        }
+        if (status == null) return NotFound("No se encontro dicho estado");
 
         status.Enabled = false;
         status.Deleted = true;

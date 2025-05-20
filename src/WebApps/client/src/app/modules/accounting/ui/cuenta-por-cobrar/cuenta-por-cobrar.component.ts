@@ -9,33 +9,36 @@ import { DOC_TYPE, DOC_TYPE_SRI } from '@core/constants/global.constants';
 import { GroupedEstab } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { isValidField } from '@core/utils/utils';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { ComprobanteIngresoOpenModalService } from '@accounting/ui/comprobante-ingreso/services/comprobante-ingreso-open-modal.service';
 import { Pagination } from '@shared/models/pagination.model';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
-import {CuentaPorCobrarUseCase} from "@accounting/core/use-cases/cuenta-por-cobrar.use-case";
-
-
+import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'app-cuenta-por-cobrar',
-    imports: [
-        MatTableModule,
-        MatCheckboxModule,
-        FormsModule,
-        FontAwesomeModule,
-        BreadcrumbComponent,
-        DateRangeSelectionComponent
-    ],
-    templateUrl: './cuenta-por-cobrar.component.html',
-    styles: ``
+  selector: 'app-cuenta-por-cobrar',
+  imports: [
+    MatTableModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatIcon,
+    BreadcrumbComponent,
+    DateRangeSelectionComponent,
+    MatCardContent,
+    MatCard,
+    MatButton,
+  ],
+  templateUrl: './cuenta-por-cobrar.component.html',
+  styles: ``,
 })
 export class CuentaPorCobrarComponent {
-
-  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase)
+  private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
   tS = inject(ToasterService);
-  comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService)
+  comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService);
 
   visibleColumns: string[] = [
     'select',
@@ -54,36 +57,36 @@ export class CuentaPorCobrarComponent {
   dataSource = new MatTableDataSource<any>([]);
   selection = new SelectionModel<any>(true, []);
 
-  pagination = new Pagination()
-
+  pagination = new Pagination();
 
   dataSearch = {
     checkBoxFecha: true,
     codEstado: null,
-    codEstab: null as (string | null),
+    codEstab: null as string | null,
     fechaInicio: formatDateToString(new Date()),
     fechaFin: formatDateToString(new Date()),
     idCliente: 0,
     ckCxcVencida: false,
-    idTipoDocumento: 0
-  }
+    idTipoDocumento: 0,
+  };
   establecimientos: GroupedEstab[] = [];
   estadosDoc: any[] = [];
-  tiposDoc: any[] = []
+  tiposDoc: any[] = [];
 
   getCodigoTipoDoc() {
-    let dataDoc = this.tiposDoc.find(doc => doc.idTipoDocumento === this.dataSearch.idTipoDocumento);
+    let dataDoc = this.tiposDoc.find(
+      (doc) => doc.idTipoDocumento === this.dataSearch.idTipoDocumento,
+    );
     let codigo;
     if (dataDoc) {
       if (dataDoc.codigo === DOC_TYPE.FV) codigo = DOC_TYPE_SRI.F;
-      if (dataDoc.codigo === DOC_TYPE.NE) codigo = DOC_TYPE.NE
+      if (dataDoc.codigo === DOC_TYPE.NE) codigo = DOC_TYPE.NE;
     }
     return codigo;
   }
 
   getCuentasPorCobrar() {
     try {
-
       let params = {
         codEstab: this.dataSearch.codEstab,
         pageIndex: this.pagination.pageIndex,
@@ -94,49 +97,51 @@ export class CuentaPorCobrarComponent {
         codEstado: isValidField(this.dataSearch.codEstado),
         idCliente: isValidField(this.dataSearch.idCliente),
         codDoc: isValidField(this.getCodigoTipoDoc()),
-        ckCxcVencida: isValidField(this.dataSearch.ckCxcVencida)
-      }
+        ckCxcVencida: isValidField(this.dataSearch.ckCxcVencida),
+      };
 
       this.selection = new SelectionModel<any>(true, []);
-      this._cuentaPorCobrarUseCase.getAll(params).subscribe(response=>{
+      this._cuentaPorCobrarUseCase.getAll(params).subscribe((response) => {
         this.dataSource = new MatTableDataSource(response.data);
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   getDataFilter() {
     try {
-      this._cuentaPorCobrarUseCase.getDataFilter().subscribe(  (response) => {
-          this.establecimientos = response.estabs;
-          this.estadosDoc = response.estadosDoc;
-          this.tiposDoc = response.tiposDoc;
+      this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
+        this.establecimientos = response.estabs;
+        this.estadosDoc = response.estadosDoc;
+        this.tiposDoc = response.tiposDoc;
 
-          if (this.estadosDoc.length > 0) {
-            let dataEstado = this.estadosDoc.find(e => e.codigo === "NCBR");
-            this.dataSearch.codEstado = dataEstado.codigo;
-          }
+        if (this.estadosDoc.length > 0) {
+          let dataEstado = this.estadosDoc.find((e) => e.codigo === 'NCBR');
+          this.dataSearch.codEstado = dataEstado.codigo;
+        }
 
-          if (this.establecimientos.length > 0) {
-            let dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
-            this.dataSearch.codEstab = dataEstab?.codEstab ?? null;
-            this.getCuentasPorCobrar();
-          }
-      })
+        if (this.establecimientos.length > 0) {
+          let dataEstab = this.establecimientos.find(
+            (estab) => estab.defaultEstab,
+          );
+          this.dataSearch.codEstab = dataEstab?.codEstab ?? null;
+          this.getCuentasPorCobrar();
+        }
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   ngOnInit() {
-    this.getDataFilter()
+    this.getDataFilter();
   }
 
-  onDateRangeSelection(range: { from: string, to: string }) {
+  onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fechaInicio = range.from;
     this.dataSearch.fechaFin = range.to;
-    this.getCuentasPorCobrar()
+    this.getCuentasPorCobrar();
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -169,55 +174,57 @@ export class CuentaPorCobrarComponent {
     const firstCustomerId = selectedDocumentos[0].idCliente;
 
     // Verificar si todas las demás entradas tienen la misma idCliente
-    const sonIguales = selectedDocumentos.every(cuenta => cuenta.idCliente === firstCustomerId);
+    const sonIguales = selectedDocumentos.every(
+      (cuenta) => cuenta.idCliente === firstCustomerId,
+    );
 
     return sonIguales;
   }
 
   openDocPaymentModal() {
-    let selectedDocumentos = this.selection.selected
+    let selectedDocumentos = this.selection.selected;
 
     if (selectedDocumentos.length === 0) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione al menos un documento!'
+        message: 'Seleccione al menos un documento!',
       });
-      return
+      return;
     }
 
     if (!this.verificarClienteIgual(selectedDocumentos)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione documentos que pertenezca al mismo cliente'
+        message: 'Seleccione documentos que pertenezca al mismo cliente',
       });
-      return
+      return;
     }
 
     // Crear un array de promesas para cada solicitud
-    const promises = selectedDocumentos.map(cxc => this._cuentaPorCobrarUseCase.getCuotasById(cxc.idCuentaPorCobrar));
+    const promises = selectedDocumentos.map((cxc) =>
+      this._cuentaPorCobrarUseCase.getCuotasById(cxc.idCuentaPorCobrar),
+    );
 
     // Utilizar Promise.all para ejecutar las promesas concurrentemente
 
-    forkJoin(promises).subscribe( (results) => {
-
-        let mergeWithCuotas = this.mergeCuotas(selectedDocumentos, results);
-        this.openModalCobroLote(mergeWithCuotas);
-
-    })
-
+    forkJoin(promises).subscribe((results) => {
+      let mergeWithCuotas = this.mergeCuotas(selectedDocumentos, results);
+      this.openModalCobroLote(mergeWithCuotas);
+    });
   }
 
-
   mergeCuotas(selectedDocumentos: any[], results: any[]) {
-    return selectedDocumentos.map(cxc => {
-      const [cuotasFiltradas] = results.filter(item =>
-        item.some((cuota: any) => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar)
-      )
+    return selectedDocumentos.map((cxc) => {
+      const [cuotasFiltradas] = results.filter((item) =>
+        item.some(
+          (cuota: any) => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar,
+        ),
+      );
       return {
         ...cxc,
         saldoTemporal: cxc.saldo,
         cuotas: structuredClone(cuotasFiltradas),
-        cuotasOriginal: structuredClone(cuotasFiltradas)
+        cuotasOriginal: structuredClone(cuotasFiltradas),
       };
     });
   }
@@ -225,19 +232,15 @@ export class CuentaPorCobrarComponent {
   openModalCobroLote(selectedDocumentos: any[]) {
     try {
       let params = {
-        selectedDocumentos
-      }
-      this.comprobanteIngresoOpenModalSvc.open(params).then(result=>{
-        if(result!==null && typeof result==='object'){
+        selectedDocumentos,
+      };
+      this.comprobanteIngresoOpenModalSvc.open(params).then((result) => {
+        if (result !== null && typeof result === 'object') {
           this.getCuentasPorCobrar();
         }
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
-
-
-
 }

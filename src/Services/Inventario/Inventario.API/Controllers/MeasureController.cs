@@ -10,7 +10,7 @@ public class MeasureController(IMeasureService measureService) : BaseApiControll
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await measureService.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         ;
         return Ok(response);
@@ -44,7 +44,8 @@ public class MeasureController(IMeasureService measureService) : BaseApiControll
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await measureService.DeleteAsync(parameters);
         return Ok(response);
     }

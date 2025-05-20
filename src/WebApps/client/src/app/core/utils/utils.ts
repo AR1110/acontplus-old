@@ -36,7 +36,14 @@ export function isValidJSON(texto: string) {
 }
 
 
-export const getValidId = (id?:number) => (typeof id==="number" && id > 0 )? id : null;
+export const getValidId =  (id?: number) => {
+  if (typeof id === "number" && id > 0) return id  ;  // Retorna id como T
+
+  if (id === undefined) return undefined;
+  return null;
+}
+
+
 
 export const imgDefault = () => '/assets/images/img-default.png';
 
@@ -93,4 +100,23 @@ export class ValidatorUtils {
     const regex = /^\d+$/;
     return regex.test(value.toString());
   }
+
+
+  static validAndFormatedRangeSequential(cadena: string): string | null {
+    // Verifica si la cadena contiene solo números.
+    const formatoValido = /^\d+$/;
+
+    // Si la cadena solo contiene números, la formateamos a "xxx-xxx".
+    if (formatoValido.test(cadena)) {
+      cadena = `${cadena}-${cadena}`; // Se agrega el guión entre la cadena duplicada.
+    }
+
+    // Validamos que la cadena siga el formato "xxx-xxx" (números seguidos de un guion y más números).
+    const formatoValidoFinal = /^\d+-\d+$/;
+
+    // Si la cadena es válida, la devolvemos; de lo contrario, retornamos null.
+    return formatoValidoFinal.test(cadena) ? cadena : null;
+  }
+
+
 }

@@ -1,0 +1,92 @@
+<form [formGroup]="retencionGroup()">
+  <div class="row mb-3">
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Impuesto:</mat-label>
+        <mat-select
+          formControlName="impuestoRetencionId"
+          id="impuestoRetencionId-{{
+            retencionGroup().get('uniqueIdDoc')?.value
+          }}"
+          (selectionChange)="
+            selectImpuestoRetencion(
+              retencionGroup().get('impuestoRetencionId')?.value
+            )
+          "
+          required
+        >
+          <mat-option [value]="">Seleccione un impuesto</mat-option>
+          @for (impuesto of impuestosRetencion(); track $index) {
+            <mat-option [value]="impuesto.id">
+              {{ impuesto.codigo }} - {{ impuesto.descripcion }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+      <app-mat-dynamic-select
+        [options]="options()"
+        label="Código Retención"
+        (selectionChange)="selectCodigoRetencion($event)"
+      />
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Base Imponible:</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="baseImponible"
+          id="baseImponible-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
+          step="any"
+          min="0"
+          required
+          (blur)="calcularRetencion()"
+        />
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Porcentaje:</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="porcentajeRetener"
+          id="porcentajeRetener-{{
+            retencionGroup().get('uniqueIdDoc')?.value
+          }}"
+          step="any"
+          min="0"
+          required
+          (blur)="calcularRetencion()"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+      <mat-form-field class="w-100">
+        <mat-label>Valor Retenido:</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="valorRetenido"
+          id="valorRetenido-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
+          step="any"
+          min="0"
+          readonly
+        />
+      </mat-form-field>
+    </div>
+    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+      <app-theme-button
+        variant="danger"
+        icon="delete"
+        matStyle="icon"
+        id="btnDeleteRetencion-{{ retencionGroup().get('uniqueIdDoc')?.value }}"
+        (handleClick)="removeRetencion()"
+      ></app-theme-button>
+    </div>
+  </div>
+</form>

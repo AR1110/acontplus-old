@@ -1,6 +1,8 @@
-﻿using Common.Infrastructure.Repository.Implementations;
+﻿using System.IO.Compression;
+using Common.Infrastructure.Data.Repository.Implementations;
 using Common.Logging;
 using Contabilidad.API.Services;
+using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 
 namespace Contabilidad.API.Extensions;
@@ -11,6 +13,17 @@ public static class ApplicationServicesExtensions
         IConfiguration configuration)
     {
         services.AddAdvancedLogging(configuration);
+
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>

@@ -1,5 +1,5 @@
-import { PURCHASE_CODE_REPORT } from "@purchase/core/enums/purchase.constants";
-import { FORMAT_REPORT } from "@core/constants/global.constants";
+import { PURCHASE_CODE_REPORT } from "@purchase/domain/enums/purchase.constants";
+import { REPORT_FORMAT } from "@core/constants/global.constants";
 
 interface Params {
   dataParams: string;
@@ -34,12 +34,12 @@ export class ParameterReportUtil {
       "DH": { // Compras no habitual
         dataParams: JSON.stringify(new DataParams(options.id)),
         hasService: true,
-        reportParams: JSON.stringify(new ReportParams(true, PURCHASE_CODE_REPORT.RCNH, FORMAT_REPORT.PDF)),
+        reportParams: JSON.stringify(new ReportParams(true, PURCHASE_CODE_REPORT.RCNH, REPORT_FORMAT.PDF)),
       },
       "03": { // Otro tipo de compra
         dataParams: JSON.stringify(new DataParams(options.id)),
         hasService: true,
-        reportParams: JSON.stringify(new ReportParams(false, PURCHASE_CODE_REPORT.RLC, FORMAT_REPORT.PDF)),
+        reportParams: JSON.stringify(new ReportParams(false, PURCHASE_CODE_REPORT.RLC, REPORT_FORMAT.PDF)),
       },
     };
 

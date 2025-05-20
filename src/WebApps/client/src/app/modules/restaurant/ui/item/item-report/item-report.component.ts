@@ -18,22 +18,27 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@restaurant/data/services/item.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { isValidField } from '@core/utils/utils';
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-item-report',
-    templateUrl: './item-report.component.html',
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BreadcrumbComponent,
-        MatAutocompleteModule,
-        AsyncPipe,
-    ]
+  selector: 'app-item-report',
+  templateUrl: './item-report.component.html',
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BreadcrumbComponent,
+    MatAutocompleteModule,
+    AsyncPipe,
+    MatCard,
+    MatCardContent,
+    ThemeButtonComponent,
+  ],
 })
 export class ItemReportComponent {
   checkedSubCategorias = new FormControl('');
@@ -47,13 +52,11 @@ export class ItemReportComponent {
   };
   private sharedSvc = inject(SharedService);
   private itemSvc = inject(ItemService);
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
 
   ngOnInit() {
-    showLoader();
     this._productUseCase.getDataReport().subscribe({
       next: (response) => {
-        hideLoader();
         const { estabs, subCategorias } = response;
         this.establecimientos = estabs;
         this.subCategorias = subCategorias;
@@ -63,7 +66,6 @@ export class ItemReportComponent {
         }
       },
       error(err) {
-        hideLoader();
         console.log(err);
       },
     });

@@ -2,19 +2,22 @@ import { Routes } from '@angular/router';
 import { CajaComponent } from './ui/cashbox-page/caja.component';
 import { MovimientoCajaPageComponent } from '@accounting/ui/movimiento-caja-page/movimiento-caja-page.component';
 
-import { SupplierAccountsComponent } from '@accounting/ui/supplier-accounts/supplier-accounts.component';
+import { SupplierAccountsComponent } from '@accounting/ui/reports/supplier-accounts/supplier-accounts.component';
 import { SubEntidadFinancieraPageComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-page.component';
 import { CuentaPorCobrarComponent } from '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component';
-import { ReporteCobrosComponent } from '@accounting/ui/reporte-cobros/reporte-cobros.component';
+import { ReporteCobrosComponent } from '@accounting/ui/reports/reporte-cobros/reporte-cobros.component';
 import { CategoryComponent } from '@accounting/ui/category/category.component';
 import { SubcategoryComponent } from '@accounting/ui/subcategory/subcategory.component';
-import { MovimientoCajaReportComponent } from '@accounting/ui/movimiento-caja-report/movimiento-caja-report.component';
+import { MovimientoCajaReportComponent } from '@accounting/ui/reports/movimiento-caja-report/movimiento-caja-report.component';
 
  import { CuentaPorPagarComponent } from '@accounting/ui/cuenta-por-pagar/cuenta-por-pagar.component';
 import {
   ResumenContableComponent
-} from "@accounting/ui/resumen-contable/resumen-contable.component";
-import {CarteraClienteComponent} from "@accounting/ui/cartera-cliente/cartera-cliente.component";
+} from "@accounting/ui/reports/resumen-contable/resumen-contable.component";
+import {CarteraClienteComponent} from "@accounting/ui/reports/cartera-cliente/cartera-cliente.component";
+import {ComprobanteIngresoComponent} from "@accounting/ui/comprobante-ingreso/comprobante-ingreso.component";
+import {ComprobanteEgresoComponent} from "@accounting/ui/comprobante-egreso/comprobante-egreso.component";
+import {PaymentsReportComponent} from "@accounting/ui/reports/payments-report/payments-report.component";
 
 export const routes: Routes = [
   {
@@ -37,19 +40,12 @@ export const routes: Routes = [
   {
     path: 'cobro-page',
     title: 'Comprobante Ingreso',
-    loadComponent: ()=>import('@accounting/ui/comprobante-ingreso/comprobante-ingreso.component').then(c=>c.ComprobanteIngresoComponent),
+    component: ComprobanteIngresoComponent,
     data: {
       breadcrumb: 'Comprobante Ingreso',
     },
   },
-  {
-    path: 'reports/supplier-accounts',
-    title: 'Cartera Proveedor',
-    component: SupplierAccountsComponent,
-    data: {
-      breadcrumb: 'Cartera Proveedor',
-    },
-  },
+
   {
     path: 'sub-entidad-financiera-page',
     title: 'SubEntidad Financiera',
@@ -66,14 +62,7 @@ export const routes: Routes = [
       breadcrumb: 'Cuenta por cobrar',
     },
   },
-  {
-    path: 'reports/reporte-cobros',
-    title: 'Reporte de Cobros',
-    component: ReporteCobrosComponent,
-    data: {
-      breadcrumb: 'Reporte de Cobros',
-    },
-  },
+
   {
     path: 'category',
     title: 'Categorías',
@@ -91,31 +80,6 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'movimiento-caja-report',
-    title: 'Movimiento Caja Reporte',
-    component: MovimientoCajaReportComponent,
-    data: {
-      breadcrumb: 'Movimiento Caja Reporte',
-    },
-  },
-  {
-    path: 'cartera-cliente',
-    title: 'Cartera Cliente',
-    loadComponent: ()=>import('@accounting/ui/cartera-cliente/cartera-cliente.component').then(c=>c.CarteraClienteComponent),
-
-    data: {
-      breadcrumb: 'Cartera Cliente',
-    },
-  },
-  {
-    path: 'resumen-contable',
-    title: 'Resumen Contable',
-    component: ResumenContableComponent,
-    data: {
-      breadcrumb: 'Resumen Contable',
-    },
-  },
-  {
     path: 'cuenta-por-pagar',
     title: 'Cuenta por pagar',
     component: CuentaPorPagarComponent,
@@ -126,10 +90,71 @@ export const routes: Routes = [
   {
     path: 'cuenta-por-cobrar',
     title: 'Cuenta por cobrar',
-    loadComponent: ()=>import('@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component').then(c=>c.CuentaPorCobrarComponent),
-
+    component: CuentaPorCobrarComponent,
     data: {
       breadcrumb: 'Cuenta por cobrar',
     },
+  },
+  {
+    path: 'comprobante-egreso',
+    title: 'Comprobante Egreso',
+    component: ComprobanteEgresoComponent,
+    data: {
+      breadcrumb: 'Comprobante Egreso',
+    },
+  },
+  {
+    path: 'reports',
+    children: [
+      {
+        path: 'resumen-contable',
+        title: 'Resumen Contable',
+        component: ResumenContableComponent,
+        data: {
+          breadcrumb: 'Resumen Contable',
+        },
+      },
+      {
+        path: 'reporte-cobros',
+        title: 'Reporte de Cobros',
+        component: ReporteCobrosComponent,
+        data: {
+          breadcrumb: 'Reporte de Cobros',
+        },
+      },
+      {
+        path: 'movimiento-caja-report',
+        title: 'Movimiento Caja Reporte',
+        component: MovimientoCajaReportComponent,
+        data: {
+          breadcrumb: 'Movimiento Caja Reporte',
+        },
+      },
+      {
+        path: 'supplier-accounts',
+        title: 'Cartera Proveedor',
+        component: SupplierAccountsComponent,
+        data: {
+          breadcrumb: 'Cartera Proveedor',
+        },
+      },
+
+      {
+        path: 'cartera-cliente',
+        title: 'Cartera Cliente',
+        component: CarteraClienteComponent,
+        data: {
+          breadcrumb: 'Cartera Cliente',
+        },
+      },
+      {
+        path: 'payments',
+        title: 'Reporte de Pagos',
+        component: PaymentsReportComponent,
+        data: {
+          breadcrumb: 'Reporte de Pagos'
+        }
+      }
+    ]
   }
 ];

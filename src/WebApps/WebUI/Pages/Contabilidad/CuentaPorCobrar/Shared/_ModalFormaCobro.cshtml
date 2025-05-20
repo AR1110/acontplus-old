@@ -9,13 +9,12 @@
             <md-tab-label>{{item.descripcion}}</md-tab-label>
             <md-tab-body>
                 <div class="card border border-info mt-2">
-                     <!--TARJETA-->
+                    <!--TARJETA-->
                     <div class="card-body" ng-if="item.codigo==='TAR'">
                         <div class="row">
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >SubEntidad Financiera: <span
-                                            class="text-danger">*</span></label>
+                                    <label>SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
                                         <option ng-value="item.idSubEntidadFinanciera"
                                             ng-repeat="item in subEntidadesFinanciera">{{item.descripcion}}</option>
@@ -25,7 +24,7 @@
 
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <label>Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
@@ -74,14 +73,14 @@
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Aprobación </label>
+                                    <label>Aprobación </label>
                                     <input type="text" ng-model="data.aprobacion" class="form-control border-select" />
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="lote">Lote:  </label>
+                                    <label for="lote">Lote: </label>
                                     <input type="text" ng-model="data.lote" class="form-control border-select" />
                                 </div>
                             </div>
@@ -94,8 +93,7 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label >SubEntidad Financiera: <span
-                                            class="text-danger">*</span></label>
+                                    <label>SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
                                         <option ng-value="item.idSubEntidadFinanciera"
                                             ng-repeat="item in subEntidadesFinanciera">
@@ -107,7 +105,7 @@
 
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label >Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <label>Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
@@ -115,7 +113,8 @@
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono *</label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()"
-                                        class="form-control border-select" decimal placeholder="0.00" onClick="select()" />
+                                        class="form-control border-select" decimal placeholder="0.00"
+                                        onClick="select()" />
                                 </div>
                             </div>
                         </div>
@@ -126,8 +125,7 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label >SubEntidad Financiera: <span
-                                            class="text-danger">*</span></label>
+                                    <label>SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
                                         <option ng-value="item.idSubEntidadFinanciera"
                                             ng-repeat="item in subEntidadesFinanciera">
@@ -139,7 +137,7 @@
 
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label >Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <label>Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
@@ -147,7 +145,8 @@
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono *</label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()"
-                                        class="form-control border-select" decimal onClick="select()" placeholder="0.00" />
+                                        class="form-control border-select" decimal onClick="select()"
+                                        placeholder="0.00" />
                                 </div>
                             </div>
                         </div>
@@ -155,7 +154,7 @@
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Banco: <span class="text-danger">*</span></label>
+                                    <label>Banco: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idBanco">
                                         <option ng-value="item.idBanco" ng-repeat="item in bancos">
                                             {{item.descripcion}}
@@ -165,7 +164,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Número <span class="text-danger">*</span></label>
+                                    <label>Número <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.nro" class="form-control border-select" />
                                 </div>
                             </div>
@@ -177,8 +176,7 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label >SubEntidad Financiera: <span
-                                            class="text-danger">*</span></label>
+                                    <label>SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
                                         <option ng-value="item.idSubEntidadFinanciera"
                                             ng-repeat="item in subEntidadesFinanciera">
@@ -189,7 +187,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label >Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <label>Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
@@ -197,7 +195,8 @@
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono *</label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()"
-                                        class="form-control border-select" decimal placeholder="0.00" onclick="select();" />
+                                        class="form-control border-select" decimal placeholder="0.00"
+                                        onclick="select();" />
                                 </div>
                             </div>
                         </div>
@@ -205,7 +204,7 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Ciudad</label>
+                                    <label>Ciudad</label>
                                     <select class="form-control border-select" ng-model="data.idCiudad" id="ciudad"
                                         ng-options="cp.idCiudad as cp.descripcion group by cp.provincia for cp in ciudades">
                                     </select>
@@ -214,7 +213,7 @@
 
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Banco: <span class="text-danger">*</span></label>
+                                    <label>Banco: <span class="text-danger">*</span></label>
                                     <select class="form-control" ng-model="data.idBanco">
                                         <option ng-value="item.idBanco" ng-repeat="item in bancos">
                                             {{item.descripcion}}
@@ -224,7 +223,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >Número: <span class="text-danger">*</span></label>
+                                    <label>Número: <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.nro" class="form-control border-select" />
                                 </div>
                             </div>
@@ -240,7 +239,7 @@
 
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label >PosFechado</label>
+                                    <label>PosFechado</label>
                                     <div class="icheck-primary">
                                         <input type="checkbox" ng-model="data.posFechado" id="posFechado" />
                                         <label for="posFechado"></label>
@@ -258,9 +257,10 @@
                                 <thead md-head>
                                     <tr md-row>
                                         <th md-column>N°</th>
+                                        <th md-column>Código Doc.</th>
+                                        <th md-column>Documento</th>
                                         <th md-column>Fecha Emision</th>
                                         <th md-column>Serie Comprobante</th>
-                                        <th md-column>Documento</th>
                                         <th md-column>Total</th>
                                     </tr>
                                 </thead>
@@ -269,13 +269,14 @@
                                         md-on-select="addDocumentoElectronico" md-select-id="idComprobante"
                                         md-auto-select>
                                         <td md-cell>{{$index+1}}</td>
+                                        <td md-cell>{{item.codDoc}}</td>
+                                        <td md-cell>{{item.nomDoc}}</td>
                                         <td md-cell>{{item.fechaEmision}}</td>
                                         <td md-cell>{{item.serieComprobante}}</td>
-                                        <td md-cell>{{item.codDoc}}</td>
                                         <td md-cell>${{item.saldo}}</td>
                                     </tr>
                                     <tr ng-if="documentosElectronicos.length===0" class="text-center">
-                                        <td colspan="5">No hay registros en esta tabla</td>
+                                        <td colspan="6">No hay registros en esta tabla</td>
                                     </tr>
                                 </tbody>
                             </table>

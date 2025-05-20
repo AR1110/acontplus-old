@@ -49,17 +49,17 @@
 <!--      </div>-->
 <!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
 <!--        <div class="card mt-2">-->
-<!--          <div class="card-body">-->
+<!--          <mat-card-content>-->
 <!--            <button-->
 <!--              (click)="onClickBtnMore()"-->
-<!--              class="btn btn-danger btn-sm"-->
+<!--              app-theme-button variant="danger" icon="delete""-->
 <!--              type="button"-->
 <!--            >-->
 <!--              <fa-icon [icon]="'eye'"/>-->
 <!--            </button>-->
 <!--            <button-->
 <!--              (click)="filterValidation()"-->
-<!--              class="btn btn-success btn-sm ml-2"-->
+<!--              app-theme-button variant="success" icon="" text="" (handleClick)="" btn-sm ml-2"-->
 <!--              type="button"-->
 <!--            >-->
 <!--              <fa-icon [icon]="'redo'"/>-->
@@ -100,9 +100,9 @@
 <!--                  <div class="form-group">-->
 <!--                    <label for="customerSearch">Cliente: </label>-->
 <!--                    <app-company-customer-search-->
-<!--                      [isSearchSimple]="isCustomerSearchSimple"-->
+<!--                      [isSimpleMode]="isCustomerSearchSimple"-->
 <!--                      (onCustomerSelected)="onCustomerSelected($event)"-->
-<!--                      (resultEmptyInput)="resultCustomerEmptyInput($event)"-->
+<!--                      (clearSearch)="resultCustomerEmptyInput($event)"-->
 <!--                      [textSearch]="companyCustomerSearchName"-->
 <!--                    />-->
 <!--                  </div>-->
@@ -111,9 +111,9 @@
 <!--                  <div class="form-group">-->
 <!--                    <label for="">Empleado: </label>-->
 <!--                    <app-employee-search-->
-<!--                      [isSearchSimple]="isSearchEmployeeSimple"-->
+<!--                      [isSimpleMode]="isSearchEmployeeSimple"-->
 <!--                      (onSupplierSelected)="onEmployeeSelected($event)"-->
-<!--                      (emptyInput)="employeeResultEmptyInput($event)"-->
+<!--                      (emptyInput)="employeeclearSearch($event)"-->
 <!--                      [textSearch]="companyCustomerSearchName"-->
 <!--                    />-->
 <!--                  </div>-->
@@ -175,7 +175,7 @@
       [paginationConfig]="pagination()"
       [tableData]="comprobantesIngreso" [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
-      (onPageEvent)="handlePageEvent($event)"
+      (pageEvent)="handlePageEvent($event)"
     ></app-mat-dynamic-table>
 
 

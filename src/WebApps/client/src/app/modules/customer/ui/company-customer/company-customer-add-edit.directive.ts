@@ -1,19 +1,16 @@
-import { Directive,  HostListener, inject, input,   output } from '@angular/core';
-import { AddEditModalComponent } from '@customer/ui/company-customer/components/add-edit-modal/add-edit-modal.component';
-import { ModalService } from '@core/services/modal.service';
+import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { DialogService } from '@core/services/dialog.service';
 import { CompanyCustomerAddEditDialogComponent } from './components/company-customer-add-edit-dialog/company-customer-add-edit-dialog.component';
+import { CompanyCustomer } from '@customer/domain/models/company-customer';
 
 @Directive({
   selector: '[appCompanyCustomerAddEdit]',
 })
 export class CompanyCustomerAddEditDirective {
-  #modalSvc = inject(ModalService);
-  private dialogSvc = inject(DialogService)
+  private dialogSvc = inject(DialogService);
 
-  onResult = output();
+  companyCustomerSaved = output<CompanyCustomer>();
   id = input(0);
-  openDialog = input(false)
 
   @HostListener('click', ['$event']) // Captura el evento click del DOM
   onClick(event: MouseEvent) {
@@ -21,34 +18,19 @@ export class CompanyCustomerAddEditDirective {
     event.preventDefault();
     event.stopPropagation();
 
-    if(this.openDialog()){
-      this.dialogSvc.open(CompanyCustomerAddEditDialogComponent, {
+    this.dialogSvc
+      .open(CompanyCustomerAddEditDialogComponent, {
         data: {
-          id: this.id()
+          id: this.id(),
         },
-        size: 'xl'
-      }).subscribe(result=>{
-        if(result && typeof result==='object'){
-          this.onResult.emit(result)
-        }
+        size: 'xl',
       })
-
-        return
-    }
-
-    const modalRef = this.#modalSvc.open(AddEditModalComponent, {
-      size: 'xl',
-    })
-
-    modalRef.componentInstance.params = {
-      id: this.id()
-    }
-
-    modalRef.result.then((result) => {
-        if (result  && typeof result === 'object') {
-          this.onResult.emit(result); // Emite el resultado a quien escucha este evento
+      .subscribe((result) => {
+        if (result && typeof result === 'object') {
+          this.companyCustomerSaved.emit(result);
         }
       });
 
+    return;
   }
 }

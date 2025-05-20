@@ -1,10 +1,10 @@
-----use Acontplus 
-----go
-----update sri.Establecimiento set autoSriAuth = 0
-----go
-----update dbo.DocumentoElectronico set isAutomatic = 0 where isAutomatic = 1 and (fechaAutorizacion is null or xmlCompressed is null)
-----go
----- update PuntoEmision set ambiente = 1 where ambiente = 2
----- go
----- update common.emailqueue set statusId = 3 where statusId != 3
----- go
+--use Acontplus 
+--go
+--update sri.Establecimiento set autoSriAuth = 0
+--go
+--update dbo.DocumentoElectronico set isAutomatic = 0 where isAutomatic = 1 and (fechaAutorizacion is null or xmlCompressed is null)
+--go
+-- update PuntoEmision set ambiente = 1 where ambiente = 2
+-- go
+-- update common.emailqueue set statusId = 3 where statusId != 3
+-- go

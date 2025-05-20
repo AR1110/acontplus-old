@@ -1,49 +1,64 @@
-import { Component, inject, Input } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import * as XLSX from 'xlsx';
-import {
-  NgbActiveModal
-} from '@ng-bootstrap/ng-bootstrap';
-import {ControlCajaUseCase} from "@accounting/core/use-cases/control-caja.use-case";
+import {Component, inject, signal} from '@angular/core';
+import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {SharedService} from "@core/services/shared.service";
 
 @Component({
-    selector: 'app-detalle-arqueo-control-caja-modal-modal',
-    imports: [FontAwesomeModule],
-    templateUrl: './detalle-arqueo-control-caja-modal.component.html',
+  selector: 'app-detalle-arqueo-control-caja-modal-modal',
+  imports: [
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatDynamicTableComponent
+  ],
+  templateUrl: './detalle-arqueo-control-caja-modal.component.html',
 })
 export class DetalleArqueoControlCajaModalComponent {
-  activeModal = inject(NgbActiveModal);
+  private dialogRef = inject(MatDialogRef<DetalleArqueoControlCajaModalComponent>)
+   params = inject(MAT_DIALOG_DATA)
+
   dataSearch = {
     sortByDefault: 0,
     sortOrder: 'ASC',
   };
-  @Input() params = {} as any;
-  private _controlCajaUseCase = inject(ControlCajaUseCase)
+  private _controlCajaUseCase = inject(ControlCajaUseCase);
+  private _sharedSvc = inject(SharedService)
 
-
-  arqueoCajaDetalle: any[] = [];
+  arqueoCajaDetalle = signal<any>([])
   total = 0;
 
-  getInfoAdicional() {
-    this.arqueoCajaDetalle = []
-    this._controlCajaUseCase.getArqueoCaja(this.params.id).subscribe(response => {
-      this.arqueoCajaDetalle = response.arqueoCajaDetalle || [];
-      this.total = this.arqueoCajaDetalle.reduce((acc, current) => acc + current.total, 0)
-    })
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'descripcion', label: 'Descripción', type: 'string' },
+    { key: 'cantidad', label: 'Cantidad', type: 'string' },
+    { key: 'valor', label: 'Valor', type: 'string' },
+    { key: 'total', label: 'Total', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  getList() {
+    this._controlCajaUseCase
+      .getArqueoCaja(this.params.id)
+      .subscribe((response) => {
+        this.arqueoCajaDetalle.set(response.arqueoCajaDetalle||[]);
+        this.total = this.arqueoCajaDetalle().reduce(
+          (acc:number, current:any) => acc + current.total,
+          0,
+        );
+      });
   }
 
   ngOnInit() {
-    this.getInfoAdicional()
+    this.getList();
   }
 
-  exportToExcel(data: any[], fileName: string): void {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    XLSX.writeFile(wb, `${fileName}.xlsx`);
-  }
 
   exportData() {
-    this.exportToExcel(this.arqueoCajaDetalle, 'arqueoCajaDetalle');
+    this._sharedSvc.exportToExcel(this.arqueoCajaDetalle(), 'ArqueoCajaDetalle')
+  }
+  close(){
+    this.dialogRef.close()
   }
 }

@@ -9,26 +9,26 @@ GO
 -- Create date: 2023-02-22
 -- Description: sp for update pagos del sustento
 -- =============================================
-IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Pago_Update', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Update
-GO
-CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Update @idUsuarioRol INT 
+
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Pago_Update @userRoleId INT 
 ,@id INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+    SET XACT_ABORT ON;
+
+	DECLARE @userId INT;
+	SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 	BEGIN TRY
 		BEGIN TRAN 
 			
-			UPDATE rp SET rp.formaPago = t.formaPago
+			UPDATE rp SET rp.formaPagoId = t.formaPagoId
 			,rp.total = t.total 
 			FROM FactElect.RetencionAtsPago rp WITH (ROWLOCK)
-			JOIN (SELECT @id idRetencionAtsPago, formaPago, total
+			JOIN (SELECT @id idRetencionAtsPago, formaPagoId, total
 			FROM OPENJSON(@json)
-			WITH( formaPago VARCHAR(2) '$.formaPago'
+			WITH( formaPagoId INT '$.formaPagoId'
 				,total NUMERIC(18,5) '$.total'
 			)) as t ON t.idRetencionAtsPago = rp.idRetencionAtsPago
 			WHERE rp.idRetencionAtsPago = @id
@@ -37,11 +37,11 @@ BEGIN
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+	    SELECT '0' code, 'Error en el procedimiento!' as 'message'
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/PUT', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES ('DocSustentoPago/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
 	END CATCH
 END
 GO

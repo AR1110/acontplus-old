@@ -15,29 +15,17 @@ public class AccountController(
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
     {
-        if (string.IsNullOrEmpty(authRequest.Username))
-        {
-            return BadRequest("Usuario no puede estar vacio");
-        }
+        if (string.IsNullOrEmpty(authRequest.Username)) return BadRequest("Usuario no puede estar vacio");
 
-        if (string.IsNullOrEmpty(authRequest.Password))
-        {
-            return BadRequest("Contraseña no puede estar vacia");
-        }
+        if (string.IsNullOrEmpty(authRequest.Password)) return BadRequest("Contraseña no puede estar vacia");
 
         var response = await accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
 
-        if (response.Code != "1" || string.IsNullOrEmpty(response.Payload))
-        {
-            return Ok(response);
-        }
+        if (response.Code != "1" || string.IsNullOrEmpty(response.Payload)) return Ok(response);
 
         List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
-        if (userData.Count != 1)
-        {
-            return Ok(response);
-        }
+        if (userData.Count != 1) return Ok(response);
 
         var user = userData[0];
         user.UrlGateway = config["ApiGateways:Acontplus"];
@@ -49,9 +37,7 @@ public class AccountController(
             if (string.IsNullOrEmpty(authRequest.UserAgent) ||
                 string.IsNullOrEmpty(authRequest.Username) ||
                 string.IsNullOrEmpty(authRequest.Password))
-            {
                 return Ok(response);
-            }
 
             var loginFailed = new LoginFailed
             {
@@ -76,9 +62,7 @@ public class AccountController(
 
         await loginHistoryService.AddAsync(logingHistory);
         user.Token = token.Token;
-        response.Create("1", "Login Correcto", user);
-
-        return Ok(response);
+        return Ok(ApiResponse.Success(payload: user, message: "Login Correcto"));
     }
 
     [AllowAnonymous]
@@ -87,10 +71,7 @@ public class AccountController(
     {
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
-        if (token == null || string.IsNullOrEmpty(token.Token))
-        {
-            return BadRequest("Error al iniciar session");
-        }
+        if (token == null || string.IsNullOrEmpty(token.Token)) return BadRequest("Error al iniciar session");
 
         var logingHistory = new LoginHistory
         {
@@ -105,7 +86,6 @@ public class AccountController(
         await loginHistoryService.AddAsync(logingHistory);
         userData.Token = token.Token;
         var response = new ApiResponse();
-        response.Create("1", "Login Correcto", userData);
-        return Ok(response);
+        return Ok(ApiResponse.Success(payload: userData, message: "Login Correcto"));
     }
 }

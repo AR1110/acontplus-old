@@ -1,6 +1,6 @@
 import {ClassProvider} from "@angular/core";
-import {ControlCajaRepository} from "@accounting/core/repositories/control-caja.repository";
 import {ControlCajaWebRepository} from "@accounting/data/control-caja/control-caja-web.repository";
+import {ControlCajaRepository} from "@accounting/domain/repositories/control-caja.repository";
 
 
 export const controlCajaProvider:ClassProvider = {

@@ -1,0 +1,31 @@
+@if (isSimpleMode()) {
+  <mat-form-field class="w-100">
+    <mat-label>Usuario:</mat-label>
+    <input
+      matInput
+      [formControl]="textSearchControl"
+      [matAutocomplete]="auto"
+      placeholder="Buscar usuario"
+      (keyup)="onKeyupSearch()"
+    />
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="onSelect($event.option.value)"
+      [displayWith]="formatter"
+    >
+      @for (user of filteredUsers | async; track $index) {
+        <mat-option [value]="user">
+          {{ user.nroIdentificacion }} - {{ user.nombreCompleto }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+}
+
+@if (searching) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+@if (searchFailed) {
+  <mat-error>Lo sentimos, no se han podido cargar las sugerencias.</mat-error>
+}

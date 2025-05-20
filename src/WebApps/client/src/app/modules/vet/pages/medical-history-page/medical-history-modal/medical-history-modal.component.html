@@ -1,13 +1,17 @@
 <form (ngSubmit)="onSave()" [formGroup]="medicalHistoryForm">
   <div class="modal-header">
     <h5 class="modal-title">
-      <fa-icon [icon]="modalIcon"></fa-icon>
+      <mat-icon>{{ modalIcon }}</mat-icon>
       {{ modalTitle }}
     </h5>
-    <button (click)="onClose()" aria-hidden="true" class="btn-close" type="button"></button>
+    <button
+      (click)="onClose()"
+      aria-hidden="true"
+      class="btn-close"
+      type="button"
+    ></button>
   </div>
   <div class="modal-body">
-
     <div class="row">
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
         <div class="form-group">
@@ -24,42 +28,63 @@
                 </option>
               }
             </select>
-            <app-pet-search (onPetSelected)="onPetSelected($event)"></app-pet-search>
+            <app-pet-search
+              (onPetSelected)="onPetSelected($event)"
+            ></app-pet-search>
           </div>
         </div>
       </div>
     </div>
 
     @if (petSelected.id > 0) {
-      <div class="card border border-1 rounded">
-        <div class="card-body">
+      <mat-card>
+        <mat-card-content>
           <h5 class="card-title">Datos del Responsable</h5>
           <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
               <div class="form-group">
                 <label for="customer">Cliente</label>
-                <input [value]="petSelected.customer" class="form-control" disabled id="customer" name="customer"
-                       type="text"/>
+                <input
+                  [value]="petSelected.customer"
+                  class="form-control"
+                  disabled
+                  id="customer"
+                  name="customer"
+                  type="text"
+                />
               </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
               <div class="form-group">
                 <label for="customerIdCard">Ruc</label>
-                <input [value]="petSelected.customerIdCard" class="form-control" disabled id="customerIdCard"
-                       name="customerIdCard" type="text"/>
+                <input
+                  [value]="petSelected.customerIdCard"
+                  class="form-control"
+                  disabled
+                  id="customerIdCard"
+                  name="customerIdCard"
+                  type="text"
+                />
               </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
               <div class="form-group">
                 <label for="email">Email</label>
-                <input [value]="petSelected.email" class="form-control" disabled id="email" name="email" type="text"/>
+                <input
+                  [value]="petSelected.email"
+                  class="form-control"
+                  disabled
+                  id="email"
+                  name="email"
+                  type="text"
+                />
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="card border border-1 rounded">
-        <div class="card-body">
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
           <h5 class="card-title">Datos de la mascota</h5>
           <div class="row">
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
@@ -95,8 +120,8 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
     }
 
     <div class="row">
@@ -114,12 +139,12 @@
     <div class="table-responsive mt-3">
       <table class="table table-bordered">
         <thead>
-        <tr>
-          <th>Test de Salud</th>
-          @for (item of diseasesStatuses; track $index) {
-            <th>{{ item.name }}</th>
-          }
-        </tr>
+          <tr>
+            <th>Test de Salud</th>
+            @for (item of diseasesStatuses; track $index) {
+              <th>{{ item.name }}</th>
+            }
+          </tr>
         </thead>
         <tbody>
           @for (d of diseases; track $index) {
@@ -137,7 +162,6 @@
               }
             </tr>
           }
-
         </tbody>
       </table>
     </div>
@@ -145,12 +169,12 @@
     <div class="table-responsive">
       <table class="table table-bordered">
         <thead>
-        <tr>
-          <th>Test de Comportamiento:</th>
-          @for (item of behaviorsStatuses; track $index) {
-            <th>{{ item.name }}</th>
-          }
-        </tr>
+          <tr>
+            <th>Test de Comportamiento:</th>
+            @for (item of behaviorsStatuses; track $index) {
+              <th>{{ item.name }}</th>
+            }
+          </tr>
         </thead>
         <tbody>
           @for (b of behaviors; track $index) {
@@ -215,11 +239,20 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button [disabled]="medicalHistoryForm.invalid" class="btn btn-success" type="submit">
-      <fa-icon [icon]="'save'"></fa-icon>
+    <button
+      [disabled]="medicalHistoryForm.invalid"
+      mat-raised-button
+      type="submit"
+    >
+      <mat-icon>save</mat-icon>
       Guardar
     </button>
-    <button (click)="onClose()" class="btn btn-dark" type="button">&times; Cancelar</button>
+    <app-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="onClose()"
+    >
+    </app-theme-button>
   </div>
-
 </form>
