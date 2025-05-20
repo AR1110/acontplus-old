@@ -9,7 +9,7 @@ import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-c
 import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
 import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
 import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
-import {ImportacionComponent} from "@modules/config/ui/importacion/importacion.component";
+import {ExcelImportComponent} from "@modules/config/ui/excel-import/excel-import.component";
 import {ElectronicSignatureComponent} from "@modules/config/ui/electronic-signature/electronic-signature.component";
 import {CreditTimeComponent} from "@modules/config/ui/credit-time/credit-time.component";
 
@@ -95,9 +95,9 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'importacion',
+    path: 'excel-import',
     title: 'Importación',
-    component: ImportacionComponent,
+    component: ExcelImportComponent,
     data: {
       breadcrumb: 'Importación',
     },

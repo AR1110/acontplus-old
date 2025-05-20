@@ -3,8 +3,8 @@ import {CompanyRepository} from "@modules/config/domain/repositories/company.rep
 import {CompanyRepositoryImpl} from "@modules/config/data/company/company-repository.impl";
 import {GeneralConfigRepository} from "@modules/config/domain/repositories/general-config.repository";
 import {GeneralConfigRepositoryImpl} from "@modules/config/data/general-config/general-config-repository-impl";
-import {ImportacionRepository} from "@modules/config/domain/repositories/importacion.repository";
-import {ImportacionRepositoryImpl} from "@modules/config/data/importacion/importacion-repository-impl";
+import {ExcelImportRepository} from "@modules/config/domain/repositories/excel-import.repository";
+import {ExcelImportRepositoryImpl} from "@modules/config/data/excel-import/excel-import-repository-impl";
 import {PrinterRepository} from "@modules/config/domain/repositories/printer.repository";
 import {PrinterWebRepository} from "@modules/config/data/printer/printer-web.repository";
 import {SolicitudAutorizacionRepository} from "@modules/config/domain/repositories/solicitud-autorizacion.repository";
@@ -78,8 +78,8 @@ export const DATA_CONFIG_IOC:Provider[]=[
     useClass: GeneralConfigRepositoryImpl,
   },
   {
-    provide: ImportacionRepository,
-    useClass: ImportacionRepositoryImpl,
+    provide: ExcelImportRepository,
+    useClass: ExcelImportRepositoryImpl,
   },
   {
     provide: PrinterRepository,

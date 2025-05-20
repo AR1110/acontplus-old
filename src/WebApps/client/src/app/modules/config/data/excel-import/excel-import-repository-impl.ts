@@ -4,13 +4,19 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable} from 'rxjs';
 import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
 import {ApiResponse} from "@core/models/api-response";
-import {ImportacionRepository} from "@modules/config/domain/repositories/importacion.repository";
+import {ExcelImportRepository} from "@modules/config/domain/repositories/excel-import.repository";
 import {ImportacionResponse} from "@modules/config/domain/models/importacion.model";
 
 @Injectable({
   providedIn: 'root',
 })
-export class ImportacionRepositoryImpl implements ImportacionRepository {
+export class ExcelImportRepositoryImpl implements ExcelImportRepository {
+      save(params: any): Observable<ApiResponse> {
+        return this._http.post<ApiResponse>(`${this._url}${params.code}`, params.data)
+    }
+      validateImportedData(params:any): Observable<ApiResponse> {
+        return this._http.post<ApiResponse>(`${this._url}GetValidation/${params.code}`, params.data)
+    }
      getFormData(): Observable<ImportacionResponse> {
        return this._http
          .get<ApiResponse>(`${this._url}?json=${JSON.stringify({})}`)
