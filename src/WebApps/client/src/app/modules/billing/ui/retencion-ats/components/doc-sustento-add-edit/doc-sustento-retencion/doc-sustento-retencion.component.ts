@@ -160,7 +160,7 @@ export class DocSustentoRetencionComponent {
       const porcentajeRetener =
         this.retencionGroup().get('porcentajeRetener')?.value;
       const valorRetenido = baseImponible * (porcentajeRetener / 100);
-      this.retencionGroup().get('valorRetenido')?.setValue(valorRetenido);
+      this.retencionGroup().get('valorRetenido')?.setValue(valorRetenido.toFixed(2));
     });
   }
 
