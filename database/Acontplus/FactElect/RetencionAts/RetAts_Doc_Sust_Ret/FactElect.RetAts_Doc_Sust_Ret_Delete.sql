@@ -10,41 +10,41 @@ GO
 -- Description: sp for delete retenciones from sustentos
 -- =============================================
 
-CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Delete @idUsuarioRol INT 
+CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Ret_Delete @userRoleId INT 
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
-	DECLARE @idUsuario INT 
-           ,@idRetencionAts INT
+	DECLARE @userId INT 
+           ,@idRetencionAts INT;
 
 	BEGIN TRY
         
-        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+        SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId);
 
-        SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id)
+        SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id);
 
 		BEGIN TRAN
-			DELETE FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id
+			DELETE FROM FactElect.RetencionAtsRet WHERE idRetencionAtsRet = @id;
 
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
                 SET importeTotal = ISNULL((SELECT SUM(valorRetenido) 
                                                 FROM FactElect.RetencionAtsRet WITH (NOLOCK) 
                                                 WHERE idRetencionAts = @idRetencionAts ),0)
             WHERE idDocumento = @idRetencionAts
-              AND codDoc = '07'
+              AND codDoc = '07';
 
 		COMMIT TRAN
-        SELECT '1' code, 'Retención del sustento eliminada con exito'  as 'message'
+        SELECT '1' code, 'Retención del sustento eliminada con exito'  as 'message';
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+	    SELECT '0' code, 'Error en el procedimiento!' as 'message';
 		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/DELETE', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+			ROLLBACK TRAN;
+		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES ('DocSustentoRetencion/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId);
 	END CATCH
 END
 GO
