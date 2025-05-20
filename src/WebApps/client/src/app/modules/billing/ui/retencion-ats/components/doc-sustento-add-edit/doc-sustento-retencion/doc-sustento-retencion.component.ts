@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
@@ -9,6 +9,10 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/doc-sustento-tax.use-case';
+import { ToasterService } from '@core/services/toaster.service';
+import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/doc-sustento-retencion.use-case';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-retencion',
@@ -35,6 +39,11 @@ export class DocSustentoRetencionComponent {
   options = signal<SelectOption[]>([]);
 
   codImpuestoRetencionSelected = signal<string>('');
+
+  private readonly _docSustentoRetencionUseCase = inject(
+    DocSustentoRetencionUseCase,
+  );
+  private readonly _tS = inject(ToasterService);
 
   selectCodigoRetencion(codigo: string) {
     setTimeout(() => {
@@ -155,16 +164,52 @@ export class DocSustentoRetencionComponent {
     });
   }
 
-  removeRetencion() {
-    const taxesArray = this.docSustentoArray()
+  async removeRetencion() {
+    const retenciones = this.docSustentoArray()
+      .at(this.indexDoc())
+      .get('retenciones') as FormArray;
+
+    const retencionSelected = retenciones.controls[this.indexRetencion()].value;
+
+    if (retencionSelected.idRetencionAtsRet > 0) {
+      const { isConfirmed } = await Swal.fire({
+        title: 'Eliminar Retencion',
+        icon: 'warning',
+        text: `Esta seguro(a) de eliminar esta retención, de manera permanente?`,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      });
+      if (isConfirmed) {
+        this._docSustentoRetencionUseCase
+          .delete(retencionSelected.idRetencionAtsRet)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.removeByIndex();
+            }
+          });
+      }
+    } else {
+      await this.removeByIndex();
+    }
+  }
+
+  async removeByIndex() {
+    const retenciones = this.docSustentoArray()
       .at(this.indexDoc())
       .get('retenciones') as FormArray;
 
     if (
       this.indexRetencion() >= 0 &&
-      this.indexRetencion() < taxesArray.length
+      this.indexRetencion() < retenciones.length
     ) {
-      taxesArray.removeAt(this.indexRetencion());
+      retenciones.removeAt(this.indexRetencion());
     }
   }
 }
