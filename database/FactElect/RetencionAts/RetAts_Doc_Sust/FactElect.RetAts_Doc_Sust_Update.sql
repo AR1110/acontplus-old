@@ -39,8 +39,8 @@ BEGIN
 			JOIN (SELECT @id idRetAtsDocSustento, documentoSustentoTributarioId, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			FROM OPENJSON(@json) WITH(documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
 				,numDocSustento VARCHAR(15) '$.numDocSustento'
-				,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
-				,fechaRegistroContable DATETIME '$.fechaRegistroContable'
+				,fechaEmisionDocSustento DATETIME2 '$.fechaEmisionDocSustento'
+				,fechaRegistroContable DATETIME2 '$.fechaRegistroContable'
 				,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
 				,pagoLocExt VARCHAR(2) '$.pagoLocExt'
 				,tipoRegimenFiscalExteriorId INT '$.tipoRegi'
