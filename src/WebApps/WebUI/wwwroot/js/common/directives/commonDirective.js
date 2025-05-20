@@ -1221,85 +1221,6 @@
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
      * 
      */
-    app.directive('btnSendToWhatsApp', ['modalService', 'nombreModal', 'mainService', 'toastService', function (modalService, nombreModal, mainService, toastService) {
-        return {
-            restrict: 'A',
-            scope: {
-                params: '=',
-                resultModal: '&',
-                hasPermission: '=',
-                typeSend: '=',
-            },
-            link: function (scope, element) {
-                element.on('click', function () {
-                    console.log('click')
-                    /**
-                     * Eliminar mas adelante en cuanto se corrija el codDoc en las opciones de factura venta
-                     */
-                    let params = Object.assign({}, scope.params);
-                    if (("codigoTipoDoc" in params)) {
-                        params.codDoc = '01';
-                    }
-                    //===================================
-
-                    mainService.getData('GET', 'Config/WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 })).then(
-                        async response => {
-                            if (response.code == '0') {
-                                toastService.toastr('warning', response.message)
-                            }
-                            if (response.code == '1') {
-                                let tempArray = JSON.parse(response.payload)
-                                if (tempArray[0][0].code == '0') {
-                                    Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'warning' })
-
-                                } else {
-                                    if (tempArray[0][0].message) {
-                                        Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'info' })
-                                        return
-                                    }
-                                    // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
-                                    // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
-                                    // let template = nombreModalLogistica.VEHICULO.templates['M'];
-                                    const {
-                                        MODAL_SEND_WHATSAPP_CTRL,
-                                        MODAL_SEND_WHATSAPP_CSHTML
-                                    } = nombreModal.common;
-                                    const {
-                                        ModalWhatsAppCtrl
-                                    } = await import(MODAL_SEND_WHATSAPP_CTRL);
-                                    // console.log(template)
-
-                                    params.type = scope.typeSend;
-                                    params.hasPermissions = scope.hasPermissions
-                                    const modalDialogRef = modalService.openModalCustom({
-                                        controller: ModalWhatsAppCtrl,
-                                        template: MODAL_SEND_WHATSAPP_CSHTML,
-                                        size: 'md',
-                                        params: params || {},
-                                        isRenderRazorPartial: true,
-                                    })
-
-                                    modalDialogRef.result.then(result => {
-                                        if (typeof result === "object") {
-                                            scope.resultModal({
-                                                result
-                                            })
-                                        }
-                                    })
-                                }
-                            }
-                            hideLoader()
-                        }
-                    ).catch(error => {
-                        hideLoader()
-                        console.log(error)
-                    })
-                });
-            }
-        }
-    }])
-
-    //Nueva Version usar esta en proximos modulos
 
     app.directive('actionSendToWhatsApp', ['modalService', 'nombreModalCommon', 'mainService', 'toastService', function (modalSvc, nombreModalCommon, mS, tS) {
         return {
@@ -1318,8 +1239,8 @@
                     let url = `Config/WhatsappUsage/?json=${json}`;
 
                     showLoader();
-                    let response = await mS.getData('get', url, null, true).finally(() => hideLoader());
-
+                    let response = await mS.getData('get', url).finally(() => hideLoader());
+                    
                     if (response.code === "0") {
                         tS.toastr({
                             type: 'warning',
@@ -1328,25 +1249,19 @@
                         return
                     }
 
-                    let [tempArray] = JSON.parse(response.payload);
-                    let tempResponse = tempArray[0];
-
-                    if (tempResponse.code == '0') {
-                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'warning' })
+                    if (response.code == '0') {
+                        Swal.fire({ title: 'Aviso', text: response.message, icon: 'warning' })
                         return
                     }
 
 
-                    if (tempResponse.message) {
-                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'info' })
+                    if (response.message) {
+                        Swal.fire({ title: 'Aviso', text: response.message, icon: 'info' })
                         return
                     }
 
                     let { fileCtrl, template, controller } = nombreModalCommon.SEND_WHATSAPP;
-                    let ctrl = (await import(fileCtrl))[controller];
-
-
-
+                    let ctrl = (await import(fileCtrl))[controller]; 
                     const modalRef = modalSvc.open({
                         controller: ctrl,
                         template,
@@ -1978,7 +1893,7 @@
             scope: {
                 params: '=',
                 onResult: '&',
-                codDoc:'='
+                codDoc: '='
             },
             link: function (scope, element) {
                 element.on('click', async function () {
@@ -2587,7 +2502,7 @@
 
                     let format = 'pdf';
 
-                    let dataParms = { 
+                    let dataParms = {
                         codEstab: scope.codEstab,
                         id: scope.unique
                     }
