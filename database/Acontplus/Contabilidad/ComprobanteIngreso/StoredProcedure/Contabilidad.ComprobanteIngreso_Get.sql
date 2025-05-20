@@ -411,7 +411,6 @@ BEGIN
 								    ,cx.mora
 								    ,cx.diasMora
 								    ,cx.abono
-								    ,cx.cuota - cx.abono as saldoCta
 								    ,cx.saldo
 								    ,estado = ep.descripcion
 						       FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
@@ -454,7 +453,6 @@ BEGIN
 				  ,cx.mora
 				  ,cx.diasMora
 				  ,cx.abono
-				  ,cx.cuota - cx.abono as saldoCta
 				  ,cx.saldo
 				  ,ep.descripcion      as estado
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
