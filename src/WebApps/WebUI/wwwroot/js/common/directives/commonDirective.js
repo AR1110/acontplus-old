@@ -328,58 +328,59 @@
                 placement: "@"
             },
             link: function (scope, element) {
-                // Generate a unique ID for this instance
-                var uniqueId = 'stock-popover-' + (scope.article.idArticulo || 'unknown');
-
-                // Add classes to make this element interactive
+                // Hacer que el elemento sea visualmente interactivo
                 element.addClass('estab-stock-trigger');
                 element.css('cursor', 'pointer');
 
-                // Create popover configuration
-                var config = {
-                    container: 'body',
-                    html: true,
-                    trigger: 'manual',
-                    placement: scope.placement || 'auto',
-                    title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
-                    content: '<div class="p-2 text-center"><div class="spinner-border spinner-border-sm" role="status"></div> Cargando...</div>'
-                };
-
-                // Initialize popover
-                $(element).popover(config);
-
-                // Track state
-                var isPopoverShown = false;
+                // Variable para evitar múltiples llamadas
                 var isLoadingData = false;
-                var loadAttempts = 0;
-                var maxAttempts = 3;
 
-                // Function to load data
-                function loadStockData() {
-                    if (isLoadingData || loadAttempts >= maxAttempts) return;
-
+                // Función para mostrar SweetAlert con datos de stock
+                function showStockDetails() {
+                    if (isLoadingData) return;
                     isLoadingData = true;
-                    loadAttempts++;
 
-                    $log.info('Loading stock data for article ID:', scope.article.idArticulo, 'Attempt:', loadAttempts);
+                    // Mostrar SweetAlert con indicador de carga
+                    Swal.fire({
+                        title: '<i class="mdi mdi-information-outline mr-2"></i>Bodega-Stock',
+                        html: '<div class="text-center p-3"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Cargando datos de stock...</p></div>',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        width: 'auto',
+                        padding: '0',
+                        customClass: {
+                            container: 'stock-swal-container',
+                            popup: 'stock-swal-popup'
+                        },
+                        didOpen: () => {
+                            // Cargar datos cuando el modal esté abierto
+                            loadStockData();
+                        },
+                        didClose: () => {
+                            isLoadingData = false;
+                        }
+                    });
+                }
+
+                // Función para cargar datos de stock
+                function loadStockData() {
+                    $log.info('Cargando datos de stock para artículo ID:', scope.article.idArticulo);
 
                     if (!scope.article || !scope.article.idArticulo) {
-                        $log.error('Invalid article or article ID');
-                        updatePopoverContent('<div class="text-danger">Error: Artículo inválido</div>');
+                        updateSwalContent('<div class="text-danger p-3">Error: Artículo inválido</div>');
                         isLoadingData = false;
                         return;
                     }
 
-                    // Add a small delay to ensure the service isn't overwhelmed with simultaneous requests
-                    $timeout(function () {
-                        articuloSvc.getDataStock(scope.article.idArticulo)
-                            .then(function (response) {
-                                $log.info('Stock data received:', response);
+                    articuloSvc.getDataStock(scope.article.idArticulo)
+                        .then(function (response) {
+                            $log.info('Datos de stock recibidos:', response);
 
-                                var html = `
+                            var html = `
+                            <div class="p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
-                                        <thead>
+                                    <table class="table table-sm table-bordered mb-0">
+                                        <thead class="thead-light">
                                             <tr>
                                                 <th>Estab.</th>
                                                 <th>Bodega</th>
@@ -388,146 +389,78 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                            `;
+                        `;
 
-                                if (response && response.length > 0) {
-                                    response.forEach(function (branch) {
-                                        if (branch.warehouses && branch.warehouses.length > 0) {
-                                            var rowspanCount = branch.warehouses.length;
+                            if (response && response.length > 0) {
+                                response.forEach(function (branch) {
+                                    if (branch.warehouses && branch.warehouses.length > 0) {
+                                        var rowspanCount = branch.warehouses.length;
 
-                                            branch.warehouses.forEach(function (wh, idx) {
-                                                html += '<tr>';
+                                        branch.warehouses.forEach(function (wh, idx) {
+                                            html += '<tr>';
 
-                                                if (idx === 0) {
-                                                    html += '<td rowspan="' + rowspanCount + '">' + branch.branchOffice + '</td>';
-                                                }
+                                            if (idx === 0) {
+                                                html += '<td rowspan="' + rowspanCount + '">' + branch.branchOffice + '</td>';
+                                            }
 
-                                                html += '<td>' + wh.bodega + '</td>';
-                                                html += '<td>' + wh.stock + '</td>';
-                                                html += '<td>' + wh.ubicacion + '</td>';
-                                                html += '</tr>';
-                                            });
-                                        }
-                                    });
-                                } else {
-                                    html += '<tr><td colspan="4" class="text-center">No hay datos disponibles</td></tr>';
-                                }
-
-                                html += '</tbody></table></div>';
-
-                                updatePopoverContent(html);
-                                isLoadingData = false;
-                            })
-                            .catch(function (error) {
-                                $log.error('Error loading stock data:', error);
-
-                                if (loadAttempts < maxAttempts) {
-                                    updatePopoverContent('<div class="text-warning">Reintentando cargar datos...</div>');
-                                    isLoadingData = false;
-
-                                    // Retry after a delay
-                                    $timeout(function () {
-                                        loadStockData();
-                                    }, 1000);
-                                } else {
-                                    updatePopoverContent('<div class="text-danger">Error al cargar datos después de varios intentos</div>');
-                                    isLoadingData = false;
-                                }
-                            });
-                    }, 100);
-                }
-
-                // Update popover content
-                function updatePopoverContent(html) {
-                    var $popover = $('.popover:visible');
-                    if ($popover.length) {
-                        $popover.find('.popover-body').html(html);
-                    }
-                }
-
-                // Show popover and load data
-                function showPopover() {
-                    $(element).popover('show');
-                    isPopoverShown = true;
-
-                    // Add hover event to the popover after it's shown
-                    $timeout(function () {
-                        var $popover = $('.popover:visible');
-
-                        if ($popover.length) {
-                            $popover.on('mouseenter', function () {
-                                $popover.data('hover', true);
-                            });
-
-                            $popover.on('mouseleave', function () {
-                                $popover.data('hover', false);
-                                $timeout(function () {
-                                    if (!$popover.data('hover') && !$(element).is(':hover')) {
-                                        hidePopover();
+                                            html += '<td>' + wh.bodega + '</td>';
+                                            html += '<td>' + wh.stock + '</td>';
+                                            html += '<td>' + wh.ubicacion + '</td>';
+                                            html += '</tr>';
+                                        });
                                     }
-                                }, 100);
-                            });
+                                });
+                            } else {
+                                html += '<tr><td colspan="4" class="text-center">No hay datos disponibles</td></tr>';
+                            }
 
-                            // Load data
-                            loadStockData();
-                        }
-                    }, 200);  // Increased timeout for popover to fully render
+                            html += '</tbody></table></div></div>';
+
+                            updateSwalContent(html);
+                            isLoadingData = false;
+                        })
+                        .catch(function (error) {
+                            $log.error('Error al cargar datos de stock:', error);
+                            updateSwalContent('<div class="text-danger p-3">Error al cargar datos de stock</div>');
+                            isLoadingData = false;
+                        });
                 }
 
-                // Hide popover
-                function hidePopover() {
-                    $(element).popover('hide');
-                    isPopoverShown = false;
-                    // Reset load attempts when popover closes
-                    loadAttempts = 0;
+                // Función para actualizar el contenido del SweetAlert
+                function updateSwalContent(html) {
+                    Swal.update({
+                        html: html
+                    });
                 }
 
-                // Toggle popover on click (additional to hover)
+                // Evento de clic para mostrar los detalles
                 element.on('click', function (e) {
+                    e.preventDefault();
                     e.stopPropagation();
-                    if (isPopoverShown) {
-                        hidePopover();
-                    } else {
-                        showPopover();
-                    }
+                    showStockDetails();
                 });
 
-                // Show on hover
-                element.on('mouseenter', function () {
-                    if (!isPopoverShown) {
-                        showPopover();
-                    }
-                });
+                // Evento para hover opcional (puedes descomentar si quieres activarlo)
+                 var hoverTimer;
+                 element.on('mouseenter', function() {
+                     hoverTimer = $timeout(function() {
+                         showStockDetails();
+                     }, 500); // Retraso para evitar activación accidental
+                 });
+                 
+                 element.on('mouseleave', function() {
+                     $timeout.cancel(hoverTimer);
+                 });
 
-                // Hide when mouse leaves (if not over popover)
-                element.on('mouseleave', function () {
-                    $timeout(function () {
-                        var $popover = $('.popover:visible');
-                        if ($popover.length && !$popover.data('hover')) {
-                            hidePopover();
-                        }
-                    }, 100);
-                });
-
-                // Close popover when clicking outside
-                $(document).on('click.' + uniqueId, function (e) {
-                    if (isPopoverShown && !$(element).is(e.target) &&
-                        !$(element).has(e.target).length &&
-                        !$('.popover').has(e.target).length) {
-                        hidePopover();
-                    }
-                });
-
-                // Clean up
+                // Limpiar eventos al destruir el scope
                 scope.$on('$destroy', function () {
-                    $(element).popover('dispose');
-                    element.off('click mouseenter mouseleave');
-                    $(document).off('click.' + uniqueId);
-                    $('.popover').off('mouseenter mouseleave');
+                    element.off('click');
+                    // $timeout.cancel(hoverTimer); // Descomentar si usas hover
                 });
             }
         };
     }]);
+
     app.directive('totalesVentaView', ['$rootScope', function ($rootScope) {
         return {
             restrict: 'A',
