@@ -7,6 +7,7 @@ import {
   OnInit,
   output,
   ViewChild,
+  effect,
 } from '@angular/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
@@ -54,6 +55,33 @@ export class MatDynamicSelectComponent
 
   protected _onDestroy = new Subject<void>();
 
+  constructor() {
+    // Use effect to watch for changes in selectedValue input
+    effect(() => {
+      const value = this.selectedValue();
+      if (value !== undefined && value !== null) {
+        // Find the complete option object that matches the selected value
+        const selectedOption = this.options().find(
+          (option) =>
+            option.value === value ||
+            (typeof value === 'object' && option.value === value.value),
+        );
+
+        if (selectedOption && this.selectControl.value !== selectedOption) {
+          this.selectControl.setValue(selectedOption, { emitEvent: false });
+        }
+      }
+    });
+
+    // Use effect to watch for changes in options input
+    effect(() => {
+      const options = this.options();
+      if (options) {
+        this.filteredOptions.next(options.slice());
+      }
+    });
+  }
+
   ngOnInit() {
     this.filteredOptions.next(this.options().slice());
 
@@ -63,13 +91,16 @@ export class MatDynamicSelectComponent
         this.filterOptions();
       });
 
-    if (this.selectedValue) {
-      this.selectControl.setValue(this.selectedValue);
-    }
-
-    this.selectControl.valueChanges.subscribe((value) => {
-      this.selectionChange.emit(value);
-    });
+    this.selectControl.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe((selectedOption: SelectOption) => {
+        // Emit the actual value, not the entire option object
+        if (selectedOption && selectedOption.value !== undefined) {
+          this.selectionChange.emit(selectedOption.value);
+        } else {
+          this.selectionChange.emit(selectedOption);
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -85,8 +116,11 @@ export class MatDynamicSelectComponent
     this.filteredOptions
       .pipe(take(1), takeUntil(this._onDestroy))
       .subscribe(() => {
-        this.singleSelect.compareWith = (a: SelectOption, b: SelectOption) =>
-          a && b && a.value === b.value;
+        // Set compareWith to compare the actual SelectOption objects
+        this.singleSelect.compareWith = (a: SelectOption, b: SelectOption) => {
+          if (!a || !b) return false;
+          return a.value === b.value;
+        };
       });
   }
 
@@ -103,10 +137,21 @@ export class MatDynamicSelectComponent
       search = search.toLowerCase();
     }
 
-    this.filteredOptions.next(
-      this.options().filter(
-        (option) => option.viewValue.toLowerCase().indexOf(search) > -1,
-      ),
+    const filtered = this.options().filter(
+      (option) => option.viewValue.toLowerCase().indexOf(search) > -1,
     );
+
+    // Always include the currently selected option in the filtered results
+    // to prevent the select from losing its value
+    const currentSelectedOption = this.selectControl.value;
+    if (
+      currentSelectedOption &&
+      !filtered.find((option) => option.value === currentSelectedOption.value)
+    ) {
+      // Add the currently selected option at the beginning
+      filtered.unshift(currentSelectedOption);
+    }
+
+    this.filteredOptions.next(filtered);
   }
 }

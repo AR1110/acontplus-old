@@ -144,13 +144,8 @@ export class DocSustentoRetencionComponent {
       }
     });
   }
-  setPorcentajeRet() {
-    // Logic to set porcentaje based on codigo
-  }
 
   calcularRetencion() {
-    // Logic to set value based on input
-
     setTimeout(() => {
       const baseImponible = this.retencionGroup().get('baseImponible')?.value;
       const porcentajeRetener =

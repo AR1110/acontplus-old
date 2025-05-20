@@ -3,11 +3,13 @@
   <mat-select [formControl]="selectControl" #singleSelect>
     <mat-option>
       <ngx-mat-select-search
+        placeholderLabel="Buscar..."
+        noEntriesFoundLabel="No se encontraron resultados"
         [formControl]="selectFilterControl"
       ></ngx-mat-select-search>
     </mat-option>
     @for (option of filteredOptions | async; track $index) {
-      <mat-option [value]="option.value">
+      <mat-option [value]="option">
         {{ option.viewValue }}
       </mat-option>
     }
