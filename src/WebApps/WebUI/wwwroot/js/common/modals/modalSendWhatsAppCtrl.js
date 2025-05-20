@@ -1,8 +1,9 @@
+//@ts-check
 export {
-    ModalWhatsAppCtrl
+    modalSendWhatsAppCtrl
 }
 
-ModalWhatsAppCtrl.$inject = [
+modalSendWhatsAppCtrl.$inject = [
     '$scope',
     '$http',
     '$uibModalInstance',
@@ -13,12 +14,13 @@ ModalWhatsAppCtrl.$inject = [
     'decodeToken'
 ]
 
-function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
+function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
     $scope.client = {}
     $scope.whatsapp = {}
     $scope.connected_devices = []
     $scope.current_device = {}
 
+    console.log(params)
 
     $scope.hasPermissions = _token.userRoleId == '26'
 
@@ -39,6 +41,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
             (response) => {
+                console.log(response)
                 let { stateInstance } = response.data
                 if (stateInstance === "authorized") {
                     $scope.session.is_logged_in = true

@@ -423,9 +423,6 @@ app.constant('nombreModal', {
         MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         MODAL_STATUS_MAIL_CSHTML: '~/Pages/FactElect/DocumentoElectronico/Shared/_ModalStatusEmail.cshtml',
 
-        MODAL_SEND_WHATSAPP_CTRL: '/js/modal/common/modalWhatsAppCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_SEND_WHATSAPP_CSHTML: '~/Pages/Common/WhatsApp/Shared/_ModalWhatsApp.cshtml',
-
         MODAL_INFO_ADICIONAL_DOC: {
             controller: 'InfoAdicionalTipoDocCtrl',
             template: '~/Pages/Common/Shared/_ModalInfoAdicionalTipoDoc.cshtml'
