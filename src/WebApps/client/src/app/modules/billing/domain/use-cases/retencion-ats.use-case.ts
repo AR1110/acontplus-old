@@ -32,7 +32,7 @@ export class RetencionAtsUseCase {
     return this._retencionAtsRepository.create(data);
   }
 
-  update(id: number, data: RetencionAts) {
+  update<T>(id: number, data: T) {
     return this._retencionAtsRepository.update(id, data);
   }
 }

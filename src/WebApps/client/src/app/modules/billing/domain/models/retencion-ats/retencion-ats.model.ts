@@ -1,6 +1,10 @@
 export interface RetencionAts {
   idRetencionAts: number;
+  idPuntoEmision: number;
+  idProveedor: number;
   fechaEmision: string;
+  parteRel: string;
+  tipoSujetoRetenido: string;
   idDocumentoElectronico: number;
   razonSocialSujetoRetenido: string;
   codEstab?: string;

@@ -20,7 +20,6 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
-import { DatePipe } from '@angular/common';
 import { TipoComprobante } from '@sri/domain/models/tipo-comprobante';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFiscalExterior } from '@sri/domain/models/tipo-regimen-fiscal-exterior';
@@ -75,7 +74,6 @@ import { formatDate } from '@core/utils/date.util';
 })
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
-  private datePipe = inject(DatePipe);
   readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly _dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
@@ -126,6 +124,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   // Info adicional
   infoAdicional: RetAtsInfoAdicional[] = [];
   supplierSelected = '';
+  dataLoaded = false;
 
   // Computed properties
   dialogIcon = signal('add');
@@ -169,13 +168,13 @@ export class RetencionAtsAddEditComponent implements OnInit {
       totalImpuestoReembolso: [0],
       totalSinImpuestos: [0],
       importeTotal: [0],
-      taxes: this._fb.array([]),
-      retenciones: this._fb.array([]),
+      taxes: this._fb.array([], [Validators.required]),
+      retenciones: this._fb.array([], [Validators.required]),
       reembolsos: this._fb.group({
         id: [0],
         taxes: this._fb.array([]),
       }),
-      payments: this._fb.array([]),
+      payments: this._fb.array([], [Validators.required]),
       isAutomatic: [false],
     });
   }
@@ -248,6 +247,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.conceptosRetencionAir = response.conceptosRetencionAir;
       this.porcentajesRetIva = response.porcentajesRetIva;
       this.formasPago = response.formasPago;
+      this.dataLoaded = true;
     });
   }
 
@@ -262,8 +262,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
       };
       // console.log(parsedData);
       this.retencionAtsForm.patchValue(parsedData);
-      this.retencionAtsForm.get('idEstablecimiento')?.disable();
-      this.retencionAtsForm.get('idPuntoEmision')?.disable();
       const formatedDate = formatDate(this._data.fechaEmision);
       this.retencionAtsForm
         .get('fechaEmision')
@@ -370,12 +368,10 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   onSave() {
+    console.log(this.retencionAtsForm.value);
     if (this._data.idRetencionAts > 0) {
       this._retencionAtsUseCase
-        .update(
-          this._data.idRetencionAts,
-          this.retencionAtsForm.value as RetencionAts,
-        )
+        .update(this._data.idRetencionAts, this.retencionAtsForm.value)
         .subscribe((response) => {
           this._tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',

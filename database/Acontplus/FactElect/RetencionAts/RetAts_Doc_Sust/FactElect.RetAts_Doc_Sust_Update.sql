@@ -16,10 +16,10 @@ CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Update @userRoleId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT
+	DECLARE @userId INT
 
 	BEGIN TRY
-        SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+        SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
 		BEGIN TRAN 
 			
@@ -51,7 +51,6 @@ BEGIN
 			)) t ON rds.idRetAtsDocSustento = t.idRetAtsDocSustento
 			
 			WHERE rds.idRetAtsDocSustento = @id
-
 			
 			UPDATE fc SET fc.retencion = 1
 			FROM dbo.FacturaCompra fc
@@ -63,11 +62,11 @@ BEGIN
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+	    SELECT '0' code, 'Error en el procedimiento!' as 'message'
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
-		INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES (NEWID(), '/UPDATE', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES ('DocSustento/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
 	END CATCH
 END
 GO

@@ -84,6 +84,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
+  dataLoaded = input.required<boolean>();
   tiposComprobante = input.required<TipoComprobante[]>();
   sustentosTributarios = input.required<SustentoTributario[]>();
   tiposPago = input.required<TipoPago[]>();
@@ -154,6 +155,11 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
         infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
       };
 
+      this.docSustentoArray()
+        .at(this.indexDoc())
+        .get('idRetencionAts')
+        ?.setValue(parsedData.idRetencionAts);
+
       parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
         if (doc.taxes) {
           doc.taxes.forEach((tax) => {
@@ -199,7 +205,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       codigoRetencion: ['', Validators.required],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
-      valorRetenido: [0, [Validators.required]],
+      valorRetenido: [0],
     });
   }
 
@@ -353,11 +359,25 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       this._docSustentoUseCase
         .update(docSustento.idRetAtsDocSustento, docSustento)
         .subscribe((response) => {
-          console.log(response);
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
         });
     } else {
       this._docSustentoUseCase.create(docSustento).subscribe((response) => {
-        console.log(response);
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code === '1') {
+          const { idRetAtsDocSustento } = JSON.parse(
+            response.payload as string,
+          );
+          this.docSustentoArray()
+            .controls[index].get('idRetAtsDocSustento')
+            ?.setValue(idRetAtsDocSustento);
+        }
       });
     }
   }

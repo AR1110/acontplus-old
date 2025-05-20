@@ -47,7 +47,7 @@ export abstract class RetencionAtsRepository {
   }>;
   abstract getById(id: number): Observable<RetencionAts>;
   abstract create<T>(data: T): Observable<ApiResponse>;
-  abstract update(id: number, data: RetencionAts): Observable<ApiResponse>;
+  abstract update<T>(id: number, data: T): Observable<ApiResponse>;
   abstract getDocs(parameters: unknown): Observable<{
     documents: RetAtsDocSustento[];
   }>;

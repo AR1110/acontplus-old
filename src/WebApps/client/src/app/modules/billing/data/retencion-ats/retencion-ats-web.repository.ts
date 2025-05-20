@@ -105,7 +105,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       .post<ApiResponse>(`${this._url}`, data)
       .pipe(map((response) => response));
   }
-  update(id: number, data: RetencionAts): Observable<ApiResponse> {
+  update<T>(id: number, data: T): Observable<ApiResponse> {
     return this._http
       .put<ApiResponse>(`${this._url}${id}`, data)
       .pipe(map((response) => response));
