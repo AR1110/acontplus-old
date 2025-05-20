@@ -7,7 +7,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
+import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import {
   MatCard,
   MatCardActions,

@@ -7,7 +7,7 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import Swal from 'sweetalert2';
-import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/doc-sustento-tax.use-case';
+import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
 import { ToasterService } from '@core/services/toaster.service';
 
 @Component({

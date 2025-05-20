@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats.repository';
+import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats/retencion-ats.repository';
 import { map, Observable } from 'rxjs';
 import {
   RetencionAts,

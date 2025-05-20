@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { DocSustentoRepository } from '@billing/domain/repositories/doc-sustento.repository';
+import { DocSustentoRepository } from '@billing/domain/repositories/retencion-ats/doc-sustento.repository';
 
 @Injectable({
   providedIn: 'root',

@@ -27,7 +27,7 @@ import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFiscalExterior } from '@sri/domain/models/tipo-regimen-fiscal-exterior';
 import { Pais } from '@sri/domain/models/pais';
 import { GenericModel } from '@core/models/generic.model';
-import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
+import { DocSustentoUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento.use-case';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { DocSustentoTaxComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-tax/doc-sustento-tax.component';

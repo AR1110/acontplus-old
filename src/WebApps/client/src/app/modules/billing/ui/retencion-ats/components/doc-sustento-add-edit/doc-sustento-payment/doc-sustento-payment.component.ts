@@ -4,9 +4,9 @@ import { MatFormField, MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/doc-sustento-tax.use-case';
+import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
 import { ToasterService } from '@core/services/toaster.service';
-import { DocSustentoPaymentUseCase } from '@billing/domain/use-cases/doc-sustento-payment.use-case';
+import { DocSustentoPaymentUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-payment.use-case';
 import Swal from 'sweetalert2';
 
 @Component({

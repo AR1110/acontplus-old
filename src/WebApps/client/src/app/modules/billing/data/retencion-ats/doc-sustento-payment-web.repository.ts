@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { RETENCION_ATS_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
-import { DocSustentoPaymentRepository } from '@billing/domain/repositories/doc-sustento-payment.repository';
+import { DocSustentoPaymentRepository } from '@billing/domain/repositories/retencion-ats/doc-sustento-payment.repository';
 
 @Injectable({
   providedIn: 'root',
