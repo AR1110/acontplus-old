@@ -368,8 +368,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   onSave() {
-    console.log(this.retencionAtsForm.value);
-    if (this._data.idRetencionAts > 0) {
+    if (this._data && this._data.idRetencionAts > 0) {
       this._retencionAtsUseCase
         .update(this._data.idRetencionAts, this.retencionAtsForm.value)
         .subscribe((response) => {
