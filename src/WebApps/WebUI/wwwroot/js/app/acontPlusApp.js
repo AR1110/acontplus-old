@@ -113,6 +113,10 @@ app.factory("authInterceptorService", function ($q, $localStorage, jwtHelper) {
     let authInterceptorServiceFactory = {};
 
     let _request = (config) => {
+        if (config.url.includes('api.green-api.com')) {
+            return config;
+        }
+
         config.headers = config.headers || {};
         let authData = $localStorage.currentUser;
 
