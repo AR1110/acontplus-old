@@ -403,8 +403,8 @@ BEGIN
 
             --> CONTABILIDAD 
 			INSERT INTO Contabilidad.CuentaPorPagar
-			      (codDoc,fechaEmision, idEstablecimiento, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento)
-		    SELECT @codDoc,fechaEmision,@idEstablecimiento,@idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts
+			      (codDoc,fechaEmision, idEstablecimiento, idEntidad, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento)
+		    SELECT @codDoc,fechaEmision,@idEstablecimiento,@idEntidad, @idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts
             FROM @tblInfoCompRet
 
 			UPDATE tax SET tax.idRetAtsDocSustento = ds.idRetAtsDocSustento

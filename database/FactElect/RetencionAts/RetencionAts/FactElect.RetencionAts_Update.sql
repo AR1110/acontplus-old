@@ -69,7 +69,9 @@ BEGIN
             ,parteRel                         VARCHAR(2)
             ,razonSocialSujetoRetenido        VARCHAR(300)
             ,periodoFiscal                    VARCHAR(8)
-		)
+		);
+
+        SET @idProveedor = (SELECT TOP 1 idProveedor FROM @tblInfoCompRet)
 
         --> Recuperacion de Varialbles
         SELECT TOP 1 @ruc = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad

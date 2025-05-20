@@ -1,6 +1,9 @@
 ﻿using System.IO.Compression;
 using System.Text.Json.Serialization;
+using Common.FactElect.Services.Authentication;
 using Common.FactElect.Services.Conversion;
+using Common.FactElect.Services.External;
+using Common.FactElect.Services.Validation;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -85,7 +88,10 @@ public static class ApplicationServicesExtensions
             .WithTransientLifetime()
         );
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
-
+        services.AddScoped<ICookieService, CookieService>();
+        services.AddScoped<ICaptchaService, CaptchaService>();
+        services.AddScoped<IRucService, RucService>();
+        services.AddScoped<ICedulaService, CedulaService>();
         return services;
     }
 }
