@@ -157,8 +157,8 @@ BEGIN
 		     uniqueIdDoc                 UNIQUEIDENTIFIER 
 	        ,documentoSustentoTributarioId                INT
 	        ,numDocSustento              VARCHAR(17) 
-	        ,fechaEmisionDocSustento     DATETIME 
-	        ,fechaRegistroContable       DATETIME 
+	        ,fechaEmisionDocSustento     DATETIME2 
+	        ,fechaRegistroContable       DATETIME2 
 	        ,numAutDocSustento           VARCHAR(49) 
 	        ,pagoLocExt                  VARCHAR(2) 
 	        ,tipoRegimenFiscalExteriorId INT

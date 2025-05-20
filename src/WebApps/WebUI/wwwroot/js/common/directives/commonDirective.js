@@ -320,7 +320,7 @@
         }
     }])
 
-    app.directive('estabStock', ['$compile', 'articuloService', function ($compile, articuloSvc) {
+    app.directive('estabStock', ['$compile', 'articuloService', '$timeout', '$log', function ($compile, articuloSvc, $timeout, $log) {
         return {
             restrict: 'A',
             scope: {
@@ -328,78 +328,206 @@
                 placement: "@"
             },
             link: function (scope, element) {
-                let isPopoverInitialized = false;
-                var popoverOptions = {
-                    title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
-                    content: function () {
-                        isPopoverInitialized = true;
-                        var popoverContent = ` <div class="table-responsive">
-                                                <table class="table table-sm">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Estab.</th>
-                                                            <th>Bodega</th>
-                                                            <th>Stock</th>
-                                                            <th>Ub.                                                       
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody ng-repeat="s in branchs" class="small">
-                                                        <tr ng-repeat="ub in s.warehouses">
-                                                            <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
-                                                            <td>{{ub.bodega}}</td>
-                                                            <td>{{ub.stock}}</td>
-                                                            <td>{{ub.ubicacion}}</td>
-                                                        <tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>   
-                                             `;
+                // Generate a unique ID for this instance
+                var uniqueId = 'stock-popover-' + (scope.article.idArticulo || 'unknown');
 
-                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
+                // Add classes to make this element interactive
+                element.addClass('estab-stock-trigger');
+                element.css('cursor', 'pointer');
 
-
-                            scope.branchs = response;
-
-                        })
-
-                        // Compile the popover content with the scope
-                        let compiledContent = $compile(popoverContent)(scope);
-                        scope.$apply();
-                        return compiledContent;
-
-                    },
-                    placement: scope.placement || 'bottom',
-                    trigger: 'outsideClick',
+                // Create popover configuration
+                var config = {
+                    container: 'body',
                     html: true,
-                    customClass: 'zindex'
-                    // container: 'body'
+                    trigger: 'manual',
+                    placement: scope.placement || 'auto',
+                    title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
+                    content: '<div class="p-2 text-center"><div class="spinner-border spinner-border-sm" role="status"></div> Cargando...</div>'
                 };
 
+                // Initialize popover
+                $(element).popover(config);
 
-                $(element).popover(popoverOptions);
+                // Track state
+                var isPopoverShown = false;
+                var isLoadingData = false;
+                var loadAttempts = 0;
+                var maxAttempts = 3;
 
+                // Function to load data
+                function loadStockData() {
+                    if (isLoadingData || loadAttempts >= maxAttempts) return;
 
-                element.on('mouseover', function () {
-                    if (!isPopoverInitialized) {
-                        $(element).popover('show');
+                    isLoadingData = true;
+                    loadAttempts++;
+
+                    $log.info('Loading stock data for article ID:', scope.article.idArticulo, 'Attempt:', loadAttempts);
+
+                    if (!scope.article || !scope.article.idArticulo) {
+                        $log.error('Invalid article or article ID');
+                        updatePopoverContent('<div class="text-danger">Error: Artículo inválido</div>');
+                        isLoadingData = false;
+                        return;
+                    }
+
+                    // Add a small delay to ensure the service isn't overwhelmed with simultaneous requests
+                    $timeout(function () {
+                        articuloSvc.getDataStock(scope.article.idArticulo)
+                            .then(function (response) {
+                                $log.info('Stock data received:', response);
+
+                                var html = `
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Estab.</th>
+                                                <th>Bodega</th>
+                                                <th>Stock</th>
+                                                <th>Ub.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                            `;
+
+                                if (response && response.length > 0) {
+                                    response.forEach(function (branch) {
+                                        if (branch.warehouses && branch.warehouses.length > 0) {
+                                            var rowspanCount = branch.warehouses.length;
+
+                                            branch.warehouses.forEach(function (wh, idx) {
+                                                html += '<tr>';
+
+                                                if (idx === 0) {
+                                                    html += '<td rowspan="' + rowspanCount + '">' + branch.branchOffice + '</td>';
+                                                }
+
+                                                html += '<td>' + wh.bodega + '</td>';
+                                                html += '<td>' + wh.stock + '</td>';
+                                                html += '<td>' + wh.ubicacion + '</td>';
+                                                html += '</tr>';
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    html += '<tr><td colspan="4" class="text-center">No hay datos disponibles</td></tr>';
+                                }
+
+                                html += '</tbody></table></div>';
+
+                                updatePopoverContent(html);
+                                isLoadingData = false;
+                            })
+                            .catch(function (error) {
+                                $log.error('Error loading stock data:', error);
+
+                                if (loadAttempts < maxAttempts) {
+                                    updatePopoverContent('<div class="text-warning">Reintentando cargar datos...</div>');
+                                    isLoadingData = false;
+
+                                    // Retry after a delay
+                                    $timeout(function () {
+                                        loadStockData();
+                                    }, 1000);
+                                } else {
+                                    updatePopoverContent('<div class="text-danger">Error al cargar datos después de varios intentos</div>');
+                                    isLoadingData = false;
+                                }
+                            });
+                    }, 100);
+                }
+
+                // Update popover content
+                function updatePopoverContent(html) {
+                    var $popover = $('.popover:visible');
+                    if ($popover.length) {
+                        $popover.find('.popover-body').html(html);
+                    }
+                }
+
+                // Show popover and load data
+                function showPopover() {
+                    $(element).popover('show');
+                    isPopoverShown = true;
+
+                    // Add hover event to the popover after it's shown
+                    $timeout(function () {
+                        var $popover = $('.popover:visible');
+
+                        if ($popover.length) {
+                            $popover.on('mouseenter', function () {
+                                $popover.data('hover', true);
+                            });
+
+                            $popover.on('mouseleave', function () {
+                                $popover.data('hover', false);
+                                $timeout(function () {
+                                    if (!$popover.data('hover') && !$(element).is(':hover')) {
+                                        hidePopover();
+                                    }
+                                }, 100);
+                            });
+
+                            // Load data
+                            loadStockData();
+                        }
+                    }, 200);  // Increased timeout for popover to fully render
+                }
+
+                // Hide popover
+                function hidePopover() {
+                    $(element).popover('hide');
+                    isPopoverShown = false;
+                    // Reset load attempts when popover closes
+                    loadAttempts = 0;
+                }
+
+                // Toggle popover on click (additional to hover)
+                element.on('click', function (e) {
+                    e.stopPropagation();
+                    if (isPopoverShown) {
+                        hidePopover();
+                    } else {
+                        showPopover();
                     }
                 });
 
-
-                $(document).on('mouseover', function (event) {
-                    isPopoverInitialized = false;
-                    if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
-                        $(element).popover('hide');
+                // Show on hover
+                element.on('mouseenter', function () {
+                    if (!isPopoverShown) {
+                        showPopover();
                     }
+                });
+
+                // Hide when mouse leaves (if not over popover)
+                element.on('mouseleave', function () {
+                    $timeout(function () {
+                        var $popover = $('.popover:visible');
+                        if ($popover.length && !$popover.data('hover')) {
+                            hidePopover();
+                        }
+                    }, 100);
+                });
+
+                // Close popover when clicking outside
+                $(document).on('click.' + uniqueId, function (e) {
+                    if (isPopoverShown && !$(element).is(e.target) &&
+                        !$(element).has(e.target).length &&
+                        !$('.popover').has(e.target).length) {
+                        hidePopover();
+                    }
+                });
+
+                // Clean up
+                scope.$on('$destroy', function () {
+                    $(element).popover('dispose');
+                    element.off('click mouseenter mouseleave');
+                    $(document).off('click.' + uniqueId);
+                    $('.popover').off('mouseenter mouseleave');
                 });
             }
         };
-    }])
-
-
-
-
+    }]);
     app.directive('totalesVentaView', ['$rootScope', function ($rootScope) {
         return {
             restrict: 'A',
