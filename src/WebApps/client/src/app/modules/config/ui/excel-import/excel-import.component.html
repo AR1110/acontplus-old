@@ -42,6 +42,7 @@
 
     </div>
     <mat-divider/>
+  </div>
 
 <!--    <app-theme-button-->
 <!--    [type]="'button'"-->
@@ -50,27 +51,30 @@
 <!--    [icon]="'add'"-->
 <!--    />-->
 
-    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <div class="table-container small-table">
+      <div class="table-container">
+        <mat-table
+          [dataSource]="dataSource.data"
+          multiTemplateDataRows
+          class="mat-elevation-z8 full-width-table"
+        >
+          @for (col of displayedColumns; track $index) {
+            <ng-container [matColumnDef]="col">
+              <mat-header-cell *matHeaderCellDef class="column-header">
+                {{ col }}
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element" class="column-cell">
+                {{ element[col] }}
+              </mat-cell>
+            </ng-container>
+          }
 
-      <!-- Definir columnas dinámicamente si los encabezados son variables -->
-      @for (col of displayedColumns; track $index){
-        <ng-container   [matColumnDef]="col">
-          <mat-header-cell *matHeaderCellDef>
-            <div style="white-space: normal; word-wrap: break-word; text-align: center;">
-              {{ col }}
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element" [style.max-width]="300" style="white-space: normal; word-wrap: break-word;"> {{ element[col] }} </mat-cell>
-        </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+      </div>
 
-      }
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-
-    </mat-table>
-
-  </div>
+    </div>
 
 
 </app-mat-dynamic-card>
