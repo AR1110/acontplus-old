@@ -13,8 +13,8 @@ public static class ContablidadEndpointsExtensions
 
         cuotaPorCobrarGroup.MapPut("/{id}",
             async (ICuotaPorCobrarEndpoints endpoints, int id,
-                    CuotaPorCobrarUpdateDto param) =>
-                await endpoints.UpdateAsync(param));
+                  CuotaPorCobrarUpdateParamsDto paremeter) =>
+                await endpoints.UpdateAsync(paremeter));
 
         return endpointRouteBuilder;
     }

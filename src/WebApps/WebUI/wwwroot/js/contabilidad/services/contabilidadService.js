@@ -1466,14 +1466,14 @@
 
     app.factory('cuotaPorCobrarService', ['mainService', 'formulario', function (mS, fS) {
 
-        const url = 'Contabilidad/CuotaPorCobrar';
+        const url = 'Contabilidad/CuotaPorCobrar/';
 
         return {
             update
         }
 
         function update(data) {
-            return mS.getData('put', `${url}`, data, true)
+            return mS.getData('put', `${url}${0}`, data, true)
         }
 
 

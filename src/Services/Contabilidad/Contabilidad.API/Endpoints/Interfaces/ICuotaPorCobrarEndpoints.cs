@@ -2,6 +2,6 @@
 {
     public interface ICuotaPorCobrarEndpoints
     {
-        Task<IResult> UpdateAsync(CuotaPorCobrarUpdateDto param);
+        Task<IResult> UpdateAsync(CuotaPorCobrarUpdateParamsDto param);
     }
 }
