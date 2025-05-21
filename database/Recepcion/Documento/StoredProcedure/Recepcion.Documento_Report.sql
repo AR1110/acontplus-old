@@ -206,10 +206,10 @@ BEGIN
 			                                    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
 			                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                                                INNER JOIN Sri.ImpuestoRetencion tr ON ir.impuestoRetencionId = tr.Id
+                                                INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
 			                                    WHERE ds.numAutDocSustento = dr.claveAcceso
 	 			                                    AND rt.anuladaSri = 0 
-				                                    AND tr.Codigo = 1
+				                                    AND sr.codigo = 1
                                                     AND ds.estado = 1
 
 		                                    ),0) as retRenta
@@ -220,10 +220,10 @@ BEGIN
 			                                    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
 			                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                                                INNER JOIN Sri.ImpuestoRetencion tr ON ir.impuestoRetencionId = tr.Id
+                                                INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
 			                                    WHERE ds.numAutDocSustento = dr.claveAcceso
 	 			                                    AND rt.anuladaSri = 0 
-				                                    AND tr.Codigo= 2
+				                                    AND sr.codigo = 2
                                                     AND ds.estado = 1
 
 		                                    ),0) as retIva
@@ -382,12 +382,12 @@ BEGIN
 			                                    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
 			                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                                                INNER JOIN Sri.ImpuestoRetencion tr ON ir.impuestoRetencionId = tr.Id
+                                                INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
 			                                    WHERE ds.numAutDocSustento = fc.nroAutorizacion
 	 			                                  AND rt.anuladaSri = 0 
 				                                  AND rt.idProveedor = fc.idProveedor
                                                   AND ds.estado = 1
-                                                  AND tr.Codigo= 1
+                                                  AND sr.codigo = 1
 
 		                                    ),0) as retRenta
 
@@ -397,12 +397,12 @@ BEGIN
 			                                    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
 			                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                                                INNER JOIN Sri.ImpuestoRetencion tr ON ir.impuestoRetencionId = tr.Id
+                                                INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
 			                                    WHERE ds.numAutDocSustento = fc.nroAutorizacion
 	 			                                    AND rt.anuladaSri = 0 
 				                                    AND rt.idProveedor = fc.idProveedor
                                                     AND ds.estado = 1
-                                                    AND tr.Codigo= 2
+                                                    AND sr.codigo = 2
 
 		                                    ),0) as retIva
                                             ,us.nombreUsuario as usuario
