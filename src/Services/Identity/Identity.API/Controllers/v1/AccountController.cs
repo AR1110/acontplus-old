@@ -34,45 +34,45 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1 when !userData[0].NeedAuthorization:
-                {
-                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                    var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                    if (token == null || string.IsNullOrEmpty(token.Token))
-                        return BadRequest("Error al iniciar session");
-
-                    userData.ForEach(x => x.Token = token.Token);
-                    var logingHistory = new LoginHistory
                     {
-                        UserId = userData[0].UserId,
-                        Username = userData[0].Username,
-                        UserRoleId = userData[0].UserRoleId,
-                        UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
-                        IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper
-                            .SummarizeUserAgent(authRequest.UserAgent).ipAddress),
-                        Token = token.Token,
-                        TokenExpiration = token.Expires
-                    };
+                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
 
-                    await loginHistoryService.AddAsync(logingHistory);
+                        var token = tokenService.CreateToken(userData.FirstOrDefault());
 
-                    logingHistory.UserAgent = authRequest.UserAgent;
-                    await accountService.AddNotificationAsync(logingHistory);
+                        if (token == null || string.IsNullOrEmpty(token.Token))
+                            return BadRequest("Error al iniciar session");
 
-                    return Ok(new
-                    {
-                        code = "1",
-                        message = "Login correcto",
-                        payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
-                    });
-                }
+                        userData.ForEach(x => x.Token = token.Token);
+                        var logingHistory = new LoginHistory
+                        {
+                            UserId = userData[0].UserId,
+                            Username = userData[0].Username,
+                            UserRoleId = userData[0].UserRoleId,
+                            UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
+                            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper
+                                .SummarizeUserAgent(authRequest.UserAgent).ipAddress),
+                            Token = token.Token,
+                            TokenExpiration = token.Expires
+                        };
+
+                        await loginHistoryService.AddAsync(logingHistory);
+
+                        logingHistory.UserAgent = authRequest.UserAgent;
+                        await accountService.AddNotificationAsync(logingHistory);
+
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Login correcto",
+                            payload = JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })
+                        });
+                    }
                 case 1 when userData[0].NeedAuthorization:
                     return Ok(new
                     {

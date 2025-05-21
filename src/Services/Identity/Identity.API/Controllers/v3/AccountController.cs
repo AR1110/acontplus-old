@@ -30,42 +30,42 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1:
-                {
-                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                    var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                    if (token == null || string.IsNullOrEmpty(token.Token))
-                        return BadRequest("Error al iniciar session");
-
-                    userData.ForEach(x => x.Token = token.Token);
-
-                    var logingHistory = new LoginHistory
                     {
-                        UserId = userData[0].UserId,
-                        Username = userData[0].Username,
-                        UserRoleId = userData[0].UserRoleId,
-                        UserAgent = authRequest.UserAgent,
-                        Token = token.Token,
-                        TokenExpiration = token.Expires,
-                        FromMobile = fromMobile
-                    };
+                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
 
-                    await loginHistoryService.AddAsync(logingHistory);
+                        var token = tokenService.CreateToken(userData.FirstOrDefault());
 
-                    return Ok(new
-                    {
-                        code = "1",
-                        message = "Login correcto",
-                        payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
-                    });
-                }
+                        if (token == null || string.IsNullOrEmpty(token.Token))
+                            return BadRequest("Error al iniciar session");
+
+                        userData.ForEach(x => x.Token = token.Token);
+
+                        var logingHistory = new LoginHistory
+                        {
+                            UserId = userData[0].UserId,
+                            Username = userData[0].Username,
+                            UserRoleId = userData[0].UserRoleId,
+                            UserAgent = authRequest.UserAgent,
+                            Token = token.Token,
+                            TokenExpiration = token.Expires,
+                            FromMobile = fromMobile
+                        };
+
+                        await loginHistoryService.AddAsync(logingHistory);
+
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Login correcto",
+                            payload = JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })
+                        });
+                    }
             }
         }
         else
