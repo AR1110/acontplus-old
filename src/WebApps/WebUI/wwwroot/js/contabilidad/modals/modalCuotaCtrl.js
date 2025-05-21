@@ -14,6 +14,7 @@ ModalCuotaCtrl.$inject = [
 
 function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
     const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+    const cuotaPorCobrarSvc = $injector.get('cuotaPorCobrarService');
 
     let { idCuentaPorCobrar } = params;
 
@@ -148,7 +149,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
     }
 
     $scope.crearCuota = function () {
-        let query = {
+        const cuenta = {
             idCuentaPorCobrar,
             idTiempoCredito: $scope.comprobante.idTiempoCredito,
             fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision, "YYYY-MM-DD HH:mm:ss A"),
@@ -156,8 +157,12 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
             importeTotal: $scope.comprobante.importeTotal
         };
 
-        showLoader();
-        cuentaPorCobrarSvc.saveCuota(query).then(response => {
+        const sendData = {
+            cuenta: JSON.stringify(cuenta),
+            cuotas: JSON.stringify($scope.cuotas),
+        }
+
+        cuotaPorCobrarSvc.update(sendData).then(response => {
             if (response.code === "0") {
                 fS.sweetAlert('warning', response.message);
             }
@@ -168,9 +173,24 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 $scope.cuotas = tempCuotas.map(cuotaMappFrom);
                 setFooterTotals();
             }
-        }).catch(error => {
-            console.log(error)
-        }).finally(() => hideLoader());
+        })
+
+
+        // showLoader();
+        // cuentaPorCobrarSvc.saveCuota(query).then(response => {
+        //     if (response.code === "0") {
+        //         fS.sweetAlert('warning', response.message);
+        //     }
+        //     if (response.code == "1") {
+        //         $scope.isReload = true;
+        //         fS.sweetAlert('success', response.message, response.titleSms, 1000);
+        //         let tempCuotas = JSON.parse(response.payload) || [];
+        //         $scope.cuotas = tempCuotas.map(cuotaMappFrom);
+        //         setFooterTotals();
+        //     }
+        // }).catch(error => {
+        //     console.log(error)
+        // }).finally(() => hideLoader());
     }
 
     $scope.askToApplyMora = async function () {

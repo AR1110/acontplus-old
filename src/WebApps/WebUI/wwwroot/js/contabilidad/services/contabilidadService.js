@@ -1461,6 +1461,28 @@
     }])
 
 
+
+
+
+    app.factory('cuotaPorCobrarService', ['mainService', 'formulario', function (mS, fS) {
+
+        const url = 'Contabilidad/CuotaPorCobrar';
+
+        return {
+            update
+        }
+
+        function update(data) {
+            return mS.getData('put', `${url}`, data, true)
+        }
+
+
+    }])
+
+
+
+
+
     //control caja 
 
     app.factory('controlCajaService', ['mainService', function (mS) {
