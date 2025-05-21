@@ -52,14 +52,14 @@
 
     <ng-template #templateOp let-item="item">
       <mat-menu #menu="matMenu">
-        @if (
-          !item.isAutomatic && item.codEstado !== 4 && item.codEstado !== 6
-        ) {
+        @if ([0, 2, 5, 7, 8].includes(item.codEstado)) {
           <button mat-menu-item (click)="edit(item)">
             <mat-icon>edit</mat-icon>
             Editar
           </button>
+        }
 
+        @if (!item.isAutomatic && [3].includes(item.codEstado)) {
           <button
             mat-menu-item
             (click)="authorize(item)"
