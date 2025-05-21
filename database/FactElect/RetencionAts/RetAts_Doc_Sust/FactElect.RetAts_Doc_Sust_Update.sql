@@ -39,7 +39,7 @@ BEGIN
 			
 			UPDATE rds SET 
 				rds.documentoSustentoTributarioId = t.documentoSustentoTributarioId 
-				,rds.numDocSustento = t.numDocSustento
+				,rds.numDocSustento = REPLACE(t.numDocSustento, '-', '')
 				,rds.fechaEmisionDocSustento = CASE 
 					WHEN t.fechaEmisionDocSustento = '1900-01-01' THEN NULL 
 					ELSE t.fechaEmisionDocSustento 
@@ -73,7 +73,7 @@ BEGIN
 					pagoRegFis
 				FROM OPENJSON(@json) WITH(
 					documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
-					,numDocSustento VARCHAR(15) '$.numDocSustento'
+					,numDocSustento VARCHAR(17) '$.numDocSustento'
 					,fechaEmisionDocSustento NVARCHAR(30) '$.fechaEmisionDocSustento'
 					,fechaRegistroContable NVARCHAR(30) '$.fechaRegistroContable'
 					,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
