@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace Restaurant.API.Entities
+namespace Restaurant.Api.Entities;
+
+[Table("PromotionMenu", Schema = "Restaurant")]
+public class PromotionMenu : BaseEntity
 {
-    [Table("PromotionMenu", Schema = "Restaurant")]
-    public class PromotionMenu : BaseEntity
-    {
-        public Promotion Promotion { get; set; }
-        public int PromotionId { get; set; }
-        public Menu Menu { get; set; }
-        public int MenuId { get; set; }
-    }
+    public Promotion Promotion { get; set; }
+    public int PromotionId { get; set; }
+    public Menu Menu { get; set; }
+    public int MenuId { get; set; }
 }

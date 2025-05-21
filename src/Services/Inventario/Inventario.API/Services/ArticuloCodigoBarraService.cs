@@ -3,13 +3,11 @@
 public class ArticuloCodigoBarraService(IAdoRepository _repository) : IArticuloCodigoBarraService
 {
     private const string nameSp = "Inventario.ArticuloCodigoBarra_";
+
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("", parameters);
-        if (ds.Tables.Count == 0)
-        {
-            return null;
-        }
+        if (ds.Tables.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }

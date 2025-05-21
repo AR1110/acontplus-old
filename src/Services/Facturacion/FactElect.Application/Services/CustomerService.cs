@@ -17,10 +17,7 @@ public class CustomerService(FactElectContext context, IAdoRepository adoReposit
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var customer = await context.Customers.FindAsync(id);
-        if (customer == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Item no encontrado" };
-        }
+        if (customer == null) return new ApiResponse { Code = "0", Message = "Item no encontrado" };
 
         customer.Enabled = false;
         customer.Deleted = true;

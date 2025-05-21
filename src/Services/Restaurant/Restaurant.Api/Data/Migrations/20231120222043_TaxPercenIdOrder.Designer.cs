@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Restaurant.API.Data;
+using Restaurant.Api.Data;
 
 
 #nullable disable
 
-namespace Restaurant.API.Data.Migrations
+namespace Restaurant.Api.Data.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
     [Migration("20231120222043_TaxPercenIdOrder")]

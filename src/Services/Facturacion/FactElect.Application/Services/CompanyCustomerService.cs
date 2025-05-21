@@ -3,6 +3,7 @@
 public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustomerService
 {
     private const string nameSp = "Ventas.Cliente_";
+
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> data)
     {
         return await repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", data);
@@ -17,9 +18,7 @@ public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustome
     {
         var ds = await repository.GetDataSetAsync($"{nameSp}Get", parameters, false);
         if (DataValidation.DataSetIsNull(ds))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontraron clientes" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) };
     }
@@ -28,9 +27,7 @@ public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustome
     {
         var dt = await repository.GetDataTableAsync($"{nameSp}Get_Search", parameters);
         if (DataValidation.DataTableIsNull(dt))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontraron clientes con estos datos" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
@@ -39,9 +36,7 @@ public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustome
     {
         var dt = await repository.GetDataTableAsync($"{nameSp}Get_Id", parameters);
         if (DataValidation.DataTableIsNull(dt))
-        {
             return new ApiResponse { Code = "0", Message = "No se encontró datos del cliente" };
-        }
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }

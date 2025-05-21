@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
+﻿using FactElect.Application.DTOs.RetencionAts;
+
+namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class DocSustentoPagoEndpoints(IDocSustentoPagoService docSustentoPagoService, IUserContext userContext)
     : IDocSustentoPagoEndpoints
@@ -15,23 +17,23 @@ public class DocSustentoPagoEndpoints(IDocSustentoPagoService docSustentoPagoSer
         throw new NotImplementedException();
     }
 
-    public async Task<IResult> CreateDocSustentoRetencionAsync(string json)
+    public async Task<IResult> CreateDocSustentoRetencionAsync(RetencionAtsPagoDto retencionAtsPagoDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", DataConverters.SerializeObjectCustom<RetencionAtsPagoDto>(retencionAtsPagoDto) }
         };
         return Results.Ok(await docSustentoPagoService.AddAsync(parameters));
     }
 
-    public async Task<IResult> UpdateDocSustentoRetencionAsync(int id, string json)
+    public async Task<IResult> UpdateDocSustentoRetencionAsync(int id, RetencionAtsPagoDto retencionAtsPagoDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(json) }
+            { "json", DataConverters.SerializeObjectCustom<RetencionAtsPagoDto>(retencionAtsPagoDto) }
         };
         return Results.Ok(await docSustentoPagoService.UpdateAsync(parameters));
     }

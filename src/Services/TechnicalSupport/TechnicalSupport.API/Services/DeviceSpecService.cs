@@ -2,8 +2,8 @@
 
 public class DeviceSpecService : IDeviceSpecService
 {
-    private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;
+    private readonly TechnicalSupportContext _context;
 
     public DeviceSpecService(IAdoRepository adoRepository, TechnicalSupportContext context)
     {
@@ -25,9 +25,7 @@ public class DeviceSpecService : IDeviceSpecService
     {
         var itemFounded = await _context.DeviceSpecs.FindAsync(id);
         if (itemFounded == null)
-        {
             return new ApiResponse { Code = "0", Message = "No se encontró registro de especificaciones" };
-        }
 
         itemFounded.Specs = data.Specs;
         itemFounded.UserId = data.UserId;

@@ -1,7 +1,9 @@
-﻿public class ModeloService : IModeloService
+﻿namespace TechnicalSupport.API.Services;
+
+public class ModeloService : IModeloService
 {
-    private readonly TechnicalSupportContext _context;
     private readonly IAdoRepository _adoRepository;
+    private readonly TechnicalSupportContext _context;
 
     public ModeloService(TechnicalSupportContext context, IAdoRepository adoRepository)
     {
@@ -21,10 +23,8 @@
     {
         var modelo = await _context.Modelos.FindAsync(id);
         if (modelo == null)
-        {
             // Handle case where model not found
             return new ApiResponse { Code = "0", Message = "Modelo no encontrado" };
-        }
 
         modelo.Enabled = false;
         modelo.Deleted = true;
@@ -37,10 +37,7 @@
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Modelo_Get", parameters);
-        if (DataValidation.DataTableIsNull(dt))
-        {
-            return new ApiResponse { Code = "0", Message = "No data" };
-        }
+        if (DataValidation.DataTableIsNull(dt)) return new ApiResponse { Code = "0", Message = "No data" };
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
@@ -49,10 +46,8 @@
     {
         var modeloFound = await _context.Modelos.FindAsync(id);
         if (modeloFound == null)
-        {
             // Handle case where model not found
             return new ApiResponse { Code = "0", Message = "Modelo no encontrado" };
-        }
 
         modeloFound.Code = modelo.Code;
         modeloFound.Enabled = modelo.Enabled;

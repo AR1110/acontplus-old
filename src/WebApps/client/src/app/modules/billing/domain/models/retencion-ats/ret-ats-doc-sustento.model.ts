@@ -1,8 +1,9 @@
 export interface RetAtsDocSustento {
   idDocumento?: number;
   documentName?: string;
-  idRetDocSustento?: number;
+  idRetAtsDocSustento: number;
   idRetencionAts?: number;
+  tipoComprobanteId?: number;
   uniqueIdDoc?: string;
   codSustento?: string;
   codDocSustento?: string;
@@ -23,6 +24,8 @@ export interface RetAtsDocSustento {
   totalSinImpuestos?: number;
   importeTotal: number;
   taxes?: any[];
+  retenciones?: any[];
+  payments?: any[];
   estado?: boolean;
   isAutomatic?: boolean;
 }
@@ -30,7 +33,7 @@ export interface RetAtsDocSustento {
 export interface RetencionAtsDocPayment
   extends Pick<
     RetAtsDocSustento,
-    'idRetDocSustento' | 'idRetencionAts' | 'uniqueIdDoc'
+    'idRetAtsDocSustento' | 'idRetencionAts' | 'uniqueIdDoc'
   > {
   idFormaPago: number;
   formaPago: string;

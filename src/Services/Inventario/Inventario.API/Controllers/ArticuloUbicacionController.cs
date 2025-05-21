@@ -17,7 +17,8 @@ public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbica
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloUbicacionService.UpdateAsync(parameters));
     }
@@ -26,7 +27,8 @@ public class ArticuloUbicacionController(IArticuloUbicacionService articuloUbica
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await articuloUbicacionService.DeleteAsync(parameters));
     }
 }

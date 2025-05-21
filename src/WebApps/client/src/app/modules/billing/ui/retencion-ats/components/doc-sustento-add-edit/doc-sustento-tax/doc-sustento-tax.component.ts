@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, input, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
@@ -6,6 +6,9 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
+import Swal from 'sweetalert2';
+import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
   selector: 'app-doc-sustento-tax',
@@ -28,6 +31,8 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   taxes = input.required<Impuesto[]>();
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   tarifaImpuestosFiltered = signal<TarifaImpuesto[]>([]); // Signal mutable
+  private readonly _docSustentoTaxUseCase = inject(DocSustentoTaxUseCase);
+  private readonly _tS = inject(ToasterService);
 
   selectTax(tax: any) {
     setTimeout(() => {
@@ -42,7 +47,43 @@ export class DocSustentoTaxComponent implements AfterViewInit {
     this.selectTax(this.taxGroup().value);
   }
 
-  removeTax(): void {
+  async removeTax() {
+    const taxesArray = this.docSustentoArray()
+      .at(this.indexDoc())
+      .get('taxes') as FormArray;
+
+    const taxSelected = taxesArray.controls[this.indexTax()].value;
+
+    if (taxSelected.idRetAtsDocSustento > 0) {
+      const { isConfirmed } = await Swal.fire({
+        title: 'Eliminar Impuesto',
+        icon: 'warning',
+        text: `Esta seguro(a) de eliminar este impuesto de manera permanente?`,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      });
+      if (isConfirmed) {
+        this._docSustentoTaxUseCase
+          .delete(taxSelected.idRetAtsImpDocSustento)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.removeByIndex();
+            }
+          });
+      }
+    } else {
+      await this.removeByIndex();
+    }
+  }
+
+  async removeByIndex() {
     const taxesArray = this.docSustentoArray()
       .at(this.indexDoc())
       .get('taxes') as FormArray;

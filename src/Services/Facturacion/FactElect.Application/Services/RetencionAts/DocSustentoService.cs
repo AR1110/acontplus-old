@@ -3,6 +3,7 @@
 public class DocSustentoService(IAdoRepository adoRepository) : IDocSustentoService
 {
     private const string ModuleName = "FactElect.RetAts_Doc_Sust_";
+
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);

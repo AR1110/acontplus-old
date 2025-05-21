@@ -3,11 +3,12 @@ import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RETENCION_ATS_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
-import { isApiResponse } from '@core/models/api-response';
-import { DocSustentoRepository } from '@billing/domain/repositories/doc-sustento.repository';
-import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { DocSustentoRepository } from '@billing/domain/repositories/retencion-ats/doc-sustento.repository';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class DocSustentoWebRepository implements DocSustentoRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.RETENCION_ATS}${RETENCION_ATS_PATHS.DOC_SUSTENTO}`;
@@ -41,16 +42,22 @@ export class DocSustentoWebRepository implements DocSustentoRepository {
       payments: [],
     };
   }
-  getById(id: number): Observable<RetAtsDocSustento> {
+  getById(id: number): Observable<ApiResponse> {
     throw new Error('Method not implemented.');
   }
-  create(data: any): Observable<RetAtsDocSustento> {
-    throw new Error('Method not implemented.');
+  create<T>(data: T): Observable<ApiResponse> {
+    return this._http
+      .post<ApiResponse>(`${this._url}`, data)
+      .pipe(map((response) => response));
   }
-  update(data: any): Observable<RetAtsDocSustento> {
-    throw new Error('Method not implemented.');
+  update<T>(id: number, data: T): Observable<ApiResponse> {
+    return this._http
+      .put<ApiResponse>(`${this._url}${id}`, data)
+      .pipe(map((response) => response));
   }
-  delete(id: number): Observable<RetAtsDocSustento> {
-    throw new Error('Method not implemented.');
+  delete(id: number) {
+    return this._http
+      .delete<ApiResponse>(`${this._url}${id}`)
+      .pipe(map((response) => response));
   }
 }

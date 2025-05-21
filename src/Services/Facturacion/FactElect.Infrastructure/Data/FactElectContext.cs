@@ -29,20 +29,15 @@ public class FactElectContext(DbContextOptions<FactElectContext> options) : Base
             var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
 
             foreach (var property in properties)
-            {
                 builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
-            }
         }
 
         foreach (var property in builder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
-                     .Where(
-                         p => p.ClrType == typeof(string) // Entity is a string
-                              && p.GetColumnType() == null // No column type is set
+                     .Where(p => p.ClrType == typeof(string) // Entity is a string
+                                 && p.GetColumnType() == null // No column type is set
                          // Next line only required if using ASP.Net Identity:
                      ))
-        {
             property.SetIsUnicode(false);
-        }
     }
 }

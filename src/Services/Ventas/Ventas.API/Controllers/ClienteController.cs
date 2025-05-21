@@ -28,10 +28,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     [HttpGet("Search")]
     public async Task<IActionResult> Search(string json)
     {
-        if (!DataValidation.IsValidJson(json))
-        {
-            return BadRequest("Caracteres de busqueda invalidos");
-        }
+        if (!DataValidation.IsValidJson(json)) return BadRequest("Caracteres de busqueda invalidos");
 
         var parameters = new Dictionary<string, object>
         {
@@ -56,7 +53,8 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", JsonConvert.SerializeObject(data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "json", JsonConvert.SerializeObject(data) }
         };
         return Ok(await clienteService.UpdateAsync(parameters));
     }
@@ -64,7 +62,8 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, };
+        var parameters = new Dictionary<string, object>
+            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await clienteService.DeleteAsync(parameters));
     }
 

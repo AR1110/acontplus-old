@@ -28,6 +28,7 @@ public class HousingTypeConfiguration : BaseEntityTypeConfiguration<HousingType>
             .IsUnique();
     }
 }
+
 public class MaritalStatusConfiguration : BaseEntityTypeConfiguration<MaritalStatus>
 {
     public override void Configure(EntityTypeBuilder<MaritalStatus> builder)

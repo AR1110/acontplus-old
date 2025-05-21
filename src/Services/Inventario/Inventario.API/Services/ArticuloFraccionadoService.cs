@@ -10,10 +10,7 @@ public class ArticuloFraccionadoService(IAdoRepository _repository) : IArticuloF
 
         if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
         {
-            if (ds.Tables.Count > 0)
-            {
-                ds = new DataSet();
-            }
+            if (ds.Tables.Count > 0) ds = new DataSet();
 
             return null;
         }

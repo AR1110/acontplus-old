@@ -3,6 +3,7 @@
 public class DocSustentoImpuestoService(IAdoRepository adoRepository) : IDocSustentoImpuestoService
 {
     private const string ModuleName = "FactElect.RetAts_Doc_Sust_Imp_";
+
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);

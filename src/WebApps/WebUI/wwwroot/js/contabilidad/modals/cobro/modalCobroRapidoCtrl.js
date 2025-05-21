@@ -90,7 +90,9 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     function loadInitialData() {
         try {
             showLoader();
-            comprobanteIngresoSvc.getDataForm(idCuentaPorCobrar).then(dataFormaCobro => {
+            comprobanteIngresoSvc.paymentFormData({
+                idCuentaPorCobrar
+            }).then(dataFormaCobro => {
                 let {
                     entidadesFinanciera,
                     bancos,
@@ -116,7 +118,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     throw 'No posee cuotas'
                 }
 
-                let selectedDocsTemp = modalCobroSvc.calcularInteresMora(cuentaPorCobrar);
+                let selectedDocsTemp = modalCobroSvc.prepararParaCobro(cuentaPorCobrar);
 
                 $scope.selectedDocumentos = selectedDocsTemp;
 

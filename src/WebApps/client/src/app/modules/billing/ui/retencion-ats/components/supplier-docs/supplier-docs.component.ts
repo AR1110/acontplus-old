@@ -3,7 +3,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
+import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 

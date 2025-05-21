@@ -3,9 +3,9 @@ using Common.Infrastructure.Core.Context;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Restaurant.API.Entities;
+using Restaurant.Api.Entities;
 
-namespace Restaurant.API.Data;
+namespace Restaurant.Api.Data;
 
 public class RestaurantContext(DbContextOptions<RestaurantContext> options) : BaseContext(options)
 {
@@ -39,22 +39,17 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
             var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
 
             foreach (var property in properties)
-            {
                 builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
-            }
         }
 
         foreach (var property in builder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
-                     .Where(
-                         p => p.ClrType == typeof(string) // Entity is a string
-                              && p.GetColumnType() == null // No column type is set
+                     .Where(p => p.ClrType == typeof(string) // Entity is a string
+                                 && p.GetColumnType() == null // No column type is set
                          // Next line only required if using ASP.Net Identity:
                          //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                      ))
-        {
             property.SetIsUnicode(false);
-        }
 
         builder.ApplyUtcDateTimeConverter();
 
@@ -79,43 +74,36 @@ public static class UtcDateAnnotation
     private const string IsUtcAnnotation = "IsUtc";
 
     private static readonly ValueConverter<DateTime, DateTime> UtcConverter =
-        new ValueConverter<DateTime, DateTime>(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        new(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
     private static readonly ValueConverter<DateTime?, DateTime?> UtcNullableConverter =
-        new ValueConverter<DateTime?, DateTime?>(v => v,
+        new(v => v,
             v => v == null ? v : DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
 
     public static PropertyBuilder<TProperty> IsUtc<TProperty>(this PropertyBuilder<TProperty> builder,
-        bool isUtc = true) =>
-        builder.HasAnnotation(IsUtcAnnotation, isUtc);
+        bool isUtc = true)
+    {
+        return builder.HasAnnotation(IsUtcAnnotation, isUtc);
+    }
 
-    private static bool IsUtc(this IMutableProperty property) =>
-        (bool?)property.FindAnnotation(IsUtcAnnotation)?.Value ?? true;
+    private static bool IsUtc(this IMutableProperty property)
+    {
+        return (bool?)property.FindAnnotation(IsUtcAnnotation)?.Value ?? true;
+    }
 
     /// <summary>
-    /// Make sure this is called after configuring all your entities.
+    ///     Make sure this is called after configuring all your entities.
     /// </summary>
     public static void ApplyUtcDateTimeConverter(this ModelBuilder builder)
     {
         foreach (var entityType in builder.Model.GetEntityTypes())
+        foreach (var property in entityType.GetProperties())
         {
-            foreach (var property in entityType.GetProperties())
-            {
-                if (!property.IsUtc())
-                {
-                    continue;
-                }
+            if (!property.IsUtc()) continue;
 
-                if (property.ClrType == typeof(DateTime))
-                {
-                    property.SetValueConverter(UtcConverter);
-                }
+            if (property.ClrType == typeof(DateTime)) property.SetValueConverter(UtcConverter);
 
-                if (property.ClrType == typeof(DateTime?))
-                {
-                    property.SetValueConverter(UtcNullableConverter);
-                }
-            }
+            if (property.ClrType == typeof(DateTime?)) property.SetValueConverter(UtcNullableConverter);
         }
     }
 }

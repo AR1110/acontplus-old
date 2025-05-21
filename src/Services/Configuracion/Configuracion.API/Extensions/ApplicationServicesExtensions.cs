@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System.IO.Compression;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -23,15 +24,9 @@ public static class ApplicationServicesExtensions
             options.Providers.Add<GzipCompressionProvider>();
         });
 
-        services.Configure<BrotliCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.Configure<GzipCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -39,7 +34,6 @@ public static class ApplicationServicesExtensions
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
-
 
 
         // Services that should be scoped (have dependencies on ConfigContext)

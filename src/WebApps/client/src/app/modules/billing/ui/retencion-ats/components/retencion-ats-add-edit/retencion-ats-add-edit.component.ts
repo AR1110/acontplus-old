@@ -7,7 +7,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
+import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import {
   MatCard,
   MatCardActions,
@@ -20,7 +20,6 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { DialogService } from '@core/services/dialog.service';
 import { SupplierDocsComponent } from '@billing/ui/retencion-ats/components/supplier-docs/supplier-docs.component';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
-import { DatePipe } from '@angular/common';
 import { TipoComprobante } from '@sri/domain/models/tipo-comprobante';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFiscalExterior } from '@sri/domain/models/tipo-regimen-fiscal-exterior';
@@ -49,6 +48,7 @@ import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
+import { formatDate } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -74,9 +74,8 @@ import { ToasterService } from '@core/services/toaster.service';
 })
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
-  private datePipe = inject(DatePipe);
-  readonly data = inject<RetencionAts>(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject(
+  readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
+  private readonly _dialogRef = inject(
     MatDialogRef<RetencionAtsAddEditComponent>,
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
@@ -124,6 +123,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
   itemsPerPage = 10;
   // Info adicional
   infoAdicional: RetAtsInfoAdicional[] = [];
+  supplierSelected = '';
+  dataLoaded = false;
 
   // Computed properties
   dialogIcon = signal('add');
@@ -146,6 +147,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   // Create a new docSustento FormGroup
   createDocSustentoGroup() {
     return this._fb.group({
+      idRetencionAts: [0],
       idRetAtsDocSustento: [0],
       idDocumento: [0],
       uniqueIdDoc: [generateUuidv4(), [Validators.required]],
@@ -166,13 +168,13 @@ export class RetencionAtsAddEditComponent implements OnInit {
       totalImpuestoReembolso: [0],
       totalSinImpuestos: [0],
       importeTotal: [0],
-      taxes: this._fb.array([]),
-      retenciones: this._fb.array([]),
+      taxes: this._fb.array([], [Validators.required]),
+      retenciones: this._fb.array([], [Validators.required]),
       reembolsos: this._fb.group({
         id: [0],
         taxes: this._fb.array([]),
       }),
-      payments: this._fb.array([]),
+      payments: this._fb.array([], [Validators.required]),
       isAutomatic: [false],
     });
   }
@@ -187,8 +189,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   // Add a docSustento with predefined values
+
   addDocSustento(doc: RetAtsDocSustento) {
-    console.log(doc);
     const docGroup = this.createDocSustentoGroup();
 
     let formattedFecha = '';
@@ -213,6 +215,11 @@ export class RetencionAtsAddEditComponent implements OnInit {
     this.infoAdicionalArray.push(this.createInfoAdicional());
   }
 
+  addInfoAdicionalWithValues(infoAdicional: RetAtsInfoAdicional) {
+    const infoAdicionalGroup = this.createInfoAdicional();
+    infoAdicionalGroup.patchValue(infoAdicional);
+    this.infoAdicionalArray.push(infoAdicionalGroup);
+  }
   initialLoad() {
     this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
       this.estabs = groupEstabUtil({
@@ -240,41 +247,44 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.conceptosRetencionAir = response.conceptosRetencionAir;
       this.porcentajesRetIva = response.porcentajesRetIva;
       this.formasPago = response.formasPago;
+      this.dataLoaded = true;
     });
   }
 
   ngOnInit() {
     this.initialLoad();
-    console.log(this.data);
-    if (this.data && this.data.idRetencionAts > 0) {
-      this.retencionAtsForm.patchValue(this.data);
-      this.retencionAtsForm.get('idEstablecimiento')?.disable();
-      this.retencionAtsForm.get('idPuntoEmision')?.disable();
+    if (this._data && this._data.idRetencionAts > 0) {
+      this.supplierSelected = this._data.razonSocialSujetoRetenido;
+      const parsedData = {
+        ...this._data,
+        documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
+        infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
+      };
+      // console.log(parsedData);
+      this.retencionAtsForm.patchValue(parsedData);
+      const formatedDate = formatDate(this._data.fechaEmision);
+      this.retencionAtsForm
+        .get('fechaEmision')
+        ?.setValue(formatedDate.toISOString());
       this.getPeriod();
+      this.retAtsDocSustentos = parsedData.documentosSustento;
+      this.retAtsDocSustentos.forEach((doc) => {
+        this.addDocSustento(doc);
+      });
+      this.infoAdicional = parsedData.infoAdicional;
+      this.infoAdicional.forEach((info) => {
+        this.addInfoAdicionalWithValues(info);
+      });
     } else {
       this.retencionAtsForm
         .get('fechaEmision')
-        ?.setValue(this.datePipe.transform(new Date(), 'yyyy-MM-dd'));
+        ?.setValue(formatDate(new Date()).toISOString());
       this.getPeriod();
     }
   }
 
   onClose() {
-    this.dialogRef.close();
-  }
-  onSave() {
-    console.log(this.retencionAtsForm.value);
-    this._retencionAtsUseCase
-      .create(this.retencionAtsForm.value)
-      .subscribe((response) => {
-        this._tS.toastr({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
-        if (response.code === '1') {
-          this.dialogRef.close(response);
-        }
-      });
+    this._dialogRef.close();
   }
 
   onSelectEstablecimiento(): void {
@@ -330,7 +340,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     // }
   }
 
-  supplierclearSearch() {
+  clearSupplierSearch() {
     this.retencionAtsForm.get('identificacionSujetoRetenido')?.setValue('');
   }
 
@@ -357,7 +367,31 @@ export class RetencionAtsAddEditComponent implements OnInit {
     });
   }
 
-  editDocSust(index: number): void {
-    // Edit document logic
+  onSave() {
+    if (this._data && this._data.idRetencionAts > 0) {
+      this._retencionAtsUseCase
+        .update(this._data.idRetencionAts, this.retencionAtsForm.value)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code === '1') {
+            this._dialogRef.close(response);
+          }
+        });
+    } else {
+      this._retencionAtsUseCase
+        .create(this.retencionAtsForm.value)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code === '1') {
+            this._dialogRef.close(response);
+          }
+        });
+    }
   }
 }

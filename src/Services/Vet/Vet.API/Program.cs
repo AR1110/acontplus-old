@@ -14,17 +14,11 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    app.Urls.Add("http://*:5014"); // Linux Port
-}
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) app.Urls.Add("http://*:5014"); // Linux Port
 
 app.UseResponseCompression();
 

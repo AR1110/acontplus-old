@@ -6,9 +6,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
     {
         if (await context.Subcategories.AnyAsync(x =>
                 (x.CompanyId == subcategory.CompanyId) & (x.Code == subcategory.Code)))
-        {
             return new ApiResponse { Code = "0", Message = "Código ya existe" };
-        }
 
         context.Subcategories.Add(subcategory);
         await context.SaveChangesAsync();
@@ -18,10 +16,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
-        if (subcategory == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
-        }
+        if (subcategory == null) return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
 
         subcategory.Enabled = false;
         subcategory.Deleted = true;
@@ -34,10 +29,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Contabilidad.Subcategory_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds, true))
-        {
-            return new ApiResponse { Code = "0", Message = "Data not found" };
-        }
+        if (DataValidation.DataSetIsNull(ds, true)) return new ApiResponse { Code = "0", Message = "Data not found" };
 
         return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
@@ -45,10 +37,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
     public async Task<ApiResponse> UpdateAsync(int id, Subcategory subcategory)
     {
         var subcategoryFound = await context.Subcategories.FindAsync(id);
-        if (subcategoryFound == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
-        }
+        if (subcategoryFound == null) return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
 
         subcategoryFound.CategoryId = subcategory.CategoryId;
         subcategoryFound.Code = subcategory.Code;

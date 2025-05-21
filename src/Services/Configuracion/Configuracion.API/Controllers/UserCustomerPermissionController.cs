@@ -11,7 +11,7 @@ public class UserCustomerPermissionController(IUserCustomerPermissionService _sv
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await _svc.GetAsync(parameters);
-        if (response == null) { return NoContent(); }
+        if (response == null) return NoContent();
 
         return Ok(response);
     }

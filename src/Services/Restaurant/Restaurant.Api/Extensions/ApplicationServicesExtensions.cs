@@ -1,9 +1,11 @@
-﻿using System.Threading.RateLimiting;
+﻿using System.IO.Compression;
+using System.Threading.RateLimiting;
 using Common.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Scrutor;
 
-namespace Restaurant.API.Extensions;
+namespace Restaurant.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -15,7 +17,7 @@ public static class ApplicationServicesExtensions
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
-                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 x.SerializerSettings.ContractResolver =
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
@@ -29,14 +31,8 @@ public static class ApplicationServicesExtensions
             options.Providers.Add<GzipCompressionProvider>();
         });
 
-        services.Configure<BrotliCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
-        services.Configure<GzipCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
 
         // Add rate limiting service
@@ -45,11 +41,11 @@ public static class ApplicationServicesExtensions
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
             {
                 // Get client IP, with fallback to a default value if null
-                string clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip";
+                var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip";
 
                 return RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: clientIp,
-                    factory: _ => new FixedWindowRateLimiterOptions
+                    clientIp,
+                    _ => new FixedWindowRateLimiterOptions
                     {
                         AutoReplenishment = true,
                         PermitLimit = 10,
@@ -71,9 +67,9 @@ public static class ApplicationServicesExtensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         string[] scopedNameSpaces =
-           [
-                "Restaurant.API.Services"
-           ];
+        [
+            "Restaurant.Api.Services"
+        ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
@@ -84,10 +80,10 @@ public static class ApplicationServicesExtensions
         );
 
         string[] trascientNameSpaces =
-           [
-               "Common.S3Application.Services",
-               "Common.Infrastructure.Data.Repository.Implementations"
-           ];
+        [
+            "Common.S3Application.Services",
+            "Common.Infrastructure.Data.Repository.Implementations"
+        ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()

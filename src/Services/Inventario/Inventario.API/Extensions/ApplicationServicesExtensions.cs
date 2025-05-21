@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System.IO.Compression;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -18,15 +19,9 @@ public static class ApplicationServicesExtensions
             options.Providers.Add<GzipCompressionProvider>();
         });
 
-        services.Configure<BrotliCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.Configure<GzipCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>
@@ -40,7 +35,7 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Inventario.API.Services",
+            "Inventario.API.Services"
         ];
 
         services.Scan(scan => scan
@@ -52,10 +47,10 @@ public static class ApplicationServicesExtensions
         );
 
         string[] trascientNameSpaces =
-          [
-              "Common.S3Application.Services",
-              "Common.Infrastructure.Data.Repository.Implementations"
-          ];
+        [
+            "Common.S3Application.Services",
+            "Common.Infrastructure.Data.Repository.Implementations"
+        ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()

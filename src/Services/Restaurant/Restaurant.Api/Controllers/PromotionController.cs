@@ -1,8 +1,8 @@
 ﻿using Common.S3Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Services;
+using Restaurant.Api.Services;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class PromotionController(
     IPromotionService promotionService,
@@ -16,7 +16,8 @@ public class PromotionController(
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+            new Dictionary<string, object>
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await promotionService.GetAsync(parameters));
     }
 
@@ -26,9 +27,7 @@ public class PromotionController(
         try
         {
             if (file != null)
-            {
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
-            }
 
             var parameters = new Dictionary<string, object>
             {
@@ -38,13 +37,12 @@ public class PromotionController(
                 { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" }
             };
 
-            int userRoleId = User.GetClaimValue<int>("userRoleId");
+            var userRoleId = User.GetClaimValue<int>("userRoleId");
             var response = await promotionService.AddAsync(parameters);
 
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storage.UploadAsync(s3ObjectCustom);
-
             }
 
             return Ok(response);
@@ -53,7 +51,6 @@ public class PromotionController(
         {
             if (file != null)
             {
-
             }
 
             return BadRequest("Error on put: " + ex.Message);
@@ -66,9 +63,7 @@ public class PromotionController(
         try
         {
             if (file != null)
-            {
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}/promociones/", file);
-            }
 
             var parameters = new Dictionary<string, object>
             {
@@ -80,12 +75,11 @@ public class PromotionController(
             };
 
             var response = await promotionService.UpdateAsync(parameters);
-            if (response == null) { return NoContent(); }
+            if (response == null) return NoContent();
 
             if (response.Code == "1" && file != null)
             {
                 var s3Response = await storage.UploadAsync(s3ObjectCustom);
-
             }
 
             return Ok(response);
@@ -94,7 +88,6 @@ public class PromotionController(
         {
             if (file != null)
             {
-
             }
 
             return BadRequest(ex.Message);

@@ -17,10 +17,7 @@ public class PetTypeController(IPetTypeService petTypeService) : BaseApiControll
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] PetType petType)
     {
-        if (id != petType.Id)
-        {
-            return BadRequest();
-        }
+        if (id != petType.Id) return BadRequest();
 
         return Ok(await petTypeService.UpdateAsync(id, petType));
     }

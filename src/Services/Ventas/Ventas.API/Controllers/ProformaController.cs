@@ -41,7 +41,8 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         return Ok(await svc.DeleteAsync(parameters));
     }
@@ -49,7 +50,8 @@ public class ProformaController(IProformaService svc) : BaseApiController
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetId(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await svc.GetByIdAsync(parameters));
     }
 

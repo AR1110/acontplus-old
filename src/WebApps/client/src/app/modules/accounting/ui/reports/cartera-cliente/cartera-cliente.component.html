@@ -1,6 +1,5 @@
 <app-breadcrumb />
 <app-mat-dynamic-card>
-  <h1>Car</h1>
   <mat-tab-group>
     <!-- Pestaña Cartera Cliente -->
     <mat-tab label="Cartera Cliente">
@@ -41,7 +40,7 @@
                 [(ngModel)]="dataSearch.codEstab"
                 (selectionChange)="onChangeEstab()"
               >
-                @for (item of establecimientos; track $index) {
+                @for (item of establecimientos(); track $index) {
                   <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
                 }
               </mat-select>
@@ -53,7 +52,7 @@
               <mat-select
                 [(ngModel)]="dataSearch.idPuntoEmision"
               >
-                @for (item of puntosEmision; track $index) {
+                @for (item of puntosEmision(); track $index) {
                   <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
                 }
               </mat-select>
@@ -71,7 +70,7 @@
               <mat-select
                 [(ngModel)]="dataSearch.codEstado"
               > <mat-option [value]="null">Todos</mat-option>
-                @for (item of estadosDoc; track $index) {
+                @for (item of estadosDoc(); track $index) {
                   <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
                 }
               </mat-select>
@@ -86,8 +85,8 @@
                 [(ngModel)]="dataSearch.codDoc"
                 (selectionChange)="onChangeTipoDoc()"
               >
-                <mat-option [value]="null">Todos</mat-option>
-                @for (item of tiposDoc; track $index) {
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of tiposDoc(); track $index) {
                   <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
                 }
               </mat-select>
@@ -107,7 +106,7 @@
                 [(ngModel)]="dataSearch.idEmpresa"
               >
                 <mat-option [value]="0">Todos</mat-option>
-                @for (item of empresas; track $index) {
+                @for (item of empresas(); track $index) {
                   <mat-option [value]="item.idEmpresa">{{item.nombreComercial}}</mat-option>
                 }
               </mat-select>
@@ -117,24 +116,24 @@
             class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex align-items-center"
           >
             @if (isSelectedNotaEntrega) {
-              <div class="icheck-primary icheck-inline">
-                <input
-                  type="checkbox"
-                  id="docTransferidas"
-                  [(ngModel)]="dataSearch.convertToDoc"
-                />
-                <label for="docTransferidas">Docs. Transferidas</label>
-              </div>
+              <mat-checkbox   [(ngModel)]="dataSearch.convertToDoc">Docs. Transferidas</mat-checkbox>
             }
           </div>
         </div>
 
         <div class="row">
           <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-            <app-user-search
-              (userSelected)="onUserSelected($event)"
-              (clearSearch)="emptyInputUser()"
-            />
+            <mat-form-field class="w-100">
+              <mat-label>Usuario</mat-label>
+              <mat-select
+                [(ngModel)]="dataSearch.userId"
+              >
+                <mat-option [value]="0">--Todos--</mat-option>
+                @for (item of users(); track $index) {
+                  <mat-option [value]="item.idUsuario">{{item.nombreUsuario}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
           @if (dataSearch.checkBoxDirViviendaCliente) {
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -142,7 +141,7 @@
                 <mat-label>Ciudad</mat-label>
                 <mat-select [(ngModel)]="dataSearch.idCiudad">
                   <mat-option [value]="0">-- Ninguna --</mat-option>
-                  @for (group of provinciasAgrupadas; track $index) {
+                  @for (group of provinciasAgrupadas(); track $index) {
                     <mat-optgroup [label]="group.nombre">
                       @for (sg of group.ciudades; track sg.idCiudad) {
                         <mat-option [value]="sg.idCiudad">{{
@@ -195,7 +194,7 @@
                   [(ngModel)]="dataSearch.codEstab"
                   (selectionChange)="onChangeEstab()"
                 >
-                  @for (item of establecimientos; track $index) {
+                  @for (item of establecimientos(); track $index) {
                     <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
                   }
                 </mat-select>
@@ -209,7 +208,7 @@
                 <mat-select
                   [(ngModel)]="dataSearch.idPuntoEmision"
                 > <mat-option [value]="0">Todos</mat-option>
-                  @for (item of puntosEmision; track $index) {
+                  @for (item of puntosEmision(); track $index) {
                     <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
                   }
                 </mat-select>
@@ -229,7 +228,7 @@
                   placeholder="Seleccione Ciudad"
                 >
                   <mat-option [value]="0">-- Ninguna --</mat-option>
-                  @for (group of provinciasAgrupadas; track $index) {
+                  @for (group of provinciasAgrupadas(); track $index) {
                     <mat-optgroup [label]="group.nombre">
                       @for (sg of group.ciudades; track sg.idCiudad) {
                         <mat-option [value]="sg.idCiudad">{{ sg.ciudad }}</mat-option>

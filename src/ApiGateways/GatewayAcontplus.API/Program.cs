@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System.IO.Compression;
+using Common.Logging;
 using Common.Services.Configuration;
 using Common.Services.Extensions;
 using Common.Services.Middleware;
@@ -30,7 +31,7 @@ builder.Configuration.AddConfiguration(configuration);
 var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",");
 
 // Ocelot Configuration (consider using environment variables for dynamic configuration)
-builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", false, true);
 
 builder.Services.AddOcelot();
 
@@ -53,8 +54,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services
-               .AddHealthChecks()
-               .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+    .AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
 builder.Services.AddResponseCompression(options =>
 {
@@ -63,14 +64,8 @@ builder.Services.AddResponseCompression(options =>
     options.Providers.Add<GzipCompressionProvider>();
 });
 
-builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
-{
-    options.Level = System.IO.Compression.CompressionLevel.Optimal;
-});
-builder.Services.Configure<GzipCompressionProviderOptions>(options =>
-{
-    options.Level = System.IO.Compression.CompressionLevel.Optimal;
-});
+builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
 var app = builder.Build();
 
@@ -95,10 +90,10 @@ app.UseAuthorization();
 app.UseEndpoints(_ => { });
 
 // Map health check endpoints
-app.MapHealthChecks("/hc", new HealthCheckOptions()
+app.MapHealthChecks("/hc", new HealthCheckOptions
 {
     Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
 app.MapHealthChecks("/liveness", new HealthCheckOptions

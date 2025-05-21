@@ -1,3 +1,41 @@
+:root {
+  --swal2-container-padding: 0.625em;
+  --swal2-backdrop: rgba(0, 0, 0, 0.4);
+  --swal2-width: 32em;
+  --swal2-padding: 0 0 1.25em;
+  --swal2-border: none;
+  --swal2-border-radius: 0.3125rem;
+  --swal2-background: white;
+  --swal2-color: #545454;
+  --swal2-footer-border-color: #eee;
+  --swal2-input-background: transparent;
+  --swal2-validation-message-background: #f0f0f0;
+  --swal2-validation-message-color: #666;
+}
+
+[data-swal2-theme=dark] {
+  --swal2-dark-theme-black: #19191a;
+  --swal2-dark-theme-white: #e1e1e1;
+  --swal2-background: var(--swal2-dark-theme-black);
+  --swal2-color: var(--swal2-dark-theme-white);
+  --swal2-footer-border-color: #555;
+  --swal2-input-background: color-mix(in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10%);
+  --swal2-validation-message-background: color-mix(in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10%);
+  --swal2-validation-message-color: var(--swal2-dark-theme-white);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-swal2-theme=auto] {
+    --swal2-dark-theme-black: #19191a;
+    --swal2-dark-theme-white: #e1e1e1;
+    --swal2-background: var(--swal2-dark-theme-black);
+    --swal2-color: var(--swal2-dark-theme-white);
+    --swal2-footer-border-color: #555;
+    --swal2-input-background: color-mix(in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10%);
+    --swal2-validation-message-background: color-mix(in srgb, var(--swal2-dark-theme-black), var(--swal2-dark-theme-white) 10%);
+    --swal2-validation-message-color: var(--swal2-dark-theme-white);
+  }
+}
 body.swal2-shown:not(.swal2-no-backdrop, .swal2-toast-shown) {
   overflow: hidden;
 }
@@ -12,7 +50,7 @@ body.swal2-no-backdrop .swal2-container .swal2-popup {
   pointer-events: all;
 }
 body.swal2-no-backdrop .swal2-container .swal2-modal {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px var(--swal2-backdrop);
 }
 body.swal2-toast-shown .swal2-container {
   box-sizing: border-box;
@@ -74,13 +112,13 @@ div:where(.swal2-container) {
   grid-template-areas: "top-start     top            top-end" "center-start  center         center-end" "bottom-start  bottom-center  bottom-end";
   grid-template-rows: minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);
   height: 100%;
-  padding: 0.625em;
+  padding: var(--swal2-container-padding);
   overflow-x: hidden;
   transition: background-color 0.1s;
   -webkit-overflow-scrolling: touch;
 }
 div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--swal2-backdrop);
 }
 div:where(.swal2-container).swal2-backdrop-hide {
   background: transparent !important;
@@ -150,13 +188,13 @@ div:where(.swal2-container) div:where(.swal2-popup) {
   position: relative;
   box-sizing: border-box;
   grid-template-columns: minmax(0, 100%);
-  width: 32em;
+  width: var(--swal2-width);
   max-width: 100%;
-  padding: 0 0 1.25em;
-  border: none;
-  border-radius: 5px;
-  background: #fff;
-  color: #545454;
+  padding: var(--swal2-padding);
+  border: var(--swal2-border);
+  border-radius: var(--swal2-border-radius);
+  background: var(--swal2-background);
+  color: var(--swal2-color);
   font-family: inherit;
   font-size: 1rem;
 }
@@ -279,7 +317,7 @@ div:where(.swal2-container) button:where(.swal2-styled)::-moz-focus-inner {
 div:where(.swal2-container) div:where(.swal2-footer) {
   margin: 1em 0 0;
   padding: 1em 1em 0;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--swal2-footer-border-color);
   color: inherit;
   font-size: 1em;
   text-align: center;
@@ -292,8 +330,8 @@ div:where(.swal2-container) .swal2-timer-progress-bar-container {
   left: 0;
   grid-column: auto !important;
   overflow: hidden;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: var(--swal2-border-radius);
+  border-bottom-left-radius: var(--swal2-border-radius);
 }
 div:where(.swal2-container) div:where(.swal2-timer-progress-bar) {
   width: 100%;
@@ -318,7 +356,7 @@ div:where(.swal2-container) button:where(.swal2-close) {
   overflow: hidden;
   transition: color 0.1s, box-shadow 0.1s;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--swal2-border-radius);
   background: transparent;
   color: #ccc;
   font-family: monospace;
@@ -369,7 +407,7 @@ div:where(.swal2-container) textarea:where(.swal2-textarea) {
   transition: border-color 0.1s, box-shadow 0.1s;
   border: 1px solid #d9d9d9;
   border-radius: 0.1875em;
-  background: transparent;
+  background: var(--swal2-input-background);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06), 0 0 0 3px transparent;
   color: inherit;
   font-size: 1.125em;
@@ -394,7 +432,7 @@ div:where(.swal2-container) textarea:where(.swal2-textarea)::placeholder {
 }
 div:where(.swal2-container) .swal2-range {
   margin: 1em 2em 3px;
-  background: #fff;
+  background: var(--swal2-background);
 }
 div:where(.swal2-container) .swal2-range input {
   width: 80%;
@@ -420,7 +458,7 @@ div:where(.swal2-container) .swal2-file {
   width: 75%;
   margin-right: auto;
   margin-left: auto;
-  background: transparent;
+  background: var(--swal2-input-background);
   font-size: 1.125em;
 }
 div:where(.swal2-container) .swal2-textarea {
@@ -431,7 +469,7 @@ div:where(.swal2-container) .swal2-select {
   min-width: 50%;
   max-width: 100%;
   padding: 0.375em 0.625em;
-  background: transparent;
+  background: var(--swal2-input-background);
   color: inherit;
   font-size: 1.125em;
 }
@@ -439,7 +477,7 @@ div:where(.swal2-container) .swal2-radio,
 div:where(.swal2-container) .swal2-checkbox {
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--swal2-background);
   color: inherit;
 }
 div:where(.swal2-container) .swal2-radio label,
@@ -463,8 +501,8 @@ div:where(.swal2-container) div:where(.swal2-validation-message) {
   margin: 1em 0 0;
   padding: 0.625em;
   overflow: hidden;
-  background: #f0f0f0;
-  color: #666;
+  background: var(--swal2-validation-message-background);
+  color: var(--swal2-validation-message-color);
   font-size: 1em;
   font-weight: 300;
 }
@@ -720,7 +758,7 @@ div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-circular-lin
   grid-template-columns: min-content auto min-content;
   padding: 1em;
   overflow-y: hidden;
-  background: #fff;
+  background: var(--swal2-background);
   box-shadow: 0 0 1px hsla(0, 0%, 0%, 0.075), 0 1px 2px hsla(0, 0%, 0%, 0.075), 1px 2px 4px hsla(0, 0%, 0%, 0.075), 1px 3px 8px hsla(0, 0%, 0%, 0.075), 2px 4px 16px hsla(0, 0%, 0%, 0.075);
   pointer-events: all;
 }

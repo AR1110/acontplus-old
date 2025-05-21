@@ -1,8 +1,7 @@
 ﻿using BarberShop.Infrastructure.Data.Repositories.Interfaces;
 using BarberShop.Infrastructure.Persistence;
-using Common.Core.DTOs;
-using Common.Core.Models;
 using Common.Infrastructure.Data.Repository.Implementations;
+using Common.Infrastructure.Data.Repository.Models;
 
 namespace BarberShop.Infrastructure.Data.Repositories.Implementations;
 
@@ -16,17 +15,10 @@ public class SeatRepository : Repository<Seat>, ISeatRepository
     {
         IQueryable<Seat> query = _dbSet;
 
-        if (!string.IsNullOrEmpty(paginationDto.TextSearch))
-        {
-            query = query.Where(u => u.Name.Contains(paginationDto.TextSearch) ||
-                                     u.Code.Contains(paginationDto.TextSearch) ||
-                                     u.Description!.Contains(paginationDto.TextSearch));
-        }
-
-        if (paginationDto.UserId > 0)
-        {
-            query = query.Where(u => u.Id == paginationDto.UserId);
-        }
+        if (!string.IsNullOrEmpty(paginationDto.SearchTerm))
+            query = query.Where(u => u.Name.Contains(paginationDto.SearchTerm) ||
+                                     u.Code.Contains(paginationDto.SearchTerm) ||
+                                     u.Description!.Contains(paginationDto.SearchTerm));
 
         query = query.OrderBy(u => u.Id);
 

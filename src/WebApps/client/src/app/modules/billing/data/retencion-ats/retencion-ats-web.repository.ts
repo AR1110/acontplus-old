@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats.repository';
+import { RetencionAtsRepository } from '@billing/domain/repositories/retencion-ats/retencion-ats.repository';
 import { map, Observable } from 'rxjs';
 import {
   RetencionAts,
@@ -105,8 +105,10 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       .post<ApiResponse>(`${this._url}`, data)
       .pipe(map((response) => response));
   }
-  update(data: any): Observable<RetencionAts> {
-    throw new Error('Method not implemented.');
+  update<T>(id: number, data: T): Observable<ApiResponse> {
+    return this._http
+      .put<ApiResponse>(`${this._url}${id}`, data)
+      .pipe(map((response) => response));
   }
 
   getDocs<T extends { idCard: string }>(parameters: T) {

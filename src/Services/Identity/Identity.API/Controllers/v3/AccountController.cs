@@ -17,15 +17,9 @@ public class AccountController(
     {
         var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
 
-        if (string.IsNullOrEmpty(authRequest.Username))
-        {
-            return BadRequest("Usuario no puede estar vacio");
-        }
+        if (string.IsNullOrEmpty(authRequest.Username)) return BadRequest("Usuario no puede estar vacio");
 
-        if (string.IsNullOrEmpty(authRequest.Password))
-        {
-            return BadRequest("Contraseña no puede estar vacia");
-        }
+        if (string.IsNullOrEmpty(authRequest.Password)) return BadRequest("Contraseña no puede estar vacia");
 
         var response = await accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password);
 
@@ -42,9 +36,7 @@ public class AccountController(
                         var token = tokenService.CreateToken(userData.FirstOrDefault());
 
                         if (token == null || string.IsNullOrEmpty(token.Token))
-                        {
                             return BadRequest("Error al iniciar session");
-                        }
 
                         userData.ForEach(x => x.Token = token.Token);
 
@@ -78,13 +70,12 @@ public class AccountController(
         }
         else
         {
-
             var loginFailed = new LoginFailed
             {
                 UserAgent = authRequest.UserAgent,
                 Username = authRequest.Username,
                 Password = authRequest.Password,
-                FromMobile = fromMobile,
+                FromMobile = fromMobile
             };
             await loginFailedService.AddAsync(loginFailed);
         }
@@ -99,10 +90,7 @@ public class AccountController(
         var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
-        if (token == null || string.IsNullOrEmpty(token.Token))
-        {
-            return BadRequest("Error al iniciar session");
-        }
+        if (token == null || string.IsNullOrEmpty(token.Token)) return BadRequest("Error al iniciar session");
 
         var logingHistory = new LoginHistory
         {

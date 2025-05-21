@@ -27,7 +27,8 @@ public class TipoEntidadController(ITipoEntidadService tipoEntidadService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }, { "json", SqlStringParam.Sanitize(json) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await tipoEntidadService.UpdateAsync(parameters));
     }
@@ -35,7 +36,8 @@ public class TipoEntidadController(ITipoEntidadService tipoEntidadService) : Bas
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await tipoEntidadService.DeleteAsync(parameters));
     }
 }

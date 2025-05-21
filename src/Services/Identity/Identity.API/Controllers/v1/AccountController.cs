@@ -17,15 +17,9 @@ public class AccountController(
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
     {
-        if (string.IsNullOrEmpty(authRequest.Username))
-        {
-            return BadRequest("Usuario no puede estar vacio");
-        }
+        if (string.IsNullOrEmpty(authRequest.Username)) return BadRequest("Usuario no puede estar vacio");
 
-        if (string.IsNullOrEmpty(authRequest.Password))
-        {
-            return BadRequest("Contraseña no puede estar vacia");
-        }
+        if (string.IsNullOrEmpty(authRequest.Password)) return BadRequest("Contraseña no puede estar vacia");
 
         var response = await accountService.LoginAsync(authRequest.Username, authRequest.Password);
         //User founded
@@ -33,7 +27,7 @@ public class AccountController(
         {
             List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
-            if (authRequest.ReturnUrl == "/") { authRequest.ReturnUrl = null; }
+            if (authRequest.ReturnUrl == "/") authRequest.ReturnUrl = null;
 
             userData.ForEach(x => x.ReturnUrl = authRequest.ReturnUrl ?? "/Index");
 
@@ -46,9 +40,7 @@ public class AccountController(
                         var token = tokenService.CreateToken(userData.FirstOrDefault());
 
                         if (token == null || string.IsNullOrEmpty(token.Token))
-                        {
                             return BadRequest("Error al iniciar session");
-                        }
 
                         userData.ForEach(x => x.Token = token.Token);
                         var logingHistory = new LoginHistory
@@ -57,7 +49,8 @@ public class AccountController(
                             Username = userData[0].Username,
                             UserRoleId = userData[0].UserRoleId,
                             UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
-                            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress),
+                            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper
+                                .SummarizeUserAgent(authRequest.UserAgent).ipAddress),
                             Token = token.Token,
                             TokenExpiration = token.Expires
                         };
@@ -113,14 +106,13 @@ public class AccountController(
             if (string.IsNullOrEmpty(authRequest.UserAgent) ||
                 string.IsNullOrEmpty(authRequest.Username) ||
                 string.IsNullOrEmpty(authRequest.Password))
-            {
                 return Ok(response);
-            }
 
             var loginFailed = new LoginFailed
             {
                 UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
-                IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).ipAddress),
+                IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent)
+                    .ipAddress),
                 Username = authRequest.Username,
                 Password = authRequest.Password
             };
@@ -136,10 +128,7 @@ public class AccountController(
     {
         userData.UrlGateway = config["ApiGateways:Acontplus"];
         var token = tokenService.CreateToken(userData);
-        if (token == null || string.IsNullOrEmpty(token.Token))
-        {
-            return BadRequest("Error al iniciar session");
-        }
+        if (token == null || string.IsNullOrEmpty(token.Token)) return BadRequest("Error al iniciar session");
 
         var logingHistory = new LoginHistory
         {
@@ -147,7 +136,8 @@ public class AccountController(
             Username = userData.Username,
             UserRoleId = userData.UserRoleId,
             UserAgent = UserAgentHelper.SummarizeUserAgent(userData.UserAgent).userAgent,
-            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(userData.UserAgent).ipAddress),
+            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper.SummarizeUserAgent(userData.UserAgent)
+                .ipAddress),
             Token = token.Token,
             TokenExpiration = token.Expires
         };

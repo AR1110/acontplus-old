@@ -1,4 +1,5 @@
 ﻿namespace FactElect.Application.Interfaces.RetencionAts;
+
 public interface IDocSustentoPagoService
 {
     Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);

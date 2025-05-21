@@ -22,13 +22,10 @@ public class InventarioContext : BaseContext
 
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
-                     .Where(
-                         p => p.ClrType == typeof(string) // Entity is a string
-                              && p.GetColumnType() == null
+                     .Where(p => p.ClrType == typeof(string) // Entity is a string
+                                 && p.GetColumnType() == null
                      ))
-        {
             property.SetIsUnicode(false);
-        }
 
         modelBuilder.Entity<MotivoDiscrepancia>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         modelBuilder.Entity<StockFisico>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");

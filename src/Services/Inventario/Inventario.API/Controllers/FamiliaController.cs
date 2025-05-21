@@ -38,7 +38,8 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await familiaService.DeleteAsync(parameters));
     }
 }

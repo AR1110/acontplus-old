@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class MenuController(IMenuService menuService) : BaseApiController
 {
@@ -9,7 +9,8 @@ public class MenuController(IMenuService menuService) : BaseApiController
     public async Task<IActionResult> Get(string json)
     {
         var parameters =
-            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+            new Dictionary<string, object>
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await menuService.GetAsync(parameters));
     }
 

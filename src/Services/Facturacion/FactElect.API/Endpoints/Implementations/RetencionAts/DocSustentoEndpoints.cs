@@ -1,22 +1,24 @@
 ﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
-public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserContext userContext) : IDocSustentoEndpoints
+public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserContext userContext)
+    : IDocSustentoEndpoints
 {
     private const string UserRoleClaimType = "userRoleId";
 
-    public async Task<IResult> CreateDocSustento(ApiRequest data)
+    public async Task<IResult> CreateDocSustento(RetAtsDocSustentoDto retAtsDocSustento)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", DataConverters.SerializeObjectCustom<RetAtsDocSustentoDto>(retAtsDocSustento) }
         };
         return Results.Ok(await docSustentoService.AddAsync(parameters));
     }
 
     public async Task<IResult> DeleteDocSustento(int id)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id }
         };
@@ -38,13 +40,13 @@ public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserC
         return Results.Ok(await docSustentoService.GetAsync(parameters));
     }
 
-    public async Task<IResult> UpdateDocSustento(int id, ApiRequest data)
+    public async Task<IResult> UpdateDocSustento(int id, RetAtsDocSustentoDto retAtsDocSustento)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", DataConverters.SerializeObjectCustom < RetAtsDocSustentoDto >(retAtsDocSustento) }
         };
         return Results.Ok(await docSustentoService.UpdateAsync(parameters));
     }

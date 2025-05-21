@@ -1,0 +1,12 @@
+<ng-select
+  [items]="filteredOptions"
+  bindLabel="viewValue"
+  bindValue="value"
+  [searchable]="true"
+  [clearable]="false"
+  [formControl]="selectControl"
+  placeholder="{{ label() }}"
+  (change)="onSelectionChange($event)"
+  [ngClass]="className"
+>
+</ng-select>

@@ -13,7 +13,7 @@ public class ProductPhotoController(
     public async Task<IActionResult> Get(int productId)
     {
         var response = await productPhoto.GetAsync(productId);
-        if (response == null) { return BadRequest($"Cant get data: {productId}"); }
+        if (response == null) return BadRequest($"Cant get data: {productId}");
 
         return Ok(response);
     }
@@ -24,9 +24,7 @@ public class ProductPhotoController(
         var data = new ProductPhoto();
         data.UserId = User.GetUserId();
         if (file != null)
-        {
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
-        }
 
         data.ProductId = productId;
         data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
@@ -35,7 +33,6 @@ public class ProductPhotoController(
         if (response.Code == "1" && file != null)
         {
             var s3Response = await storageService.UploadAsync(s3ObjectCustom);
-
         }
 
         return Ok(response);
@@ -48,16 +45,13 @@ public class ProductPhotoController(
         data = JsonConvert.DeserializeObject<ProductPhoto>(json);
         data.UserId = User.GetUserId();
         if (file != null)
-        {
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
-        }
         data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;
         data.S3ObjectUrl = s3ObjectCustom.S3ObjectUrl;
         var response = await productPhoto.UpdateAsync(id, data);
         if (response.Code == "1" && file != null)
         {
             var s3Response = await storageService.UpdateAsync(s3ObjectCustom);
-
         }
 
         return Ok(response);
@@ -66,7 +60,6 @@ public class ProductPhotoController(
     [HttpPut("SetDefault/{id}/{isDefault}")]
     public async Task<IActionResult> Put(int id, bool isDefault)
     {
-
         var response = await productPhoto.SetDefaultAsync(id, isDefault, User.GetUserId());
         return Ok(response);
     }
@@ -79,7 +72,6 @@ public class ProductPhotoController(
         {
             await s3ObjectCustom.Initialize(response.Payload);
             var s3Response = await storageService.DeleteAsync(s3ObjectCustom);
-
         }
 
         return Ok(response);

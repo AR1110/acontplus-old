@@ -1,9 +1,13 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
+import { ToasterService } from '@core/services/toaster.service';
+import { DocSustentoPaymentUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-payment.use-case';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-payment',
@@ -24,13 +28,54 @@ export class DocSustentoPaymentComponent {
   paymentGroup = input.required<any>();
   formasPago = input.required<FormaPago[]>();
 
-  removePayment() {
-    const taxesArray = this.docSustentoArray()
+  private readonly _docSustentoPaymentUseCase = inject(
+    DocSustentoPaymentUseCase,
+  );
+  private readonly _tS = inject(ToasterService);
+
+  async removePayment() {
+    const payments = this.docSustentoArray()
       .at(this.indexDoc())
       .get('payments') as FormArray;
 
-    if (this.indexPayment() >= 0 && this.indexPayment() < taxesArray.length) {
-      taxesArray.removeAt(this.indexPayment());
+    const retencionSelected = payments.controls[this.indexPayment()].value;
+
+    if (retencionSelected.idRetencionAtsPago > 0) {
+      const { isConfirmed } = await Swal.fire({
+        title: 'Eliminar Pago',
+        icon: 'warning',
+        text: `Esta seguro(a) de eliminar este pago, de manera permanente?`,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      });
+      if (isConfirmed) {
+        this._docSustentoPaymentUseCase
+          .delete(retencionSelected.idRetencionAtsPago)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.removeByIndex();
+            }
+          });
+      }
+    } else {
+      await this.removeByIndex();
+    }
+  }
+
+  async removeByIndex() {
+    const payments = this.docSustentoArray()
+      .at(this.indexDoc())
+      .get('payments') as FormArray;
+
+    if (this.indexPayment() >= 0 && this.indexPayment() < payments.length) {
+      payments.removeAt(this.indexPayment());
     }
   }
 }

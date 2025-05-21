@@ -12,7 +12,7 @@ import {
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats.use-case';
+import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import { DialogService } from '@core/services/dialog.service';
 import { RetencionAtsAddEditComponent } from './components/retencion-ats-add-edit/retencion-ats-add-edit.component';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';

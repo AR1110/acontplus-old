@@ -1,7 +1,7 @@
 ﻿using Common.Infrastructure.Data.Repository.Interfaces;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Services;
+namespace Restaurant.Api.Services;
 
 public class OrderService(
     IAdoRepository repository,
@@ -40,7 +40,7 @@ public class OrderService(
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var order = await context.Orders.FindAsync(id);
-        if (order == null) { return new ApiResponse { Code = "0", Message = "Order not found" }; }
+        if (order == null) return new ApiResponse { Code = "0", Message = "Order not found" };
 
         order.Enabled = false;
         context.Update(order);

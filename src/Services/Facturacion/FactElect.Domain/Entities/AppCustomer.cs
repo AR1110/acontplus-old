@@ -4,9 +4,9 @@
 public class AppCustomer : BaseEntity
 {
     public int IdTypeId { get; set; }
-    [Required][MaxLength(15)] public required string IdCard { get; set; }
+    [Required] [MaxLength(15)] public required string IdCard { get; set; }
 
-    [Required][MaxLength(300)] public required string BusinessName { get; set; }
+    [Required] [MaxLength(300)] public required string BusinessName { get; set; }
 
     [MaxLength(300)] public string? TradeName { get; set; }
 

@@ -91,7 +91,7 @@
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.15.10",
+      "library": "limonte-sweetalert2@11.16.1",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -103,7 +103,7 @@
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
-      "library": "moment-timezone@0.5.46",
+      "library": "moment-timezone@0.5.47",
       "destination": "wwwroot/lib/moment-timezone/"
     },
     {

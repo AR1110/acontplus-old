@@ -1,13 +1,12 @@
-﻿using Restaurant.API.Entities;
+﻿using Restaurant.Api.Entities;
 
-namespace Restaurant.API.Interfaces
+namespace Restaurant.Api.Interfaces;
+
+public interface IProductionAreaService
 {
-    public interface IProductionAreaService
-    {
-        Task<ApiResponse> AddAsync(ProductionArea productionArea);
-        Task<ApiResponse> DeleteAsync(int userId, int id);
-        Task<ApiResponse> GetAllAsync();
-        Task<ApiResponse> GetByEstabAsync(int establecimientoId);
-        Task<ApiResponse> UpdateAsync(int id, ProductionArea productionArea);
-    }
+    Task<ApiResponse> AddAsync(ProductionArea productionArea);
+    Task<ApiResponse> DeleteAsync(int userId, int id);
+    Task<ApiResponse> GetAllAsync();
+    Task<ApiResponse> GetByEstabAsync(int establecimientoId);
+    Task<ApiResponse> UpdateAsync(int id, ProductionArea productionArea);
 }

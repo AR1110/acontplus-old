@@ -1,5 +1,4 @@
-﻿
-namespace Configuracion.Application.Interfaces;
+﻿namespace Configuracion.Application.Interfaces;
 
 public interface ISolicitudAutorizacionService
 {

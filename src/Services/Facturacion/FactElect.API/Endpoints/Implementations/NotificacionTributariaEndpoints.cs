@@ -2,7 +2,9 @@
 
 namespace FactElect.API.Endpoints.Implementations;
 
-public class NotificacionTributariaEndpoints(INotificacionTributariaService notificacionTributariaService, IUserContext userContext) : INotificacionTributariaEndpoints
+public class NotificacionTributariaEndpoints(
+    INotificacionTributariaService notificacionTributariaService,
+    IUserContext userContext) : INotificacionTributariaEndpoints
 {
     public async Task<IResult> CreateNotificacionTributariaAsync(NotificacionTributariaDto notificacionTributariaDto)
     {

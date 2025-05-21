@@ -4,7 +4,7 @@ public interface IRetencionAtsInfoAdicionalEndpoints
 {
     Task<IResult> GetRetencionAtsInfoAdicional(string json);
     Task<IResult> GetRetencionAtsInfoAdicionalById(int id);
-    Task<IResult> CreateRetencionAtsInfoAdicional(string json);
-    Task<IResult> UpdateRetencionAtsInfoAdicional(int id, string json);
+    Task<IResult> CreateRetencionAtsInfoAdicional(RetAtsInfoAdicionalDto retencionAtsPagoDto);
+    Task<IResult> UpdateRetencionAtsInfoAdicional(int id, RetAtsInfoAdicionalDto retAtsInfoAdicionalDto);
     Task<IResult> DeleteRetencionAtsInfoAdicional(int id);
 }

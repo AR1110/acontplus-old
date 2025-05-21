@@ -1,4 +1,5 @@
 ﻿using Common.Services.Middleware;
+using Restaurant.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,10 +33,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

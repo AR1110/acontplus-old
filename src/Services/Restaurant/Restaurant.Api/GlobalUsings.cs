@@ -7,5 +7,4 @@ global using Common.Services.Configuration;
 global using Common.Services.Extensions;
 global using Microsoft.AspNetCore.ResponseCompression;
 global using Microsoft.EntityFrameworkCore;
-global using Restaurant.API.Data;
-global using Restaurant.API.Extensions;
+global using Restaurant.Api.Data;

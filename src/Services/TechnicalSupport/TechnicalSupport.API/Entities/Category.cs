@@ -8,7 +8,7 @@ public class Category : BaseEntity
 {
     public int CompanyId { get; set; }
 
-    [Required][MaxLength(25)] public string Code { get; set; }
+    [Required] [MaxLength(25)] public string Code { get; set; }
 
-    [Required][MaxLength(300)] public string Name { get; set; }
+    [Required] [MaxLength(300)] public string Name { get; set; }
 }

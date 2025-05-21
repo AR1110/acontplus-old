@@ -5,7 +5,8 @@ public class MedicalHistoryController(IMedicalHistoryService historyService) : B
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await historyService.GetAsync(parameters));
     }
 
@@ -25,10 +26,7 @@ public class MedicalHistoryController(IMedicalHistoryService historyService) : B
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] MedicalHistory medicalHistory)
     {
-        if (id != medicalHistory.Id)
-        {
-            return BadRequest("Id no coincide!");
-        }
+        if (id != medicalHistory.Id) return BadRequest("Id no coincide!");
 
         medicalHistory.UserId = User.GetUserId();
         return Ok(await historyService.UpdateAsync(id, medicalHistory));

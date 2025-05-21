@@ -3,8 +3,8 @@ import {CompanyRepository} from "@modules/config/domain/repositories/company.rep
 import {CompanyRepositoryImpl} from "@modules/config/data/company/company-repository.impl";
 import {GeneralConfigRepository} from "@modules/config/domain/repositories/general-config.repository";
 import {GeneralConfigRepositoryImpl} from "@modules/config/data/general-config/general-config-repository-impl";
-import {ImportacionRepository} from "@modules/config/domain/repositories/importacion.repository";
-import {ImportacionRepositoryImpl} from "@modules/config/data/importacion/importacion-repository-impl";
+import {ExcelImportRepository} from "@modules/config/domain/repositories/excel-import.repository";
+import {ExcelImportRepositoryImpl} from "@modules/config/data/excel-import/excel-import-repository-impl";
 import {PrinterRepository} from "@modules/config/domain/repositories/printer.repository";
 import {PrinterWebRepository} from "@modules/config/data/printer/printer-web.repository";
 import {SolicitudAutorizacionRepository} from "@modules/config/domain/repositories/solicitud-autorizacion.repository";
@@ -37,6 +37,8 @@ import {
 } from "@modules/config/data/user-customer-permission/user-customer-permission-repository-impl";
 import {ElectronicSignatureRepository} from "@modules/config/domain/repositories/electronic-signature.repository";
 import {ElectronicSignatureRepoImpl} from "@modules/config/data/electronic-signature/electronic-signature-repo.impl";
+import {CreditTimeRepository} from "@modules/config/domain/repositories/credit-time.repository";
+import {CreditTimeRepositoryImpl} from "@modules/config/data/credit-time/credit-time-repository.impl";
 
 
 const DATA_USER_CUSTOMER_IOC:Provider[]=[
@@ -76,8 +78,8 @@ export const DATA_CONFIG_IOC:Provider[]=[
     useClass: GeneralConfigRepositoryImpl,
   },
   {
-    provide: ImportacionRepository,
-    useClass: ImportacionRepositoryImpl,
+    provide: ExcelImportRepository,
+    useClass: ExcelImportRepositoryImpl,
   },
   {
     provide: PrinterRepository,
@@ -94,6 +96,10 @@ export const DATA_CONFIG_IOC:Provider[]=[
   {
     provide: ElectronicSignatureRepository,
     useClass: ElectronicSignatureRepoImpl
+  },
+  {
+    provide: CreditTimeRepository,
+    useClass: CreditTimeRepositoryImpl
   },
   //user-customer
   ...DATA_USER_CUSTOMER_IOC

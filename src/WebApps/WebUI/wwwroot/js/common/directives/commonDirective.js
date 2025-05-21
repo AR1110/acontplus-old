@@ -320,7 +320,7 @@
         }
     }])
 
-    app.directive('estabStock', ['$compile', 'articuloService', function ($compile, articuloSvc) {
+    app.directive('estabStock', ['$compile', 'articuloService', '$timeout', '$log', function ($compile, articuloSvc, $timeout, $log) {
         return {
             restrict: 'A',
             scope: {
@@ -328,77 +328,138 @@
                 placement: "@"
             },
             link: function (scope, element) {
-                let isPopoverInitialized = false;
-                var popoverOptions = {
-                    title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
-                    content: function () {
-                        isPopoverInitialized = true;
-                        var popoverContent = ` <div class="table-responsive">
-                                                <table class="table table-sm">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Estab.</th>
-                                                            <th>Bodega</th>
-                                                            <th>Stock</th>
-                                                            <th>Ub.                                                       
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody ng-repeat="s in branchs" class="small">
-                                                        <tr ng-repeat="ub in s.warehouses">
-                                                            <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
-                                                            <td>{{ub.bodega}}</td>
-                                                            <td>{{ub.stock}}</td>
-                                                            <td>{{ub.ubicacion}}</td>
-                                                        <tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>   
-                                             `;
+                // Hacer que el elemento sea visualmente interactivo
+                element.addClass('estab-stock-trigger');
+                element.css('cursor', 'pointer');
 
-                        articuloSvc.getDataStock(scope.article.idArticulo).then(response => {
+                // Variable para evitar múltiples llamadas
+                var isLoadingData = false;
 
+                // Función para mostrar SweetAlert con datos de stock
+                function showStockDetails() {
+                    if (isLoadingData) return;
+                    isLoadingData = true;
 
-                            scope.branchs = response;
+                    // Mostrar SweetAlert con indicador de carga
+                    Swal.fire({
+                        title: '<i class="mdi mdi-information-outline mr-2"></i>Bodega-Stock',
+                        html: '<div class="text-center p-3"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Cargando datos de stock...</p></div>',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        width: 'auto',
+                        padding: '0',
+                        customClass: {
+                            container: 'stock-swal-container',
+                            popup: 'stock-swal-popup'
+                        },
+                        didOpen: () => {
+                            // Cargar datos cuando el modal esté abierto
+                            loadStockData();
+                        },
+                        didClose: () => {
+                            isLoadingData = false;
+                        }
+                    });
+                }
 
-                        })
+                // Función para cargar datos de stock
+                function loadStockData() {
+                    $log.info('Cargando datos de stock para artículo ID:', scope.article.idArticulo);
 
-                        // Compile the popover content with the scope
-                        let compiledContent = $compile(popoverContent)(scope);
-                        scope.$apply();
-                        return compiledContent;
-
-                    },
-                    placement: scope.placement || 'bottom',
-                    trigger: 'outsideClick',
-                    html: true,
-                    customClass: 'zindex'
-                    // container: 'body'
-                };
-
-
-                $(element).popover(popoverOptions);
-
-
-                element.on('mouseover', function () {
-                    if (!isPopoverInitialized) {
-                        $(element).popover('show');
+                    if (!scope.article || !scope.article.idArticulo) {
+                        updateSwalContent('<div class="text-danger p-3">Error: Artículo inválido</div>');
+                        isLoadingData = false;
+                        return;
                     }
+
+                    articuloSvc.getDataStock(scope.article.idArticulo)
+                        .then(function (response) {
+                            $log.info('Datos de stock recibidos:', response);
+
+                            var html = `
+                            <div class="p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered mb-0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Estab.</th>
+                                                <th>Bodega</th>
+                                                <th>Stock</th>
+                                                <th>Ub.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                        `;
+
+                            if (response && response.length > 0) {
+                                response.forEach(function (branch) {
+                                    if (branch.warehouses && branch.warehouses.length > 0) {
+                                        var rowspanCount = branch.warehouses.length;
+
+                                        branch.warehouses.forEach(function (wh, idx) {
+                                            html += '<tr>';
+
+                                            if (idx === 0) {
+                                                html += '<td rowspan="' + rowspanCount + '">' + branch.branchOffice + '</td>';
+                                            }
+
+                                            html += '<td>' + wh.bodega + '</td>';
+                                            html += '<td>' + wh.stock + '</td>';
+                                            html += '<td>' + wh.ubicacion + '</td>';
+                                            html += '</tr>';
+                                        });
+                                    }
+                                });
+                            } else {
+                                html += '<tr><td colspan="4" class="text-center">No hay datos disponibles</td></tr>';
+                            }
+
+                            html += '</tbody></table></div></div>';
+
+                            updateSwalContent(html);
+                            isLoadingData = false;
+                        })
+                        .catch(function (error) {
+                            $log.error('Error al cargar datos de stock:', error);
+                            updateSwalContent('<div class="text-danger p-3">Error al cargar datos de stock</div>');
+                            isLoadingData = false;
+                        });
+                }
+
+                // Función para actualizar el contenido del SweetAlert
+                function updateSwalContent(html) {
+                    Swal.update({
+                        html: html
+                    });
+                }
+
+                // Evento de clic para mostrar los detalles
+                element.on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showStockDetails();
                 });
 
+                // Evento para hover opcional (puedes descomentar si quieres activarlo)
+                 var hoverTimer;
+                 element.on('mouseenter', function() {
+                     hoverTimer = $timeout(function() {
+                         showStockDetails();
+                     }, 500); // Retraso para evitar activación accidental
+                 });
+                 
+                 element.on('mouseleave', function() {
+                     $timeout.cancel(hoverTimer);
+                 });
 
-                $(document).on('mouseover', function (event) {
-                    isPopoverInitialized = false;
-                    if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
-                        $(element).popover('hide');
-                    }
+                // Limpiar eventos al destruir el scope
+                scope.$on('$destroy', function () {
+                    element.off('click');
+                    // $timeout.cancel(hoverTimer); // Descomentar si usas hover
                 });
             }
         };
-    }])
-
-
-
+    }]);
 
     app.directive('totalesVentaView', ['$rootScope', function ($rootScope) {
         return {
@@ -1221,85 +1282,6 @@
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
      * 
      */
-    app.directive('btnSendToWhatsApp', ['modalService', 'nombreModal', 'mainService', 'toastService', function (modalService, nombreModal, mainService, toastService) {
-        return {
-            restrict: 'A',
-            scope: {
-                params: '=',
-                resultModal: '&',
-                hasPermission: '=',
-                typeSend: '=',
-            },
-            link: function (scope, element) {
-                element.on('click', function () {
-                    console.log('click')
-                    /**
-                     * Eliminar mas adelante en cuanto se corrija el codDoc en las opciones de factura venta
-                     */
-                    let params = Object.assign({}, scope.params);
-                    if (("codigoTipoDoc" in params)) {
-                        params.codDoc = '01';
-                    }
-                    //===================================
-
-                    mainService.getData('GET', 'Config/WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 })).then(
-                        async response => {
-                            if (response.code == '0') {
-                                toastService.toastr('warning', response.message)
-                            }
-                            if (response.code == '1') {
-                                let tempArray = JSON.parse(response.payload)
-                                if (tempArray[0][0].code == '0') {
-                                    Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'warning' })
-
-                                } else {
-                                    if (tempArray[0][0].message) {
-                                        Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'info' })
-                                        return
-                                    }
-                                    // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
-                                    // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
-                                    // let template = nombreModalLogistica.VEHICULO.templates['M'];
-                                    const {
-                                        MODAL_SEND_WHATSAPP_CTRL,
-                                        MODAL_SEND_WHATSAPP_CSHTML
-                                    } = nombreModal.common;
-                                    const {
-                                        ModalWhatsAppCtrl
-                                    } = await import(MODAL_SEND_WHATSAPP_CTRL);
-                                    // console.log(template)
-
-                                    params.type = scope.typeSend;
-                                    params.hasPermissions = scope.hasPermissions
-                                    const modalDialogRef = modalService.openModalCustom({
-                                        controller: ModalWhatsAppCtrl,
-                                        template: MODAL_SEND_WHATSAPP_CSHTML,
-                                        size: 'md',
-                                        params: params || {},
-                                        isRenderRazorPartial: true,
-                                    })
-
-                                    modalDialogRef.result.then(result => {
-                                        if (typeof result === "object") {
-                                            scope.resultModal({
-                                                result
-                                            })
-                                        }
-                                    })
-                                }
-                            }
-                            hideLoader()
-                        }
-                    ).catch(error => {
-                        hideLoader()
-                        console.log(error)
-                    })
-                });
-            }
-        }
-    }])
-
-    //Nueva Version usar esta en proximos modulos
 
     app.directive('actionSendToWhatsApp', ['modalService', 'nombreModalCommon', 'mainService', 'toastService', function (modalSvc, nombreModalCommon, mS, tS) {
         return {
@@ -1318,8 +1300,8 @@
                     let url = `Config/WhatsappUsage/?json=${json}`;
 
                     showLoader();
-                    let response = await mS.getData('get', url, null, true).finally(() => hideLoader());
-
+                    let response = await mS.getData('get', url).finally(() => hideLoader());
+                    
                     if (response.code === "0") {
                         tS.toastr({
                             type: 'warning',
@@ -1328,25 +1310,19 @@
                         return
                     }
 
-                    let [tempArray] = JSON.parse(response.payload);
-                    let tempResponse = tempArray[0];
-
-                    if (tempResponse.code == '0') {
-                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'warning' })
+                    if (response.code == '0') {
+                        Swal.fire({ title: 'Aviso', text: response.message, icon: 'warning' })
                         return
                     }
 
 
-                    if (tempResponse.message) {
-                        Swal.fire({ title: 'Aviso', text: tempResponse.message, icon: 'info' })
+                    if (response.message) {
+                        Swal.fire({ title: 'Aviso', text: response.message, icon: 'info' })
                         return
                     }
 
                     let { fileCtrl, template, controller } = nombreModalCommon.SEND_WHATSAPP;
-                    let ctrl = (await import(fileCtrl))[controller];
-
-
-
+                    let ctrl = (await import(fileCtrl))[controller]; 
                     const modalRef = modalSvc.open({
                         controller: ctrl,
                         template,
@@ -1978,7 +1954,7 @@
             scope: {
                 params: '=',
                 onResult: '&',
-                codDoc:'='
+                codDoc: '='
             },
             link: function (scope, element) {
                 element.on('click', async function () {
@@ -2587,7 +2563,7 @@
 
                     let format = 'pdf';
 
-                    let dataParms = { 
+                    let dataParms = {
                         codEstab: scope.codEstab,
                         id: scope.unique
                     }

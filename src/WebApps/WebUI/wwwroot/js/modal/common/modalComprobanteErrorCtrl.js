@@ -13,7 +13,10 @@ export class ComprobanteErrorCtrl {
 
     $onInit() {
         this._mS.getData('get', 'FactElect/DocumentoElectronicoError/' + this._params.idDocumentoElectronico).then(response => {
-            this.erroresComprobante = JSON.parse(response.payload) || [];
+            if (response.code === '1') {
+                const { errors } = JSON.parse(response.payload) || []
+                this.erroresComprobante = errors;
+            }
         }).catch(error => {
             if (error.data) {
                 this._ts.toastr('error', error.data.message, error.status)

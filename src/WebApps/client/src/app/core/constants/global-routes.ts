@@ -9,8 +9,9 @@ export enum GlobalRoutes {
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer',
   ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
-  ConfigImportacion = 'config/importacion',
+  ConfigImportacion = 'config/excel-import',
   FirmaElectronica='config/electronic-signature',
+  TiempoCredito='config/credit-time',
   //Configuration End
 
   //Facturación start

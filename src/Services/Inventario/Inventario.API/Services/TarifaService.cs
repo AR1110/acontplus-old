@@ -1,38 +1,33 @@
-﻿namespace Inventario.API.Services
+﻿namespace Inventario.API.Services;
+
+public class TarifaService : ITarifaService
 {
-    public class TarifaService : ITarifaService
+    private readonly IAdoRepository _repository;
+    private readonly string nameSchema = "Inventario.Tarifa";
+
+    public TarifaService(IAdoRepository repository)
     {
-        private readonly IAdoRepository _repository;
-        private readonly string nameSchema = "Inventario.Tarifa";
+        _repository = repository;
+    }
 
-        public TarifaService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
+        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
+
+
+        return new ApiResponse
         {
-            _repository = repository;
-        }
-
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            {
-                return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
-            }
+            Code = "1",
+            Message = "Listado exitosamente",
+            Payload = DataConverters.DataSetToJson(ds)
+        };
+    }
 
 
-            return new ApiResponse
-            {
-                Code = "1",
-                Message = "Listado exitosamente",
-                Payload = DataConverters.DataSetToJson(ds)
-            };
-        }
-
-
-
-        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
-        }
-
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
     }
 }

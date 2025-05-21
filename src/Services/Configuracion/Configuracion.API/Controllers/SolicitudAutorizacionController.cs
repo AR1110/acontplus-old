@@ -1,5 +1,4 @@
-﻿
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc) : BaseApiController
 {
@@ -49,4 +48,3 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
         return Ok(await _svc.GetAsync(parameters));
     }
 }
-

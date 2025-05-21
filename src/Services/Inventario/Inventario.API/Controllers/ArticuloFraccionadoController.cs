@@ -12,7 +12,7 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             };
             var response = await articuloFraccionadoService.GetAsync(parameters);
-            if (response == null) { return NoContent(); }
+            if (response == null) return NoContent();
 
             return Ok(response);
         }
@@ -34,7 +34,6 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, ApiRequest request)
     {
-
         request.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var response = await articuloFraccionadoService.UpdateAsync(id, request);
         return Ok(response);
@@ -43,9 +42,9 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await articuloFraccionadoService.DeleteAsync(parameters);
         return Ok(response);
-
     }
 }

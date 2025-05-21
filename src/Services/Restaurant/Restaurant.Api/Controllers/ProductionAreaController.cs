@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Entities;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Entities;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class ProductionAreaController(IProductionAreaService productionAreaService) : BaseApiController
 {

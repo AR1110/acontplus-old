@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Restaurant.API.Data.Migrations
+namespace Restaurant.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class FinishedColumnOrder : Migration

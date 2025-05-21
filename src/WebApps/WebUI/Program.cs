@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Common.Logging;
+﻿using Common.Logging;
 using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,18 +25,19 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 builder.Services.AddAdvancedLogging(builder.Configuration);
 
 builder.Services.AddHttpClient("ApiProxy", client =>
-{
-    // Aumentar el timeout para solicitudes grandes
-    client.Timeout = TimeSpan.FromMinutes(30);
-    client.DefaultRequestHeaders.ConnectionClose = false;
-})
-.ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-{
-    PooledConnectionLifetime = TimeSpan.FromMinutes(5),
-    PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
-    MaxConnectionsPerServer = 100,
-    EnableMultipleHttp2Connections = true
-}); ;
+    {
+        // Aumentar el timeout para solicitudes grandes
+        client.Timeout = TimeSpan.FromMinutes(30);
+        client.DefaultRequestHeaders.ConnectionClose = false;
+    })
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+        PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
+        MaxConnectionsPerServer = 100,
+        EnableMultipleHttp2Connections = true
+    });
+;
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
@@ -98,15 +98,15 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
-{
-    builder.UseStaticFiles();
-    builder.Run(async context =>
-    {
-        context.Response.ContentType = "text/html";
-        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
-    });
-});
+//app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
+//{
+//    builder.UseStaticFiles();
+//    builder.Run(async context =>
+//    {
+//        context.Response.ContentType = "text/html";
+//        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
+//    });
+//});
 
 
 await app.RunAsync();

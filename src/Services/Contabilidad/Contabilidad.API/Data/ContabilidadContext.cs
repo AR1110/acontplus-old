@@ -21,13 +21,10 @@ public class ContabilidadContext : BaseContext
 
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
-                     .Where(
-                         p => p.ClrType == typeof(string) // Entity is a string
-                              && p.GetColumnType() == null
+                     .Where(p => p.ClrType == typeof(string) // Entity is a string
+                                 && p.GetColumnType() == null
                      ))
-        {
             property.SetIsUnicode(false);
-        }
 
         modelBuilder.Entity<Category>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         modelBuilder.Entity<Category>().Property(p => p.Enabled).HasDefaultValue(true);
@@ -55,6 +52,5 @@ public class ContabilidadContext : BaseContext
         modelBuilder.Entity<Account>().HasOne(a => a.ParentAccount).WithMany(a => a.ChildAccounts)
             .HasForeignKey(a => a.ParentAccountId)
             .OnDelete(DeleteBehavior.Restrict);
-
     }
 }

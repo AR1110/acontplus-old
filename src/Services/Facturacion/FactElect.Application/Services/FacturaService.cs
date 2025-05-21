@@ -7,7 +7,7 @@ public class FacturaService(IAdoRepository repository) : IFacturaService
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync(_nameSchema + "Get", parameters, false, false);
-        if (DataValidation.DataSetIsNull(ds)) { return null; }
+        if (DataValidation.DataSetIsNull(ds)) return null;
 
         return DataConverters.DataSetToJson(ds, true);
     }
@@ -15,7 +15,7 @@ public class FacturaService(IAdoRepository repository) : IFacturaService
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync(_nameSchema + "Get_Id", parameters, false);
-        if (ds.Tables[0].Rows.Count == 0) { return null; }
+        if (ds.Tables[0].Rows.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds, true);
     }

@@ -1,8 +1,9 @@
+//@ts-check
 export {
-    ModalWhatsAppCtrl
+    modalSendWhatsAppCtrl
 }
 
-ModalWhatsAppCtrl.$inject = [
+modalSendWhatsAppCtrl.$inject = [
     '$scope',
     '$http',
     '$uibModalInstance',
@@ -13,12 +14,12 @@ ModalWhatsAppCtrl.$inject = [
     'decodeToken'
 ]
 
-function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
+function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
     $scope.client = {}
     $scope.whatsapp = {}
     $scope.connected_devices = []
     $scope.current_device = {}
-
+    const { data } = params;
 
     $scope.hasPermissions = _token.userRoleId == '26'
 
@@ -30,15 +31,16 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
     $scope.session = {}
     $scope.session.is_logged_in = false
 
-    $scope.type = params.type
-    $scope.codDoc = params.codDoc
-    $scope.comprobante = params.comprobante + ': ' + params.serieComprobante
+    $scope.type = ['01', '03', '04', '05', '06', '07'].includes(data.codDoc) ? 'SRI' : 'GenericFile';
+    $scope.codDoc = data.codDoc
+    $scope.comprobante = data.comprobante + ': ' + data.serieComprobante
 
     let idInstance = "7103845341"
     let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c"
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
             (response) => {
+                console.log(response)
                 let { stateInstance } = response.data
                 if (stateInstance === "authorized") {
                     $scope.session.is_logged_in = true
@@ -64,14 +66,14 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
 
     $scope.hasPhoneNumber = true
     let phoneNumbers
-    if (params.telefono) {
+    if (data.telefono) {
 
-        if (params.telefono.includes(";")) {
-            phoneNumbers = params.telefono.split(";")
-        } else if (params.telefono.includes("|")) {
-            phoneNumbers = params.telefono.split("|")
+        if (data.telefono.includes(";")) {
+            phoneNumbers = data.telefono.split(";")
+        } else if (data.telefono.includes("|")) {
+            phoneNumbers = data.telefono.split("|")
         } else {
-            phoneNumbers = params.telefono.split(" ")
+            phoneNumbers = data.telefono.split(" ")
         }
     } else {
         $scope.hasPhoneNumber = false
@@ -247,8 +249,8 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
                         totalMessages++
                         if (lastMessage) {
                             let messageAdd = ''
-                            if (params.telefonoEstablecimiento) {
-                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${params.nombreComercial}* al siguiente número: *${params.telefonoEstablecimiento}*`
+                            if (data.telefonoEstablecimiento) {
+                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${data.nombreComercial}* al siguiente número: *${data.telefonoEstablecimiento}*`
                                 sendSms(messageAdd)
                             }
                             setTimeout(() => {
@@ -279,10 +281,10 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
     }
 
     $scope.generateXml = () => {
-        if (!params.idDocumentoElectronico) {
+        if (!data.idDocumentoElectronico) {
             return;
         }
-        mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico).then(response => {
+        mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + data.idDocumentoElectronico).then(response => {
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
             fileName = fileName.replace('"', "")
             const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
@@ -316,21 +318,21 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _
         let format = 'pdf'
         let dataParms = {
             hasParams: true,
-            id: params.idDocumento,
-            versionComp: params.versionComp
+            id: data.idDocumento,
+            versionComp: data.versionComp
         }
         let reportParams = {
             hasParams: true,
-            codigo: REPORT_CODES[params.codDoc],
+            codigo: REPORT_CODES[data.codDoc],
             format,
-            codEstab: params.codEstab,
+            codEstab: data.codEstab,
             aditionalParams: [],
-            versionComp: params.versionComp
+            versionComp: data.versionComp
         }
 
 
 
-        if (params.codDoc === 'CI') {
+        if (data.codDoc === 'CI') {
             dataParms.tipo = 3;
             dataParms.hasParams = true;
             let parameters = {

@@ -45,7 +45,7 @@
           formControlName="documentoSustentoTributarioId"
           [disabled]="sustentosFiltered().length === 0"
         >
-          <mat-option [value]="0">::seleccione::</mat-option>
+          <mat-option>::seleccione::</mat-option>
           @for (sustento of sustentosFiltered(); track $index) {
             <mat-option [value]="sustento.documentoSustentoTributarioId">
               {{ sustento.codigo }} - {{ sustento.descripcion }}
@@ -323,7 +323,12 @@
         variant="success"
         icon="save"
         type="submit"
-        [disabled]="!docSustentoArray().get('idRetAtsDocSustento')?.value"
+        [disabled]="
+          !docSustentoArray().get('idRetencionAts')?.value &&
+          !docSustentoArray().get('idRetAtsDocSustento')?.value &&
+          docSustentoGroup().invalid
+        "
+        (handleClick)="onSave(indexDoc())"
       >
       </app-theme-button>
       <app-theme-button

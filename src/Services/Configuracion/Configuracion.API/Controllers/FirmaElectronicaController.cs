@@ -19,9 +19,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
         if (file.ContentType != "application/x-pkcs12")
-        {
             return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
-        }
 
         var signFile = new FileModel
         {
@@ -65,9 +63,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
     {
         if (file.ContentType != "application/x-pkcs12")
-        {
             return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
-        }
 
         var signFile = new FileModel
         {
@@ -86,18 +82,17 @@ public class FirmaElectronicaController(
         };
         return Ok(await firmaElectronicaService.UpdateFileAsync(parameters));
     }
+
     [HttpGet("Download/{id}")]
     public async Task<IActionResult> Download(int id)
     {
-        var parameters = new Dictionary<string, object> {
+        var parameters = new Dictionary<string, object>
+        {
             { "userRoleId", User.GetClaimValue<int>(UserRoleId) },
             { "id", id }
         };
         var response = await firmaElectronicaService.DownloadAsync(parameters);
-        if (response == null)
-        {
-            return BadRequest("No se encontro firma electrónica");
-        }
+        if (response == null) return BadRequest("No se encontro firma electrónica");
 
         return File(response.Content, "application/x-pkcs12", response.FileName);
     }

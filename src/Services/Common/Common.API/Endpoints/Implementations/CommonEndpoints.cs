@@ -3,7 +3,8 @@ using Common.API.Endpoints.Interfaces;
 
 namespace Common.API.Endpoints.Implementations;
 
-public class CommonEndpoints(IDashboardService dashboardService,
+public class CommonEndpoints(
+    IDashboardService dashboardService,
     IEmailQueueService emailQueueService,
     IHttpContextAccessor httpContextAccessor,
     INotificationService notificationService,
@@ -69,7 +70,8 @@ public class CommonEndpoints(IDashboardService dashboardService,
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", userContext.GetClaimValue<int>(UserRoleClaimType) },
+            { "json", SqlStringParam.Sanitize(json) }
         };
         return Results.Ok(await userManualService.GetAsync(parameters));
     }

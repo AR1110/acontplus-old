@@ -659,8 +659,7 @@
                     mora: item.mora,
                     interes: item.interes,
                     diasMora: item.diasMora,
-                    abono: item.abono,
-                    saldoCta: item.saldoCta,
+                    abono: item.abono, 
                     saldo: item.saldo,
                     estado: item.estado,
                     saldoOriginal: item.saldo,
@@ -681,8 +680,7 @@
                 mora: item.mora,
                 interes: item.interes,
                 diasMora: item.diasMora,
-                abono: item.abono,
-                saldoCta: item.saldoCta, //resta de cuota - saldo
+                abono: item.abono, 
                 saldo: item.saldo,
                 nombreEstado: item.estado,
             }));
@@ -708,8 +706,7 @@
                     diasMora: item.diasMora,
                     mora: item.mora,
                     abono: item.abono,
-                    saldo: item.saldo,
-                    saldoDoc: item.saldoDoc, //resta de importe total - abono 
+                    saldo: item.saldo, 
                     nombreEstado: item.descripcion, //nombre del estado de pago
                     cuotas: structuredClone(cuotasTransformada),
                     cuotasOriginal: structuredClone(cuotasTransformada)
@@ -1777,7 +1774,7 @@
                     let { cuotas, cuotasOriginal, ...documento } = cuenta;
                     let cuotasCalculadas = cuotas.map(cuota => {
                         // Inicialización de variables 
-                        let saldoAnterior = cuota.saldoCta;
+                        let saldoAnterior = cuota.saldo;
                         return {
                             ...cuota,
                             saldoTotalActual: fS.instanceDecimal(saldoAnterior, 5),
@@ -1803,7 +1800,7 @@
                     let interesActual = fS.instanceDecimal(0);
                     let saldoAnterior = fS.instanceDecimal(0);
                     for (let cc of cuotasCalculadas) {
-                        saldoActualDoc = fS.plus(saldoActualDoc, cc.saldoTotalActual, 5);
+                        saldoActualDoc = fS.plus(saldoActualDoc, cc.saldoAnterior, 5);
                         diasMoraActual += cc.diasMora;
                         interesPorMoraActual = interesPorMoraActual.plus(cc.interes);
                         interesActual = interesActual.plus(cc.interes),

@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Entities;
-using Restaurant.API.Interfaces;
+using Restaurant.Api.Entities;
+using Restaurant.Api.Interfaces;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class IngredientController(IIngredientService ingredientService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+        var parameters = new Dictionary<string, object>
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
         return Ok(await ingredientService.GetAsync(parameters));
     }
 

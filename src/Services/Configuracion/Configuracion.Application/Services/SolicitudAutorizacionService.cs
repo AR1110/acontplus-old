@@ -1,6 +1,4 @@
-﻿
-
-namespace Configuracion.Application.Services;
+﻿namespace Configuracion.Application.Services;
 
 public class SolicitudAutorizacionService(IAdoRepository _repo) : ISolicitudAutorizacionService
 {

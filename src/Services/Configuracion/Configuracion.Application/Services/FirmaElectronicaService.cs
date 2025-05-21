@@ -8,6 +8,7 @@ public class FirmaElectronicaService(IAdoRepository adoRepository) : IFirmaElect
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
     }
+
     public async Task<FileModel> DownloadAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Download", parameters);
@@ -29,6 +30,7 @@ public class FirmaElectronicaService(IAdoRepository adoRepository) : IFirmaElect
 
         return null;
     }
+
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, false);

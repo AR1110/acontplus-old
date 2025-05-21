@@ -2,21 +2,20 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace Restaurant.API.Entities
+namespace Restaurant.Api.Entities;
+
+[Table("Menu", Schema = "Restaurant")]
+public class Menu : BaseEntity
 {
-    [Table("Menu", Schema = "Restaurant")]
-    public class Menu : BaseEntity
-    {
-        public int ProductId { get; set; }
-        [Required]
-        [MaxLength(500)]
-        public string Title { get; set; }
-        [MaxLength(500)]
-        public string Summary { get; set; }
-        public MenuType MenuType { get; set; }
-        public int? MenuTypeId { get; set; }
-        public string Content { get; set; }
-        public bool ForPromotion { get; set; }
-        public List<MenuItem> MenuItems { get; set; }
-    }
+    public int ProductId { get; set; }
+
+    [Required] [MaxLength(500)] public string Title { get; set; }
+
+    [MaxLength(500)] public string Summary { get; set; }
+
+    public MenuType MenuType { get; set; }
+    public int? MenuTypeId { get; set; }
+    public string Content { get; set; }
+    public bool ForPromotion { get; set; }
+    public List<MenuItem> MenuItems { get; set; }
 }

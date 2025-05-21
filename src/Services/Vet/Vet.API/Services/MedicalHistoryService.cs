@@ -5,20 +5,12 @@ public class MedicalHistoryService(IAdoRepository adoRepository, VetContext cont
     public async Task<ApiResponse> AddAsync(MedicalHistory medicalHistory)
     {
         if (medicalHistory.BehaviorTests.Count > 0)
-        {
             foreach (var item in medicalHistory.BehaviorTests)
-            {
                 item.UserId = medicalHistory.UserId;
-            }
-        }
 
         if (medicalHistory.HealthChecks.Count > 0)
-        {
             foreach (var item in medicalHistory.HealthChecks)
-            {
                 item.UserId = medicalHistory.UserId;
-            }
-        }
 
         context.MedicalHistories.Add(medicalHistory);
         await context.SaveChangesAsync();
@@ -28,10 +20,7 @@ public class MedicalHistoryService(IAdoRepository adoRepository, VetContext cont
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var medicalHistory = await context.MedicalHistories.FindAsync(id);
-        if (medicalHistory == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
-        }
+        if (medicalHistory == null) return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
 
         medicalHistory.Deleted = true;
         medicalHistory.Enabled = false;
@@ -62,10 +51,7 @@ public class MedicalHistoryService(IAdoRepository adoRepository, VetContext cont
     public async Task<ApiResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
     {
         var medicalHistoryFound = await context.MedicalHistories.FindAsync(id);
-        if (medicalHistoryFound == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
-        }
+        if (medicalHistoryFound == null) return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
 
         medicalHistoryFound.Date = medicalHistory.Date;
         medicalHistoryFound.Observations = medicalHistory.Observations;

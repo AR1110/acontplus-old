@@ -1,5 +1,8 @@
 import {
+  docSustentoPaymentProvider,
   docSustentoProvider,
+  docSustentoRetencionProvider,
+  docSustentoTaxProvider,
   retencionAtsProvider,
 } from './retencion-ats.provider';
 import { guiaRemisionProvider } from '@billing/providers/guia-remision.provider';
@@ -9,5 +12,8 @@ export const billingProviders = [
   documentoElectronicoProvider,
   retencionAtsProvider,
   docSustentoProvider,
+  docSustentoTaxProvider,
+  docSustentoRetencionProvider,
+  docSustentoPaymentProvider,
   guiaRemisionProvider,
 ];

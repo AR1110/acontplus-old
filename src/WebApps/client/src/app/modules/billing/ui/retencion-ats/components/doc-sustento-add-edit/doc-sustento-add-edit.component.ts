@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -20,7 +27,7 @@ import { TipoPago } from '@sri/domain/models/tipo-pago';
 import { TipoRegimenFiscalExterior } from '@sri/domain/models/tipo-regimen-fiscal-exterior';
 import { Pais } from '@sri/domain/models/pais';
 import { GenericModel } from '@core/models/generic.model';
-import { DocSustentoUseCase } from '@billing/domain/use-cases/doc-sustento.use-case';
+import { DocSustentoUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento.use-case';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { DocSustentoTaxComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-tax/doc-sustento-tax.component';
@@ -44,6 +51,11 @@ import {
 } from '@angular/material/datepicker';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
+import { DialogService } from '@core/services/dialog.service';
+import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
+import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-add-edit',
@@ -68,10 +80,11 @@ import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-rec
   templateUrl: './doc-sustento-add-edit.component.html',
   styles: ``,
 })
-export class DocSustentoAddEditComponent implements AfterViewInit {
+export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   docSustentoGroup = input.required<any>();
   docSustentoArray = input.required<FormArray>();
   indexDoc = input.required<number>();
+  dataLoaded = input.required<boolean>();
   tiposComprobante = input.required<TipoComprobante[]>();
   sustentosTributarios = input.required<SustentoTributario[]>();
   tiposPago = input.required<TipoPago[]>();
@@ -88,11 +101,12 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   sustentosFiltered = signal<SustentoTributario[]>([]);
   isPagoResidente = true;
   uniqueIdDoc = input.required<string>();
-
+  private readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
   private readonly _tS = inject(ToasterService);
   private readonly _documentoReceivedUseCase = inject(DocumentReceivedUseCase);
+  private readonly _dialogService = inject(DialogService);
 
   setPanelOpen(index: number) {
     this.panelOpenState = index;
@@ -133,6 +147,38 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.selectSustento(this.indexDoc());
   }
+  ngOnInit(): void {
+    if (this._data) {
+      const parsedData = {
+        ...this._data,
+        documentosSustento: JSON.parse(this._data.documentosSustento || '[]'),
+        infoAdicional: JSON.parse(this._data.infoAdicional || '[]'),
+      };
+
+      this.docSustentoArray()
+        .at(this.indexDoc())
+        .get('idRetencionAts')
+        ?.setValue(parsedData.idRetencionAts);
+
+      parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
+        if (doc.taxes) {
+          doc.taxes.forEach((tax) => {
+            this.createTax(this.indexDoc(), tax);
+          });
+        }
+        if (doc.retenciones) {
+          doc.retenciones.forEach((retencion) => {
+            this.createRetencion(this.indexDoc(), retencion);
+          });
+        }
+        if (doc.payments) {
+          doc.payments.forEach((payment) => {
+            this.createPayment(this.indexDoc(), payment);
+          });
+        }
+      });
+    }
+  }
 
   createTaxGroup(): FormGroup {
     return this._fb.group({
@@ -159,7 +205,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       codigoRetencion: ['', Validators.required],
       baseImponible: [0, [Validators.required]],
       porcentajeRetener: [0],
-      valorRetenido: [0, [Validators.required, Validators.min(0)]],
+      valorRetenido: [0],
     });
   }
 
@@ -235,7 +281,10 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
       this._documentoReceivedUseCase
         .previewXml(doc.idDocumento)
         .subscribe((response) => {
-          console.log(response);
+          this._dialogService.open(DocElectViewerComponent, {
+            size: 'xxl',
+            data: response.payload,
+          });
         });
     } else {
       this._tS.toastr({
@@ -246,12 +295,90 @@ export class DocSustentoAddEditComponent implements AfterViewInit {
   }
 
   // Remove a docSustento at a specific index
-  removeDocSustento(index: number) {
+  async removeDocSustento(index: number) {
+    const doc = this.docSustentoArray().controls[index]
+      .value as RetAtsDocSustento;
+
+    if (doc.idRetAtsDocSustento > 0) {
+      const { isConfirmed } = await Swal.fire({
+        title: 'Eliminar documento',
+        icon: 'warning',
+        text: `Esta seguro(a) de eliminar el documento nro. ${doc.numDocSustento} de esta retención, de manera permanente?`,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      });
+      if (isConfirmed) {
+        this._docSustentoUseCase
+          .delete(doc.idRetAtsDocSustento)
+          .subscribe((response) => {
+            this._tS.toastr({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.removeByIndex(index);
+            }
+          });
+      }
+    } else {
+      await this.removeByIndex(index);
+    }
+  }
+
+  async removeByIndex(index: number) {
     this.docSustentoArray().removeAt(index);
   }
 
   addPayment(indexDoc: number) {
     const payment = {};
     this.createPayment(indexDoc, payment as RetencionAtsDocPayment);
+  }
+
+  onSave(index: number) {
+    const docSustento = this.docSustentoArray().controls[index]
+      .value as RetAtsDocSustento;
+
+    const taxes = this.getTaxesArray(index).controls.map((tax) => tax.value);
+    const retenciones = this.getRetencionesArray(index).controls.map(
+      (retencion) => retencion.value,
+    );
+    const payments = this.getPaymentsArray(index).controls.map(
+      (payment) => payment.value,
+    );
+
+    docSustento.taxes = taxes;
+    docSustento.retenciones = retenciones;
+    docSustento.payments = payments;
+
+    this.docSustentoGroup().patchValue(docSustento);
+
+    if (docSustento.idRetAtsDocSustento > 0) {
+      this._docSustentoUseCase
+        .update(docSustento.idRetAtsDocSustento, docSustento)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
+    } else {
+      this._docSustentoUseCase.create(docSustento).subscribe((response) => {
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code === '1') {
+          const { idRetAtsDocSustento } = JSON.parse(
+            response.payload as string,
+          );
+          this.docSustentoArray()
+            .controls[index].get('idRetAtsDocSustento')
+            ?.setValue(idRetAtsDocSustento);
+        }
+      });
+    }
   }
 }

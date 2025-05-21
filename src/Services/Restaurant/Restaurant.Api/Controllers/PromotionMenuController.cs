@@ -1,8 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Restaurant.API.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using Restaurant.Api.Services;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class PromotionMenuController(IPromotionMenuService promotionMenuService) : BaseApiController
 {
@@ -11,7 +10,8 @@ public class PromotionMenuController(IPromotionMenuService promotionMenuService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }, { "id", id }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) },
+            { "id", id }
         };
 
         return Ok(await promotionMenuService.GetByIdAsync(parameters));

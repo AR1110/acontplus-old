@@ -24,6 +24,5 @@ public class BarberShopContext(DbContextOptions<BarberShopContext> options) : Ba
 
         SimpleEntityRegistration.RegisterEntities(modelBuilder,
             typeof(TicketDocument));
-
     }
 }

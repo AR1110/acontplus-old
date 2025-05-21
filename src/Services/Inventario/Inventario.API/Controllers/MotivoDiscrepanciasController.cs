@@ -6,10 +6,7 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MotivoDiscrepancia>>> GetMotivoDiscrepancias()
     {
-        if (context.MotivoDiscrepancias == null)
-        {
-            return NotFound();
-        }
+        if (context.MotivoDiscrepancias == null) return NotFound();
 
         try
         {
@@ -25,17 +22,11 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
     [HttpGet("{id}")]
     public async Task<ActionResult<MotivoDiscrepancia>> GetMotivoDiscrepancia(int id)
     {
-        if (context.MotivoDiscrepancias == null)
-        {
-            return NotFound();
-        }
+        if (context.MotivoDiscrepancias == null) return NotFound();
 
         var motivoDiscrepancia = await context.MotivoDiscrepancias.FindAsync(id);
 
-        if (motivoDiscrepancia == null)
-        {
-            return NotFound();
-        }
+        if (motivoDiscrepancia == null) return NotFound();
 
         return motivoDiscrepancia;
     }
@@ -45,10 +36,7 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
     [HttpPut("{id}")]
     public async Task<IActionResult> PutMotivoDiscrepancia(int id, MotivoDiscrepancia motivoDiscrepancia)
     {
-        if (id != motivoDiscrepancia.Id)
-        {
-            return BadRequest();
-        }
+        if (id != motivoDiscrepancia.Id) return BadRequest();
 
         context.Entry(motivoDiscrepancia).State = EntityState.Modified;
 
@@ -58,10 +46,7 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!MotivoDiscrepanciaExists(id))
-            {
-                return NotFound();
-            }
+            if (!MotivoDiscrepanciaExists(id)) return NotFound();
 
             throw;
         }
@@ -75,9 +60,7 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
     public async Task<ActionResult<MotivoDiscrepancia>> PostMotivoDiscrepancia(MotivoDiscrepancia motivoDiscrepancia)
     {
         if (context.MotivoDiscrepancias == null)
-        {
             return Problem("Entity set 'InventarioContext.MotivoDiscrepancias'  is null.");
-        }
 
         context.MotivoDiscrepancias.Add(motivoDiscrepancia);
         await context.SaveChangesAsync();
@@ -89,16 +72,10 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMotivoDiscrepancia(int id)
     {
-        if (context.MotivoDiscrepancias == null)
-        {
-            return NotFound();
-        }
+        if (context.MotivoDiscrepancias == null) return NotFound();
 
         var motivoDiscrepancia = await context.MotivoDiscrepancias.FindAsync(id);
-        if (motivoDiscrepancia == null)
-        {
-            return NotFound();
-        }
+        if (motivoDiscrepancia == null) return NotFound();
 
         //_context.MotivoDiscrepancias.Remove(motivoDiscrepancia);
         motivoDiscrepancia.Enabled = false;
@@ -110,10 +87,7 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
         }
         catch (Exception)
         {
-            if (!MotivoDiscrepanciaExists(id))
-            {
-                return NotFound();
-            }
+            if (!MotivoDiscrepanciaExists(id)) return NotFound();
 
             throw;
         }

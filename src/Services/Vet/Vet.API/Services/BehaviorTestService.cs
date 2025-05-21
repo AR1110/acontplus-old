@@ -5,10 +5,7 @@ public class BehaviorTestService(VetContext context) : IBehaviorTestService
     public async Task<ApiResponse> UpdateAsync(int id, BehaviorTest behaviorTest)
     {
         var test = await context.BehaviorTests.FindAsync(id);
-        if (test == null)
-        {
-            return new ApiResponse { Code = "0", Message = "Item no encontrado!" };
-        }
+        if (test == null) return new ApiResponse { Code = "0", Message = "Item no encontrado!" };
 
         test.BehaviorId = behaviorTest.BehaviorId;
         test.BehaviorStatusId = behaviorTest.BehaviorStatusId;

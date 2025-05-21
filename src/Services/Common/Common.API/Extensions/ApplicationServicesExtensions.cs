@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.ResponseCompression;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
 namespace Common.API.Extensions;
@@ -8,7 +9,6 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-
         services.AddHttpContextAccessor();
 
         services.AddDbContextPool<CommonContext>(options =>
@@ -21,15 +21,9 @@ public static class ApplicationServicesExtensions
             options.Providers.Add<GzipCompressionProvider>();
         });
 
-        services.Configure<BrotliCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.Configure<GzipCompressionProviderOptions>(options =>
-        {
-            options.Level = System.IO.Compression.CompressionLevel.Optimal;
-        });
+        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         services.AddOpenApi();
@@ -58,7 +52,7 @@ public static class ApplicationServicesExtensions
         string[] nameTrascientSpaces =
         [
             "Common.Infrastructure.Data.Repository.Implementations",
-            "Common.Services.Extensions",
+            "Common.Services.Extensions"
         ];
 
         services.Scan(scan => scan

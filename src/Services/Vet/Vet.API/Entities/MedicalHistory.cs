@@ -10,8 +10,10 @@ public class MedicalHistory : BaseEntity
     public List<HealthCheck> HealthChecks { get; set; }
     public List<BehaviorTest> BehaviorTests { get; set; }
     public int? EstablecimientoId { get; set; }
+
     [Column(TypeName = "numeric(4,2), null")]
     public decimal? Age { get; set; }
+
     [Column(TypeName = "numeric(4,2), null")]
     public decimal? Weight { get; set; }
 }
