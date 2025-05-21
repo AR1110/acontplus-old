@@ -215,4 +215,8 @@ export class RetencionAtsComponent implements OnInit {
         });
       });
   }
+
+  refresh() {
+    this.loadData();
+  }
 }

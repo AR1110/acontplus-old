@@ -160,7 +160,9 @@ export class DocSustentoRetencionComponent {
       const porcentajeRetener =
         this.retencionGroup().get('porcentajeRetener')?.value;
       const valorRetenido = baseImponible * (porcentajeRetener / 100);
-      this.retencionGroup().get('valorRetenido')?.setValue(valorRetenido.toFixed(2));
+      this.retencionGroup()
+        .get('valorRetenido')
+        ?.setValue(valorRetenido.toFixed(2));
     });
   }
 
@@ -210,6 +212,34 @@ export class DocSustentoRetencionComponent {
       this.indexRetencion() < retenciones.length
     ) {
       retenciones.removeAt(this.indexRetencion());
+    }
+  }
+
+  onSave() {
+    const retenciones = this.docSustentoArray()
+      .at(this.indexDoc())
+      .get('retenciones') as FormArray;
+
+    const retencionSelected = retenciones.controls[this.indexRetencion()].value;
+
+    if (retencionSelected.idRetencionAtsRet > 0) {
+      this._docSustentoRetencionUseCase
+        .update(retencionSelected.idRetencionAtsRet, retencionSelected)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
+    } else {
+      this._docSustentoRetencionUseCase
+        .create(retencionSelected)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
     }
   }
 }
