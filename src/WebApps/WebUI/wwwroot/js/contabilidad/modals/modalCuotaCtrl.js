@@ -43,6 +43,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 $scope.comprobante = structuredClone(cuentaPorCobrar);
 
                 $scope.comprobante.fechaEmision = formatDateFecha(new Date($scope.comprobante.fechaEmision));
+                $scope.comprobante.fechaVencimiento = formatDateFecha(new Date($scope.comprobante.fechaVencimiento));
                 $scope.comprobante.fechaEmisionFormat = cuentaPorCobrar.fechaEmision;
 
 
@@ -135,7 +136,15 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
             })
 
             if (isConfirmed) {
+                let {
+                    fechaVencimiento,
+                } = fS.sumarDiasAFecha($scope.comprobante.fechaEmision, dataCredito.diasCredito);
+
+                // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
+
+                $scope.comprobante.fechaVencimiento = new Date(fechaVencimiento);
                 $scope.crearCuota();
+
                 $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
                 $scope.$apply()
             } else {
@@ -175,8 +184,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 idCuotaPorCobrar: 0,
                 nroCuota: esEntrada ? 0 : nroCuota,
                 cuota: esEntrada ? 0 : Number(valorCuota.toFixed(pricingUtils.precisionMaxima)),
-                fechaVencimiento: fS.formatDateTimeZone(fechaVencimiento),
-                entrada: esEntrada ? 1 : 0,
+                fechaVencimiento: fS.formatDateMoment(fechaVencimiento),
+                entrada: esEntrada ? true : false,
                 estado: 1,
                 interes: 0,
                 mora: 0,
@@ -194,15 +203,27 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
         const cuenta = {
             idCuentaPorCobrar,
             idTiempoCredito: $scope.comprobante.idTiempoCredito,
-            fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision, "YYYY-MM-DD HH:mm:ss A"),
+            fechaEmision: fS.formatDateMoment($scope.comprobante.fechaEmision),
             codEstado: $scope.comprobante.codEstado,
-            importeTotal: $scope.comprobante.importeTotal
+            importeTotal: $scope.comprobante.importeTotal,
+            fechaVencimiento: fS.formatDateMoment($scope.comprobante.fechaVencimiento),
         };
 
         const cuotas = calcularCuotas().cuotas;
+        const oldCuotas = $scope.cuotas.map(item => ({
+            idCuotaPorCobrar: item.idCuotaPorCobrar,
+            nroCuota: item.nroCuota,
+            cuota: item.cuota,
+            fechaVencimiento: fS.formatDateMoment(new Date(item.fechaVencimiento)),
+            entrada: item.entrada || false,
+            estado: 0,
+            interes: item.interes,
+            mora: item.mora,
+            diasMora: item.diasMora
+        }));
         const sendData = {
             cuenta,
-            cuotas,
+            cuotas: [...cuotas, ...oldCuotas],
         }
 
         cuotaPorCobrarSvc.update(sendData).then(response => {
@@ -506,23 +527,26 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
 
             if (isConfirmed) {
 
-                 const cuenta = {
-            idCuentaPorCobrar,
-            idTiempoCredito: $scope.comprobante.idTiempoCredito,
-            fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision, "YYYY-MM-DD HH:mm:ss A"),
-            codEstado: $scope.comprobante.codEstado,
-            importeTotal: $scope.comprobante.importeTotal
-        };
+                const cuenta = {
+                    idCuentaPorCobrar,
+                    idTiempoCredito: $scope.comprobante.idTiempoCredito,
+                    fechaEmision: fS.formatDateMoment($scope.comprobante.fechaEmision),
+                    codEstado: $scope.comprobante.codEstado,
+                    importeTotal: $scope.comprobante.importeTotal,
+                    fechaVencimiento: fS.formatDateMoment($scope.comprobante.fechaVencimiento),
+                };
 
 
                 const cuotas = $scope.cuotas.map(val => ({
+                    nroCuota: val.nroCuota,
                     idCuotaPorCobrar: val.idCuotaPorCobrar,
                     cuota: Number(val.cuota),
-                    fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
+                    fechaVencimiento: fS.formatDateMoment(val.fechaVencimiento),
                     interes: val.interes,
                     diasMora: val.diasMora,
                     mora: val.mora,
-                    estado: 0,
+                    estado: 1,
+                    entrada: val.entrada || false,
                 }))
                 // let query = {
                 //     idCuentaPorCobrar,

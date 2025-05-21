@@ -10,7 +10,7 @@ public class CuotaPorCobrarDto
 
     public int IdTiempoCredito { get; set; }
 
-    public DateTime FechaVencimiento { get; set; }
+    public string FechaVencimiento { get; set; }
 }
 
 
@@ -18,7 +18,7 @@ public class CuotaPorCobrarUpdateDto
 {
     public int IdCuotaPorCobrar { get; set; }
 
-    public DateTime FechaVencimiento { get; set; }
+    public string FechaVencimiento { get; set; }
 
     public decimal Cuota { get; set; }
 

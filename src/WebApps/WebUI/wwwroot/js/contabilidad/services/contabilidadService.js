@@ -1421,6 +1421,7 @@
                         config: dataCuentaPorCobrar.config,
                         tipoConfig: dataCuentaPorCobrar.tipoConfig,
                         interes: dataCuentaPorCobrar.interes,
+                        fechaVencimiento: dataCuentaPorCobrar.fechaVencimiento,
                     },
                     tiemposCredito,
                     cuotas: resultCuotas
@@ -1466,14 +1467,19 @@
 
     app.factory('cuotaPorCobrarService', ['mainService', 'formulario', function (mS, fS) {
 
-        const url = 'Contabilidad/CuotaPorCobrar/';
+       // const url = 'Contabilidad/CuotaPorCobrar/';
+           const url = 'Contabilidad/CuentaPorCobrar/';
 
         return {
-            update
+            update: updateCuota
         }
 
         function update(data) {
             return mS.getData('put', `${url}${0}`, data, true)
+        }
+
+        function updateCuota(data) {
+            return mS.getData('put', `${url}Update/Cuota`, { data }, true)
         }
 
 
