@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { RetencionAtsRepository } from '../../repositories/retencion-ats/retencion-ats.repository';
-import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 
 @Injectable({
   providedIn: 'root',

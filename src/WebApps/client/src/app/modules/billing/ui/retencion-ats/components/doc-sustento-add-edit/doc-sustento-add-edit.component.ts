@@ -198,7 +198,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   createRetencionGroup(): FormGroup {
     return this._fb.group({
       idRetencionAtsRet: [0],
-      idRetencionAtsDocSustento: [0],
+      idRetAtsDocSustento: [0],
       idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       impuestoRetencionId: [0, [Validators.required]],
@@ -212,7 +212,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   createPaymentGroup(): FormGroup {
     return this._fb.group({
       idRetencionAtsPago: [0],
-      idRetencionAtsDocSustento: [0],
+      idRetAtsDocSustento: [0],
       idRetencionAts: [0],
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       formaPagoId: [0, [Validators.required]],
@@ -233,6 +233,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     if (retencion != typeof 'object') {
       retencionGroup.patchValue(retencion);
     }
+    console.log(retencionGroup.value);
     retencionesArray.push(retencionGroup);
   }
   createPayment(indexDoc: number, payment: RetencionAtsDocPayment): void {
@@ -270,7 +271,11 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   }
 
   addRetencion(indexDoc: number) {
-    this.createRetencion(indexDoc, {});
+    this.createRetencion(indexDoc, {
+      idRetAtsDocSustento: this.docSustentoArray().controls[
+        this.indexDoc()
+      ].get('idRetAtsDocSustento')?.value,
+    });
   }
 
   docPreview(index: number): void {

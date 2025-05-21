@@ -104,7 +104,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
   subContribuyente = '';
   tiposIdentificacion: TipoIdentificacion[] = [];
   tiposIdentificacionProveedor: TipoIdentificacionProveedor[] = [];
-  isNotForeign = true;
   generic: GenericModel[] = [{ code: 'SI' }, { code: 'NO' }];
   retAtsDocSustentos: RetAtsDocSustento[] = [];
   tiposComprobante: TipoComprobante[] = [];
@@ -279,6 +278,8 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.retencionAtsForm
         .get('fechaEmision')
         ?.setValue(formatDate(new Date()).toISOString());
+
+      this.retencionAtsForm.get('parteRel')?.setValue('NO');
       this.getPeriod();
     }
   }
