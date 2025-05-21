@@ -1,10 +1,8 @@
 ﻿namespace Identity.API.Entities;
 
 [Table("LoginFailed", Schema = "Seguridad")]
-public class LoginFailed
+public class LoginFailed : BaseEntity
 {
-    public int Id { get; set; }
-
     [MaxLength(100)] public string Username { get; set; }
 
     [MaxLength(100)] public string Password { get; set; }
@@ -13,5 +11,4 @@ public class LoginFailed
     public DateTime ErrorDate { get; set; }
 
     [MaxLength(15)] public string IpAddress { get; set; }
-    public bool? FromMobile { get; set; }
 }

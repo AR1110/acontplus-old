@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Common.Infrastructure.Core.Entity;
 
 namespace Identity.API.Data;
 
@@ -10,6 +11,7 @@ public class ApplicationDbContext : BaseContext
 
     public DbSet<ForgotPassword> ForgotPasswords { get; set; }
     public DbSet<LoginHistory> LoginHistories { get; set; }
+    public DbSet<LoginHistoryArchive> LoginHistoryArchives { get; set; }
     public DbSet<LoginFailed> LoginFaileds { get; set; }
     public DbSet<AccessAuthorization> AccessAuthorizations { get; set; }
 
@@ -31,20 +33,17 @@ public class ApplicationDbContext : BaseContext
                      .SelectMany(t => t.GetProperties())
                      .Where(p => p.ClrType == typeof(string) // Entity is a string
                                  && p.GetColumnType() == null // No column type is set
-                         // Next line only required if using ASP.Net Identity:
-                         //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
+                                                              // Next line only required if using ASP.Net Identity:
+                                                              //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                      ))
             property.SetIsUnicode(false);
 
-        builder.Entity<AccessAuthorization>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<AccessAuthorization>().Property(p => p.Enabled).HasDefaultValue(true);
-
-
-        builder.Entity<LoginHistory>().Property(p => p.LoginDate).HasDefaultValueSql("GETDATE()");
-        builder.Entity<LoginHistory>().Property(x => x.IsLoggedIn).HasDefaultValue(true);
-
-        builder.Entity<LoginFailed>().Property(p => p.ErrorDate).HasDefaultValueSql("GETDATE()");
-
-        builder.Entity<ForgotPassword>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+        SimpleEntityRegistration.RegisterEntities(builder,
+            typeof(AccessAuthorization),
+            typeof(LoginHistory),
+            typeof(LoginHistoryArchive),
+            typeof(LoginFailed),
+            typeof(ForgotPassword)
+            );
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using Common.Infrastructure.Data.Repository.Implementations;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 
 namespace Identity.API.Extensions;
@@ -9,6 +10,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLogging(configuration);
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
@@ -31,7 +33,7 @@ public static class ApplicationServicesExtensions
                     new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-        services.AddHostedService<TokenCleanupService>();
+        services.AddHostedService<TokenCleanupAndArchivalService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAdoRepository, AdoRepository>();
         services.AddScoped<ILoginFailedService, LoginFailedService>();
