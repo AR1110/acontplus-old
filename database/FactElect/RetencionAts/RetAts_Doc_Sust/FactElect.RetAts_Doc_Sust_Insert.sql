@@ -31,13 +31,13 @@ BEGIN
 			    ,totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal, idUsuario)
 
 			SELECT idRetencionAts idRetencionAts, uniqueIdDoc, documentoSustentoTributarioId
-			    ,numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
+			    ,REPLACE(numDocSustento, '-', ''), fechaEmisionDocSustento, fechaRegistroContable
 			    ,numAutDocSustento, pagoLocExt, tipoRegimenFiscalExteriorId, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			    ,totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal, @userId
 			FROM OPENJSON(@json) WITH ( idRetencionAts INT
                                 ,uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
 								,documentoSustentoTributarioId INT '$.documentoSustentoTributarioId'
-								,numDocSustento VARCHAR(15) '$.numDocSustento'
+								,numDocSustento VARCHAR(17) '$.numDocSustento'
 								,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
 								,fechaRegistroContable DATETIME '$.fechaRegistroContable'
 								,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
