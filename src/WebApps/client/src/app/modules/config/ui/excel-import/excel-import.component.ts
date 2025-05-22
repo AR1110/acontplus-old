@@ -20,11 +20,16 @@ import {
 import {finalize} from "rxjs/operators";
 import {isValidField} from "@core/utils/utils";
 import {SaveExcelImportUseCase} from "@modules/config/application/use-cases/excel-import/save-excel-import.use-case";
+import {NgClass} from "@angular/common";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {SelectionModel} from "@angular/cdk/collections";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 @Component({
   selector: 'app-excel-import',
   imports: [
     MatSelectModule,
     MatFormFieldModule,
+    MatCheckboxModule,
     BreadcrumbComponent,
     MatDynamicCardComponent,
     MatIconModule,
@@ -33,6 +38,8 @@ import {SaveExcelImportUseCase} from "@modules/config/application/use-cases/exce
     MatDivider,
     FormsModule,
     MatTableModule,
+    NgClass,
+    ThemeButtonComponent,
   ],
   templateUrl: './excel-import.component.html',
   styles: `
@@ -47,7 +54,8 @@ import {SaveExcelImportUseCase} from "@modules/config/application/use-cases/exce
 
     .table-container {
       width: 100%;
-      overflow-x: auto; /* permite scroll horizontal si hay muchas columnas */
+      height: 400px;
+      overflow: auto;
     }
 
     .full-width-table {
@@ -57,15 +65,46 @@ import {SaveExcelImportUseCase} from "@modules/config/application/use-cases/exce
 
     .column-header,
     .column-cell {
-      padding: 12px;
-      white-space: nowrap;
+     //padding: 12px;
+      //white-space: wrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      min-width: 120px; /* fuerza una anchura mínima por columna */
-      max-width: 300px; /* opcional, si deseas limitar el ancho */
+     // min-width: 120px;
+      max-width: 330px;
       flex: 1;
       box-sizing: border-box;
     }
+
+    .item-import-register {
+      background-color: rgb(116, 255, 158);
+    }
+
+    .item-import-error {
+      background-color: rgb(255, 167, 116);
+    }
+
+    .item-import-register .item-import-error {
+      cursor: pointer;
+    }
+
+    ::ng-deep mat-header-cell.mat-column-select,
+    ::ng-deep mat-cell.mat-column-select {
+      //width: 100px !important;
+      //max-width: 100px !important;
+      //overflow: hidden;
+      //width: 32px;
+      //border-right: 1px solid currentColor;
+      //padding-right: 24px;
+      //text-align: center;
+    }
+
+    .mat-column-select {
+      width: 32px;
+      border-right: 1px solid currentColor;
+      padding-right: 24px !important;
+      text-align: center;
+    }
+
 
 
   `
@@ -83,25 +122,60 @@ export class ExcelImportComponent {
     nameModule: ''
   })
 
-  displayedColumns: string[] = [];
+  displayedColumns: string[] = ["select"];
   dataSource = new MatTableDataSource<any>();
   tempArrayFiles: any[] = [];
 
-  selected = signal([])
-  // ngOnInit(){
-  //   this.$getFormData.execute().subscribe(response=>{
-  //     this.modules.set(response.modules)
-  //   })
-  // }
+
+  selection = new SelectionModel<any>(true, []);
+
+
+
+  ngOnInit(){
+    this.$getFormData.execute().subscribe(response=>{
+      this.modules.set(response.modules)
+    })
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    // if there is a selection then clear that selection
+    if (this.isSomeSelected()) {
+      this.selection.clear();
+      return
+    }
+
+    if(this.isAllSelected()) {
+        this.selection.clear()
+    }else{
+        this.dataSource.data.forEach(row => this.selection.select(row));
+    }
+  }
+
+  isSomeSelected() {
+    console.log(this.selection.selected);
+    return this.selection.selected.length > 0;
+  }
+
+  isSelectionDisabled(){
+    return this.dataSource.data.some(item=>!(item.estado==='IMPORTAR'))
+  }
 
   handleChangeModule(){
     const dataModule = this.modules().find(item=>item.codigo===this.data().codeModule);
-    this.data.update(item=>{
-      return {
+    this.data.set({
         nameModule: dataModule.descripcion,
         codeModule: dataModule.codigo
-      }
-    })
+      })
+    this.urlFile = dataModule.urlDocument;
+    console.log(dataModule)
   }
 
   async onFileSelected(ev: any) {
@@ -110,9 +184,11 @@ export class ExcelImportComponent {
 
     try {
       const rawData = await this._excelImportSvc.parseExcelFile(target.files[0]);
-      this.displayedColumns = Object.keys(rawData[0]).map(c => c.trim());
+      const displayedColumns = Object.keys(rawData[0]).map(c => c.trim());
+
+     // this.displayedColumns = [...this.displayedColumns, ...displayedColumns]
       this.tempArrayFiles = this._excelImportSvc.mapItems(rawData, this.displayedColumns).map(row =>
-        this._excelImportSvc.cleanRow(row, this.displayedColumns, this.data().codeModule)
+        this._excelImportSvc.cleanRow(row, displayedColumns, this.data().codeModule)
       );
       this.validateImport();
     } catch (error) {
@@ -149,7 +225,7 @@ export class ExcelImportComponent {
   }
 
 
-  async validateImport(){
+  validateImport(){
     Swal.fire({
       title: '<small>Espere por favor...</small>',
       html: 'Validando datos...',
@@ -167,14 +243,16 @@ export class ExcelImportComponent {
           finalize(() => Swal.close())
         )
         .subscribe(response=>{
+          console.log(response)
           if (response.code === '0') {
             Swal.fire({ icon: 'warning', html: `<small>${response.message}</small>` });
           } else if (response.code === '1') {
             Swal.close();
             const payload = JSON.parse(response.payload as string);
             this.dataSource.data = payload;
-            this.displayedColumns = Object.keys(payload[0]).filter(item=>!["idArticulo", "idMedida", "idSubFamilia", "idTipoIva"].includes(item))
+            const displayedColumns = Object.keys(payload[0]).filter(item=>!["idArticulo", "idMedida", "idSubFamilia", "idTipoIva"].includes(item))
 
+            this.displayedColumns = [...this.displayedColumns, ...displayedColumns] ;
           }
       })
   }
@@ -189,29 +267,29 @@ export class ExcelImportComponent {
 
   private isValidForm(){
     let isComplete = false;
-    for(let item of this.dataSource.data){
-      if(item.hasOwnProperty("codigo") && !isValidField(item.codigo)){
+    for(const item of this.selection.selected){
+      if(Object.prototype.hasOwnProperty.call(item, "codigo") && !isValidField(item.codigo)){
         this.showSwalFire('codigo')
         return
       }
 
       //Cliente/Proveedor
-      if(item.hasOwnProperty("codContribuyente") && !isValidField(item.codContribuyente)){
+      if(Object.prototype.hasOwnProperty.call(item, "codContribuyente") && !isValidField(item.codContribuyente)){
         this.showSwalFire('codContribuyente')
         return
       }
 
-      if(item.hasOwnProperty("codIdentificacion") && !isValidField(item.codIdentificacion)){
+      if(Object.prototype.hasOwnProperty.call(item, "codIdentificacion") && !isValidField(item.codIdentificacion)){
         this.showSwalFire('codIdentificacion')
         return
       }
 
-      if(item.hasOwnProperty("nombreComercial") && !isValidField(item.nombreComercial)){
+      if(Object.prototype.hasOwnProperty.call(item, "nombreComercial") && !isValidField(item.nombreComercial)){
         this.showSwalFire('nombreComercial')
         return
       }
 
-      if(item.hasOwnProperty("nombreFiscal") && !isValidField(item.nombreFiscal)){
+      if(Object.prototype.hasOwnProperty.call(item, "nombreFiscal") && !isValidField(item.nombreFiscal)){
         this.showSwalFire('nombreFiscal')
         return
       }
@@ -219,28 +297,30 @@ export class ExcelImportComponent {
       isComplete = true;
     }
 
-    if(isComplete){
-      this.save();
-    }
+    return isComplete;
 
   }
 
   save(){
+
+    if(!this.isValidForm()) return
+
     Swal.fire({
       icon: 'warning',
       html: `
       ¿Está seguro de guardar la importación de
-      <b><h3>${this.selected().length}</h3></b>
+      <b><h3>${this.selection.selected.length}</h3></b>
       ítems del módulo <b>${this.data().nameModule}</b>?`,
       showDenyButton: true,
       confirmButtonText: 'Sí, guardar',
       denyButtonText: 'No, cancelar',
       allowOutsideClick: false,
     }).then(result=>{
+      if(!result.isConfirmed) return;
       const sendData = {
         code: this.data().codeModule,
         data:   {
-          jsonParams: JSON.stringify(this.selected())
+          jsonParams: JSON.stringify(this.selection.selected)
         }
       }
 
@@ -267,8 +347,8 @@ export class ExcelImportComponent {
               nameModule: ''
             })
           },timer )
-          this.selected.set([]);
-          this.displayedColumns = [];
+          this.selection.clear() ;
+          this.displayedColumns = ["select"];
           this.dataSource.data = [];
         }
       })
