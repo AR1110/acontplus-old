@@ -16,6 +16,8 @@ BEGIN
     DECLARE @codEstab VARCHAR(100) ,@idPuntoEmision INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codEstado INT ,@ckDevolucion BIT ,@ckRetencion BIT
            ,@identificacion VARCHAR(20) ,@idUsuario INT
     
+    BEGIN TRY
+
     --> Recuperar Datos
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -202,7 +204,7 @@ BEGIN
                               ,@idUsuario      = @idUsuario
            
            
-           RETURN 
+            
         END 
     
     --> Nota Credito
@@ -408,7 +410,7 @@ BEGIN
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
 
-            RETURN 
+             
         END
     
     --> Liquidacion
@@ -599,7 +601,7 @@ BEGIN
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
 
-            RETURN 
+             
         END 
     
     --> Retencion
@@ -648,9 +650,10 @@ BEGIN
 			                                                                    FROM FactElect.RetencionAts            ra WITH (NOLOCK)
 			                                                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
 			                                                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+                                                                                INNER JOIN Sri.ImpuestoRetencion irt WITH(NOLOCK) ON ir.impuestoRetencionId = irt.Id
 			                                                                    WHERE ra.idRetencionAts = rt.idRetencionAts
 	 			                                                                  AND rt.anuladaSri = 0 
-				                                                                  AND ir.codigo = 1
+				                                                                  AND irt.Codigo = 1
                                                                                   AND ds.estado = 1
 												                           )
 			                         END
@@ -661,9 +664,10 @@ BEGIN
 			                                                                    FROM FactElect.RetencionAts            ra WITH (NOLOCK)
 			                                                                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = ra.idRetencionAts
 			                                                                    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = ra.idRetencionAts
+                                                                                INNER JOIN Sri.ImpuestoRetencion irt WITH(NOLOCK) ON ir.impuestoRetencionId = irt.Id
 			                                                                    WHERE ra.idRetencionAts = rt.idRetencionAts
 	 			                                                                  AND rt.anuladaSri = 0 
-				                                                                  AND ir.codigo = 2
+				                                                                  AND irt.Codigo = 2
                                                                                   AND ds.estado = 1
 												                           )
 			                          END
@@ -771,9 +775,19 @@ BEGIN
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
 
-            RETURN
+            
         END 
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
-    RETURN 
+    END TRY
+    BEGIN CATCH
+          -- Log error details
+        INSERT INTO dbo.ErroresSistema (
+            [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario]
+        )
+        VALUES (
+            'Reports/ReporteTributario', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), 'FactElect.Doc_Elect_Report', ERROR_LINE(), ERROR_MESSAGE(), @idUsuario
+        );
+        THROW;
+    END CATCH
 END 
