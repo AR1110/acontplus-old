@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Contabilidad.API.Extensions.Endpoints;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Use AppConfiguration for loading settings
 var configuration = AppConfiguration.Load();
@@ -28,21 +30,24 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.MapContabilidadEndpoints();
+
 app.MapControllers().RequireAuthorization();
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-var context = services.GetRequiredService<ContabilidadContext>();
-var logger = services.GetRequiredService<ILogger<Program>>();
 
-try
-{
-    await context.Database.MigrateAsync();
-    await ContabilidadContextSeed.SeedAsync(context);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "An error occured during migration");
-}
+//using var scope = app.Services.CreateScope();
+//var services = scope.ServiceProvider;
+//var context = services.GetRequiredService<ContabilidadContext>();
+//var logger = services.GetRequiredService<ILogger<Program>>();
+
+//try
+//{
+//    await context.Database.MigrateAsync();
+//    await ContabilidadContextSeed.SeedAsync(context);
+//}
+//catch (Exception ex)
+//{
+//    logger.LogError(ex, "An error occured during migration");
+//}
 
 await app.RunAsync();
