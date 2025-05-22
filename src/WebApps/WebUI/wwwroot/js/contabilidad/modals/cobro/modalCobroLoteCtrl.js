@@ -53,8 +53,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
             gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                console.log($scope)
-                console.log(row)
+                 
                 if (row.isExpanded) {
                     row.entity.subGridOptions = {
                         appScopeProvider: $scope, // ← 🔥 Esto es clave
@@ -467,8 +466,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     // modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
 
                     for (let item of $scope.gridOptions.data) {
-                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
-                        console.log(item)
+                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone); 
                         if (item.subGridOptions) {
                             item.subGridOptions.data = structuredClone(item.cuotasCalculadasClone);
                         }
