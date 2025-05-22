@@ -4,7 +4,6 @@ import { MatFormField, MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocSustentoPaymentUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-payment.use-case';
 import Swal from 'sweetalert2';
@@ -38,9 +37,9 @@ export class DocSustentoPaymentComponent {
       .at(this.indexDoc())
       .get('payments') as FormArray;
 
-    const retencionSelected = payments.controls[this.indexPayment()].value;
+    const paymentSelected = payments.controls[this.indexPayment()].value;
 
-    if (retencionSelected.idRetencionAtsPago > 0) {
+    if (paymentSelected.idRetencionAtsPago > 0) {
       const { isConfirmed } = await Swal.fire({
         title: 'Eliminar Pago',
         icon: 'warning',
@@ -53,7 +52,7 @@ export class DocSustentoPaymentComponent {
       });
       if (isConfirmed) {
         this._docSustentoPaymentUseCase
-          .delete(retencionSelected.idRetencionAtsPago)
+          .delete(paymentSelected.idRetencionAtsPago)
           .subscribe((response) => {
             this._tS.toastr({
               type: response.code === '1' ? 'success' : 'warning',
@@ -76,6 +75,34 @@ export class DocSustentoPaymentComponent {
 
     if (this.indexPayment() >= 0 && this.indexPayment() < payments.length) {
       payments.removeAt(this.indexPayment());
+    }
+  }
+
+  onSave() {
+    const payments = this.docSustentoArray()
+      .at(this.indexDoc())
+      .get('payments') as FormArray;
+
+    const paymentSelected = payments.controls[this.indexPayment()].value;
+
+    if (paymentSelected.idRetencionAtsPago > 0) {
+      this._docSustentoPaymentUseCase
+        .update(paymentSelected.idRetencionAtsPago, paymentSelected)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
+    } else {
+      this._docSustentoPaymentUseCase
+        .create(paymentSelected)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
     }
   }
 }

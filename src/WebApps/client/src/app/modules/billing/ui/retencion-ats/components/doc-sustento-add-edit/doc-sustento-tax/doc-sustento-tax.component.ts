@@ -43,7 +43,6 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // console.log(this.taxGroup().value);
     this.selectTax(this.taxGroup().value);
   }
 
@@ -54,7 +53,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
 
     const taxSelected = taxesArray.controls[this.indexTax()].value;
 
-    if (taxSelected.idRetAtsDocSustento > 0) {
+    if (taxSelected.idRetAtsImpDocSustento > 0) {
       const { isConfirmed } = await Swal.fire({
         title: 'Eliminar Impuesto',
         icon: 'warning',
@@ -94,4 +93,30 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   selectTarifa(value: any) {}
+
+  onSave() {
+    const taxes = this.docSustentoArray()
+      .at(this.indexDoc())
+      .get('taxes') as FormArray;
+
+    const taxSelected = taxes.controls[this.indexTax()].value;
+
+    if (taxSelected.idRetAtsImpDocSustento > 0) {
+      this._docSustentoTaxUseCase
+        .update(taxSelected.idRetAtsImpDocSustento, taxSelected)
+        .subscribe((response) => {
+          this._tS.toastr({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        });
+    } else {
+      this._docSustentoTaxUseCase.create(taxSelected).subscribe((response) => {
+        this._tS.toastr({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+      });
+    }
+  }
 }
