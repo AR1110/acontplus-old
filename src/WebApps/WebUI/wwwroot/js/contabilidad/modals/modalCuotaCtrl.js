@@ -33,7 +33,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
     const MAX_ROUND_NUMBER = 5;
 
     $scope.initiload = initiload;
-    $scope.initiload();
+     initiload();
 
     function initiload() {
         try {
@@ -164,6 +164,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
             console.error("Tiempo de crédito no encontrado.");
             return { cuotas: [], montoTotalCuota: 0 };
         }
+       
 
         const { diasCredito, numeroCuota, entrada } = tiempoCredito;
         const diasPorCuota = diasCredito / numeroCuota;
@@ -184,7 +185,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 idCuotaPorCobrar: 0,
                 nroCuota: esEntrada ? 0 : nroCuota,
                 cuota: esEntrada ? 0 : Number(valorCuota.toFixed(pricingUtils.precisionMaxima)),
-                fechaVencimiento: fS.formatDateMoment(fechaVencimiento),
+                fechaVencimiento: esEntrada?fS.formatDateMoment($scope.comprobante.fechaEmision):  fS.formatDateMoment(fechaVencimiento),
                 entrada: esEntrada ? true : false,
                 estado: 1,
                 interes: 0,
