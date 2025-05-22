@@ -36,6 +36,14 @@
       <mat-radio-button [value]="false">Compra</mat-radio-button>
       <mat-radio-button [value]="true">Venta</mat-radio-button>
     </mat-radio-group>
+
+
+      <mat-radio-group aria-label="Select an option" [(ngModel)]="data.estado" >
+        <mat-radio-button [value]="true">Activo</mat-radio-button>
+        <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+      </mat-radio-group>
+
+
   </div>
 </ng-template>
 <ng-template #footer>

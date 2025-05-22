@@ -36,6 +36,7 @@ export class AddEditCreditTimeComponent {
   params = inject<CreditTimeList>(MAT_DIALOG_DATA);
 
 
+  statusDisabled = this.params.estado;
   private $createUseCase = inject(CreateCreditTimeUseCase)
   private $updateUseCase = inject(UpdateCreditTimeUseCase)
 
@@ -50,6 +51,7 @@ export class AddEditCreditTimeComponent {
     numeroCuota: 1,
     entrada: false,
     gestion: true,
+    estado: true,
   }
 
 
@@ -74,12 +76,15 @@ export class AddEditCreditTimeComponent {
       this.data.numeroCuota = this.params.numeroCuota;
       this.data.entrada = this.params.entrada;
       this.data.gestion = this.params.gestion;
+      this.data.estado = this.params.estado;
     }
   }
 
   save(){
     let regex = /^(null|undefined|\s*)$/;
-    const sendData = {} as typeof this.data;
+    const sendData = {
+      estado: this.data.estado,
+    } as typeof this.data;
     if (regex.test(this.data.descripcion)) {
       Swal.fire({
         icon: 'warning',
@@ -151,9 +156,6 @@ export class AddEditCreditTimeComponent {
       ...sendData,
       id: this.params.idTiempoCredito
     }).subscribe(this.successResponse)
-
-
-
   }
 
   successResponse = (response:ApiResponse)=>{

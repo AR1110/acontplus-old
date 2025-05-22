@@ -24,7 +24,7 @@ export class ListCreditTimeMapper {
           "numeroCuota": item.numeroCuota,
           "descripcion": item.descripcion,
           "entrada": item.entrada,
-          "estado": item.estado,
+          estado: item.estado,
           "tipo": item.tipo,
           "nombreGestion": item.nombreGestion,
           "nombreEntrada": item.entrada?'SI': 'NO',
@@ -37,7 +37,6 @@ export class ListCreditTimeMapper {
       result.totalRecords = result.data.length>0?result.data[0].totalRecords: 0;
     }
 
-    console.log(result)
     return result;
 
   }
