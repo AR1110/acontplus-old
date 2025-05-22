@@ -19,7 +19,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
 
   cancel(id: number) {
     return this._http
-      .put<ApiResponse>(`${this._url}Cancel/${id}`, '')
+      .put<ApiResponse>(`${this._url}Cancel/${id}`, {})
       .pipe(map((response) => response));
   }
 
