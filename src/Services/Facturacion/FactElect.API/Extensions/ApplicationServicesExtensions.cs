@@ -18,6 +18,8 @@ public static class ApplicationServicesExtensions
 
         services.AddHttpContextAccessor();
 
+        services.AddMemoryCache();
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;
