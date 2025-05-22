@@ -1389,6 +1389,7 @@
                         diasCredito: tc.diasCredito,
                         numeroCuota: tc.numeroCuota,
                         tiempoCredito: tc.tiempoCredito,
+                        entrada: tc.entrada,
                     }
                 })
 
