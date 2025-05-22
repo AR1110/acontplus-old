@@ -14,6 +14,8 @@ ModalCuotaCtrl.$inject = [
 
 function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
     const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+    const cuotaPorCobrarSvc = $injector.get('cuotaPorCobrarService');
+    const pricingUtils = $injector.get('pricingUtils');
 
     let { idCuentaPorCobrar } = params;
 
@@ -27,7 +29,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
     $scope.totalDiferencia = 0;
 
     $scope.isReload = false;
-    
+
     const MAX_ROUND_NUMBER = 5;
 
     $scope.initiload = initiload;
@@ -41,6 +43,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 $scope.comprobante = structuredClone(cuentaPorCobrar);
 
                 $scope.comprobante.fechaEmision = formatDateFecha(new Date($scope.comprobante.fechaEmision));
+                $scope.comprobante.fechaVencimiento = formatDateFecha(new Date($scope.comprobante.fechaVencimiento));
                 $scope.comprobante.fechaEmisionFormat = cuentaPorCobrar.fechaEmision;
 
 
@@ -65,7 +68,6 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 console.log(error)
             }).finally(() => hideLoader())
         } catch (error) {
-            hideLoader();
             console.log(error)
         }
     }
@@ -134,7 +136,15 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
             })
 
             if (isConfirmed) {
+                let {
+                    fechaVencimiento,
+                } = fS.sumarDiasAFecha($scope.comprobante.fechaEmision, dataCredito.diasCredito);
+
+                // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
+
+                $scope.comprobante.fechaVencimiento = new Date(fechaVencimiento);
                 $scope.crearCuota();
+
                 $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
                 $scope.$apply()
             } else {
@@ -147,17 +157,76 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
         }
     }
 
+
+    function calcularCuotas() {
+        const tiempoCredito = $scope.tiempoCreditos.find(t => t.idTiempoCredito === $scope.comprobante.idTiempoCredito);
+        if (!tiempoCredito) {
+            console.error("Tiempo de crédito no encontrado.");
+            return { cuotas: [], montoTotalCuota: 0 };
+        }
+
+        const { diasCredito, numeroCuota, entrada } = tiempoCredito;
+        const diasPorCuota = diasCredito / numeroCuota;
+        const valorCuota = $scope.comprobante.importeTotal / numeroCuota;
+
+        // Construir array de cuotas; si hay entrada, agregamos cuota 0 para la entrada
+        const cuotas = (entrada ? [0] : []).concat(
+            Array.from({ length: numeroCuota }, (_, i) => i + 1)
+        );
+
+        // Mapear cuotas con sus datos
+        const resultCuotas = cuotas.map((nroCuota, index) => {
+            const esEntrada = entrada && nroCuota === 0;
+            const diasSumados = esEntrada ? 0 : (entrada ? index - 1 : index) * diasPorCuota;
+            const fechaVencimiento = new Date($scope.comprobante.fechaEmision.getTime() + diasSumados * 24 * 60 * 60 * 1000);
+
+            return {
+                idCuotaPorCobrar: 0,
+                nroCuota: esEntrada ? 0 : nroCuota,
+                cuota: esEntrada ? 0 : Number(valorCuota.toFixed(pricingUtils.precisionMaxima)),
+                fechaVencimiento: fS.formatDateMoment(fechaVencimiento),
+                entrada: esEntrada ? true : false,
+                estado: 1,
+                interes: 0,
+                mora: 0,
+                diasMora: 0
+            };
+        });
+
+        const montoTotalCuota = resultCuotas.reduce((acc, c) => acc + c.cuota, 0);
+
+        return { cuotas: resultCuotas, montoTotalCuota };
+    };
+
+
     $scope.crearCuota = function () {
-        let query = {
+        const cuenta = {
             idCuentaPorCobrar,
             idTiempoCredito: $scope.comprobante.idTiempoCredito,
-            fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision, "YYYY-MM-DD HH:mm:ss A"),
+            fechaEmision: fS.formatDateMoment($scope.comprobante.fechaEmision),
             codEstado: $scope.comprobante.codEstado,
-            importeTotal: $scope.comprobante.importeTotal
+            importeTotal: $scope.comprobante.importeTotal,
+            fechaVencimiento: fS.formatDateMoment($scope.comprobante.fechaVencimiento),
         };
 
-        showLoader();
-        cuentaPorCobrarSvc.saveCuota(query).then(response => {
+        const cuotas = calcularCuotas().cuotas;
+        const oldCuotas = $scope.cuotas.map(item => ({
+            idCuotaPorCobrar: item.idCuotaPorCobrar,
+            nroCuota: item.nroCuota,
+            cuota: item.cuota,
+            fechaVencimiento: fS.formatDateMoment(new Date(item.fechaVencimiento)),
+            entrada: item.entrada || false,
+            estado: 0,
+            interes: item.interes,
+            mora: item.mora,
+            diasMora: item.diasMora
+        }));
+        const sendData = {
+            cuenta,
+            cuotas: [...cuotas, ...oldCuotas],
+        }
+
+        cuotaPorCobrarSvc.update(sendData).then(response => {
             if (response.code === "0") {
                 fS.sweetAlert('warning', response.message);
             }
@@ -168,9 +237,24 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                 $scope.cuotas = tempCuotas.map(cuotaMappFrom);
                 setFooterTotals();
             }
-        }).catch(error => {
-            console.log(error)
-        }).finally(() => hideLoader());
+        })
+
+
+        // showLoader();
+        // cuentaPorCobrarSvc.saveCuota(query).then(response => {
+        //     if (response.code === "0") {
+        //         fS.sweetAlert('warning', response.message);
+        //     }
+        //     if (response.code == "1") {
+        //         $scope.isReload = true;
+        //         fS.sweetAlert('success', response.message, response.titleSms, 1000);
+        //         let tempCuotas = JSON.parse(response.payload) || [];
+        //         $scope.cuotas = tempCuotas.map(cuotaMappFrom);
+        //         setFooterTotals();
+        //     }
+        // }).catch(error => {
+        //     console.log(error)
+        // }).finally(() => hideLoader());
     }
 
     $scope.askToApplyMora = async function () {
@@ -443,23 +527,41 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
 
             if (isConfirmed) {
 
-                let cuotas = $scope.cuotas.map(val => ({
+                const cuenta = {
+                    idCuentaPorCobrar,
+                    idTiempoCredito: $scope.comprobante.idTiempoCredito,
+                    fechaEmision: fS.formatDateMoment($scope.comprobante.fechaEmision),
+                    codEstado: $scope.comprobante.codEstado,
+                    importeTotal: $scope.comprobante.importeTotal,
+                    fechaVencimiento: fS.formatDateMoment($scope.comprobante.fechaVencimiento),
+                };
+
+
+                const cuotas = $scope.cuotas.map(val => ({
+                    nroCuota: val.nroCuota,
                     idCuotaPorCobrar: val.idCuotaPorCobrar,
                     cuota: Number(val.cuota),
-                    fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
+                    fechaVencimiento: fS.formatDateMoment(val.fechaVencimiento),
                     interes: val.interes,
                     diasMora: val.diasMora,
-                    mora: val.mora
+                    mora: val.mora,
+                    estado: 1,
+                    entrada: val.entrada || false,
                 }))
-                let query = {
-                    idCuentaPorCobrar,
-                    codEstado: $scope.comprobante.codEstado,
-                    tipoConfig: $scope.comprobante.tipoConfig,
-                    interes: $scope.comprobante.interes,
-                    cuotas
+                // let query = {
+                //     idCuentaPorCobrar,
+                //     codEstado: $scope.comprobante.codEstado,
+                //     tipoConfig: $scope.comprobante.tipoConfig,
+                //     interes: $scope.comprobante.interes,
+                //     cuotas
+                // }
+
+                const sendData = {
+                    cuenta,
+                    cuotas,
                 }
                 showLoader();
-                cuentaPorCobrarSvc.updateCuota(query).then(response => { 
+                cuotaPorCobrarSvc.update(sendData).then(response => {
                     if (response.code === "0") {
                         fS.sweetAlert('warning', response.message, response.titleSms);
                     }
@@ -470,9 +572,9 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
                         $scope.cuotas = tempCuotas.map(cuotaMappFrom);
                         setFooterTotals();
                     }
-                }).catch(error => { 
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader());
+                }).finally(() => hideLoader());
             }
 
         } catch (error) {
