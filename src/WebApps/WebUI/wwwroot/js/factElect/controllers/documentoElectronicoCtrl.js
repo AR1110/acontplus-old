@@ -6,13 +6,13 @@
     app.controller('documentoElectronicoCtrl', documentoElectronicoCtrl)
     documentoElectronicoCtrl.$inject = [
         '$scope',
-        '$injector',    
+        '$injector',
         'proveedorService'
     ]
 
     function documentoElectronicoCtrl(
         $scope,
-        $injector,    
+        $injector,
         proveedorSvc
     ) {
 
@@ -40,7 +40,7 @@
         $scope.codEstab_Asig = null;
 
         $scope.dataCustomerSearch = {
-            
+
         }
 
         //DETECT MOBILE DEVICE
@@ -60,7 +60,7 @@
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
-            codEstado: null ,
+            codEstado: null,
             codDoc: null
         };
 
@@ -73,7 +73,7 @@
         // Imprime el valor
         $scope.tipo = params.get("tipo");
 
-        function getComprobantes () {
+        function getComprobantes() {
             try {
 
                 $scope.comprobantes = [];
@@ -81,10 +81,10 @@
                 let checkBoxDate = $scope.dataSearch.checkBoxDate = true;
 
                 if ($scope.dataSearch.nroSecuencial) {
-                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) { 
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
-                    } 
+                    }
 
                     checkBoxDate = false;
                     tS.toastr({
@@ -94,10 +94,10 @@
                 }
 
 
-                if ($scope.tipo > 0) {  
-                    codEstado = 8; 
+                if ($scope.tipo > 0) {
+                    codEstado = 8;
                     checkBoxDate = false;
-                } 
+                }
 
 
                 showLoader();
@@ -120,8 +120,8 @@
                 docElectSvc.getAll(dataSearch).then(response => {
                     if (!$scope.isMobile) {
                         document.getElementById('menu_toggle').click();
-                    } 
-                    
+                    }
+
                     $scope.comprobantes = response;
                     $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
                 })
@@ -130,14 +130,14 @@
                         $scope.dataSearch.totalRecords = 0;
                         console.log(error)
                     })
-                 
+
             } catch (error) {
                 console.log(error)
             }
-        } 
+        }
 
         initiload()
-        function initiload () {
+        function initiload() {
             showLoader();
             docElectSvc.getDataFilter().then(response => {
                 let {
@@ -162,29 +162,29 @@
                     getComprobantes();
                 }
             }).finally(() => hideLoader())
-        } 
+        }
 
         $scope.getClass = function (item) {
             return {
                 'table-success': item.codEstado == 4,
-                'table-danger': item.codEstado == 6, 
-                'table-warning': item.codEstado===5
+                'table-danger': item.codEstado == 6,
+                'table-warning': item.codEstado === 5
             };
         };
 
 
-        $scope.refresh = function(){
+        $scope.refresh = function () {
             getComprobantes()
         }
 
-        $scope.isDisabledRow = function(item){
+        $scope.isDisabledRow = function (item) {
             return !(item.codEstado === 0 || item.codEstado === 2 || item.codEstado === 5)
         }
 
-        $scope.validateRowAction = function(item){
-           return {
-               authorized: item.codEstado ===4
-           }
+        $scope.validateRowAction = function (item) {
+            return {
+                authorized: item.codEstado === 4
+            }
         }
 
 
@@ -234,7 +234,7 @@
                         }))
                     })
                 } else {
-                    return proveedorSvc.search(textSearch).then(response => { 
+                    return proveedorSvc.search(textSearch).then(response => {
                         return response.map(item => ({
                             idClienteProveedor: item.idProveedor,
                             nameCustomerProvider: item.nombreFiscal,
@@ -247,10 +247,10 @@
             }
         }
 
-        $scope.onKeyupCustomerSupplier= function(){
-      
-            if (!fS.isValidField($scope.dataCustomerSearch.name)){
-             //   $scope.dataCustomerSearch.name = null;
+        $scope.onKeyupCustomerSupplier = function () {
+
+            if (!fS.isValidField($scope.dataCustomerSearch.name)) {
+                //   $scope.dataCustomerSearch.name = null;
                 $scope.dataSearch.isSearchCustomerProvider = false;
                 $scope.dataSearch.identificacionReceptor = null;
             }
@@ -271,7 +271,7 @@
         $scope.searchUser = function (textSearch) {
             try {
                 let query = {
-                    busqueda: textSearch, 
+                    busqueda: textSearch,
                 }
                 return commonSvc.usuarioSearch(query)
             } catch (error) {
@@ -288,11 +288,11 @@
         $scope.clearUserSearch = function () {
             $scope.modelUser = null;
             $scope.dataSearch.idUsuario = 0;
-             getComprobantes();
+            getComprobantes();
         }
 
         $scope.pagechanged = function () {
-             getComprobantes();
+            getComprobantes();
         }
 
         $scope.changePageSize = function () {
@@ -301,7 +301,7 @@
         }
 
         $scope.onSelectComprobante = (item) => {
-        
+
         }
         //=====================================================END FILTER===============================================
         const REPORT_CODES = Object.freeze({
@@ -314,7 +314,7 @@
 
         //Get Report 
         $scope.getReport = (item) => {
-            try { 
+            try {
 
                 if (!(Object.keys(REPORT_CODES).includes(item.codDoc))) {
                     tS.toastr('warning', 'No Disponible')
@@ -358,7 +358,7 @@
             try {
 
                 const tipoDoc = $scope.tiposDocumento.find(doc => doc.codDoc === item.codDoc);
-              
+
                 let codigo = '';
                 if (tipoDoc.codDoc === "01") {
                     loadDetalleInvoice(item.idDocumentoElectronico, tipoDoc.codDoc)
@@ -367,7 +367,7 @@
                 if (tipoDoc.codDoc === "06") {
                     codigo = 'GR'
                 }
-                commonSvc.viewDetailDocument({                    
+                commonSvc.viewDetailDocument({
                     idDocumentoElectronico: item.idDocumentoElectronico,
                     codigoDocumento: codigo,
                     size: 'xl',
@@ -379,7 +379,7 @@
             }
         }
 
-        async function loadDetalleInvoice(idDocumentoElectronico, codDoc){
+        async function loadDetalleInvoice(idDocumentoElectronico, codDoc) {
             let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
             let ctrl = (await import(fileCtrl))[controller];
             let template = templates['FV_SRI'];
@@ -388,7 +388,7 @@
                 template: template,
                 size: 'xl',
                 params: {
-                    codDoc,                    
+                    codDoc,
                     idDocumentoElectronico,
                 },
                 windowClass: 'uibModalFullScreen',
@@ -402,11 +402,10 @@
             try {
                 if ($scope.selectedComprobantes.length === 0) {
                     tS.toastr('warning', 'Seleccione al menos un comprobante');
-                    return
+                    return;
                 }
-                let {
-                    isConfirmed
-                } = await Swal.fire({
+
+                let { isConfirmed } = await Swal.fire({
                     title: '<small>Autorizar</small>',
                     icon: 'warning',
                     html: `<small>Estás seguro/a de Autorizar <h4><b>${$scope.selectedComprobantes.length}</b></h4> comprobantes?</small>`,
@@ -414,53 +413,63 @@
                     confirmButtonText: 'Si, autorizar',
                     denyButtonText: 'No, cancelar',
                     allowOutsideClick: false
-                })
+                });
 
                 if (isConfirmed) {
-                    
                     let updatePromises = $scope.selectedComprobantes.map(item =>
                         docElectSvc.updateXml(item.idDocumentoElectronico)
                     );
-                    
-                    showLoader();
-                    await Promise.all(updatePromises).then((response) => {
-                        // if(Array.isArray(response)){
-                        //     let dataResponse = response.find(item=>item.code==="0");
-                        //     if(dataResponse){
-                        //         Swal.fire({
-                        //             icon: 'warning',
-                        //             html: dataResponse.message,
-                        //             timer: 1000
-                        //         }) 
-                        //         return 
-                        //     }
 
-                        // }
-                         
+                    showLoader();
+
+                    try {
+                        const responses = await Promise.all(updatePromises);
+
+                        // Filtrar respuestas con código "0"
+                        const warningResponses = responses.filter(response => response && response.code === "0");
+
+                        if (warningResponses.length > 0) {
+                            // Mostrar advertencias si hay respuestas con código "0"
+                            const warningMessages = warningResponses.map(response => response.message).join('<br>');
+
+                            await Swal.fire({
+                                icon: 'warning',
+                                title: '<small>Advertencias</small>',
+                                html: `<small>${warningMessages}</small>`,
+                                confirmButtonText: 'Entendido'
+                            });
+                        } else {
+                            // Mostrar mensaje de éxito si no hay advertencias
+                            await Swal.fire({
+                                icon: 'success',
+                                html: `<small>Autorizando...</small>`,
+                                timer: 1000
+                            });
+                        }
+
                         // Vaciar el array selectedComprobantes después de la actualización
-                        Swal.fire({
-                            icon: 'success',
-                            html: `<small>Autorizando...</small>`,
-                            timer: 1000
-                        })
                         $scope.selectedComprobantes = [];
                         $scope.refresh();
-                    }).catch((error) => {                        
-                        console.error("Failed to update one or more items:", error);
-                    }).finally(()=>{
+
+                    } catch (error) {
+                        console.error("Error al procesar las respuestas:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: '<small>Error</small>',
+                            html: '<small>Ha ocurrido un error al procesar las solicitudes</small>'
+                        });
+                    } finally {
                         hideLoader();
-                    })
-
-
-                    // for (let item of $scope.selectedComprobantes) {
-                    //     docElectSvc.updateXml(item.idDocumentoElectronico).then(() => {
-                    //         let index = $scope.selectedComprobantes.indexOf(item);
-                    //         $scope.selectedComprobantes.splice(index, 1);
-                    //     })
-                    // } 
+                    }
                 }
             } catch (error) {
-                console.log(error)
+                console.error("Error general:", error);
+                hideLoader();
+                Swal.fire({
+                    icon: 'error',
+                    title: '<small>Error</small>',
+                    html: '<small>Ha ocurrido un error inesperado</small>'
+                });
             }
         }
 
@@ -518,7 +527,7 @@
                 console.log(error)
             }
         }
-  
+
 
         $scope.showBtnUpdateXml = (item) => {
             return [2, 0, 5].includes(item.codEstado)
@@ -540,11 +549,11 @@
             if (isConfirmed) {
                 showLoader();
                 docElectSvc.updateXml(item.idDocumentoElectronico).then(response => {
-                    if((response)){
+                    if ((response)) {
                         tS.toastr('success', response.message, response.titleSms);
-                         $scope.refresh(); 
+                        $scope.refresh();
                     }
-                      
+
                 })
                     .catch(error => {
                         console.log(error)
@@ -555,9 +564,9 @@
         }
 
 
-        $scope.updateComprobanteResult = function(result){
-            if(typeof result==='object'){
-                $scope.refresh(); 
+        $scope.updateComprobanteResult = function (result) {
+            if (typeof result === 'object') {
+                $scope.refresh();
             }
         }
 
@@ -598,7 +607,7 @@
             docElectSvc.retencionAtsCancel(item.idDocumentoElectronico).then(response => {
                 if (response.code == '1') {
                     tS.toastr('success', response.message)
-                    $scope.refresh(); 
+                    $scope.refresh();
                 }
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
