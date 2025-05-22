@@ -1,26 +1,18 @@
 <app-breadcrumb></app-breadcrumb>
 <mat-card appearance="outlined">
   <mat-card-content>
-    <div class="row mb-3">
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
-        <app-theme-button
-          icon="add"
-          text="Registrar"
-          (handleClick)="onDialogOpen()"
-        ></app-theme-button>
-      </div>
-      <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 col-6 d-flex">
-        <div class="ms-auto">
-          <app-theme-button
-            variant="secondary"
-            icon="refresh"
-            matStyle="icon"
-            title="Recargar"
-            (handleClick)="refresh()"
-          ></app-theme-button>
-        </div>
-      </div>
-    </div>
+    <app-doc-elect-filters
+      [showMoreOptions]="showMoreOptions()"
+      [filterOptions]="myCustomFilterOptions"
+      (triggerSearch)="onSearch($event)"
+      (selectCliente)="onSelectCliente($event)"
+      (keyupCliente)="onKeyupCliente()"
+      (toggleMoreOptions)="toggleMoreOptions()"
+      (selectUsuario)="onSelectUsuario($event)"
+      (keyupUsuario)="onKeyupUsuario($event)"
+      (dialogOpen)="onDialogOpen()"
+    >
+    </app-doc-elect-filters>
     <div class="row mb-3">
       <div class="col">
         @if (this.retenciones().length > 0) {

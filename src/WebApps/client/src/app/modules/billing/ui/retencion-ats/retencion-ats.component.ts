@@ -15,7 +15,6 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import { DialogService } from '@core/services/dialog.service';
 import { RetencionAtsAddEditComponent } from './components/retencion-ats-add-edit/retencion-ats-add-edit.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -27,6 +26,12 @@ import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
 import { isApiResponse } from '@core/models/api-response';
+import { DocElectFiltersComponent } from '@shared/components/doc-elect-filters/doc-elect-filters.component';
+import {
+  FilterOptions,
+  getMergedDocElectFilterOptions,
+} from '@billing/domain/models/documento-electronico.model';
+import { PersonType } from '@customer/domain/enums/customer.enum';
 
 @Component({
   selector: 'app-retencion-ats',
@@ -41,16 +46,19 @@ import { isApiResponse } from '@core/models/api-response';
     MatMenu,
     MatDynamicTableComponent,
     MatPaginator,
-    ThemeButtonComponent,
     MatTooltip,
     FaIconComponent,
     SendMailDialogDirective,
+    DocElectFiltersComponent,
   ],
   templateUrl: './retencion-ats.component.html',
   styles: ``,
 })
 export class RetencionAtsComponent implements OnInit {
   retenciones = signal<RetencionAtsList[]>([]);
+
+  showMoreOptions = signal(false);
+  dataSearch = signal<any>({});
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'estado', label: 'Estado', type: 'string' },
@@ -79,15 +87,17 @@ export class RetencionAtsComponent implements OnInit {
 
   loadData() {
     this.pagination().pageIndex = 1;
-    this._retencionAtsUseCase
-      .getAll(this.pagination())
-      .subscribe((response) => {
-        if (response.retenciones.length > 0) {
-          this.retenciones.set(response.retenciones);
-          this.pagination().totalRecords =
-            response.retenciones[0]!.totalRecords || 0;
-        }
-      });
+    const obj = {
+      ...this.pagination(),
+      ...this.dataSearch(),
+    };
+    this._retencionAtsUseCase.getAll(obj).subscribe((response) => {
+      if (response.retenciones.length > 0) {
+        this.retenciones.set(response.retenciones);
+        this.pagination().totalRecords =
+          response.retenciones[0]!.totalRecords || 0;
+      } else this.retenciones.set([]);
+    });
   }
 
   ngOnInit() {
@@ -219,4 +229,38 @@ export class RetencionAtsComponent implements OnInit {
   refresh() {
     this.loadData();
   }
+
+  onSearch(filterData: any): void {
+    this.dataSearch.set(filterData);
+    this.loadData();
+  }
+
+  onSelectCliente(cliente: any): void {
+    console.log('Cliente selected:', cliente);
+    // Additional logic if needed
+  }
+
+  onKeyupCliente(): void {
+    console.log('Cliente search keyup');
+    // Additional logic if needed
+  }
+
+  toggleMoreOptions(): void {
+    this.showMoreOptions.set(!this.showMoreOptions());
+  }
+
+  onSelectUsuario(usuario: any): void {
+    console.log('Usuario selected:', usuario);
+    // Additional logic if needed
+  }
+
+  onKeyupUsuario(searchText: string) {
+    console.log('Search usuario:', searchText);
+    // Additional logic if needed
+  }
+
+  myCustomFilterOptions: FilterOptions = getMergedDocElectFilterOptions({
+    showTipoDocumento: signal(false),
+    personType: signal(PersonType.SUPPLIER),
+  });
 }

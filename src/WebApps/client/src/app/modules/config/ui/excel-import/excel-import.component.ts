@@ -160,7 +160,6 @@ export class ExcelImportComponent {
   }
 
   isSomeSelected() {
-    console.log(this.selection.selected);
     return this.selection.selected.length > 0;
   }
 
@@ -175,7 +174,6 @@ export class ExcelImportComponent {
         codeModule: dataModule.codigo
       })
     this.urlFile = dataModule.urlDocument;
-    console.log(dataModule)
   }
 
   async onFileSelected(ev: any) {
@@ -243,7 +241,6 @@ export class ExcelImportComponent {
           finalize(() => Swal.close())
         )
         .subscribe(response=>{
-          console.log(response)
           if (response.code === '0') {
             Swal.fire({ icon: 'warning', html: `<small>${response.message}</small>` });
           } else if (response.code === '1') {

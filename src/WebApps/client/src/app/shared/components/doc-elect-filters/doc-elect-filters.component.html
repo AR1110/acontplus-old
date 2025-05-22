@@ -1,123 +1,118 @@
-<div class="container-fluid">
-  <form [formGroup]="filterForm">
-    <div class="row">
-      <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
-        <div class="row">
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Establecimiento</mat-label>
-              <mat-select
-                formControlName="codEstab"
-                (selectionChange)="onEstabChange()"
-              >
-                <mat-option
-                  *ngFor="let item of establecimientos"
-                  [value]="item.codEstab"
-                >
-                  {{ item.nombreComercial }}
-                </mat-option>
-              </mat-select>
-              <mat-error
-                *ngIf="
-                  filterForm.get('codEstab')?.invalid &&
-                  filterForm.get('codEstab')?.touched
-                "
-              >
-                Campo requerido
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-            <div class="d-flex flex-column">
-              <div class="d-flex align-items-center">
-                <mat-checkbox
-                  formControlName="checkBoxFecha"
-                  [disabled]="filterForm.get('idCliente')?.value <= 0"
-                  color="primary"
-                  class="mr-2"
-                >
-                </mat-checkbox>
-
-                <app-date-range-selection></app-date-range-selection>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
-        <div class="row">
-          <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-            <mat-form-field appearance="outline" class="w-100">
-              <app-company-customer-search></app-company-customer-search>
-            </mat-form-field>
-          </div>
-
-          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="d-flex align-items-end h-100 mb-3">
-              <button
-                mat-icon-button
-                color="primary"
-                matTooltip="Más opciones"
-                (click)="onMoreOptionsClick()"
-              >
-                <mat-icon>visibility</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                color="accent"
-                matTooltip="Recargar"
-                (click)="reload()"
-              >
-                <mat-icon>refresh</mat-icon>
-              </button>
-            </div>
-          </div>
-        </div>
+<form [formGroup]="filterForm">
+  <div class="row mb-3">
+    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+      @if (this.filterOptions().showButtonNew()) {
+        <app-theme-button
+          icon="add"
+          text="Registrar"
+          (handleClick)="onDialogOpen()"
+        ></app-theme-button>
+      }
+    </div>
+    <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 col-6 d-flex">
+      <div class="ms-auto">
+        <app-theme-button
+          matStyle="icon"
+          variant="info"
+          [icon]="showMoreOptions() ? 'visibility_off' : 'visibility'"
+          [matTooltip]="
+            showMoreOptions() ? 'Ocultar Opciones' : 'Ver más opciones'
+          "
+          (click)="onMoreOptionsClick()"
+        >
+          <mat-icon>visibility</mat-icon>
+        </app-theme-button>
+        <app-theme-button
+          variant="secondary"
+          icon="refresh"
+          matStyle="icon"
+          title="Recargar"
+          (handleClick)="reload()"
+        ></app-theme-button>
       </div>
     </div>
-
-    <!-- Additional options section -->
-    <div class="row" *ngIf="showMoreOptions">
-      <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Punto de Emisión</mat-label>
-          <mat-select
-            formControlName="idPuntoEmision"
-            (selectionChange)="reload()"
-          >
-            <mat-option
-              *ngFor="let item of puntosEmision"
-              [value]="item.idPuntoEmision"
-            >
+  </div>
+  <div class="row mb-3">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select
+          formControlName="idEstablecimiento"
+          (selectionChange)="onEstabChange()"
+        >
+          @for (item of establecimientos(); track $index) {
+            <mat-option [value]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (
+          filterForm.get("codEstab")?.invalid &&
+          filterForm.get("codEstab")?.touched
+        ) {
+          <mat-error> Campo requerido </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Punto de Emisión</mat-label>
+        <mat-select
+          formControlName="idPuntoEmision"
+          (selectionChange)="reload()"
+        >
+          @for (item of puntosEmision(); track item.idPuntoEmision) {
+            <mat-option [value]="item.idPuntoEmision">
               {{ item.ptoEmi }}
             </mat-option>
-          </mat-select>
-          <mat-error
-            *ngIf="
-              filterForm.get('idPuntoEmision')?.invalid &&
-              filterForm.get('idPuntoEmision')?.touched
-            "
-          >
-            Campo requerido
-          </mat-error>
+          }
+        </mat-select>
+        @if (
+          filterForm.get("idPuntoEmision")?.invalid &&
+          filterForm.get("idPuntoEmision")?.touched
+        ) {
+          <mat-error> Campo requerido </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+      <app-date-range-selection
+        [showInputMaterial]="true"
+        [(checkbox)]="checkBoxFecha"
+        [showMatPrefix]="true"
+        (onCheckboxChange)="setCheckBoxDate()"
+        (onChangeDateRange)="onDateRangeSelected($event)"
+      ></app-date-range-selection>
+    </div>
+  </div>
+
+  <!-- Additional options section -->
+  @if (showMoreOptions()) {
+    <div class="row mb-3">
+      @if (this.filterOptions().showPersonSearch()) {
+        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+          @if (this.filterOptions().personType()) {
+            <app-supplier-search
+              (supplierSelected)="onSelectSupplierHandler($event)"
+            ></app-supplier-search>
+          } @else {
+            <app-company-customer-search
+              [isSimpleMode]="true"
+              (customerSelected)="onSelectClienteHandler($event)"
+            ></app-company-customer-search>
+          }
+        </div>
+      }
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Clave Acceso:</mat-label>
+          <input matInput formControlName="claveAcceso" />
         </mat-form-field>
       </div>
-
+    </div>
+    <div class="row mb-3">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Usuario</mat-label>
-          <input
-            matInput
-            [(ngModel)]="usuarioNombre"
-            [ngModelOptions]="{ standalone: true }"
-            (keyup)="onKeyupUsuarioSearchHandler(usuarioNombre)"
-            placeholder="Buscar Usuario"
-            autocomplete="off"
-          />
-          <!-- You'd need to implement an autocomplete component here -->
-        </mat-form-field>
+        <app-user-search (userSelected)="onSelectedUsuarioSearch($event)" />
       </div>
 
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
@@ -141,21 +136,40 @@
           />
         </mat-form-field>
       </div>
-
+      @if (this.filterOptions().showTipoDocumento()) {
+        <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Tipo Documento:</mat-label>
+            <mat-select
+              formControlName="idTipoDocumento"
+              (selectionChange)="reload()"
+            >
+              <mat-option value="">Todos</mat-option>
+              @for (item of tipoDocumentos(); track item.idTipoDocumento) {
+                <mat-option [value]="item.idTipoDocumento">
+                  {{ item.descripcion }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      }
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Estado</mat-label>
-          <mat-select formControlName="byEstado" (selectionChange)="reload()">
+          <mat-select
+            formControlName="idEstadoServicio"
+            (selectionChange)="reload()"
+          >
             <mat-option value="">Todos</mat-option>
-            <mat-option
-              *ngFor="let item of estadoDocumentos"
-              [value]="item.idEstadoPago"
-            >
-              {{ item.descripcion }}
-            </mat-option>
+            @for (item of estadoDocumentos(); track item.idEstadoServicio) {
+              <mat-option [value]="item.idEstadoServicio">
+                {{ item.descripcion }}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
     </div>
-  </form>
-</div>
+  }
+</form>

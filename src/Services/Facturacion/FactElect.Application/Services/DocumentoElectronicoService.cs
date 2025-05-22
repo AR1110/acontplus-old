@@ -18,11 +18,21 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
+
+    //Eliminar el método GetDataFormAsync y su implementación en la interfaz IDocumentoElectronicoService
     public async Task<ApiResponse> GetDataFormAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Data_Form", parameters);
         return !DataValidation.DataSetIsNull(ds)
             ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+    public async Task<ApiResponse> GetFiltersAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Filters", parameters);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
             : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
     }
 

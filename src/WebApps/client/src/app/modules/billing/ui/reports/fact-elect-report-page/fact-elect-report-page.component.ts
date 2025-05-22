@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -21,6 +21,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { FilterData } from '@billing/domain/models/documento-electronico.model';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -42,10 +45,11 @@ import { CompanyCustomer } from '@customer/domain/models/company-customer';
   templateUrl: './fact-elect-report-page.component.html',
   styles: ``,
 })
-export class FactElectReportPageComponent implements OnInit {
+export class FactElectReportPageComponent implements OnInit, OnDestroy {
   private readonly _docElectSvc = inject(DocumentoElectronicoWebRepository);
   private readonly _tS = inject(ToasterService);
   private readonly _sharedSvc = inject(SharedService);
+  private destroy$ = new Subject<void>();
 
   dataSearch = {
     checkBoxCustomer: false,
@@ -68,9 +72,13 @@ export class FactElectReportPageComponent implements OnInit {
   estadosDoc: any[] = [];
   tiposDoc = signal<any[]>([]);
   empresas: any[] = [];
-
+  filterData: FilterData | null = null;
   showField = true;
   format: any;
+
+  isLoadingFilters = false;
+  isRefreshingFilters = false;
+  isLoadingMainData = false;
 
   retenciones = [
     { code: 'ALL', descripcion: 'Todos' },
@@ -108,34 +116,39 @@ export class FactElectReportPageComponent implements OnInit {
     );
 
     this.showField = !!(dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F);
-    if(this.showField){
-      this.dataSearch.codeDevolucion='SD'
-    }else{
-      this.dataSearch.codeDevolucion= 'ALL';
+    if (this.showField) {
+      this.dataSearch.codeDevolucion = 'SD';
+    } else {
+      this.dataSearch.codeDevolucion = 'ALL';
     }
   }
 
-  getDataFilter() {
-    this._docElectSvc.getDataFilter().subscribe((response) => {
-      const { estabs, estadosDoc, tiposDoc } = response;
-      this.establecimientos = estabs;
-      if (this.establecimientos.length > 0) {
-        const dataEstab = this.establecimientos.find(
-          (estab) => estab.defaultEstab,
-        );
-        this.puntosEmision = dataEstab?.puntosEmision ?? [];
-      }
-      this.tiposDoc.set(tiposDoc);
-      const dataTipoDoc = this.tiposDoc().find(
-        (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
-      );
-      this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
-      this.estadosDoc = estadosDoc;
-    });
+  loadFilters() {
+    this.isLoadingFilters = true;
+
+    this._docElectSvc
+      .getFilters()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.handleFilterDataReceived(data);
+          this.isLoadingFilters = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar filtros:', error);
+          this.isLoadingFilters = false;
+          // Aquí puedes mostrar un toast o mensaje de error
+        },
+      });
   }
 
   ngOnInit() {
-    this.getDataFilter();
+    this.loadFilters();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onChangeEstab() {
@@ -266,5 +279,34 @@ export class FactElectReportPageComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  /**
+   * Maneja los datos recibidos de filtros
+   */
+  private handleFilterDataReceived(data: FilterData): void {
+    this.filterData = data;
+
+    // Extraer arrays para usar en los dropdowns
+    this.establecimientos = data.estabs;
+    this.tiposDoc.set(data.tipoDocumentos);
+
+    if (this.establecimientos.length > 0) {
+      const dataEstab = this.establecimientos.find(
+        (estab) => estab.defaultEstab,
+      );
+      this.puntosEmision = dataEstab?.puntosEmision ?? [];
+    }
+    const dataTipoDoc = this.tiposDoc().find(
+      (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
+    );
+    this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
+    this.estadosDoc = data.estadoDocumentos;
+    console.log('📊 Datos de filtros procesados:', {
+      establecimientos: this.establecimientos.length,
+      tipoDocumentos: this.tiposDoc().length,
+      estadoDocumentos: this.estadosDoc.length,
+      lastUpdated: data.lastUpdated,
+    });
   }
 }

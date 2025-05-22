@@ -32,37 +32,112 @@ BEGIN
 	    SELECT @tipo =  tipo FROM OPENJSON(@json) WITH(tipo INT )
 
         --> Variables Globales 
-        SELECT TOP 1 @idEntidad = idEntidad, @userId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+        SELECT TOP 1 @idEntidad = idEntidad, @userId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         IF (@tipo = 1)
             BEGIN
                 
                 SET @tableNames = 'retenciones'
                 -- Declare parameters
-                DECLARE @textSearch VARCHAR(500) = '' -- Example value
-                DECLARE @checkTextSearch BIT = 0 -- Example value
-                DECLARE @pageIndex INT;-- Example value
-                DECLARE @pageSize INT;-- Example value
-                DECLARE @params NVARCHAR(500) = N'@idEntidad INT, @textSearch VARCHAR(500), @pageIndex INT, @pageSize INT'
+                DECLARE @pageIndex INT;
+                DECLARE @pageSize INT;
+                DECLARE @idEstablecimiento INT = 0;
+                DECLARE @checkBoxFecha BIT = 0;
+                DECLARE @fechaInicio DATE;
+                DECLARE @fechaFin DATE;
+                DECLARE @customerId INT = 0;
+                DECLARE @idCliente INT = 0;
+                DECLARE @idProveedor INT = 0;
+                DECLARE @idPuntoEmision INT = 0;
+                DECLARE @idTipoDocumento INT = 0;
+                DECLARE @nroSecuencial VARCHAR(255) = '';
+                DECLARE @infoAdicional VARCHAR(255) = '';
+                DECLARE @idEstadoServicio INT = 0;
+                DECLARE @idUsuario INT = 0;
+                DECLARE @claveAcceso VARCHAR(255) = '';
+                
+                DECLARE @params NVARCHAR(1000) = N'@idEntidad INT, @pageIndex INT, @pageSize INT, @idEstablecimiento INT, @checkBoxFecha BIT, @fechaInicio DATE, @fechaFin DATE, @customerId INT, @idPuntoEmision INT, @idTipoDocumento INT, @nroSecuencial VARCHAR(255), @infoAdicional VARCHAR(255), @idEstadoServicio INT, @idUsuario INT, @claveAcceso VARCHAR(255)'
+                DECLARE @countParams NVARCHAR(1000) = N'@idEntidad INT, @idEstablecimiento INT, @checkBoxFecha BIT, @fechaInicio DATE, @fechaFin DATE, @customerId INT, @idPuntoEmision INT, @idTipoDocumento INT, @nroSecuencial VARCHAR(255), @infoAdicional VARCHAR(255), @idEstadoServicio INT, @idUsuario INT, @claveAcceso VARCHAR(255), @totalRecords INT OUTPUT'
                 DECLARE @sql NVARCHAR(MAX);
 
-                SELECT @pageSize    = pageSize
-                  ,@pageIndex       = pageIndex 
-                  ,@checkTextSearch = checkTextSearch 
-                  ,@textSearch      = (REPLACE(textSearch,SPACE(1),'%'))
+                SELECT @pageSize = pageSize
+                  ,@pageIndex = pageIndex 
+                  ,@idEstablecimiento = idEstablecimiento
+                  ,@checkBoxFecha = checkBoxFecha
+                  ,@fechaInicio = fechaInicio
+                  ,@fechaFin = fechaFin
+                  ,@idCliente = idCliente
+                  ,@idProveedor = idProveedor
+                  ,@idPuntoEmision = idPuntoEmision
+                  ,@idTipoDocumento = idTipoDocumento
+                  ,@nroSecuencial = nroSecuencial
+                  ,@infoAdicional = infoAdicional
+                  ,@idEstadoServicio = idEstadoServicio
+                  ,@idUsuario = idUsuario
+                  ,@claveAcceso = claveAcceso
                 FROM OPENJSON(@json) WITH 
                 (
-                     pageIndex       INT 
-                    ,pageSize        INT 
-                    ,checkTextSearch BIT  
-                    ,textSearch      VARCHAR(255)
+                     pageIndex INT 
+                    ,pageSize INT 
+                    ,idEstablecimiento INT
+                    ,checkBoxFecha BIT
+                    ,fechaInicio DATETIME2
+                    ,fechaFin DATETIME2
+                    ,idCliente INT
+                    ,idProveedor INT
+                    ,idPuntoEmision INT
+                    ,idTipoDocumento INT
+                    ,nroSecuencial VARCHAR(255)
+                    ,infoAdicional VARCHAR(255)
+                    ,idEstadoServicio INT
+                    ,idUsuario INT
+                    ,claveAcceso VARCHAR(255)
                 )
+
+                IF (@idCliente > 0)
+                    BEGIN
+                        SET @customerId = (SELECT customerId FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente)
+                    END
+                
+                 IF (@idProveedor > 0)
+                    BEGIN
+                        SET @customerId = (SELECT customerId FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor)
+                    END
+                
 
                 -- Construct the WHERE clause
                 DECLARE @whereClause NVARCHAR(MAX) = ' WHERE de.idEntidad = @idEntidad '
 
-                IF @checkTextSearch = 1
-                    SET @whereClause = @whereClause + 'AND de.rucReceptor + '' '' + de.razonSocial + '' '' + de.claveAcceso LIKE ''%''+@textSearch+''%'' '
+                -- Add filters conditionally
+                IF @idEstablecimiento > 0
+                    SET @whereClause = @whereClause + 'AND de.idEstablecimiento = @idEstablecimiento '
+
+                IF @checkBoxFecha = 1
+                    SET @whereClause = @whereClause + 'AND de.fechaEmision BETWEEN @fechaInicio AND @fechaFin '
+
+                IF @customerId > 0
+                    SET @whereClause = @whereClause + 'AND de.customerId = @customerId '
+
+                IF @idPuntoEmision > 0
+                    SET @whereClause = @whereClause + 'AND de.idPuntoEmision = @idPuntoEmision '
+
+                --IF @idTipoDocumento > 0
+                --    SET @whereClause = @whereClause + 'AND de.idTipoDocumento = @idTipoDocumento '
+
+                IF @nroSecuencial != ''
+                    SET @whereClause = @whereClause + 'AND de.nroSecuencial LIKE ''%'' + @nroSecuencial + ''%'' '
+
+                --IF @infoAdicional != ''
+                --    SET @whereClause = @whereClause + 'AND de.infoAdicional LIKE ''%'' + @infoAdicional + ''%'' '
+
+                IF @idEstadoServicio > 0
+                    SET @whereClause = @whereClause + 'AND de.idEstadoServicio = @idEstadoServicio '
+
+                IF @idUsuario > 0
+                    SET @whereClause = @whereClause + 'AND de.idUsuario = @idUsuario '
+
+                IF @claveAcceso != ''
+                    SET @whereClause = @whereClause + 'AND de.claveAcceso LIKE ''%'' + @claveAcceso + ''%'' '
 
                 -- Get total count with a separate query
                 DECLARE @countSql NVARCHAR(MAX) = 'SELECT @totalRecords = COUNT(*) 
@@ -72,9 +147,20 @@ BEGIN
                 DECLARE @totalRecords INT
 
                 EXEC sp_executesql @countSql
-                                  ,N'@idEntidad INT, @textSearch VARCHAR(500), @totalRecords INT OUTPUT'
+                                  ,@countParams
                                   ,@idEntidad = @idEntidad
-                                  ,@textSearch = @textSearch
+                                  ,@idEstablecimiento = @idEstablecimiento
+                                  ,@checkBoxFecha = @checkBoxFecha
+                                  ,@fechaInicio = @fechaInicio
+                                  ,@fechaFin = @fechaFin
+                                  ,@customerId = @customerId
+                                  ,@idPuntoEmision = @idPuntoEmision
+                                  ,@idTipoDocumento = @idTipoDocumento
+                                  ,@nroSecuencial = @nroSecuencial
+                                  ,@infoAdicional = @infoAdicional
+                                  ,@idEstadoServicio = @idEstadoServicio
+                                  ,@idUsuario = @idUsuario
+                                  ,@claveAcceso = @claveAcceso
                                   ,@totalRecords = @totalRecords OUTPUT
 
                 -- Main query for the data
@@ -105,10 +191,21 @@ BEGIN
 
                 EXEC sp_executesql @sql
                                   ,@params 
-                                  ,@idEntidad  = @idEntidad
-                                  ,@textSearch = @textSearch
-                                  ,@pageIndex  = @pageIndex
-                                  ,@pageSize   = @pageSize
+                                  ,@idEntidad = @idEntidad
+                                  ,@pageIndex = @pageIndex
+                                  ,@pageSize = @pageSize
+                                  ,@idEstablecimiento = @idEstablecimiento
+                                  ,@checkBoxFecha = @checkBoxFecha
+                                  ,@fechaInicio = @fechaInicio
+                                  ,@fechaFin = @fechaFin
+                                  ,@customerId = @customerId
+                                  ,@idPuntoEmision = @idPuntoEmision
+                                  ,@idTipoDocumento = @idTipoDocumento
+                                  ,@nroSecuencial = @nroSecuencial
+                                  ,@infoAdicional = @infoAdicional
+                                  ,@idEstadoServicio = @idEstadoServicio
+                                  ,@idUsuario = @idUsuario
+                                  ,@claveAcceso = @claveAcceso
             END
 
 	    --> DataForm
@@ -272,7 +369,7 @@ BEGIN
     END TRY
     BEGIN CATCH
         INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
-        VALUES('RetencionAts/Get', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId);
+        VALUES('RetencionAts/Get', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), 'FactElect.RetencionAts_Get', ERROR_LINE(), ERROR_MESSAGE(), @userId);
         THROW;
     END CATCH
 END

@@ -37,12 +37,15 @@
       [matStyle]="'icon'"
       (handleClick)="openModalAddUpdate(item)"
     />
-    <app-theme-button
-      variant="danger"
-      [icon]="'delete'"
-      [matStyle]="'icon'"
-      (handleClick)="askToDelete(item)"
-    />
+    @if(item.estado){
+      <app-theme-button
+        variant="danger"
+        [icon]="'delete'"
+        [matStyle]="'icon'"
+        (handleClick)="askToDelete(item)"
+      />
+
+    }
 
   </ng-template>
 
