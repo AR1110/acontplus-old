@@ -163,9 +163,9 @@ BEGIN
 			UPDATE ret WITH (ROWLOCK)
                SET ret.tipoSujetoRetenido = t.tipoSujetoRetenido 
 			      ,ret.parteRel           = t.parteRel
-			      ,ret.periodoFiscal      = t.periodoFiscal
 			      ,ret.idUsuario          = @idUsuario
 			      ,ret.idProveedor        = @idProveedor
+                  ,ret.periodoFiscal = FORMAT(@fechaEmision, 'MM/yyyy')
 			FROM FactElect.RetencionAts ret
 			INNER JOIN @tblInfoCompRet    t on ret.idRetencionAts = t.idRetencionAts
 

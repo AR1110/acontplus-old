@@ -2,7 +2,7 @@
 @model WebUI.Pages.Config.Importacion.IndexModel
 @{
     ViewData["Title"] = "Index";
-    
+
 }
 <style>
     .item-import-register {
@@ -37,12 +37,14 @@
                             <button type="button" class="btn btn-info" ng-click="$ctrl.openModalImport()">
                                 <i class="mdi mdi-arrow-up"></i> Nueva Importación
                             </button>
-                            <button type="button" ng-if="$ctrl.items.length>0" class="btn btn-success m-l-15" ng-click="$ctrl.validarCampo()">
+                            <button type="button" ng-if="$ctrl.items.length>0" class="btn btn-success m-l-15"
+                                ng-click="$ctrl.validarCampo()">
                                 <i class="ti-save"></i> Guardar
                             </button>
                             <div flex></div>
                             <form class="form-material">
-                                <input type="search" ng-model="txtFilter" class="form-control border-select" placeholder="Buscar Item">
+                                <input type="search" ng-model="txtFilter" class="form-control border-select"
+                                    placeholder="Buscar Item">
                             </form>
                         </div>
                     </md-toolbar>
@@ -53,21 +55,27 @@
                     </div>
 
                     <div ng-style="getStyle($index)" ng-show="$ctrl.items.length>0">
-                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden">
-                            <table md-row-select="true" multiple="true" ng-model="$ctrl.selected" resize master md-table name="innerWireTable">
+                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)"
+                            infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true"
+                            ng-show="isShow" style=" max-height: 400px; overflow-x: hidden">
+                            <table md-row-select="true" multiple="true" ng-model="$ctrl.selected" resize master md-table
+                                name="innerWireTable">
                                 <thead md-trim-column-names fix-head md-head>
                                     <tr md-row>
                                         <th md-column>N°</th>
-                                        <th ng-repeat="column in $ctrl.nameColums" ng-hide="$ctrl.hiddenColumn(column)" md-column>{{column}}</th>
+                                        <th ng-repeat="column in $ctrl.nameColums" ng-hide="$ctrl.hiddenColumn(column)"
+                                            md-column>{{column}}</th>
                                     </tr>
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row md-select="item" ng-disabled="!(item.estado==='IMPORTAR')"
-                                        md-on-select="$ctrl.seleccionarCliente"
-                                        md-auto-select="true" ng-repeat="item in $ctrl.itemsImportacion | filter: txtFilter" ng-class="$ctrl.classColumnTable(item)">
+                                        md-on-select="$ctrl.seleccionarCliente" md-auto-select="true"
+                                        ng-repeat="item in $ctrl.itemsImportacion | filter: txtFilter"
+                                        ng-class="$ctrl.classColumnTable(item)">
                                         @* ng-class="{'md-placeholder': !item[column]}" *@
                                         <td md-cell>{{$index+1}}</td>
-                                        <td md-cell ng-repeat="column in $ctrl.nameColums" ng-hide="$ctrl.hiddenColumn(column)">
+                                        <td md-cell ng-repeat="column in $ctrl.nameColums"
+                                            ng-hide="$ctrl.hiddenColumn(column)">
                                             {{item[column]}}
 
                                         </td>
@@ -83,7 +91,8 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <span ng-show="$ctrl.items.length>0">{{$ctrl.items.length}} {{$ctrl.items.length > 1 ? 'items' : 'item'}} Importados</span>
+                    <span ng-show="$ctrl.items.length>0">{{$ctrl.items.length}} {{$ctrl.items.length > 1 ? 'items' :
+                        'item'}} Importados</span>
                 </div>
             </div>
         </div>
@@ -92,7 +101,7 @@
 
 </div>
 
-@section Scripts{
+@section Scripts {
     <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
     <script src="~/js/controllers/importacion/importacionCtrl.js" asp-append-version="true"></script>
 }

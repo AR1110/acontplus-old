@@ -2,12 +2,23 @@
 <mat-card appearance="outlined">
   <mat-card-content>
     <div class="row mb-3">
-      <div class="col-4">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
         <app-theme-button
           icon="add"
           text="Registrar"
           (handleClick)="onDialogOpen()"
         ></app-theme-button>
+      </div>
+      <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 col-6 d-flex">
+        <div class="ms-auto">
+          <app-theme-button
+            variant="secondary"
+            icon="refresh"
+            matStyle="icon"
+            title="Recargar"
+            (handleClick)="refresh()"
+          ></app-theme-button>
+        </div>
       </div>
     </div>
     <div class="row mb-3">
@@ -41,14 +52,14 @@
 
     <ng-template #templateOp let-item="item">
       <mat-menu #menu="matMenu">
-        @if (
-          !item.isAutomatic && item.codEstado !== 4 && item.codEstado !== 6
-        ) {
+        @if ([0, 2, 5, 7, 8].includes(item.codEstado)) {
           <button mat-menu-item (click)="edit(item)">
             <mat-icon>edit</mat-icon>
             Editar
           </button>
+        }
 
+        @if ([2, 3, 7].includes(item.codEstado)) {
           <button
             mat-menu-item
             (click)="authorize(item)"
