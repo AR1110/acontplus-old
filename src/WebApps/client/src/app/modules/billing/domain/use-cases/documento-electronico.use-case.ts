@@ -1,5 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { DocumentoElectronicoRepository } from '@billing/domain/repositories/documento-electronico.repository';
+import { Observable } from 'rxjs';
+import { FilterData } from '@billing/domain/models/documento-electronico.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +15,14 @@ export class DocumentoElectronicoUseCase {
     return this._documentoElectronicoRepository.authorize(id);
   }
 
-  getDataFilter(parameters: unknown) {
-    return this._documentoElectronicoRepository.getDataFilter(parameters);
+  getFilters(forceRefresh = false) {
+    return this._documentoElectronicoRepository.getFilters(forceRefresh);
+  }
+  get filterData$(): Observable<FilterData | null> {
+    return this._documentoElectronicoRepository.filterData$;
+  }
+  refreshFilters() {
+    return this._documentoElectronicoRepository.refreshFilters();
   }
 
   getAll<T>(obj: T) {

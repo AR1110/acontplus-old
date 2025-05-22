@@ -800,8 +800,7 @@
                         cuentaPorCobrar,
                         estadoPago,
                         config
-                    } = JSON.parse(response.payload);
-                    console.log(JSON.parse(response.payload))
+                    } = JSON.parse(response.payload); 
 
                     // Subentidades agrupadas por entidad
                     cobroFormData.entidadesFinanciera = entidadFinanciera.map(ef => ({
@@ -1389,6 +1388,7 @@
                         diasCredito: tc.diasCredito,
                         numeroCuota: tc.numeroCuota,
                         tiempoCredito: tc.tiempoCredito,
+                        entrada: tc.entrada,
                     }
                 })
 
@@ -2204,10 +2204,11 @@
                         dataCuota.abono = dataCuota.saldo;
 
                         //dato real que se presenta en la UI 
-                        dataCuota.abonoActual = dataCuota.saldo;
+                        dataCuota.abonoActual += dataCuota.saldo;
                     } else {
                         dataCuota.abono = this.getValorAbono();
 
+                         dataCuota.abonoActual += this.getValorAbono()
 
                     }
 
@@ -2245,7 +2246,7 @@
                     dataCuota.abono = fS.plus(dataCuota.abono, dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT);
 
                     //valor real que se presenta en la UI
-                    dataCuota.abonoActual = dataCuota.saldoTotalActual;
+                    dataCuota.abonoActual =fS.plus(dataCuota.abonoActual, dataCuota.saldoTotalActual, this.MAX_DECIMALS.DEFAULT)
                 }
 
                 // Agrega un detalle de cobro con el saldoTotalActual como valor del abono

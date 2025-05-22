@@ -1,6 +1,9 @@
-﻿namespace FactElect.API.Controllers;
+﻿using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Caching.Memory;
 
-public class DocumentoElectronicoController(IDocumentoElectronicoService documentoElectronicoService)
+namespace FactElect.API.Controllers;
+
+public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElectronicoService documentoElectronicoService)
     : BaseApiController
 {
     private const string UserRoleId = "userRoleId";
@@ -35,6 +38,70 @@ public class DocumentoElectronicoController(IDocumentoElectronicoService documen
             }
         };
         return Ok(await documentoElectronicoService.GetDataFormAsync(parameters));
+    }
+
+    [HttpGet("GetFilters")]
+    public async Task<IActionResult> GetFilters()
+    {
+        const string cacheKey = "doc_elect_filters_data";
+
+        if (_cache.TryGetValue(cacheKey, out ApiResponse cachedData))
+        {
+            //_logger.LogInformation("Datos de filtros obtenidos desde caché");
+            return Ok(cachedData);
+        }
+        var parameters = new Dictionary<string, object>
+        {
+            {
+                "userRoleId", User.GetClaimValue<int>(UserRoleId)
+            }
+        };
+        var filtersData = await documentoElectronicoService.GetFiltersAsync(parameters);
+
+        // Cachear por 30 minutos
+        var cacheOptions = new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30),
+            SlidingExpiration = TimeSpan.FromMinutes(10),
+            Priority = CacheItemPriority.Normal,
+            Size = 1
+        };
+
+        _cache.Set(cacheKey, filtersData, cacheOptions);
+        //_logger.LogInformation("Datos de filtros cacheados exitosamente");
+
+        return Ok(filtersData);
+    }
+
+    [HttpPost("RefreshFilters")]
+    public async Task<IActionResult> RefreshfiltersData()
+    {
+        const string cacheKey = "doc_elect_filters_data";
+
+        // Limpiar caché
+        _cache.Remove(cacheKey);
+
+        var parameters = new Dictionary<string, object>
+        {
+            {
+                "userRoleId", User.GetClaimValue<int>(UserRoleId)
+            }
+        };
+        // Obtener datos frescos
+        var filtersData = await documentoElectronicoService.GetFiltersAsync(parameters);
+
+        // Volver a cachear
+        var cacheOptions = new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30),
+            SlidingExpiration = TimeSpan.FromMinutes(10),
+            Priority = CacheItemPriority.Normal
+        };
+
+        _cache.Set(cacheKey, filtersData, cacheOptions);
+        //_logger.LogInformation("Caché de filtros refrescado manualmente");
+
+        return Ok(filtersData);
     }
 
     [HttpGet("GetXmlSri/{id}")]
