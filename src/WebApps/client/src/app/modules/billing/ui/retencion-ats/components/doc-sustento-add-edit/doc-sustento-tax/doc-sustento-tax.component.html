@@ -37,12 +37,14 @@
     <mat-form-field class="w-100">
       <mat-label>Base Imponible</mat-label>
       <input
+        #baseImponible
         matInput
         formControlName="baseImponible"
         id="baseImponible-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         type="number"
         step="any"
         placeholder="Base imponible"
+        (click)="baseImponible.select()"
       />
     </mat-form-field>
   </div>
@@ -75,6 +77,16 @@
     </mat-form-field>
   </div>
   <div class="col-auto">
+    @if (taxGroup().get("idRetAtsDocSustento")?.value) {
+      <app-theme-button
+        variant="success"
+        icon="save"
+        matStyle="icon"
+        id="btn-save-tax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+        title="Guardar retención del sustento"
+        (handleClick)="onSave()"
+      ></app-theme-button>
+    }
     <app-theme-button
       variant="danger"
       icon="delete"

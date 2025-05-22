@@ -59,7 +59,7 @@
           </button>
         }
 
-        @if (!item.isAutomatic && [3].includes(item.codEstado)) {
+        @if ([2, 3, 7].includes(item.codEstado)) {
           <button
             mat-menu-item
             (click)="authorize(item)"
