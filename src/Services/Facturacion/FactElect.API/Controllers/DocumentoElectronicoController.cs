@@ -43,7 +43,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
     [HttpGet("GetFilters")]
     public async Task<IActionResult> GetFilters()
     {
-        const string cacheKey = "doc_elect_filters_data";
+        var cacheKey = $"doc_elect_filters_data_${User.GetClaimValue<int>(UserRoleId)}";
 
         if (_cache.TryGetValue(cacheKey, out ApiResponse cachedData))
         {
@@ -76,7 +76,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
     [HttpPost("RefreshFilters")]
     public async Task<IActionResult> RefreshfiltersData()
     {
-        const string cacheKey = "doc_elect_filters_data";
+        var cacheKey = $"doc_elect_filters_data_${User.GetClaimValue<int>(UserRoleId)}";
 
         // Limpiar caché
         _cache.Remove(cacheKey);
