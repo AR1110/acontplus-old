@@ -20,8 +20,21 @@ BEGIN
     DECLARE @DeletedCount INT = 0;
     DECLARE @TotalDeleted INT = 0;
     DECLARE @BatchCount INT = 0;
+    DECLARE @OldErrorsDeleted INT = 0;
     
     BEGIN TRY
+        -- First: Delete old error records, keeping only the latest error per document
+        DELETE TOP (@BatchSize) dee
+        FROM dbo.DocumentoElectronicoError dee
+        WHERE dee.idDocumentoElectronicoError NOT IN (
+            SELECT MAX(dee2.idDocumentoElectronicoError)
+            FROM dbo.DocumentoElectronicoError dee2
+            GROUP BY dee2.idDocumentoElectronico
+        );
+        
+        SET @OldErrorsDeleted = @@ROWCOUNT;
+        
+        -- Second: Delete processed error records in batches
         WHILE (@BatchCount < @MaxBatches)
         BEGIN
             -- Delete records in batches to avoid locking issues
@@ -47,7 +60,9 @@ BEGIN
         END
         
         -- Log the total number of deleted records
-        PRINT 'Total records deleted: ' + CAST(@TotalDeleted AS VARCHAR(10)) + ' in ' + CAST(@BatchCount AS VARCHAR(10)) + ' batches';
+        PRINT 'Old error records deleted: ' + CAST(@OldErrorsDeleted AS VARCHAR(10));
+        PRINT 'Processed error records deleted: ' + CAST(@TotalDeleted AS VARCHAR(10)) + ' in ' + CAST(@BatchCount AS VARCHAR(10)) + ' batches';
+        PRINT 'Total records deleted: ' + CAST(@OldErrorsDeleted + @TotalDeleted AS VARCHAR(10));
         
     END TRY
     BEGIN CATCH
