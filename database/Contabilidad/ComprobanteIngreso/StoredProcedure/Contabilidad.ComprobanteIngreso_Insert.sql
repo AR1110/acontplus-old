@@ -318,18 +318,14 @@ BEGIN
 		    --> Editar Estados de las Cuenta
             UPDATE cc SET
                    cc.idEstadoPago = tc.idEstadoPago
-                  ,cc.abono        = cc.abono    + tc.abono
-                  ,cc.diasMora     = cc.diasMora + tc.diasMora
-                  ,cc.mora         = cc.mora     + tc.mora
+                  ,cc.abono        = cc.abono + tc.abono
             FROM Contabilidad.CuentaPorCobrar cc WITH (ROWLOCK)
             INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
             --> Editar Estados de la cuota
             UPDATE cx SET 
                    cx.idEstadoPago = tc.idEstadoPago
-                  ,cx.abono        = cx.abono    + tc.abono
-                  ,cx.diasMora     = cx.diasMora + tc.diasMora
-                  ,cx.mora         = cx.mora     + tc.mora
+                  ,cx.abono        = cx.abono + tc.abono
             FROM Contabilidad.CuotaPorCobrar cx WITH (ROWLOCK)
             INNER JOIN @tbCuota              tc ON tc.idCuotaPorCobrar = cx.idCuotaPorCobrar
 		
