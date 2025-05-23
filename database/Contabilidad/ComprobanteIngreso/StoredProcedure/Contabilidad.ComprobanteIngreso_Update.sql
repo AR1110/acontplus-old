@@ -147,8 +147,6 @@ BEGIN
                     UPDATE cc WITH (ROWLOCK) SET
                            cc.idEstadoPago = tc.idEstadoPago
                           ,cc.abono        = tc.abono
-                          ,cc.mora         = cc.mora - tc.mora
-                          ,cc.diasMora     = cc.diasMora - tc.diasMora
                     FROM Contabilidad.CuentaPorCobrar cc
                     INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
@@ -156,8 +154,6 @@ BEGIN
                     UPDATE cx WITH (ROWLOCK) SET 
                            cx.idEstadoPago = tc.idEstadoPago
                           ,cx.abono        = tc.abono
-                          ,cx.mora         = tc.mora - tc.mora
-                          ,cx.diasMora     = tc.diasMora - tc.diasMora
                     FROM Contabilidad.CuotaPorCobrar cx
                     INNER JOIN @tbCuota              tc ON tc.idCuotaPorCobrar = cx.idCuotaPorCobrar
                 END
