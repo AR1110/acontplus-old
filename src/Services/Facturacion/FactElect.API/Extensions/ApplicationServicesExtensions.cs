@@ -4,6 +4,7 @@ using Common.FactElect.Services.Authentication;
 using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
+using FactElect.Application.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -17,6 +18,8 @@ public static class ApplicationServicesExtensions
         services.AddAdvancedLogging(configuration);
 
         services.AddHttpContextAccessor();
+
+        services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
         services.AddMemoryCache();
 
