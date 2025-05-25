@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Configuracion.API.Controllers;
 
 public class EstablecimientoLogoController : BaseApiController
 {
@@ -23,7 +25,7 @@ public class EstablecimientoLogoController : BaseApiController
     public async Task<IActionResult> Post(int establecimientoId, IFormFile file)
     {
         var logo = new FileModel();
-        await logo.CreateBytesCompressedDeflatedAsync(file);
+        await logo.CreateBytesCompressedGzipAsync(file);
         var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(logo);
         estabLogo.EstablecimientoId = establecimientoId;
         estabLogo.UserId = User.GetUserId();
@@ -39,7 +41,7 @@ public class EstablecimientoLogoController : BaseApiController
         if (file == null) return BadRequest("File not found");
 
         var logo = new FileModel();
-        await logo.CreateBytesCompressedDeflatedAsync(file);
+        await logo.CreateBytesCompressedGzipAsync(file);
         var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(logo);
         estabLogo.UserId = User.GetUserId();
         var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
