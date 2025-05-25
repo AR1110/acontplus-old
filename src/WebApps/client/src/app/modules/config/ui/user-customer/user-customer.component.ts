@@ -57,11 +57,11 @@ export class UserCustomerComponent {
   pagination = signal(new MatPagination());
 
   refresh(){
-    this.refresh()
+    this.getList()
   }
 
   private getList(){
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex+1,
       pageSize: this.pagination().pageSize
     }
@@ -104,7 +104,7 @@ export class UserCustomerComponent {
   }
 
   openSetting(item: UserCustomerList){
-    const ref = this._dialogSvc.open(SettingUserCustomerComponent, {
+    this._dialogSvc.open(SettingUserCustomerComponent, {
       size: 'xxl',
       data: structuredClone(item)
     })
