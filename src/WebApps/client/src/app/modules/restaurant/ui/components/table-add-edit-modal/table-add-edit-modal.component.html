@@ -9,13 +9,9 @@
 <ng-template #containerTemplate>
   <form id="formTableId" (ngSubmit)="onSave()" [formGroup]="tableForm" autocomplete="off">
     <div class="d-grid gap-2">
-      <mat-form-field >
-        <mat-label  >Sala: </mat-label>
-        <mat-select formControlName="roomId"   required>
-          @for (item of rooms; track $index) {
-            <mat-option [value]="item.id">{{ item.floor?.description }} - {{ item.description }}</mat-option>
-          }
-        </mat-select>
+      <mat-form-field>
+        <mat-label>Sala</mat-label>
+        <input type="text" matInput [value]="params.roomName"  readonly  >
       </mat-form-field>
 
 
@@ -38,7 +34,7 @@
       </mat-form-field>
 
 
-      @if (data.id >0 && !data.enabled){
+      @if (params.id >0 && !params.enabled){
         <mat-slide-toggle formControlName="enabled">
           {{tableForm.value.enabled?'Activo': 'Inactivo'}}
         </mat-slide-toggle>

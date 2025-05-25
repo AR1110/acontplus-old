@@ -1,6 +1,10 @@
 
 import {TableRepository} from "@restaurant/domain/repositories/table.repository";
+import {Injectable} from "@angular/core";
 
+@Injectable({
+  providedIn: 'root',
+})
 export class TableUseCase {
   constructor( private repo : TableRepository ) {}
 

@@ -57,6 +57,7 @@ public class FloorService(RestaurantContext context) : IFloorService
     public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
     {
         var floors = await context.Floors.Include(x => x.Rooms)
+               .ThenInclude(r => r.Tables)
             .Where(x => x.EstablecimientoId == establecimientoId && x.Deleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }

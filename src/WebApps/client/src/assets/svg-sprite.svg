@@ -12,4 +12,14 @@
     <path d="M13.5 6.5l4 4" />
     <path d="M19 16l-2 3h4l-2 3" />
   </symbol>
+
+  <symbol id="icon-tabler-corner-down-right"  viewBox="0 0 24 24"  fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-corner-down-right">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+    <path d="M6 6v6a3 3 0 0 0 3 3h10l-4 -4m0 8l4 -4" />
+  </symbol>
 </svg>
