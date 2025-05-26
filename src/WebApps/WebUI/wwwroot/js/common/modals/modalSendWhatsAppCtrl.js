@@ -46,15 +46,19 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     function createDataParamDocSri(data) {
         let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.documentoId;
         return {
+            tipo: 2,
             id,
             codDoc: data.codDoc,
             esNotificacionTributaria: true,
         };
     }
     function createDataParamDoc(data) {
+        //estandarizar el codDoc para notificaciones generales
+        const codDoc = data.codDoc === '09' ? 'PF' : data.codDoc;
         return {
-            id: data.documentoId,
-            codDoc: data.codDoc,
+            tipo: 3,
+            id: data.idDocumento,
+            codDoc,
             esNotificacionGeneral: true,
         };
     }
@@ -63,6 +67,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     let dataParamGetDataForm = {
         "01": createDataParamDocSri(data),
         "NE": createDataParamDoc(data),
+        "09": createDataParamDoc(data),
     };
 
     let phoneNumbers = [];
