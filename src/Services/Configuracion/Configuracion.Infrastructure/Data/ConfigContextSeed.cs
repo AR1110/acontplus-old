@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 
 namespace Configuracion.Infrastructure.Data;
 
@@ -8,10 +9,15 @@ public class ConfigContextSeed
     {
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         if (!context.PrinterTypes.Any())
         {
-            var printerTypesData = await File.ReadAllTextAsync(path + @"/Data/SeedData/PrinterTypes.json");
-            var printerTypes = JsonConvert.DeserializeObject<List<PrinterType>>(printerTypesData);
+            var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/PrinterTypes.json");
+            var printerTypes = JsonSerializer.Deserialize<List<PrinterType>>(jsonList, options);
             context.PrinterTypes.AddRange(printerTypes);
         }
 

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Data" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\Configuracion.Infrastructure\Configuracion.Infrastructure.csproj" />
   </ItemGroup>
 

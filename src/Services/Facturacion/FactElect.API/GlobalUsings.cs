@@ -1,8 +1,8 @@
 ﻿global using System.Data;
-global using Common.Core.Data;
+global using Common.Data;
 global using Common.Core.Enums;
 global using Common.Core.Models;
-global using Common.Core.Time;
+global using Common.Utilities.Time;
 global using Common.Core.Validation;
 global using Common.FactElect.Interfaces.Services;
 global using Common.FactElect.Models.Validation;

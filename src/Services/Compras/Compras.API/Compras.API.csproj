@@ -10,6 +10,7 @@
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Common.Data" />
     <PackageReference Include="Acontplus.Common.FactElect" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.Logging" />

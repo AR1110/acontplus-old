@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 
 namespace FactElect.Infrastructure.Data;
 
@@ -8,66 +9,68 @@ public abstract class FactElectContextSeed
     {
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         if (!context.ImpuestosRetencion.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/ImpuestosRetencion.json");
-            var impuestos = JsonConvert.DeserializeObject<List<ImpuestoRetencion>>(jsonList);
+            var impuestos = JsonSerializer.Deserialize<List<ImpuestoRetencion>>(jsonList, options);
             context.ImpuestosRetencion.AddRange(impuestos);
         }
 
         if (!context.TipoComprobantes.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/TipoComprobantes.json");
-            var comprobantes = JsonConvert.DeserializeObject<List<TipoComprobante>>(jsonList);
+            var comprobantes = JsonSerializer.Deserialize<List<TipoComprobante>>(jsonList, options);
             context.TipoComprobantes.AddRange(comprobantes);
         }
 
         if (!context.SustentosTributarios.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/SustentosTributarios.json");
-            var sustentosTributarios = JsonConvert.DeserializeObject<List<SustentoTributario>>(jsonList);
-            context.SustentosTributarios.AddRange(sustentosTributarios);
+            var sustentos = JsonSerializer.Deserialize<List<SustentoTributario>>(jsonList, options);
+            context.SustentosTributarios.AddRange(sustentos);
         }
 
         if (!context.PorcentajesRetencionIva.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/PorcentajesRetencionIva.json");
-            var porcentajes = JsonConvert.DeserializeObject<List<PorcentajeRetencionIva>>(jsonList);
+            var porcentajes = JsonSerializer.Deserialize<List<PorcentajeRetencionIva>>(jsonList, options);
             context.PorcentajesRetencionIva.AddRange(porcentajes);
         }
 
         if (!context.TiposIdentificacionProveedor.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/TiposIdentificacionProveedor.json");
-            var tiposIdentificacionProvedor =
-                JsonConvert.DeserializeObject<List<TipoIdentificacionProveedor>>(jsonList);
-            context.TiposIdentificacionProveedor.AddRange(tiposIdentificacionProvedor);
+            var tiposIdentificacion = JsonSerializer.Deserialize<List<TipoIdentificacionProveedor>>(jsonList, options);
+            context.TiposIdentificacionProveedor.AddRange(tiposIdentificacion);
         }
 
         if (!context.TipoPagos.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/TipoPagos.json");
-            var tipoPagos =
-                JsonConvert.DeserializeObject<List<TipoPago>>(jsonList);
-            context.TipoPagos.AddRange(tipoPagos);
+            var tiposPago = JsonSerializer.Deserialize<List<TipoPago>>(jsonList, options);
+            context.TipoPagos.AddRange(tiposPago);
         }
 
         if (!context.TiposRegimenFiscalExterior.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/TiposRegimenFiscalExterior.json");
-            var regimenes =
-                JsonConvert.DeserializeObject<List<TipoRegimenFiscalExterior>>(jsonList);
+            var regimenes = JsonSerializer.Deserialize<List<TipoRegimenFiscalExterior>>(jsonList, options);
             context.TiposRegimenFiscalExterior.AddRange(regimenes);
         }
 
         if (!context.FormasPago.Any())
         {
             var jsonList = await File.ReadAllTextAsync(path + @"/Data/SeedData/FormasPago.json");
-            var formasPago =
-                JsonConvert.DeserializeObject<List<FormaPago>>(jsonList);
+            var formasPago = JsonSerializer.Deserialize<List<FormaPago>>(jsonList, options);
             context.FormasPago.AddRange(formasPago);
         }
 
-        if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
+        if (context.ChangeTracker.HasChanges())
+            await context.SaveChangesAsync();
     }
 }

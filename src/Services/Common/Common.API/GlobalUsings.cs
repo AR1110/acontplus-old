@@ -1,8 +1,8 @@
 ﻿global using Common.API.Data;
 global using Common.API.Extensions;
 global using Common.API.Interfaces;
-global using Common.Core.Data;
-global using Common.Core.Format;
+global using Common.Data;
+global using Common.Utilities.Format;
 global using Common.Core.Models;
 global using Common.Core.Validation;
 global using Common.Infrastructure.Core.Entity;
