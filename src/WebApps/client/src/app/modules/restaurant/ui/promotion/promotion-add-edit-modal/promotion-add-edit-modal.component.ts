@@ -15,7 +15,7 @@ import { imgDefault, isValidField } from '@core/utils/utils';
 import { MenuSearchComponent } from '@restaurant/ui/components/menu-search/menu-search.component';
 import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
-import { RestaurantStoreService } from '@restaurant/store/restaurant-store.service';
+import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { TimeInputFormat24Directive } from '@shared/directives/time-input-format-directive.directive';

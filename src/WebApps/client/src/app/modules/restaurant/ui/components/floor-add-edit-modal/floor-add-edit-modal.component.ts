@@ -1,13 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { Floor } from '@restaurant/domain/models/floor.model';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SharedService } from '@core/services/shared.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
@@ -16,27 +13,31 @@ import { MatButton } from '@angular/material/button';
 import { ApiResponse } from '@core/models/api-response';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { RoomService } from '@restaurant/data/services/room.service';
-import { FloorUseCase } from '@restaurant/domain/use-cases/floor.use-case';
+import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
   selector: 'app-floor-add-edit-modal',
   imports: [
     ReactiveFormsModule,
-    MatIcon,
     TabulatorSemanticUiComponent,
-    MatButton,
     MatSlideToggle,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './floor-add-edit-modal.component.html',
   styles: ``,
 })
 export class FloorAddEditModalComponent {
-  data = {} as Floor;
+
   roomColumns: any[] = [
     { title: 'ID', field: 'id', visible: false },
     { title: 'Código', field: 'code', editor: 'input' },
@@ -107,8 +108,6 @@ export class FloorAddEditModalComponent {
       width: 100,
     },
   ];
-
-  establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   validation = [undefined, null, '', 0];
   floorForm = new FormGroup({
     id: new FormControl(0),
@@ -119,13 +118,14 @@ export class FloorAddEditModalComponent {
     enabled: new FormControl(true),
   });
   modalIcon = 'add';
-  modalTitle: string = 'Registrar Piso';
+  modalTitle = 'Registrar Piso';
   rooms: Room[] = [];
 
   private _floorUseCase = inject(FloorUseCase);
-  _modalRef = inject(NgbActiveModal);
+
+  _modalRef = inject(MatDialogRef<FloorAddEditModalComponent>);
+  data = inject<any>(MAT_DIALOG_DATA);
   _roomService = inject(RoomService);
-  _sharedService = inject(SharedService);
   _tS = inject(ToasterService);
 
   deleteRoom(row: any) {
@@ -141,16 +141,7 @@ export class FloorAddEditModalComponent {
     }
   }
 
-  getEstabAsign() {
-    this._sharedService.getEstabAsign().subscribe((response) => {
-      if (response) {
-        this.establecimientos = response;
-      }
-    });
-  }
-
   ngOnInit() {
-    this.getEstabAsign();
     this.floorForm.patchValue({
       establecimientoId: this.data.establecimientoId,
     });
@@ -158,7 +149,7 @@ export class FloorAddEditModalComponent {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Piso';
       this.floorForm.patchValue(this.data);
-      this.rooms = this.data.rooms || [];
+      this.rooms = this.data.children || [];
     }
   }
 
@@ -176,12 +167,9 @@ export class FloorAddEditModalComponent {
       });
     }
 
-    let dataToSave = {
+    const dataToSave = {
       ...this.floorForm.value,
-      codEstab:
-        this.establecimientos.find(
-          (x) => x.idEstablecimiento === this.data.establecimientoId,
-        )?.codEstab || null,
+      codEstab: this.data.codEstab,
       rooms: this.data.id > 0 ? [] : this.rooms, //solo añade si es nueva
     };
 
@@ -228,7 +216,7 @@ export class FloorAddEditModalComponent {
       this.rooms.length > 0
         ? `${Math.max(...this.rooms.map((room) => parseInt(room.code))) + 1}`
         : '1';
-    let newRoom: Room = {
+    const newRoom: Room = {
       id: maxId + 1, // Auto-increment the id based on the highest current id;
       code: code,
       description: `Sala ${code}`,

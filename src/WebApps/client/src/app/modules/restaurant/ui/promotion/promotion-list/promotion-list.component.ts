@@ -1,6 +1,6 @@
 import { Component, inject, model, signal } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { RestaurantStoreService } from '@restaurant/store/restaurant-store.service';
+import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { Pagination } from '@shared/models/pagination.model';

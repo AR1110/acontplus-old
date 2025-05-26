@@ -6,7 +6,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RoomService } from '@restaurant/data/services/room.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
 import { Room } from '@restaurant/domain/models/room.model';
@@ -39,8 +38,6 @@ export class TableAddEditModalComponent {
   readonly dialogRef = inject(MatDialogRef<TableAddEditModalComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
-  establecimientoId: number = 0;
-  data: any = {};
   rooms: Room[] = [];
   tableForm = new FormGroup({
     id: new FormControl(0),
@@ -55,33 +52,22 @@ export class TableAddEditModalComponent {
     enabled: new FormControl(true),
   });
 
-  modalTitle: string = 'Registrar Mesa';
+  modalTitle  = 'Registrar Mesa';
   btnText = 'Guardar';
-  #roomService = inject(RoomService);
   #tableService = inject(TableService);
   #tS = inject(ToasterService);
 
 
-  getRooms() {
-    this.#roomService
-      .getByEstab(this.establecimientoId)
-      .subscribe((response) => {
-        this.rooms = (response.payload as Room[]) || [];
-
-
-      });
-  }
-
   ngOnInit() {
-    const {establecimientoId,  ...rest} = this.params;
-    this.data = structuredClone(this.params)
-    if(this.data.id>0){
+    this.tableForm.patchValue({
+      roomId: this.params.roomId,
+    });
+    if(this.params.id>0){
+      const {roomName, ...rest} = this.params;
       this.modalTitle = 'Editar Mesa';
       this.btnText ='Actualizar'
-    this.tableForm.setValue(rest)
+      this.tableForm.setValue(rest)
     }
-    this.establecimientoId = establecimientoId;
-    this.getRooms();
   }
 
   onSave() {
@@ -96,8 +82,8 @@ export class TableAddEditModalComponent {
       ...this.tableForm.value,
     };
 
-    if (this.data.id > 0) {
-      this.#tableService.put(this.data.id, dataToSave).subscribe((response) => {
+    if (this.params.id > 0) {
+      this.#tableService.put(this.params.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {

@@ -1,6 +1,10 @@
-
+import { Injectable } from "@angular/core";
 import {RoomRepository} from "@restaurant/domain/repositories/room.repository";
 
+
+@Injectable({
+  providedIn: 'root',
+})
 export class RoomUseCase {
   constructor( private repo : RoomRepository ) {}
 

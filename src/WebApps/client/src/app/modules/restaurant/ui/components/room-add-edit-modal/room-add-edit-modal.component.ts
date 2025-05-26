@@ -11,23 +11,23 @@ import {
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { RoomService } from '@restaurant/data/services/room.service';
-import { FloorService } from '@restaurant/data/services/floor.service';
-import { Floor } from '@restaurant/domain/models/floor.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
 
 @Component({
   selector: 'app-room-add-edit-modal',
-    imports: [FormsModule, ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [FormsModule, ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent,
+
+
+    MatFormFieldModule,
+  MatInputModule],
   templateUrl: './room-add-edit-modal.component.html',
   styles: ``,
 })
 export class RoomAddEditModalComponent {
-  establecimientoId = 0;
-  data: any = {};
-  floors: Floor[] = [];
   roomForm = new FormGroup({
     id: new FormControl(0),
     floorId: new FormControl(0, [Validators.required]),
@@ -45,24 +45,17 @@ export class RoomAddEditModalComponent {
     enabled: new FormControl(true),
   });
   modalIcon = 'add';
-  modalTitle: string = 'Registrar Sala';
-  #floorService = inject(FloorService);
-  #modalRef = inject(NgbActiveModal);
+  modalTitle = 'Registrar Sala';
+  _modalRef = inject(MatDialogRef<RoomAddEditModalComponent>);
+  data = inject<any>(MAT_DIALOG_DATA);
   #roomService = inject(RoomService);
   #tS = inject(ToasterService);
 
-  getFloors() {
-    this.#floorService
-      .getByEstab(this.establecimientoId)
-      .subscribe((response) => {
-        console.log(response);
-        this.floors = (response.payload as Floor[]) || [];
-      });
-  }
 
   ngOnInit() {
-    this.establecimientoId = this.data.establecimientoId;
-    this.getFloors();
+    this.roomForm.patchValue({
+      floorId: this.data.floorId,
+    });
   }
 
   onSave() {
@@ -89,7 +82,7 @@ export class RoomAddEditModalComponent {
   }
 
   onModalClose() {
-    this.#modalRef.close();
+    this._modalRef.close();
   }
 
   setCode() {
@@ -107,7 +100,7 @@ export class RoomAddEditModalComponent {
       message: response.message,
     });
     if (response.code == '1') {
-      this.#modalRef.close(response);
+      this._modalRef.close(response);
     }
   }
 }

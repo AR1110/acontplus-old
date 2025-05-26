@@ -2,7 +2,7 @@
 import {inject} from "@angular/core"
 import {ResolveFn} from "@angular/router"
 import { RestaurantConfigService } from "@restaurant/data/services/restaurant-config.service"
-import { RestaurantStoreService } from "../store/restaurant-store.service"
+import { RestaurantStoreService } from "@restaurant/application/store/restaurant-store.service"
 
 
 export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
