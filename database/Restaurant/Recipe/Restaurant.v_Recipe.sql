@@ -1,6 +1,6 @@
 USE Acontplus
 GO
-CREATE VIEW Restaurant.v_Recipe WITH SCHEMABINDING AS (
+CREATE OR ALTER VIEW Restaurant.v_Recipe WITH SCHEMABINDING AS (
 	
 	SELECT  r.[Id]
 		,r.[ItemId]

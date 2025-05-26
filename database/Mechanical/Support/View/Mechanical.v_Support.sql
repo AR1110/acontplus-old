@@ -11,7 +11,9 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,st.CompanyId
           ,st.UserId
           ,st.[Enabled]
+          ,st.IsActive
           ,st.Deleted
+          ,st.IsDeleted
           ,st.[Sequence]
           ,st.Obs
           ,ve.LicensePlate

@@ -21,7 +21,9 @@ CREATE OR ALTER VIEW Mechanical.v_Vehicle WITH SCHEMABINDING AS (
 		  ,cs.TradeName
 		  ,cs.IDCard
 		  ,vc.[Enabled]
+          ,vc.IsActive
 		  ,vc.Deleted
+          ,vc.IsDeleted
           ,ct.[Description] as Country
 	FROM Mechanical.Vehicle              ve WITH (NOLOCK)
 	INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON ve.Id        = vc.VehicleId
