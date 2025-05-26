@@ -116,7 +116,7 @@ BEGIN
             BEGIN
                 SET @emailSenderConfigId = (SELECT TOP 1 Id 
                                                FROM Config.EmailSenderConfig 
-                                               WHERE IsGlobal = 1 AND Enabled = 1);
+                                               WHERE IsGlobal = 1 AND IsActive = 1);
             END
             ELSE
             BEGIN

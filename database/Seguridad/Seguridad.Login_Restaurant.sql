@@ -72,21 +72,21 @@ BEGIN
 	                                                                    INNER JOIN AcontplusAdmin.Config.Submenu             sm WITH (NOLOCK) ON lad.SubmenuId = sm.Id
 	                                                                    INNER JOIN AcontplusAdmin.Config.Menu                 m WITH (NOLOCK) ON sm.MenuId = m.Id
 	                                                                    INNER JOIN AcontplusAdmin.Config.Aplicacion         a WITH (NOLOCK) ON m.AplicacionId = a.Id 
-                                                                        INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[Enabled] = 1
+                                                                        INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[IsActive] = 1
 	                                                                    INNER JOIN AcontplusAdmin.Config.LicenciaDetalle   ld WITH (NOLOCK) ON a.Id = ld.AplicacionId  AND ld.LicenciaId = la.LicenciaId
-	                                                                    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[Enabled] = 1
-	                                                                    INNER JOIN AcontplusAdmin.Sales.Suscripcion         s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[Enabled] = 1
+	                                                                    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
+	                                                                    INNER JOIN AcontplusAdmin.Sales.Suscripcion         s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
 	                                                                    INNER JOIN AcontplusAdmin.Config.Company           cc WITH (NOLOCK) ON s.CompanyId = cc.Id
 	                                                                    INNER JOIN Acontplus.dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
 	                                                                    INNER JOIN Acontplus.App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
                                                                         WHERE urr.idUsuarioRol = r.idUsuarioRol 
-                                                                        AND a.Code='AR' AND a.[Enabled] = 1
+                                                                        AND a.Code='AR' AND a.[IsActive] = 1
                                                                         AND m.Code IN('POS')
 	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) 
                                                                                                                 INNER JOIN AcontplusAdmin.Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
                                                                                                                 INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
                                                                                                                 WHERE enn.idEntidad = r.idEntidad
-                                                                                                                AND s.[Enabled] = 1
+                                                                                                                AND s.[IsActive] = 1
 							                                                                    ORDER BY s.Id DESC
 							                                                                    )
                                                                             GROUP BY m.Id 
@@ -139,22 +139,22 @@ BEGIN
 	                                                                    INNER JOIN AcontplusAdmin.Config.Submenu sm WITH (NOLOCK) ON lad.SubmenuId = sm.Id
 	                                                                    INNER JOIN AcontplusAdmin.Config.Menu m WITH (NOLOCK) ON sm.MenuId = m.Id
 	                                                                    INNER JOIN AcontplusAdmin.Config.Aplicacion a WITH (NOLOCK) ON m.AplicacionId = a.Id
-                                                                        INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[Enabled] = 1
+                                                                        INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[IsActive] = 1
 	                                                                    INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld WITH (NOLOCK) ON a.Id = ld.AplicacionId  AND ld.LicenciaId = la.LicenciaId
-	                                                                    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[Enabled] = 1
-	                                                                    INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[Enabled] = 1
+	                                                                    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
+	                                                                    INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
 	                                                                    INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON s.CompanyId = cc.Id
 	                                                                    INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON cc.Uuid = en.Uuid
 	                                                                    INNER JOIN Acontplus.App.UsuarioRol urr WITH (NOLOCK) ON la.RoleId = urr.RoleId
                                                                         AND urr.idEntidad = en.idEntidad
                                                                         WHERE urr.idUsuarioRol = r.idUsuarioRol
-                                                                        AND a.Code='AR' AND a.[Enabled] = 1
+                                                                        AND a.Code='AR' AND a.[IsActive] = 1
                                                                         AND m.Code  IN ('POS')
 	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) 
                                                                                                             INNER JOIN AcontplusAdmin.Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
                                                                                                             INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
                                                                                                             WHERE enn.idEntidad = r.idEntidad
-                                                                                                                AND s.[Enabled] = 1
+                                                                                                                AND s.[IsActive] = 1
 							                                                                    ORDER BY s.Id DESC
 							                                                                    )
                                                                         ORDER BY m.[Order]      
@@ -198,8 +198,12 @@ BEGIN
 				                INNER JOIN dbo.Usuario                       u WITH (NOLOCK) ON u.idUsuario = r.idUsuario
                                 INNER JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
 				                INNER JOIN AcontplusAdmin.Seguridad.[Role]  ro WITH (NOLOCK) ON ro.Id       = r.RoleId
+                                INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON e.Uuid = cc.Uuid
+                                INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON cc.Id = s.CompanyId
 				                WHERE r.estado    = 1
                                   AND r.idUsuario = @userId
+                                   AND GETDATE() BETWEEN s.StartDate AND s.EndDate
+                                   AND s.[IsActive] = 1
                                   AND @count > 0
                 FOR JSON PATH) as payload
 		END
