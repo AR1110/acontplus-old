@@ -39,7 +39,6 @@ import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to
 
 import Swal from 'sweetalert2';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { DocConfigService } from '@modules/config/services/doc-config.service';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -57,6 +56,10 @@ import { MatIcon } from '@angular/material/icon';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {CreateDocConfigUseCase} from "@modules/config/application/use-cases/doc-config/create-doc-config.use-case";
+import {
+  GetDocConfigFormDataUseCase
+} from "@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case";
 
 @Component({
   selector: 'app-wizard-config',
@@ -136,10 +139,10 @@ export class WizardConfigComponent {
   isDisabledAgenteRetencion = false;
   emails: string[] = [];
   telephones: string[] = [];
-  establecimientos: Array<GroupedEstab> = [];
-  currentEstab: string = '';
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  docs: Array<DocConfig> = [];
+  establecimientos: GroupedEstab[] = [];
+  currentEstab = '';
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
+  docs: DocConfig[] = [];
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
     fechaCaducidad: new FormControl('', [Validators.required]),
@@ -160,8 +163,8 @@ export class WizardConfigComponent {
   });
   demoSteps: DemoStep[] = [];
   user = {} as UserData;
-  userUpdated: boolean = false;
-  estabRegistered: boolean = false;
+  userUpdated = false;
+  estabRegistered = false;
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
 
   private _tokenUseCase = inject(TokenUseCase);
@@ -196,7 +199,9 @@ export class WizardConfigComponent {
     bodegas: this.#fb.array([]),
   });
   #firmaElectronicaService = inject(FirmaElectronicaService);
-  #docConfigSvc = inject(DocConfigService);
+  #createDocConfig = inject(CreateDocConfigUseCase);
+  private $formDataDocConfig = inject(GetDocConfigFormDataUseCase)
+
   #companyDemoStepService = inject(CompanyDemoStepService);
 
   get bodegas(): FormArray {
@@ -308,7 +313,7 @@ export class WizardConfigComponent {
   }
 
   fetchDocConfig() {
-    this.#docConfigSvc.getDataForm().subscribe((response) => {
+    this.$formDataDocConfig.execute().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       this.currentEstab = this.establecimientos[0].nombreComercial;
       const combinedData = this.establecimientos[0].puntosEmision.map(
@@ -359,14 +364,14 @@ export class WizardConfigComponent {
         message: 'Revise que los datos de los puntos de emisión sean correctos',
       });
     }
-    let telephone =
+    const telephone =
       this.telephones.length > 0
         ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH)
         : null;
 
     this.estabForm.get('telefono')?.setValue(telephone);
 
-    let correo =
+    const correo =
       this.emails.length > 0
         ? this.emails.join(SEPARATOR_KEY_CODE.SLASH)
         : null;
@@ -534,7 +539,7 @@ export class WizardConfigComponent {
       docs: JSON.stringify(docs),
       demoStepId: this.demoSteps.find((step) => step.code === 'VI')?.id,
     };
-    this.#docConfigSvc.post(dataToSave).subscribe((response) => {
+    this.#createDocConfig.execute(dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code === '0' && this.stepper) {
           this.stepper.previous();

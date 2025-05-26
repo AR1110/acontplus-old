@@ -1,7 +1,6 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
+<app-mat-dynamic-card>
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
@@ -39,63 +38,53 @@
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Nro.</th>
-            <th>Documento</th>
-            <th></th>
-            <th>Secuencia</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of docs(); track $index) {
-            <tr style="vertical-align: middle">
-              <td>{{ $index + 1 }}</td>
-              <td>{{ item.descripcion }}</td>
-              <td>
-                <mat-checkbox
-                  type="checkbox"
-                  [name]="item.descripcion + $index"
-                  [id]="item.descripcion + $index"
-                  [(ngModel)]="item.estado"
-                >
-                </mat-checkbox>
-              </td>
-              <td>
-                <mat-form-field>
-                  <input
-                    matInput
-                    type="number"
-                    [(ngModel)]="item.ultimaSecuencia"
-                    onclick="this.select()"
-                    min="1"
-                  />
-                </mat-form-field>
-              </td>
-              <td class="d-flex gap-2">
-                <app-theme-button
-                  variant="success"
-                  icon="save"
-                  matStyle="icon"
-                  [disabled]="!item.ultimaSecuencia"
-                  (handleClick)="saveConfig(item)"
-                />
-                @if (item.infoAdicional) {
-                  <app-theme-button
-                    icon="sell"
-                    matStyle="icon"
-                    [disabled]="!item.ultimaSecuencia"
-                    (handleClick)="openModalInfoAdicional(item)"
-                  />
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </mat-card-content>
-</mat-card>
+
+  <app-mat-dynamic-table
+    [tableData]="docs()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+  />
+
+  <ng-template #templateOp let-item="item">
+    <app-theme-button
+      variant="success"
+      icon="save"
+      matStyle="icon"
+      [disabled]="!item.ultimaSecuencia"
+      (handleClick)="saveConfig(item)"
+    />
+    @if (item.hasInfoAdicional) {
+      <app-theme-button
+        icon="sell"
+        matStyle="icon"
+        [disabled]="!item.ultimaSecuencia"
+        (handleClick)="openModalInfoAdicional(item)"
+      />
+    }
+  </ng-template>
+
+  <ng-template #templateSecuencia let-item>
+
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="item.ultimaSecuencia"
+        onclick="this.select()"
+        min="1"
+        [disabled]="!item.estado"
+      />
+    </mat-form-field>
+
+
+  </ng-template>
+  <ng-template #templateSelect let-item>
+    <mat-checkbox
+      type="checkbox"
+      [name]="item.nomDoc + item.index"
+      [id]="item.nomDoc + item.index"
+      [(ngModel)]="item.estado"
+    />
+  </ng-template>
+</app-mat-dynamic-card>
