@@ -60,34 +60,31 @@ BEGIN
 
             SET @sql = 'SELECT ad.idAprob_Document
 							  ,ad.idAprob_Document                           as uniqueId
-							  ,ad.docOrigen  
-							  ,ad.codDoc
+							  --,ad.docOrigen  
+							  --,ad.codDoc
 							  ,es.codEstab
-                              ,CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
-												 WHEN ''NE'' THEN ''Nota Entrega'' ELSE '''' 
-							   END                                           as docOrigenDesc
-							  ,CASE ad.codDoc WHEN ''01'' THEN ''Factura''
-											  WHEN ''NE'' THEN ''Nota Entrega''
-														  ELSE '''' 
-							   END                                           as docDestinoDesc
+                              ,og.descripcion                                as docOrigenDesc
+							  ,td.descripcion                                as docDestinoDesc
 							  ,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm'') as fechaEmision
 							  ,ad.SerieComprobante                           as serie
 							  ,cu.IDCard                                     as identificacionComprador
 							  ,cu.BusinessName                               as razonSocialComprador
 							  ,ad.importeTotal                               as total
-							  ,ad.codEstado                                  as codEstado
+							  ,ep.codigo                                     as codEstado
 							  ,ep.descripcion                                as estado
-							  ,CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
-												 WHEN ''APR'' THEN ''table-success''
-												 ELSE ''''
+							  ,CASE ep.codigo WHEN ''A''   THEN ''table-danger'' 
+											  WHEN ''APR'' THEN ''table-success''
+											               ELSE ''''
 							   END                                           as colorFila 
                               ,count(*) over()                               as totalRecords
                               ,us.nombreUsuario                              as userName
 						FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
-						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo            = ad.codEstado
+						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago      = ad.idEstadoDocumento
 						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
 						INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = ad.idUsuario 
                         INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+                        INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = ad.idTipoDocumento
+                        INNER JOIN dbo.TipoDocumento   og WITH (NOLOCK) ON og.idTipoDocumento   = ad.idTipoDocOrigen
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
                         INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
 						WHERE es.idEntidad = @idEntidad  '
@@ -139,12 +136,12 @@ BEGIN
 
 			IF @codEstado IS NOT NULL
 				BEGIN
-				    SET @sql = @sql + 'AND ad.codEstado = @codEstado '
+				    SET @sql = @sql + 'AND ep.codigo = @codEstado '
 				END
 
             ELSE 
                 BEGIN
-                    SET @sql = @sql + 'AND ad.codEstado NOT IN (''A'') '
+                    SET @sql = @sql + 'AND ep.codigo NOT IN (''A'') '
                 END 
 
 			IF @byUsuario > 0
@@ -272,8 +269,6 @@ BEGIN
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT ad.serieComprobante
-	              ,ad.codDoc
-	              ,ad.docOrigen
 	              ,ad.fechaEmision	 
 	              ,ad.observacion
 	              ,ad.totalSinImpuestos
@@ -282,10 +277,14 @@ BEGIN
 	              ,ad.importeTotal
                   ,es.nombreComercial
                   ,pe.ptoEmi
+                  ,ISNULL(td.codigoSri,'NE')     as codDoc
+                  ,og.codigo                     as docOrigen
                   ,cu.IDCard as identificacionComprador
              FROM Ventas.Aprob_Document     ad WITH (NOLOCK)
              INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
-             INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision 
+             INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+             INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = ad.idTipoDocumento
+             INNER JOIN dbo.TipoDocumento   og WITH (NOLOCK) ON og.idTipoDocumento   = ad.idTipoDocOrigen
              INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
              INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
              WHERE ad.idAprob_Document = @id

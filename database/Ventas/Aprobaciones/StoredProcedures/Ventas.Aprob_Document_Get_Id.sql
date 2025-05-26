@@ -30,9 +30,7 @@ BEGIN
 	      ,ad.idUsuario
           ,ISNULL(cl.idTiempoCredito, 0) as idTiempoCredito
 	      ,ad.idPuntoEmision
-	      ,ad.serieComprobante 
-	      ,ad.codDoc
-	      ,ad.docOrigen
+	      ,ad.serieComprobante
 	      ,ad.fechaEmision	 
 	      ,ad.observacion
 	      ,ad.totalSinImpuestos
@@ -41,10 +39,14 @@ BEGIN
 	      ,ad.importeTotal
           ,cu.IDCard                     as identificacionComprador
           ,pe.ptoEmi
+          ,ISNULL(td.codigoSri,'NE')     as codDoc
+          ,og.codigo                     as docOrigen
           ,es.estab
 	FROM Ventas.Aprob_Document     ad WITH (NOLOCK)
 	INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
     INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+    INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = ad.idTipoDocumento
+    INNER JOIN dbo.TipoDocumento   og WITH (NOLOCK) ON og.idTipoDocumento   = ad.idTipoDocOrigen
     INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
     INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 	WHERE ad.idAprob_Document = @id

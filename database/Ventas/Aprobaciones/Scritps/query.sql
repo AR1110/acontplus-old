@@ -126,4 +126,45 @@ go
     
     --EXEC sp_rename 'Ventas.Aprob_Document.UdpatedAt', 'UpdatedAt', 'COLUMN';
 
+
+    ---> 5/26/2025
+
+    --ALTER TABLE Ventas.Aprob_Document ADD idTipoDocumento BIGINT CONSTRAINT fk_idTipDocumento_Aprobacion FOREIGN KEY REFERENCES dbo.TipoDocumento(idTipoDocumento)
+
+    --UPDATE ad set 
+    --       ad.idTipoDocumento = case ad.codDoc when '01' THEN (select top 1 idTipoDocumento from dbo.TipoDocumento td where td.codigoSri = '01') 
+    --                                           when 'ne' THEN (select top 1 idTipoDocumento from dbo.TipoDocumento td where codigo = 'NE')
+    --                            end 
+    --from Ventas.Aprob_Document ad
+
+    --ALTER TABLE Ventas.Aprob_Document ALTER COLUMN idTipoDocumento BIGINT NOT NULL
+
+    --ALTER TABLE Ventas.Aprob_Document ADD idTipoDocOrigen BIGINT CONSTRAINT fk_idTipDocOrigen_Aprobacion FOREIGN KEY REFERENCES dbo.TipoDocumento(idTipoDocumento)
+
+    --UPDATE Ventas.Aprob_Document set docOrigen = 'NE' WHERE docOrigen = '01'
+
+    --UPDATE ad set 
+    --       ad.idTipoDocOrigen = case ad.docOrigen when 'PR' THEN (select top 1 idTipoDocumento from dbo.TipoDocumento td where td.codigo = 'PR') 
+    --                                           when 'NE' THEN (select top 1 idTipoDocumento from dbo.TipoDocumento td where codigo = 'NE')
+    --                            end 
+    --from Ventas.Aprob_Document ad
+
+    --ALTER TABLE Ventas.Aprob_Document ALTER COLUMN idTipoDocOrigen BIGINT NOT NULL
+
+    --ALTER TABLE Ventas.Aprob_Document ADD idEstadoDocumento INT CONSTRAINT fk_idEstadoDocumento_Aprobacion_05262025 FOREIGN KEY REFERENCES dbo.EstadoPago(idEstadoPago)
+
+    --UPDATE ad set 
+    --       ad.idEstadoDocumento = (select top 1 ep.idEstadoPago from dbo.EstadoPago ep where ep.codigo = ad.codEstado) 
+    --from Ventas.Aprob_Document ad
+
+    --ALTER TABLE Ventas.Aprob_Document ALTER COLUMN idEstadoDocumento INT NOT NULL
+
+    --ALTER TABLE Ventas.Aprob_Document drop column codDoc
+    
+    --ALTER TABLE Ventas.Aprob_Document drop column docOrigen
+    
+     --ALTER TABLE Ventas.Aprob_Document drop constraint DF__Aprob_Doc__codEs__20FCAC79
+     
+     --ALTER TABLE Ventas.Aprob_Document drop column codEstado
+
     SELECT top 10 * FROM Ventas.Aprob_Document
