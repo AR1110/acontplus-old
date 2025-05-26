@@ -188,6 +188,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       idImpuesto: [0],
       idTarifaImpuesto: [0],
+      codigo: [''],
       porcentaje: [''],
       tarifa: [0],
       baseImponible: [0, Validators.required],
@@ -233,7 +234,6 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     if (retencion != typeof 'object') {
       retencionGroup.patchValue(retencion);
     }
-    console.log(retencionGroup.value);
     retencionesArray.push(retencionGroup);
   }
   createPayment(indexDoc: number, payment: RetencionAtsDocPayment): void {
@@ -259,7 +259,6 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
           this.createTax(indexDoc, tax);
           totalSinImpuestos += tax.baseImponible;
         });
-        console.log(totalSinImpuestos);
         this.docSustentoArray()
           .controls[indexDoc].get('totalSinImpuestos')
           ?.setValue(totalSinImpuestos);
