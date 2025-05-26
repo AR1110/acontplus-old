@@ -42,51 +42,51 @@ public class TechnicalSupportContext : BaseContext
                      ))
             property.SetIsUnicode(false);
         builder.Entity<Brand>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Brand>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<Brand>().Property(x => x.IsActive).HasDefaultValue(true);
         builder.Entity<Brand>().HasMany(x => x.Series).WithOne(x => x.Brand).HasForeignKey(x => x.BrandId);
 
         builder.Entity<Category>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Category>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<Category>().Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.Entity<Device>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Device>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<Device>().Property(x => x.IsActive).HasDefaultValue(true);
         builder.Entity<Device>().HasMany(x => x.Customers).WithOne(x => x.Device).HasForeignKey(x => x.DeviceId);
         builder.Entity<Device>().HasOne(x => x.Specs).WithOne(x => x.Device).HasForeignKey<DeviceSpecs>(x => x.DeviceId)
             .IsRequired();
 
         builder.Entity<DeviceCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<DeviceCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<DeviceCustomer>().Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.Entity<DeviceSpecs>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<DeviceSpecs>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<DeviceSpecs>().Property(x => x.IsActive).HasDefaultValue(true);
         builder.Entity<DeviceSpecs>().HasIndex(x => x.DeviceId).HasDatabaseName("UI_TS_DS_DeviceId").IsUnique();
 
         builder.Entity<Modelo>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Modelo>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<Modelo>().Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Order>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<Order>().Property(x => x.IsActive).HasDefaultValue(true);
         builder.Entity<Order>().HasMany(x => x.OrderDetails).WithOne(x => x.Order).HasForeignKey(x => x.OrderId);
 
         builder.Entity<OrderDocument>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<OrderDocument>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<OrderDocument>().Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.Entity<OrderDetail>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<OrderDetail>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<OrderDetail>().Property(x => x.IsActive).HasDefaultValue(true);
         builder.Entity<OrderDetail>().HasMany(x => x.OrderMaintenances).WithOne(x => x.OrderDetail)
             .HasForeignKey(x => x.OrderDetailId);
 
         builder.Entity<OrderMaintenance>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<OrderMaintenance>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<OrderMaintenance>().Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<OrderStatus>().Property(x => x.IsActive).HasDefaultValue(true);
         builder.Entity<OrderStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_OrderStatus").IsUnique();
 
         builder.Entity<Serie>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<Serie>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<Serie>().Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.Entity<WarrantyHistory>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-        builder.Entity<WarrantyHistory>().Property(x => x.Enabled).HasDefaultValue(true);
+        builder.Entity<WarrantyHistory>().Property(x => x.IsActive).HasDefaultValue(true);
     }
 }

@@ -15,7 +15,7 @@ public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentSer
 
         var document = await context.PrinterDocuments.FindAsync(id);
         document!.UserId = printerDocument.UserId;
-        document.Enabled = printerDocument.Enabled;
+        document.IsActive = printerDocument.IsActive;
         document.Copies = printerDocument.Copies;
         context.Update(document);
         await context.SaveChangesAsync();

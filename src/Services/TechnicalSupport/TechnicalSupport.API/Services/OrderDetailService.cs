@@ -31,7 +31,7 @@ public class OrderDetailService : IOrderDetailService
             };
 
         var detailFound = await _context.OrderDetails.FindAsync(id);
-        detailFound.Enabled = false;
+        detailFound.IsActive = false;
         detailFound.Deleted = true;
         _context.Update(detailFound);
         await _context.SaveChangesAsync();

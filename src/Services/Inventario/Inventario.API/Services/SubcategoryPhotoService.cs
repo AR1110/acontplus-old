@@ -39,7 +39,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
         ;
         productFound.S3ObjectKey = data.S3ObjectKey;
         productFound.S3ObjectUrl = data.S3ObjectUrl;
-        productFound.Enabled = data.Enabled;
+        productFound.IsActive = data.IsActive;
         productFound.UserId = data.UserId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();
@@ -52,7 +52,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
         if (productFound == null) return new { code = "0", message = "No existe el registro!" };
 
         ;
-        productFound.Enabled = false;
+        productFound.IsActive = false;
         productFound.Deleted = true;
         productFound.UserId = userId;
         _context.Update(productFound);

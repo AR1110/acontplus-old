@@ -25,7 +25,7 @@ public class CategoryService : ICategoryService
             // Handle case where category not found
             return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
 
-        category.Enabled = false;
+        category.IsActive = false;
         category.Deleted = true;
         category.UserId = userId;
         _context.Update(category);
@@ -53,7 +53,7 @@ public class CategoryService : ICategoryService
 
         categoryFound.CompanyId = category.CompanyId;
         categoryFound.Code = category.Code;
-        categoryFound.Enabled = category.Enabled;
+        categoryFound.IsActive = category.IsActive;
         categoryFound.Name = category.Name;
         categoryFound.UserId = category.UserId;
         _context.Update(categoryFound);

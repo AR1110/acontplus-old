@@ -65,7 +65,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         roomFound.Code = room.Code;
         roomFound.Capacity = room.Capacity;
         roomFound.Description = room.Description;
-        roomFound.Enabled = room.Enabled;
+        roomFound.IsActive = room.IsActive;
         roomFound.UserId = room.UserId;
         context.Update(roomFound);
         await context.SaveChangesAsync();

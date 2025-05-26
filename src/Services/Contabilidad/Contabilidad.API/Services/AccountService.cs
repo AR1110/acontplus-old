@@ -29,7 +29,7 @@ public class AccountService(ContabilidadContext context, IAdoRepository reposito
         accountFound.Name = account.Name;
         accountFound.Hierarchy = account.Hierarchy;
         accountFound.Level = account.Level;
-        accountFound.Enabled = account.Enabled;
+        accountFound.IsActive = account.IsActive;
         accountFound.UserId = account.UserId;
         context.Update(accountFound);
         await context.SaveChangesAsync();
@@ -41,7 +41,7 @@ public class AccountService(ContabilidadContext context, IAdoRepository reposito
         var account = await context.Accounts.FirstOrDefaultAsync(x => x.Id == id);
         if (account == null) return new ApiResponse { Code = "0", Message = "Cuenta no encontrada" };
 
-        account.Enabled = false;
+        account.IsActive = false;
         account.Deleted = true;
         account.UserId = userId;
         context.Update(account);

@@ -78,7 +78,7 @@ public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiC
         if (motivoDiscrepancia == null) return NotFound();
 
         //_context.MotivoDiscrepancias.Remove(motivoDiscrepancia);
-        motivoDiscrepancia.Enabled = false;
+        motivoDiscrepancia.IsActive = false;
         motivoDiscrepancia.Deleted = true;
         context.Entry(motivoDiscrepancia).State = EntityState.Modified;
         try

@@ -41,7 +41,7 @@ public class OrderMaintenanceService : IOrderMaintenanceService
             // Handle case where order not found
             return new ApiResponse { Code = "0", Message = "No se encontró orden para eliminar" };
 
-        orderMaintenance.Enabled = false;
+        orderMaintenance.IsActive = false;
         orderMaintenance.Deleted = true;
 
         _context.Update(orderMaintenance);

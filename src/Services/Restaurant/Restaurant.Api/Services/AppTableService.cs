@@ -51,7 +51,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         tableFound.RoomId = appTable.RoomId;
         tableFound.Description = appTable.Description;
         tableFound.NumberTable = appTable.NumberTable;
-        tableFound.Enabled = appTable.Enabled;
+        tableFound.IsActive = appTable.IsActive;
         tableFound.Capacity = appTable.Capacity;
         tableFound.Assigned = appTable.Assigned;
         context.Update(tableFound);
@@ -81,7 +81,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         //{
         //    return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
         //}
-        appTable.Enabled = false;
+        appTable.IsActive = false;
         context.Update(appTable);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Inactivado existosamente" };

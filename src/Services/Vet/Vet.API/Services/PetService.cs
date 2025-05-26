@@ -16,7 +16,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
 
         pet.UserId = userId;
         pet.Deleted = true;
-        pet.Enabled = false;
+        pet.IsActive = false;
         context.Update(pet);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -48,7 +48,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         petFound.BreedId = pet.BreedId;
         petFound.GenderId = pet.GenderId;
         petFound.Color = pet.Color;
-        petFound.Enabled = pet.Enabled;
+        petFound.IsActive = pet.IsActive;
         petFound.Birthdate = pet.Birthdate;
         context.Pets.Update(petFound);
         await context.SaveChangesAsync();

@@ -15,7 +15,7 @@ public class PetTypeService(VetContext context) : IPetTypeService
         if (petType == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
         petType.Deleted = true;
-        petType.Enabled = false;
+        petType.IsActive = false;
         petType.UserId = userId;
         context.Update(petType);
         await context.SaveChangesAsync();

@@ -25,7 +25,7 @@ public class SerieService : ISerieService
             // Handle case where serie not found
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
 
-        serie.Enabled = false;
+        serie.IsActive = false;
         serie.Deleted = true;
         serie.UserId = userId;
         _context.Update(serie);
@@ -50,7 +50,7 @@ public class SerieService : ISerieService
 
         serieFound.BrandId = serie.BrandId;
         serieFound.Code = serie.Code;
-        serieFound.Enabled = serie.Enabled;
+        serieFound.IsActive = serie.IsActive;
         serieFound.Name = serie.Name;
         serieFound.UserId = serie.UserId;
         _context.Update(serieFound);

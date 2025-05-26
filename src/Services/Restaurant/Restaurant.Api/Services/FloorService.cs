@@ -72,7 +72,7 @@ public class FloorService(RestaurantContext context) : IFloorService
         floorFound.Capacity = floor.Capacity;
         floorFound.Code = floor.Code;
         floorFound.Description = floor.Description;
-        floorFound.Enabled = floor.Enabled;
+        floorFound.IsActive = floor.IsActive;
         floorFound.UserId = floor.UserId;
         context.Update(floorFound);
         await context.SaveChangesAsync();

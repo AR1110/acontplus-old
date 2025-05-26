@@ -44,7 +44,7 @@ public class ProductPhotoService : IProductPhotoService
         ;
         productFound.S3ObjectKey = productPhoto.S3ObjectKey;
         productFound.S3ObjectUrl = productPhoto.S3ObjectUrl;
-        productFound.Enabled = productPhoto.Enabled;
+        productFound.IsActive = productPhoto.IsActive;
         productFound.UserId = productPhoto.UserId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();

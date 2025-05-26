@@ -34,7 +34,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
         //}
         //else
         //{
-        //    productionArea.Enabled = false;
+        //    productionArea.IsActive = false;
         //    productionArea.Deleted = true;
         //    productionArea.UserId = userId;
         //    context.Update(productionArea);
@@ -68,7 +68,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
 
         productionAreaFound.Code = productionArea.Code;
         productionAreaFound.Description = productionArea.Description;
-        productionAreaFound.Enabled = productionArea.Enabled;
+        productionAreaFound.IsActive = productionArea.IsActive;
         productionAreaFound.UserId = productionArea.UserId;
         context.Update(productionAreaFound);
         await context.SaveChangesAsync();

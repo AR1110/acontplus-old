@@ -16,7 +16,7 @@ public class BreedService(VetContext context) : IBreedService
 
         breed.UserId = userId;
         breed.Deleted = true;
-        breed.Enabled = false;
+        breed.IsActive = false;
         context.Update(breed);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -46,7 +46,7 @@ public class BreedService(VetContext context) : IBreedService
         breedFound.Code = breed.Code;
         breedFound.Name = breed.Name;
         breedFound.Description = breed.Description;
-        breedFound.Enabled = breed.Enabled;
+        breedFound.IsActive = breed.IsActive;
         breedFound.UserId = breed.UserId;
         context.Update(breedFound);
         await context.SaveChangesAsync();

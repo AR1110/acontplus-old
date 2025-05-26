@@ -23,7 +23,7 @@ public class OrderStatusController : BaseApiController
         var status = await _context.OrderStatuses.FindAsync(id);
         if (status == null) return NotFound("No se encontro dicho estado");
 
-        status.Enabled = false;
+        status.IsActive = false;
         status.Deleted = true;
         _context.Entry(status).State = EntityState.Modified;
         await _context.SaveChangesAsync();
