@@ -46,7 +46,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var productionAreas = await context.ProductionAreas.Where(x => x.IsDeleted == null).ToListAsync();
+        var productionAreas = await context.ProductionAreas.Where(x => !x.IsDeleted).ToListAsync();
         return productionAreas.Count > 0
             ? new ApiResponse { Code = "1", Payload = productionAreas }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -55,7 +55,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
     public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
     {
         var productionAreas = await context.ProductionAreas
-            .Where(x => x.IsDeleted == null && x.EstablecimientoId == establecimientoId).ToListAsync();
+            .Where(x => !x.IsDeleted && x.EstablecimientoId == establecimientoId).ToListAsync();
         return productionAreas.Count > 0
             ? new ApiResponse { Code = "1", Payload = productionAreas }
             : new ApiResponse { Code = "0", Message = "Not found!" };

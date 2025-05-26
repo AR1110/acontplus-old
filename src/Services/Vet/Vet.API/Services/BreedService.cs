@@ -24,7 +24,7 @@ public class BreedService(VetContext context) : IBreedService
 
     public async Task<ApiResponse> GetAsync()
     {
-        var response = await context.Breeds.Include(t => t.PetType).Where(x => x.IsDeleted == null).ToListAsync();
+        var response = await context.Breeds.Include(t => t.PetType).Where(x => !x.IsDeleted).ToListAsync();
         if (response.Count > 0) return new ApiResponse { Code = "1", Payload = response };
 
         return new ApiResponse { Code = "0", Message = "No data!" };
