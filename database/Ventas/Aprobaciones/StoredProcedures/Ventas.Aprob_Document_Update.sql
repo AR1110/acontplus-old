@@ -196,7 +196,16 @@ BEGIN
 				SELECT '0'code,'Erro en la informacion del detalle' as 'message'
 				RETURN
 			END 
-   
+
+        IF EXISTS (SELECT 1 FROM Ventas.Aprob_Document ad WITH (NOLOCK) 
+                             INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ad.idEstadoDocumento
+                   WHERE ad.idAprob_Document = @id 
+                     AND ep.codigo = 'APR')
+            BEGIN
+                SELECT '0'code,'Este documento esta Aprobado no puede ser editado.' as 'message'
+				RETURN
+            END
+
 		IF @claveAcceso IS NULL
 			BEGIN
 				SELECT '0'code,'Error critico la clave de Acceso no se genero correctamente' as 'message'
@@ -236,7 +245,6 @@ BEGIN
 			ORDER BY orderIndex ASC
 
             --> Impuestos
-
             UPDATE Ventas.AprobVentasImpuesto SET [Enabled] = 0 WHERE AprobDocumentId = @id 
 
             INSERT INTO Ventas.AprobVentasImpuesto

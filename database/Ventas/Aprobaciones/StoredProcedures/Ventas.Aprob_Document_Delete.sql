@@ -31,16 +31,29 @@ BEGIN
 	DECLARE @docOrigen VARCHAR(5) 
 
 	BEGIN TRY 
+        --> Variables
 		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @docOrigen = docOrigen FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
+		SELECT @docOrigen = td.codigo 
+        FROM Ventas.Aprob_Document   ad WITH (NOLOCK)
+        INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = ad.idTipoDocOrigen 
+        WHERE idAprob_Document = @id
 
-		SELECT @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WHERE codigo = 'PE'
+		SELECT @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WHERE codigo = 'A'
+
+        --> Validation
+        IF EXISTS (SELECT 1 FROM Ventas.Aprob_Document ad WITH (NOLOCK) 
+                             INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ad.idEstadoDocumento
+                   WHERE ad.idAprob_Document = @id 
+                     AND ep.codigo = 'APR')
+            BEGIN
+                SELECT '0'code,'Este documento esta Aprobado no puede ser anulado.' as 'message'
+				RETURN
+            END 
 
 		BEGIN TRAN 
 			
-			UPDATE Ventas.Aprob_Document SET codEstado = 'A' ,UpdatedByUserId = @idUsuario ,UpdatedAt = GETDATE()  WHERE idAprob_Document = @id
-			
+			UPDATE Ventas.Aprob_Document SET idEstadoDocumento = @idEstadoDocumento,UpdatedByUserId = @idUsuario ,UpdatedAt = GETDATE()  WHERE idAprob_Document = @id
 			
 			IF @docOrigen = 'NE'
 				BEGIN

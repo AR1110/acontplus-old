@@ -29,7 +29,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Globales 
-    DECLARE @idAprob_Document INT ,@idTipoDocumento INT ,@idEntidad INT ,@idUsuario INT
+    DECLARE @idAprob_Document INT ,@idEntidad INT ,@idUsuario INT ,@idTipoDocumento INT
 
     -- Data Json
     DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@historial VARCHAR(MAX) ,@infoAdicionalArticulo VARCHAR(MAX) ,@infoAdicional VARCHAR(MAX)
@@ -43,16 +43,15 @@ BEGIN
 	DECLARE @tbComprobante  AS TABLE (
 		 idCliente INT NOT NULL
 		,idPuntoEmision INT NOT NULL
+        ,idUsuario INT NOT NULL
+        ,idTipoDocumento INT NOT NULL
+        ,idTipoDocOrigen INT NOT NULL
 		,fechaEmision DATETIME2 NOT NULL
-		,codDoc VARCHAR(5) NOT NULL
 		,totalSinImpuestos NUMERIC(18,5) NOT NULL
 		,totalDescuento NUMERIC(18,5) NOT NULL
 		,propina NUMERIC(18,5) NOT NULL
 		,importeTotal NUMERIC(18,5) NOT NULL
-		,docOrigen VARCHAR(15) NOT NULL
-		,docDestino VARCHAR(15) NOT NULL
 		,observacion VARCHAR(300) NULL
-        ,idUsuario INT NOT NULL
 	)
 
 	DECLARE @tbDetalle AS TABLE (
@@ -120,22 +119,22 @@ BEGIN
         )
 
 		INSERT INTO @tbComprobante
-		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion,idUsuario)
-		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion,idUsuario
+		      (idCliente,idPuntoEmision,idUsuario,idTipoDocumento,idTipoDocOrigen,fechaEmision,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion)
+		SELECT idCliente,idPuntoEmision,idUsuario,idTipoDocumento,idTipoDocOrigen,fechaEmision,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion
 		FROM OPENJSON(@comprobante) WITH 
         (
 		     idCliente         INT  
 		    ,idPuntoEmision    INT 
+            ,idUsuario         INT 
+            ,idTipoDocumento   INT
+            ,idTipoDocOrigen   INT
 		    ,fechaEmision      DATETIME2 
-		    ,codDoc            VARCHAR(5)
 		    ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos'
 		    ,totalDescuento    NUMERIC(18,5)
 		    ,propina           NUMERIC(18,5) 
 		    ,importeTotal      NUMERIC(18,5) 
-		    ,docOrigen         VARCHAR(15)
-		    ,docDestino        VARCHAR(15)
 		    ,observacion       VARCHAR(300)
-            ,idUsuario         INT 
+            
 		)
 
 		INSERT INTO @tbDetalle 
@@ -180,23 +179,26 @@ BEGIN
 		
 		INSERT INTO @tbHistorialVenta (idInfoAdicional) SELECT idInfoAdicional FROM OPENJSON(@infoAdicionalArticulo) WITH (idInfoAdicional INT '$.idInfoAdicional')
 		
-
-		-- ========================== CAPTURAR LAS VARIABLES =============================================================
-		SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
-
+		--> CAPTURAR LAS VARIABLES 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT TOP 1 @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
+        SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-		SELECT @idPuntoEmision          = dt.idPuntoEmision 
-		      ,@estab                   = es.estab
-		      ,@ptoEmi                  = pt.ptoEmi
-		      ,@ambiente                = pt.ambiente
-		      ,@fechaEmision            = dt.fechaEmision
-              ,@idUsuario               = dt.idUsuario
+		SELECT @idPuntoEmision  = dt.idPuntoEmision 
+              ,@idTipoDocumento = dt.idTipoDocumento
+              ,@fechaEmision    = dt.fechaEmision
+              ,@idUsuario       = dt.idUsuario
+              ,@ptoEmi          = pt.ptoEmi
+		      ,@ambiente        = pt.ambiente
+              ,@docDestino      = td.codigoSri
+              ,@docOrigen       = og.codigo
+              ,@estab           = es.estab
 		FROM @tbComprobante dt 
 		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = dt.idPuntoEmision
+        INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = dt.idTipoDocumento
+        INNER JOIN dbo.TipoDocumento   og WITH (NOLOCK) ON og.idTipoDocumento   = dt.idTipoDocOrigen
 		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pt.idEstablecimiento
+        
 		
 		SELECT @secuencial =  COUNT(*) + 1 FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
 
@@ -260,8 +262,8 @@ BEGIN
             
             --> Comprobante
 			INSERT INTO Ventas.Aprob_Document
-                  (idCliente,idPuntoEmision,fechaEmision,codDoc,secuencial,claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,observacion,idUsuario,serieComprobante)
-			SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,@secuencial,@claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,@docOrigen,observacion,@idUsuario,@serieComprobante
+                  (idTipoDocumento,idTipoDocOrigen,idCliente,idPuntoEmision, idEstadoDocumento, idUsuario,fechaEmision ,secuencial ,claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion ,serieComprobante)
+			SELECT idTipoDocumento,idTipoDocOrigen,idCliente,idPuntoEmision,@idEstadoDocumento,@idUsuario,fechaEmision,@secuencial,@claveAcceso,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion,@serieComprobante
 			FROM @tbComprobante
 
 			SET @idAprob_Document = @@IDENTITY
