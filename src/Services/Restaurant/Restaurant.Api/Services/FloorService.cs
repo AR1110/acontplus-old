@@ -48,7 +48,7 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.Deleted == null).ToListAsync();
+        var floors = await context.Floors.Include(x => x.Rooms).Where(x => !x.IsDeleted).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -57,7 +57,8 @@ public class FloorService(RestaurantContext context) : IFloorService
     public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
     {
         var floors = await context.Floors.Include(x => x.Rooms)
-            .Where(x => x.EstablecimientoId == establecimientoId && x.Deleted == null).ToListAsync();
+               .ThenInclude(r => r.Tables)
+            .Where(x => x.EstablecimientoId == establecimientoId && !x.IsDeleted).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -71,7 +72,7 @@ public class FloorService(RestaurantContext context) : IFloorService
         floorFound.Capacity = floor.Capacity;
         floorFound.Code = floor.Code;
         floorFound.Description = floor.Description;
-        floorFound.Enabled = floor.Enabled;
+        floorFound.IsActive = floor.IsActive;
         floorFound.UserId = floor.UserId;
         context.Update(floorFound);
         await context.SaveChangesAsync();

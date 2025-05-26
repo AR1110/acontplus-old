@@ -39,7 +39,7 @@ public class RoomService(RestaurantContext context) : IRoomService
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var floors = await context.Rooms.Include(x => x.Floor).Where(x => x.Deleted == null).ToListAsync();
+        var floors = await context.Rooms.Include(x => x.Floor).Where(x => !x.IsDeleted).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -50,7 +50,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         var rooms = await context.Rooms
             .Include(x => x.Floor)
             .Include(x => x.Tables)
-            .Where(x => x.Floor.EstablecimientoId == establecimientoId && x.Deleted == null)
+            .Where(x => x.Floor.EstablecimientoId == establecimientoId && !x.IsDeleted)
             .ToListAsync();
         return rooms.Count > 0
             ? new ApiResponse { Code = "1", Payload = rooms }
@@ -65,7 +65,7 @@ public class RoomService(RestaurantContext context) : IRoomService
         roomFound.Code = room.Code;
         roomFound.Capacity = room.Capacity;
         roomFound.Description = room.Description;
-        roomFound.Enabled = room.Enabled;
+        roomFound.IsActive = room.IsActive;
         roomFound.UserId = room.UserId;
         context.Update(roomFound);
         await context.SaveChangesAsync();

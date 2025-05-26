@@ -4,6 +4,7 @@ using Common.FactElect.Services.Authentication;
 using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
+using FactElect.Application.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -17,6 +18,8 @@ public static class ApplicationServicesExtensions
         services.AddAdvancedLogging(configuration);
 
         services.AddHttpContextAccessor();
+
+        services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
         services.AddMemoryCache();
 
@@ -53,11 +56,8 @@ public static class ApplicationServicesExtensions
 
         services.AddDbContextPool<FactElectContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                        x => x.MigrationsAssembly("FactElect.Infrastructure")) //Migrations in infrastructure library
-                    .EnableSensitiveDataLogging(environment.IsDevelopment()) // Enable only in Development
-                    .EnableDetailedErrors(environment.IsDevelopment())
-                    .LogTo(Log.Warning, LogLevel.Warning) // Log EF Core queries using Serilog
-        );
+                        x => x.MigrationsAssembly("FactElect.Infrastructure"))); //Migrations in infrastructure library
+
 
         string[] scopedNameSpaces =
         [

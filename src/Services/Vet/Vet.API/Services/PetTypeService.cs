@@ -14,8 +14,8 @@ public class PetTypeService(VetContext context) : IPetTypeService
         var petType = await context.PetTypes.FindAsync(id);
         if (petType == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
-        petType.Deleted = true;
-        petType.Enabled = false;
+        petType.IsDeleted = true;
+        petType.IsActive = false;
         petType.UserId = userId;
         context.Update(petType);
         await context.SaveChangesAsync();
@@ -24,7 +24,7 @@ public class PetTypeService(VetContext context) : IPetTypeService
 
     public async Task<ApiResponse> GetAsync()
     {
-        var response = await context.PetTypes.Where(x => x.Deleted == null).ToListAsync();
+        var response = await context.PetTypes.Where(x => !x.IsDeleted).ToListAsync();
         if (response.Count > 0) return new ApiResponse { Code = "1", Payload = response };
 
         return new ApiResponse { Code = "0", Message = "No data!" };

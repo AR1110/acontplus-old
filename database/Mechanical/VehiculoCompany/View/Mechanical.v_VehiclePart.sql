@@ -5,7 +5,9 @@ CREATE OR ALTER VIEW Mechanical.v_VehiclePart WITH SCHEMABINDING AS (
           ,vp.[Description] as Part
 		  ,vp.Code as CodePart
           ,vp.[Enabled]
+          ,vp.IsActive
           ,vp.Deleted
+          ,vp.IsDeleted
 		  ,tp.[Description] as TypePart
           ,tp.Code as CodeTypePart
 	FROM Mechanical.VehiclePart           vp WITH (NOLOCK)

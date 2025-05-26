@@ -117,17 +117,17 @@ BEGIN
 
 				SELECT i.idImpuesto
                 ,impuesto = i.descripcion 
-				,codImpuestoDocSustento = fci.codigo
+				,t.codigo
 				,porcentaje = ti.descripcion
-				,codigoPorcentaje = fci.codigoPorcentaje
-				,baseImponible = fci.baseImponible
+				,codigoPorcentaje = t.codigoPorcentaje
+				,baseImponible = t.baseImponible
                 ,ti.idTarifaImpuesto
 				,ti.porcentaje tarifa
-				,valorImpuesto = fci.valor
-			    FROM @taxes fci
-			    LEFT JOIN Sri.Impuesto i ON fci.codigo = i.codigo
-			    LEFT JOIN Sri.TarifaImpuesto ti ON i.idImpuesto = ti.idImpuesto AND fci.codigoPorcentaje = ti.codigo
-			    WHERE fci.baseImponible > 0
+				,valorImpuesto = t.valor
+			    FROM @taxes t
+			    LEFT JOIN Sri.Impuesto i ON t.codigo = i.codigo
+			    LEFT JOIN Sri.TarifaImpuesto ti ON i.idImpuesto = ti.idImpuesto AND t.codigoPorcentaje = ti.codigo
+			    WHERE t.baseImponible > 0
 
                 SELECT fp.Id formaPagoId
                     ,fp.Codigo

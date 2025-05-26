@@ -34,8 +34,8 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
         //}
         //else
         //{
-        //    productionArea.Enabled = false;
-        //    productionArea.Deleted = true;
+        //    productionArea.IsActive = false;
+        //    productionArea.IsDeleted = true;
         //    productionArea.UserId = userId;
         //    context.Update(productionArea);
         //}
@@ -46,7 +46,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var productionAreas = await context.ProductionAreas.Where(x => x.Deleted == null).ToListAsync();
+        var productionAreas = await context.ProductionAreas.Where(x => !x.IsDeleted).ToListAsync();
         return productionAreas.Count > 0
             ? new ApiResponse { Code = "1", Payload = productionAreas }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -55,7 +55,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
     public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
     {
         var productionAreas = await context.ProductionAreas
-            .Where(x => x.Deleted == null && x.EstablecimientoId == establecimientoId).ToListAsync();
+            .Where(x => !x.IsDeleted && x.EstablecimientoId == establecimientoId).ToListAsync();
         return productionAreas.Count > 0
             ? new ApiResponse { Code = "1", Payload = productionAreas }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -68,7 +68,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
 
         productionAreaFound.Code = productionArea.Code;
         productionAreaFound.Description = productionArea.Description;
-        productionAreaFound.Enabled = productionArea.Enabled;
+        productionAreaFound.IsActive = productionArea.IsActive;
         productionAreaFound.UserId = productionArea.UserId;
         context.Update(productionAreaFound);
         await context.SaveChangesAsync();

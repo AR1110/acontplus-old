@@ -17,8 +17,8 @@ public class CategoryService(ContabilidadContext context, IAdoRepository reposit
         var category = await context.Categories.FindAsync(id);
         if (category == null) return new ApiResponse { Code = "0", Message = "Categoría no existe" };
 
-        category.Enabled = false;
-        category.Deleted = true;
+        category.IsActive = false;
+        category.IsDeleted = true;
         category.UserId = userId;
         context.Update(category);
         await context.SaveChangesAsync();
@@ -40,7 +40,7 @@ public class CategoryService(ContabilidadContext context, IAdoRepository reposit
 
         categoryFound.Code = category.Code;
         categoryFound.Name = category.Name;
-        categoryFound.Enabled = category.Enabled;
+        categoryFound.IsActive = category.IsActive;
         categoryFound.TipoId = category.TipoId;
         categoryFound.UserId = category.UserId;
         context.Update(categoryFound);

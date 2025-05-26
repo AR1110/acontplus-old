@@ -1,6 +1,6 @@
 ﻿global using System.Data;
-global using Common.Core.Data;
-global using Common.Core.Format;
+global using Common.Data;
+global using Common.Utilities.Format;
 global using Common.Core.Models;
 global using Common.Core.Validation;
 global using Common.Infrastructure.Data.Repository.Interfaces;

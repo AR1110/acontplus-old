@@ -36,7 +36,7 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         printerFound.MacAddress = printer.MacAddress;
         printerFound.ServerDevice = printer.ServerDevice;
         printerFound.IsDefault = printer.IsDefault;
-        printerFound.Enabled = printer.Enabled;
+        printerFound.IsActive = printer.IsActive;
         printerFound.UserId = printer.UserId;
         printerFound.Domain = printer.Domain;
         context.Update(printerFound);

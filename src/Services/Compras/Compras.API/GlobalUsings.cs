@@ -2,7 +2,7 @@
 global using System.Text;
 global using System.Web;
 global using System.Xml;
-global using Common.Core.Data;
+global using Common.Data;
 global using Common.Core.Models;
 global using Common.Core.Validation;
 global using Common.FactElect.Interfaces.Services;

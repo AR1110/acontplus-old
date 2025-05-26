@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Common.Utilities.IO;
+
+namespace Configuracion.API.Controllers;
 
 public class FirmaElectronicaController(
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController

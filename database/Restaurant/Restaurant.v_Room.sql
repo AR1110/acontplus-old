@@ -12,8 +12,8 @@ AS
 		,capacity			= rr.Capacity
 		,createdAt			= rr.CreatedAt
 		,updatedAt			= rr.UpdatedAt
-		,enabled			= rr.Enabled
-		,deleted			= rr.Deleted
+			,enabled		= rr.IsActive
+		,deleted		= rr.IsDeleted
 		,userId				= rr.UserId
 		,floorId			= rr.FloorId
 		,floorDescription	= rf.Description

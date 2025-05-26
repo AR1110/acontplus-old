@@ -3,4 +3,5 @@
 public interface IDocumentoElectronicoErrorService
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task CleanupProcessedErrorsAsync();
 }

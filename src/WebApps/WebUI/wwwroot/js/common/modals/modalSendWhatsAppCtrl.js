@@ -11,10 +11,11 @@ modalSendWhatsAppCtrl.$inject = [
     'mainService',
     'commonService',
     'params',
-    'decodeToken'
+    'decodeToken',
+    "sharedService"
 ]
 
-function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
+function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token, _sharedSvc) {
     $scope.client = {}
     $scope.whatsapp = {}
     $scope.connected_devices = []
@@ -31,12 +32,97 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     $scope.session = {}
     $scope.session.is_logged_in = false
 
+    $scope.hasPhoneNumber = true;
+    $scope.phoneNumbers = []
+
     $scope.type = ['01', '03', '04', '05', '06', '07'].includes(data.codDoc) ? 'SRI' : 'GenericFile';
     $scope.codDoc = data.codDoc
     $scope.comprobante = data.comprobante + ': ' + data.serieComprobante
 
     let idInstance = "7103845341"
-    let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c"
+    let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c";
+
+
+    function createDataParamDocSri(data) {
+        let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.documentoId;
+        return {
+            id,
+            codDoc: data.codDoc,
+            esNotificacionTributaria: true,
+        };
+    }
+    function createDataParamDoc(data) {
+        return {
+            id: data.documentoId,
+            codDoc: data.codDoc,
+            esNotificacionGeneral: true,
+        };
+    }
+
+
+    let dataParamGetDataForm = {
+        "01": createDataParamDocSri(data),
+        "NE": createDataParamDoc(data),
+    };
+
+    let phoneNumbers = [];
+    let esNotificacionTributaria = false;
+    let esNotificacionGeneral = false;
+
+    let telefonoEstab;
+    let nombreEstab
+
+    getDataForm();
+    function getDataForm() {
+
+        let params = dataParamGetDataForm[data.codDoc];
+        if (!params) {
+            console.error(`No se encontraron parámetros para el tipo de documento: ${data.codDoc}`);
+            return;
+        }
+        esNotificacionTributaria = params.esNotificacionTributaria;
+        esNotificacionGeneral = params.esNotificacionGeneral;
+
+        _sharedSvc.getDataFormNotificacion(params).then(response => {
+            telefonoEstab = response.telefonoEstab;
+            nombreEstab = response.nombreEstab;
+
+            // if (response.telefono) {
+
+            //     if (response.telefono.includes(";")) {
+            //         phoneNumbers = response.telefono.split(";")
+            //     } else if (response.telefono.includes("|")) {
+            //         phoneNumbers = response.telefono.split("|")
+            //     } else {
+            //         phoneNumbers = response.telefono.split(" ")
+            //     }
+            // }
+
+            phoneNumbers = response.telefonos.filter((p) => p.length === 10);
+            $scope.phoneNumbers = phoneNumbers.map((p) => {
+                return {
+                    number: p,
+                }
+            });
+
+
+            if ($scope.phoneNumbers.length == 0) {
+                $scope.hasPhoneNumber = false
+            } else {
+                $scope.whatsapp.number = $scope.phoneNumbers[0].number
+            }
+
+            if (esNotificacionTributaria) {
+                $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante electrónico:'
+            } else {
+                $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
+            }
+
+
+        })
+    }
+
+
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
             (response) => {
@@ -64,44 +150,33 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     }
     $scope.connectGreenApi();
 
-    $scope.hasPhoneNumber = true
-    let phoneNumbers
-    if (data.telefono) {
 
-        if (data.telefono.includes(";")) {
-            phoneNumbers = data.telefono.split(";")
-        } else if (data.telefono.includes("|")) {
-            phoneNumbers = data.telefono.split("|")
-        } else {
-            phoneNumbers = data.telefono.split(" ")
-        }
-    } else {
-        $scope.hasPhoneNumber = false
-    }
+    // if (data.telefono) {
 
-    $scope.phoneNumbers = []
-    if (phoneNumbers) {
-        //Only cellphone numbers
-        for (const p of phoneNumbers) {
-            if (p.length == 10) {
-                $scope.phoneNumbers.push({
-                    number: p,
-                })
-            }
-        }
-    }
+    //     if (data.telefono.includes(";")) {
+    //         phoneNumbers = data.telefono.split(";")
+    //     } else if (data.telefono.includes("|")) {
+    //         phoneNumbers = data.telefono.split("|")
+    //     } else {
+    //         phoneNumbers = data.telefono.split(" ")
+    //     }
+    // } else {
+    //     $scope.hasPhoneNumber = false
+    // }
 
-    if ($scope.phoneNumbers.length == 0) {
-        $scope.hasPhoneNumber = false
-    } else {
-        $scope.whatsapp.number = $scope.phoneNumbers[0].number
-    }
 
-    if ($scope.type == 'SRI') {
-        $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante electrónico:'
-    } else {
-        $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
-    }
+    // if (phoneNumbers) {
+    //     //Only cellphone numbers
+    //     for (const p of phoneNumbers) {
+    //         if (p.length == 10) {
+    //             $scope.phoneNumbers.push({
+    //                 number: p,
+    //             })
+    //         }
+    //     }
+    // }
+
+
 
     $scope.validatePhoneNumber = (phone) => {
         if (!phone) {
@@ -248,11 +323,14 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                         resolve(response.data.message)
                         totalMessages++
                         if (lastMessage) {
-                            let messageAdd = ''
-                            if (data.telefonoEstablecimiento) {
-                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${data.nombreComercial}* al siguiente número: *${data.telefonoEstablecimiento}*`
+                            let messageAdd = '';
+
+
+                            if (telefonoEstab) {
+                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${nombreEstab}* al siguiente número: *${telefonoEstab}*`;
                                 sendSms(messageAdd)
                             }
+
                             setTimeout(() => {
                                 sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
                             }, 2000)
@@ -318,7 +396,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         let format = 'pdf'
         let dataParms = {
             hasParams: true,
-            id: data.idDocumento,
+            id: data.idDocumento||data.idDocumentoElectronico,
             versionComp: data.versionComp
         }
         let reportParams = {

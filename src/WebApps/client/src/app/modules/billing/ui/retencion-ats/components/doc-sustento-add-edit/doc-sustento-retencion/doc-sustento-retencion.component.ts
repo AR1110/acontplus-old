@@ -9,7 +9,6 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-retencion.use-case';
 import Swal from 'sweetalert2';
@@ -47,7 +46,6 @@ export class DocSustentoRetencionComponent {
 
   selectCodigoRetencion(codigo: string) {
     setTimeout(() => {
-      console.log(codigo);
       this.retencionGroup().get('codigoRetencion').setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
@@ -73,7 +71,7 @@ export class DocSustentoRetencionComponent {
 
     let taxValue = 0;
     if (codigo === '2') {
-      const taxesArray = docGroup.get('impuestos') as FormArray;
+      const taxesArray = docGroup.get('taxes') as FormArray;
 
       for (let i = 0; i < taxesArray.length; i++) {
         const taxItem = taxesArray.at(i).value;
@@ -92,7 +90,6 @@ export class DocSustentoRetencionComponent {
           break;
         case '2':
           baseImponibleControl.setValue(taxValue);
-
           break;
         default:
           break;

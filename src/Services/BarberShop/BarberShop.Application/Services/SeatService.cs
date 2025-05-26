@@ -1,4 +1,5 @@
 ﻿using BarberShop.Infrastructure.Data.Repositories.Interfaces;
+using Common.Core.Extensions;
 using Common.Infrastructure.Data.Repository.Models;
 
 namespace BarberShop.Application.Services;
@@ -84,7 +85,7 @@ public class SeatService(BarberShopContext context, ISeatRepository seatReposito
 
         seat.Name = seatDto.Name;
         seat.Description = seatDto.Description;
-        seat.Enabled = seatDto.Enabled;
+        seat.IsActive = seatDto.IsActive.OrKeep(seat.IsActive);
         seat.UserId = seatDto.UserId;
         context.Seats.Update(seat);
         await context.SaveChangesAsync();

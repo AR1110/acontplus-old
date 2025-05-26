@@ -29,8 +29,8 @@ public class VehicleService(IAdoRepository _repository, MechanicalContext _conte
         var vehicle = await _context.VehicleCompanys.FindAsync(id);
         if (vehicle == null)
             return new ApiResponse { Code = "0", Message = "No se encontro el Vehículo para actualizar" };
-        vehicle.Enabled = false;
-        vehicle.Deleted = true;
+        vehicle.IsActive = false;
+        vehicle.IsDeleted = true;
         _context.Update(vehicle);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
@@ -41,7 +41,7 @@ public class VehicleService(IAdoRepository _repository, MechanicalContext _conte
         var vehicle = await _context.VehicleCompanys.FindAsync(id);
         if (vehicle == null)
             return new ApiResponse { Code = "0", Message = "No se encontro el Vehículo para actualizar" };
-        vehicle.Enabled = state;
+        vehicle.IsActive = state;
         _context.Update(vehicle);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };

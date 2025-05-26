@@ -151,8 +151,8 @@ export class RetencionAtsComponent implements OnInit {
       text: 'Una vez cancelado no se podrá modificar.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sí, cancelar',
-      cancelButtonText: 'No, cancelar',
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No',
     }).then((result) => {
       if (result.isConfirmed) {
         this._retencionAtsUseCase

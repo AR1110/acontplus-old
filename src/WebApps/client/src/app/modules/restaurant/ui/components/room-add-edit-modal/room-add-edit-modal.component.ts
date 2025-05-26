@@ -1,0 +1,106 @@
+import { Component, inject } from '@angular/core';
+
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+
+import { ApiResponse } from '@core/models/api-response';
+import { ToasterService } from '@core/services/toaster.service';
+import { RoomService } from '@restaurant/data/services/room.service';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+
+@Component({
+  selector: 'app-room-add-edit-modal',
+  imports: [FormsModule, ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent,
+
+
+    MatFormFieldModule,
+  MatInputModule],
+  templateUrl: './room-add-edit-modal.component.html',
+  styles: ``,
+})
+export class RoomAddEditModalComponent {
+  roomForm = new FormGroup({
+    id: new FormControl(0),
+    floorId: new FormControl(0, [Validators.required]),
+    description: new FormControl('', [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(50),
+    ]),
+    code: new FormControl('', [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(5),
+    ]),
+    capacity: new FormControl(1, [Validators.required, Validators.min(1)]),
+    enabled: new FormControl(true),
+  });
+  modalIcon = 'add';
+  modalTitle = 'Registrar Sala';
+  _modalRef = inject(MatDialogRef<RoomAddEditModalComponent>);
+  data = inject<any>(MAT_DIALOG_DATA);
+  #roomService = inject(RoomService);
+  #tS = inject(ToasterService);
+
+
+  ngOnInit() {
+    this.roomForm.patchValue({
+      floorId: this.data.floorId,
+    });
+  }
+
+  onSave() {
+    if (this.roomForm.invalid) {
+      return this.#tS.toastr({
+        type: 'warning',
+        message: 'Revise los datos correctos',
+      });
+    }
+
+    const dataToSave = {
+      ...this.roomForm.value,
+    };
+
+    if (this.data.id > 0) {
+      this.#roomService.put(this.data.id, dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
+    } else {
+      this.#roomService.post(dataToSave).subscribe((response) => {
+        this.successResponse(response);
+      });
+    }
+  }
+
+  onModalClose() {
+    this._modalRef.close();
+  }
+
+  setCode() {
+    const description = this.roomForm.get('description')?.value;
+    if (description) {
+      this.roomForm.patchValue({
+        code: description.substring(0, 3).toUpperCase(),
+      });
+    }
+  }
+
+  successResponse(response: ApiResponse) {
+    this.#tS.toastr({
+      type: response.code == '1' ? 'success' : 'warning',
+      message: response.message,
+    });
+    if (response.code == '1') {
+      this._modalRef.close(response);
+    }
+  }
+}

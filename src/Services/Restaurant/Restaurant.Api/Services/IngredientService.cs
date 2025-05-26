@@ -41,7 +41,7 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
         ingredientFound.Summary = ingredient.Summary;
         ingredientFound.Unit = ingredient.Unit;
         ingredientFound.Content = ingredient.Content;
-        ingredientFound.Enabled = ingredient.Enabled;
+        ingredientFound.IsActive = ingredient.IsActive;
         ingredientFound.UserId = ingredient.UserId;
         context.Update(ingredientFound);
         await context.SaveChangesAsync();
@@ -53,8 +53,8 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
         var ingredient = await context.Ingredients.FindAsync(id);
         if (ingredient == null) return new ApiResponse { Code = "0", Message = "Ingredient not found" };
 
-        ingredient.Enabled = false;
-        ingredient.Deleted = true;
+        ingredient.IsActive = false;
+        ingredient.IsDeleted = true;
         ingredient.UserId = userId;
         context.Update(ingredient);
         await context.SaveChangesAsync();

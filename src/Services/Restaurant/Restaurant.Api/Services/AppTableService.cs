@@ -8,15 +8,15 @@ public class AppTableService(RestaurantContext context) : IAppTableService
     public async Task<ApiResponse> GetByEstabAsync(string codEstab)
     {
         var rooms = await context.Rooms.Include(x => x.Floor)
-            .Where(x => x.Floor.CodEstab == codEstab && x.Deleted == null)
+            .Where(x => x.Floor.CodEstab == codEstab && !x.IsDeleted)
             .ToListAsync();
         var floors = await context.Floors
-            .Where(x => x.CodEstab == codEstab && x.Deleted == null)
+            .Where(x => x.CodEstab == codEstab && !x.IsDeleted)
             .ToListAsync();
 
         var tables = await context.Tables
             .Include(x => x.Room)
-            .Where(x => x.Room.Floor.CodEstab == codEstab && x.Deleted == null)
+            .Where(x => x.Room.Floor.CodEstab == codEstab && !x.IsDeleted)
             .ToListAsync();
 
         var result = new Dictionary<string, object> { { "rooms", rooms }, { "floors", floors }, { "tables", tables } };
@@ -51,7 +51,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         tableFound.RoomId = appTable.RoomId;
         tableFound.Description = appTable.Description;
         tableFound.NumberTable = appTable.NumberTable;
-        tableFound.Enabled = appTable.Enabled;
+        tableFound.IsActive = appTable.IsActive;
         tableFound.Capacity = appTable.Capacity;
         tableFound.Assigned = appTable.Assigned;
         context.Update(tableFound);
@@ -81,7 +81,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         //{
         //    return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
         //}
-        appTable.Enabled = false;
+        appTable.IsActive = false;
         context.Update(appTable);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Inactivado existosamente" };

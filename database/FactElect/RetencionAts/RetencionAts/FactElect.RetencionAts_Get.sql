@@ -125,7 +125,7 @@ BEGIN
                 --    SET @whereClause = @whereClause + 'AND de.idTipoDocumento = @idTipoDocumento '
 
                 IF @nroSecuencial != ''
-                    SET @whereClause = @whereClause + 'AND de.nroSecuencial LIKE ''%'' + @nroSecuencial + ''%'' '
+                    SET @whereClause = @whereClause + 'AND de.secuencial LIKE ''%'' + @nroSecuencial + ''%'' '
 
                 --IF @infoAdicional != ''
                 --    SET @whereClause = @whereClause + 'AND de.infoAdicional LIKE ''%'' + @infoAdicional + ''%'' '

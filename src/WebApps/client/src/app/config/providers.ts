@@ -12,7 +12,6 @@ import { provideToastr } from 'ngx-toastr';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
 import { mechanicalProvider } from '@mechanical/providers';
-import { restaurantProvider } from '@restaurant/providers';
 import { saleProvider } from '@sale/providers';
 import { billingProviders } from '@modules/billing/providers';
 import { DatePipe } from '@angular/common';
@@ -23,6 +22,7 @@ import { DATA_INVENTORY_IOC } from '@inventory/data/inventory.ioc';
 import { DATA_CONFIG_IOC } from '@modules/config/data/data-config.ioc';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import 'moment/locale/es';
+import {DATA_RESTAURANT_IOC} from "@restaurant/data/data-restaurant.ioc";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -63,7 +63,7 @@ export const featureProviders = [
   ...authMainProvider,
   ...commonProviders,
   ...mechanicalProvider,
-  ...restaurantProvider,
+  ...DATA_RESTAURANT_IOC,
   ...DATA_CONFIG_IOC,
   ...saleProvider,
   ...billingProviders,

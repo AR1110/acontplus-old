@@ -17,12 +17,12 @@ namespace Configuracion.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Configuracion.API.Entities.EstablecimientoLogo", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.EstablecimientoLogo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,10 +44,19 @@ namespace Configuracion.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<bool?>("Deleted")
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("Enabled")
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Enabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -60,17 +69,33 @@ namespace Configuracion.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<bool?>("FromMobile")
+                    b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<bool?>("IsCompressed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("LatestVersion")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -84,7 +109,7 @@ namespace Configuracion.API.Data.Migrations
                     b.ToTable("EstablecimientoLogo", "Config");
                 });
 
-            modelBuilder.Entity("Configuracion.API.Entities.Printer", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.Printer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,15 +122,24 @@ namespace Configuracion.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<bool?>("Deleted")
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Domain")
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<bool?>("Enabled")
+                    b.Property<bool>("Enabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -113,7 +147,7 @@ namespace Configuracion.API.Data.Migrations
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("FromMobile")
+                    b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<string>("IpAddress")
@@ -122,7 +156,15 @@ namespace Configuracion.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("MacAddress")
@@ -145,11 +187,19 @@ namespace Configuracion.API.Data.Migrations
                     b.Property<int>("PrinterTypeId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<bool?>("ServerDevice")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -161,7 +211,7 @@ namespace Configuracion.API.Data.Migrations
                     b.ToTable("Printer", "Config");
                 });
 
-            modelBuilder.Entity("Configuracion.API.Entities.PrinterDocument", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.PrinterDocument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,22 +233,47 @@ namespace Configuracion.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<bool?>("Deleted")
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("Enabled")
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Enabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<bool?>("FromMobile")
+                    b.Property<bool>("FromMobile")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("PrinterId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -210,7 +285,7 @@ namespace Configuracion.API.Data.Migrations
                     b.ToTable("PrinterDocument", "Config");
                 });
 
-            modelBuilder.Entity("Configuracion.API.Entities.PrinterType", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.PrinterType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -229,15 +304,24 @@ namespace Configuracion.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<bool?>("Deleted")
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DeviceInfo")
                         .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<bool?>("Enabled")
+                    b.Property<bool>("Enabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -248,7 +332,15 @@ namespace Configuracion.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool?>("FromMobile")
+                    b.Property<bool>("FromMobile")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -257,11 +349,19 @@ namespace Configuracion.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<bool>("Thermal")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -275,9 +375,9 @@ namespace Configuracion.API.Data.Migrations
                     b.ToTable("PrinterType", "Config");
                 });
 
-            modelBuilder.Entity("Configuracion.API.Entities.Printer", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.Printer", b =>
                 {
-                    b.HasOne("Configuracion.API.Entities.PrinterType", "PrinterType")
+                    b.HasOne("Configuracion.Domain.Entities.PrinterType", "PrinterType")
                         .WithMany()
                         .HasForeignKey("PrinterTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -286,9 +386,9 @@ namespace Configuracion.API.Data.Migrations
                     b.Navigation("PrinterType");
                 });
 
-            modelBuilder.Entity("Configuracion.API.Entities.PrinterDocument", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.PrinterDocument", b =>
                 {
-                    b.HasOne("Configuracion.API.Entities.Printer", "Printer")
+                    b.HasOne("Configuracion.Domain.Entities.Printer", "Printer")
                         .WithMany("Documents")
                         .HasForeignKey("PrinterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -297,7 +397,7 @@ namespace Configuracion.API.Data.Migrations
                     b.Navigation("Printer");
                 });
 
-            modelBuilder.Entity("Configuracion.API.Entities.Printer", b =>
+            modelBuilder.Entity("Configuracion.Domain.Entities.Printer", b =>
                 {
                     b.Navigation("Documents");
                 });

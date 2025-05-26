@@ -61,7 +61,7 @@ public class TokenCleanupAndArchivalService(
                 {
                     token.IsLoggedIn = null;
                     token.IsLocked = null;
-                    token.Enabled = null;
+                    token.IsActive = false;
                     token.Token = null;
                     token.TokenExpiration = null;
                 }

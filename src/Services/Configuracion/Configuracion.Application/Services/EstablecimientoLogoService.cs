@@ -33,7 +33,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
             await _context.EstablecimientoLogos.FirstOrDefaultAsync(x => x.EstablecimientoId == establecimientoId);
         if (logo == null) return null;
 
-        if (logo.IsCompressed == true) logo.Content = CompressionUtils.DecompressDeflate(logo.Content);
+        if (logo.IsCompressed == true) logo.Content = CompressionUtils.DecompressGZip(logo.Content);
 
         return logo;
     }
