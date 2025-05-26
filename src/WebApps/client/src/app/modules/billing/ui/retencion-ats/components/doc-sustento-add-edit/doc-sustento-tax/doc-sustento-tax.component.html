@@ -22,7 +22,7 @@
       <mat-select
         formControlName="idTarifaImpuesto"
         id="idTarifaImpuesto-{{ taxGroup().get('uniqueIdDoc')?.value }}"
-        (change)="selectTarifa(taxGroup().value)"
+        (selectionChange)="selectTarifa()"
       >
         <mat-option>Seleccione una tarifa</mat-option>
         @for (tarifaImpuesto of tarifaImpuestosFiltered(); track $index) {
@@ -45,6 +45,7 @@
         step="any"
         placeholder="Base imponible"
         (click)="baseImponible.select()"
+        (blur)="calculateValorImpuesto()"
       />
     </mat-form-field>
   </div>
@@ -83,7 +84,7 @@
         icon="save"
         matStyle="icon"
         id="btn-save-tax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
-        title="Guardar retención del sustento"
+        title="Guardar impuesto del sustento"
         (handleClick)="onSave()"
       ></app-theme-button>
     }
@@ -92,6 +93,7 @@
       icon="delete"
       matStyle="icon"
       id="btnDeleteTax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
+      title="Eliminar impuesto del sustento"
       (handleClick)="removeTax()"
     ></app-theme-button>
   </div>
