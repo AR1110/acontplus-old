@@ -26,7 +26,7 @@ public class SerieService : ISerieService
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
 
         serie.IsActive = false;
-        serie.Deleted = true;
+        serie.IsDeleted = true;
         serie.UserId = userId;
         _context.Update(serie);
         await _context.SaveChangesAsync();

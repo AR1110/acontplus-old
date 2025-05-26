@@ -33,7 +33,7 @@ public class DeviceService : IDeviceService
         if (device == null) return new ApiResponse { Code = "0", Message = "No existe el equipo" };
 
         device.IsActive = false;
-        device.Deleted = true;
+        device.IsDeleted = true;
         device.UserId = userId;
         _context.Update(device);
         await _context.SaveChangesAsync();

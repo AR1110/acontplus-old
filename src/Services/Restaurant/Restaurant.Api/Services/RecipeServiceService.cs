@@ -54,7 +54,7 @@ public class RecipeServiceService(IAdoRepository adoRepository, RestaurantContex
         if (recipe == null) return new ApiResponse { Code = "1", Message = "Recipe not found!" };
 
         recipe.IsActive = false;
-        recipe.Deleted = true;
+        recipe.IsDeleted = true;
         recipe.UserId = userId;
         context.Update(recipe);
         await context.SaveChangesAsync();

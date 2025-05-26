@@ -56,11 +56,8 @@ public static class ApplicationServicesExtensions
 
         services.AddDbContextPool<FactElectContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                        x => x.MigrationsAssembly("FactElect.Infrastructure")) //Migrations in infrastructure library
-                    .EnableSensitiveDataLogging(environment.IsDevelopment()) // Enable only in Development
-                    .IsActiveetailedErrors(environment.IsDevelopment())
-                    .LogTo(Log.Warning, LogLevel.Warning) // Log EF Core queries using Serilog
-        );
+                        x => x.MigrationsAssembly("FactElect.Infrastructure"))); //Migrations in infrastructure library
+
 
         string[] scopedNameSpaces =
         [

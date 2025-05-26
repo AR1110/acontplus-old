@@ -19,7 +19,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
         if (subcategory == null) return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
 
         subcategory.IsActive = false;
-        subcategory.Deleted = true;
+        subcategory.IsDeleted = true;
         subcategory.UserId = userId;
         context.Update(subcategory);
         await context.SaveChangesAsync();

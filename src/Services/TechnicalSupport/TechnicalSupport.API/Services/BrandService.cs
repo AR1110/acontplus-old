@@ -26,7 +26,7 @@ public class BrandService : IBrandService
     {
         var brand = await _context.Brands.FindAsync(id);
         brand.IsActive = false;
-        brand.Deleted = true;
+        brand.IsDeleted = true;
         _context.Update(brand);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };

@@ -18,7 +18,7 @@ public class CategoryService(ContabilidadContext context, IAdoRepository reposit
         if (category == null) return new ApiResponse { Code = "0", Message = "Categoría no existe" };
 
         category.IsActive = false;
-        category.Deleted = true;
+        category.IsDeleted = true;
         category.UserId = userId;
         context.Update(category);
         await context.SaveChangesAsync();

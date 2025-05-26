@@ -42,7 +42,7 @@ public class AccountService(ContabilidadContext context, IAdoRepository reposito
         if (account == null) return new ApiResponse { Code = "0", Message = "Cuenta no encontrada" };
 
         account.IsActive = false;
-        account.Deleted = true;
+        account.IsDeleted = true;
         account.UserId = userId;
         context.Update(account);
         await context.SaveChangesAsync();

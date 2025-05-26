@@ -22,7 +22,7 @@ public class MedicalHistoryService(IAdoRepository adoRepository, VetContext cont
         var medicalHistory = await context.MedicalHistories.FindAsync(id);
         if (medicalHistory == null) return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
 
-        medicalHistory.Deleted = true;
+        medicalHistory.IsDeleted = true;
         medicalHistory.IsActive = false;
         medicalHistory.UserId = userId;
         context.Update(medicalHistory);

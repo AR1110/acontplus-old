@@ -54,7 +54,7 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
         if (ingredient == null) return new ApiResponse { Code = "0", Message = "Ingredient not found" };
 
         ingredient.IsActive = false;
-        ingredient.Deleted = true;
+        ingredient.IsDeleted = true;
         ingredient.UserId = userId;
         context.Update(ingredient);
         await context.SaveChangesAsync();

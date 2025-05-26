@@ -25,7 +25,7 @@ public class TipoService : ITipoService
         if (tipo == null) return new ApiResponse { Code = "0", Message = "Tipo no existe" };
 
         tipo.IsActive = false;
-        tipo.Deleted = true;
+        tipo.IsDeleted = true;
         tipo.UserId = userId;
         _context.Update(tipo);
         await _context.SaveChangesAsync();

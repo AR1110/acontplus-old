@@ -15,7 +15,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         if (pet == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
         pet.UserId = userId;
-        pet.Deleted = true;
+        pet.IsDeleted = true;
         pet.IsActive = false;
         context.Update(pet);
         await context.SaveChangesAsync();

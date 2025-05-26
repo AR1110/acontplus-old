@@ -42,7 +42,7 @@ public class OrderMaintenanceService : IOrderMaintenanceService
             return new ApiResponse { Code = "0", Message = "No se encontró orden para eliminar" };
 
         orderMaintenance.IsActive = false;
-        orderMaintenance.Deleted = true;
+        orderMaintenance.IsDeleted = true;
 
         _context.Update(orderMaintenance);
         await _context.SaveChangesAsync();

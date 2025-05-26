@@ -48,7 +48,7 @@ public class FloorService(RestaurantContext context) : IFloorService
 
     public async Task<ApiResponse> GetAllAsync()
     {
-        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.Deleted == null).ToListAsync();
+        var floors = await context.Floors.Include(x => x.Rooms).Where(x => x.IsDeleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };
@@ -58,7 +58,7 @@ public class FloorService(RestaurantContext context) : IFloorService
     {
         var floors = await context.Floors.Include(x => x.Rooms)
                .ThenInclude(r => r.Tables)
-            .Where(x => x.EstablecimientoId == establecimientoId && x.Deleted == null).ToListAsync();
+            .Where(x => x.EstablecimientoId == establecimientoId && x.IsDeleted == null).ToListAsync();
         return floors.Count > 0
             ? new ApiResponse { Code = "1", Payload = floors }
             : new ApiResponse { Code = "0", Message = "Not found!" };

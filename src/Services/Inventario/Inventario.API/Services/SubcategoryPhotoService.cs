@@ -53,7 +53,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
 
         ;
         productFound.IsActive = false;
-        productFound.Deleted = true;
+        productFound.IsDeleted = true;
         productFound.UserId = userId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();

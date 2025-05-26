@@ -27,7 +27,7 @@ public class ModeloService : IModeloService
             return new ApiResponse { Code = "0", Message = "Modelo no encontrado" };
 
         modelo.IsActive = false;
-        modelo.Deleted = true;
+        modelo.IsDeleted = true;
         modelo.UserId = userId;
         _context.Update(modelo);
         await _context.SaveChangesAsync();

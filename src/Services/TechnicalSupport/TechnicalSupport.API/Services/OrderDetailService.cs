@@ -23,7 +23,7 @@ public class OrderDetailService : IOrderDetailService
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
-        if (await _context.OrderMaintenances.AnyAsync(x => x.OrderDetailId == id && x.Deleted == null))
+        if (await _context.OrderMaintenances.AnyAsync(x => x.OrderDetailId == id && x.IsDeleted == null))
             return new ApiResponse
             {
                 Code = "0",
@@ -32,7 +32,7 @@ public class OrderDetailService : IOrderDetailService
 
         var detailFound = await _context.OrderDetails.FindAsync(id);
         detailFound.IsActive = false;
-        detailFound.Deleted = true;
+        detailFound.IsDeleted = true;
         _context.Update(detailFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };

@@ -26,7 +26,7 @@ public class CategoryService : ICategoryService
             return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
 
         category.IsActive = false;
-        category.Deleted = true;
+        category.IsDeleted = true;
         category.UserId = userId;
         _context.Update(category);
         await _context.SaveChangesAsync();
