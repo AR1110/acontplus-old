@@ -95,7 +95,6 @@ export class DocConfigInfoAdicionalComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          const index = this.dataSource().indexOf(item)
           this.dataSource.update((ds)=>{
             return ds.filter(ds=>ds.unique !== item.unique)
           });
@@ -146,7 +145,7 @@ export class DocConfigInfoAdicionalComponent {
               text: response.message,
               timer: 1000,
             })
-            this.getInfoAdicional();
+            this.dialogRef.close(response);
           }
         }  );
     } catch (error) {

@@ -79,7 +79,7 @@ export class DocConfigPageComponent implements OnInit {
   @ViewChild('templateSelect') templateSelect!: TemplateRef<any>;
   getDocs() {
     this.docs.set([])
-    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe(response=>{ 
+    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe(response=>{
       this.docs.set(response.data)
     })
   }
