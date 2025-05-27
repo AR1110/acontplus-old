@@ -15,11 +15,17 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-printer-add-edit-modal',
-    imports: [FormsModule, MatSlideToggleModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [
+    FormsModule,
+    MatSlideToggleModule,
+    MatIcon,
+    MatButton,
+    ThemeButtonComponent,
+  ],
   templateUrl: './printer-add-edit-modal.component.html',
   styles: ``,
 })
@@ -152,12 +158,12 @@ export class PrinterAddEditModalComponent {
   }
 
   async updateDocument(data: any) {
-    if (!data.enabled) {
+    if (!data.isActive) {
       data.copies = 1;
     }
     if (this.params.data.id > 0) {
       if (data.id > 0) {
-        !data.enabled ? (data.labelEnabled = 'Inactiva') : 'Activa';
+        !data.isActive ? (data.labelisActive = 'Inactiva') : 'Activa';
 
         this._printerDocService
           .put(data.id, data)
@@ -215,7 +221,7 @@ export class PrinterAddEditModalComponent {
       });
       return;
     }
-    if (this.documents.every((item) => !item.enabled)) {
+    if (this.documents.every((item) => !item.isActive)) {
       this._tS.toastr({
         type: 'warning',
         message: 'Seleccione al menos un documento',
@@ -225,23 +231,27 @@ export class PrinterAddEditModalComponent {
 
     let codDoc = '';
     if (
-      this.documents.some((item) => item.codDoc === DOC_TYPE.FV && item.enabled)
+      this.documents.some(
+        (item) => item.codDoc === DOC_TYPE.FV && item.isActive,
+      )
     ) {
       codDoc = 'FV';
     }
     if (
-      this.documents.some((item) => item.codDoc === DOC_TYPE.NE && item.enabled)
+      this.documents.some(
+        (item) => item.codDoc === DOC_TYPE.NE && item.isActive,
+      )
     ) {
       codDoc = 'NE';
     }
-    if (this.documents.every((item) => item.enabled)) {
+    if (this.documents.every((item) => item.isActive)) {
       codDoc = 'A';
     }
 
     let params = {
       ...this.data,
       codDoc,
-      documents: this.documents.filter((x) => x.enabled),
+      documents: this.documents.filter((x) => x.isActive),
     };
 
     if (this.params.data.id > 0) {

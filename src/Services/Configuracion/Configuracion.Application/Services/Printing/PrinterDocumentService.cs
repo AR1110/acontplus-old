@@ -14,10 +14,9 @@ public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentSer
         if (id != printerDocument.Id) return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
 
         var document = await context.PrinterDocuments.FindAsync(id);
-        document!.UserId = printerDocument.UserId;
+        document.UpdatedByUserId = printerDocument.UpdatedByUserId;
         document.IsActive = printerDocument.IsActive;
         document.Copies = printerDocument.Copies;
-        context.Update(document);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
     }

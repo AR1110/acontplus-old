@@ -14,8 +14,11 @@ public static class ApplicationServicesExtensions
 
         services.AddHttpContextAccessor();
 
-        services.AddDbContextPool<ConfigContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContextPool<ConfigContext>(opt =>
+        {
+            opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("Configuracion.Infrastructure"));
+        });
 
         services.AddResponseCompression(options =>
         {

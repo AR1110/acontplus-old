@@ -65,20 +65,20 @@ BEGIN
 
 	DECLARE @tblDocs AS TABLE(
 		 uniqueIdDoc UNIQUEIDENTIFIER NOT NULL
-		,documentoSustentoTributarioId INT NULL
-		,numDocSustento VARCHAR(15) NULL
+		,documentoSustentoTributarioId INT NOT NULL
+		,numDocSustento VARCHAR(15) NOT NULL
 		,fechaEmisionDocSustento DATETIME2 NOT NULL
-		,fechaRegistroContable DATETIME2 NULL
-		,numAutDocSustento VARCHAR(49) NULL
-		,pagoLocExt VARCHAR(2) NULL
-		,tipoRegimenFiscalExteriorId INT
-		,paisEfecPago VARCHAR(3) NULL
-		,aplicConvDobTrib VARCHAR(2) NULL
-		,pagExtSujRetNorLeg VARCHAR(2) NULL
-		,pagoRegFis VARCHAR(2) NULL
-		,totalComprobantesReembolso NUMERIC(18,5) NULL
-		,totalBaseImponibleReembolso NUMERIC(18,5) NULL
-		,totalImpuestoReembolso NUMERIC(18,5) NULL
+		,fechaRegistroContable DATETIME2
+		,numAutDocSustento VARCHAR(49) NOT NULL
+		,pagoLocExt VARCHAR(2)
+		,tipoRegimenFiscalExteriorId INT NOT NULL
+		,paisEfecPago VARCHAR(3)
+		,aplicConvDobTrib VARCHAR(2)
+		,pagExtSujRetNorLeg VARCHAR(2)
+		,pagoRegFis VARCHAR(2)
+		,totalComprobantesReembolso NUMERIC(18,5)
+		,totalBaseImponibleReembolso NUMERIC(18,5)
+		,totalImpuestoReembolso NUMERIC(18,5)
 		,totalSinImpuestos NUMERIC(18,5) NOT NULL
 		,importeTotal NUMERIC(18,5) NOT NULL
 	);

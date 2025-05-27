@@ -166,12 +166,12 @@
             <td>{{ item.name }}</td>
             <td class="text-center">
               <mat-slide-toggle
-                [(ngModel)]="item.enabled"
+                [(ngModel)]="item.isActive"
                 (change)="updateDocument(item)"
               ></mat-slide-toggle>
             </td>
             <td class="text-center">
-              @if (item.enabled) {
+              @if (item.isActive) {
                 <input
                   type="number"
                   id="copies{{ $index + 1 }}"

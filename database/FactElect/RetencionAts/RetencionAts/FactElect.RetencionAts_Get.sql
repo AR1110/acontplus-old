@@ -234,7 +234,7 @@ BEGIN
 
 			    SELECT idImpuesto, codigo, Descripcion FROM Sri.Impuesto WITH (NOLOCK) WHERE estado = 1 
 
-			    SELECT idImpuesto, idTarifaImpuesto, Codigo, Descripcion FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
+			    SELECT idImpuesto, idTarifaImpuesto, Codigo AS CodigoPorcentaje, Descripcion, Porcentaje AS Tarifa FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1
 
 			    SELECT Id, Codigo, Descripcion FROM Sri.ImpuestoRetencion  WITH (NOLOCK) WHERE [Enabled] = CAST(1 AS BIT) 
 

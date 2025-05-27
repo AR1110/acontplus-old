@@ -7,7 +7,7 @@ export interface Printer {
   machine: string;
   server: string;
   ipAddress: string;
-  enabled: boolean;
+  isActive: boolean;
 }
 
 export interface PrinterRead extends Printer {
@@ -23,7 +23,7 @@ interface PrinterType {
   formato: string;
   deviceInfo: string;
   thermal: boolean;
-  enabled: boolean;
+  isActive: boolean;
 }
 
 export interface PrinterTypeSelectHtmlOnly extends PrinterType {}

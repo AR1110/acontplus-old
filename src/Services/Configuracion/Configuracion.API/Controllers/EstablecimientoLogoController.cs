@@ -30,6 +30,7 @@ public class EstablecimientoLogoController : BaseApiController
         var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(fileModel);
         estabLogo.EstablecimientoId = establecimientoId;
         estabLogo.UserId = User.GetUserId();
+        estabLogo.CreatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.AddAsync(estabLogo);
         if (response == null) return BadRequest($"No response: {establecimientoId}");
 
@@ -43,7 +44,7 @@ public class EstablecimientoLogoController : BaseApiController
 
         var fileModel = await FileModelBuilder.CreateCompressedAsync(file, CompressionUtils.CompressGZip);
         var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(fileModel);
-        estabLogo.UserId = User.GetUserId();
+        estabLogo.UpdatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
         if (response == null) return BadRequest($"No response {id}");
 

@@ -8,12 +8,13 @@ public class PrinterDocumentEndpoints(IPrinterDocumentService printerDocumentSer
     public async Task<IResult> CreatePrinterDocument(PrinterDocument printerDocument)
     {
         printerDocument.UserId = userContext.GetUserId();
+        printerDocument.CreatedByUserId = userContext.GetUserId();
         return Results.Ok(await printerDocumentService.AddAsync(printerDocument));
     }
 
     public async Task<IResult> UpdatePrinterDocument(int id, PrinterDocument printerDocument)
     {
-        printerDocument.UserId = userContext.GetUserId();
+        printerDocument.UpdatedByUserId = userContext.GetUserId();
         return Results.Ok(await printerDocumentService.UpdateAsync(id, printerDocument));
     }
 }

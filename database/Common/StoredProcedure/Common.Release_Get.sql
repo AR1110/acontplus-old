@@ -28,6 +28,6 @@ BEGIN
 		,CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
      FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
      WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId)
-		AND r.Deleted IS NULL
+		AND r.IsDeleted = CAST(0 AS BIT)
 END
 GO
