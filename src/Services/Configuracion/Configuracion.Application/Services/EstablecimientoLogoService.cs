@@ -48,7 +48,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
         logo.ContentType = data.ContentType;
         logo.IsCompressed = true;
         logo.LatestVersion = data.LatestVersion + 1;
-        _context.Update(logo);
+        logo.UpdatedByUserId = data.UpdatedByUserId;
         await _context.SaveChangesAsync();
         return new { code = "1", message = "Actualizado Exitosamente" };
     }

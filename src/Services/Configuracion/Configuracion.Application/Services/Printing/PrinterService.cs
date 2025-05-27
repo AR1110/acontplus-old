@@ -37,9 +37,8 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         printerFound.ServerDevice = printer.ServerDevice;
         printerFound.IsDefault = printer.IsDefault;
         printerFound.IsActive = printer.IsActive;
-        printerFound.UserId = printer.UserId;
         printerFound.Domain = printer.Domain;
-        context.Update(printerFound);
+        printerFound.UpdatedByUserId = printer.UpdatedByUserId;
         await context.SaveChangesAsync();
 
         return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };

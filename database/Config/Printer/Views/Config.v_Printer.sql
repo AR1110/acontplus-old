@@ -11,7 +11,6 @@ CREATE OR ALTER VIEW Config.v_Printer WITH SCHEMABINDING AS (
 	,ti.[Code] printerTypeCode
 	,ti.[Name] printerTypeName
     ,p.IsActive
-	,p.[Enabled]
     ,p.IpAddress
     ,p.Domain
     ,p.UserId

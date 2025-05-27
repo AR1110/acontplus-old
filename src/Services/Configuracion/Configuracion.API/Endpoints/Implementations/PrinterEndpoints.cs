@@ -26,13 +26,14 @@ public class PrinterEndpoints(IPrinterService printerService, IUserContext userC
     public async Task<IResult> CreatePrinter(Printer printer)
     {
         printer.UserId = userContext.GetUserId();
+        printer.CreatedByUserId = userContext.GetUserId();
         var result = await printerService.AddAsync(printer);
         return Results.Ok(result);
     }
 
     public async Task<IResult> UpdatePrinter(int id, Printer printer)
     {
-        printer.UserId = userContext.GetUserId();
+        printer.UpdatedByUserId = userContext.GetUserId();
         var result = await printerService.UpdateAsync(id, printer);
         return Results.Ok(result);
     }
