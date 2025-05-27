@@ -86,17 +86,13 @@ BEGIN
             
             SELECT TOP 1 @fechaEmision = fechaEmision, @idPuntoEmision = idPuntoEmision FROM Ventas.v_Factura WITH (NOLOCK) WHERE idFactura = @idDocument
 
-            SET @infoAdicional = (SELECT TOP 1 (
-                                        SELECT info.value
-                                        FROM OPENJSON(cd.infoAdicional) AS info
-                                        WHERE info.[key] = '0'
-                                            AND JSON_VALUE(info.value, '$.valor') IS NOT NULL
-                                        FOR JSON PATH
-                                    ) AS PrimerElementoEnArray
+            SET @infoAdicional = (SELECT TOP 1 JSON_QUERY(cd.infoAdicional, '$[0]')
                                     FROM dbo.ConfiguracionDocumento cd
                                     INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
-                                    WHERE td.codigoSri = @codDoc
-                                      AND cd.idPuntoEmision = @idPuntoEmision
+                                    WHERE td.codigo = @codDoc
+                                        AND cd.idPuntoEmision = @idPuntoEmision
+                                        AND JSON_VALUE(cd.infoAdicional, '$[0].valor') IS NOT NULL
+                                        AND JSON_VALUE(cd.infoAdicional, '$[0].valor') != ''
                                     );
 			SET @header = (
 					        SELECT 
@@ -207,17 +203,13 @@ BEGIN
             
             SELECT TOP 1 @fechaEmision = fechaEmision, @idPuntoEmision = idPuntoEmision FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idDocument
             
-            SET @infoAdicional = (SELECT TOP 1 (
-                                        SELECT info.value
-                                        FROM OPENJSON(cd.infoAdicional) AS info
-                                        WHERE info.[key] = '0'
-                                            AND JSON_VALUE(info.value, '$.valor') IS NOT NULL
-                                        FOR JSON PATH
-                                    ) AS PrimerElementoEnArray
+            SET @infoAdicional = (SELECT TOP 1 JSON_QUERY(cd.infoAdicional, '$[0]')
                                     FROM dbo.ConfiguracionDocumento cd
                                     INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
                                     WHERE td.codigo = @codDoc
-                                      AND cd.idPuntoEmision = @idPuntoEmision
+                                        AND cd.idPuntoEmision = @idPuntoEmision
+                                        AND JSON_VALUE(cd.infoAdicional, '$[0].valor') IS NOT NULL
+                                        AND JSON_VALUE(cd.infoAdicional, '$[0].valor') != ''
                                     );
 			SET @header = (SELECT 
 							
