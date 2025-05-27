@@ -153,11 +153,18 @@ BEGIN
       AND dt.estado = 1 
     ORDER BY dt.idAprob_Document_Detailt ASC 
 
-	SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
-			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
-			               ELSE '' END 
-		  ,serieComprobante = serie
-	FROM Ventas.Aprob_Document_Hist 
+	SELECT CASE WHEN ah.idProForma    > 0 THEN 'Proforma' 
+			    WHEN ah.idNotaEntrega > 0 THEN 'Nota Entrega' 
+			                              ELSE '' 
+           END as tipoDoc
+
+		  ,CASE WHEN ah.idProForma    > 0 THEN pr.serieComprobante
+			    WHEN ah.idNotaEntrega > 0 THEN ne.serieComprobante 
+			                              ELSE '' 
+           END as serieComprobante
+	FROM Ventas.Aprob_Document_Hist ah WITH (NOLOCK)
+    LEFT JOIN dbo.Proforma          pr WITH (NOLOCK) ON pr.idProforma    = ah.idProforma
+    LEFT JOIN dbo.NotaEntrega       ne WITH (NOLOCK) ON ne.idNotaEntrega = ah.idNotaEntrega
     WHERE idAprob_Document = @id
 	
 	SELECT 

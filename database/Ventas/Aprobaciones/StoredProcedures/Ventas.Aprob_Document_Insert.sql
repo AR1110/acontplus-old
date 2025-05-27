@@ -83,8 +83,8 @@ BEGIN
     )
 
 	DECLARE @tbHistorial AS TABLE (
-		idDocumento INT NOT NULL
-	   ,serie VARCHAR(20) NOT NULL
+		idNotaEntrega INT
+	   ,idProforma INT
 	)
 
 	DECLARE @tbInfoAdicional AS TABLE (
@@ -173,7 +173,14 @@ BEGIN
            ,discount     NUMERIC(18,5)
         )
 
-		INSERT INTO @tbHistorial  (idDocumento,serie) SELECT idDocumento,serie FROM OPENJSON(@historial) WITH (idDocumento INT '$.idDocumento' ,serie VARCHAR(30) '$.serie')
+		INSERT INTO @tbHistorial  
+              (idNotaEntrega,idProforma) 
+        SELECT idNotaEntrega,idProforma 
+        FROM OPENJSON(@historial) WITH 
+        (
+            idNotaEntrega INT
+           ,idProforma    INT
+        )
 
 		INSERT INTO @tbInfoAdicional (nombre,valor) SELECT nombre,valor FROM OPENJSON(@infoAdicional) WITH (nombre VARCHAR(300) '$.nombre' ,valor VARCHAR(300) '$.valor')
 		
@@ -281,33 +288,30 @@ BEGIN
             SELECT @idAprob_Document,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 
 			INSERT INTO Ventas.Aprob_Document_Hist
-                   (idAprob_Document,idDocumento,codDocumento,serie)
-			SELECT @idAprob_Document,idDocumento,@docOrigen,serie FROM @tbHistorial 
+                   (idAprob_Document,idProforma,idNotaEntrega)
+			SELECT @idAprob_Document,idProforma,idNotaEntrega 
+            FROM @tbHistorial 
 
 			INSERT INTO InfoAdicionalDoc(idComprobante,idTipoDocumento,nombre,valor)
-						          SELECT @idAprob_Document,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
+			SELECT @idAprob_Document,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
 
 
 			IF @docOrigen = 'NE'
 				BEGIN
-					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
-
                     UPDATE dbo.NotaEntrega WITH (ROWLOCK) SET convertToDoc = 1 
                     WHERE idNotaEntrega IN (
-                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @idAprob_Document  
+                                              SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @idAprob_Document  
                                            )
-
 				END 
 
 			IF @docOrigen = 'PR'
 				BEGIN
 					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'APL'
 
-					UPDATE pr SET	
-						pr.idEstadoDocumento = @idEstadoDocumento
-					FROM dbo.Proforma pr WITH(NOLOCK)
-				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-					       WHERE dt.idAprob_Document = @idAprob_Document) dt ON dt.idDocumento = pr.idProforma
+					UPDATE dbo.Proforma SET idEstadoDocumento = @idEstadoDocumento
+                    WHERE idProforma IN (
+                                            SELECT dt.idProforma FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @idAprob_Document  
+                                        )
 				END 
 
 		COMMIT TRAN 

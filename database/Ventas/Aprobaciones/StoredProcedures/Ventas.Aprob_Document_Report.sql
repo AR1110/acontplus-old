@@ -204,33 +204,42 @@ BEGIN
                   ,cu.IDCard                                  as identificacionCompador
                   ,cu.BusinessName                            as razonSocialComprador
                   ,FORMAT(ad.fechaEmision,'dd/MM/yyyy HH:mm') as fechaEmision
-                  ,CASE ad.docOrigen WHEN 'NE' THEN 'Nota Entrega' 
-                                     WHEN 'PR' THEN 'Proforma'
-                   END                                        as docOrigen
-                  ,CASE ad.codDoc WHEN '01' THEN 'Factura'
-                                  WHEN 'NE' THEN 'Nota Entrega'
-                   END                                        as docDestino
+                  ,og.descripcion                             as docOrigen
+                  ,td.descripcion                             as docDestino
                   ,CAST(ad.importeTotal as numeric(18,2))     as importeTotal
                   ,us.nombreUsuario                           as usuario
             FROM Ventas.Aprob_Document   ad WITH (NOLOCK)
-            INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente = ad.idCliente
-            INNER JOIN dbo.Usuario       us WITH (NOLOCK) ON us.idUsuario = ad.idUsuario
-            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id        = cl.CustomerId
+            INNER JOIN dbo.Cliente       cl WITH (NOLOCK) ON cl.idCliente       = ad.idCliente
+            INNER JOIN dbo.Usuario       us WITH (NOLOCK) ON us.idUsuario       = ad.idUsuario
+            INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = ad.idTipoDocumento
+            INNER JOIN dbo.TipoDocumento og WITH (NOLOCK) ON og.idTipoDocumento = ad.idTipoDocOrigen
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id              = cl.CustomerId
             WHERE ad.idAprob_Document = @id
 
-            SELECT serie        as seriComprobante
-	              ,CASE codDocumento WHEN 'NE' THEN (SELECT TOP 1 FORMAT(ne.fechaEmision,'dd/MM/yyyy HH:mm') FROM dbo.NotaEntrega ne WITH (NOLOCK) WHERE ne.idNotaEntrega = hv.idDocumento) 
-	                                 WHEN 'PR' THEN (SELECT TOP 1 FORMAT(pr.fechaEmision,'dd/MM/yyyy HH:mm') FROM dbo.Proforma pr WITH (NOLOCK) WHERE pr.idProforma = hv.idDocumento) 
-                   END          as fechaEmision
+            SELECT CASE WHEN hv.idProForma    > 0 THEN pr.serieComprobante
+			            WHEN hv.idNotaEntrega > 0 THEN ne.serieComprobante 
+			                                      ELSE '' 
+                   END as serieComprobante
+
+	              ,CASE WHEN hv.idProForma    > 0 THEN FORMAT(pr.fechaEmision,'dd/MM/yyyy HH:mm') 
+	                    WHEN hv.idNotaEntrega > 0 THEN FORMAT(ne.fechaEmision,'dd/MM/yyyy HH:mm') 
+                   END as fechaEmision
             FROM Ventas.Aprob_Document_Hist hv WITH (NOLOCK)
+            LEFT JOIN dbo.Proforma          pr WITH (NOLOCK) ON pr.idProforma    = hv.idProforma
+            LEFT JOIN dbo.NotaEntrega       ne WITH (NOLOCK) ON ne.idNotaEntrega = hv.idNotaEntrega
             WHERE hv.idAprob_Document = @id
-            ORDER BY hv.serie ASC
+            ORDER BY serieComprobante ASC
 
             SELECT us.nombreUsuario                                               as usuario
-                  ,Common.ufnGetSerieDocument(va.estab,va.ptoEmi,va.secuencial,0) as serieComprobante
+                  ,CASE WHEN va.idFactura     > 0 THEN de.serieComprobante 
+	                    WHEN va.idNotaEntrega > 0 THEN ne.serieComprobante 
+                   END as serieComprobante
                   ,FORMAT(va.fechaRegistro,'dd/MM/yyyy HH:mm')                    as fechaRegistro
-            FROM Ventas.Aprob_Document_Audit va WITH (NOLOCK)
-            INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = va.idUsuario
+            FROM Ventas.Aprob_Document_Audit    va WITH (NOLOCK)
+            INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario              = va.idUsuario
+             LEFT JOIN dbo.Factura              fa WITH (NOLOCK) ON fa.idFactura              = va.idFactura
+             LEFT JOIN dbo.NotaEntrega          ne WITH (NOLOCK) ON ne.idNotaEntrega          = va.idNotaEntrega
+             LEFT JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
             WHERE va.idAprob_Document = @id
 
             RETURN 

@@ -61,13 +61,13 @@ BEGIN
 					DECLARE @idDocumento AS INT
 
 					DECLARE cursor_inventory CURSOR LOCAL FOR
-					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
+					SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt
 				    WHERE dt.idAprob_Document = @id
 
 					
 					UPDATE dbo.NotaEntrega WITH (ROWLOCK) SET convertToDoc = 0
                     WHERE idNotaEntrega IN (
-                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @id  
+                                              SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @id  
                                            )
 
 
@@ -89,9 +89,12 @@ BEGIN
 
 			IF @docOrigen = 'PR'
 				BEGIN
-					UPDATE pr SET pr.idEstadoDocumento = @idEstadoDocumento
-					FROM dbo.Proforma pr WITH(NOLOCK) 
-					JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @id) dt ON dt.idDocumento = pr.idProforma
+                    SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+
+					UPDATE dbo.Proforma SET idEstadoDocumento = @idEstadoDocumento
+                    WHERE idProforma IN (
+                                            SELECT dt.idProforma FROM Ventas.Aprob_Document_Hist dt WHERE dt.idAprob_Document = @id  
+                                        )
 				END 
 
 		COMMIT TRAN 

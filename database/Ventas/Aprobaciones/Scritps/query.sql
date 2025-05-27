@@ -127,7 +127,9 @@ go
     --EXEC sp_rename 'Ventas.Aprob_Document.UdpatedAt', 'UpdatedAt', 'COLUMN';
 
 
-    ---> 5/26/2025
+    --> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    ---> NORMALICACION DE ID ENTIDAD REALCION IDTIPODOCUMENTO, IDTIPODOCORRIGEN, IDESTADODOCUMENTO 5/26/2025
 
     --ALTER TABLE Ventas.Aprob_Document ADD idTipoDocumento BIGINT CONSTRAINT fk_idTipDocumento_Aprobacion FOREIGN KEY REFERENCES dbo.TipoDocumento(idTipoDocumento)
 
@@ -167,4 +169,62 @@ go
      
      --ALTER TABLE Ventas.Aprob_Document drop column codEstado
 
-    SELECT top 10 * FROM Ventas.Aprob_Document
+    
+    --> ENTIDAD REALCION DIRECTA PARA LA TABLA DE HISTORIAL CON LAS TABLAS PROFORMA Y NOTA DE ENTREGA
+
+    --ALTER TABLE Ventas.Aprob_Document_Hist ADD idNotaEntrega BIGINT CONSTRAINT FK_idNotaEntrega_Aprob_Document_Hist FOREIGN KEY REFERENCES dbo.NotaEntrega(idNotaEntrega)
+
+    --update ah
+    --   set ah.idNotaEntrega = ne.idNotaEntrega
+    --FROM Ventas.Aprob_Document_Hist ah
+    --INNER JOIN dbo.NotaEntrega      ne on ne.idNotaEntrega = ah.idDocumento
+    --WHERE codDocumento = 'NE'
+
+    --ALTER TABLE Ventas.Aprob_Document_Hist ADD idProforma BIGINT CONSTRAINT FK_idProforma_Aprob_Document_Hist FOREIGN KEY REFERENCES dbo.Proforma(idProforma)
+    
+
+    --update ah
+    --   set ah.idProforma = pr.idProforma
+    --FROM Ventas.Aprob_Document_Hist ah
+    --INNER JOIN dbo.Proforma         pr on pr.idProforma = ah.idDocumento
+    --WHERE codDocumento = 'PR'
+
+
+    --alter table Ventas.Aprob_Document_Hist drop column idDocumento 
+
+    --alter table Ventas.Aprob_Document_Hist drop column codDocumento 
+    
+    --alter table Ventas.Aprob_Document_Hist drop column serie 
+
+    --SELECT TOP 100 * FROM Ventas.Aprob_Document_Hist
+
+
+    --> ENTIDAD REALCION DIRECTA PARA LA TABLA DE AUDITORIA CON LAS TABLAS FACTURA Y NOTA DE ENTREGA
+
+    --ALTER TABLE Ventas.Aprob_Document_Audit ADD idFactura BIGINT CONSTRAINT FK_idFactura_Aprob_Document_Audit FOREIGN KEY REFERENCES dbo.Factura(idFactura)
+
+    --update au
+    --   set au.idFactura = fa.idFactura
+    --FROM Ventas.Aprob_Document_Audit au
+    --INNER JOIN dbo.Factura           fa on fa.idFactura = au.idDocumento
+    --WHERE codDoc = '01'
+
+    --ALTER TABLE Ventas.Aprob_Document_Audit ADD idNotaEntrega BIGINT CONSTRAINT FK_idNotaEntrega_Aprob_Document_Audit FOREIGN KEY REFERENCES dbo.NotaEntrega(idNotaEntrega)
+
+    --update au
+    --   set au.idNotaEntrega = ne.idNotaEntrega
+    --FROM Ventas.Aprob_Document_Audit au
+    --INNER JOIN dbo.NotaEntrega       ne on ne.idNotaEntrega = au.idDocumento
+    --WHERE codDoc = 'NE'
+
+    --ALTER TABLE Ventas.Aprob_Document_Audit DROP COLUMN estab 
+    --ALTER TABLE Ventas.Aprob_Document_Audit DROP COLUMN ptoEmi 
+    --ALTER TABLE Ventas.Aprob_Document_Audit DROP COLUMN secuencial 
+    --ALTER TABLE Ventas.Aprob_Document_Audit DROP COLUMN codDoc 
+    --ALTER TABLE Ventas.Aprob_Document_Audit DROP COLUMN idDocumento 
+
+
+    select * FROM Ventas.Aprob_Document_Audit au
+    
+
+    
