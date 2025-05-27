@@ -44,6 +44,8 @@ BEGIN
     DECLARE @taxes VARCHAR(MAX)
     DECLARE @fechaEmision DATETIME2
     DECLARE @saldo NUMERIC(18,2)
+    DECLARE @idPuntoEmision INT;
+    DECLARE @infoAdicional VARCHAR(MAX);
 
     DECLARE @tbTaxes AS TABLE(
         descripcion VARCHAR(150) NOT NULL
@@ -82,8 +84,20 @@ BEGIN
 	IF @codDoc = 'FV'
 		BEGIN
             
-            SELECT TOP 1 @fechaEmision = fechaEmision FROM Ventas.v_Factura WITH (NOLOCK) WHERE idFactura = @idDocument
+            SELECT TOP 1 @fechaEmision = fechaEmision, @idPuntoEmision = idPuntoEmision FROM Ventas.v_Factura WITH (NOLOCK) WHERE idFactura = @idDocument
 
+            SET @infoAdicional = (SELECT TOP 1 (
+                                        SELECT info.value
+                                        FROM OPENJSON(cd.infoAdicional) AS info
+                                        WHERE info.[key] = '0'
+                                            AND JSON_VALUE(info.value, '$.valor') IS NOT NULL
+                                        FOR JSON PATH
+                                    ) AS PrimerElementoEnArray
+                                    FROM dbo.ConfiguracionDocumento cd
+                                    INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
+                                    WHERE td.codigoSri = @codDoc
+                                      AND cd.idPuntoEmision = @idPuntoEmision
+                                    );
 			SET @header = (
 					        SELECT 
 					             codDoc = 'FV'
@@ -123,6 +137,7 @@ BEGIN
 						        ,regimen = UPPER(s.contribuyenteRimpe)
 						        ,usuario = u.nombreUsuario
                                 ,@saldo saldo
+                                ,@infoAdicional additionalInfo
 					        FROM dbo.Factura                     f WITH (NOLOCK)
                             INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = f.idDocumentoElectronico
 					        INNER JOIN dbo.Usuario               u WITH (NOLOCK) ON u.idUsuario               = f.idUsuario 
@@ -190,8 +205,20 @@ BEGIN
 	IF @codDoc = 'NE'
 		BEGIN
             
-            SELECT TOP 1 @fechaEmision = fechaEmision FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idDocument
-
+            SELECT TOP 1 @fechaEmision = fechaEmision, @idPuntoEmision = idPuntoEmision FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idDocument
+            
+            SET @infoAdicional = (SELECT TOP 1 (
+                                        SELECT info.value
+                                        FROM OPENJSON(cd.infoAdicional) AS info
+                                        WHERE info.[key] = '0'
+                                            AND JSON_VALUE(info.value, '$.valor') IS NOT NULL
+                                        FOR JSON PATH
+                                    ) AS PrimerElementoEnArray
+                                    FROM dbo.ConfiguracionDocumento cd
+                                    INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
+                                    WHERE td.codigo = @codDoc
+                                      AND cd.idPuntoEmision = @idPuntoEmision
+                                    );
 			SET @header = (SELECT 
 							
 							 codDoc = 'NE'
@@ -225,6 +252,7 @@ BEGIN
 							,observacion = ISNULL(ne.observacion, 'S/N')
 							,usuario = u.nombreUsuario
                             ,@saldo saldo
+                            ,@infoAdicional additionalInfo
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
 						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.idEstablecimiento  = pe.idEstablecimiento
