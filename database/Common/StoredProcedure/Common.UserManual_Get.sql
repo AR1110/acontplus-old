@@ -47,7 +47,7 @@ BEGIN
             ,Name
         
         FROM AcontplusAdmin.Config.Menu WITH(NOLOCK)
-        WHERE Enabled = CAST(1 AS BIT)
+        WHERE IsActive = CAST(1 AS BIT)
         ORDER BY Name
 
         SET @totalRecords = (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserManual WITH(NOLOCK))
@@ -63,7 +63,7 @@ BEGIN
                 INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
             	    ON um.UserManualTypeId = umt.Id
 			    LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
-		    WHERE um.Enabled = CAST(1 AS BIT) '
+		    WHERE um.IsActive = CAST(1 AS BIT) '
       	
        	IF (@menuId > 0)
         	BEGIN
