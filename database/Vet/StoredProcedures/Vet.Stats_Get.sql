@@ -37,8 +37,8 @@ BEGIN
     INNER JOIN Vet.Breed b ON p.BreedId = b.Id
     INNER JOIN Vet.PetType pt  WITH(NOLOCK) ON b.PetTypeId = pt.Id
     INNER JOIN dbo.Cliente c On p.customerCompanyId = c.idCliente
-    WHERE p.[Enabled] = 1 
-        AND p.Deleted IS NULL
+    WHERE p.[IsActive] = 1 
+        AND p.IsDeleted = CAST(0 AS BIT)
         AND c.idEntidad = @companyId
     GROUP BY pt.[Name]
     ORDER BY pt.[Name] ASC
@@ -47,8 +47,8 @@ BEGIN
     FROM Vet.Pet p  WITH(NOLOCK)
     INNER JOIN Vet.Breed b  WITH(NOLOCK) ON p.BreedId = b.Id
      INNER JOIN dbo.Cliente c On p.customerCompanyId = c.idCliente
-    WHERE p.[Enabled] = 1 
-        AND p.Deleted IS NULL
+    WHERE p.[IsActive] = 1 
+        AND p.IsDeleted = CAST(0 AS BIT)
         AND c.idEntidad = @companyId
     GROUP BY b.[Name]
     ORDER BY b.[Name] ASC
@@ -57,8 +57,8 @@ BEGIN
     FROM Vet.Pet p  WITH(NOLOCK)
     INNER JOIN Vet.Gender g  WITH(NOLOCK) ON p.GenderId = g.Id
      INNER JOIN dbo.Cliente c On p.customerCompanyId = c.idCliente
-    WHERE p.[Enabled] = 1 
-        AND p.Deleted IS NULL
+    WHERE p.[IsActive] = 1 
+        AND p.IsDeleted = CAST(0 AS BIT)
         AND c.idEntidad = @companyId
     GROUP BY g.[Name]
 END

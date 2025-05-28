@@ -432,7 +432,7 @@ BEGIN
         END
 
     ---- INSERT OrderDocument -----
-    INSERT INTO TechnicalSupport.OrderDocument(OrderId, DocumentoId, TipoDocumentoId, [Enabled], UserId)
+    INSERT INTO TechnicalSupport.OrderDocument(OrderId, DocumentoId, TipoDocumentoId, [IsActive], UserId)
     VALUES(@orderId, @documentoId, @tipoDocumentoId, 1, @userId)
 
     UPDATE cf 

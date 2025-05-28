@@ -130,7 +130,7 @@ BEGIN
 
             ---> Inser data - Details
             INSERT INTO TechnicalSupport.OrderDetail
-                   (Uuid, OrderId, Deviceid, Obs, CreatedAt, [Enabled], UserId)
+                   (Uuid, OrderId, Deviceid, Obs, CreatedAt, [IsActive], UserId)
             SELECT uuid, @id, deviceId, obs, @datetime, @enabled, @userId
             FROM @tbDetails
             WHERE id = 0

@@ -61,10 +61,10 @@ BEGIN
     IF (@tipo = 2)
         BEGIN
             SET @tableNames = 'behaviors,behaviorsStatuses,diseases,diseasesStatuses,estabs'
-            SELECT * FROM Vet.Behavior WITH (NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM Vet.BehaviorStatus WITH (NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM Vet.Disease WITH (NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM Vet.DiseaseStatus WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT * FROM Vet.Behavior WITH (NOLOCK) WHERE [IsActive] = 1
+            SELECT * FROM Vet.BehaviorStatus WITH (NOLOCK) WHERE [IsActive] = 1
+            SELECT * FROM Vet.Disease WITH (NOLOCK) WHERE [IsActive] = 1
+            SELECT * FROM Vet.DiseaseStatus WITH (NOLOCK) WHERE [IsActive] = 1
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -97,7 +97,7 @@ BEGIN
         LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON c.CustomerId = cc.Id
 	WHERE c.idEntidad = @companyId
 	    AND mh.establecimientoId = @idEstablecimiento
-	    AND mh.Deleted is null '
+	    AND mh.IsDeleted = CAST(0 AS BIT) '
 
 
      IF LEN(LTRIM(RTRIM(@textSearch))) >= 3

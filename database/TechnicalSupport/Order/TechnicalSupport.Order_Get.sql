@@ -76,7 +76,7 @@ BEGIN
                     ,[Total]
                     ,[Obs]
                     ,[OrderStatusId] 
-                    ,o.[Enabled]
+                    ,o.[IsActive]
                     ,o.[Deleted]
                     ,o.[UserId]
                     ,[Finished]
@@ -89,7 +89,7 @@ BEGIN
                     WHERE o.Id = @id
 
                     SELECT od.[Id], od.[Uuid], od.[OrderId], od.[DeviceId], od.[Obs], od.[CreatedAt], od.[UpdatedAt], 
-                        od.[Enabled], od.[Deleted], od.[UserId], ISNULL(od.[AssignedUserId], 0) AssignedUserId
+                        od.[IsActive], od.[Deleted], od.[UserId], ISNULL(od.[AssignedUserId], 0) AssignedUserId
                         ,d.[Name] DeviceName
                         ,dc.SerialNumber DeviceSerie
                         ,CONVERT(VARCHAR, FORMAT(warrantyEndDate, 'yyyy-MM-dd'), 106) DeviceWarranty
@@ -99,7 +99,7 @@ BEGIN
                         INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON od.DeviceId = d.Id
                         INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId AND dc.CustomerCompanyId = o.CustomerCompanyId
                     WHERE od.OrderId = @id
-                        AND od.Deleted IS NULL
+                        AND od.IsDeleted = CAST(0 AS BIT)
                 END
 		END
 
@@ -136,7 +136,7 @@ BEGIN
         LEFT JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = tor.AssignedUserId
         WHERE e.idEntidad = @companyId
             AND CAST(tor.fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE)
-            AND tor.Deleted IS NULL '
+            AND tor.IsDeleted = CAST(0 AS BIT) '
 
 
         IF (LEN(RTRIM(LTRIM(ISNULL(@orderStatusCode, '')))) > 0)
@@ -189,9 +189,10 @@ BEGIN
                 ,ISNULL(tor.Obs, '')        AS obs
                 ,tor.Enabled
                 ,tor.CustomerCompanyId
-                ,c.nombreFiscal RazonSocial
+                ,cc.BusinessName RazonSocial
             FROM TechnicalSupport.[Order] tor 
-            INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId 
+            INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
+            INNER JOIN Customer.Customer cc ON c.customerId = cc.Id
             WHERE tor.Id = @id
 
             SELECT 
@@ -224,7 +225,7 @@ BEGIN
                   ,a.llevaInventario 
                   ,a.precioSinSubsidio
                   ,a.codigo      
-                  ,om.[Enabled]         AS estado
+                  ,om.[IsActive]         AS estado
                   ,orderDetailId =  od.Id
                   ,om.Obs
                   ,ISNULL
@@ -332,13 +333,13 @@ BEGIN
 	        SELECT 
                 ti.idTarifaImpuesto
                 ,ti.codigo
-                ,ti.codImpuesto
+                ,i.codigo codImpuesto
                 ,i.idImpuesto
                 ,ti.descripcion
                 ,ti.porcentaje
                 ,ti.estado 
                 pe FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
-            INNER JOIN Sri.Impuesto i WITH(NOLOCK)  ON i.codigo = ti.codImpuesto 
+            INNER JOIN Sri.Impuesto i WITH(NOLOCK)  ON i.idImpuesto = ti.idImpuesto 
 
             SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @companyId AND codTrasaccion = 'V'
             RETURN
@@ -356,8 +357,8 @@ BEGIN
             ,   CONVERT(NVARCHAR, FORMAT(o.FechaEmision, 'yyyy/MM/dd')) AS FechaEmision
             ,   it.serieComprobante                                     AS Serie
             ,   e.nombreComercial                                       AS Establecimiento
-            ,   c.nombreComercial                                       AS Cliente
-            ,   c.numeroIdentificacion
+            ,   cc.TradeName                                       AS Cliente
+            ,   cc.IdCard numeroIdentificacion
             ,   c.correo
             ,   c.direccion
             ,   f.subTotalSinImpuestos
@@ -372,6 +373,7 @@ BEGIN
         INNER JOIN TechnicalSupport.[Order] o       WITH (NOLOCK) ON o.Id                   = tsod.OrderId
         INNER JOIN Sri.Establecimiento e            WITH (NOLOCK) ON e.idEstablecimiento    = o.EstablecimientoId
         INNER JOIN Cliente c                        WITH (NOLOCK) ON c.idCliente            = o.CustomerCompanyId
+        INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.customerId = cc.Id
         INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento     = tsod.TipoDocumentoId
         INNER JOIN Factura f                        WITH (NOLOCK) ON f.idFactura            = tsod.DocumentoId
         LEFT JOIN  Inventario.Transaccion it        WITH (NOLOCK) ON it.idDocumento         = tsod.DocumentoId
@@ -386,8 +388,8 @@ BEGIN
             ,   CONVERT(NVARCHAR, FORMAT(o.FechaEmision, 'yyyy/MM/dd')) AS FechaEmision
             ,   it.serieComprobante                                     AS Serie
             ,   e.nombreComercial                                       AS Establecimiento
-            ,   c.nombreComercial                                       AS Cliente
-            ,   c.numeroIdentificacion
+            ,   cC.TradeName                                       AS Cliente
+            ,   cc.IdCard numeroIdentificacion
             ,   c.correo
             ,   c.direccion
             ,   ne.subTotalSinImpuestos
@@ -402,6 +404,7 @@ BEGIN
         INNER JOIN TechnicalSupport.[Order] o       WITH (NOLOCK) ON o.Id                   = tsod.OrderId
         INNER JOIN Sri.Establecimiento e            WITH (NOLOCK) ON e.idEstablecimiento    = o.EstablecimientoId
         INNER JOIN Cliente c                        WITH (NOLOCK) ON c.idCliente            = o.CustomerCompanyId
+        INNER JOIN Customer.Customer cc WITH (NOLOCK) on c.customerID = cc.Id
         INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento     = tsod.TipoDocumentoId
         INNER JOIN NotaEntrega ne                   WITH (NOLOCK) ON ne.idNotaEntrega       = tsod.DocumentoId
         LEFT JOIN  Inventario.Transaccion it        WITH (NOLOCK) ON it.idDocumento         = tsod.DocumentoId
