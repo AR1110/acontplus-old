@@ -73,7 +73,7 @@ public class FloorService(RestaurantContext context) : IFloorService
         floorFound.Code = floor.Code;
         floorFound.Description = floor.Description;
         floorFound.IsActive = floor.IsActive;
-        floorFound.UserId = floor.UserId;
+        floorFound.UpdatedByUserId = floor.UpdatedByUserId;
         context.Update(floorFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };

@@ -14,9 +14,7 @@ public class BreedService(VetContext context) : IBreedService
         var breed = await context.Breeds.FindAsync(id);
         if (breed == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
-        breed.UserId = userId;
-        breed.IsDeleted = true;
-        breed.IsActive = false;
+        breed.MarkAsDeleted(userId);
         context.Update(breed);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -47,7 +45,7 @@ public class BreedService(VetContext context) : IBreedService
         breedFound.Name = breed.Name;
         breedFound.Description = breed.Description;
         breedFound.IsActive = breed.IsActive;
-        breedFound.UserId = breed.UserId;
+        breedFound.UpdatedByUserId = breed.UpdatedByUserId;
         context.Update(breedFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente", Payload = breed };

@@ -23,7 +23,7 @@ public class FloorController(IFloorService floorService) : BaseApiController
     public async Task<IActionResult> Post([FromBody] Floor floor)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        floor.UserId = User.GetUserId();
+        floor.CreatedByUserId = User.GetUserId();
         return Ok(await floorService.AddAsync(floor));
     }
 
@@ -31,7 +31,7 @@ public class FloorController(IFloorService floorService) : BaseApiController
     public async Task<IActionResult> Put(int id, [FromBody] Floor floor)
     {
         if (id != floor.Id) return BadRequest();
-        floor.UserId = User.GetUserId();
+        floor.UpdatedByUserId = User.GetUserId();
         return Ok(await floorService.UpdateAsync(id, floor));
     }
 

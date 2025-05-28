@@ -17,14 +17,14 @@ public class CustomerController(ICustomerService customerService) : BaseApiContr
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, AppCustomer appCustomer)
     {
-        appCustomer.UserId = User.GetUserId();
+        appCustomer.UpdatedByUserId = User.GetUserId();
         return Ok(await customerService.UpdateAsync(id, appCustomer));
     }
 
     [HttpPost]
     public async Task<ActionResult<AppCustomer>> Post(AppCustomer appCustomer)
     {
-        appCustomer.UserId = User.GetUserId();
+        appCustomer.CreatedByUserId = User.GetUserId();
         return Ok(await customerService.AddAsync(appCustomer));
     }
 

@@ -45,9 +45,8 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         var tableFound = await context.Tables.FindAsync(id);
 
         if (tableFound == null) return new ApiResponse { Code = "1", Message = "No se encontro mesa" };
-        ;
 
-        tableFound.UserId = appTable.UserId;
+        tableFound.UpdatedByUserId = appTable.UpdatedByUserId;
         tableFound.RoomId = appTable.RoomId;
         tableFound.Description = appTable.Description;
         tableFound.NumberTable = appTable.NumberTable;
@@ -81,7 +80,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         //{
         //    return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
         //}
-        appTable.IsActive = false;
+        appTable.MarkAsDeleted(userId);
         context.Update(appTable);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Inactivado existosamente" };
@@ -94,7 +93,7 @@ public class AppTableService(RestaurantContext context) : IAppTableService
         if (tableFound == null) return new ApiResponse { Code = "1", Message = "No se encontro mesa" };
         ;
 
-        tableFound.UserId = userId;
+        tableFound.UpdatedByUserId = userId;
         tableFound.Assigned = null;
         context.Update(tableFound);
         await context.SaveChangesAsync();

@@ -19,9 +19,7 @@ public class CustomerService(FactElectContext context, IAdoRepository adoReposit
         var customer = await context.Customers.FindAsync(id);
         if (customer == null) return new ApiResponse { Code = "0", Message = "Item no encontrado" };
 
-        customer.IsActive = false;
-        customer.IsDeleted = true;
-        customer.UserId = userId;
+        customer.MarkAsDeleted(userId);
         context.Update(customer);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };

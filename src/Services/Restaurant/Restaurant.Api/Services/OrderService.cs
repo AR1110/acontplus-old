@@ -42,7 +42,7 @@ public class OrderService(
         var order = await context.Orders.FindAsync(id);
         if (order == null) return new ApiResponse { Code = "0", Message = "Order not found" };
 
-        order.IsActive = false;
+        order.MarkAsDeleted(userId);
         context.Update(order);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado exitosamente!" };

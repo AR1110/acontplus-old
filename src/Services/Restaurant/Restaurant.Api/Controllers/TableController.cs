@@ -17,7 +17,7 @@ public class TableController(IAppTableService tableService) : BaseApiController
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        appTable.UserId = User.GetUserId();
+        appTable.CreatedByUserId = User.GetUserId();
 
         return Ok(await tableService.AddAsync(appTable));
     }
@@ -27,7 +27,7 @@ public class TableController(IAppTableService tableService) : BaseApiController
     {
         if (id != appTable.Id) return BadRequest();
 
-        appTable.UserId = User.GetUserId();
+        appTable.UpdatedByUserId = User.GetUserId();
 
         return Ok(await tableService.UpdateAsync(id, appTable));
     }

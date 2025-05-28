@@ -43,6 +43,8 @@ public class RecipeServiceService(IAdoRepository adoRepository, RestaurantContex
         recipeFound.NetWeight = recipe.NetWeight;
         recipeFound.ExtentId = recipe.ExtentId;
         recipeFound.CostPrice = recipe.CostPrice;
+        recipeFound.IsActive = recipe.IsActive;
+        recipeFound.UpdatedByUserId = recipe.UpdatedByUserId;
         context.Update(recipeFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
@@ -52,11 +54,8 @@ public class RecipeServiceService(IAdoRepository adoRepository, RestaurantContex
     {
         var recipe = await context.Recipes.FindAsync(id);
         if (recipe == null) return new ApiResponse { Code = "1", Message = "Recipe not found!" };
-
-        recipe.IsActive = false;
-        recipe.IsDeleted = true;
-        recipe.UserId = userId;
-        context.Update(recipe);
+         
+        context.Remove(recipe);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
     }

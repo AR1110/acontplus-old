@@ -25,7 +25,7 @@ public class DeviceController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Device device)
     {
-        device.UserId = User.GetUserId();
+        device.CreatedByUserId = User.GetUserId();
         var response = await _deviceService.AddAsync(device);
         if (response == null) return BadRequest("Cant Save");
 
@@ -35,7 +35,7 @@ public class DeviceController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Device device)
     {
-        device.UserId = User.GetUserId();
+        device.UpdatedByUserId = User.GetUserId();
         var response = await _deviceService.UpdateAsync(id, device);
         if (response == null) return BadRequest("Cant Update");
 

@@ -22,7 +22,7 @@ public class ModeloController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Modelo modelo)
     {
-        modelo.UserId = User.GetUserId();
+        modelo.CreatedByUserId = User.GetUserId();
         var response = await _modeloService.AddAsync(modelo);
         return Ok(response);
     }
@@ -30,7 +30,7 @@ public class ModeloController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Modelo modelo)
     {
-        modelo.UserId = User.GetUserId();
+        modelo.UpdatedByUserId = User.GetUserId();
         var response = await _modeloService.UpdateAsync(id, modelo);
         return Ok(response);
     }

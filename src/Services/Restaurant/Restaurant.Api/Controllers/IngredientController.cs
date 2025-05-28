@@ -30,7 +30,7 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Ingredient ingredient)
     {
-        ingredient.UserId = User.GetUserId();
+        ingredient.UpdatedByUserId = User.GetUserId();
         return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
 

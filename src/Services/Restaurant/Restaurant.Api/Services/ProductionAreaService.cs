@@ -69,7 +69,7 @@ public class ProductionAreaService(RestaurantContext context) : IProductionAreaS
         productionAreaFound.Code = productionArea.Code;
         productionAreaFound.Description = productionArea.Description;
         productionAreaFound.IsActive = productionArea.IsActive;
-        productionAreaFound.UserId = productionArea.UserId;
+        productionAreaFound.UpdatedByUserId = productionArea.UpdatedByUserId;
         context.Update(productionAreaFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };

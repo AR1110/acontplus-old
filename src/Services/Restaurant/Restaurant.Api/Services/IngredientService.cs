@@ -42,7 +42,7 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
         ingredientFound.Unit = ingredient.Unit;
         ingredientFound.Content = ingredient.Content;
         ingredientFound.IsActive = ingredient.IsActive;
-        ingredientFound.UserId = ingredient.UserId;
+        ingredientFound.UpdatedByUserId = ingredient.UpdatedByUserId;
         context.Update(ingredientFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
@@ -52,11 +52,8 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
     {
         var ingredient = await context.Ingredients.FindAsync(id);
         if (ingredient == null) return new ApiResponse { Code = "0", Message = "Ingredient not found" };
-
-        ingredient.IsActive = false;
-        ingredient.IsDeleted = true;
-        ingredient.UserId = userId;
-        context.Update(ingredient);
+        
+        context.Remove(ingredient);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado existosamente" };
     }
