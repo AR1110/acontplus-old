@@ -46,6 +46,7 @@ public class AccountController(
                         var logingHistory = new LoginHistory
                         {
                             UserId = userData[0].UserId,
+                            CreatedByUserId = userData[0].UserId,
                             Username = userData[0].Username,
                             UserRoleId = userData[0].UserRoleId,
                             UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).userAgent,
@@ -132,7 +133,7 @@ public class AccountController(
 
         var logingHistory = new LoginHistory
         {
-            UserId = userData.UserId,
+            CreatedByUserId = userData.UserId,
             Username = userData.Username,
             UserRoleId = userData.UserRoleId,
             UserAgent = UserAgentHelper.SummarizeUserAgent(userData.UserAgent).userAgent,

@@ -42,7 +42,7 @@ public class AccountController(
 
                         var logingHistory = new LoginHistory
                         {
-                            UserId = userData[0].UserId,
+                            CreatedByUserId = userData[0].UserId,
                             Username = userData[0].Username,
                             UserRoleId = userData[0].UserRoleId,
                             UserAgent = authRequest.UserAgent,
