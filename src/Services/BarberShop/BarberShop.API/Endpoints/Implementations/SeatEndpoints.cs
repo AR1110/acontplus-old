@@ -9,7 +9,7 @@ public class SeatEndpoints(IUserContext userContext, ISeatService seatService) :
 {
     public async Task<IResult> CreateSeatAsync(SeatDto seatDto)
     {
-        seatDto.UserId = userContext.GetUserId();
+        seatDto.CreatedByUserId = userContext.GetUserId();
         return Results.Ok(await seatService.CreateSeatAsync(seatDto));
     }
 
@@ -31,7 +31,7 @@ public class SeatEndpoints(IUserContext userContext, ISeatService seatService) :
 
     public async Task<IResult> UpdateSeatAsync(int id, SeatDto seatDto)
     {
-        seatDto.UserId = userContext.GetUserId();
+        seatDto.UpdatedByUserId = userContext.GetUserId();
         return Results.Ok(await seatService.UpdateSeatAsync(id, seatDto));
     }
 }

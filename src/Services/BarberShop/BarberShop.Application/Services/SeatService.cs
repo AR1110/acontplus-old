@@ -86,7 +86,7 @@ public class SeatService(BarberShopContext context, ISeatRepository seatReposito
         seat.Name = seatDto.Name;
         seat.Description = seatDto.Description;
         seat.IsActive = seatDto.IsActive.OrKeep(seat.IsActive);
-        seat.UserId = seatDto.UserId;
+        seat.UpdatedByUserId = seatDto.UpdatedByUserId;
         context.Seats.Update(seat);
         await context.SaveChangesAsync();
         return new ApiResponse
