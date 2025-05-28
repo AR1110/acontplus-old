@@ -185,14 +185,14 @@ BEGIN
    --         VALUES(@params, @emailData, REPLACE(@receptor,'|',','), 'NE', @idUsuario)
             
             -- Insert into Notification table
-            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
+            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [CreatedByUserId], [FromMobile])
             VALUES (@notificationTypeId, COMPRESS(CONVERT(VARCHAR(MAX), ISNULL(@params, '{}'))), 'Envio por correo', @subject, @idUsuario, @fromMobile);
 
             SET @notificationId = SCOPE_IDENTITY();
 
             -- Insert into EmailQueue table
             INSERT INTO Common.EmailQueue ([NotificationId], [EmailSenderConfigId], [RecipientEmail], Cc, [Subject], [IsHtml],
-            [CompressedBody], [PriorityId], [StatusId], [Template], [UserId], [FromMobile])
+            [CompressedBody], [PriorityId], [StatusId], [Template], [CreatedByUserId], [FromMobile])
             VALUES (@notificationId, @emailSenderConfigId, @receptor, @cc, @subject, CAST(0 AS BIT),
             COMPRESS(@body), @priorityId, @statusId, @template, @idUsuario, @fromMobile)
 		COMMIT TRAN
