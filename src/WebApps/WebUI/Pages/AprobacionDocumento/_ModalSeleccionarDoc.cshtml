@@ -7,17 +7,31 @@
     <div class="row">
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12">
             <div class="form-group">
-                <span for="tipo">Seleccione Doc.:</span>
-                <select name="tipo" id="tipo" ng-model="dataSearch.tipo" class="form-control border-select"
-                    ng-change="onChangeTipo()">
+                <span for="idTipoDocOrigen">Documento Origen:
+                    <span class="text-danger">*</span>
+                </span>
+                <select name="idTipoDocOrigen" id="idTipoDocOrigen" ng-model="dataSearch.idTipoDocOrigen"
+                    class="form-control border-select" ng-change="onChangeTipoDocOrigen()">
                     <option ng-value="0" disabled>Seleccion::</option>
-                    <option ng-value="item.code" ng-repeat="item in tipos">
-                        {{item.desc}}
+                    <option ng-value="item.idTipoDocumento" ng-repeat="item in tiposDocOrigen">
+                        {{item.descripcion}}
                     </option>
                 </select>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.tipo>0">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-show="dataSearch.idTipoDocOrigen>0">
+            <div class="form-group">
+                <span for="idTipoDocDestino">Documento Destino: <b class="text-danger">*</b> </span>
+                <select name="idTipoDocDestino" id="idTipoDocDestino" ng-model="dataSearch.idTipoDocDestino"
+                    class="form-control border-select" ng-change="onChangeTipoDocDestino()">
+                    <option ng-value="0" disabled>Seleccion::</option>
+                    <option ng-value="item.idTipoDocumento" ng-repeat="item in tiposDocDestino">
+                        {{item.descripcion}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.idTipoDocDestino>0">
             <div class="form-group">
                 <span for="establecimiento">Establecimiento: <span class="text-danger">*</span></span>
                 <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="onChangeEstab()">
@@ -27,7 +41,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.tipo>0">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.idTipoDocDestino>0">
             <div class="form-group">
                 <span for="puntoEmision">Punto Emision: <span class="text-danger">*</span></span>
                 <select class="form-control border-select" ng-model="dataSearch.idPuntoEmision" ng-change="refresh()">
@@ -38,16 +52,12 @@
                 </select>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-sm-12-col-12" ng-if="dataSearch.tipo>0">
-            <div class="form-group">
-                <span for="">Rango de fechas:</span>
-                <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                    end-date="dataSearch.fechaFin" result-range-date="resultDateRange(result)"></date-range-filter>
-            </div>
-        </div>
     </div>
 
-    <div class="row" ng-if="dataSearch.tipo>0">
+
+
+
+    <div class="row" ng-if="dataSearch.idTipoDocDestino>0">
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
             <div class="form-group">
                 <span for="">Cliente: <span class="text-danger">*</span></span>
@@ -63,7 +73,14 @@
                                         </script>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+            <div class="form-group">
+                <span for="">Rango de fechas:</span>
+                <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                    end-date="dataSearch.fechaFin" result-range-date="resultDateRange(result)"></date-range-filter>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="form-group">
                 <span for="secuencial">Secuencial: <span class="text-danger">*</span></span>
 
@@ -71,7 +88,7 @@
                     placeholder="Ej: 123 o 1-30">
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 d-flex align-items-center justify-content-end">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 d-flex align-items-center justify-content-end">
             <div class="btn-group" role="group" aria-label="Option Buttons">
                 <button type="button" class="btn btn-info" ng-click="getDocs()">
                     <i class="fas fa-search"></i>

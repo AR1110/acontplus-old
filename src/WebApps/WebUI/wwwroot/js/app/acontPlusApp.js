@@ -173,23 +173,45 @@ app.factory("errorInterceptor", function ($q, toastService) {
 });
 
 app.factory("loaderInterceptor", function ($q) {
+    var activeRequests = 0;
+
+    function showLoaderIfNeeded() {
+        if (activeRequests === 1) {
+            showLoader(); // Solo mostramos loader al inicio
+        }
+    }
+
+    function hideLoaderIfNeeded() {
+        if (activeRequests === 0) {
+            hideLoader(); // Solo ocultamos loader cuando no hay más solicitudes activas
+        }
+    }
+
     return {
         request: function (config) {
-            // Skip loader for requests marked with `noLoader` config
             if (config && config.noLoader) {
                 return config;
             }
-            showLoader();
+            activeRequests++;
+            showLoaderIfNeeded();
             return config;
         },
+
         response: function (response) {
-            hideLoader();
+            if (!response.config.noLoader) {
+                activeRequests--;
+                hideLoaderIfNeeded();
+            }
             return response;
         },
+
         responseError: function (error) {
-            hideLoader();
-            return $q.reject(error); // Re-throw the error
-        },
+            if (!error.config || !error.config.noLoader) {
+                activeRequests--;
+                hideLoaderIfNeeded();
+            }
+            return $q.reject(error);
+        }
     };
 });
 
@@ -448,11 +470,11 @@ function modalService($uibModal, $mdDialog) {
             windowTopClass,
             openedClass,
             scope,
-            props = {}, 
+            props = {},
         }) {
-            let templateUrl = ""; 
-            
-            templateUrl = `/Home/Index?name=${template}`; 
+            let templateUrl = "";
+
+            templateUrl = `/Home/Index?name=${template}`;
 
             return $uibModal.open({
                 animation,
@@ -526,7 +548,7 @@ function modalService($uibModal, $mdDialog) {
                 },
             });
         },
-        openWithComponent: function ({ component, params, size, windowClass }){
+        openWithComponent: function ({ component, params, size, windowClass }) {
             return $uibModal.open({
                 animation: true,
                 component,
@@ -784,13 +806,13 @@ app.filter("mapTipoIce", () => {
 });
 
 
-app.filter('roundTo',['formulario', function (fS) {
-     return function (input, decimals) {
-         var number = parseFloat(input); // Convertir a número
-         
-         if (!isNaN(number)) {
-             return fS.roundNumber(number, decimals || 2); // Redondear a 2 decimales por defecto
-         }
-         return input;
-     }
- }]);
+app.filter('roundTo', ['formulario', function (fS) {
+    return function (input, decimals) {
+        var number = parseFloat(input); // Convertir a número
+
+        if (!isNaN(number)) {
+            return fS.roundNumber(number, decimals || 2); // Redondear a 2 decimales por defecto
+        }
+        return input;
+    }
+}]);

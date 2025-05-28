@@ -26,7 +26,7 @@ function modalSolictudCreditoCtrl($scope, $injector, $uibModalInstance, decodeTo
     initiload();
     function initiload() {
         let params = {
-            idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar
+            idCuentaPorCobrar: $scope.dataForm.idCuentaPorCobrar, 
         }
         $scope.guarantors = [];
         creditoGaranteSvc.getAll(params).then(response => { 
