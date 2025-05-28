@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BarberShop.Infrastructure.Persistense.Migrations
+namespace BarberShop.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class BarberShopInitial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,12 +26,18 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                     Name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     IsOccupied = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    FromMobile = table.Column<bool>(type: "bit", nullable: true)
+                    FromMobile = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -50,12 +57,18 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TotalSales = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
                     TotalAdvances = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    FromMobile = table.Column<bool>(type: "bit", nullable: true)
+                    FromMobile = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -77,12 +90,18 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                     Comments = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     BalanceForward = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     WorkSessionId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    FromMobile = table.Column<bool>(type: "bit", nullable: true)
+                    FromMobile = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -116,12 +135,18 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                     SeatId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: true),
                     WorkSessionId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    FromMobile = table.Column<bool>(type: "bit", nullable: true)
+                    FromMobile = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -161,11 +186,17 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                     Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
                     Obs = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    FromMobile = table.Column<bool>(type: "bit", nullable: true)
+                    FromMobile = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -180,7 +211,8 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketDocuments",
+                name: "TicketDocument",
+                schema: "BarberShop",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -188,18 +220,24 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                     TicketId = table.Column<int>(type: "int", nullable: false),
                     DocumentoId = table.Column<int>(type: "int", nullable: true),
                     TipoDocumentoId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    FromMobile = table.Column<bool>(type: "bit", nullable: true)
+                    FromMobile = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketDocuments", x => x.Id);
+                    table.PrimaryKey("PK_TicketDocument", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TicketDocuments_Ticket_TicketId",
+                        name: "FK_TicketDocument_Ticket_TicketId",
                         column: x => x.TicketId,
                         principalSchema: "BarberShop",
                         principalTable: "Ticket",
@@ -214,7 +252,7 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                 column: "WorkSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Seat_Code",
+                name: "UX_SEAT_CODE",
                 schema: "BarberShop",
                 table: "Seat",
                 column: "Code",
@@ -239,12 +277,13 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketDocuments_TicketId",
-                table: "TicketDocuments",
+                name: "IX_TicketDocument_TicketId",
+                schema: "BarberShop",
+                table: "TicketDocument",
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkSession_StartDate",
+                name: "IX_WORK_SESSION_START_DATE",
                 schema: "BarberShop",
                 table: "WorkSession",
                 column: "StartDate");
@@ -262,7 +301,8 @@ namespace BarberShop.Infrastructure.Persistense.Migrations
                 schema: "BarberShop");
 
             migrationBuilder.DropTable(
-                name: "TicketDocuments");
+                name: "TicketDocument",
+                schema: "BarberShop");
 
             migrationBuilder.DropTable(
                 name: "Ticket",

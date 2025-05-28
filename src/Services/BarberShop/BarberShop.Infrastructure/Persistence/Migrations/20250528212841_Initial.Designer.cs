@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarberShop.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(BarberShopContext))]
-    [Migration("20250528041122_DefaultValuesBaseColumns")]
-    partial class DefaultValuesBaseColumns
+    [Migration("20250528212841_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,13 +45,17 @@ namespace BarberShop.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(300)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -60,19 +64,27 @@ namespace BarberShop.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("FormaPagoId")
                         .HasColumnType("int");
 
                     b.Property<bool>("FromMobile")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
@@ -189,7 +201,7 @@ namespace BarberShop.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("IX_Seat_Code");
+                        .HasDatabaseName("UX_SEAT_CODE");
 
                     b.ToTable("Seat", "BarberShop");
                 });
@@ -463,7 +475,7 @@ namespace BarberShop.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("TicketDocuments");
+                    b.ToTable("TicketDocument", "BarberShop");
                 });
 
             modelBuilder.Entity("BarberShop.Domain.Entities.WorkSession", b =>
@@ -543,7 +555,7 @@ namespace BarberShop.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("StartDate")
-                        .HasDatabaseName("IX_WorkSession_StartDate");
+                        .HasDatabaseName("IX_WORK_SESSION_START_DATE");
 
                     b.ToTable("WorkSession", "BarberShop");
                 });
