@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.API.Controllers;
 
 public class HorarioController : BaseApiController
 {

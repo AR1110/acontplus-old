@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BarberShop.Application\BarberShop.Application.csproj" />
+    <ProjectReference Include="..\BarberShop.Infrastructure\BarberShop.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

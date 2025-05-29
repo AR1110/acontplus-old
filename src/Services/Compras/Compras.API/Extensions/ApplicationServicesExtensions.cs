@@ -48,7 +48,7 @@ public static class ApplicationServicesExtensions
 
         string[] trascientNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations"
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan

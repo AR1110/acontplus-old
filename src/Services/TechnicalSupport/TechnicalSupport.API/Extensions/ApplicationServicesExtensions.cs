@@ -1,5 +1,5 @@
 ﻿using System.IO.Compression;
-using Common.Infrastructure.Data.Repository.Implementations;
+using Common.Infrastructure.Repository.Implementations;
 using Microsoft.AspNetCore.ResponseCompression;
 
 namespace TechnicalSupport.API.Extensions;

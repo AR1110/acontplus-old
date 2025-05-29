@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services.Printing;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services.Printing;
 
 public class PrinterTypeService(ConfigContext context) : IPrinterTypeService
 {

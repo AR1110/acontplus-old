@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Restaurant.Infrastructure.Persistence;
 using Scrutor;
 
 namespace Restaurant.Api.Extensions;
@@ -63,12 +64,15 @@ public static class ApplicationServicesExtensions
             };
         });
 
-        services.AddDbContextPool<RestaurantContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContextPool<RestaurantContext>(opt =>
+        {
+            opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("Restaurant.Infrastructure"));
+        });
 
         string[] scopedNameSpaces =
         [
-            "Restaurant.Api.Services"
+            "Restaurant.Application.Services"
         ];
 
         services.Scan(scan => scan
@@ -82,7 +86,7 @@ public static class ApplicationServicesExtensions
         string[] trascientNameSpaces =
         [
             "Common.S3Application.Services",
-            "Common.Infrastructure.Data.Repository.Implementations"
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan

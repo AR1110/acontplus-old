@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services;
 
 public class EstablecimientoLogoService : IEstablecimientoLogoService
 {

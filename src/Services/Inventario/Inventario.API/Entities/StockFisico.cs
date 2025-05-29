@@ -3,16 +3,16 @@
 [Table("StockFisico", Schema = "Inventario")]
 public class StockFisico : BaseEntity
 {
-    [Required] [MaxLength(15)] public string CodEstab { get; set; }
+    [Required][MaxLength(15)] public string CodEstab { get; set; }
 
     public int PuntoEmisionId { get; set; }
     public int Secuencial { get; set; }
 
-    [Required] [MaxLength(18)] public string SerieDocumento { get; set; }
+    [Required][MaxLength(18)] public string SerieDocumento { get; set; }
 
     public DateTime Fecha { get; set; }
 
-    [Required] [MaxLength(300)] public string Responsable { get; set; }
+    [Required][MaxLength(300)] public string Responsable { get; set; }
 
     [MaxLength(500)] public string Obs { get; set; }
 

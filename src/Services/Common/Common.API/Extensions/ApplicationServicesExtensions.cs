@@ -51,7 +51,7 @@ public static class ApplicationServicesExtensions
         );
         string[] nameTrascientSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 
