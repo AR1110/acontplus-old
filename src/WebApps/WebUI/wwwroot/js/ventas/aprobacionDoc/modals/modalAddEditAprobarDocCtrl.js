@@ -585,13 +585,13 @@
 
                         idPuntoEmision: $scope.data.idPuntoEmision,
                         idUsuario: $scope.data.idUsuario,
-                        idTipoDocumento: params.idTipoDocDestino,
+                        idTipoDocDestino: params.idTipoDocDestino,
                         idTipoDocOrigen: params.idTipoDocOrigen,
                         fechaEmision: $scope.data.fechaEmision,
                         subTotalSinImpuestos: $scope.data.subTotalSinImpuestos,
                         totalDescuento: $scope.data.totalDescuento,
                         propina: $scope.data.propina,
-                        importeTotal: $scope.data.total,
+                        total: $scope.data.total,
                         observacion: $scope.data.observacion,
                     }
 
@@ -612,7 +612,7 @@
                     // })
                     const { codigo } = getDocOrigen(params.idTipoDocOrigen);
                     const selectedDocshistorial = docsSelected.map(item => {
-                        const idProforma = codigo === DOC_TYPE.PF ? item.idDocumento : null;
+                        const idProforma = codigo === DOC_TYPE.PR ? item.idDocumento : null;
                         const idNotaEntrega = codigo === DOC_TYPE.NE ? item.idDocumento : null;
 
                         return {
@@ -621,8 +621,8 @@
                         }
                     })
 
-                    if (selectedDocshistorial.some(item => !item.idProforma && !item.idNotaEntrega)) {
-                        fS.sweetAlert('warning', 'Debe seleccionar al menos un documento de Proforma o Nota de Entrega');
+                    if (selectedDocshistorial.some(item => !(item.idProforma || item.idNotaEntrega))) {
+                        fS.sweetAlert('warning', 'Error al generar el historial de documentos seleccionados. Por favor, asegúrese de que los documentos seleccionados sean válidos.');
                         return;
                     }
 

@@ -222,8 +222,9 @@
             return !['APR', 'A'].includes(item.codEstado)
         }
 
-        function getStatusClass(codigo) {
+        function getStatusClass(codigo) { 
             if (!codigo) return '';
+
 
             switch (codigo.toUpperCase()) {
                 case 'A':

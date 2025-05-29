@@ -102,8 +102,7 @@
                     let {
                         estabs,
                         tiposDoc
-                    } = mainDataForm;
-                    console.log(tiposDoc)
+                    } = mainDataForm; 
 
                     $scope.tiposDocOrigen = tiposDoc.filter(item => [DOC_TYPE.NE, DOC_TYPE.PR].includes(item.codigo));
                     $scope.tiposDocDestino = tiposDoc.filter(item => [DOC_TYPE.NE, DOC_TYPE.FV].includes(item.codigo));
@@ -412,12 +411,6 @@
                 })
             }
 
-            function getDataTipoDoc() {
-                let data = OPTION_APROBACION[$scope.dataSearch.tipo];
-                if (data) return data;
-                throw new Error("No se puedo obtener datos de documento destino");
-
-            }
 
             function obtenerDetallesDoc() {
                 const { codigo } = getDataTipoDocOrigen()
@@ -472,7 +465,7 @@
                     })
                     return
                 }
-                const { docDestino, docOrigen } = getDataTipoDoc()
+                // const { docDestino, docOrigen } = getDataTipoDocOrigen()
 
                 obtenerDetallesDoc().then(detalles => {
 
@@ -495,8 +488,6 @@
                             docsSelected: structuredClone($scope.docsSelected),
                             cliente: structuredClone($scope.cliente),
                             detalles,
-                            docDestino,
-                            docOrigen,
                             mainDataForm,
                             codEstab: $scope.dataSearch.codEstab,
                             idPuntoEmision: $scope.dataSearch.idPuntoEmision,
@@ -513,7 +504,9 @@
 
                     modalRef.result.then(result => {
                         if (result && typeof result === 'object') {
-                            $ctrl.close()
+                            $ctrl.close({
+                                $value: result
+                            });
                         }
                     })
 
@@ -606,38 +599,20 @@
                 })
             }
 
-            $scope.addDocs = function () {
 
-                Swal.fire({
-                    title: '¿Deseas agregar los documentos seleccionados?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    confirmButtonText: 'Agregar y continuar',
-                    denyButtonText: 'Agregar y cerrar',
-                    cancelButtonText: 'Cerrar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Lógica para agregar y continuar
-                        $setDocs($scope.docsSelected)
-                    } else if (result.isDenied) {
-                        // Lógica para agregar y cerrar
-                        $ctrl.close({
-                            $value: {
-                                docs: $scope.docsSelected
-                            }
-                        })
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        // Lógica para cerrar sin hacer nada
-                        $ctrl.close();
+            $scope.addDocClose = function () {
+                $ctrl.close({
+                    $value: {
+                        docs: $scope.docsSelected
                     }
-                });
-
-
-
-
-
+                })
             }
+
+            $scope.addDoc = function () {
+                $setDocs($scope.docsSelected)
+            }
+
+
 
             $scope.close = function () {
                 $ctrl.close()
@@ -677,7 +652,7 @@
                 setColumnDefs()
 
 
-                fnGetItems(item.idDocumento).then(response => {
+                fnGetItems(item.idDocumento).then(response => { 
                     $scope.gridOptionsDetalle.data = response.items;
                 })
             }
@@ -814,7 +789,10 @@
                         visible: true,
                         cellFilter: fS.cellFilterRoundToNumber(),
                         cellTooltip: function (row, col) {
-                            return fS.cellTooltipGrid(row.entity, col.field)
+                            if (row.entity[col.field]) {
+                                return fS.cellTooltipGrid(row.entity, col.field)
+                            }
+                            return 0;
                         },
 
                     },
