@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+using Common.Core.Base;
 
 namespace Mechanical.API.Entities;
 
 [Table("VehiclePartType", Schema = "Mechanical")]
 public class VehiclePartType : BaseEntity
 {
-    [Required] [MaxLength(15)] public string Code { get; set; }
+    [Required][MaxLength(15)] public string Code { get; set; }
 
-    [Required] [MaxLength(150)] public string Description { get; set; }
+    [Required][MaxLength(150)] public string Description { get; set; }
 }

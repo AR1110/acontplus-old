@@ -1,7 +1,5 @@
 ﻿using System.IO.Compression;
-using Common.Infrastructure.Data.Repository.Implementations;
 using Common.Logging;
-using Contabilidad.API.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 using Scrutor;
@@ -56,7 +54,7 @@ public static class ApplicationServicesExtensions
 
         string[] transientNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

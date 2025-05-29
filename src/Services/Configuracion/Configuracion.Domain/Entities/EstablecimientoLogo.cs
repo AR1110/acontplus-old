@@ -6,7 +6,7 @@ public class EstablecimientoLogo : BaseEntity
     public int EstablecimientoId { get; set; }
     public byte[] Content { get; set; }
 
-    [Required] [MaxLength(50)] public string ContentType { get; set; }
+    [Required][MaxLength(50)] public string ContentType { get; set; }
 
     [MaxLength(300)] public string FileName { get; set; }
 

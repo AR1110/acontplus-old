@@ -9,9 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Data" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj" />
+    <ProjectReference Include="..\FactElect.Domain\FactElect.Domain.csproj" />
   </ItemGroup>
 
 </Project>
