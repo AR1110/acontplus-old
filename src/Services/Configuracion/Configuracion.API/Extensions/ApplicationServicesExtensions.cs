@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using Common.Logging;
+using Configuracion.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -60,7 +61,7 @@ public static class ApplicationServicesExtensions
         // Other services that can be transient
         string[] transientNamespaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

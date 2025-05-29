@@ -11,7 +11,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="Data\SeedData\PrinterTypes.json">
+    <Content Include="Persistence\SeedData\PrinterTypes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -20,6 +20,10 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Configuracion.Domain\Configuracion.Domain.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Persistence\Repositories\" />
   </ItemGroup>
 
 </Project>

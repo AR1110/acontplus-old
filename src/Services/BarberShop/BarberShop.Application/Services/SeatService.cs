@@ -1,45 +1,9 @@
-﻿using BarberShop.Infrastructure.Data.Repositories.Interfaces;
-using Common.Core.Extensions;
-using Common.Infrastructure.Data.Repository.Models;
+﻿using BarberShop.Domain.Repositories;
 
 namespace BarberShop.Application.Services;
 
-public class SeatService(BarberShopContext context, ISeatRepository seatRepository) : ISeatService
+public class SeatService(ISeatRepository seatRepository) : ISeatService
 {
-    public async Task<ApiResponse> CreateSeatAsync(SeatDto seatDto)
-    {
-        var seat = ObjectMapper.Map<SeatDto, Seat>(seatDto);
-
-        context.Seats.Add(seat);
-        await context.SaveChangesAsync();
-
-        return new ApiResponse
-        {
-            Code = "1",
-            Message = "Asiento creato exitosamente",
-            Payload = seat
-        };
-    }
-
-    public async Task<ApiResponse> DeleteSeatAsync(int id)
-    {
-        var seat = await context.Seats.FindAsync(id);
-        if (seat == null)
-            return new ApiResponse
-            {
-                Code = "0",
-                Message = "Asiento no encontrado"
-            };
-
-        context.Seats.Remove(seat);
-        await context.SaveChangesAsync();
-        return new ApiResponse
-        {
-            Code = "1",
-            Message = "Asiento eliminado exitosamente"
-        };
-    }
-
     public async Task<PagedResult<SeatDto>> GetAllSeatsAsync(PaginationDto paginationDto)
     {
         var pagedSeats = await seatRepository.GetSeatsAsync(paginationDto);
@@ -55,45 +19,45 @@ public class SeatService(BarberShopContext context, ISeatRepository seatReposito
         };
     }
 
-    public async Task<ApiResponse> GetSeatByIdAsync(int id)
-    {
-        var seat = await context.Seats.FindAsync(id);
-        if (seat == null)
-            return new ApiResponse
-            {
-                Code = "0",
-                Message = "Asiento no encontrado"
-            };
+    //public async Task<ApiResponse> GetSeatByIdAsync(int id)
+    //{
+    //    var seat = await context.Seats.FindAsync(id);
+    //    if (seat == null)
+    //        return new ApiResponse
+    //        {
+    //            Code = "0",
+    //            Message = "Asiento no encontrado"
+    //        };
 
-        return new ApiResponse
-        {
-            Code = "1",
-            Message = "Asiento obtenido exitosamente",
-            Payload = seat
-        };
-    }
+    //    return new ApiResponse
+    //    {
+    //        Code = "1",
+    //        Message = "Asiento obtenido exitosamente",
+    //        Payload = seat
+    //    };
+    //}
 
-    public async Task<ApiResponse> UpdateSeatAsync(int id, SeatDto seatDto)
-    {
-        var seat = await context.Seats.FindAsync(id);
-        if (seat == null)
-            return new ApiResponse
-            {
-                Code = "0",
-                Message = "Asiento no encontrado"
-            };
+    //public async Task<ApiResponse> UpdateSeatAsync(int id, SeatDto seatDto)
+    //{
+    //    var seat = await context.Seats.FindAsync(id);
+    //    if (seat == null)
+    //        return new ApiResponse
+    //        {
+    //            Code = "0",
+    //            Message = "Asiento no encontrado"
+    //        };
 
-        seat.Name = seatDto.Name;
-        seat.Description = seatDto.Description;
-        seat.IsActive = seatDto.IsActive.OrKeep(seat.IsActive);
-        seat.UserId = seatDto.UserId;
-        context.Seats.Update(seat);
-        await context.SaveChangesAsync();
-        return new ApiResponse
-        {
-            Code = "1",
-            Message = "Asiento actualizado exitosamente",
-            Payload = seat
-        };
-    }
+    //    seat.Name = seatDto.Name;
+    //    seat.Description = seatDto.Description;
+    //    seat.IsActive = seatDto.IsActive.OrKeep(seat.IsActive);
+    //    seat.UpdatedByUserId = seatDto.UpdatedByUserId;
+    //    context.Seats.Update(seat);
+    //    await context.SaveChangesAsync();
+    //    return new ApiResponse
+    //    {
+    //        Code = "1",
+    //        Message = "Asiento actualizado exitosamente",
+    //        Payload = seat
+    //    };
+    //}
 }

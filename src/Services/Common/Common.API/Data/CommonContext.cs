@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Common.API.Entities;
-using Common.Infrastructure.Core.Context;
+using Common.Infrastructure.Context;
 using Common.Notifications.Entities;
 
 namespace Common.API.Data;

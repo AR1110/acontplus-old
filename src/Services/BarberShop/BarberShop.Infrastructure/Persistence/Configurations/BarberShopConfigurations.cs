@@ -9,7 +9,7 @@ public class WorkSessionConfiguration : BaseEntityTypeConfiguration<WorkSession>
         base.Configure(builder);
 
         builder.HasIndex(x => x.StartDate)
-            .HasDatabaseName("IX_WorkSession_StartDate");
+            .HasDatabaseName("IX_WORK_SESSION_START_DATE");
 
         builder.HasMany(x => x.Tickets)
             .WithOne(x => x.WorkSession)
@@ -28,8 +28,7 @@ public class SeatConfiguration : BaseEntityTypeConfiguration<Seat>
         base.Configure(builder);
 
         builder.HasIndex(x => x.Code)
-            .IsUnique()
-            .HasDatabaseName("IX_Seat_Code")
+            .HasDatabaseName("UX_SEAT_CODE")
             .IsUnique();
 
         builder.HasMany(x => x.Tickets)

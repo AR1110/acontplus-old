@@ -1,9 +1,8 @@
-﻿using Common.Services.Extensions;
-using Contabilidad.API.Endpoints.Interfaces;
+﻿using Contabilidad.API.Endpoints.Interfaces;
 
 namespace Contabilidad.API.Endpoints.Implementations;
 
-public class CuotaPorCobrarEndPoints(IUserContext userContext, ICuotaPorCobrarService _svc):ICuotaPorCobrarEndpoints
+public class CuotaPorCobrarEndPoints(IUserContext userContext, ICuotaPorCobrarService _svc) : ICuotaPorCobrarEndpoints
 {
     public async Task<IResult> UpdateAsync(CuotaPorCobrarUpdateParamsDto param)
     {

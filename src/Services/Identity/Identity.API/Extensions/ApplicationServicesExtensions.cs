@@ -1,5 +1,5 @@
 ﻿using System.IO.Compression;
-using Common.Infrastructure.Data.Repository.Implementations;
+using Common.Infrastructure.Repository.Implementations;
 using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 

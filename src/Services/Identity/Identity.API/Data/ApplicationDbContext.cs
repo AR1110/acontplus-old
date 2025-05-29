@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Core.Entity;
+using Common.Infrastructure.Entity;
 
 namespace Identity.API.Data;
 

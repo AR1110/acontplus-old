@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+using Common.Core.Base;
 
 namespace Mechanical.API.Entities;
 
@@ -16,7 +16,7 @@ public class SupportDetail : BaseEntity
     public int TaxId { get; set; }
     public int TaxPercentId { get; set; }
 
-    [Required] [MaxLength(300)] public string Description { get; set; }
+    [Required][MaxLength(300)] public string Description { get; set; }
 
     [Required]
     [Column(TypeName = "numeric(18,5), null")]
