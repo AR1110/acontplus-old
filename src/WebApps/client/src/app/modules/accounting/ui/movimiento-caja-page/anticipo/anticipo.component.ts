@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
 import { AnticipoModalComponent } from '@accounting/ui/movimiento-caja-page/anticipo/anticipo-modal/anticipo-modal.component';
 
 import { AnticipoRead } from '@accounting/domain/models/anticipo.model';
@@ -28,6 +27,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { finalize } from 'rxjs/operators';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
 import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-anticipo',
@@ -46,7 +46,7 @@ import {CompanyCustomer} from "@customer/domain/models/company-customer";
   templateUrl: './anticipo.component.html',
 })
 export class AnticipoComponent {
-  establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
+  establecimientos = signal<EstablecimientoSelectHtmlOnly[]>([]);
   dataSearch = {
     codEstab: '',
     customerId: 0,
@@ -54,13 +54,13 @@ export class AnticipoComponent {
     toDate: formatDateToString(new Date()),
     checkBoxFecha: true
   };
-  private modalSvc = inject(ModalService);
+  private modalSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
   private _anticipoUseCase = inject(AnticipoUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
 
-  dataSource: AnticipoRead[] = [];
+  dataSource = signal<AnticipoRead[]>([])
 
   isLoadingResults = signal(false);
 
@@ -85,7 +85,7 @@ export class AnticipoComponent {
   pagination = signal(new MatPagination());
 
   getAnticipos() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       codEstab: this.dataSearch.codEstab,
@@ -96,18 +96,18 @@ export class AnticipoComponent {
     };
 
     if (this.isLoadingResults()) return;
-    this.dataSource = [];
+    this.dataSource.set([]);
     this.isLoadingResults.set(true);
     this._anticipoUseCase
       .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
-        this.dataSource = response;
+        this.dataSource.set(response);
         this.pagination.update((e) => {
           return {
             ...e,
             totalRecords:
-              this.dataSource.length > 0 ? this.dataSource[0].totalRecords : 0,
+              this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
           };
         });
       });
@@ -115,9 +115,9 @@ export class AnticipoComponent {
 
   ngOnInit() {
     this._anticipoUseCase.getDataFilter().subscribe((response) => {
-      this.establecimientos = response.establecimientos;
+      this.establecimientos.set(response.establecimientos)
       if (this.establecimientos.length > 0) {
-        let dataEstab = this.establecimientos.find(
+        const dataEstab = this.establecimientos().find(
           (item) => item.predeterminado,
         );
         if (dataEstab) {
@@ -147,17 +147,19 @@ export class AnticipoComponent {
   }
 
   openModal<T>(data?: T) {
-    const modalRef = this.modalSvc.openModalCustom(AnticipoModalComponent);
-    modalRef.componentInstance.params = data;
-
-    modalRef.result.then((result) => {
-      if (typeof result === 'object') {
+    const modalRef = this.modalSvc.open(AnticipoModalComponent, {
+      size: 'lg',
+      data: structuredClone(data) || {},
+    });
+    modalRef.subscribe(result => {
+      if (result && typeof result === 'object') {
+        this.getAnticipos();
       }
     });
   }
 
   getPrint(data: AnticipoRead) {
-    let parameters = {
+    const parameters = {
       idDocument: data.idAnticipo,
       idTipoDocumento: data.idTipoDocumento,
       codEstab: data.codEstab,
@@ -170,9 +172,9 @@ export class AnticipoComponent {
   }
 
   getReport(data: AnticipoRead) {
-    let format = 'pdf';
+    const format = 'pdf';
 
-    let dataParms = {
+    const dataParms = {
       tipo: 1,
       id: data.idAnticipo,
     };
@@ -204,7 +206,7 @@ export class AnticipoComponent {
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
       }).then((result) => {
-        if (result.isConfirmed) {
+        if(!result.isConfirmed) return;
           this._anticipoUseCase
             .delete(data.idAnticipo)
             .subscribe((response) => {
@@ -222,7 +224,6 @@ export class AnticipoComponent {
                 this.getAnticipos();
               }
             });
-        }
       });
     } catch (error) {
       console.log(error);
