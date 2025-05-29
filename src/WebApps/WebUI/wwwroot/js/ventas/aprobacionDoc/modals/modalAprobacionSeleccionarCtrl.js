@@ -21,6 +21,9 @@
             const notaEntregaSvc = $injector.get('notaEntregaService');
             const modalSvc = $injector.get('modalService');
 
+            $scope.tiposDocOrigen = [];
+            $scope.tiposDocDestino = [];
+
             $scope.tipos = [
                 { code: 1, desc: 'NOTA DE ENTREGA A FACTURA' },
                 { code: 2, desc: 'PROFORMA A FACTURA' },
@@ -61,6 +64,8 @@
             });
 
             $scope.dataSearch = {
+                idTipoDocOrigen: 0,
+                idTipoDocDestino: 0,
                 tipo: 0,
                 fechaInicio: new Date(),
                 fechaFin: new Date(),
@@ -87,6 +92,7 @@
             let mainDataForm = null;
 
 
+            $scope.onChangeTipoDocOrigen = onChangeTipoDocOrigen;
 
 
             $ctrl.$onInit = function () {
@@ -95,11 +101,11 @@
                     mainDataForm = params.mainDataForm;
                     let {
                         estabs,
-                    } = mainDataForm;
+                        tiposDoc
+                    } = mainDataForm; 
 
-                    /**
-                     * Establecimiento - Impuesto Tarifa 
-                     */
+                    $scope.tiposDocOrigen = tiposDoc.filter(item => [DOC_TYPE.NE, DOC_TYPE.PR].includes(item.codigo));
+                    $scope.tiposDocDestino = tiposDoc.filter(item => [DOC_TYPE.NE, DOC_TYPE.FV].includes(item.codigo));
                     $scope.establecimientos = estabs;
 
                     let dataEstab = $scope.establecimientos.find(item => (item.defaultEstab))
@@ -123,14 +129,38 @@
                 $scope.docsSelected = [];
             }
 
+            function onChangeTipoDocOrigen() {
+                let {
+                    tiposDoc
+                } = mainDataForm;
+                clearDocs();
+                $scope.dataSearch.idTipoDocDestino = 0;
+                const dataTipoDocOrigen = $scope.tiposDocOrigen.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocOrigen);
+                if (dataTipoDocOrigen && dataTipoDocOrigen.codigo === DOC_TYPE.NE) {
+                    $scope.tiposDocDestino = tiposDoc.filter(item => [DOC_TYPE.FV].includes(item.codigo));
+                } else {
+                    $scope.tiposDocDestino = tiposDoc.filter(item => [DOC_TYPE.NE, DOC_TYPE.FV].includes(item.codigo));
+                }
+
+            }
+
             function isValidFilter() {
-                if (!($scope.dataSearch.tipo > 0)) {
+                if (!($scope.dataSearch.idTipoDocOrigen > 0)) {
                     tS.toastr({
                         type: 'warning',
-                        message: 'Seleccione el documento a aprobar'
+                        message: 'Seleccione el documento Origen'
                     })
                     return
                 }
+
+                if (!($scope.dataSearch.idTipoDocDestino > 0)) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Seleccione el documento Destino'
+                    })
+                    return
+                }
+
                 if (!$scope.dataSearch.codEstab) {
                     tS.toastr('warning', 'Seleccione el Establecimiento');
                     return
@@ -155,11 +185,6 @@
 
                 return true;
             }
-
-            $scope.onChangeTipo = function () {
-                clearDocs()
-            }
-
 
             $scope.onChangeEstab = async function () {
                 try {
@@ -224,16 +249,46 @@
 
             $scope.getDocs = getDocs;
 
+            function getDataTipoDocOrigen() {
+                let dataTipoDocOrigen = $scope.tiposDocOrigen.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocOrigen);
+                if (!dataTipoDocOrigen) {
+                    tS.toastr({
+
+                        type: 'warning',
+                        message: 'Seleccione un tipo de documento origen válido'
+                    })
+                    return null;
+
+                }
+                return dataTipoDocOrigen;
+            }
+
             function getDocs() {
 
                 if (!isValidFilter()) return;
 
-                if ($scope.dataSearch.tipo === 1) {
-                    getNotasEntrega();
+                const dataTipoDocOrigen = getDataTipoDocOrigen();
+                if (!dataTipoDocOrigen) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Seleccione un tipo de documento origen válido'
+                    })
                     return
                 }
 
-                getProformas();
+                if (dataTipoDocOrigen.codigo === DOC_TYPE.NE) {
+                    getNotasEntrega();
+                    return
+                }
+                if (dataTipoDocOrigen.codigo === DOC_TYPE.PR) {
+                    getProformas();
+                    return
+                }
+                tS.toastr({
+                    type: 'warning',
+                    message: 'Tipo de documento origen no soportado'
+                })
+
             }
 
             function getDataSearchNotasEntrega() {
@@ -333,17 +388,15 @@
             }
 
             $scope.verItems = function (item) {
-
-                const { docOrigen } = getDataTipoDoc()
+                const { codigo } = getDataTipoDocOrigen()
 
                 let fnGetItems = function () { }
 
-                if (docOrigen.codDoc === DOC_TYPE.NE) {
-
+                if (codigo === DOC_TYPE.NE) {
                     fnGetItems = notaEntregaSvc.getDetalleDoc
                 }
 
-                if (docOrigen.codDoc === DOC_TYPE.PR) {
+                if (codigo === DOC_TYPE.PR) {
                     fnGetItems = proformaSvc.getDetalleDoc
                 }
 
@@ -358,23 +411,17 @@
                 })
             }
 
-            function getDataTipoDoc() {
-                let data = OPTION_APROBACION[$scope.dataSearch.tipo];
-                if (data) return data;
-                throw new Error("No se puedo obtener datos de documento destino");
-
-            }
 
             function obtenerDetallesDoc() {
-                const { docOrigen } = getDataTipoDoc()
+                const { codigo } = getDataTipoDocOrigen()
                 let promises = null;
 
-                if (docOrigen.codDoc === DOC_TYPE.NE) {
+                if (codigo === DOC_TYPE.NE) {
 
                     promises = $scope.docsSelected.map(item => notaEntregaSvc.getDetalleDoc(item.idDocumento));
                 }
 
-                if (docOrigen.codDoc === DOC_TYPE.PR) {
+                if (codigo === DOC_TYPE.PR) {
                     promises = $scope.docsSelected.map(item => proformaSvc.getDetalleDoc(item.idDocumento));
                 }
                 return Promise.all(promises)
@@ -390,10 +437,10 @@
 
 
             $scope.continuar = function () {
-                if (!($scope.dataSearch.tipo > 0)) {
+                if (!($scope.dataSearch.idTipoDocDestino > 0)) {
                     tS.toastr({
                         type: 'warning',
-                        message: 'Seleccione la opcion de convertir documento'
+                        message: 'Seleccione el documento Destino'
                     })
                     return
                 }
@@ -418,7 +465,7 @@
                     })
                     return
                 }
-                const { docDestino, docOrigen } = getDataTipoDoc()
+                // const { docDestino, docOrigen } = getDataTipoDocOrigen()
 
                 obtenerDetallesDoc().then(detalles => {
 
@@ -441,11 +488,13 @@
                             docsSelected: structuredClone($scope.docsSelected),
                             cliente: structuredClone($scope.cliente),
                             detalles,
-                            docDestino,
-                            docOrigen,
                             mainDataForm,
                             codEstab: $scope.dataSearch.codEstab,
-                            idPuntoEmision: $scope.dataSearch.idPuntoEmision
+                            idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                            idTipoDocDestino: $scope.dataSearch.idTipoDocDestino,
+                            idTipoDocOrigen: $scope.dataSearch.idTipoDocOrigen,
+                            tiposDocDestino: $scope.tiposDocDestino,
+                            tiposDocOrigen: $scope.tiposDocOrigen,
                             // data: $scope.data,
                             // estabs: $scope.establecimientos,
 
@@ -455,7 +504,9 @@
 
                     modalRef.result.then(result => {
                         if (result && typeof result === 'object') {
-                            $ctrl.close()
+                            $ctrl.close({
+                                $value: result
+                            });
                         }
                     })
 
@@ -548,38 +599,20 @@
                 })
             }
 
-            $scope.addDocs = function () {
 
-                Swal.fire({
-                    title: '¿Deseas agregar los documentos seleccionados?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    confirmButtonText: 'Agregar y continuar',
-                    denyButtonText: 'Agregar y cerrar',
-                    cancelButtonText: 'Cerrar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Lógica para agregar y continuar
-                        $setDocs($scope.docsSelected)
-                    } else if (result.isDenied) {
-                        // Lógica para agregar y cerrar
-                        $ctrl.close({
-                            $value: {
-                                docs: $scope.docsSelected
-                            }
-                        })
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        // Lógica para cerrar sin hacer nada
-                        $ctrl.close();
+            $scope.addDocClose = function () {
+                $ctrl.close({
+                    $value: {
+                        docs: $scope.docsSelected
                     }
-                });
-
-
-
-
-
+                })
             }
+
+            $scope.addDoc = function () {
+                $setDocs($scope.docsSelected)
+            }
+
+
 
             $scope.close = function () {
                 $ctrl.close()
@@ -619,7 +652,7 @@
                 setColumnDefs()
 
 
-                fnGetItems(item.idDocumento).then(response => {
+                fnGetItems(item.idDocumento).then(response => { 
                     $scope.gridOptionsDetalle.data = response.items;
                 })
             }
@@ -756,7 +789,10 @@
                         visible: true,
                         cellFilter: fS.cellFilterRoundToNumber(),
                         cellTooltip: function (row, col) {
-                            return fS.cellTooltipGrid(row.entity, col.field)
+                            if (row.entity[col.field]) {
+                                return fS.cellTooltipGrid(row.entity, col.field)
+                            }
+                            return 0;
                         },
 
                     },

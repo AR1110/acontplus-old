@@ -1340,9 +1340,9 @@
                     })
 
                     if (isConfirmed) {
-                        showLoader();
+                        
 
-                        let query = aprobacionDocSvc.queryMapperConvertToDoc({
+                        let query = aprobacionDocSvc.convertToDocAprobacionDocMapper({
                             id: $scope.data.idAprob_Document,
                             codDocDestino,
                             codDoc,
@@ -1354,7 +1354,7 @@
                             historyDatosAdicionales: $scope.historyDatosAdicionales,
                         })
 
-                        showLoader();
+                       
                         aprobacionDocSvc.convertToDoc(query).then(response => {
                             if (response.code === '0') {
                                 fS.sweetAlert('warning', response.message, response.titleSms);
@@ -1366,14 +1366,13 @@
                             }
                         }).catch(error => {
                             console.log(error)
-                        }).finally(() => hideLoader())
+                        }) 
 
 
 
                     }
 
-                } catch (error) {
-                    hideLoader()
+                } catch (error) { 
                     console.log(error)
                 }
             }
