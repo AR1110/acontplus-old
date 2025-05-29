@@ -14,4 +14,10 @@
     <ProjectReference Include="..\BarberShop.Domain\BarberShop.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Seats\Validators\" />
+    <Folder Include="Services\Interfaces\" />
+    <Folder Include="Services\Services\" />
+  </ItemGroup>
+
 </Project>
