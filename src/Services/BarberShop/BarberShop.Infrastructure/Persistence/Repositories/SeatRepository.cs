@@ -4,10 +4,25 @@ using Common.Infrastructure.Repository.Implementations;
 
 namespace BarberShop.Infrastructure.Persistence.Repositories;
 
-public class SeatRepository : Repository<Seat>, ISeatRepository
+public class SeatRepository : BaseRepository<Seat>, ISeatRepository
 {
     public SeatRepository(BarberShopContext context) : base(context)
     {
+    }
+
+    public async Task<Seat> AddSeatAsync(Seat seat)
+    {
+        return await base.AddAsync(seat);
+    }
+
+    public async Task DeleteSeatAsync(int id)
+    {
+        await base.DeleteByIdAsync(id);
+    }
+
+    public async Task<Seat?> GetSeatByIdAsync(int id)
+    {
+        return await base.GetByIdAsync(id);
     }
 
     public async Task<PagedResult<Seat>> GetSeatsAsync(PaginationDto paginationDto)
@@ -35,5 +50,10 @@ public class SeatRepository : Repository<Seat>, ISeatRepository
             PageSize = paginationDto.PageSize,
             TotalCount = totalCount
         };
+    }
+
+    public async Task<Seat> UpdateSeatAsync(Seat seat)
+    {
+        return await base.UpdateAsync(seat);
     }
 }

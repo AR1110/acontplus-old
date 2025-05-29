@@ -12,14 +12,14 @@ POST {{BarberShop.API_HostAddress}}/seat
 Content-Type: application/json
 Authorization: {{Token}}
 {
-  "SeatNumber": 1,
-  "Code": "A1",
-  "Name": "Asiento 1"
+  "SeatNumber": 2,
+  "Code": "A2",
+  "Name": "Asiento 2"
 }
 
 ###
 
-@id=0
+@id=1
 DELETE {{BarberShop.API_HostAddress}}/seat/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
@@ -37,9 +37,9 @@ Content-Type: application/json
 Authorization: {{Token}}
 {
   "Id": 1,
-  "SeatNumber": 2,
-  "Code": "A2",
-  "Name": "Asiento 2"
+  "SeatNumber": 1,
+  "Code": "A1",
+  "Name": "Asiento Modificado"
 }
 
 ###

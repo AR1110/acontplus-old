@@ -1,4 +1,5 @@
 ﻿using BarberShop.API.Endpoints.Interfaces;
+using BarberShop.Application.Seats.DTOs;
 using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,20 +19,20 @@ public static class TicketEndpointsExtensions
             async (ISeatEndpoints seatEndpoints, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
             {
                 var paginationDto = new PaginationDto { PageIndex = pageIndex, PageSize = pageSize };
-                return await seatEndpoints.GetAllSeatsAsync(paginationDto);
+                return await seatEndpoints.GetSeatsAsync(paginationDto);
             });
 
-        //seatGroup.MapGet("/{id}", async (ISeatEndpoints seatEndpoints, int id) =>
-        //    await seatEndpoints.GetSeatByIdAsync(id));
+        seatGroup.MapGet("/{id}", async (ISeatEndpoints seatEndpoints, int id) =>
+            await seatEndpoints.GetSeatByIdAsync(id));
 
-        //seatGroup.MapPost("/", async (ISeatEndpoints seatEndpoints, SeatDto seatDto) =>
-        //    await seatEndpoints.CreateSeatAsync(seatDto));
+        seatGroup.MapPost("/", async (ISeatEndpoints seatEndpoints, SeatDto seatDto) =>
+            await seatEndpoints.CreateSeatAsync(seatDto));
 
-        //seatGroup.MapPut("/{id}", async (ISeatEndpoints seatEndpoints, int id, SeatDto seatDto) =>
-        //    await seatEndpoints.UpdateSeatAsync(id, seatDto));
+        seatGroup.MapPut("/{id}", async (ISeatEndpoints seatEndpoints, int id, SeatDto seatDto) =>
+            await seatEndpoints.UpdateSeatAsync(id, seatDto));
 
-        //seatGroup.MapDelete("/{id}", async (ISeatEndpoints seatEndpoints, int id) =>
-        //    await seatEndpoints.DeleteSeatAsync(id));
+        seatGroup.MapDelete("/{id}", async (ISeatEndpoints seatEndpoints, int id) =>
+            await seatEndpoints.DeleteSeatAsync(id));
 
         return builder;
     }
