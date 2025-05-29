@@ -1,26 +1,31 @@
 <app-breadcrumb />
 
-<mat-card>
-  <mat-card-content>
-    <mat-tab-group (selectedTabChange)="onTabChange($event)">
-      <mat-tab label="Productos">
-        <app-item-list></app-item-list>
-      </mat-tab>
-      <mat-tab label="Menus">
-        @if (isMenuTabActive) {
-        <app-menu-list></app-menu-list>
-        }
-      </mat-tab>
-      <mat-tab label="Promociones">
-        @if (isPromotionTabActive) {
-        <app-promotion-list></app-promotion-list>
-        }
-      </mat-tab>
-      <mat-tab label="Ingredientes">
-        @if (isIngredientTabActive) {
-        <app-ingredient-list></app-ingredient-list>
-        }
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card-content>
-</mat-card>
+<app-mat-dynamic-card>
+
+  <mat-tab-group (selectedTabChange)="onTabChange($event)" dynamicHeight >
+    <mat-tab label="Productos">
+      <ng-template matTabContent>
+        <div class="mx-3">
+        <app-item-list/>
+
+        </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Menus">
+      <ng-template matTabContent>
+        <app-menu-list/>
+
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Promociones">
+      <ng-template matTabContent>
+        <app-promotion-list/>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Ingredientes">
+      <ng-template matTabContent>
+        <app-ingredient-list/>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</app-mat-dynamic-card>

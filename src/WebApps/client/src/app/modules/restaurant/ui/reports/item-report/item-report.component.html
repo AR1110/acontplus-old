@@ -1,56 +1,49 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="estab">Establecimiento.:</label>
-          <select
-            name="estab"
-            id="estab"
-            class="form-select"
+<app-mat-dynamic-card>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select
             [(ngModel)]="dataSearch.codEstab"
           >
-            <option value="">Todos</option>
-            @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.codEstab">
-                {{ item.nombreComercial }}
-              </option>
+            @for (item of establecimientos(); track $index) {
+              <mat-option [value]="item.codEstab">{{item.nombreComercial}} </mat-option>
+
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="subCategorias">SubCategorias</label>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>SubCategorias</mat-label>
           <mat-select
-            matNativeControl
             [formControl]="checkedSubCategorias"
             multiple
-            class="form-select"
           >
-            @for (item of subCategorias; track $index) {
+            @for (item of subCategorias(); track $index) {
               <mat-optgroup [label]="item.familia" style="font-weight: bold">
                 @for (sf of item.subFamilias; track $index) {
                   <mat-option [value]="sf.idSubFamilia">{{
-                    sf.subFamilia
-                  }}</mat-option>
+                      sf.subFamilia
+                    }}</mat-option>
                 }
               </mat-optgroup>
             }
           </mat-select>
-        </div>
+        </mat-form-field>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Artículo: </label>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Artículo</mat-label>
           <input
             type="text"
             placeholder="..."
+            matInput
             [formControl]="control"
             [matAutocomplete]="autoProductSearchSimple"
-            class="form-control"
           />
 
           <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
@@ -79,12 +72,12 @@
               </mat-option>
             }
           </mat-autocomplete>
-        </div>
+        </mat-form-field>
       </div>
     </div>
-  </mat-card-content>
-  <div class="card-footer">
-    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+
+
+    <div class="hstack gap-2">
       <app-theme-button
         variant="danger"
         text="Pdf"
@@ -93,12 +86,12 @@
       >
       </app-theme-button
       ><app-theme-button
-        variant="success"
-        text="Excel"
-        icon="download"
-        (handleClick)="getReport('excel')"
-      >
-      </app-theme-button>
+      variant="success"
+      text="Excel"
+      icon="download"
+      (handleClick)="getReport('excel')"
+    >
+    </app-theme-button>
     </div>
   </div>
-</mat-card>
+</app-mat-dynamic-card>

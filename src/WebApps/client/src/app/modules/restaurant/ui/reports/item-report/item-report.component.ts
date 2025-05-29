@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab } from '@core/models/estab.model';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
@@ -21,8 +21,9 @@ import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {MatInput} from "@angular/material/input";
 
 @Component({
   selector: 'app-item-report',
@@ -35,15 +36,15 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     BreadcrumbComponent,
     MatAutocompleteModule,
     AsyncPipe,
-    MatCard,
-    MatCardContent,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
+    MatInput,
   ],
 })
 export class ItemReportComponent {
   checkedSubCategorias = new FormControl('');
-  establecimientos: Array<GroupedEstab> = [];
-  subCategorias: Array<GroupedSubFamilia> = [];
+  establecimientos =signal<GroupedEstab[]>([]);
+  subCategorias = signal<GroupedSubFamilia[]>([]);
   control = new FormControl('');
   filteredProducts!: Observable<any[]>;
   dataSearch = {
@@ -55,19 +56,14 @@ export class ItemReportComponent {
   private _productUseCase = inject(ProductUseCase);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe({
-      next: (response) => {
+    this._productUseCase.getDataReport().subscribe((response) => {
         const { estabs, subCategorias } = response;
-        this.establecimientos = estabs;
-        this.subCategorias = subCategorias;
-        const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
+        this.establecimientos.set(estabs);
+        this.subCategorias.set(subCategorias);
+        const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
         }
-      },
-      error(err) {
-        console.log(err);
-      },
     });
 
     this.filteredProducts = this.control.valueChanges.pipe(
@@ -89,9 +85,9 @@ export class ItemReportComponent {
   }
 
   async getReport(format: 'pdf' | 'excel') {
-    let checkedSubCategorias = this.checkedSubCategorias.value;
+    const checkedSubCategorias = this.checkedSubCategorias.value;
     try {
-      let subCategoriasChecked =
+      const subCategoriasChecked =
         Array.isArray(checkedSubCategorias) && checkedSubCategorias.join(',');
 
       const dataSearch = {

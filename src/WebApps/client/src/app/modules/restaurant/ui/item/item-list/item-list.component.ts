@@ -6,26 +6,24 @@ import { FormsModule } from '@angular/forms';
 import { ModalService } from '@core/services/modal.service';
 import { ItemAddEditModalComponent } from '@restaurant/ui/item/item-add-edit-modal/item-add-edit-modal.component';
 import { imgDefault, isValidField } from '@core/utils/utils';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent } from '@angular/material/paginator';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import { MatIconModule} from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
   selector: 'app-item-list',
     imports: [
         FormsModule,
-        CustomTableContainerComponent,
         MatDynamicTableComponent,
-        MatCard,
-        MatCardContent,
-        MatButton,
-        MatIcon,
+      MatFormFieldModule,
+      MatInputModule,
+      MatIconModule,
+      MatButtonModule,
         ThemeButtonComponent,
     ],
   templateUrl: './item-list.component.html',
@@ -47,7 +45,7 @@ export class ItemListComponent {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  dataSource = new MatTableDataSource<any>();
+  dataSource = signal<any>([])
 
   isLoadingResults = signal(false);
 
@@ -59,16 +57,15 @@ export class ItemListComponent {
       textSearch: isValidField(this.dataSearch.textSearch),
     };
     this.#itemService.get(obj).subscribe((response) => {
-      let items = response.items.map((item: any, index: number) => {
+      const items = response.items.map((item: any, index: number) => {
         return {
           index: index + 1,
           ...item,
           img: isValidField(item.s3ObjectUrl) || imgDefault(),
         };
       });
-      this.dataSource = new MatTableDataSource(items);
-      this.pagination().totalRecords =
-        this.dataSource.data[0]?.totalRecords ?? 0;
+      this.dataSource.set(items);
+      this.pagination().totalRecords =  this.dataSource()[0]?.totalRecords ?? 0;
     });
   }
 
