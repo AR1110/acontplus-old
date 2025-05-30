@@ -1,7 +1,6 @@
-﻿using BarberShop.Application.Seats.DTOs;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 
-namespace BarberShop.API.Endpoints.Interfaces;
+namespace BarberShop.Api.Endpoints.Interfaces;
 
 public interface ISeatEndpoints
 {

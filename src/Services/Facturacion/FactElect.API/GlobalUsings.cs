@@ -20,7 +20,6 @@ global using FactElect.Application.Interfaces;
 global using FactElect.Application.Interfaces.Logistica;
 global using FactElect.Application.Interfaces.RetencionAts;
 global using FactElect.Application.Interfaces.Sri;
-global using FactElect.Domain.Entities;
 global using FactElect.Domain.Models;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;

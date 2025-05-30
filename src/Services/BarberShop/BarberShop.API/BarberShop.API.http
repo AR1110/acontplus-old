@@ -1,14 +1,14 @@
-@BarberShop.API_HostAddress = https://localhost:7114
+@BarberShop.Api_HostAddress = https://localhost:7114
 @Token = Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InphcmF0ZWNAYWNvbnRwbHVzLmNvbS5lYyIsImdpdmVuX25hbWUiOiJaQVJBVEUgScORSUdVRVogQ0hSSVNUSUFOIElWQU4iLCJqdGkiOiJlOWUyN2RhNi03ZDgwLTRlNmItOTZjYi02YTNlNzdhYTA2YmUiLCJuYW1lIjoiWkFSQVRFIEnDkUlHVUVaIENIUklTVElBTiBJVkFOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdWIiOiIxMCIsInVuaXF1ZV9uYW1lIjoiemFyYXRlYyIsInVzZXJSb2xlSWQiOiIyNyIsImlkQ2FyZENvbXBhbnkiOiIwMTAyNzYyNTMxMDAxIiwiY29tcGFueUlkIjoiMSIsInRyYWRlTmFtZSI6IlpBUkFURSBJw5FJR1VFWiBDSFJJU1RJQU4gSVZBTiIsImJ1c2luZXNzTmFtZSI6IlpBUkFURSBJw5FJR1VFWiBDSFJJU1RJQU4gSVZBTiIsInVybEdhdGV3YXkiOiJodHRwczovL2xvY2FsaG9zdDo3MDYwIiwiZXhwIjoxNzc2NzgyMDgwfQ.wT1ncKWBTcK-zW54vw1cqafEBcOLrZOWukaw_BoWFos
 
 
-GET {{BarberShop.API_HostAddress}}/seat?pageIndex=1&pageSize=10
+GET {{BarberShop.Api_HostAddress}}/seat?pageIndex=1&pageSize=10
 Content-Type: application/json
 Authorization: {{Token}}
 
 ###
 
-POST {{BarberShop.API_HostAddress}}/seat
+POST {{BarberShop.Api_HostAddress}}/seat
 Content-Type: application/json
 Authorization: {{Token}}
 {
@@ -20,19 +20,19 @@ Authorization: {{Token}}
 ###
 
 @id=1
-DELETE {{BarberShop.API_HostAddress}}/seat/{{id}}
+DELETE {{BarberShop.Api_HostAddress}}/seat/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 
 ###
 
-GET {{BarberShop.API_HostAddress}}/seat/{{id}}
+GET {{BarberShop.Api_HostAddress}}/seat/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 
 ###
 @id=1
-PUT {{BarberShop.API_HostAddress}}/seat/{{id}}
+PUT {{BarberShop.Api_HostAddress}}/seat/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 {
