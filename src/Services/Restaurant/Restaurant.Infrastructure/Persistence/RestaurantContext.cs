@@ -51,7 +51,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
 
         builder.ApplyUtcDateTimeConverter();
 
-        SimpleEntityRegistration.RegisterEntities(builder,
+        SimpleEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
             typeof(AppTable),
             typeof(Ingredient),
             typeof(Item),
