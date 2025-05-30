@@ -14,14 +14,14 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^20.0.0",
-    "@angular/cdk": "^19.2.10",
+    "@angular/cdk": "^20.0.1",
     "@angular/cli": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/forms": "^20.0.0",
-    "@angular/material": "^19.2.10",
-    "@angular/material-moment-adapter": "^19.2.16",
+    "@angular/material": "^20.0.1",
+    "@angular/material-moment-adapter": "^20.0.1",
     "@angular/platform-browser": "^20.0.0",
     "@angular/platform-browser-dynamic": "^20.0.0",
     "@angular/router": "^20.0.0",
@@ -53,8 +53,7 @@
     "tabulator-tables": "^6.3.1",
     "tslib": "^2.8.1",
     "uuid": "^11.1.0",
-    "xlsx": "^0.18.5",
-    "zone.js": "^0.15.0"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@angular/build": "^20.0.0",

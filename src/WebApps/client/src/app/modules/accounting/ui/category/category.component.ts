@@ -1,4 +1,4 @@
-﻿import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
