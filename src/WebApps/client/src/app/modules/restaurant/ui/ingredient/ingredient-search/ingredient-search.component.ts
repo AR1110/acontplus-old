@@ -1,89 +1,76 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgbHighlight, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import {
-  catchError,
-  distinctUntilChanged,
-  Observable,
-  of,
-  OperatorFunction,
-  switchMap,
-  tap,
-} from 'rxjs';
+  Component,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+  OnInit,
+} from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IngredientService } from '@restaurant/data/services/ingredient.service';
+import { finalize, Observable, switchMap } from 'rxjs';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-ingredient-search',
-    imports: [FormsModule, NgbHighlight, NgbTypeahead],
-    templateUrl: './ingredient-search.component.html',
-    styles: ``
+  selector: 'app-ingredient-search',
+  imports: [
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    AsyncPipe,
+    MatInputModule,
+  ],
+  templateUrl: './ingredient-search.component.html',
+  styles: ``,
 })
-export class IngredientSearchComponent {
+export class IngredientSearchComponent implements OnInit {
   searching = false;
   searchFailed = false;
-  @Output() onIngredientSelected = new EventEmitter<{
-    ingredient: Ingredient;
-  }>();
-  @Output() clearSearch = new EventEmitter();
-  @Input() isSimpleMode = false;
-  @Input() textSearch = '';
-  @Input() isSearchToExternal = false;
-  @Input() id = 0;
+  selectedOn = output<Ingredient>();
+  clearSearch = output();
+  isSimpleMode = input(false);
+  textSearch = model('');
+  isSearchToExternal = input(false);
+  id = model(0);
   ingredient = {} as Ingredient;
+
+  isLoading = signal(false);
+  control = new FormControl('');
+  filteredProducts!: Observable<any[]>;
+
   #ingredientService = inject(IngredientService);
 
-  onKeyupSearch() {
-    if (!this.textSearch) {
-      this.id = 0;
-      this.clearSearch.emit({});
-    }
-  }
-
-  onSelect($event: any) {
-    this.ingredient = $event.item as Ingredient;
-    this.id = this.ingredient.id;
-    this.setCustomerData(this.ingredient);
-  }
-
-  search: OperatorFunction<string, Array<Ingredient>> = (
-    text$: Observable<string>,
-  ) =>
-    text$.pipe(
-      distinctUntilChanged(),
-      tap(() => {
-        this.searching = true;
-        this.id = 0;
-      }),
-      switchMap((term) => {
-        if (!term || term.length < 2) {
-          return of([]);
+  ngOnInit() {
+    this.filteredProducts = this.control.valueChanges.pipe(
+      switchMap((val) => {
+        if (val && val.length > 2) {
+          return this._filter(val);
+          // return this.products as any[]
         }
-        return this.#ingredientService.search({ textSearch: term }).pipe(
-          tap(() => (this.searchFailed = false)),
-          catchError((error) => {
-            console.log(error);
-            this.searchFailed = true;
-            return of([]);
-          }),
-        );
-      }),
-      tap(() => (this.searching = false)),
+        this.clearSearch.emit();
+        return [];
+      })
     );
-
-  setCustomerData(ingredient: Ingredient) {
-    this.onEmitData(ingredient);
-    setTimeout(() => {
-      this.textSearch = ingredient.productDescription;
-    });
   }
 
-  onEmitData(ingredient: Ingredient) {
-    this.onIngredientSelected.emit({ ingredient });
+  private _filter(value: string) {
+    return this.#ingredientService
+      .search({ textSearch: value })
+      .pipe(finalize(() => this.isLoading.set(false)));
   }
 
-  onEnterKeyPressed(event: Event): void {
-    let ev = event as KeyboardEvent;
-    if (!this.isSearchToExternal && !(ev.key === 'Enter')) return;
+  onSelect($event: Ingredient) {
+    this.ingredient = $event;
+    this.id.set(this.ingredient.id);
+    this.selectedOn.emit(this.ingredient);
   }
 }

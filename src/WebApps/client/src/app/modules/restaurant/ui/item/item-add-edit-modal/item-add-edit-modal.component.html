@@ -7,63 +7,59 @@
 
 <ng-template #body>
   <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
-
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label>Resumen</label>
-            <input
-              class="form-control form-control-lg"
-              formControlName="summary"
-              type="text"
-            />
-          </div>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label>Resumen</label>
+          <input
+            class="form-control form-control-lg"
+            formControlName="summary"
+            type="text"
+          />
         </div>
       </div>
-      <div class="row mt-3">
-        <div class="col-6">
-          <div class="form-group">
-            <label for="recipe">Receta</label>
-            <textarea
-              class="form-control"
-              formControlName="recipe"
-              id="recipe"
-              rows="6"
-            ></textarea>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="form-group">
-            <label for="instructions">Instrucciones</label>
-            <textarea
-              class="form-control"
-              formControlName="instructions"
-              id="instructions"
-              rows="6"
-            ></textarea>
-          </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-6">
+        <div class="form-group">
+          <label for="recipe">Receta</label>
+          <textarea
+            class="form-control"
+            formControlName="recipe"
+            id="recipe"
+            rows="6"
+          ></textarea>
         </div>
       </div>
-      <div class="row mb-3">
-        <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
-          <div class="form-group">
-            <label>Ingredientes:</label>
-            <app-ingredient-search
-              (onIngredientSelected)="onIngredientSelected($event)"
-              [textSearch]="ingredientSearch"
-            ></app-ingredient-search>
-          </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label for="instructions">Instrucciones</label>
+          <textarea
+            class="form-control"
+            formControlName="instructions"
+            id="instructions"
+            rows="6"
+          ></textarea>
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <app-tabulator-semantic-ui
-            [columnNames]="columns"
-            [options]="{ reactiveData: true }"
-            [tableData]="recipes"
-          ></app-tabulator-semantic-ui>
-        </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-12 12">
+        <app-ingredient-search
+          (selectedOn)="onIngredientSelected($event)"
+          [(textSearch)]="ingredientSearch"
+        />
       </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <app-tabulator-semantic-ui
+          [columnNames]="columns"
+          [options]="{ reactiveData: true }"
+          [tableData]="recipes"
+        ></app-tabulator-semantic-ui>
+      </div>
+    </div>
   </form>
 </ng-template>
 <ng-template #footer>
@@ -76,4 +72,3 @@
     [disabled]="itemForm.invalid"
   />
 </ng-template>
-
