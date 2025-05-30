@@ -43,7 +43,7 @@ export class SubCategoryDialogComponent implements OnInit {
   private tS = inject(ToasterService);
 
   titleModal = 'Nueva SubCategoria';
-  categorias: any[] = [];
+  categorias = signal<any[]>([])
 
   files: NgxFileDropEntry[] = [];
   croppedImage: any;
@@ -70,7 +70,7 @@ export class SubCategoryDialogComponent implements OnInit {
 
   private getDataForm() {
     this._productUseCase.getDataForm().subscribe((response) => {
-      this.categorias = response.categorias;
+      this.categorias.set(response.categorias)
     });
   }
   ngOnInit(): void {

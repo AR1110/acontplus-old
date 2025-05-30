@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +38,7 @@ export class UserCustomerRolePermissionComponent {
   usersCustomerAdmin: UserCustomerRole[] = [];
   userCustomerAdminSelected = new FormControl([]);
 
-  allCompleteSaleComprobante = false;
+  allCompleteSaleComprobante = signal(false);
   allCompleteSaleDetail = false;
   allCompleteSaleAdditional = false;
   allCompleteProduct = false;
@@ -119,12 +119,12 @@ export class UserCustomerRolePermissionComponent {
     const comprobantePermisos =
       this.permissionSaleComprobanteKey.filter(
         (permiso) => this.mainPermissionSale.comprobante[permiso].enabled,
-      ).length > 0 && !this.allCompleteSaleComprobante;
+      ).length > 0 && !this.allCompleteSaleComprobante();
     return comprobantePermisos;
   }
 
   setAllSaleComprobante(completed: boolean) {
-    this.allCompleteSaleComprobante = completed;
+    this.allCompleteSaleComprobante.set(completed)
 
     this.permissionSaleComprobanteKey.forEach((permiso) => {
       this.mainPermissionSale.comprobante[permiso].enabled = completed;
@@ -132,9 +132,9 @@ export class UserCustomerRolePermissionComponent {
   }
 
   updateAllCompleteSaleComprobante() {
-    this.allCompleteSaleComprobante = this.permissionSaleComprobanteKey.every(
+    this.allCompleteSaleComprobante.set(this.permissionSaleComprobanteKey.every(
       (permiso) => this.mainPermissionSale.comprobante[permiso].enabled,
-    );
+    ))
   }
 
   /**
