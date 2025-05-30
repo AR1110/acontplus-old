@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Breed } from '@modules/vet/models/breed.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { BreedService } from '@modules/vet/services/breed.service';
@@ -7,20 +7,17 @@ import { BreedModalComponent } from '@modules/vet/components/breed-modal/breed-m
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
-import {DialogService} from "@core/services/dialog.service";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { DialogService } from '@core/services/dialog.service';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
   selector: 'app-breed-page',
   imports: [
     BreadcrumbComponent,
     SecondaryStatusPipe,
-    MatCard,
-    MatCardContent,
     MatButton,
     MatMenu,
     MatMenuTrigger,
@@ -31,9 +28,9 @@ import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-d
   templateUrl: './breed-page.component.html',
   styles: ``,
 })
-export class BreedPageComponent {
+export class BreedPageComponent implements OnInit {
   data = {} as Breed;
-  breeds: Breed[] = [];
+  breeds = signal<Breed[]>([]);
   private readonly breedService = inject(BreedService);
   private readonly modalService = inject(DialogService);
   private readonly tS = inject(ToasterService);
@@ -41,7 +38,7 @@ export class BreedPageComponent {
   loadBreeds() {
     this.breedService.get({}).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        this.breeds = response.payload as Breed[];
+        this.breeds.set(response.payload as Breed[]);
       }
     });
   }
@@ -85,7 +82,7 @@ export class BreedPageComponent {
 
   onModalOpen() {
     const modalRef = this.modalService.open(BreedModalComponent, {
-       data: this.data.id > 0 ?structuredClone( this.data) : {}
+      data: this.data.id > 0 ? structuredClone(this.data) : {},
     });
     modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {

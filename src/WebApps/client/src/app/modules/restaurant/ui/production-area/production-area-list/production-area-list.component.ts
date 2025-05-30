@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
@@ -8,35 +8,30 @@ import { ProductionAreaAddEditModalComponent } from '@restaurant/ui/production-a
 
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  NgbAccordionItem,
-  NgbAccordionModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import { ProductionArea } from '@restaurant/domain/models/production-area';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DialogService } from '@core/services/dialog.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
-import {MatCard, MatCardContent} from "@angular/material/card";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {DialogService} from "@core/services/dialog.service";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ProductionArea } from '@modules/restaurant/domain/models/production-area';
 
 @Component({
-    selector: 'app-production-area-list',
-    imports: [
-
-        FormsModule,
-        MatButton,
-        NgbAccordionModule,
-        NgClass,
-        MatCardContent,
-        MatCard,
-        ThemeButtonComponent,
-    ],
-    templateUrl: './production-area-list.component.html',
-    styles: ``
+  selector: 'app-production-area-list',
+  imports: [
+    FormsModule,
+    MatButton,
+    NgClass,
+    MatIcon,
+    MatTabsModule,
+    ThemeButtonComponent,
+    MatDynamicCardComponent,
+  ],
+  templateUrl: './production-area-list.component.html',
+  styles: ``,
 })
-export class ProductionAreaListComponent {
-  @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
-
-  establecimientoId  = 0;
+export class ProductionAreaListComponent implements OnInit {
+  establecimientoId = 0;
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   data = {} as ProductionArea;
   productionAreas: ProductionArea[] = [];
@@ -45,6 +40,14 @@ export class ProductionAreaListComponent {
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);
 
+  selected = signal(0);
+
+  selectedIndexChange($event: number) {
+    this.selected.set($event);
+    if (this.establecimientos.length > 0) {
+      this.loadData(this.establecimientos[$event].idEstablecimiento);
+    }
+  }
   loadData(idEstablecimiento: number) {
     // if (!this.panelOpenState()) {
     //   return;
@@ -104,10 +107,10 @@ export class ProductionAreaListComponent {
       ProductionAreaAddEditModalComponent,
       {
         size: 'sm',
-        data:  Object.assign(this.data, {
-            establecimientoId: this.establecimientoId,
-        })
-      },
+        data: Object.assign(this.data, {
+          establecimientoId: this.establecimientoId,
+        }),
+      }
     );
 
     modalRef.subscribe((response) => {
