@@ -1,38 +1,33 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-
-import { ModalService } from '@core/services/modal.service';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import {CategoryUseCase} from "@accounting/domain/use-cases/category.use-case";
-import {MatCard, MatCardContent} from "@angular/material/card";
 import {Category} from "@accounting/domain/models/category";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MatMenuModule} from "@angular/material/menu";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
     selector: 'app-category',
-    imports: [
-        BreadcrumbComponent,
-
-        NgbDropdownModule,
-        SecondaryStatusPipe,
-        MatCardContent,
-        MatCard,
-      MatIconModule,
-      MatButtonModule,
-      MatMenuModule
-    ],
+  imports: [
+    BreadcrumbComponent,
+    SecondaryStatusPipe,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatDynamicCardComponent
+  ],
     templateUrl: './category.component.html',
     styles: ``
 })
 export class CategoryComponent {
-  categories: Category[] = [];
+  categories = signal<Category[]>([])
   data: Category = {} as Category;
   private _categoryUseCase = inject(CategoryUseCase)
-  private readonly modalService = inject(ModalService);
+  private readonly modalService = inject(DialogService);
 
   edit(item: Category) {
     this.data = item;
@@ -43,7 +38,7 @@ export class CategoryComponent {
     this._categoryUseCase.get({ tipo: 1 }).subscribe((response) => {
       if ( response.code == '1') {
         const { categories } = JSON.parse(response.payload as string);
-        this.categories = categories;
+        this.categories.set(categories);
       }
     });
   }
@@ -55,12 +50,10 @@ export class CategoryComponent {
   onModalOpen() {
     const modalRef = this.modalService.open(CategoryModalComponent, {
       size: 'sm',
-      centered: true,
+       data: this.data.id>0? structuredClone(this.data): {}
     });
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = this.data;
-    }
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe(response => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -68,5 +61,5 @@ export class CategoryComponent {
     });
   }
 
-  onResultModal() {}
+
 }

@@ -6,19 +6,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Item } from '@restaurant/domain/models/item.model';
 import { Recipe } from '@restaurant/domain/models/recipe.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { ItemService } from '@restaurant/data/services/item.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-item-add-edit-modal',
@@ -26,15 +25,14 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     ReactiveFormsModule,
     TabulatorSemanticUiComponent,
     IngredientSearchComponent,
-    MatIcon,
-    MatButton,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
   ],
   templateUrl: './item-add-edit-modal.component.html',
   styles: ``,
 })
 export class ItemAddEditModalComponent {
-  data = {} as Item;
+  data = inject(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Item';
   itemForm = new FormGroup({
@@ -46,10 +44,10 @@ export class ItemAddEditModalComponent {
     productId: new FormControl(0),
   });
   recipes: Recipe[] = [];
-  ingredientSearch: string = '';
+  ingredientSearch = '';
   #ingredientService = inject(IngredientService);
   #itemService = inject(ItemService);
-  #modalRef = inject(NgbActiveModal);
+  #modalRef = inject(MatDialogRef<ItemAddEditModalComponent>);
   #recipeService = inject(RecipeService);
   #tS = inject(ToasterService);
 

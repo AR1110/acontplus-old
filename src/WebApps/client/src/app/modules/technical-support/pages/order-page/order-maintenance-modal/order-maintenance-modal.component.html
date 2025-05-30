@@ -1,13 +1,15 @@
-<div class="modal-header">
-  <h5 class="modal-title"><mat-icon>settings</mat-icon> Reparaciones</h5>
-  <button type="button" class="btn-close" (click)="onModalClose()"></button>
-</div>
-<div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  title="Reparaciones"
+  (close)="onModalClose()"
+/>
+
+<ng-template #body>
   <div class="row">
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="establishment"
-          >Establecimiento <span class="text-danger">*</span></label
+        >Establecimiento <span class="text-danger">*</span></label
         >
         <select
           name="establishment"
@@ -27,7 +29,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="puntoEmision"
-          >Punto Emisión <span class="text-danger">*</span></label
+        >Punto Emisión <span class="text-danger">*</span></label
         >
         <select
           name="puntoEmision"
@@ -44,7 +46,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="fechaEmision"
-          >Fecha Emisión: <span class="text-danger">*</span></label
+        >Fecha Emisión: <span class="text-danger">*</span></label
         >
         <app-input-date [(value)]="order.fechaEmision" />
       </div>
@@ -90,7 +92,7 @@
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
         <div class="form-group">
           <label for="orderDetails"
-            >Detalle (Equipo): <span class="text-danger">*</span></label
+          >Detalle (Equipo): <span class="text-danger">*</span></label
           >
           <select
             name="orderDetails"
@@ -123,7 +125,7 @@
       <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-12">
         <div class="form-group">
           <label for="obs-detalle-reparacion"
-            >Solicitud de Reparación: <span class="text-danger">*</span></label
+          >Solicitud de Reparación: <span class="text-danger">*</span></label
           >
           <input
             type="text"
@@ -212,13 +214,5 @@
       </div>
     </div>
   </div>
-</div>
-<div class="modal-footer">
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="onModalClose()"
-  >
-  </app-theme-button>
-</div>
+</ng-template>
+

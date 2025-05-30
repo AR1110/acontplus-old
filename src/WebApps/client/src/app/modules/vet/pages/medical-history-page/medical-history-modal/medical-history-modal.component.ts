@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   FormControl,
   FormGroup,
@@ -25,22 +24,21 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-medical-history-modal',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        PetSearchComponent,
-        MatCard,
-        MatCardContent,
-        MatIcon,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PetSearchComponent,
+    MatCard,
+    MatCardContent,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './medical-history-modal.component.html',
   styles: ``,
 })
@@ -48,7 +46,7 @@ export class MedicalHistoryModalComponent {
   behaviors: Behavior[] = [];
   behaviorsStatuses: BehaviorStatus[] = [];
   behaviorTests: BehaviorTest[] = [];
-  data = {} as MedicalHistory;
+  data = inject<MedicalHistory>(MAT_DIALOG_DATA);
   diseases: Disease[] = [];
   diseasesStatuses: DiseaseStatus[] = [];
   establecimientos: Array<GroupedEstab> = [];
@@ -69,7 +67,7 @@ export class MedicalHistoryModalComponent {
   private readonly behaviorTestService = inject(BehaviorTestService);
   private readonly healthCheckService = inject(HealthCheckService);
   private readonly medicalHistoryService = inject(MedicalHistoryService);
-  private readonly modalRef = inject(NgbActiveModal);
+  private readonly modalRef = inject(MatDialogRef<MedicalHistoryModalComponent>);
   private readonly tS = inject(ToasterService);
 
   addBehavior(behaviorId: number, behaviorStatusId: number) {

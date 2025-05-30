@@ -1,7 +1,6 @@
 <app-breadcrumb />
 @if (breeds.length > 0) {
-  <mat-card appearance="outlined">
-    <mat-card-content>
+  <app-mat-dynamic-card>
       <div class="row mb-3">
         <div class="col-md-2 col-12">
           <button (click)="onModalOpen()" mat-raised-button type="button">
@@ -53,8 +52,7 @@
           </tbody>
         </table>
       </div>
-    </mat-card-content>
-  </mat-card>
+  </app-mat-dynamic-card>
 } @else {
   <h5>No se encontraron registros de razas</h5>
 }

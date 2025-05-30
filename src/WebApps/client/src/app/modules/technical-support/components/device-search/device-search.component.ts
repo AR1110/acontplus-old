@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
 import { DeviceSearch } from '@modules/technical-support/models/device.model';
 import { DeviceModalComponent } from '@modules/technical-support/pages/device-page/device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -15,6 +14,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-device-search',
@@ -26,7 +26,7 @@ export class DeviceSearchComponent {
   @Input() textSearch = '';
   @Output() deviceSelected = new EventEmitter<{ data: any }>();
   @Output() clearSearch = new EventEmitter();
-  private modalService = inject(ModalService);
+  private modalService = inject(DialogService);
   private deviceService = inject(DeviceService);
 
   device: DeviceSearch = {
@@ -50,12 +50,12 @@ export class DeviceSearchComponent {
     }
   }
   openModal() {
-    const modalRef = this.modalService.openModalCustom(DeviceModalComponent, {
+    const modalRef = this.modalService.open(DeviceModalComponent, {
       size: 'xl',
-      centered: true,
+       data: structuredClone(this.device),
     });
-    modalRef.componentInstance.data = this.device;
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe((response) => {
       this.setDeviceData(response);
     });
   }

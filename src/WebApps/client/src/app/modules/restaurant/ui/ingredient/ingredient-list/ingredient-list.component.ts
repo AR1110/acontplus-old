@@ -1,7 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
-import { ModalService } from '@core/services/modal.service';
 import {MatPagination } from '@shared/models/pagination.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IngredientAddEditModalComponent } from '@restaurant/ui/ingredient/ingredient-add-edit-modal/ingredient-add-edit-modal.component';

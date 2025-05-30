@@ -1,56 +1,56 @@
-import { Component, inject, input, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { ApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
-import { imgDefault, isValidField } from "@core/utils/utils";
-import { SubCategoryService } from "@inventory/data/services/sub-category.service";
-import { SubcategoryPhotoService } from "@inventory/data/services/subcategory-photo.service";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { UploadImageComponent } from "@shared/components/upload-image/upload-image.component";
-import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
-import { NgxFileDropEntry } from "ngx-file-drop";
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatButton} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ApiResponse } from '@core/models/api-response';
+import { ToasterService } from '@core/services/toaster.service';
+import { imgDefault, isValidField } from '@core/utils/utils';
+import { SubCategoryService } from '@inventory/data/services/sub-category.service';
+import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
+import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { NgxFileDropEntry } from 'ngx-file-drop';
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-sub-category-dialog',
+  selector: 'app-sub-category-dialog',
   imports: [
     FormsModule,
-    MatFormFieldModule, MatSelectModule, MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     MatCustomDialogComponent,
     UploadImageComponent,
-    ToUpperCaseDirective, MatButton,
-    MatIconModule
+    ToUpperCaseDirective,
+    MatButton,
+    MatIconModule,
   ],
-    templateUrl: './sub-category-dialog.component.html'
+  templateUrl: './sub-category-dialog.component.html',
 })
-
-export class SubCategoryDialogComponent {
+export class SubCategoryDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<SubCategoryDialogComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
 
-  private subCategorySvc = inject(SubCategoryService)
-  private subCategoryPhotoSvc = inject(SubcategoryPhotoService)
-  private tS = inject(ToasterService)
-
+  private subCategorySvc = inject(SubCategoryService);
+  private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
+  private tS = inject(ToasterService);
 
   titleModal = 'Nueva SubCategoria';
-  categorias: any[] = []
+  categorias: any[] = [];
 
   files: NgxFileDropEntry[] = [];
   croppedImage: any;
 
-  imageUrl = signal(imgDefault())
-  selectedFile = signal<any>('')
-  isRefresh = signal(false)
+  imageUrl = signal(imgDefault());
+  selectedFile = signal<any>('');
+  isRefresh = signal(false);
 
   data = {
     subcategoryPhotoId: 0,
@@ -61,164 +61,166 @@ export class SubCategoryDialogComponent {
     ultimoSecuencial: 0,
     estado: true,
     s3ObjectKey: null,
-    s3ObjectUrl: null
-  }
+    s3ObjectUrl: null,
+  };
 
   private esEditar() {
-    return this.params.idSubFamilia > 0
+    return this.params.idSubFamilia > 0;
   }
 
   private getDataForm() {
-    this._productUseCase.getDataForm().subscribe(response => {
+    this._productUseCase.getDataForm().subscribe((response) => {
       this.categorias = response.categorias;
-    })
+    });
   }
   ngOnInit(): void {
-    this.getDataForm()
+    this.getDataForm();
 
     if (typeof this.params === 'object' && this.esEditar()) {
       this.titleModal = 'Editar SubCategoria';
-      this.data = structuredClone(this.params)
-      this.imageUrl.set(this.params.s3ObjectUrl || imgDefault())
+      this.data = structuredClone(this.params);
+      this.imageUrl.set(this.params.s3ObjectUrl || imgDefault());
     }
   }
 
   generateSigla() {
     if (isValidField(this.data.descripcion) && !this.esEditar()) {
-      this.data.siglas = this.data.descripcion.slice(0, 3)
+      this.data.siglas = this.data.descripcion.slice(0, 3);
     }
   }
 
   onSelected($event: any) {
-    this.selectedFile.set($event)
+    this.selectedFile.set($event);
 
     if (this.esEditar()) {
-      this.uploadFile()
+      this.uploadFile();
     }
   }
-
 
   private successResponse = (response: ApiResponse) => {
-    if (response.code === "0") {
+    if (response.code === '0') {
       this.tS.toastr({
         type: 'warning',
-        message: response.message
-      })
+        message: response.message,
+      });
     }
-    if (response.code === "1") {
+    if (response.code === '1') {
       this.tS.toastr({
         type: 'success',
-        message: response.message
-      })
-      this.dialogRef.close({ isRefresh: true })
+        message: response.message,
+      });
+      this.dialogRef.close({ isRefresh: true });
     }
-  }
+  };
   save() {
-
     if (!isValidField(this.data.descripcion)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese la Descripción'
-      })
-      return
+        message: 'Ingrese la Descripción',
+      });
+      return;
     }
-
 
     if (!isValidField(this.data.siglas)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese la Sigla'
-      })
-      return
+        message: 'Ingrese la Sigla',
+      });
+      return;
     }
     if (this.esEditar() && this.data.ultimoSecuencial) {
       if (!this.data.ultimoSecuencial) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese Nro. Secuencial'
-        })
-        return
+          message: 'Ingrese Nro. Secuencial',
+        });
+        return;
       }
 
       if (isNaN(this.data.ultimoSecuencial) || this.data.ultimoSecuencial < 0) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Nro. Secuencial tiene que ser un número'
-        })
-        return
+          message: 'Nro. Secuencial tiene que ser un número',
+        });
+        return;
       }
     }
 
     try {
-      let data = {
+      const data = {
         idFamilia: this.data.idFamilia || null,
         descripcion: this.data.descripcion,
         siglas: this.data.siglas,
         montoObjetivo: this.data.montoObjetivo || 0,
         estado: this.data.estado,
-        secuencial: this.data.ultimoSecuencial || 0
-      }
-      let id = this.params.idSubFamilia as number
+        secuencial: this.data.ultimoSecuencial || 0,
+      };
+      const id = this.params.idSubFamilia as number;
       if (id > 0) {
-        this.subCategorySvc.put(id, data).subscribe(this.successResponse)
-
+        this.subCategorySvc.put(id, data).subscribe(this.successResponse);
       } else {
-        this.subCategorySvc.post(data, this.selectedFile()).subscribe(this.successResponse)
+        this.subCategorySvc
+          .post(data, this.selectedFile())
+          .subscribe(this.successResponse);
       }
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   private uploadFile() {
     if (this.data.subcategoryPhotoId > 0 && this.selectedFile()) {
-      let obj = {
+      const obj = {
         id: this.data.subcategoryPhotoId,
         s3ObjectKey: this.data.s3ObjectKey,
-        s3ObjectUrl: this.data.s3ObjectUrl
-      }
-      this.subCategoryPhotoSvc.put(obj, this.data.subcategoryPhotoId, this.selectedFile()).subscribe(response => {
-        if (response.code === "0") {
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code === "1") {
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
-          this.isRefresh.set(true)
-
-        }
-      })
-
+        s3ObjectUrl: this.data.s3ObjectUrl,
+      };
+      this.subCategoryPhotoSvc
+        .put(obj, this.data.subcategoryPhotoId, this.selectedFile())
+        .subscribe((response) => {
+          if (response.code === '0') {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code === '1') {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message,
+            });
+            this.isRefresh.set(true);
+          }
+        });
     }
-    if (this.esEditar() && this.data.subcategoryPhotoId == 0 && this.selectedFile()) {
-
-      this.subCategoryPhotoSvc.post(this.params.idSubFamilia, this.selectedFile()).subscribe(response => {
-        if (response.code === "0") {
-          this.tS.toastr({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code === "1") {
-          this.tS.toastr({
-            type: 'success',
-            message: response.message
-          })
-          this.isRefresh.set(true)
-        }
-      })
+    if (
+      this.esEditar() &&
+      this.data.subcategoryPhotoId == 0 &&
+      this.selectedFile()
+    ) {
+      this.subCategoryPhotoSvc
+        .post(this.params.idSubFamilia, this.selectedFile())
+        .subscribe((response) => {
+          if (response.code === '0') {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code === '1') {
+            this.tS.toastr({
+              type: 'success',
+              message: response.message,
+            });
+            this.isRefresh.set(true);
+          }
+        });
     }
   }
 
   onModalClose() {
     this.dialogRef.close({
-      isRefresh: this.isRefresh()
+      isRefresh: this.isRefresh(),
     });
   }
 }

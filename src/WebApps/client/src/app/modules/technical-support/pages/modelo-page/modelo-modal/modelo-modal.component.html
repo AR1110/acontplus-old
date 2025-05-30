@@ -1,91 +1,92 @@
-<form [formGroup]="modeloForm" (ngSubmit)="onSave()">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
-    </h5>
-    <button type="button" class="btn-close" (click)="onModalClose()"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="brandId">Marca:</label>
-          <select
-            formControlName="brandId"
-            id="brandId"
-            class="form-select"
-            (change)="onBrandChange($event)"
-          >
-            <option [value]="0">Seleccione una marca</option>
-            @for (item of brands; track $index) {
-              <option [value]="item.id">
-                {{ item.categoryName }} - {{ item.name }}
-              </option>
-            }
-          </select>
+<app-mat-custom-dialog
+[containerTemplate]="body"
+[actionsTemplate]="footer"
+[title]="modalTitle"
+(close)="onModalClose()"
+/>
+<ng-template #body>
+  <form [formGroup]="modeloForm" id="modeloForm" (ngSubmit)="onSave()">
+
+      <div class="row">
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="brandId">Marca:</label>
+            <select
+              formControlName="brandId"
+              id="brandId"
+              class="form-select"
+              (change)="onBrandChange($event)"
+            >
+              <option [value]="0">Seleccione una marca</option>
+              @for (item of brands; track $index) {
+                <option [value]="item.id">
+                  {{ item.categoryName }} - {{ item.name }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="serieId">Serie:</label>
+            <select formControlName="serieId" id="serieId" class="form-select">
+              <option [value]="0">Seleccione una serie</option>
+              @for (item of series; track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="code">Código:</label>
+            <input
+              type="text"
+              formControlName="code"
+              id="code"
+              class="form-control"
+              maxlength="25"
+            />
+          </div>
         </div>
       </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="serieId">Serie:</label>
-          <select formControlName="serieId" id="serieId" class="form-select">
-            <option [value]="0">Seleccione una serie</option>
-            @for (item of series; track $index) {
-              <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
+      <div class="row">
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input
+              type="text"
+              formControlName="name"
+              id="name"
+              class="form-control"
+              maxlength="100"
+            />
+          </div>
+        </div>
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="year">Año:</label>
+            <input
+              type="text"
+              formControlName="year"
+              id="year"
+              class="form-control"
+              maxlength="4"
+            />
+          </div>
         </div>
       </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="code">Código:</label>
-          <input
-            type="text"
-            formControlName="code"
-            id="code"
-            class="form-control"
-            maxlength="25"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="name">Nombre:</label>
-          <input
-            type="text"
-            formControlName="name"
-            id="name"
-            class="form-control"
-            maxlength="100"
-          />
-        </div>
-      </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="year">Año:</label>
-          <input
-            type="text"
-            formControlName="year"
-            id="year"
-            class="form-control"
-            maxlength="4"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="submit" mat-raised-button [disabled]="modeloForm.invalid">
-      <mat-icon>save</mat-icon> Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [disabled]="modeloForm.invalid"
+    variant="success"
+    icon="save"
+    text="Guardar"
+    type="submit"
+    form="modeloForm"
+  />
+</ng-template>
+

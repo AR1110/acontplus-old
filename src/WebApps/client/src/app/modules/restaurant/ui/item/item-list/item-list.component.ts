@@ -3,7 +3,6 @@ import { Item } from '@restaurant/domain/models/item.model';
 import { ItemService } from '@restaurant/data/services/item.service';
 import { MatPagination } from '@shared/models/pagination.model';
 import { FormsModule } from '@angular/forms';
-import { ModalService } from '@core/services/modal.service';
 import { ItemAddEditModalComponent } from '@restaurant/ui/item/item-add-edit-modal/item-add-edit-modal.component';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -14,6 +13,7 @@ import { MatIconModule} from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-item-list',
@@ -33,7 +33,7 @@ export class ItemListComponent {
   items: Item[] = [];
   pagination = signal(new MatPagination());
   #itemService = inject(ItemService);
-  #modalService = inject(ModalService);
+  #modalService = inject(DialogService);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -93,15 +93,14 @@ export class ItemListComponent {
     this.refresh();
   }
   onEdit(item: Item) {
-    const modalRef = this.#modalService.openModalCustom(
+    const modalRef = this.#modalService.open(
       ItemAddEditModalComponent,
       {
         size: 'xl',
-        centered: true,
+        data: structuredClone(item),
       },
     );
-    modalRef.componentInstance.data = item;
-    modalRef.result.then((response) => {
+    modalRef.subscribe((response) => {
       if (typeof response === 'object' && response.code === '1') {
         this.loadData();
       }

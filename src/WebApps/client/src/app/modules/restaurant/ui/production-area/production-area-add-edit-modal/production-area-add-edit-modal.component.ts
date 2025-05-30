@@ -6,7 +6,6 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
 import { ApiResponse } from '@core/models/api-response';
 import { ProductionArea } from '@restaurant/domain/models/production-area';
@@ -15,18 +14,19 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 
 @Component({
   selector: 'app-production-area-add-edit-modal',
-  imports: [ReactiveFormsModule, MatSlideToggle, MatIcon, MatButton],
+  imports: [ReactiveFormsModule, MatSlideToggle,   MatCustomDialogComponent, ThemeButtonComponent],
   templateUrl: './production-area-add-edit-modal.component.html',
   styles: ``,
 })
 export class ProductionAreaAddEditModalComponent {
-  establecimientoId: number = 0;
-  data = {} as ProductionArea;
+  establecimientoId = 0;
+  data = inject<ProductionArea>(MAT_DIALOG_DATA);
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   productionAreaForm = new FormGroup({
     id: new FormControl(0),
@@ -44,8 +44,8 @@ export class ProductionAreaAddEditModalComponent {
     enabled: new FormControl(true),
   });
   modalIcon = 'add';
-  modalTitle: string = 'Registrar Área de Producción';
-  #modalRef = inject(NgbActiveModal);
+  modalTitle = 'Registrar Área de Producción';
+  #modalRef = inject(MatDialogRef<ProductionAreaAddEditModalComponent>);
   #productionAreaService = inject(ProductionAreaService);
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);

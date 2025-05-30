@@ -1,13 +1,9 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Kardex</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="modal.dismiss()"
-  ></button>
-</div>
-<div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  title="Kardex"
+  (close)="close()"
+/>
+<ng-template #body>
   <div class="row">
     <div class="col-xl-9 col-lg-9 col-md-12 col-12">
       <mat-chip-listbox
@@ -44,9 +40,9 @@
           (change)="getBodegas()"
         >
           @for (item of establecimientos; track $index) {
-            <option [ngValue]="item.codEstab">
-              {{ item.nombreComercial }}
-            </option>
+          <option [ngValue]="item.codEstab">
+            {{ item.nombreComercial }}
+          </option>
           }
         </select>
       </div>
@@ -62,7 +58,7 @@
           (change)="searchKardex()"
         >
           @for (item of bodegas; track $index) {
-            <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
+          <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
           }
         </select>
       </div>
@@ -88,7 +84,7 @@
         >
           <option value="">Todos</option>
           @for (item of tiposTransaccion; track $index) {
-            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+          <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
           }
         </select>
       </div>
@@ -172,13 +168,4 @@
       ></app-tabulator>
     </div>
   </div>
-</div>
-<div class="modal-footer">
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="modal.close()"
-  >
-  </app-theme-button>
-</div>
+</ng-template>

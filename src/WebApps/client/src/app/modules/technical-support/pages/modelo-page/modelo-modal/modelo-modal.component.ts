@@ -13,21 +13,20 @@ import { Serie } from '@modules/technical-support/models/serie';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-modelo-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,   ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './modelo-modal.component.html',
   styles: ``,
 })
 export class ModeloModalComponent {
   private modeloService = inject(ModeloService);
   private brandService = inject(BrandService);
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<ModeloModalComponent>);
   private serieService = inject(SerieService);
   private tS = inject(ToasterService);
   modeloForm = new FormGroup({
@@ -47,14 +46,7 @@ export class ModeloModalComponent {
     year: new FormControl(0),
   });
   brands: Brand[] = [];
-  data: Modelo = {
-    id: 0,
-    code: '',
-    name: '',
-    categoryName: '',
-    brandId: 0,
-    brandName: '',
-  };
+  data = inject<Modelo>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Modelo';
   series: Serie[] = [];

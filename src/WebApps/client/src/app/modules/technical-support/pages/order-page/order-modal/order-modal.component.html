@@ -1,159 +1,150 @@
-<form [formGroup]="orderForm" (ngSubmit)="save()">
-  <div class="modal-header">
-    <h4 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
-    </h4>
-    <button
-      type="button"
-      class="btn-close"
-      aria-hidden="true"
-      aria-label="btn-close"
-      (click)="onModalClose()"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-        <div class="form-group">
-          <label for="establecimientoId">Establecimiento:</label>
-          <select
-            #estabs
-            id="establecimientoId"
-            class="form-select"
-            formControlName="establecimientoId"
-            (change)="onChangeEstab()"
-          >
-            @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.idEstablecimiento">
-                {{ item.nombreComercial }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
-        <div class="form-group">
-          <label for="idPuntoEmision">P. Emi.:</label>
-          <select
-            id="idPuntoEmision"
-            class="form-select"
-            formControlName="puntoEmisionId"
-          >
-            @for (item of puntosEmision; track $index) {
-              <option [ngValue]="item.idPuntoEmision">
-                {{ item.ptoEmi }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="fechaEmision">Fecha Emisión: </label>
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="modalTitle"
+  (close)="onModalClose()"
+/>
+<ng-template #body>
+  <form [formGroup]="orderForm" id="orderForm" (ngSubmit)="save()">
 
-          <input
-            type="date"
-            id="fechaEmision"
-            class="form-control border-select"
-            formControlName="fechaEmision"
-            (change)="onChangeDate($event)"
-            [value]="orderForm.get('fechaEmision')?.value | date: 'yyyy-MM-dd'"
-            required
-          />
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="assignedUserId">
-            Responsable: <span class="text-danger">*</span>
-          </label>
-          <select
-            formControlName="assignedUserId"
-            id="assignedUserId"
-            class="form-select border-select"
-            required
-          >
-            <option [value]="0">Pendiente</option>
-            @for (item of users; track $index) {
-              <option [ngValue]="item.idUsuario">
-                {{ item.nombreUsuario }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <app-company-customer-search
-            [textSearch]="customerBusinessName"
-            (customerSelected)="onCustomerSelected($event)"
-            [isAdvancedMode]="true"
-          ></app-company-customer-search>
-        </div>
-      </div>
-    </div>
-
-    <!--End Form register-update customer-->
-    @if (order.customerCompanyId > 0) {
       <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
           <div class="form-group">
-            <app-device-search
-              (deviceSelected)="onDeviceSelected($event)"
+            <label for="establecimientoId">Establecimiento:</label>
+            <select
+              #estabs
+              id="establecimientoId"
+              class="form-select"
+              formControlName="establecimientoId"
+              (change)="onChangeEstab()"
+            >
+              @for (item of establecimientos; track $index) {
+                <option [ngValue]="item.idEstablecimiento">
+                  {{ item.nombreComercial }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+          <div class="form-group">
+            <label for="idPuntoEmision">P. Emi.:</label>
+            <select
+              id="idPuntoEmision"
+              class="form-select"
+              formControlName="puntoEmisionId"
+            >
+              @for (item of puntosEmision; track $index) {
+                <option [ngValue]="item.idPuntoEmision">
+                  {{ item.ptoEmi }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="fechaEmision">Fecha Emisión: </label>
+
+            <input
+              type="date"
+              id="fechaEmision"
+              class="form-control border-select"
+              formControlName="fechaEmision"
+              (change)="onChangeDate($event)"
+              [value]="orderForm.get('fechaEmision')?.value | date: 'yyyy-MM-dd'"
+              required
             />
           </div>
         </div>
-        <div class="col">
-          <button
-            type="button"
-            mat-raised-button
-            title="Ver Historial de equipos del cliente"
-            (click)="getDevices()"
-          >
-            <mat-icon>history</mat-icon> Historial
-          </button>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+          <div class="form-group">
+            <label for="assignedUserId">
+              Responsable: <span class="text-danger">*</span>
+            </label>
+            <select
+              formControlName="assignedUserId"
+              id="assignedUserId"
+              class="form-select border-select"
+              required
+            >
+              <option [value]="0">Pendiente</option>
+              @for (item of users; track $index) {
+                <option [ngValue]="item.idUsuario">
+                  {{ item.nombreUsuario }}
+                </option>
+              }
+            </select>
+          </div>
         </div>
       </div>
-    }
-    @if (orderDetails.length > 0) {
-      <app-tabulator
-        [columnNames]="columnNames"
-        [tableData]="orderDetails"
-      ></app-tabulator>
-    }
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <app-company-customer-search
+              [textSearch]="customerBusinessName"
+              (customerSelected)="onCustomerSelected($event)"
+              [isAdvancedMode]="true"
+            ></app-company-customer-search>
+          </div>
+        </div>
+      </div>
 
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="observación">Observación General:</label>
-          <textarea
-            id="observación"
-            formControlName="obs"
-            class="form-control border-select"
-            aria-label="obs"
-          ></textarea>
+      <!--End Form register-update customer-->
+      @if (order.customerCompanyId > 0) {
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+              <app-device-search
+                (deviceSelected)="onDeviceSelected($event)"
+              />
+            </div>
+          </div>
+          <div class="col">
+            <button
+              type="button"
+              mat-raised-button
+              title="Ver Historial de equipos del cliente"
+              (click)="getDevices()"
+            >
+              <mat-icon>history</mat-icon> Historial
+            </button>
+          </div>
+        </div>
+      }
+      @if (orderDetails.length > 0) {
+        <app-tabulator
+          [columnNames]="columnNames"
+          [tableData]="orderDetails"
+        ></app-tabulator>
+      }
+
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="observación">Observación General:</label>
+            <textarea
+              id="observación"
+              formControlName="obs"
+              class="form-control border-select"
+              aria-label="obs"
+            ></textarea>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="submit"
-      mat-raised-button
-      title="Guardar Orden"
-      [disabled]="orderForm.invalid"
-    >
-      <mat-icon>save</mat-icon> Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      title="Cancelar Orden"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [disabled]="orderForm.invalid"
+    variant="success"
+    icon="save"
+    text="Guardar"
+    type="submit"
+    form="orderForm"
+    title="Guardar Orden"
+  />
+</ng-template>
+
+

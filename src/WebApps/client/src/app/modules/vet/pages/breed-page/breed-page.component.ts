@@ -3,7 +3,6 @@ import { Breed } from '@modules/vet/models/breed.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { BreedModalComponent } from '@modules/vet/components/breed-modal/breed-modal.component';
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
@@ -12,6 +11,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
+import {DialogService} from "@core/services/dialog.service";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
   selector: 'app-breed-page',
@@ -25,6 +26,7 @@ import { MatIcon } from '@angular/material/icon';
     MatMenuTrigger,
     MatMenuItem,
     MatIcon,
+    MatDynamicCardComponent,
   ],
   templateUrl: './breed-page.component.html',
   styles: ``,
@@ -33,7 +35,7 @@ export class BreedPageComponent {
   data = {} as Breed;
   breeds: Breed[] = [];
   private readonly breedService = inject(BreedService);
-  private readonly modalService = inject(ModalService);
+  private readonly modalService = inject(DialogService);
   private readonly tS = inject(ToasterService);
 
   loadBreeds() {
@@ -82,13 +84,10 @@ export class BreedPageComponent {
   }
 
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(BreedModalComponent, {
-      centered: true,
+    const modalRef = this.modalService.open(BreedModalComponent, {
+       data: this.data.id > 0 ?structuredClone( this.data) : {}
     });
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = this.data;
-    }
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.loadBreeds();
       }

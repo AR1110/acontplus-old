@@ -1,7 +1,6 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 
@@ -24,6 +23,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-order-list',
@@ -74,7 +74,7 @@ export class OrderListComponent implements OnInit {
   pagination = new Pagination();
   startDate = '';
   users: any = [];
-  private modalService = inject(ModalService);
+  private modalService = inject(DialogService);
   private orderService = inject(OrderService);
   private sharedService = inject(SharedService);
   private tS = inject(ToasterService);
@@ -162,12 +162,11 @@ export class OrderListComponent implements OnInit {
   }
 
   onEdit(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
+    const modalRef = this.modalService.open(OrderModalComponent, {
       size: 'xl',
-      centered: true,
+       data: item || {},
     });
-    modalRef.componentInstance.data = item;
-    modalRef.result.then((response) => {
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -175,11 +174,12 @@ export class OrderListComponent implements OnInit {
   }
 
   onModalOpen() {
-    const modalResp = this.modalService.openModalCustom(OrderModalComponent, {
-      centered: true,
+    const modalResp = this.modalService.open(OrderModalComponent, {
+
       size: 'xl',
+      data: {}  ,
     });
-    modalResp.result.then((response) => {
+    modalResp.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -187,23 +187,21 @@ export class OrderListComponent implements OnInit {
   }
 
   onOpenDocument(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderDocumentComponent, {
+      this.modalService.open(OrderDocumentComponent, {
       size: 'xl',
-      centered: true,
+      data: structuredClone(item),
     });
-    modalRef.componentInstance.data = item;
   }
 
   askToDelivery(item: any) {
-    const modalRef = this.modalService.openModalCustom(
+    const modalRef = this.modalService.open(
       OrderDeliveryModalComponent,
       {
-        centered: true,
+         data: structuredClone(item) || {},
       },
     );
-    modalRef.componentInstance.data = item;
 
-    modalRef.result.then((response) => {
+    modalRef.subscribe((response) => {
       if (response.code === '1') {
         this.get();
       }
@@ -222,13 +220,16 @@ export class OrderListComponent implements OnInit {
           'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',
       });
     }
-    const modalRef = this.modalService.openModalCustom(
+    const modalRef = this.modalService.open(
       OrderMaintenanceModalComponent,
-      { size: 'xl' },
+      { size: 'xl',
+        data: {
+        id: item.id,
+        }
+      },
     );
-    modalRef.componentInstance.params = { id: item.id };
 
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.get();
       }

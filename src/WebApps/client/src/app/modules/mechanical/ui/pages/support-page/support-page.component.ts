@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   inject,
-  Input,
   signal,
   TemplateRef,
   ViewChild,
@@ -12,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import {getValidId, isValidField} from '@core/utils/utils';
@@ -21,7 +19,6 @@ import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
 } from '@mechanical/domain/enums/mechanical.enum';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -54,7 +51,6 @@ import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
 
     MatTableModule,
     MatCheckboxModule,
-    NgbPopoverModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
@@ -72,7 +68,6 @@ export class SupportPageComponent {
   $store = inject(MechanicalStore)
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
-  modalSvc = inject(ModalService);
   dialogSvc = inject(DialogService);
   supportUseCase = inject(SupportUseCase);
   tS = inject(ToasterService);
@@ -277,15 +272,13 @@ export class SupportPageComponent {
   }
 
   openMaintenance(id: number) {
-    let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
+    const modalRef = this.dialogSvc.open(SupportMaintenanceModalComponent, {
       size: 'xl',
-      backdrop: 'static',
-      keyboard: false,
+      data: {
+        id,
+      }
     });
-    modalRef.componentInstance.params = {
-      id,
-    };
-    modalRef.result.then((result) => {
+    modalRef.subscribe(result=> {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -293,14 +286,14 @@ export class SupportPageComponent {
   }
 
   openModalInspection(id: number) {
-    let modalRef = this.modalSvc.open(InspectionModalComponent, {
+    const modalRef = this.dialogSvc.open(InspectionModalComponent, {
       size: 'xl',
+      data: {
+        supportId: id,
+      }
     });
-    modalRef.componentInstance.params = {
-      supportId: id,
-    };
 
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -310,7 +303,7 @@ export class SupportPageComponent {
   askToConvertToDoc(id: number) {
     this.supportUseCase.getConvertToAprobDoc(id).subscribe({
       next: (response) => {
-        let dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
+        const dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
           size: 'lg',
           data: response,
         });
@@ -326,8 +319,8 @@ export class SupportPageComponent {
 
   // For report
   getReport(item: any) {
-    let format = 'pdf';
-    let dataParams = { supportId: item.id, tipo: 1 };
+    const format = 'pdf';
+    const dataParams = { supportId: item.id, tipo: 1 };
     const params = {
       reportParams: JSON.stringify({
         hasParams: true,

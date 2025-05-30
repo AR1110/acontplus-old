@@ -1,6 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ModalService } from '@core/services/modal.service';
 import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 import { isApiResponse } from '@core/models/api-response';
@@ -35,6 +34,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-medical-history-page',
@@ -91,7 +91,7 @@ export class MedicalHistoryPageComponent {
   pagination = new Pagination();
   searching: boolean = false;
   private readonly medicalHistoryService = inject(MedicalHistoryService);
-  private readonly modalService = inject(ModalService);
+  private readonly modalService = inject(DialogService);
   private readonly sharedService = inject(SharedService);
   private readonly tS = inject(ToasterService);
 
@@ -199,14 +199,15 @@ export class MedicalHistoryPageComponent {
   }
 
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(
+    const modalRef = this.modalService.open(
       MedicalHistoryModalComponent,
-      { size: 'xl', centered: true },
+      { size: 'xl',
+        data: this.data.id > 0 ? this.data : {}
+
+      },
     );
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = this.data;
-    }
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.loadHistories();
       }

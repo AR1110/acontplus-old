@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {PATHS_API} from "@core/constants/global.constants";
 import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
+import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +13,11 @@ export class PrinterDocService {
 
 
   post<T>(data:T){
-    return this.http.post(`${this.url}/`, data)
+    return this.http.post<ApiResponse>(`${this.url}/`, data)
   }
 
   put<T>(id:number, data:T){
-    return this.http.put(`${this.url}/${id}`, data)
+    return this.http.put<ApiResponse>(`${this.url}/${id}`, data)
   }
 
 }

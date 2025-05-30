@@ -7,23 +7,23 @@ import {
 } from '@angular/forms';
 import { Breed } from '@modules/vet/models/breed.model';
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+
 
 @Component({
   selector: 'app-breed-modal',
-    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,   ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './breed-modal.component.html',
   styles: ``,
 })
 export class BreedModalComponent {
-  data = {} as Breed;
+  data = inject<Breed>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Raza';
   petTypes: PetType[] = [];
@@ -40,7 +40,7 @@ export class BreedModalComponent {
     enabled: new FormControl(true),
   });
   private readonly breedService = inject(BreedService);
-  private readonly modalRef = inject(NgbActiveModal);
+  private readonly modalRef = inject(MatDialogRef<BreedModalComponent>);
   private readonly petTypeService = inject(PetTypeService);
   private readonly tS = inject(ToasterService);
 

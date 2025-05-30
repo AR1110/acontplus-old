@@ -1,84 +1,79 @@
-<form (ngSubmit)="onSave()" [formGroup]="itemForm">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon>
-      {{ modalTitle }}
-    </h5>
-    <button
-      (click)="onModalClose()"
-      aria-label="Close"
-      class="btn-close"
-      type="button"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label>Resumen</label>
-          <input
-            class="form-control form-control-lg"
-            formControlName="summary"
-            type="text"
-          />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="onModalClose()"
+  [title]="modalTitle"
+/>
+
+<ng-template #body>
+  <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Resumen</label>
+            <input
+              class="form-control form-control-lg"
+              formControlName="summary"
+              type="text"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-6">
-        <div class="form-group">
-          <label for="recipe">Receta</label>
-          <textarea
-            class="form-control"
-            formControlName="recipe"
-            id="recipe"
-            rows="6"
-          ></textarea>
+      <div class="row mt-3">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="recipe">Receta</label>
+            <textarea
+              class="form-control"
+              formControlName="recipe"
+              id="recipe"
+              rows="6"
+            ></textarea>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="instructions">Instrucciones</label>
+            <textarea
+              class="form-control"
+              formControlName="instructions"
+              id="instructions"
+              rows="6"
+            ></textarea>
+          </div>
         </div>
       </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label for="instructions">Instrucciones</label>
-          <textarea
-            class="form-control"
-            formControlName="instructions"
-            id="instructions"
-            rows="6"
-          ></textarea>
+      <div class="row mb-3">
+        <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+          <div class="form-group">
+            <label>Ingredientes:</label>
+            <app-ingredient-search
+              (onIngredientSelected)="onIngredientSelected($event)"
+              [textSearch]="ingredientSearch"
+            ></app-ingredient-search>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
-        <div class="form-group">
-          <label>Ingredientes:</label>
-          <app-ingredient-search
-            (onIngredientSelected)="onIngredientSelected($event)"
-            [textSearch]="ingredientSearch"
-          ></app-ingredient-search>
+      <div class="row">
+        <div class="col">
+          <app-tabulator-semantic-ui
+            [columnNames]="columns"
+            [options]="{ reactiveData: true }"
+            [tableData]="recipes"
+          ></app-tabulator-semantic-ui>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <app-tabulator-semantic-ui
-          [columnNames]="columns"
-          [options]="{ reactiveData: true }"
-          [tableData]="recipes"
-        ></app-tabulator-semantic-ui>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button [disabled]="itemForm.invalid" mat-raised-button type="submit">
-      <mat-icon>save</mat-icon>
-      Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    ></app-theme-button>
-  </div>
-</form>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    type="submit"
+    icon="save"
+    variant="success"
+    text="Añadir producto"
+    form="itemForm"
+    [disabled]="itemForm.invalid"
+  />
+</ng-template>
+

@@ -1,6 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import swal from 'sweetalert2';
@@ -17,6 +16,7 @@ import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { NgClass } from '@angular/common';
 import {MatCard, MatCardContent} from "@angular/material/card";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
     selector: 'app-production-area-list',
@@ -36,12 +36,12 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 export class ProductionAreaListComponent {
   @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
 
-  establecimientoId: number = 0;
+  establecimientoId  = 0;
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   data = {} as ProductionArea;
   productionAreas: ProductionArea[] = [];
   #productionAreaService = inject(ProductionAreaService);
-  #modalService = inject(ModalService);
+  #modalService = inject(DialogService);
   #sharedService = inject(SharedService);
   #tS = inject(ToasterService);
 
@@ -100,21 +100,17 @@ export class ProductionAreaListComponent {
   }
 
   onModalOpen() {
-    const modalRef = this.#modalService.openModalCustom(
+    const modalRef = this.#modalService.open(
       ProductionAreaAddEditModalComponent,
       {
         size: 'sm',
-        centered: true,
+        data:  Object.assign(this.data, {
+            establecimientoId: this.establecimientoId,
+        })
       },
     );
-    const modalData = Object.assign(this.data, {
-      establecimientoId: this.establecimientoId,
-    });
-    modalRef.componentInstance.data = modalData;
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = modalData;
-    }
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe((response) => {
       if (typeof response == 'object') {
         if (response.code == '1') {
           this.loadData(this.establecimientoId);

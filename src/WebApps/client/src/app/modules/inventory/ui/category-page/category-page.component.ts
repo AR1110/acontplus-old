@@ -1,19 +1,24 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CategoryRead } from '@inventory/domain/models/category.model';
 import { CategoryService } from '@inventory/data/services/category.service';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
-import {MatCard, MatCardContent} from "@angular/material/card";
+import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
-    selector: 'app-category',
-  imports: [FormsModule, NgbPagination, BreadcrumbComponent, PrimaryStatusPipe, MatCardContent, MatCard],
-    templateUrl: './category-page.component.html',
-    styles: ``
+  selector: 'app-category',
+  imports: [
+    FormsModule,
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatCardContent,
+    MatCard,
+  ],
+  templateUrl: './category-page.component.html',
+  styles: ``,
 })
-export class CategoryPageComponent {
+export class CategoryPageComponent implements OnInit {
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
@@ -21,11 +26,11 @@ export class CategoryPageComponent {
     totalRecords: 0,
   };
   recordsQuantity = [25, 50, 100];
-  categories: Array<CategoryRead> = [];
+  categories: CategoryRead[] = [];
   private categorySvc = inject(CategoryService);
 
   getCatgories() {
-    let params = {
+    const params = {
       pageIndex: this.dataSearch.pageIndex,
       pageSize: this.dataSearch.pageSize,
     };

@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
 import { Pet } from '@modules/vet/models/pet.model';
@@ -18,22 +17,21 @@ import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-pet-modal',
   imports: [
-    MatIcon,
     FormsModule,
     ReactiveFormsModule,
     CompanyCustomerSearchComponent,
     MatCard,
     MatCardContent,
-    MatButton,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
   ],
   templateUrl: './pet-modal.component.html',
   styles: ``,
@@ -42,7 +40,7 @@ export class PetModalComponent implements OnInit {
   breeds: Breed[] = [];
   breedsFiltered: Breed[] = [];
   customerBusinessName = '';
-  data = {} as Pet;
+  data = inject<Pet>(MAT_DIALOG_DATA);
   genders: Gender[] = [];
   modalIcon = 'add';
   modalTitle = 'Registrar Mascota';
@@ -59,7 +57,7 @@ export class PetModalComponent implements OnInit {
     enabled: new FormControl(true),
   });
   private readonly petService = inject(PetService);
-  private readonly modalRef = inject(NgbActiveModal);
+  private readonly modalRef = inject(MatDialogRef<PetModalComponent>);
   private readonly tS = inject(ToasterService);
 
   get() {
