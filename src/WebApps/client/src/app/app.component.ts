@@ -1,5 +1,5 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, effect, inject, OnInit, Renderer2 } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, OnInit, Renderer2, DOCUMENT } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { GlobalRoutes } from '@core/constants/global-routes';
 import { THEME_OPTIONS } from '@core/theme/theme-options';
