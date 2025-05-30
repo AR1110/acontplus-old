@@ -38,7 +38,7 @@ public class ApplicationDbContext : BaseContext
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(builder,
+        SimpleEntityRegistration.RegisterEntities(builder, typeof(ApplicationDbContext),
             typeof(AccessAuthorization),
             typeof(LoginHistory),
             typeof(LoginHistoryArchive),

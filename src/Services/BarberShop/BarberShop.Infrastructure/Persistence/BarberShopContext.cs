@@ -22,7 +22,7 @@ public class BarberShopContext(DbContextOptions<BarberShopContext> options) : Ba
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(BarberShopContext),
             typeof(TicketDocument), typeof(BarberPayment));
     }
 }

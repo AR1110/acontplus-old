@@ -39,7 +39,7 @@ public class CommonContext(DbContextOptions<CommonContext> options) : BaseContex
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(CommonContext),
             typeof(Attachment),
             typeof(EmailQueue),
             typeof(WhatsAppMessage));
