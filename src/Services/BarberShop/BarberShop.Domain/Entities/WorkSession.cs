@@ -1,6 +1,5 @@
 ﻿namespace BarberShop.Domain.Entities;
 
-[Table("WorkSession", Schema = "BarberShop")]
 public class WorkSession : BaseEntity
 {
     public int PuntoEmisionId { get; set; }

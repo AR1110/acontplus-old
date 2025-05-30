@@ -36,7 +36,7 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "BarberShop.API.Endpoints.Implementations",
+            "BarberShop.Api.Endpoints.Implementations",
             "BarberShop.Application.Services"
         ];
         services.Scan(scan => scan
