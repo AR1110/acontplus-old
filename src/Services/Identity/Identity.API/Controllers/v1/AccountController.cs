@@ -23,7 +23,7 @@ public class AccountController(
 
         if (response.Code == "1" && !string.IsNullOrEmpty(response.Payload))
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+            List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
             if (authRequest.ReturnUrl == "/") authRequest.ReturnUrl = null;
 

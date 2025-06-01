@@ -29,5 +29,3 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
-global using Newtonsoft.Json;
-global using Newtonsoft.Json.Serialization;

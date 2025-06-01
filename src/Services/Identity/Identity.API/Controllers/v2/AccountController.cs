@@ -23,7 +23,7 @@ public class AccountController(
 
         if (response.Code != "1" || string.IsNullOrEmpty(response.Payload)) return Ok(response);
 
-        List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+        List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
         if (userData.Count != 1) return Ok(response);
 

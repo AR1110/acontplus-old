@@ -146,8 +146,8 @@ BEGIN
 
         INSERT INTO @userToSendEmail(body, params, receptor)
 		SELECT  (SELECT @requesting_user requesting_user
-                                                ,@browser browser
-                                                ,@os os
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
@@ -163,8 +163,8 @@ BEGIN
                 INSERT INTO @userToSendEmail(body, params, receptor)
                 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,approving_user = UPPER(ISNULL(cu.BusinessName, us.nombreUsuario))
-                                                ,@browser browser
-                                                ,@os os
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username

@@ -25,7 +25,7 @@ public class AccountController(
 
         if (response.Code == "1")
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+            List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
             switch (userData.Count)
             {
