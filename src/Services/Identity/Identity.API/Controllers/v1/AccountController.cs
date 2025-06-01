@@ -1,4 +1,7 @@
-﻿namespace Identity.API.Controllers.v1;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+namespace Identity.API.Controllers.v1;
 
 [Route("api/account/[action]")]
 [ApiController]
@@ -32,40 +35,58 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1 when !userData[0].NeedAuthorization:
-                {
-                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                    var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                    if (token == null || string.IsNullOrEmpty(token.Token))
-                        return BadRequest("Error al iniciar session");
-
-                    userData.ForEach(x => x.Token = token.Token);
-                    var loginHistory = new LoginHistory
                     {
-                        CreatedByUserId = userData[0].UserId,
-                        UserRoleId = userData[0].UserRoleId,
-                        UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).UserAgent,
-                        IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper
-                            .SummarizeUserAgent(authRequest.UserAgent).IpAddress),
-                        Token = token.Token,
-                        TokenExpiration = token.Expires
-                    };
-                    await loginHistoryService.AddAsync(loginHistory);
-                    //Originally user agent to get with another property, but now we use the one from authRequest
-                    loginHistory.UserAgent = authRequest.UserAgent;
-                    await accountService.AddNotificationAsync(loginHistory);
-                    return Ok(ApiResponse.Success(message: "Login Correcto!",
-                        payload: DataConverters.SerializeObjectCustom<List<UserData>>(userData)));
-                }
+                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                        var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                        if (token == null || string.IsNullOrEmpty(token.Token))
+                            return BadRequest("Error al iniciar session");
+
+                        userData.ForEach(x => x.Token = token.Token);
+                        var loginHistory = new LoginHistory
+                        {
+                            CreatedByUserId = userData[0].UserId,
+                            UserRoleId = userData[0].UserRoleId,
+                            UserAgent = UserAgentHelper.SummarizeUserAgent(authRequest.UserAgent).UserAgent,
+                            IpAddress = DataValidation.ValidateIpAddress(UserAgentHelper
+                                .SummarizeUserAgent(authRequest.UserAgent).IpAddress),
+                            Token = token.Token,
+                            TokenExpiration = token.Expires
+                        };
+                        await loginHistoryService.AddAsync(loginHistory);
+                        //Originally user agent to get with another property, but now we use the one from authRequest
+                        loginHistory.UserAgent = authRequest.UserAgent;
+                        await accountService.AddNotificationAsync(loginHistory);
+                        return Ok(ApiResponse.Success(message: "Login Correcto!",
+                            payload: JsonConvert.SerializeObject(userData,
+                                    new JsonSerializerSettings
+                                    {
+                                        ContractResolver =
+                                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                        Formatting = Formatting.Indented
+                                    })));
+                    }
                 case 1 when userData[0].NeedAuthorization:
                     return Ok(ApiResponse.Success(
                         message: "Su ingreso requiere ser autenticado, espere la confirmación!",
-                        payload: DataConverters.SerializeObjectCustom<List<UserData>>(userData)));
+                        payload: JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })));
                 case > 1:
                     return Ok(ApiResponse.Success(
                         message: "Seleccione la empresa!",
-                        payload: DataConverters.SerializeObjectCustom<List<UserData>>(userData)));
+                        payload: JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })));
             }
         }
         else
@@ -115,7 +136,13 @@ public class AccountController(
 
         return Ok(ApiResponse.Success(
             message: "Login Correcto!",
-            payload: DataConverters.SerializeObjectCustom<List<UserData>>(userData)));
+            payload: JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })));
     }
 
     [AllowAnonymous]
