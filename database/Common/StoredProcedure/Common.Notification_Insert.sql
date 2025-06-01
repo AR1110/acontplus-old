@@ -36,7 +36,7 @@ BEGIN
 
 	--> Email 
 	DECLARE @body VARCHAR(MAX)
-	       ,@template VARCHAR(50)
+	       ,@template VARCHAR(50) = 'ReporteGenerado.html'
 	       ,@subject VARCHAR(100)
            ,@cc VARCHAR(100);
 
@@ -87,10 +87,17 @@ BEGIN
 		) AS js
 
 
-        --> Tipo para reportes 
-		IF EXISTS (SELECT 1 FROM Config.Reporte WITH (NOLOCK) WHERE codigo = @codigo)
+        --> Reportes Internos - Administrativos -- Cuadre Caja, Ventas, Consumo Diario
+		IF EXISTS (SELECT 1 FROM Config.Reporte WITH (NOLOCK) WHERE codigo = @codigo AND @codigo IN ('RCC', 'FG', 'CDA'))
 			BEGIN
-                SET @template = 'ReporteGenerado.html'
+                
+                SELECT @receptor = STRING_AGG(correo, '|') WITHIN GROUP (ORDER BY correo)
+                FROM (
+                    SELECT DISTINCT TRIM(correo) as correo
+                    FROM Sri.Establecimiento 
+                    WHERE idEntidad = @idEntidad 
+                      AND NULLIF(TRIM(correo), '') IS NOT NULL
+                ) receptor;
 
 				SET @body = (
 								SELECT dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()) as fechaEmision
@@ -180,10 +187,7 @@ BEGIN
 
 			END
                   
-        BEGIN TRAN 
-			--INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
-   --         VALUES(@params, @emailData, REPLACE(@receptor,'|',','), 'NE', @idUsuario)
-            
+        BEGIN TRAN
             -- Insert into Notification table
             INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [CreatedByUserId], [FromMobile])
             VALUES (@notificationTypeId, COMPRESS(CONVERT(VARCHAR(MAX), ISNULL(@params, '{}'))), 'Envio por correo', @subject, @idUsuario, @fromMobile);
