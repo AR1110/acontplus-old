@@ -200,9 +200,6 @@ namespace Identity.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<DateTime>("ErrorDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("FromMobile")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -224,9 +221,9 @@ namespace Identity.API.Data.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("Password")
-                        .HasMaxLength(100)
+                        .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -235,16 +232,17 @@ namespace Identity.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserAgent")
+                        .HasMaxLength(2000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("varchar(2000)");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .HasMaxLength(100)
+                        .HasMaxLength(50)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -309,12 +307,10 @@ namespace Identity.API.Data.Migrations
                     b.Property<bool?>("IsLoggedIn")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LoginDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Token")
+                        .HasMaxLength(4000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("varchar(4000)");
 
                     b.Property<DateTime?>("TokenExpiration")
                         .HasColumnType("datetime2");
@@ -326,18 +322,15 @@ namespace Identity.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserAgent")
+                        .HasMaxLength(2000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("varchar(2000)");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserRoleId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
 
                     b.HasKey("Id");
 
@@ -402,12 +395,10 @@ namespace Identity.API.Data.Migrations
                     b.Property<bool?>("IsLoggedIn")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LoginDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Token")
+                        .HasMaxLength(4000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("varchar(4000)");
 
                     b.Property<DateTime?>("TokenExpiration")
                         .HasColumnType("datetime2");
@@ -419,18 +410,15 @@ namespace Identity.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserAgent")
+                        .HasMaxLength(2000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("varchar(2000)");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserRoleId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
 
                     b.HasKey("Id");
 

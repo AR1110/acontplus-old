@@ -89,13 +89,13 @@ BEGIN
             END
 
         SELECT @userAgentMain = userAgent
-            ,@loginDate = loginDate
+            ,@loginDate = [Utils].[ConvertToEcuadorTimeZone](createdAt)
             ,@userRoleId = userRoleId
             ,@userId = userId
             ,@fromMobile = fromMobile
         FROM OPENJSON (@json) WITH (
                 userAgent VARCHAR(MAX),
-                loginDate DATETIME2,
+                createdAt DATETIME2,
                 userRoleId INT, 
                 userId INT,
                 fromMobile BIT);
@@ -148,7 +148,7 @@ BEGIN
 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,@browser browser
                                                 ,@os os
-                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
+                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
                                                 ,@company company
@@ -165,7 +165,7 @@ BEGIN
                                                 ,approving_user = UPPER(ISNULL(cu.BusinessName, us.nombreUsuario))
                                                 ,@browser browser
                                                 ,@os os
-                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
+                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
                                                 ,@company company
@@ -218,8 +218,8 @@ BEGIN
     BEGIN CATCH
          IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
-        INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), 'LoginHistory/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+        INSERT INTO ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
+		VALUES ('LoginHistory/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
     END CATCH
 END
 GO

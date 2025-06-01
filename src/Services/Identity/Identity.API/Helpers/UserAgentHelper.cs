@@ -5,78 +5,78 @@ public static class UserAgentHelper
     public static UserAgentContainer SummarizeUserAgent(string userAgentJson)
     {
         if (string.IsNullOrEmpty(userAgentJson))
-            return new UserAgentContainer { userAgent = "Invalid UserAgent", ipAddress = "" };
+            return new UserAgentContainer { UserAgent = "Invalid UserAgent", IpAddress = "" };
 
         try
         {
             var userAgentMain = JsonConvert.DeserializeObject<UserAgentContainer>(userAgentJson);
-            var userAgent = JsonConvert.DeserializeObject<UserAgentSummary>(userAgentMain.userAgent);
-            if (userAgent == null || string.IsNullOrEmpty(userAgent.browser.name) ||
-                string.IsNullOrEmpty(userAgent.browser.version) ||
-                string.IsNullOrEmpty(userAgent.os.name) ||
-                string.IsNullOrEmpty(userAgent.os.version))
-                return new UserAgentContainer { userAgent = "Incomplete UserAgent data", ipAddress = "" };
+            var userAgent = JsonConvert.DeserializeObject<UserAgentSummary>(userAgentMain.UserAgent);
+            if (userAgent == null || string.IsNullOrEmpty(userAgent.Browser.Name) ||
+                string.IsNullOrEmpty(userAgent.Browser.Version) ||
+                string.IsNullOrEmpty(userAgent.Os.Name) ||
+                string.IsNullOrEmpty(userAgent.Os.Version))
+                return new UserAgentContainer { UserAgent = "Incomplete UserAgent data", IpAddress = "" };
             var summarizedUserAgent = new
             {
                 application = "acontplus-web",
-                browser = $"{userAgent.browser.name} {userAgent.browser.version}",
-                os = $"{userAgent.os.name} {userAgent.os.version}"
+                browser = $"{userAgent.Browser.Name} {userAgent.Browser.Version}",
+                os = $"{userAgent.Os.Name} {userAgent.Os.Version}"
             };
 
             return new UserAgentContainer
             {
-                userAgent = JsonConvert.SerializeObject(summarizedUserAgent),
-                ipAddress = userAgentMain.ipAddress
+                UserAgent = JsonConvert.SerializeObject(summarizedUserAgent),
+                IpAddress = userAgentMain.IpAddress
             };
         }
         catch (JsonException)
         {
-            return new UserAgentContainer { userAgent = "Invalid UserAgent format", ipAddress = "" };
+            return new UserAgentContainer { UserAgent = "Invalid UserAgent format", IpAddress = "" };
         }
     }
 }
 
 public class UserAgentContainer
 {
-    public string userAgent { get; set; }
-    public string ipAddress { get; set; }
+    public string UserAgent { get; set; }
+    public string IpAddress { get; set; }
 }
 
 public class UserAgentSummary
 {
-    public string ua { get; set; }
-    public BrowserInfo browser { get; set; }
-    public EngineInfo engine { get; set; }
-    public OsInfo os { get; set; }
-    public DeviceInfo device { get; set; }
-    public CpuInfo cpu { get; set; }
+    public string Ua { get; set; }
+    public BrowserInfo Browser { get; set; }
+    public EngineInfo Engine { get; set; }
+    public OsInfo Os { get; set; }
+    public DeviceInfo Device { get; set; }
+    public CpuInfo Cpu { get; set; }
 }
 
-public class BrowserInfo
+public abstract class BrowserInfo
 {
-    public string name { get; set; }
-    public string version { get; set; }
-    public string major { get; set; }
+    public string Name { get; set; }
+    public string Version { get; set; }
+    public string Major { get; set; }
 }
 
-public class EngineInfo
+public abstract class EngineInfo
 {
-    public string name { get; set; }
-    public string version { get; set; }
+    public string Name { get; set; }
+    public string Version { get; set; }
 }
 
-public class OsInfo
+public abstract class OsInfo
 {
-    public string name { get; set; }
-    public string version { get; set; }
+    public string Name { get; set; }
+    public string Version { get; set; }
 }
 
-public class DeviceInfo
+public abstract class DeviceInfo
 {
     // Define properties if needed
 }
 
-public class CpuInfo
+public abstract class CpuInfo
 {
-    public string architecture { get; set; }
+    public string Architecture { get; set; }
 }
