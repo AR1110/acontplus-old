@@ -302,8 +302,15 @@ BEGIN
 			  AND fc.estado = 1
               AND cu.IDCard = @idCard 
 			  AND fc.retencion = 0
-              AND MONTH(fc.fechaEmision) = MONTH(GETDATE())
-              AND YEAR(fc.fechaEmision) = YEAR(GETDATE())
+             AND MONTH(CAST(fc.fechaEmision AS DATE)) IN (
+                MONTH(GETDATE()), 
+                MONTH(DATEADD(MONTH, -1, GETDATE()))
+            )
+            AND YEAR(CAST(fc.fechaEmision AS DATE)) IN (
+                YEAR(GETDATE()), 
+                YEAR(DATEADD(MONTH, -1, GETDATE()))
+            )
+
 			  AND REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) 
 			    NOT IN 
                 (
@@ -339,8 +346,15 @@ BEGIN
                 e.idEntidad = @idEntidad
                 AND dr.estado = CAST(1 AS BIT)
                 AND dr.rucEmisor = @idCard
-                AND MONTH(CAST(dr.fechaEmision AS DATE)) = MONTH(GETDATE())
-                AND YEAR(CAST(dr.fechaEmision AS DATE)) = YEAR(GETDATE())
+                AND MONTH(CAST(dr.fechaEmision AS DATE)) IN (
+                    MONTH(GETDATE()), 
+                    MONTH(DATEADD(MONTH, -1, GETDATE()))
+                )
+                AND YEAR(CAST(dr.fechaEmision AS DATE)) IN (
+                    YEAR(GETDATE()), 
+                    YEAR(DATEADD(MONTH, -1, GETDATE()))
+                )
+
                 AND NOT EXISTS (
                     SELECT 1
                     FROM FactElect.RetencionAts ra WITH (NOLOCK)
