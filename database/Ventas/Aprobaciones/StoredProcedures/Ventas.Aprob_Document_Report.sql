@@ -244,6 +244,13 @@ BEGIN
 
             RETURN 
         END 
+
+    --> Reporte general de historial
+    IF  @tipo =  3
+        BEGIN
+            
+            RETURN 
+        END 
     
      
 END 

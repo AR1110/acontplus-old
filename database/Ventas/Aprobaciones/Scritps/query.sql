@@ -165,9 +165,9 @@ go
     
     --ALTER TABLE Ventas.Aprob_Document drop column docOrigen
     
-     --ALTER TABLE Ventas.Aprob_Document drop constraint DF__Aprob_Doc__codEs__20FCAC79
+    -- ALTER TABLE Ventas.Aprob_Document drop constraint DF__Aprob_Doc__codEs__20FCAC79
      
-     --ALTER TABLE Ventas.Aprob_Document drop column codEstado
+    -- ALTER TABLE Ventas.Aprob_Document drop column codEstado
 
     
     --> ENTIDAD REALCION DIRECTA PARA LA TABLA DE HISTORIAL CON LAS TABLAS PROFORMA Y NOTA DE ENTREGA
