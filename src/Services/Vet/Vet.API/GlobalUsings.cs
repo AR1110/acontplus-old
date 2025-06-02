@@ -18,3 +18,4 @@ global using Vet.API.Entities;
 global using Vet.API.Extensions;
 global using Vet.API.Interfaces;
 global using Vet.API.Services;
+global using Common.Logging;

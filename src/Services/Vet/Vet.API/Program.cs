@@ -1,51 +1,81 @@
 ﻿using System.Runtime.InteropServices;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApplicationServices(builder.Configuration);
+    var environment = builder.Environment.EnvironmentName;
 
-builder.Services.AddIdentityService(builder.Configuration);
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-builder.Services.AddOpenApi();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-var app = builder.Build();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-app.UseMiddleware<ExceptionMiddleware>();
+    builder.Services.AddIdentityService(builder.Configuration);
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) app.Urls.Add("http://*:5014"); // Linux Port
+    builder.Services.AddOpenApi();
 
-app.UseResponseCompression();
+    var app = builder.Build();
 
-app.UseHttpsRedirection();
+    app.UseSerilogRequestLogging();
 
-app.UseStatusCodePages();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseRouting();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseAuthentication();
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) app.Urls.Add("http://*:5014"); // Linux Port
 
-app.UseAuthorization();
+    app.UseResponseCompression();
 
-app.MapControllers().RequireAuthorization();
+    app.UseHttpsRedirection();
 
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-//var context = services.GetRequiredService<VetContext>();
-//var logger = services.GetRequiredService<ILogger<Program>>();
-//try
-//{
-//    await context.Database.MigrateAsync();
-//    await VetContextSeed.SeedAsync(context);
-//}
-//catch (Exception ex)
-//{
-//    logger.LogError(ex, "An error occured during migration");
-//}
+    app.UseStatusCodePages();
 
-await app.RunAsync();
+    app.UseRouting();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers().RequireAuthorization();
+
+    //using var scope = app.Services.CreateScope();
+    //var services = scope.ServiceProvider;
+    //var context = services.GetRequiredService<VetContext>();
+    //var logger = services.GetRequiredService<ILogger<Program>>();
+    //try
+    //{
+    //    await context.Database.MigrateAsync();
+    //    await VetContextSeed.SeedAsync(context);
+    //}
+    //catch (Exception ex)
+    //{
+    //    logger.LogError(ex, "An error occured during migration");
+    //}
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

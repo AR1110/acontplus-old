@@ -1,9 +1,28 @@
 ﻿using Common.Logging;
 using Microsoft.AspNetCore.Http.Features;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    var environment = builder.Environment.EnvironmentName;
+
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
+
+    builder.Services.AddAdvancedLoggingOptions(builder.Configuration);
+
+    builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     // 1. Aumentar el tamaño máximo del buffer de solicitudes (8MB)
     serverOptions.Limits.MaxRequestBufferSize = 8_388_608; // 8MB
@@ -22,91 +41,102 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MaxRequestBodySize = null; // Sin límite
 });
 
-builder.Services.AddAdvancedLogging(builder.Configuration);
+    builder.Services.AddAdvancedLoggingOptions(builder.Configuration);
 
-builder.Services.AddHttpClient("ApiProxy", client =>
+    builder.Services.AddHttpClient("ApiProxy", client =>
+        {
+            // Aumentar el timeout para solicitudes grandes
+            client.Timeout = TimeSpan.FromMinutes(30);
+            client.DefaultRequestHeaders.ConnectionClose = false;
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
+            MaxConnectionsPerServer = 100,
+            EnableMultipleHttp2Connections = true
+        });
+    ;
+
+    builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
+    builder.Services.Configure<FormOptions>(options =>
     {
-        // Aumentar el timeout para solicitudes grandes
-        client.Timeout = TimeSpan.FromMinutes(30);
-        client.DefaultRequestHeaders.ConnectionClose = false;
-    })
-    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-    {
-        PooledConnectionLifetime = TimeSpan.FromMinutes(5),
-        PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
-        MaxConnectionsPerServer = 100,
-        EnableMultipleHttp2Connections = true
+        options.ValueLengthLimit = int.MaxValue;
+        options.MultipartBodyLengthLimit = long.MaxValue;
+        options.MultipartHeadersLengthLimit = int.MaxValue;
     });
-;
 
-builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+    var app = builder.Build();
 
-builder.Services.Configure<FormOptions>(options =>
-{
-    options.ValueLengthLimit = int.MaxValue;
-    options.MultipartBodyLengthLimit = long.MaxValue;
-    options.MultipartHeadersLengthLimit = int.MaxValue;
-});
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        // Handle general exceptions
+        app.UseExceptionHandler("/Error");
 
-var app = builder.Build();
+        // Handle 404 Not Found errors
+        app.UseStatusCodePagesWithReExecute("/NotFound");
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    // Handle general exceptions
-    app.UseExceptionHandler("/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
 
-    // Handle 404 Not Found errors
-    app.UseStatusCodePagesWithReExecute("/NotFound");
 
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseHttpsRedirection();
+
+    app.UseDefaultFiles();
+
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    //app.Use(async (context, next) =>
+    //{
+    //    // Para solicitudes PUT
+    //    if (context.Request.Method == HttpMethods.Put)
+    //    {
+    //        var queryLength = context.Request.QueryString.Value?.Length ?? 0;
+
+    //        // Log para query strings grandes
+    //        if (queryLength > 2000)
+    //        {
+    //            Log.Warning("Solicitud PUT con query string largo: {Length} caracteres", queryLength);
+
+    //            // Habilitar buffering para asegurar que se pueda leer el cuerpo varias veces
+    //            context.Request.EnableBuffering();
+    //        }
+    //    }
+
+    //    await next();
+    //});
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapRazorPages();
+
+    //app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
+    //{
+    //    builder.UseStaticFiles();
+    //    builder.Run(async context =>
+    //    {
+    //        context.Response.ContentType = "text/html";
+    //        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
+    //    });
+    //});
+
+
+    await app.RunAsync();
 }
-
-
-app.UseHttpsRedirection();
-
-app.UseDefaultFiles();
-
-app.UseStaticFiles();
-
-app.UseRouting();
-
-//app.Use(async (context, next) =>
-//{
-//    // Para solicitudes PUT
-//    if (context.Request.Method == HttpMethods.Put)
-//    {
-//        var queryLength = context.Request.QueryString.Value?.Length ?? 0;
-
-//        // Log para query strings grandes
-//        if (queryLength > 2000)
-//        {
-//            Log.Warning("Solicitud PUT con query string largo: {Length} caracteres", queryLength);
-
-//            // Habilitar buffering para asegurar que se pueda leer el cuerpo varias veces
-//            context.Request.EnableBuffering();
-//        }
-//    }
-
-//    await next();
-//});
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-//app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
-//{
-//    builder.UseStaticFiles();
-//    builder.Run(async context =>
-//    {
-//        context.Response.ContentType = "text/html";
-//        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
-//    });
-//});
-
-
-await app.RunAsync();
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

@@ -13,3 +13,4 @@ global using Common.Services.Middleware;
 global using Common.Utilities.Format;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
+global using Common.Logging;

@@ -17,3 +17,4 @@ global using TechnicalSupport.API.Entities;
 global using TechnicalSupport.API.Extensions;
 global using TechnicalSupport.API.Interfaces;
 global using TechnicalSupport.API.Services;
+global using Common.Logging;

@@ -2,31 +2,62 @@
 using BarberShop.Api.Extensions.Endpoints;
 using Common.Services.Configuration;
 using Common.Services.Middleware;
+using Serilog;
+using Common.Logging;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApplicationServices(builder.Configuration);
+    var environment = builder.Environment.EnvironmentName;
 
-builder.Services.AddIdentityService(builder.Configuration);
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-var app = builder.Build();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-app.UseResponseCompression();
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-app.UseMiddleware<ExceptionMiddleware>();
+    builder.Services.AddIdentityService(builder.Configuration);
 
-app.UseHttpsRedirection();
+    var app = builder.Build();
 
-app.UseAuthentication();
+    app.UseSerilogRequestLogging();
 
-app.UseAuthorization();
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.MapTicketEndpoints();
+    app.UseResponseCompression();
 
-await app.RunAsync();
+    app.UseMiddleware<ExceptionMiddleware>();
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapTicketEndpoints();
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

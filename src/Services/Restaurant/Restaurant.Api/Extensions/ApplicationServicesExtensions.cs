@@ -13,7 +13,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddAdvancedLogging(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
         services.AddControllers()
             .AddNewtonsoftJson(x =>
