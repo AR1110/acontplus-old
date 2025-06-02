@@ -1,5 +1,5 @@
 
-import { Component, inject  } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -51,11 +51,11 @@ export class EstabAddEditModalComponent {
   titleModal = 'Nuevo Establecimiento';
   btnText = 'Guardar';
 
-  cantones: any[] = [];
-  actividadesEconomica: any[] = [];
-  agentesRetencion: any[] = [];
-  contribuyentes: any[] = [];
-  ambientes: any[] = [];
+  cantones = signal<any[]>([]);
+  actividadesEconomica = signal<any[]>([]);
+  agentesRetencion = signal<any[]>([]);
+  contribuyentes = signal<any[]>([]);
+  ambientes = signal<any[]>([]);
 
   data = {
     canton: null,
@@ -74,8 +74,8 @@ export class EstabAddEditModalComponent {
 
   isDisabledAgenteRetencion = false;
 
-  emails: string[] = [];
-  telephones: string[] = [];
+  emails = signal<string[]>([]);
+  telephones = signal<string[]>([]);
 
   successResponse =   (response: ApiResponse) => {
 
@@ -128,17 +128,17 @@ export class EstabAddEditModalComponent {
           contribuyentes,
           ambientes,
         } = mainDataForm;
-        this.cantones = cantones;
-        this.actividadesEconomica = actividadesEconomica;
-        this.agentesRetencion = agentesRetencion;
-        this.contribuyentes = contribuyentes;
-        this.ambientes = ambientes;
+        this.cantones.set(cantones);
+        this.actividadesEconomica.set(actividadesEconomica);
+        this.agentesRetencion.set(agentesRetencion);
+        this.contribuyentes.set(contribuyentes);
+        this.ambientes.set(ambientes);
 
         if (this.params.id > 0) {
           this.data = data;
 
-          this.emails = data.emails;
-          this.telephones = data.telephones;
+          this.emails.set(data.emails);
+          this.telephones.set(data.telephones);
         }
       });
     } catch (error) {
@@ -154,7 +154,7 @@ export class EstabAddEditModalComponent {
   }
 
   showInfoTipoContribuyente() {
-    const dataInfo = this.contribuyentes.find(
+    const dataInfo = this.contribuyentes().find(
       (item) => item.codigo === this.data.contribuyente,
     );
     if (!this.data.contribuyente || !dataInfo.contribuyenteRimpe) return;
@@ -167,7 +167,7 @@ export class EstabAddEditModalComponent {
 
   showInfoActividadEconomica() {
     if (!this.data.actividad) return;
-    const groupActEconomica = this.actividadesEconomica.find(
+    const groupActEconomica = this.actividadesEconomica().find(
       (item) => item.codigo === this.data.actividad,
     ).grupo;
     Swal.fire({
@@ -248,7 +248,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (this.emails.length > 0) {
-        if (!this.emails.every((item) => isValidEmail(item))) {
+        if (!this.emails().every((item) => isValidEmail(item))) {
           this.tS.toastr({
             type: 'warning',
             message: 'Verifique que los correos  esten ingresado correctamente',
@@ -273,17 +273,17 @@ export class EstabAddEditModalComponent {
         return;
       }
 
-      this.data.contribuyenteRimpe = this.contribuyentes.find(
+      this.data.contribuyenteRimpe = this.contribuyentes().find(
         (item) => item.codigo === this.data.contribuyente,
       ).contribuyenteRimpe;
 
       this.data.telefono =
-        this.telephones.length > 0
-          ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH)
+        this.telephones().length > 0
+          ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
           : null;
       this.data.correo =
-        this.emails.length > 0
-          ? this.emails.join(SEPARATOR_KEY_CODE.SLASH)
+        this.emails().length > 0
+          ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
           : null;
 
       if (!isValidField(this.data.correo)) {

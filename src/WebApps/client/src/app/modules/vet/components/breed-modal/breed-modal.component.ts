@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -26,7 +26,7 @@ export class BreedModalComponent {
   data = inject<Breed>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Raza';
-  petTypes: PetType[] = [];
+  petTypes = signal<PetType[]>([]);
   breedForm = new FormGroup({
     id: new FormControl(0),
     petTypeId: new FormControl(0, [Validators.required]),
@@ -47,7 +47,7 @@ export class BreedModalComponent {
   loadPetTypes() {
     this.petTypeService.get({}).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        this.petTypes = response.payload as PetType[];
+        this.petTypes.set(response.payload as PetType[])
       }
     });
   }

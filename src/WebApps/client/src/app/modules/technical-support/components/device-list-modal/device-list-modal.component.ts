@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {Component, OnInit, inject, signal} from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -19,7 +19,7 @@ export class DeviceListModalComponent implements OnInit {
   private tS = inject(ToasterService);
 
   data = inject<any>(MAT_DIALOG_DATA);
-  devices: any = [];
+  devices =signal<any>([]);
   onModalClose() {
     this.modalRef.close();
   }
@@ -30,12 +30,11 @@ export class DeviceListModalComponent implements OnInit {
         tipo: 4,
         customerCompanyId: this.data.customerCompanyId,
       })
-      .subscribe({
-        next: (response) => {
+      .subscribe( (response) => {
           if (isApiResponse(response)) {
-            let { devices } = JSON.parse(response.payload as string) || [];
-            this.devices = devices;
-            if (this.devices.length == 0) {
+            const { devices } = JSON.parse(response.payload as string) || [];
+            this.devices.set(devices);
+            if (this.devices().length == 0) {
               this.modalRef.close();
               this.tS.toastr({
                 type: 'info',
@@ -43,7 +42,6 @@ export class DeviceListModalComponent implements OnInit {
               });
             }
           }
-        },
       });
   }
   select(device: any) {

@@ -16,7 +16,7 @@
               class="form-select"
             >
               <option [value]="0">Seleccione una categoría</option>
-              @for (item of categories; track $index) {
+              @for (item of categories(); track $index) {
                 <option [value]="item.id">{{ item.name }}</option>
               }
             </select>

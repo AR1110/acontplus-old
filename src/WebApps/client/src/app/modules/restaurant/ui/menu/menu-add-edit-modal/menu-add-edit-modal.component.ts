@@ -79,7 +79,7 @@ export class MenuAddEditModalComponent {
     selectList.addEventListener('blur', onChange);
 
     for (let i = 0; i < fees.length; i++) {
-      let option = document.createElement('option');
+      const option = document.createElement('option');
 
       option.value = fees[i].idTarifa.toString();
       option.text = fees[i].tarifa;

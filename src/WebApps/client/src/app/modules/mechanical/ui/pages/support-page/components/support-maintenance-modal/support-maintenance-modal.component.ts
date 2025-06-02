@@ -1,4 +1,4 @@
-import { Component, inject,   ViewChild } from '@angular/core';
+import {Component, inject, signal, ViewChild} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -90,13 +90,13 @@ export class SupportMaintenanceModalComponent {
     bodegaId: 0,
     feeId: 0,
   };
-  details: SupportMaintenanceDetail[] = [];
-  detailsDeleted: SupportMaintenanceDetail[] = [];
+  details = signal< SupportMaintenanceDetail[]>([])
+  detailsDeleted = signal< SupportMaintenanceDetail[]>([])
 
-  estabs: GroupedEstab[] = [];
-  bodegas: GroupedEstabBodega[] = [];
-  taxes: any[] = [];
-  taxPercents: TarifaImpuesto[] = [];
+  estabs = signal<GroupedEstab[]>([])
+  bodegas = signal<GroupedEstabBodega[]>([])
+  taxes = signal<any[]>([])
+  taxPercents = signal<TarifaImpuesto[]>([])
 
   decimal: DecimalSale = {
     nroPrecio: 0,
@@ -121,7 +121,7 @@ export class SupportMaintenanceModalComponent {
     textSearch: '',
   };
 
-  feeds: Tarifa[] = [];
+  feeds = signal<Tarifa[]>([]);
   validatorNumber = ['required', 'number'];
 
   comboEditor = (
@@ -179,7 +179,7 @@ export class SupportMaintenanceModalComponent {
     }
 
     if (column === 'bodegaId') {
-      for (const b of this.bodegas) {
+      for (const b of this.bodegas()) {
         const opt = document.createElement('option');
         opt.value = b.idBodega.toString();
         opt.innerHTML = b.descripcion;
@@ -220,11 +220,11 @@ export class SupportMaintenanceModalComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          const index = this.details.findIndex((r) => r.rowguid === data.rowguid);
-          this.details.splice(index, 1);
+          const index = this.details().findIndex((r) => r.rowguid === data.rowguid);
+          this.details().splice(index, 1);
 
           if (data.id > 0) {
-            this.detailsDeleted.push({
+            this.detailsDeleted().push({
               ...data,
               enabled: false,
               deleted: true,
@@ -513,25 +513,25 @@ export class SupportMaintenanceModalComponent {
         ...response.data,
       };
 
-      this.estabs = response.estabs;
-      this.taxPercents = response.tarifasImpuesto;
-      this.feeds = response.feeds;
-      this.vehicle = response.vehicle;
-      this.decimal = response.decimal;
+      this.estabs.set(response.estabs);
+      this.taxPercents.set(response.tarifasImpuesto);
+      this.feeds.set(response.feeds);
+      this.vehicle.set(response.vehicle);
+      this.decimal= response.decimal;
 
-      this.details = response.details;
-      const dataEstab = this.estabs.find(
+      this.details.set(response.details);
+      const dataEstab = this.estabs().find(
         (e) => e.idEstablecimiento === this.data.establecimientoId,
       );
       if (dataEstab) {
-        this.bodegas = dataEstab.bodegas;
-        const dataBodega = this.bodegas.find((b) => b.defaultBodega);
+        this.bodegas.set(dataEstab.bodegas);
+        const dataBodega = this.bodegas().find((b) => b.defaultBodega);
         if (dataBodega) {
           this.data.bodegaId = dataBodega.idBodega;
         }
       }
 
-      const dataTarifa = this.feeds.find((t) => t.predeterminada);
+      const dataTarifa = this.feeds().find((t) => t.predeterminada);
       if (dataTarifa) {
         this.data.feeId = dataTarifa.idTarifa;
         this.cloneData.feeId = dataTarifa.idTarifa;
@@ -572,12 +572,11 @@ export class SupportMaintenanceModalComponent {
   }
 
   getDataRowEmpty() {
-    const detailsEmpty = new SupportMaintenanceDetail();
-    return detailsEmpty;
+    return new SupportMaintenanceDetail();
   }
 
   onResultSelectedProduct(response: any) {
-    const tempDetails = structuredClone(this.details);
+    const tempDetails = structuredClone(this.details());
 
     const product = response.product as ProductSale;
     const medidas = response.medidas as MedidaProducto[];
@@ -585,7 +584,7 @@ export class SupportMaintenanceModalComponent {
       response.consolidacionesFecha as ConsolidacionBodega[];
 
     let row = this.getDataRowEmpty();
-    const dataTaxPercent = this.taxPercents.find(
+    const dataTaxPercent = this.taxPercents().find(
       (d) => d.codigo === product.codigoPorcentaje,
     );
 
@@ -626,7 +625,7 @@ export class SupportMaintenanceModalComponent {
     //Producto de tipo Servicio
     if (!product.llevaInventario) {
       tempDetails.push(row);
-      this.details = tempDetails;
+      this.details.set(tempDetails)
       this.setCalculoTotales('quantity', row, undefined);
       return;
     }
@@ -649,7 +648,7 @@ export class SupportMaintenanceModalComponent {
         row.quantity += 1;
       } else {
         tempDetails.push(row);
-        this.details = tempDetails;
+        this.details.set(tempDetails)
       }
 
       const dataProductMerge = mergeProductStock({
@@ -708,7 +707,7 @@ export class SupportMaintenanceModalComponent {
 
   async onChangeBodega() {
     try {
-      let bodega = this.bodegas.find(
+      const bodega = this.bodegas().find(
         (item) => item.idBodega === this.data.bodegaId,
       );
       const swalWithBootstrapButtons = Swal.mixin({
@@ -719,7 +718,7 @@ export class SupportMaintenanceModalComponent {
         buttonsStyling: false,
       });
 
-      let { isConfirmed } = await swalWithBootstrapButtons.fire({
+      const { isConfirmed } = await swalWithBootstrapButtons.fire({
         title: '<small>Cambiar Bodega</small>',
         html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega?.descripcion}</b>  en el detalle del Documento?</small>`,
         icon: 'warning',
@@ -731,30 +730,33 @@ export class SupportMaintenanceModalComponent {
         allowEscapeKey: false,
       });
 
-      if (isConfirmed) {
+      if(!isConfirmed) {
+        this.data.bodegaId = this.cloneData.bodegaId;
+        return;
+      };
+
+
         this.cloneData.bodegaId = this.data.bodegaId;
 
         if (this.details.length === 0) return;
 
         this.setIdBodegaInDetalle();
         this.resetCantidadToZeroAndRecalculateTotals();
-      } else {
-        this.data.bodegaId = this.cloneData.bodegaId;
-      }
+
     } catch (error) {
       console.log(error);
     }
   }
 
   setIdBodegaInDetalle() {
-    for (const item of this.details) {
+    for (const item of this.details()) {
       item.bodegaId = this.data.bodegaId;
     }
   }
 
   resetCantidadToZeroAndRecalculateTotals() {
     try {
-      for (const row of this.details) {
+      for (const row of this.details()) {
         if (!row.llevaInventario) continue;
 
         row.quantity = 0;
@@ -774,8 +776,8 @@ export class SupportMaintenanceModalComponent {
       //   return
       // }
 
-      let tarifa = this.feeds.find((item) => item.idTarifa === this.data.feeId);
-      let { isConfirmed } = await Swal.fire({
+      const tarifa = this.feeds().find((item) => item.idTarifa === this.data.feeId);
+      const { isConfirmed } = await Swal.fire({
         html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
         icon: 'warning',
         showCancelButton: true,
@@ -785,23 +787,25 @@ export class SupportMaintenanceModalComponent {
         allowOutsideClick: false,
       });
 
-      if (isConfirmed) {
+      if(!isConfirmed){
+        this.data.feeId = this.cloneData.feeId;
+        return;
+      }
+
         this.cloneData.feeId = this.data.feeId;
 
-        if (this.details.length === 0) return;
+        if (this.details().length === 0) return;
 
         this.salesDetailCalculationSvc.setFeeInDetail({
           generalFeeId: this.data.feeId,
-          items: this.details,
+          items: this.details(),
           decimal: this.decimal,
           columnDefs: this.columns,
-          tarifasImpuesto: this.taxPercents,
+          tarifasImpuesto: this.taxPercents(),
         });
 
         this.drawImpuestoTotales();
-      } else {
-        this.data.feeId = this.cloneData.feeId;
-      }
+
     } catch (error) {
       console.log(error);
     }
@@ -854,9 +858,9 @@ export class SupportMaintenanceModalComponent {
         discount,
         percentageDiscount,
       } = this.salesDetailCalculationSvc.getTaxTotals({
-        items: this.details,
+        items: this.details(),
         decimal: this.decimal,
-        tarifasImpuesto: this.taxPercents,
+        tarifasImpuesto: this.taxPercents(),
       });
 
       this.data.subTotalSinImpuesto = subTotalSinImpuesto;
@@ -906,7 +910,7 @@ export class SupportMaintenanceModalComponent {
     }
 
     if (column === 'taxId') {
-      if (!this.taxPercents.some((t) => t.idImpuesto === Number(value))) {
+      if (!this.taxPercents().some((t) => t.idImpuesto === Number(value))) {
         taxId = oldValue;
       } else {
         const cellInOtherColumn = row.getCell('taxPercentId');
@@ -940,7 +944,7 @@ export class SupportMaintenanceModalComponent {
   }
 
   private isValidForm() {
-    if (this.details.length === 0) {
+    if (this.details().length === 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Ingrese al menos un artículo en el detalle',
@@ -948,7 +952,7 @@ export class SupportMaintenanceModalComponent {
       return;
     }
 
-    if (this.details.some((row) => row.llevaInventario && row.quantity === 0)) {
+    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
       this.tS.toastr({
         type: 'warning',
         message:
@@ -957,7 +961,7 @@ export class SupportMaintenanceModalComponent {
       return;
     }
 
-    if (this.details.some((row) => !(row.bodegaId > 0))) {
+    if (this.details().some((row) => !(row.bodegaId > 0))) {
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -994,8 +998,8 @@ export class SupportMaintenanceModalComponent {
 
       const obj = {
         data: structuredClone(this.data),
-        details: this.details,
-        detailsDeleted: this.detailsDeleted,
+        details: this.details(),
+        detailsDeleted: this.detailsDeleted(),
       };
       const params = SupportMaintenanceAdapter.to(obj);
 

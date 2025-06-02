@@ -18,7 +18,7 @@
               formControlName="establecimientoId"
               (change)="onChangeEstab()"
             >
-              @for (item of establecimientos; track $index) {
+              @for (item of establecimientos(); track $index) {
                 <option [ngValue]="item.idEstablecimiento">
                   {{ item.nombreComercial }}
                 </option>
@@ -34,7 +34,7 @@
               class="form-select"
               formControlName="puntoEmisionId"
             >
-              @for (item of puntosEmision; track $index) {
+              @for (item of puntosEmision(); track $index) {
                 <option [ngValue]="item.idPuntoEmision">
                   {{ item.ptoEmi }}
                 </option>
@@ -69,7 +69,7 @@
               required
             >
               <option [value]="0">Pendiente</option>
-              @for (item of users; track $index) {
+              @for (item of users(); track $index) {
                 <option [ngValue]="item.idUsuario">
                   {{ item.nombreUsuario }}
                 </option>
@@ -112,10 +112,10 @@
           </div>
         </div>
       }
-      @if (orderDetails.length > 0) {
+      @if (orderDetails().length > 0) {
         <app-tabulator
           [columnNames]="columnNames"
-          [tableData]="orderDetails"
+          [tableData]="orderDetails()"
         ></app-tabulator>
       }
 

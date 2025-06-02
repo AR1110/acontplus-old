@@ -65,8 +65,8 @@ export class MedicalHistoryPageComponent implements OnInit {
     textSearch: '',
   };
   data = {} as MedicalHistory;
-  establecimientos: GroupedEstab[] = [];
-  medicalHistories: MedicalHistory[] = [];
+  establecimientos = signal<GroupedEstab[]>([]);
+  medicalHistories = signal<MedicalHistory[]>([]);
   searching = false;
   private readonly medicalHistoryService = inject(MedicalHistoryService);
   private readonly modalService = inject(DialogService);
@@ -104,8 +104,8 @@ export class MedicalHistoryPageComponent implements OnInit {
       console.log(response);
       if (isApiResponse(response) && response.code == '1') {
         const { estabs } = JSON.parse(response.payload as string);
-        this.establecimientos = estabs;
-        const dataEstab = this.establecimientos.find(
+        this.establecimientos.set(estabs);
+        const dataEstab = this.establecimientos().find(
           (estab) => estab.defaultEstab
         );
         if (dataEstab) {
@@ -130,8 +130,8 @@ export class MedicalHistoryPageComponent implements OnInit {
     const clonedParams = Object.assign(params, this.dataSearch);
     this.medicalHistoryService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        const { medicalHistories } = JSON.parse(response.payload as string);
-        this.medicalHistories = medicalHistories;
+        const { medicalHistories=[] } = JSON.parse(response.payload as string);
+        this.medicalHistories.set(medicalHistories)
         historiesModified =
           medicalHistories &&
           medicalHistories.map((pet: any, index: number) => ({
@@ -162,7 +162,7 @@ export class MedicalHistoryPageComponent implements OnInit {
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.idEstablecimiento)) {
-      const dataEstab = this.establecimientos.find(
+      const dataEstab = this.establecimientos().find(
         (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento
       );
       this.loadHistories();
@@ -222,7 +222,7 @@ export class MedicalHistoryPageComponent implements OnInit {
   }
 
   onReport(element: MedicalHistory) {
-    const codEstab = this.establecimientos.find(
+    const codEstab = this.establecimientos().find(
       (x) => (x.idEstablecimiento = this.dataSearch.idEstablecimiento)
     )?.codEstab;
 

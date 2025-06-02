@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -45,7 +45,7 @@ export class BrandModalComponent {
       Validators.maxLength(100),
     ]),
   });
-  categories: Category[] = [];
+  categories =signal<Category[]>([]);
   columnNames = [
     {
       title: 'id',
@@ -135,18 +135,12 @@ export class BrandModalComponent {
     this.onGet();
   }
   onGet() {
-    this.categoryService.get({}).subscribe({
-      next: (response) => {
+    this.categoryService.get({}).subscribe(  (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            this.categories = JSON.parse(response.payload as string);
+            this.categories.set(JSON.parse(response.payload as string));
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {},
     });
   }
   onModalClose() {
@@ -174,21 +168,9 @@ export class BrandModalComponent {
       series: this.series || [],
     };
     if (this.data.id > 0) {
-      this.brandService.put(this.data.id, dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.brandService.put(this.data.id, dataToSave).subscribe(this.successResponse);
     } else {
-      this.brandService.post(dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.brandService.post(dataToSave).subscribe(  this.successResponse);
     }
   }
   onSerieAdd() {
@@ -208,8 +190,7 @@ export class BrandModalComponent {
       confirmButtonText: 'Si',
     }).then((response) => {
       if (response.isConfirmed) {
-        this.serieService.delete(item.id).subscribe({
-          next: (response) => {
+        this.serieService.delete(item.id).subscribe(  (response) => {
             if (isApiResponse(response)) {
               this.tS.toastr({
                 type: response.code === '1' ? 'success' : 'warning',
@@ -222,11 +203,6 @@ export class BrandModalComponent {
                 );
               }
             }
-          },
-          error(err) {
-            console.log(err);
-          },
-          complete() {},
         });
       }
     });
