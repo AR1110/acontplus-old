@@ -26,7 +26,7 @@ BEGIN
 		BEGIN TRAN
 		
 
-			UPDATE TechnicalSupport.[Order] WITH (ROWLOCK) SET [Enabled] = 0
+			UPDATE TechnicalSupport.[Order] WITH (ROWLOCK) SET [IsActive] = 0
 				,UpdatedAt = dbo.ufnGetDateEcuador()
 			WHERE Id = @id
 

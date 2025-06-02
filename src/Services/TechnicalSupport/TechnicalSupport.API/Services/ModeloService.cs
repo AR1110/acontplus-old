@@ -26,9 +26,7 @@ public class ModeloService : IModeloService
             // Handle case where model not found
             return new ApiResponse { Code = "0", Message = "Modelo no encontrado" };
 
-        modelo.IsActive = false;
-        modelo.IsDeleted = true;
-        modelo.UserId = userId;
+        modelo.MarkAsDeleted(userId);
         _context.Update(modelo);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
@@ -52,7 +50,7 @@ public class ModeloService : IModeloService
         modeloFound.Code = modelo.Code;
         modeloFound.IsActive = modelo.IsActive;
         modeloFound.Name = modelo.Name;
-        modeloFound.UserId = modelo.UserId;
+        modeloFound.UpdatedByUserId = modelo.UpdatedByUserId;
         modeloFound.SerieId = modelo.SerieId;
         _context.Update(modeloFound);
         await _context.SaveChangesAsync();

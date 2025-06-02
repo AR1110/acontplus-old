@@ -1,5 +1,4 @@
 import { Component, inject, ViewChild, OnInit } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
 import { PetService } from '@modules/vet/services/pet.service';
@@ -36,6 +35,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
+import {DialogService} from "@core/services/dialog.service";
 
 Chart.register(...registerables);
 
@@ -93,7 +93,7 @@ export class PetPageComponent implements OnInit {
   searching = false;
 
   private readonly petService = inject(PetService);
-  private readonly modalService = inject(ModalService);
+  private readonly modalService = inject(DialogService);
   private readonly tS = inject(ToasterService);
 
   applyFilter(event: Event) {
@@ -207,14 +207,12 @@ export class PetPageComponent implements OnInit {
   }
 
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(PetModalComponent, {
+    const modalRef = this.modalService.open(PetModalComponent, {
       size: 'lg',
-      centered: true,
+       data: this.data.id > 0 ? this.data : {}
     });
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = this.data;
-    }
-    modalRef.result.then((result) => {
+
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.loadPets();
       }

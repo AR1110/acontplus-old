@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+using Common.Core.Base;
 
 namespace Mechanical.API.Entities;
 
@@ -12,5 +12,5 @@ public class SupportDocument : BaseEntity
     public int DocumentoId { get; set; }
     public int TipoDocumentoId { get; set; }
 
-    [Required] [MaxLength(50)] public string SeriesVoucher { get; set; }
+    [Required][MaxLength(50)] public string SeriesVoucher { get; set; }
 }

@@ -44,7 +44,7 @@ public class VetContext : BaseContext
             property.SetIsUnicode(false);
 
 
-        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(VetContext),
             typeof(BehaviorTest),
             typeof(HealthCheck),
             typeof(Pet)

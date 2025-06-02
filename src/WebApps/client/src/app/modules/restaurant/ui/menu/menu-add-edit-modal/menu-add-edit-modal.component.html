@@ -1,37 +1,32 @@
-<form (ngSubmit)="onSave()" [formGroup]="menuForm">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon>
-      {{ modalTitle }}
-    </h5>
-    <button
-      (click)="onModalClose()"
-      aria-hidden="true"
-      class="btn-close"
-      title="Cerrar"
-      type="button"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-6 col-md-6 col-sm-12">
-        <div class="form-group">
-          <label for="title">Nombre</label>
-          <input
-            class="form-control input-group-lg"
-            formControlName="title"
-            id="title"
-            type="text"
-          />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="onModalClose()"
+  [title]="modalTitle"
+/>
+
+<ng-template #body>
+  <form (ngSubmit)="onSave()" id="menuForm" [formGroup]="menuForm">
+
+      <div class="row">
+        <div class="col-6 col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="title">Nombre</label>
+            <input
+              class="form-control input-group-lg"
+              formControlName="title"
+              id="title"
+              type="text"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="form-group">
-          <label for="summary"
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="summary"
             >Descripción -
-            <span>
+              <span>
               <app-theme-button
                 icon="add"
                 text="Generar la descripción para el combo"
@@ -39,61 +34,52 @@
               >
               </app-theme-button>
             </span>
-          </label>
-          <textarea
-            class="form-control"
-            formControlName="summary"
-            id="summary"
-          ></textarea>
+            </label>
+            <textarea
+              class="form-control"
+              formControlName="summary"
+              id="summary"
+            ></textarea>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-6 col-md-6 col-sm-6">
-        <div class="form-group">
-          <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
-            Usar en promoción
-          </mat-slide-toggle>
+      <div class="row">
+        <div class="col-6 col-md-6 col-sm-6">
+          <div class="form-group">
+            <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
+              Usar en promoción
+            </mat-slide-toggle>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="form-group">
-          <label>Buscar productos</label>
-          <app-item-search
-            (onItemSelected)="onItemSelected($event)"
-            [textSearch]="itemSearch"
-          ></app-item-search>
+      <div class="row">
+        <div class="col-12">
+            <app-item-search
+              (selectedEvent)="onItemSelected($event)"
+              [(textSearch)]="itemSearch"
+            />
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <app-tabulator-semantic-ui
-          [columnNames]="productColumns"
-          [options]="{ reactiveData: true }"
-          [tableData]="productsAdded"
-        ></app-tabulator-semantic-ui>
+      <div class="row">
+        <div class="col">
+          <app-tabulator-semantic-ui
+            [columnNames]="productColumns"
+            [options]="{ reactiveData: true }"
+            [tableData]="productsAdded"
+          ></app-tabulator-semantic-ui>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      [disabled]="menuForm.invalid"
-      mat-raised-button
-      title="guardar"
-      type="submit"
-    >
-      <mat-icon>save</mat-icon>
-      Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    type="submit"
+    icon="save"
+    variant="success"
+    text="Añadir producto"
+    form="menuForm"
+    [disabled]="menuForm.invalid"
+  />
+</ng-template>
+
+

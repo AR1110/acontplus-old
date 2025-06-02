@@ -12,7 +12,6 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
@@ -21,8 +20,6 @@ import { DeviceListModalComponent } from '@modules/technical-support/components/
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
 import {
@@ -32,25 +29,29 @@ import {
   formatDateToString,
   isDateValid,
 } from '@core/utils/date.util';
-import { CommonModule, DatePipe } from '@angular/common';
+import {   DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-order-modal',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
 
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
-    NgbAccordionModule,
     TabulatorComponent,
     MatIcon,
     MatButton,
     ThemeButtonComponent,
+    DatePipe,
+    MatCustomDialogComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
@@ -60,8 +61,8 @@ import { CompanyCustomer } from '@customer/domain/models/company-customer';
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
   private datePipe = inject(DatePipe);
-  private modalRef = inject(NgbActiveModal);
-  private modalService = inject(ModalService);
+  private modalRef = inject(MatDialogRef<OrderModalComponent>);
+  private modalService = inject(DialogService);
   private oDS = inject(OrderDetailService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
@@ -145,7 +146,7 @@ export class OrderModalComponent {
   clearSearch = true;
   currentDate = new Date();
   customerBusinessName = '';
-  data: any = {};
+  data= inject<any>(MAT_DIALOG_DATA)
   deviceFound: any = {};
   devices: any = [];
   establecimientos: GroupedEstab[] = [];
@@ -160,7 +161,7 @@ export class OrderModalComponent {
   orderForm = new FormGroup({
     id: new FormControl(0),
     assignedUserId: new FormControl(0, Validators.required),
-    uuid: new FormControl(uuidv4()),
+    uuid: new FormControl(generateUuidv4()),
     establecimientoId: new FormControl(0, Validators.required),
     puntoEmisionId: new FormControl(0, Validators.required),
     customerCompanyId: new FormControl(0, Validators.required),
@@ -176,7 +177,7 @@ export class OrderModalComponent {
         message: 'Este equipo ya se encuentra agregado en el detalle',
       });
     }
-    let deviceToAdd: OrderDetail = {
+    const deviceToAdd: OrderDetail = {
       id: 0,
       deviceId: 0,
       deviceName: '',
@@ -196,7 +197,7 @@ export class OrderModalComponent {
       ? device.warranty
       : device.deviceWarranty;
     deviceToAdd.obs = '';
-    deviceToAdd.uuid = uuidv4();
+    deviceToAdd.uuid = generateUuidv4();
     deviceToAdd.assignedUserId = 0;
     deviceToAdd.deviceCustomerId = !device.deviceCustomerId
       ? 0
@@ -300,14 +301,16 @@ export class OrderModalComponent {
   }
 
   getDevices() {
-    const modalRef = this.modalService.openModalCustom(
+    const modalRef = this.modalService.open(
       DeviceListModalComponent,
-      { size: 'lg', centered: true, backdrop: true },
+      { size: 'lg',
+
+      data: {
+        customerCompanyId: this.order.customerCompanyId,
+      }
+      },
     );
-    modalRef.componentInstance.data = {
-      customerCompanyId: this.order.customerCompanyId,
-    };
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result) {
         this.addDetail({
           deviceCustomerId: result.deviceCustomerId,

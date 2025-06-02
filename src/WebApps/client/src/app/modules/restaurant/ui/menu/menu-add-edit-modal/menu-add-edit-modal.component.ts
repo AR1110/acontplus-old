@@ -5,26 +5,25 @@ import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
 import { MenuService } from '@restaurant/data/services/menu.service';
 import { MenuItemService } from '@restaurant/data/services/menu-item.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
 import { Item } from '@restaurant/domain/models/item.model';
 
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
+
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-menu-add-edit-modal',
-    imports: [
-        ReactiveFormsModule,
-        MatSlideToggle,
-        ItemSearchComponent,
-        MatIcon,
-        TabulatorSemanticUiComponent,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    ReactiveFormsModule,
+    MatSlideToggle,
+    ItemSearchComponent,
+    TabulatorSemanticUiComponent,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './menu-add-edit-modal.component.html',
   styles: ``,
 })
@@ -35,29 +34,29 @@ export class MenuAddEditModalComponent {
     forPromotion: new FormControl(false),
     summary: new FormControl(''),
   });
-  data = {} as Menu;
+  data = inject<Menu>(MAT_DIALOG_DATA);
   menuTypes: MenuType[] = [];
   modalIcon = 'add';
-  modalTitle: string = 'Registrar Menu';
+  modalTitle = 'Registrar Menu';
   productsAdded: any[] = [];
 
-  itemSearch: string = '';
+  itemSearch = '';
   placeholder = 'Buscar producto';
   validation = [undefined, null, 0, ''];
   private readonly _menuService = inject(MenuService);
   private readonly _menuItemService = inject(MenuItemService);
   private readonly _tS = inject(ToasterService);
-  private readonly _modalRef = inject(NgbActiveModal);
+  private readonly _modalRef = inject(MatDialogRef<MenuAddEditModalComponent>);
 
   // Todo: GRID COLUMNS
   selectFee = (cell: any, onRendered: any, success: any, cancel: any) => {
     let fees = [];
-    let rows = cell.getRow().getData();
+    const rows = cell.getRow().getData();
 
     if (rows.fees === undefined) fees = [];
     if (rows.fees != undefined) fees = JSON.parse(rows.fees);
 
-    let selectList = document.createElement('select');
+    const selectList = document.createElement('select');
     selectList.style.width = '100%';
     selectList.style.boxSizing = 'border-box';
 
@@ -94,23 +93,23 @@ export class MenuAddEditModalComponent {
 
   formatterFee = (cell: any) => {
     let fees = [];
-    let row = cell.getRow().getData();
-    let value = cell.getValue();
+    const row = cell.getRow().getData();
+    const value = cell.getValue();
 
     fees = JSON.parse(row.fees);
     return fees.find((x: any) => x.idTarifa == value).tarifa;
   };
 
   calculateTotal = (cell: any) => {
-    let row = cell.getRow().getData();
+    const row = cell.getRow().getData();
     let porcentaje = 0;
     let descuento = 0;
     let totalDiscount = 0;
 
-    let column = cell.getColumn()._column.field;
+    const column = cell.getColumn()._column.field;
 
     if (column === 'feeId') {
-      let fee = JSON.parse(row.fees).find((x: any) => x.idTarifa == row.feeId);
+      const fee = JSON.parse(row.fees).find((x: any) => x.idTarifa == row.feeId);
 
       cell.getRow().update({
         priceIVA: fee.precioConIva,
@@ -122,7 +121,7 @@ export class MenuAddEditModalComponent {
       if (row.quantity >= 0) {
         cell.getRow().update({ quantity: row.quantity });
       } else {
-        let oldValue = cell.getOldValue();
+        const oldValue = cell.getOldValue();
         cell.getRow().update({ quantity: oldValue });
       }
     }
@@ -141,7 +140,7 @@ export class MenuAddEditModalComponent {
           discountValue: descuento,
         });
       } else {
-        let oldValue = cell.getOldValue();
+        const oldValue = cell.getOldValue();
         cell.getRow().update({ discountPercent: oldValue });
         return this._tS.toastr({
           type: 'warning',
@@ -301,7 +300,7 @@ export class MenuAddEditModalComponent {
       .getByMenu(0, { productId: productId, tipo: 2 })
       .subscribe((response) => {
         if (response) {
-          let newFees = response['tarifas'];
+          const newFees = response['tarifas'];
 
           newFees.forEach((e: any) => {
             if (e.precioPredeterminado) {
@@ -384,9 +383,9 @@ export class MenuAddEditModalComponent {
       .join(', ');
   }
 
-  onItemSelected($event: { item: Item }) {
+  onItemSelected($event: Item) {
     const itemExists = this.productsAdded.find(
-      (x: any) => x.productId === $event.item.productId,
+      (x: any) => x.productId === $event.productId,
     );
     if (itemExists) {
       return this._tS.toastr({
@@ -395,14 +394,14 @@ export class MenuAddEditModalComponent {
       });
     }
 
-    let newMenuItem = {
+    const newMenuItem = {
       id: 0,
-      itemId: $event.item.id,
-      productId: $event.item.productId,
-      costPrice: $event.item.costPrice,
-      descripcion: $event.item.descripcion,
-      codigo: $event.item.codigo,
-      medida: $event.item.medida,
+      itemId: $event.id,
+      productId: $event.productId,
+      costPrice: $event.costPrice,
+      descripcion: $event.descripcion,
+      codigo: $event.codigo,
+      medida: $event.medida,
       menuId: this.data.id,
       feeId: 0,
       quantity: 0,
@@ -411,6 +410,6 @@ export class MenuAddEditModalComponent {
       subtotal: 0,
     };
 
-    this.getTarifaById($event.item.productId, newMenuItem);
+    this.getTarifaById($event.productId, newMenuItem);
   }
 }

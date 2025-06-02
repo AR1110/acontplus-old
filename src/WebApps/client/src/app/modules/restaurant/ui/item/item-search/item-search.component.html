@@ -1,21 +1,17 @@
-<input
-  (keyup)="onKeyupSearch()"
-  (keyup.enter)="onEnterKeyPressed($event)"
-  (selectItem)="onSelect($event)"
-  [(ngModel)]="textSearch"
-  [class.is-invalid]="searchFailed"
-  [ngbTypeahead]="search"
-  [resultTemplate]="rt"
-  class="form-control"
-  id="typeahead-item-search"
-  onclick="select();"
-  placeholder="Buscar item"
-  type="text"
-/>
 
-<ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight
-    [result]="r.descripcion"
-    [term]="t"
-  />
-</ng-template>
+
+<mat-form-field class="w-100">
+  <mat-label>Buscar item</mat-label>
+  <input matInput
+         aria-label="State"
+         [matAutocomplete]="auto"
+         [formControl]="control">
+  <mat-autocomplete #auto="matAutocomplete">
+    @for (item of filteredItems | async; track $index) {
+      <mat-option [value]="item.descripcion"   (onSelectionChange)="onSelectionChange(item)">
+<!--        <img alt="" class="example-option-img" [src]="item.flag" height="25">-->
+        <span>{{item.descripcion}}</span>
+      </mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

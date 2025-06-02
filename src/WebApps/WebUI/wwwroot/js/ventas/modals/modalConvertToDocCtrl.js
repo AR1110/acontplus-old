@@ -93,7 +93,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
     function onLoadProforma() {
         try {
-            showLoader();
+            
+            
             getDataFormProforma().then(response => {
                 const [dataForm, data] = response; 
                 const { tiemposCredito, formasPagoSri, config, vendedores } = dataForm;
@@ -140,19 +141,17 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     $scope.comprobante.idUsuario = dataUsuario.idUsuario;
                 }
 
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
+            }) 
         } catch (error) {
-            console.log(error)
-            hideLoader();
+            console.log(error) 
         }
     }
 
 
     function onLoadNotaEntrega() {
         try {
-            showLoader();
+            
+            
             getDataFormNotaEntrega().then(response => {
                 const [dataForm, data] = response;
 
@@ -202,12 +201,9 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 }
 
 
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
+            }) 
         } catch (error) {
-            console.log(error)
-            hideLoader();
+            console.log(error) 
         }
     }
 
@@ -356,12 +352,11 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
 
 
-            showLoader();
+            
+            
             let serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                 idPuntoEmision: $scope.comprobante.idPuntoEmision,
-            })
-                .catch(error => console.log(error))
-                .finally(() => hideLoader())
+            }) 
             if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
 
@@ -398,7 +393,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 dataFormaPago: $scope.dataFormaPago
             })
 
-            showLoader();
+            
+            
             proformaSvc.convertToDoc(query).then(response => {
                 if (response.code === '0') {
                     fS.sweetAlert('warning', response.message, response.titleSms);
@@ -412,13 +408,10 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     }
                     $uibModalInstance.close(mainData)
                 }
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
+            }) 
 
 
-        } catch (error) {
-            hideLoader();
+        } catch (error) { 
             console.log(error)
         }
     }
@@ -508,12 +501,11 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
             }).then(async result => {
                 if (result.isConfirmed) {
 
-                    showLoader();
+                    
+                    
                     let serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.comprobante.idPuntoEmision,
-                    })
-                        .catch(error => console.log(error))
-                        .finally(() => hideLoader())
+                    }) 
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
 
@@ -551,7 +543,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                         dataFormaPago: $scope.dataFormaPago
                     })
 
-                    showLoader();
+                    
+                    
                     proformaSvc.convertToDoc(query).then(response => {
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message, response.titleSms);
@@ -560,9 +553,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             $uibModalInstance.close(response)
                         }
-                    }).catch(error => {
-                        console.log(error)
-                    }).finally(() => hideLoader())
+                    }) 
 
 
 
@@ -574,8 +565,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
 
 
-        } catch (error) {
-            hideLoader();
+        } catch (error) { 
             console.log(error)
         }
     }
@@ -590,12 +580,11 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
             if (cuotas && cuotas.length === 0) return
 
-            showLoader();
+            
+            
             let serieComprobante = await facturaSvc.generateSerieComprobante({
                 idPuntoEmision: $scope.comprobante.idPuntoEmision,
-            })
-                .catch(error => console.log(error))
-                .finally(() => hideLoader())
+            }) 
             if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
 
@@ -632,7 +621,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 dataFormaPago: $scope.dataFormaPago
             })
 
-            showLoader();
+            
+            
             notaEntregaSvc.convertToDoc(query).then(response => {
                 if (response.code === '0') {
                     fS.sweetAlert('warning', response.message, response.titleSms);
@@ -641,13 +631,10 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     fS.sweetAlert('success', response.message, response.titleSms, 1000);
                     $uibModalInstance.close(response)
                 }
-            }).catch(error => {
-                console.log(error)
-            }).finally(() => hideLoader())
+            }) 
 
 
-        } catch (error) {
-            hideLoader();
+        } catch (error) { 
             console.log(error)
         }
     }
@@ -683,31 +670,24 @@ function historialConversionDocCtrl($scope, $uibModalInstance, $injector, params
 
     if (DOC_TYPE.PR === codDoc) {
         try {
-            showLoader();
+            
+            
             proformaSvc.getHistorialConversionDoc(id)
                 .then(response => {
                     $scope.historialConversion = response;
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-                .finally(() => hideLoader())
-        } catch (error) {
-            hideLoader();
+                }) 
+        } catch (error) { 
         }
     }
 
     if (DOC_TYPE.NE === codDoc) {
         try {
-            showLoader();
+            
+            
             notaEntregaSvc.getHistorialConversionDoc(id)
                 .then(response => {
                     $scope.historialConversion = response;
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-                .finally(() => hideLoader())
+                }) 
         } catch (error) {
             console.log(error)
         }

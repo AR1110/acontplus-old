@@ -1,7 +1,5 @@
 import { MatIconModule } from '@angular/material/icon';
 import { Component, inject, Input } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
-import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { FormaCobroModalComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/forma-cobro-modal.component';
 import { MatTableModule } from '@angular/material/table';
@@ -31,6 +29,8 @@ import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
@@ -38,7 +38,6 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     DatePipe,
     MatTableModule,
     MatIconModule,
-    NgbAccordionModule,
     MatCard,
     MatCardContent,
     MatButton,
@@ -58,13 +57,13 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
   ],
 })
 export class ComprobanteIngresoLoteModalComponent {
-  @Input() params = {
-    data: {} as any,
-    selectedDocumentos: [] as any[],
-  };
+  params = inject<{
+    data:  any
+    selectedDocumentos:  any[],
+  }>(MAT_DIALOG_DATA);
 
-  modal = inject(NgbActiveModal);
-  modalSvc = inject(ModalService);
+  modal = inject(MatDialogRef<ComprobanteIngresoLoteModalComponent>);
+  modalSvc = inject(DialogService);
   tS = inject(ToasterService);
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
@@ -183,17 +182,17 @@ export class ComprobanteIngresoLoteModalComponent {
       return;
     }
 
-    let modalRef = this.modalSvc.openModalCustom(FormaCobroModalComponent, {
+    let modalRef = this.modalSvc.open(FormaCobroModalComponent, {
       size: 'lg',
+      data: {
+        dataFormaCobro: this.dataFormaCobro,
+        comprobante: this.comprobante,
+        saldo: this.data.totalSaldo,
+        multiplesPaymentType: this.multiplesPaymentType,
+      }
     });
-    modalRef.componentInstance.params = {
-      dataFormaCobro: this.dataFormaCobro,
-      comprobante: this.comprobante,
-      saldo: this.data.totalSaldo,
-      multiplesPaymentType: this.multiplesPaymentType,
-    };
 
-    modalRef.result.then((dataPaymentTypeForm: PaymentData) => {
+    modalRef.subscribe((dataPaymentTypeForm: PaymentData) => {
       if (
         dataPaymentTypeForm !== null &&
         typeof dataPaymentTypeForm === 'object'
@@ -524,4 +523,6 @@ export class ComprobanteIngresoLoteModalComponent {
       console.log(error);
     }
   }
+
+  protected readonly close = close;
 }

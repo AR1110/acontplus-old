@@ -1,46 +1,34 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">{{ titleModal() }}</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="close()"
-  ></button>
-</div>
-<div class="modal-body">
+
+<app-mat-custom-dialog
+[containerTemplate]="body"
+[actionsTemplate]="footer"
+(close)="close()"
+[title]="titleModal()"
+/>
+<ng-template #body>
   <div class="row">
     <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-6 col-12">
       <div
-        class="row row-cols-1 row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1"
+        class="row row-cols-1 row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1 gap-2"
       >
-        <div class="form-group">
-          <label for="estab"
-            >Establecimiento: <span class="text-danger">*</span>
-          </label>
-          <select
-            name="estab"
-            id="estab"
-            class="form-select"
-            [(ngModel)]="estabId"
-          >
-            @for (item of estabs(); track $index) {
-              <option [value]="item.idEstablecimiento">
-                {{ item.nombreComercial }}
-              </option>
-            }
-          </select>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento</mat-label>
+            <mat-select [(ngModel)]="estabId">
+              @for (item of estabs(); track $index) {
+                <mat-option [value]="item.idEstablecimiento">
+                  {{ item.nombreComercial }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
         </div>
-
-        <div class="form-group">
-          <label for="description"
-            >Descripción: <span class="text-danger">*</span></label
-          >
-          <input
-            type="text"
-            class="form-control"
-            appToUpperCase
-            [(ngModel)]="data.description"
-          />
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Descripción</mat-label>
+            <input matInput   appToUpperCase
+                   [(ngModel)]="data.description">
+          </mat-form-field>
         </div>
       </div>
 
@@ -90,30 +78,13 @@
     </div>
   </div>
 
-  <ul class="nav nav-tabs">
-    <li class="nav-item" style="cursor: pointer">
-      <a
-        class="nav-link"
-        [class.active]="selectedTab() === 0"
-        (click)="selectedTab.set(0)"
-        >Dias</a
-      >
-    </li>
-    <li class="nav-item" style="cursor: pointer">
-      <a
-        class="nav-link"
-        [class.active]="selectedTab() === 1"
-        (click)="selectedTab.set(1)"
-        >Productos</a
-      >
-    </li>
-  </ul>
 
-  @if (selectedTab() === 0) {
-    <div class="d-flex">
-      <div class="table-responsive w-auto">
-        <table class="table">
-          <thead>
+  <mat-tab-group>
+    <mat-tab label="Días">
+      <div class="d-flex">
+        <div class="table-responsive w-auto">
+          <table class="table">
+            <thead>
             <tr>
               <th>
                 <div class="form-check">
@@ -129,120 +100,119 @@
               </th>
               <th>Hora Inicio - Hora Fin</th>
             </tr>
-          </thead>
-          <tbody>
-            @for (day of daysOfWeek(); track $index) {
-              <tr>
-                <td>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [id]="day.id"
-                      [(ngModel)]="day.checked"
-                      (change)="onChangeDay()"
-                    />
-                    <label class="form-check-label" [for]="day.id">{{
-                      day.descripcion
-                    }}</label>
-                  </div>
-                </td>
-                <td>
-                  <div class="hstack gap-3">
-                    <div class="col-4">
-                      <label
-                        [for]="day.id + 'Start'"
-                        class="form-label"
-                      ></label>
+            </thead>
+            <tbody>
+              @for (day of daysOfWeek(); track $index) {
+                <tr>
+                  <td>
+                    <div class="form-check">
                       <input
-                        type="text"
-                        appTimeInputFormat24
-                        [(ngModel)]="day.horaInicio"
-                        class="form-control"
-                        [id]="day.id + 'Start'"
-                        placeholder="HH:MM"
+                        class="form-check-input"
+                        type="checkbox"
+                        [id]="day.id"
+                        [(ngModel)]="day.checked"
+                        (change)="onChangeDay()"
                       />
+                      <label class="form-check-label" [for]="day.id">{{
+                          day.descripcion
+                        }}</label>
                     </div>
-                    <span>-</span>
-                    <div class="col-4">
-                      <label [for]="day.id + 'End'" class="form-label"></label>
-                      <input
-                        type="text"
-                        appTimeInputFormat24
-                        [(ngModel)]="day.horaFin"
-                        class="form-control"
-                        [id]="day.id + 'End'"
-                        placeholder="HH:MM"
-                      />
+                  </td>
+                  <td>
+                    <div class="hstack gap-3">
+                      <div class="col-4">
+                        <label
+                          [for]="day.id + 'Start'"
+                          class="form-label"
+                        ></label>
+                        <input
+                          type="text"
+                          appTimeInputFormat24
+                          [(ngModel)]="day.horaInicio"
+                          class="form-control"
+                          [id]="day.id + 'Start'"
+                          placeholder="HH:MM"
+                        />
+                      </div>
+                      <span>-</span>
+                      <div class="col-4">
+                        <label [for]="day.id + 'End'" class="form-label"></label>
+                        <input
+                          type="text"
+                          appTimeInputFormat24
+                          [(ngModel)]="day.horaFin"
+                          class="form-control"
+                          [id]="day.id + 'End'"
+                          placeholder="HH:MM"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  }
+    </mat-tab>
+    <mat-tab label="Productos">
+      <div class="form-group">
+        <label for="menuSearch">Buscar Menú </label>
+        <app-menu-search (optionSelected)="onProductSelected($event)" />
+      </div>
 
-  @if (selectedTab() === 1) {
-    <div class="form-group">
-      <label for="menuSearch">Buscar Menú </label>
-      <app-menu-search (optionSelected)="onProductSelected($event)" />
-    </div>
-
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
           <tr>
             <th>Nro.</th>
             <th>Op.</th>
             <th>Img.</th>
             <th>Menú</th>
           </tr>
-        </thead>
-        <tbody>
-          @for (item of promotionMenus(); track $index) {
-            <tr>
-              <td>{{ $index + 1 }}</td>
-              <td>
-                <app-theme-button
-                  variant="danger"
-                  icon="delete"
-                  matStyle="icon"
-                  (handleClick)="onRemove(item.menuId)"
-                >
-                </app-theme-button>
-              </td>
-              <td>
-                <img
-                  class="rounded"
-                  [ngClass]="{ 'img-thumbnail': !item.s3ObjectUrl }"
-                  width="80"
-                  src="{{ item.s3ObjectUrl }}"
-                />
-              </td>
-              <td>{{ item.title }}</td>
-            </tr>
-          } @empty {
-            <tr class="text-center">
-              <td colspan="4">Sin registro</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  }
-</div>
-<div class="modal-footer">
-  <button type="button" mat-raised-button (click)="save()">
-    {{ titleBtnSave() }}
-  </button>
+          </thead>
+          <tbody>
+            @for (item of promotionMenus(); track $index) {
+              <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>
+                  <app-theme-button
+                    variant="danger"
+                    icon="delete"
+                    matStyle="icon"
+                    (handleClick)="onRemove(item.menuId)"
+                  >
+                  </app-theme-button>
+                </td>
+                <td>
+                  <img
+                    class="rounded"
+                    [ngClass]="{ 'img-thumbnail': !item.s3ObjectUrl }"
+                    width="80"
+                    src="{{ item.s3ObjectUrl }}"
+                    alt="Image Description"
+                  />
+                </td>
+                <td>{{ item.title }}</td>
+              </tr>
+            } @empty {
+              <tr class="text-center">
+                <td colspan="4">Sin registro</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+</ng-template>
+<ng-template #footer>
   <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="close()"
-  >
-  </app-theme-button>
-</div>
+    variant="success"
+    icon="save"
+    [text]="titleBtnSave()"
+    (handleClick)="save()"
+  />
+</ng-template>
+

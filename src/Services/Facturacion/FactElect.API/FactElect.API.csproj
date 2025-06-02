@@ -30,5 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj" />
+    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

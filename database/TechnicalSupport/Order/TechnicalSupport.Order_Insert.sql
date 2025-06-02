@@ -141,7 +141,7 @@ BEGIN
 		BEGIN TRAN
             ---> Inser data - Order.
             INSERT INTO TechnicalSupport.[Order]
-                  (Uuid,FechaEmision,EstablecimientoId,PuntoEmisionId,[Sequence],Serie,CustomerCompanyId,Obs,OrderStatusId,CreatedAt,[Enabled], UserId, AssignedUserId)
+                  (Uuid,FechaEmision,EstablecimientoId,PuntoEmisionId,[Sequence],Serie,CustomerCompanyId,Obs,OrderStatusId,CreatedAt,[IsActive], UserId, AssignedUserId)
             SELECT uuid,fechaEmision,establecimientoId,puntoEmisionId,@sequence ,@serie,customerCompanyId,obs,@orderStatusId,@datetime,@enabled,@userId, IIF(assignedUserId = 0, NULL, assignedUserId)
             FROM @tbOrder
 
@@ -149,7 +149,7 @@ BEGIN
 
             ---> Inser data - Details
             INSERT INTO TechnicalSupport.OrderDetail
-                   (Uuid, OrderId, Deviceid, Obs, CreatedAt, [Enabled], UserId)
+                   (Uuid, OrderId, Deviceid, Obs, CreatedAt, [IsActive], UserId)
             SELECT uuid, @orderId, deviceId, obs, @datetime, @enabled, @userId
             FROM @tbDetails
 

@@ -1,6 +1,6 @@
 import { Directive, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
 import { ProductSearchPopupComponent } from '@inventory/ui/product/components/product-search-popup/product-search-popup.component';
+import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appProductSearchPopup]',
@@ -8,7 +8,7 @@ import { ProductSearchPopupComponent } from '@inventory/ui/product/components/pr
 })
 export class ProductSearchPopupDirective {
 
-  private modalSvc = inject(ModalService)
+  private modalSvc = inject(DialogService)
   @Output() onSelectedRow = new EventEmitter();
   @Input() searchPurchase = false;
   @Input() searchSale = false;
@@ -21,17 +21,16 @@ export class ProductSearchPopupDirective {
   }
 
   openPopup() {
-    let modalRef = this.modalSvc.open(ProductSearchPopupComponent, {
-      centered: true,
-      keyboard: true,
-      size: 'xl'
+    const modalRef = this.modalSvc.open(ProductSearchPopupComponent, {
+
+      size: 'xl',
+      data:  {
+        searchPurchase: this.searchPurchase,
+        searchSale: this.searchSale,
+        textSearch: this.textSearch
+      }
     })
-    modalRef.componentInstance.params = {
-      searchPurchase: this.searchPurchase,
-      searchSale: this.searchSale,
-      textSearch: this.textSearch
-    }
-    modalRef.result.then(result => {
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.onSelectedRow.emit(result)
       }

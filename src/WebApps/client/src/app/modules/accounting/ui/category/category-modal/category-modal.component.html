@@ -1,81 +1,79 @@
-﻿<form (ngSubmit)="onSave()" [formGroup]="categoryForm">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon>
-      {{ modalTitle }}
-    </h5>
-    <button (click)="onModalClose()" class="btn-close" type="button"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="tipoId">Tipo:</label>
-          <select
-            class="form-select"
-            formControlName="tipoId"
-            id="tipoId"
-            required
-          >
-            <option [value]="0">Seleccione un tipo</option>
-            @for (item of tipos; track $index) {
-              <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
+﻿<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="modalTitle"
+  (close)="onModalClose()"
+/>
+<ng-template #body>
+  <form (ngSubmit)="onSave()" id="categoryForm" [formGroup]="categoryForm">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="tipoId">Tipo:</label>
+            <select
+              class="form-select"
+              formControlName="tipoId"
+              id="tipoId"
+              required
+            >
+              <option [value]="0">Seleccione un tipo</option>
+              @for (item of tipos; track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="code">Código:</label>
+      <div class="row">
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="code">Código:</label>
+            <input
+              class="form-control"
+              formControlName="code"
+              id="code"
+              maxlength="25"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input
+              class="form-control"
+              formControlName="name"
+              id="name"
+              maxlength="100"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="enabled">Estado:</label>
           <input
-            class="form-control"
-            formControlName="code"
-            id="code"
-            maxlength="25"
-            type="text"
+            class="form-check"
+            formControlName="enabled"
+            id="enabled"
+            type="checkbox"
           />
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="name">Nombre:</label>
-          <input
-            class="form-control"
-            formControlName="name"
-            id="name"
-            maxlength="100"
-            type="text"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label for="enabled">Estado:</label>
-        <input
-          class="form-check"
-          formControlName="enabled"
-          id="enabled"
-          type="checkbox"
-        />
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button [disabled]="categoryForm.invalid" mat-raised-button type="submit">
-      <mat-icon>save</mat-icon>
-      Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [disabled]="categoryForm.invalid"
+    variant="success"
+    icon="save"
+    text="Guardar"
+    type="submit"
+    form="categoryForm"
+  />
+</ng-template>
+
+

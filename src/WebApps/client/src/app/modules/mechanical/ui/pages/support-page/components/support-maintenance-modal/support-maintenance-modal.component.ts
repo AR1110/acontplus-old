@@ -1,4 +1,4 @@
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import { Component, inject,   ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -16,11 +16,6 @@ import {
   SupportMaintenanceDetail,
 } from '@mechanical/domain/models/support-maintenance.model';
 import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
-import {
-  NgbActiveModal,
-  NgbPopoverModule,
-  NgbTooltipModule,
-} from '@ng-bootstrap/ng-bootstrap';
 import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
@@ -33,31 +28,30 @@ import { Tarifa } from '@inventory/domain/models/tarifa.model';
 import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
 import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatButton} from "@angular/material/button";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-support-maintenance-modal',
   imports: [
     FormsModule,
     MatIcon,
-    NgbTooltipModule,
-    NgbPopoverModule,
     TabulatorComponent,
     DrawTaxTotalComponent,
     ProductSearchOverlayComponent,
     InputDateComponent,
-    ThemeButtonComponent,
     MatButton,
+    MatCustomDialogComponent,
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
 export class SupportMaintenanceModalComponent {
-  @Input() params = {
+   params = inject<{
     id: 0,
-  };
+  }>(MAT_DIALOG_DATA);
 
-  modal = inject(NgbActiveModal);
+  modal = inject(MatDialogRef<SupportMaintenanceModalComponent>);
   private _productUseCase = inject(ProductUseCase);
 
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
@@ -137,16 +131,16 @@ export class SupportMaintenanceModalComponent {
     cancel: any,
     editorParams: any,
   ) => {
-    let column: any = cell.getColumn().getField();
-    let data: any = cell.getData();
-    // let oldValue = cell.getOldValue();
-    // let value = cell.getValue();
+    const column: any = cell.getColumn().getField();
+    const data: any = cell.getData();
+    // const oldValue = cell.getOldValue();
+    // const value = cell.getValue();
 
-    let editor: any = document.createElement('select');
+    const editor: any = document.createElement('select');
 
     if (column === 'medidaId') {
-      for (let m of data.medidas) {
-        let opt = document.createElement('option');
+      for (const m of data.medidas) {
+        const opt = document.createElement('option');
         opt.value = m.idMedida.toString();
         opt.innerHTML = m.descripcion;
         editor.appendChild(opt);
@@ -154,8 +148,8 @@ export class SupportMaintenanceModalComponent {
     }
 
     if (column === 'taxId') {
-      for (let i of editorParams) {
-        let opt = document.createElement('option');
+      for (const i of editorParams) {
+        const opt = document.createElement('option');
         opt.value = i.idImpuesto;
         opt.innerHTML = i.descripcion;
         editor.appendChild(opt);
@@ -163,12 +157,12 @@ export class SupportMaintenanceModalComponent {
     }
 
     if (column === 'taxPercentId') {
-      let taxPercents = editorParams.filter(
+      const taxPercents = editorParams.filter(
         (ti: any) => ti.idImpuesto === Number(data.taxId),
       );
 
-      for (let ti of taxPercents) {
-        let opt = document.createElement('option');
+      for (const ti of taxPercents) {
+        const opt = document.createElement('option');
         opt.value = ti.idTarifaImpuesto;
         opt.innerHTML = ti.descripcion;
         editor.appendChild(opt);
@@ -176,8 +170,8 @@ export class SupportMaintenanceModalComponent {
     }
 
     if (column === 'feeId') {
-      for (let t of data.tarifas) {
-        let opt = document.createElement('option');
+      for (const t of data.tarifas) {
+        const opt = document.createElement('option');
         opt.value = t.idTarifa.toString();
         opt.innerHTML = t.descripcion + ' - $' + t.precioConIva;
         editor.appendChild(opt);
@@ -185,8 +179,8 @@ export class SupportMaintenanceModalComponent {
     }
 
     if (column === 'bodegaId') {
-      for (let b of this.bodegas) {
-        let opt = document.createElement('option');
+      for (const b of this.bodegas) {
+        const opt = document.createElement('option');
         opt.value = b.idBodega.toString();
         opt.innerHTML = b.descripcion;
         editor.appendChild(opt);
@@ -226,7 +220,7 @@ export class SupportMaintenanceModalComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          let index = this.details.findIndex((r) => r.rowguid === data.rowguid);
+          const index = this.details.findIndex((r) => r.rowguid === data.rowguid);
           this.details.splice(index, 1);
 
           if (data.id > 0) {
@@ -254,20 +248,18 @@ export class SupportMaintenanceModalComponent {
     {
       title: 'Op.',
       formatter: (cell: any) => {
-        //let cellEl = cell.getElement();
-        let rowDataMain = cell.getRow().getData();
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           this.askToDelete(rowData);
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
 
         return buttonHolder;
@@ -297,7 +289,7 @@ export class SupportMaintenanceModalComponent {
       //   return cell.getValue().toUpperCase();
       // },
       editable: function (cell: any) {
-        let data = cell.getRow().getData();
+        const data = cell.getRow().getData();
         return !data.llevaInventario;
       },
     },
@@ -332,8 +324,8 @@ export class SupportMaintenanceModalComponent {
       headerHozAlign: 'center',
       editor: this.comboEditor,
       formatter: function (cell: any) {
-        let data = cell.getData();
-        for (let m of data.medidas) {
+        const data = cell.getData();
+        for (const m of data.medidas) {
           if (m.idMedida == cell.getValue()) {
             return m.descripcion;
           }
@@ -372,7 +364,7 @@ export class SupportMaintenanceModalComponent {
       editor: this.comboEditor,
       editorParams: () => this.taxPercents,
       formatter: function (cell: any, formatterParams: any) {
-        for (let ti of formatterParams) {
+        for (const ti of formatterParams) {
           if (ti.idTarifaImpuesto == cell.getValue()) {
             return ti.descripcion;
           }
@@ -389,8 +381,8 @@ export class SupportMaintenanceModalComponent {
       width: '8px',
       editor: this.comboEditor,
       formatter: function (cell: any) {
-        let data = cell.getData();
-        for (let t of data.tarifas) {
+        const data = cell.getData();
+        for (const t of data.tarifas) {
           if (t.idTarifa == cell.getValue()) {
             return t.descripcion;
           }
@@ -498,7 +490,7 @@ export class SupportMaintenanceModalComponent {
       editor: this.comboEditor,
       editorParams: () => this.bodegas,
       formatter: function (cell: any, formatterParams: any) {
-        for (let ti of formatterParams) {
+        for (const ti of formatterParams) {
           if (ti.idBodega == cell.getValue()) {
             return ti.descripcion;
           }
@@ -528,18 +520,18 @@ export class SupportMaintenanceModalComponent {
       this.decimal = response.decimal;
 
       this.details = response.details;
-      let dataEstab = this.estabs.find(
+      const dataEstab = this.estabs.find(
         (e) => e.idEstablecimiento === this.data.establecimientoId,
       );
       if (dataEstab) {
         this.bodegas = dataEstab.bodegas;
-        let dataBodega = this.bodegas.find((b) => b.defaultBodega);
+        const dataBodega = this.bodegas.find((b) => b.defaultBodega);
         if (dataBodega) {
           this.data.bodegaId = dataBodega.idBodega;
         }
       }
 
-      let dataTarifa = this.feeds.find((t) => t.predeterminada);
+      const dataTarifa = this.feeds.find((t) => t.predeterminada);
       if (dataTarifa) {
         this.data.feeId = dataTarifa.idTarifa;
         this.cloneData.feeId = dataTarifa.idTarifa;
@@ -549,25 +541,55 @@ export class SupportMaintenanceModalComponent {
     });
   }
 
+  showVehicleInfo(): void {
+    Swal.fire({
+      title: 'Información del Vehículo',
+      html: `
+        <p><strong>Marca:</strong> ${this.vehicle.brand}</p>
+        <p><strong>Modelo:</strong> ${this.vehicle.model}</p>
+        <p><strong>Año de Fabricación:</strong> ${this.vehicle.year}</p>
+        <p><strong>Color:</strong> ${this.vehicle.color}</p>
+        <p><strong>Motor:</strong> ${this.vehicle.engine}</p>
+        <p><strong>Chasis:</strong> ${this.vehicle.chassis}</p>
+        <p><strong>Cilindraje:</strong> ${this.vehicle.cylindraje}</p>
+      `,
+      icon: 'info',
+      confirmButtonText: 'Cerrar'
+    });
+  }
+
+  showClientInfo(): void {
+    Swal.fire({
+      title: 'Información del Cliente',
+      html: `
+        <p><strong>RUC/Cédula:</strong> ${this.data.idCard}</p>
+        <p><strong>Dirección:</strong> ${this.data.address}</p>
+        <p><strong>Correo:</strong> ${this.data.email}</p>
+      `,
+      icon: 'info',
+      confirmButtonText: 'Cerrar'
+    });
+  }
+
   getDataRowEmpty() {
-    let detailsEmpty = new SupportMaintenanceDetail();
+    const detailsEmpty = new SupportMaintenanceDetail();
     return detailsEmpty;
   }
 
   onResultSelectedProduct(response: any) {
-    let tempDetails = structuredClone(this.details);
+    const tempDetails = structuredClone(this.details);
 
-    let product = response.product as ProductSale;
-    let medidas = response.medidas as MedidaProducto[];
-    let consolidacionesFecha =
+    const product = response.product as ProductSale;
+    const medidas = response.medidas as MedidaProducto[];
+    const consolidacionesFecha =
       response.consolidacionesFecha as ConsolidacionBodega[];
 
     let row = this.getDataRowEmpty();
-    let dataTaxPercent = this.taxPercents.find(
+    const dataTaxPercent = this.taxPercents.find(
       (d) => d.codigo === product.codigoPorcentaje,
     );
 
-    let findDataProduct = tempDetails.find(
+    const findDataProduct = tempDetails.find(
       (item) => item.llevaInventario && item.productId === product.idArticulo,
     );
 
@@ -583,7 +605,7 @@ export class SupportMaintenanceModalComponent {
       row.taxId = dataTaxPercent.idImpuesto;
     }
 
-    let dataMedida = medidas.find((m) => m.defaultMedida);
+    const dataMedida = medidas.find((m) => m.defaultMedida);
 
     if (dataMedida) {
       row.medidas = medidas;
@@ -594,7 +616,7 @@ export class SupportMaintenanceModalComponent {
       row.costoFraccionado = dataMedida.precioCostoFraccionado;
       row.conversion = dataMedida.conversion;
 
-      let dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
+      const dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
 
       row.feeId = dataTarifa?.idTarifa ?? 0;
       row.price = dataTarifa?.precioVenta ?? 0;
@@ -612,7 +634,7 @@ export class SupportMaintenanceModalComponent {
     //Producto que lleva inventario
     if (product.llevaInventario) {
       let oldValue = 1;
-      let productsDuplicated = structuredClone(tempDetails).filter(
+      const productsDuplicated = structuredClone(tempDetails).filter(
         (item) => item.llevaInventario && item.productId === product.idArticulo,
       );
 
@@ -630,12 +652,12 @@ export class SupportMaintenanceModalComponent {
         this.details = tempDetails;
       }
 
-      let dataProductMerge = mergeProductStock({
+      const dataProductMerge = mergeProductStock({
         rows: structuredClone(productsDuplicated),
         row: structuredClone(row),
       });
 
-      let cantidadStock = getCantidadStock({
+      const cantidadStock = getCantidadStock({
         fechaEmision: this.data.fechaEmision,
         bodegaId: this.data.bodegaId,
         cantidadStock: dataProductMerge.cantidadStock,
@@ -651,14 +673,14 @@ export class SupportMaintenanceModalComponent {
         .subscribe({
           next: async (response) => {
             if (isApiResponse(response)) {
-              let { code, message, titleSms } = response;
+              const { code, message, titleSms } = response;
 
               if (code === '1') {
                 this.setCalculoTotales('quantity', row, oldValue);
                 return;
               }
 
-              let { isConfirmed } = await Swal.fire({
+              const { isConfirmed } = await Swal.fire({
                 title: `<small>${titleSms}</small>`,
                 icon: 'warning',
                 html: `<small>${message}</small>`,
@@ -725,14 +747,14 @@ export class SupportMaintenanceModalComponent {
   }
 
   setIdBodegaInDetalle() {
-    for (let item of this.details) {
+    for (const item of this.details) {
       item.bodegaId = this.data.bodegaId;
     }
   }
 
   resetCantidadToZeroAndRecalculateTotals() {
     try {
-      for (let row of this.details) {
+      for (const row of this.details) {
         if (!row.llevaInventario) continue;
 
         row.quantity = 0;
@@ -796,7 +818,7 @@ export class SupportMaintenanceModalComponent {
     data: SupportMaintenanceDetail,
     oldValue?: string | number,
   ) {
-    let obj = this.salesDetailCalculationSvc.calculateColDef({
+    const obj = this.salesDetailCalculationSvc.calculateColDef({
       data: data,
       column,
       oldValue,
@@ -805,7 +827,7 @@ export class SupportMaintenanceModalComponent {
       columnDefs: this.columns,
     });
 
-    let row = this.tabulatorComponent.refTabulator
+    const row = this.tabulatorComponent.refTabulator
       .getRows()
       .find(function (row) {
         return row.getData()['rowguid'] === data.rowguid;
@@ -823,16 +845,14 @@ export class SupportMaintenanceModalComponent {
 
   drawImpuestoTotales() {
     try {
-      let {
+      const {
         subTotalSinImpuesto,
         htmlImpuestoTotal,
         htmlIvaTotal,
-        irbpnr,
-        totalIce,
+
         importeTotal,
         discount,
         percentageDiscount,
-        propina,
       } = this.salesDetailCalculationSvc.getTaxTotals({
         items: this.details,
         decimal: this.decimal,
@@ -852,22 +872,22 @@ export class SupportMaintenanceModalComponent {
   }
 
   cellEdited(cell: any) {
-    let row = cell.getRow();
-    let column: ColSupportMaintenanceDetail = cell.getColumn().getField();
-    let oldValue = parseFloat(cell.getOldValue());
-    let value = parseFloat(cell.getValue());
+    const row = cell.getRow();
+    const column: ColSupportMaintenanceDetail = cell.getColumn().getField();
+    const oldValue = parseFloat(cell.getOldValue());
+    const value = parseFloat(cell.getValue());
 
-    let data = cell.getData();
+    const data = cell.getData();
 
-    let quantity = parseFloat(data.quantity);
-    let medidaId = parseInt(data.medidaId);
+    const quantity = parseFloat(data.quantity);
+    const medidaId = parseInt(data.medidaId);
     let taxId = parseInt(data.taxId);
-    let taxPercentId = parseInt(data.taxPercentId);
-    let feeId = parseInt(data.feeId);
-    let price = parseFloat(data.price);
-    let precioConIva = parseFloat(data.precioConIva);
-    let percentageDiscount = parseFloat(data.percentageDiscount);
-    let discount = parseFloat(data.discount);
+    const taxPercentId = parseInt(data.taxPercentId);
+    const feeId = parseInt(data.feeId);
+    const price = parseFloat(data.price);
+    const precioConIva = parseFloat(data.precioConIva);
+    const percentageDiscount = parseFloat(data.percentageDiscount);
+    const discount = parseFloat(data.discount);
 
     if (column === 'descripcion' || column === 'obs') return;
 
@@ -889,7 +909,7 @@ export class SupportMaintenanceModalComponent {
       if (!this.taxPercents.some((t) => t.idImpuesto === Number(value))) {
         taxId = oldValue;
       } else {
-        let cellInOtherColumn = row.getCell('taxPercentId');
+        const cellInOtherColumn = row.getCell('taxPercentId');
         // Establecer el foco en la celda
         cellInOtherColumn.edit();
         cellInOtherColumn.getElement().focus();
@@ -904,7 +924,7 @@ export class SupportMaintenanceModalComponent {
       }
     }
 
-    let cloneData = {
+    const cloneData = {
       ...data,
       quantity,
       medidaId,
@@ -960,7 +980,7 @@ export class SupportMaintenanceModalComponent {
     try {
       if (!this.isValidForm()) return;
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         text: '¿Estás seguro de que deseas guardar este documento?',
         icon: 'warning',
         showCancelButton: true,
@@ -972,12 +992,12 @@ export class SupportMaintenanceModalComponent {
 
       if (!isConfirmed) return;
 
-      let obj = {
+      const obj = {
         data: structuredClone(this.data),
         details: this.details,
         detailsDeleted: this.detailsDeleted,
       };
-      let params = SupportMaintenanceAdapter.to(obj);
+      const params = SupportMaintenanceAdapter.to(obj);
 
       this.supportDetailUseCase.post(params).subscribe((response) => {
         if (isApiResponse(response)) {

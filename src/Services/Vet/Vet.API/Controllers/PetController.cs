@@ -21,7 +21,7 @@ public class PetController(IPetService petService) : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Pet pet)
     {
-        pet.UserId = User.GetUserId();
+        pet.CreatedByUserId = User.GetUserId();
         return Ok(await petService.AddAsync(pet));
     }
 
@@ -30,7 +30,7 @@ public class PetController(IPetService petService) : BaseApiController
     {
         if (id != pet.Id) return BadRequest();
 
-        pet.UserId = User.GetUserId();
+        pet.UpdatedByUserId = User.GetUserId();
         return Ok(await petService.UpdateAsync(id, pet));
     }
 

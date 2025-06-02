@@ -4,7 +4,7 @@ using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
-namespace BarberShop.API.Extensions;
+namespace BarberShop.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -36,7 +36,8 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "BarberShop.API.Endpoints.Implementations",
+            "BarberShop.Api.Endpoints.Implementations",
+            "BarberShop.Application.Seats.Services",
             "BarberShop.Application.Services"
         ];
         services.Scan(scan => scan
@@ -49,9 +50,8 @@ public static class ApplicationServicesExtensions
 
         string[] trascientNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
-            "Common.Infrastructure.Repositories",
-            "BarberShop.Infrastructure.Data.Repositories.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
+            "BarberShop.Infrastructure.Persistence.Repositories",
             "Common.Services.Extensions"
         ];
         services.Scan(scan => scan

@@ -33,7 +33,6 @@ import {
 } from '@modules/technical-support/models/order-maintenance.model';
 import { OrderMaintenanceService } from '@modules/technical-support/services/order-maintenance.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { Impuesto } from '@shared/models/impuesto.model';
@@ -42,15 +41,16 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatButton} from "@angular/material/button";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-order-maintenance-modal',
   imports: [
     CommonModule,
     FormsModule,
-    NgbAccordionModule,
     DrawTaxTotalComponent,
     ReactiveFormsModule,
     TabulatorComponent,
@@ -59,20 +59,21 @@ import {MatButton} from "@angular/material/button";
     MatIcon,
     ThemeButtonComponent,
     MatButton,
+    MatCustomDialogComponent,
   ],
   templateUrl: './order-maintenance-modal.component.html',
 })
 export class OrderMaintenanceModalComponent implements OnInit {
-  params = {
-    id: 0,
-  };
+  params = inject<{
+    id: 0;
+  }>(MAT_DIALOG_DATA);
 
   factura = DOC_TYPE.FV;
   notaEntrega = DOC_TYPE.NE;
 
   codDoc: DOC_TYPE | undefined = undefined;
 
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<OrderMaintenanceModalComponent>);
   private orderSvc = inject(OrderService);
   private tS = inject(ToasterService);
 
@@ -105,8 +106,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
   checkboxDetailCustom = false;
   detailCustom = false;
 
-  establecimientos: Array<GroupedEstab> = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
+  establecimientos: GroupedEstab[] = [];
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
   order = {
     establecimientoId: 0,
     puntoEmisionId: 0,
@@ -151,18 +152,18 @@ export class OrderMaintenanceModalComponent implements OnInit {
     onRendered: any,
     success: any,
     cancel: any,
-    editorParams: any,
+    editorParams: any
   ) => {
-    let column: ColOrderMaintenance = cell.getColumn().getField();
-    let data: OrderMaintenance = cell.getData();
+    const column: ColOrderMaintenance = cell.getColumn().getField();
+    const data: OrderMaintenance = cell.getData();
     // let oldValue = cell.getOldValue();
     // let value = cell.getValue();
 
-    let editor: any = document.createElement('select');
+    const editor: any = document.createElement('select');
 
     if (column === 'medidaId') {
-      for (let m of data.medidas) {
-        let opt = document.createElement('option');
+      for (const m of data.medidas) {
+        const opt = document.createElement('option');
         opt.value = m.idMedida.toString();
         opt.innerHTML = m.descripcion;
         editor.appendChild(opt);
@@ -170,8 +171,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'taxId') {
-      for (let i of editorParams) {
-        let opt = document.createElement('option');
+      for (const i of editorParams) {
+        const opt = document.createElement('option');
         opt.value = i.idImpuesto;
         opt.innerHTML = i.descripcion;
         editor.appendChild(opt);
@@ -179,12 +180,12 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'taxPercentId') {
-      let taxPercents = editorParams.filter(
-        (ti: any) => ti.idImpuesto === Number(data.taxId),
+      const taxPercents = editorParams.filter(
+        (ti: any) => ti.idImpuesto === Number(data.taxId)
       );
 
-      for (let ti of taxPercents) {
-        let opt = document.createElement('option');
+      for (const ti of taxPercents) {
+        const opt = document.createElement('option');
         opt.value = ti.idTarifaImpuesto;
         opt.innerHTML = ti.descripcion;
         editor.appendChild(opt);
@@ -192,8 +193,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'feeId') {
-      for (let t of data.tarifas) {
-        let opt = document.createElement('option');
+      for (const t of data.tarifas) {
+        const opt = document.createElement('option');
         opt.value = t.idTarifa.toString();
         opt.innerHTML = t.descripcion + ' - $' + t.precioConIva;
         editor.appendChild(opt);
@@ -201,8 +202,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'bodegaId') {
-      for (let b of this.bodegas) {
-        let opt = document.createElement('option');
+      for (const b of this.bodegas) {
+        const opt = document.createElement('option');
         opt.value = b.idBodega.toString();
         opt.innerHTML = b.descripcion;
         editor.appendChild(opt);
@@ -240,7 +241,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       title: 'Op.',
       formatter: (cell: any) => {
         //let cellEl = cell.getElement();
-        let rowDataMain = cell.getRow().getData();
+        const rowDataMain = cell.getRow().getData();
 
         //create edit button
         // let editBtn = document.createElement('button');
@@ -253,27 +254,27 @@ export class OrderMaintenanceModalComponent implements OnInit {
         // });
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           console.log(rowData);
           this.askToDelete(rowData);
         });
 
         //create kardex button
-        let kardexBtn = document.createElement('button');
+        const kardexBtn = document.createElement('button');
         kardexBtn.type = 'button';
         kardexBtn.innerHTML = `$<i class="material-icons" style="cursor:pointer;">menu</i>`;
         kardexBtn.classList.add('btn', 'btn-info', 'btn-xs');
         kardexBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           this.openModalProductKardex(rowData);
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
         // buttonHolder.appendChild(editBtn);
 
@@ -305,7 +306,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerHozAlign: 'center',
       width: '20px',
       editable: function (cell: any) {
-        let data = cell.getRow().getData();
+        const data = cell.getRow().getData();
         return !data.llevaInventario;
       },
     },
@@ -340,8 +341,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerHozAlign: 'center',
       editor: this.comboEditor,
       formatter: function (cell: any) {
-        let data = cell.getData();
-        for (let m of data.medidas) {
+        const data = cell.getData();
+        for (const m of data.medidas) {
           if (m.idMedida == cell.getValue()) {
             return m.descripcion;
           }
@@ -362,7 +363,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
       editorParams: () => this.taxes,
       formatter: function (cell: any, formatterParams: any) {
-        for (var i = 0; i < formatterParams.length; i++) {
+        for (let i = 0; i < formatterParams.length; i++) {
           if (formatterParams[i].idImpuesto == cell.getValue()) {
             return formatterParams[i].descripcion;
           }
@@ -381,7 +382,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: this.comboEditor,
       editorParams: () => this.taxPercents,
       formatter: function (cell: any, formatterParams: any) {
-        for (let ti of formatterParams) {
+        for (const ti of formatterParams) {
           if (ti.idTarifaImpuesto == cell.getValue()) {
             return ti.descripcion;
           }
@@ -399,8 +400,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       width: '8px',
       editor: this.comboEditor,
       formatter: function (cell: any) {
-        let data = cell.getData();
-        for (let t of data.tarifas) {
+        const data = cell.getData();
+        for (const t of data.tarifas) {
           if (t.idTarifa == cell.getValue()) {
             return t.descripcion;
           }
@@ -511,7 +512,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: this.comboEditor,
       editorParams: () => this.bodegas,
       formatter: function (cell: any, formatterParams: any) {
-        for (let ti of formatterParams) {
+        for (const ti of formatterParams) {
           if (ti.idBodega == cell.getValue()) {
             return ti.descripcion;
           }
@@ -541,8 +542,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     groupBy: 'orderDetailId',
     groupValues: [[]] as any,
     groupHeader: (value: any, count: any) => {
-      let dataOrderDetail = this.orderDetails.find(
-        (od) => od.orderDetailId === value,
+      const dataOrderDetail = this.orderDetails.find(
+        (od) => od.orderDetailId === value
       );
 
       if (dataOrderDetail) {
@@ -564,8 +565,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
         this.order = response.order;
         this.orderDetails = response.orderDetails;
         this.orderMaintenances = response.orderMaintenances.map((d: any) => {
-          let od = this.orderDetails.find(
-            (od) => od.orderDetailId === d.orderDetailId,
+          const od = this.orderDetails.find(
+            (od) => od.orderDetailId === d.orderDetailId
           );
           return {
             ...d,
@@ -578,13 +579,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
         this.taxPercents = response.taxPercents;
         this.decimal = response.decimal;
 
-        let dataEstab = this.establecimientos.find(
-          (e) => e.idEstablecimiento === this.order.establecimientoId,
+        const dataEstab = this.establecimientos.find(
+          (e) => e.idEstablecimiento === this.order.establecimientoId
         );
         if (dataEstab) {
           this.puntosEmision = dataEstab.puntosEmision;
           this.bodegas = dataEstab.bodegas;
-          let dataBodega = this.bodegas.find((b) => b.defaultBodega);
+          const dataBodega = this.bodegas.find((b) => b.defaultBodega);
           if (dataBodega) {
             this.order.bodegaId = dataBodega.idBodega;
             this.cloneOrder.bodegaId = this.order.bodegaId;
@@ -592,13 +593,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
           this.cloneOrder.establecimientoId = this.order.establecimientoId;
         }
 
-        let dataTarifa = this.feeds.find((t) => t.predeterminada);
+        const dataTarifa = this.feeds.find((t) => t.predeterminada);
         if (dataTarifa) {
           this.order.feeId = dataTarifa.idTarifa;
           this.cloneOrder.feeId = dataTarifa.idTarifa;
         }
 
-        let dataOrderDetail = this.orderDetails[0];
+        const dataOrderDetail = this.orderDetails[0];
 
         this.order.orderDetailId = dataOrderDetail?.orderDetailId;
         this.order.deviceWarranty = dataOrderDetail?.deviceWarranty;
@@ -618,7 +619,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   setGroupValues() {
     // Obtener valores únicos para "orderDetailId"
     const uniqueOrderDetailIds = Array.from(
-      new Set(this.orderDetails.map((item: any) => item.orderDetailId)),
+      new Set(this.orderDetails.map((item: any) => item.orderDetailId))
     );
 
     // Crear groupValues con valores únicos de "orderDetailId"
@@ -633,19 +634,19 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   onChangeOrderDetail() {
     this.order.obs = this.orderDetails.find(
-      (x) => x.orderDetailId == this.order.orderDetailId,
+      (x) => x.orderDetailId == this.order.orderDetailId
     ).obs;
   }
 
   setIdBodegaInDetalle() {
-    for (let item of this.orderMaintenances) {
+    for (const item of this.orderMaintenances) {
       item.bodegaId = this.order.bodegaId;
     }
   }
 
   resetCantidadToZeroAndRecalculateTotals() {
     try {
-      for (let row of this.orderMaintenances) {
+      for (const row of this.orderMaintenances) {
         if (!row.llevaInventario) continue;
 
         row.quantity = 0;
@@ -659,7 +660,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   async onChangeEstablecimiento() {
     try {
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: '<small>Cambiar Establecimiento?</small>',
         html: '<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>',
         icon: 'warning',
@@ -676,8 +677,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return;
       }
 
-      let dataEstab = this.establecimientos.find(
-        (item) => item.idEstablecimiento === this.order.establecimientoId,
+      const dataEstab = this.establecimientos.find(
+        (item) => item.idEstablecimiento === this.order.establecimientoId
       );
       if (!dataEstab) return;
 
@@ -702,13 +703,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return;
       }
 
-      let dataPtoEmi = this.puntosEmision.find((item) => item.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision.find((item) => item.defaultPtoEmi);
       if (dataPtoEmi) {
         this.order.puntoEmisionId = dataPtoEmi.idPuntoEmision;
       }
 
       //Bodegas
-      let dataBodega = this.bodegas.find((item) => item.defaultBodega);
+      const dataBodega = this.bodegas.find((item) => item.defaultBodega);
       if (dataBodega) {
         this.order.bodegaId = dataBodega.idBodega;
       }
@@ -724,8 +725,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   async onChangeBodega() {
     try {
-      let bodega = this.bodegas.find(
-        (item) => item.idBodega === this.order.bodegaId,
+      const bodega = this.bodegas.find(
+        (item) => item.idBodega === this.order.bodegaId
       );
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -735,7 +736,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         buttonsStyling: false,
       });
 
-      let { isConfirmed } = await swalWithBootstrapButtons.fire({
+      const { isConfirmed } = await swalWithBootstrapButtons.fire({
         title: '<small>Cambiar Bodega</small>',
         html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega?.descripcion}</b>  en el detalle del Documento?</small>`,
         icon: 'warning',
@@ -817,10 +818,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
       //   return
       // }
 
-      let tarifa = this.feeds.find(
-        (item) => item.idTarifa === this.order.feeId,
+      const tarifa = this.feeds.find(
+        (item) => item.idTarifa === this.order.feeId
       );
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
         icon: 'warning',
         showCancelButton: true,
@@ -864,8 +865,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          let index = this.orderMaintenances.findIndex(
-            (r) => r.rowguid === data.rowguid,
+          const index = this.orderMaintenances.findIndex(
+            (r) => r.rowguid === data.rowguid
           );
           this.orderMaintenances.splice(index, 1);
 
@@ -896,7 +897,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
   getDataRowEmpty() {
-    let dataOrderMaintenance: OrderMaintenance = {
+    const dataOrderMaintenance: OrderMaintenance = {
       id: 0,
       rowguid: generateUuidv4(),
       bodegaId: 0,
@@ -935,11 +936,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
   checkNotificationStock(
     rows: OrderMaintenance[],
     row: OrderMaintenance,
-    oldValue: number,
+    oldValue: number
   ) {
     try {
       // Realiza la fusión de elementos en la lista de artículos clonada.
-      let dataProductMerge = mergeProductStock({
+      const dataProductMerge = mergeProductStock({
         rows: rows,
         row,
       });
@@ -954,17 +955,17 @@ export class OrderMaintenanceModalComponent implements OnInit {
   onProductSelected($event: any) {
     const { product, medidas, consolidacionesFecha } = $event;
 
-    let taxPercents = this.taxPercents;
+    const taxPercents = this.taxPercents;
     let row = this.getDataRowEmpty();
-    let dataTaxPercent = taxPercents.find(
-      (d) => d.codigo === product.codigoPorcentaje,
+    const dataTaxPercent = taxPercents.find(
+      (d) => d.codigo === product.codigoPorcentaje
     );
-    let dataOrderDetail = this.orderDetails.find(
-      (od) => od.orderDetailId === this.order.orderDetailId,
+    const dataOrderDetail = this.orderDetails.find(
+      (od) => od.orderDetailId === this.order.orderDetailId
     );
 
-    let findDataProduct = this.orderMaintenances.find(
-      (item) => item.llevaInventario && item.productId === product.idArticulo,
+    const findDataProduct = this.orderMaintenances.find(
+      (item) => item.llevaInventario && item.productId === product.idArticulo
     );
 
     row.productId = product.idArticulo;
@@ -979,8 +980,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       row.taxId = dataTaxPercent.idImpuesto;
     }
 
-    let dataMedida = medidas.find(
-      (m: { defaultMedida: any }) => m.defaultMedida,
+    const dataMedida = medidas.find(
+      (m: { defaultMedida: any }) => m.defaultMedida
     );
 
     if (dataMedida) {
@@ -994,7 +995,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       row.deviceName = dataOrderDetail.deviceName;
       row.orderDetailId = dataOrderDetail.orderDetailId;
 
-      let dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
+      const dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
 
       row.feeId = dataTarifa?.idTarifa ?? 0;
       row.price = dataTarifa?.precioVenta ?? 0;
@@ -1017,7 +1018,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
       row.price = pricingCalculateUtil.calculatePriceSale(
         this.importeTotal,
-        dataTaxPercent?.porcentaje ?? 0,
+        dataTaxPercent?.porcentaje ?? 0
       );
       row.precioConIva = this.importeTotal;
       row.taxValue = this.importeTotal - row.price;
@@ -1038,8 +1039,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     //Producto que lleva inventario
     if (product.llevaInventario) {
       let oldValue = 1;
-      let productsDuplicated = structuredClone(this.orderMaintenances).filter(
-        (item) => item.llevaInventario && item.productId === product.idArticulo,
+      const productsDuplicated = structuredClone(this.orderMaintenances).filter(
+        (item) => item.llevaInventario && item.productId === product.idArticulo
       );
 
       productsDuplicated.push({ ...row });
@@ -1056,14 +1057,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
       }
 
       console.log(productsDuplicated);
-      let dataProductMerge = mergeProductStock({
+      const dataProductMerge = mergeProductStock({
         rows: structuredClone(productsDuplicated),
         row: structuredClone(row),
       });
 
       console.log(dataProductMerge);
 
-      let cantidadStock = getCantidadStock({
+      const cantidadStock = getCantidadStock({
         fechaEmision: this.order.fechaEmision,
         bodegaId: this.order.bodegaId,
         cantidadStock: dataProductMerge.cantidadStock,
@@ -1080,7 +1081,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         .subscribe({
           next: async (response) => {
             if (isApiResponse(response)) {
-              let { code, message, titleSms } = response;
+              const { code, message, titleSms } = response;
 
               if (code === '1') {
                 console.log(row);
@@ -1088,7 +1089,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
                 return;
               }
 
-              let { isConfirmed } = await Swal.fire({
+              const { isConfirmed } = await Swal.fire({
                 title: `<small>${titleSms}</small>`,
                 icon: 'warning',
                 html: `<small>${message}</small>`,
@@ -1169,9 +1170,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
   setCalculoTotales(
     column: any,
     data: OrderMaintenance,
-    oldValue?: string | number,
+    oldValue?: string | number
   ) {
-    let obj = this.salesDetailCalculationSvc.calculateColDef({
+    const obj = this.salesDetailCalculationSvc.calculateColDef({
       data: data,
       column,
       oldValue,
@@ -1180,7 +1181,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       columnDefs: this.tabulatorOptions.columns,
     });
 
-    let row = this.tabulatorComponent.refTabulator
+    const row = this.tabulatorComponent.refTabulator
       .getRows()
       .find(function (row) {
         return row.getData()['rowguid'] === data.rowguid;
@@ -1197,21 +1198,21 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
   cellEdited(cell: any) {
-    let row = cell.getRow();
-    let column: ColOrderMaintenance = cell.getColumn().getField();
-    let oldValue = parseFloat(cell.getOldValue());
-    let value = parseFloat(cell.getValue());
+    const row = cell.getRow();
+    const column: ColOrderMaintenance = cell.getColumn().getField();
+    const oldValue = parseFloat(cell.getOldValue());
+    const value = parseFloat(cell.getValue());
 
-    let data = cell.getData();
-    let quantity = parseFloat(data.quantity);
-    let medidaId = parseInt(data.medidaId);
+    const data = cell.getData();
+    const quantity = parseFloat(data.quantity);
+    const medidaId = parseInt(data.medidaId);
     let taxId = parseInt(data.taxId);
-    let taxPercentId = parseInt(data.taxPercentId);
-    let feeId = parseInt(data.feeId);
-    let price = parseFloat(data.price);
-    let precioConIva = parseFloat(data.precioConIva);
-    let percentageDiscount = parseFloat(data.percentageDiscount);
-    let discount = parseFloat(data.discount);
+    const taxPercentId = parseInt(data.taxPercentId);
+    const feeId = parseInt(data.feeId);
+    const price = parseFloat(data.price);
+    const precioConIva = parseFloat(data.precioConIva);
+    const percentageDiscount = parseFloat(data.percentageDiscount);
+    const discount = parseFloat(data.discount);
 
     if (column === 'descripcion' || column === 'obs') return;
 
@@ -1233,7 +1234,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       if (!this.taxPercents.some((t) => t.idImpuesto === Number(value))) {
         taxId = oldValue;
       } else {
-        let cellInOtherColumn = row.getCell('taxPercentId');
+        const cellInOtherColumn = row.getCell('taxPercentId');
         // Establecer el foco en la celda
         cellInOtherColumn.edit();
         cellInOtherColumn.getElement().focus();
@@ -1248,7 +1249,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       }
     }
 
-    let cloneData = {
+    const cloneData = {
       ...data,
       quantity,
       medidaId,
@@ -1265,11 +1266,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
   calculateTotal(cell: any) {
-    let row = cell.getRow().getData();
-    let column = cell.getColumn()._column.field;
+    const row = cell.getRow().getData();
+    const column = cell.getColumn()._column.field;
 
     if (column == 'idTarifa') {
-      let tarifa = row.tarifas.find((x: any) => x.idTarifa == row.idTarifa);
+      const tarifa = row.tarifas.find((x: any) => x.idTarifa == row.idTarifa);
 
       cell.getRow().update({ priceIva: tarifa.precioConIva });
     }
@@ -1278,17 +1279,17 @@ export class OrderMaintenanceModalComponent implements OnInit {
       if (row.quantity >= 0) {
         cell.getRow().update({ quantity: row.quantity });
       } else {
-        let oldQuantity = cell.getOldValue();
+        const oldQuantity = cell.getOldValue();
         cell.getRow().update({ quantity: oldQuantity });
       }
     }
-    let total = row.priceIva * row.quantity;
+    const total = row.priceIva * row.quantity;
     cell.getRow().update({ total: total });
   }
 
   drawImpuestoTotales() {
     try {
-      let {
+      const {
         subTotalSinImpuesto,
         htmlImpuestoTotal,
         htmlIvaTotal,
@@ -1362,7 +1363,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: this.order.fechaEmision,
       fechaEmisionDocCreado: this.order.fechaEmisionDocCreado,
       setHoursZero: true,
@@ -1385,7 +1386,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
     if (
       this.orderMaintenances.some(
-        (row) => row.llevaInventario && row.quantity === 0,
+        (row) => row.llevaInventario && row.quantity === 0
       )
     ) {
       this.tS.toastr({
@@ -1411,8 +1412,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       if (
         !this.orderDetails.every((od) =>
           this.orderMaintenances.some(
-            (item) => item.orderDetailId === od.orderDetailId,
-          ),
+            (item) => item.orderDetailId === od.orderDetailId
+          )
         )
       ) {
         this.tS.toastr({
@@ -1484,7 +1485,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         });
       }
 
-      let obj = {
+      const obj = {
         order: {
           ...this.order,
           codDoc: this.codDoc,
@@ -1492,7 +1493,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         detalles,
         customDetails,
       };
-      let params = orderMaintenanceAdapter.to(obj);
+      const params = orderMaintenanceAdapter.to(obj);
       console.log(params);
 
       this.orderMaintenanceSvc.post(params).subscribe({

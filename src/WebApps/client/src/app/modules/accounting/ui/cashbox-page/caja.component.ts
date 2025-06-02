@@ -1,7 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { getPermisosLocal } from '@core/utils/utils';
@@ -46,8 +45,6 @@ import {DialogService} from "@core/services/dialog.service";
     templateUrl: './caja.component.html'
 })
 export class CajaComponent {
-
-  private modalSvc = inject(ModalService);
   private tS = inject(ToasterService);
   private _cajaUseCase = inject(CajaUseCase)
   private _dialogSvc = inject(DialogService)

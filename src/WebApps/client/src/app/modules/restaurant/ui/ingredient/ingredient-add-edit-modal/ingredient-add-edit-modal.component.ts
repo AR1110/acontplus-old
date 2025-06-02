@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {Component, inject, signal} from '@angular/core';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 
@@ -12,18 +11,30 @@ import {
 import { ToasterService } from '@core/services/toaster.service';
 
 import { IngredientType } from '@restaurant/domain/models/ingredient-type';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { MatInputModule } from "@angular/material/input";
+import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'app-ingredient-add-edit-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    ToUpperCaseDirective,
+
+  ],
   templateUrl: './ingredient-add-edit-modal.component.html',
   styles: ``,
 })
 export class IngredientAddEditModalComponent {
-  data = {} as Ingredient;
+  data = inject<Ingredient>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   ingredientForm = new FormGroup({
     id: new FormControl(0),
@@ -37,10 +48,10 @@ export class IngredientAddEditModalComponent {
     content: new FormControl(''),
     enabled: new FormControl(true),
   });
-  modalTitle: string = 'Registrar Ingrediente';
-  ingredientTypes: IngredientType[] = [];
+  modalTitle = 'Registrar Ingrediente';
+  ingredientTypes = signal<IngredientType[]>([])
   #ingredientService = inject(IngredientService);
-  #modalRef = inject(NgbActiveModal);
+  #modalRef = inject(MatDialogRef<IngredientAddEditModalComponent>);
   #tS = inject(ToasterService);
 
   ngOnInit() {

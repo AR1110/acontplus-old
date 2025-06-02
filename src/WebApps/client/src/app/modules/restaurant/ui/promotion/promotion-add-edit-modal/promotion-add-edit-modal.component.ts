@@ -16,34 +16,42 @@ import { MenuSearchComponent } from '@restaurant/ui/components/menu-search/menu-
 import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { TimeInputFormat24Directive } from '@shared/directives/time-input-format-directive.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatTabsModule} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-promotion-add-edit-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatIcon,
-        InputDateComponent,
-        ToUpperCaseDirective,
-        TimeInputFormat24Directive,
-        MenuSearchComponent,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIcon,
+    InputDateComponent,
+    ToUpperCaseDirective,
+    TimeInputFormat24Directive,
+    MenuSearchComponent,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatTabsModule
+  ],
   templateUrl: './promotion-add-edit-modal.component.html',
   styleUrl: './promotion-add-edit-modal.component.scss',
   styles: ``,
 })
 export class PromotionAddEditModalComponent {
-  params = {} as any;
-  private modalRef = inject(NgbActiveModal);
+  params = inject(MAT_DIALOG_DATA);
+  private modalRef = inject(MatDialogRef<PromotionAddEditModalComponent>);
   private restaurantStore = inject(RestaurantStoreService);
   private tS = inject(ToasterService);
   private promotionSvc = inject(PromotionService);

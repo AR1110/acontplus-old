@@ -1548,6 +1548,8 @@
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
+                          let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos);
+
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: itemPrincipal.idProformaDetalle,
@@ -1580,7 +1582,8 @@
                             estado: 1,
                             datosAdicionalesArticulo: [],
                             precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
-                            fechaEmision: fS.formatDate(itemPrincipal.fechaEmision)
+                            fechaEmision: fS.formatDate(itemPrincipal.fechaEmision),
+                            total
                         }
 
                         return obj;

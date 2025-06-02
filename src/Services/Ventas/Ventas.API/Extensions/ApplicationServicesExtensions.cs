@@ -30,7 +30,7 @@ public static class ApplicationServicesExtensions
 
         string[] nameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Ventas.API.Services"
         ];
 

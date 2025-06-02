@@ -1,7 +1,8 @@
 ﻿using System.IO.Compression;
-using Common.Infrastructure.Data.Repository.Implementations;
 using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Identity.API.Extensions;
 

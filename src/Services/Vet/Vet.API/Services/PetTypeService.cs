@@ -14,9 +14,7 @@ public class PetTypeService(VetContext context) : IPetTypeService
         var petType = await context.PetTypes.FindAsync(id);
         if (petType == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
-        petType.IsDeleted = true;
-        petType.IsActive = false;
-        petType.UserId = userId;
+        petType.MarkAsDeleted(userId);
         context.Update(petType);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -47,7 +45,7 @@ public class PetTypeService(VetContext context) : IPetTypeService
         petTypeFound.Code = petType.Code;
         petTypeFound.Name = petType.Name;
         petTypeFound.Description = petType.Description;
-        petTypeFound.UserId = petType.UserId;
+        petTypeFound.UpdatedByUserId = petType.UpdatedByUserId;
         context.Update(petTypeFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente", Payload = petType };

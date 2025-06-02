@@ -24,9 +24,7 @@ public class TipoService : ITipoService
         var tipo = await _context.Tipos.FindAsync(id);
         if (tipo == null) return new ApiResponse { Code = "0", Message = "Tipo no existe" };
 
-        tipo.IsActive = false;
-        tipo.IsDeleted = true;
-        tipo.UserId = userId;
+        tipo.MarkAsDeleted(userId);
         _context.Update(tipo);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado exitosamente" };
@@ -52,7 +50,7 @@ public class TipoService : ITipoService
         tipoFound.Code = tipo.Code;
         tipoFound.Name = tipo.Name;
         tipo.IsActive = tipo.IsActive;
-        tipoFound.UserId = tipo.UserId;
+        tipoFound.UpdatedByUserId = tipo.UpdatedByUserId;
         _context.Update(tipoFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };

@@ -10,7 +10,7 @@
             (change)="changePageSize()"
           >
             @for (item of recordsQuantity; track $index) {
-              <option [ngValue]="item">{{ item }}</option>
+            <option [ngValue]="item">{{ item }}</option>
             }
           </select>
         </span>
@@ -40,31 +40,16 @@
         </thead>
         <tbody>
           @for (item of categories; track $index) {
-            <tr>
-              <td>{{ $index + 1 }}</td>
-              <td>{{ item.siglas }}</td>
-              <td>{{ item.descripcion }}</td>
-              <td>
-                <div [innerHTML]="item.estado | primaryStatus"></div>
-              </td>
-            </tr>
-          }
-        </tbody>
-        <tfoot>
           <tr>
-            <td align="center" colspan="6">
-              <ngb-pagination
-                [collectionSize]="dataSearch.totalRecords"
-                [(page)]="dataSearch.pageIndex"
-                [maxSize]="dataSearch.maxSize"
-                [pageSize]="dataSearch.pageSize"
-                [rotate]="true"
-                (pageChange)="pageChanged()"
-                [boundaryLinks]="true"
-              />
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.siglas }}</td>
+            <td>{{ item.descripcion }}</td>
+            <td>
+              <div [innerHTML]="item.estado | primaryStatus"></div>
             </td>
           </tr>
-        </tfoot>
+          }
+        </tbody>
       </table>
     </div>
   </mat-card-content>

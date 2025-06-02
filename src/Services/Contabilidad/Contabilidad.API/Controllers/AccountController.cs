@@ -15,14 +15,14 @@ public class AccountController(IAccountService accountService) : BaseApiControll
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Account account)
     {
-        account.UserId = User.GetUserId();
+        account.CreatedByUserId = User.GetUserId();
         return Ok(await accountService.AddAsync(account));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Account account)
     {
-        account.UserId = User.GetUserId();
+        account.UpdatedByUserId = User.GetUserId();
         return Ok(await accountService.UpdateAsync(id, account));
     }
 

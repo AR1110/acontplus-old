@@ -5,16 +5,14 @@ import {
   Output,
   inject,
   input,
-  signal, SimpleChanges,
+  signal,
+  SimpleChanges,
+  OnInit,
+  OnChanges,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import {
-  map,
-  distinctUntilChanged,
-  switchMap,
-  finalize,
-} from 'rxjs/operators';
+import { map, switchMap, finalize } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
@@ -22,34 +20,34 @@ import { ProductSearch } from '@inventory/domain/models/product.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
 
-type ProductSearchProps = {
+interface ProductSearchProps {
   isSimpleMode?: boolean;
   isSearchAdvanced?: boolean;
   nameProduct?: string;
   clearSearch?: boolean;
-};
+}
 
 /**
  * @title Plain input autocomplete
  */
 @Component({
-    selector: 'app-product-search',
-    templateUrl: './product-search.component.html',
-    imports: [
-        FormsModule,
-        MatAutocompleteModule,
-        ReactiveFormsModule,
-        MatTableModule,
-        MatFormFieldModule,
-        MatInputModule,
-        AsyncPipe,
-        MatProgressSpinnerModule,
-    ],
-    styleUrl: './product-search.component.css'
+  selector: 'app-product-search',
+  templateUrl: './product-search.component.html',
+  imports: [
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    AsyncPipe,
+    MatProgressSpinnerModule,
+  ],
+  styleUrl: './product-search.component.css',
 })
-export class ProductSearchComponent {
+export class ProductSearchComponent implements OnInit, OnChanges {
   @Input() props: ProductSearchProps = {
     isSimpleMode: false,
     isSearchAdvanced: false,
@@ -58,16 +56,16 @@ export class ProductSearchComponent {
   };
   @Input() isSimpleMode = true;
   @Input() textSearch = '';
-  isInputMat = input(false)
+  isInputMat = input(false);
 
   @Output() onProductSelected = new EventEmitter<{ data: any }>();
   @Output() emptyInput = new EventEmitter();
 
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
 
   control = new FormControl('');
   filteredProducts!: Observable<any[]>;
-  isLoading = signal(false)
+  isLoading = signal(false);
 
   // products = [
   //   {
@@ -345,7 +343,6 @@ export class ProductSearchComponent {
 
   ngOnInit() {
     this.filteredProducts = this.control.valueChanges.pipe(
-
       switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
@@ -358,17 +355,16 @@ export class ProductSearchComponent {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["textSearch"]) {
-      this.control.setValue(this.textSearch)
+    if (changes['textSearch']) {
+      this.control.setValue(this.textSearch);
     }
-
   }
 
   private _filter(value: string) {
     const filterValue = this._normalizeValue(value);
-    this.isLoading.set(true)
+    this.isLoading.set(true);
     return this._productUseCase.search({ textSearch: value }).pipe(
-      finalize(()=>this.isLoading.set(false)),
+      finalize(() => this.isLoading.set(false)),
       map((response) => {
         return response;
       })

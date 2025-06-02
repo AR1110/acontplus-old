@@ -1,6 +1,8 @@
-import { Directive, HostListener, Input } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
-import { ProductAddEditModalComponent } from '@inventory/ui/product/components/product-add-edit-modal/product-add-edit-modal.component';
+import {Directive, HostListener,   output} from '@angular/core';
+import {DialogService} from "@core/services/dialog.service";
+import {
+  AddEditProductDialogComponent
+} from "@inventory/ui/product/components/add-edit-product-dialog/add-edit-product-dialog.component";
 
 
 
@@ -9,18 +11,18 @@ import { ProductAddEditModalComponent } from '@inventory/ui/product/components/p
   standalone: true
 })
 export class ProductAddEditDirective {
-  @Input() resultModalHandler!: Function;
+    resultModalHandler = output<any>();
   @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.openModalCustom(ProductAddEditModalComponent, {
+    const modalRef = this.modalSvc.open(AddEditProductDialogComponent, {
       size: 'xl',
     });
-    modalRef.result.then((result: unknown) => {
+    modalRef.subscribe((result: unknown) => {
       if (this.resultModalHandler && typeof result === 'object') {
-        this.resultModalHandler(result);
+        this.resultModalHandler.emit(result);
       }
     })
   }
-  constructor(private modalSvc: ModalService) { }
+  constructor(private modalSvc: DialogService) { }
 }
 
 

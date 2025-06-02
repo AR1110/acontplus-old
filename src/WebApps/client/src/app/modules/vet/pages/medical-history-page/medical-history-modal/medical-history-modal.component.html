@@ -1,17 +1,15 @@
-<form (ngSubmit)="onSave()" [formGroup]="medicalHistoryForm">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon>
-      {{ modalTitle }}
-    </h5>
-    <button
-      (click)="onClose()"
-      aria-hidden="true"
-      class="btn-close"
-      type="button"
-    ></button>
-  </div>
-  <div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="modalTitle"
+  (close)="onClose()"
+/>
+<ng-template #body>
+  <form
+    (ngSubmit)="onSave()"
+    id="medicalHistoryForm"
+    [formGroup]="medicalHistoryForm"
+  >
     <div class="row">
       <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
         <div class="form-group">
@@ -23,9 +21,9 @@
             >
               <option value="">Todos</option>
               @for (estab of establecimientos; track $index) {
-                <option [ngValue]="estab.idEstablecimiento">
-                  {{ estab.nombreComercial }}
-                </option>
+              <option [ngValue]="estab.idEstablecimiento">
+                {{ estab.nombreComercial }}
+              </option>
               }
             </select>
             <app-pet-search
@@ -37,91 +35,91 @@
     </div>
 
     @if (petSelected.id > 0) {
-      <mat-card>
-        <mat-card-content>
-          <h5 class="card-title">Datos del Responsable</h5>
-          <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-              <div class="form-group">
-                <label for="customer">Cliente</label>
-                <input
-                  [value]="petSelected.customer"
-                  class="form-control"
-                  disabled
-                  id="customer"
-                  name="customer"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-              <div class="form-group">
-                <label for="customerIdCard">Ruc</label>
-                <input
-                  [value]="petSelected.customerIdCard"
-                  class="form-control"
-                  disabled
-                  id="customerIdCard"
-                  name="customerIdCard"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input
-                  [value]="petSelected.email"
-                  class="form-control"
-                  disabled
-                  id="email"
-                  name="email"
-                  type="text"
-                />
-              </div>
+    <mat-card>
+      <mat-card-content>
+        <h5 class="card-title">Datos del Responsable</h5>
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+              <label for="customer">Cliente</label>
+              <input
+                [value]="petSelected.customer"
+                class="form-control"
+                disabled
+                id="customer"
+                name="customer"
+                type="text"
+              />
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content>
-          <h5 class="card-title">Datos de la mascota</h5>
-          <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-              <div class="form-group">
-                <label>Nombre</label>
-                <h5>{{ petSelected.name }}</h5>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-              <div class="form-group">
-                <label>Tipo</label>
-                <h5>{{ petSelected.petType }}</h5>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-              <div class="form-group">
-                <label>Raza</label>
-                <h5>{{ petSelected.breed }}</h5>
-              </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="customerIdCard">Ruc</label>
+              <input
+                [value]="petSelected.customerIdCard"
+                class="form-control"
+                disabled
+                id="customerIdCard"
+                name="customerIdCard"
+                type="text"
+              />
             </div>
           </div>
-          <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-              <div class="form-group">
-                <label>Sexo</label>
-                <h5>{{ petSelected.gender }}</h5>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-              <div class="form-group">
-                <label>Color</label>
-                <h5>{{ petSelected.color }}</h5>
-              </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                [value]="petSelected.email"
+                class="form-control"
+                disabled
+                id="email"
+                name="email"
+                type="text"
+              />
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-content>
+        <h5 class="card-title">Datos de la mascota</h5>
+        <div class="row">
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+            <div class="form-group">
+              <label>Nombre</label>
+              <h5>{{ petSelected.name }}</h5>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label>Tipo</label>
+              <h5>{{ petSelected.petType }}</h5>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label>Raza</label>
+              <h5>{{ petSelected.breed }}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label>Sexo</label>
+              <h5>{{ petSelected.gender }}</h5>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+            <div class="form-group">
+              <label>Color</label>
+              <h5>{{ petSelected.color }}</h5>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
     }
 
     <div class="row">
@@ -142,25 +140,25 @@
           <tr>
             <th>Test de Salud</th>
             @for (item of diseasesStatuses; track $index) {
-              <th>{{ item.name }}</th>
+            <th>{{ item.name }}</th>
             }
           </tr>
         </thead>
         <tbody>
           @for (d of diseases; track $index) {
-            <tr>
-              <td>{{ d.name }}</td>
-              @for (ds of diseasesStatuses; track $index) {
-                <td>
-                  <input
-                    (change)="addDiseaseStatus(d.id, ds.id, true)"
-                    [id]="d.id + '-' + ds.id + '-chkdds'"
-                    [name]="d.id + '-chkdds'"
-                    type="radio"
-                  />
-                </td>
-              }
-            </tr>
+          <tr>
+            <td>{{ d.name }}</td>
+            @for (ds of diseasesStatuses; track $index) {
+            <td>
+              <input
+                (change)="addDiseaseStatus(d.id, ds.id, true)"
+                [id]="d.id + '-' + ds.id + '-chkdds'"
+                [name]="d.id + '-chkdds'"
+                type="radio"
+              />
+            </td>
+            }
+          </tr>
           }
         </tbody>
       </table>
@@ -172,25 +170,25 @@
           <tr>
             <th>Test de Comportamiento:</th>
             @for (item of behaviorsStatuses; track $index) {
-              <th>{{ item.name }}</th>
+            <th>{{ item.name }}</th>
             }
           </tr>
         </thead>
         <tbody>
           @for (b of behaviors; track $index) {
-            <tr>
-              <td>{{ b.name }}</td>
-              @for (bs of behaviorsStatuses; track $index) {
-                <td>
-                  <input
-                    (change)="addBehaviorStatus(b.id, bs.id, true)"
-                    [id]="b.id + '-' + bs.id + '-chkbbs'"
-                    [name]="b.id + '-chkbbs'"
-                    type="radio"
-                  />
-                </td>
-              }
-            </tr>
+          <tr>
+            <td>{{ b.name }}</td>
+            @for (bs of behaviorsStatuses; track $index) {
+            <td>
+              <input
+                (change)="addBehaviorStatus(b.id, bs.id, true)"
+                [id]="b.id + '-' + bs.id + '-chkbbs'"
+                [name]="b.id + '-chkbbs'"
+                type="radio"
+              />
+            </td>
+            }
+          </tr>
           }
         </tbody>
       </table>
@@ -237,22 +235,16 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      [disabled]="medicalHistoryForm.invalid"
-      mat-raised-button
-      type="submit"
-    >
-      <mat-icon>save</mat-icon>
-      Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      text="Cancelar"
-      icon="close"
-      (handleClick)="onClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [disabled]="medicalHistoryForm.invalid"
+    variant="success"
+    icon="save"
+    text="Guardar"
+    type="submit"
+    form="medicalHistoryForm"
+  >
+  </app-theme-button>
+</ng-template>

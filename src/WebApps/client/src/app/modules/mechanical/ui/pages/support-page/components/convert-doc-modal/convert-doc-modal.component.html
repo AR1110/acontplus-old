@@ -1,13 +1,11 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Convertir a un documento:</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="modal.dismiss('Cross click')"
-  ></button>
-</div>
-<div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  title="Convertir a un documento"
+  (close)="close()"
+/>
+
+<ng-template #body>
   <div class="d-flex flex-column bd-highlight mb-3">
     <div class="p-2 bd-highlight">
       Ruc/Cédula: {{ companyCustomer.identificacionComprador }}
@@ -32,8 +30,8 @@
       </app-tabulator>
     </div>
   </div>
-</div>
-<div class="modal-footer">
+</ng-template>
+<ng-template #footer>
   <app-theme-button
     variant="success"
     icon="save"
@@ -46,10 +44,4 @@
     text="Nota de Entrega"
     (handleClick)="saveNotaEntrega()"
   ></app-theme-button>
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="modal.close()"
-  ></app-theme-button>
-</div>
+</ng-template>

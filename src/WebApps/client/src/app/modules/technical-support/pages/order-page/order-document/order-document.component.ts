@@ -1,24 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component,  OnInit, inject } from '@angular/core';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { FormsModule } from '@angular/forms';
-import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-order-document',
   templateUrl: './order-document.component.html',
   styles: ``,
-    imports: [CommonModule, TabulatorComponent, FormsModule, MatIcon, ThemeButtonComponent],
+  imports: [CommonModule, TabulatorComponent, FormsModule,   MatCustomDialogComponent],
 })
 export class OrderDocumentComponent implements OnInit {
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<OrderDocumentComponent>);
   private orderService = inject(OrderService);
   documento: any = {};
   documentDetails: any = [];
-  @Input() data: any = {};
+  data = inject(MAT_DIALOG_DATA);
 
   columns = [
     { title: 'Descripción', field: 'descripcion', width: 300 },

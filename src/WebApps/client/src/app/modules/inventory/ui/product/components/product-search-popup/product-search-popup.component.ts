@@ -3,21 +3,22 @@ import {
   Component,
   HostListener,
   inject,
-  Input,
   QueryList,
   ViewChildren,
   ViewContainerRef,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatRow, MatTableModule } from '@angular/material/table';
-import { NgbActiveModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { map } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { isValidField } from '@core/utils/utils';
 
 import { Pagination } from '@shared/models/pagination.model';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-product-search-popup',
   standalone: true,
@@ -27,18 +28,17 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    NgbPopoverModule,
   ],
   templateUrl: './product-search-popup.component.html',
   styleUrl: './product-search-popup.component.scss',
 })
-export class ProductSearchPopupComponent {
-  @Input() params = {
-    textSearch: '',
-    searchPurchase: false,
-    searchSale: false,
-  };
-  modal = inject(NgbActiveModal);
+export class ProductSearchPopupComponent implements OnInit, OnDestroy {
+  params = inject<{
+    textSearch: '';
+    searchPurchase: false;
+    searchSale: false;
+  }>(MAT_DIALOG_DATA);
+  modal = inject(MatDialogRef<ProductSearchPopupComponent>);
 
   private _productUseCase = inject(ProductUseCase);
 
@@ -68,9 +68,9 @@ export class ProductSearchPopupComponent {
 
   pageEvent!: PageEvent;
 
-  highlightRowIndex: number = -1;
-  overlayHasFocus: boolean = true;
-  isOverlayOpen: boolean = false;
+  highlightRowIndex = -1;
+  overlayHasFocus = true;
+  isOverlayOpen = false;
 
   currentOption: any;
 
@@ -93,11 +93,11 @@ export class ProductSearchPopupComponent {
       return;
     }
 
-    let getDataPersist = sessionStorage.getItem(
-      this.KEY_STORAGE_DATA_PRODUCT_SEARCH,
+    const getDataPersist = sessionStorage.getItem(
+      this.KEY_STORAGE_DATA_PRODUCT_SEARCH
     );
     if (getDataPersist) {
-      let dataPersist = JSON.parse(getDataPersist);
+      const dataPersist = JSON.parse(getDataPersist);
       this.pagination = dataPersist.pagination;
       this.dataSearch = dataPersist.dataSearch;
       if (this.params.textSearch) {
@@ -120,7 +120,7 @@ export class ProductSearchPopupComponent {
   }
 
   search() {
-    let params = {
+    const params = {
       textSearch: this.dataSearch.textSearch,
       pageIndex: this.pagination.pageIndex + 1,
       pageSize: this.pagination.pageSize,
@@ -141,24 +141,24 @@ export class ProductSearchPopupComponent {
             return [];
           }
           return response;
-        }),
+        })
       )
 
       .subscribe({
         next: (response) => {
-          let results = structuredClone(response);
+          const results = structuredClone(response);
 
           this.columns = structuredClone(this.mainColumns);
           this.visibleColumns = this.columns.map((x) => x.columnDef);
           this.pagination.totalRecords = 0;
 
           if (results.length > 0) {
-            let dataResult = results[0];
+            const dataResult = results[0];
             this.productTarifas = dataResult.tarifas;
             this.pagination.totalRecords = dataResult.totalRecords;
           }
 
-          for (let item of this.productTarifas) {
+          for (const item of this.productTarifas) {
             this.columns.push({
               header: item.tarifa,
               columnDef: item.tarifa,
@@ -177,7 +177,7 @@ export class ProductSearchPopupComponent {
 
   makeDynamicTarifa(results: any) {
     this.dataSource = results.map((item: any) => {
-      let { tarifas, ...restItem } = item;
+      const { tarifas, ...restItem } = item;
       const tarifasObj = tarifas.reduce((obj: any, item: any) => {
         obj[item.tarifa] = item.precio;
         return obj;
@@ -318,7 +318,7 @@ export class ProductSearchPopupComponent {
 
   selectRow<T extends { idArticulo: number }>(
     row: T,
-    closeOverlay: boolean = true,
+    closeOverlay = true
   ): void {
     if (closeOverlay) {
       this.closeOverlay();
@@ -361,7 +361,7 @@ export class ProductSearchPopupComponent {
   }
 
   ngOnDestroy(): void {
-    let persistSearch = {
+    const persistSearch = {
       pagination: this.pagination,
       dataSearch: this.dataSearch,
       dataSource: this.dataSource,
@@ -371,7 +371,7 @@ export class ProductSearchPopupComponent {
     if (this.dataSource.length > 0) {
       sessionStorage.setItem(
         this.KEY_STORAGE_DATA_PRODUCT_SEARCH,
-        JSON.stringify(persistSearch),
+        JSON.stringify(persistSearch)
       );
     } else {
       sessionStorage.removeItem(this.KEY_STORAGE_DATA_PRODUCT_SEARCH);

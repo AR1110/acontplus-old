@@ -1,6 +1,5 @@
 ﻿using Common.Utilities.Format;
 using Common.Utilities.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Configuracion.API.Controllers;
 

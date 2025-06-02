@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { ItemReportComponent } from '@restaurant/ui/item/item-report/item-report.component';
+import { ItemReportComponent } from '@restaurant/ui/reports/item-report/item-report.component';
 import { InfrastructurePageComponent } from '@restaurant/ui/pages/infrastructure-page/infrastructure-page.component';
 import { ProductsPageComponent } from '@restaurant/ui/pages/products-page/products-page.component';
 import { restaurantConfigDataResolver } from './resolvers/restaurant-config.resolver';

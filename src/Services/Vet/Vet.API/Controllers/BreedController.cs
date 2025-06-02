@@ -19,14 +19,14 @@ public class BreedController(IBreedService breedService) : BaseApiController
     {
         if (id != breed.Id) return BadRequest();
 
-        breed.UserId = User.GetUserId();
+        breed.UpdatedByUserId = User.GetUserId();
         return Ok(await breedService.UpdateAsync(id, breed));
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Breed breed)
     {
-        breed.UserId = User.GetUserId();
+        breed.CreatedByUserId = User.GetUserId();
         return Ok(await breedService.AddAsync(breed));
     }
 

@@ -48,9 +48,9 @@
                   >
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of estabs; track $index) {
-                      <mat-option [value]="item.idEstablecimiento">
-                        {{ item.nombreComercial }}
-                      </mat-option>
+                    <mat-option [value]="item.idEstablecimiento">
+                      {{ item.nombreComercial }}
+                    </mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -61,9 +61,9 @@
                   <mat-select [(ngModel)]="dataSearch.idBodega">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of bodegas; track $index) {
-                      <mat-option [value]="item.idBodega">
-                        {{ item.descripcion }}
-                      </mat-option>
+                    <mat-option [value]="item.idBodega">
+                      {{ item.descripcion }}
+                    </mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -158,9 +158,9 @@
                   >
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of estabs; track $index) {
-                      <mat-option [value]="item.idEstablecimiento">{{
-                        item.nombreComercial
-                      }}</mat-option>
+                    <mat-option [value]="item.idEstablecimiento">{{
+                      item.nombreComercial
+                    }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -191,9 +191,9 @@
                   <mat-select [(ngModel)]="dataSearch.idBodega">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of bodegas; track $index) {
-                      <mat-option [value]="item.idBodega">{{
-                        item.descripcion
-                      }}</mat-option>
+                    <mat-option [value]="item.idBodega">{{
+                      item.descripcion
+                    }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -205,9 +205,9 @@
                   <mat-select [(ngModel)]="dataSearch.idMarca">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of marcas; track $index) {
-                      <mat-option [value]="item.idMarca">{{
-                        item.descripcion
-                      }}</mat-option>
+                    <mat-option [value]="item.idMarca">{{
+                      item.descripcion
+                    }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -219,28 +219,28 @@
                   <mat-select [(ngModel)]="dataSearch.stockStatusCode">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of stockStatus; track $index) {
-                      <mat-option [value]="item.code">{{
-                        item.description
-                      }}</mat-option>
+                    <mat-option [value]="item.code">{{
+                      item.description
+                    }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
               </div>
 
               @if (dataSearch.checkboxObtenerRentabilidad) {
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Tarifa::</mat-label>
-                    <mat-select [(ngModel)]="dataSearch.idTarifa">
-                      <mat-option [value]="0">Todos</mat-option>
-                      @for (item of tarifas; track $index) {
-                        <mat-option [value]="item.idTarifa">{{
-                          item.descripcion
-                        }}</mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Tarifa::</mat-label>
+                  <mat-select [(ngModel)]="dataSearch.idTarifa">
+                    <mat-option [value]="0">Todos</mat-option>
+                    @for (item of tarifas; track $index) {
+                    <mat-option [value]="item.idTarifa">{{
+                      item.descripcion
+                    }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
               }
             </div>
           </div>
@@ -286,9 +286,9 @@
                   <mat-label>Stock:</mat-label>
                   <mat-select [(ngModel)]="dataSearch.stockStatusCode">
                     @for (item of stockStatus; track $index) {
-                      <mat-option [value]="item.code">{{
-                        item.description
-                      }}</mat-option>
+                    <mat-option [value]="item.code">{{
+                      item.description
+                    }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -300,9 +300,9 @@
                   <mat-select [(ngModel)]="dataSearch.idTarifa">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of tarifas; track $index) {
-                      <mat-option [value]="item.idTarifa">
-                        {{ item.descripcion }}
-                      </mat-option>
+                    <mat-option [value]="item.idTarifa">
+                      {{ item.descripcion }}
+                    </mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -318,9 +318,9 @@
                   <mat-select [(ngModel)]="dataSearch.idMarca">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of marcas; track $index) {
-                      <mat-option [value]="item.idMarca">
-                        {{ item.descripcion }}
-                      </mat-option>
+                    <mat-option [value]="item.idMarca">
+                      {{ item.descripcion }}
+                    </mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -332,9 +332,9 @@
                   <mat-select [(ngModel)]="dataSearch.idTipoIva">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of taxes(); track $index) {
-                      <mat-option [value]="item.idTipoIva">
-                        {{ item.descripcion }}
-                      </mat-option>
+                    <mat-option [value]="item.idTipoIva">
+                      {{ item.descripcion }}
+                    </mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -363,10 +363,9 @@
 
               <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 @if (!dataSearch.chkProveedor) {
-                  <mat-checkbox
-                    [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro"
-                    >SubFamilia</mat-checkbox
-                  >
+                <mat-checkbox [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro"
+                  >SubFamilia</mat-checkbox
+                >
                 }
               </div>
             </div>
@@ -414,10 +413,9 @@
 
               <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 @if (!dataSearch.chkProveedor) {
-                  <mat-checkbox
-                    [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro"
-                    >SubFamilia</mat-checkbox
-                  >
+                <mat-checkbox [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro"
+                  >SubFamilia</mat-checkbox
+                >
                 }
               </div>
 
@@ -433,7 +431,7 @@
                 >
               </div>
             </div>
-            <mat-divider/>
+            <mat-divider />
             <div class="row gx-1">
               <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                 <app-supplier-search
@@ -453,42 +451,42 @@
               </div>
 
               @if (dataSearch.chkUbicacion) {
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Establecimiento</mat-label>
-                    <mat-select
-                      [(ngModel)]="dataSearch.idEstablecimiento"
-                      (selectionChange)="onChangeEstab()"
-                    >
-                      <mat-option [value]="0">Todos</mat-option>
-                      @for (item of estabs; track $index) {
-                        <mat-option [value]="item.idEstablecimiento">{{
-                          item.nombreComercial
-                        }}</mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Establecimiento</mat-label>
+                  <mat-select
+                    [(ngModel)]="dataSearch.idEstablecimiento"
+                    (selectionChange)="onChangeEstab()"
+                  >
+                    <mat-option [value]="0">Todos</mat-option>
+                    @for (item of estabs; track $index) {
+                    <mat-option [value]="item.idEstablecimiento">{{
+                      item.nombreComercial
+                    }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Bodega</mat-label>
-                    <mat-select [(ngModel)]="dataSearch.idBodega">
-                      <mat-option [value]="0">Todos</mat-option>
-                      @for (item of bodegas; track $index) {
-                        <mat-option [value]="item.idBodega">{{
-                          item.descripcion
-                        }}</mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Ubicación</mat-label>
-                    <input matInput [(ngModel)]="dataSearch.textUbicacion" />
-                  </mat-form-field>
-                </div>
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Bodega</mat-label>
+                  <mat-select [(ngModel)]="dataSearch.idBodega">
+                    <mat-option [value]="0">Todos</mat-option>
+                    @for (item of bodegas; track $index) {
+                    <mat-option [value]="item.idBodega">{{
+                      item.descripcion
+                    }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Ubicación</mat-label>
+                  <input matInput [(ngModel)]="dataSearch.textUbicacion" />
+                </mat-form-field>
+              </div>
               }
 
               <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -496,9 +494,9 @@
                   <mat-label>Estado</mat-label>
                   <mat-select [(ngModel)]="dataSearch.expiredStatusCode">
                     @for (item of expirationStates; track $index) {
-                      <mat-option [value]="item.code">{{
-                        item.description
-                      }}</mat-option>
+                    <mat-option [value]="item.code">{{
+                      item.description
+                    }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -518,31 +516,27 @@
   <mat-card-actions class="d-flex gap-2">
     <div class="d-flex flex-row gap-1">
       @if (isReporting) {
-        <app-report-buttons
-          [fileType]="FORMAT_REPORT.PDF"
-          text="Ver PDF"
-          (exportReport)="getReportPDF()"
-        >
-        </app-report-buttons>
-      }
-
-      @if (isReporting) {
-        <app-report-buttons
-          [fileType]="FORMAT_REPORT.EXCEL"
-          text="Descargar Excel"
-          (exportReport)="getReportExcel()"
-        >
-        </app-report-buttons>
-      }
-
-      @if (selected.value === 0) {
-        <app-theme-button
-          icon="email"
-          text="Enviar por correo"
-          (handleClick)="askToSendMail()"
-          appActionEnviarCorreo
-        >
-        </app-theme-button>
+      <app-report-buttons
+        [fileType]="FORMAT_REPORT.PDF"
+        text="Ver PDF"
+        (exportReport)="getReportPDF()"
+      >
+      </app-report-buttons>
+      } @if (isReporting) {
+      <app-report-buttons
+        [fileType]="FORMAT_REPORT.EXCEL"
+        text="Descargar Excel"
+        (exportReport)="getReportExcel()"
+      >
+      </app-report-buttons>
+      } @if (selected.value === 0) {
+      <app-theme-button
+        icon="email"
+        text="Enviar por correo"
+        (handleClick)="askToSendMail()"
+        appActionEnviarCorreo
+      >
+      </app-theme-button>
       }
     </div>
   </mat-card-actions>

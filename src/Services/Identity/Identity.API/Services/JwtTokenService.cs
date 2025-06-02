@@ -27,7 +27,7 @@ public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
             new(JwtRegisteredClaimNames.Sub, Convert.ToString(data.UserId)),
             new(JwtRegisteredClaimNames.UniqueName, data.Username),
             new("userRoleId", Convert.ToString(data.UserRoleId)),
-            new("idCardCompany", data.IDCardCompany),
+            new("idCardCompany", data.IdCardCompany),
             new("companyId", Convert.ToString(data.CompanyId)),
             new("tradeName", data.TradeName),
             new("businessName", data.BusinessName),

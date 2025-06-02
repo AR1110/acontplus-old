@@ -5,6 +5,7 @@ using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
 using FactElect.Application.Services;
+using FactElect.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -78,7 +79,7 @@ public static class ApplicationServicesExtensions
 
         string[] transientNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

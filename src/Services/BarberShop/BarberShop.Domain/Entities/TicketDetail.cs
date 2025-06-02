@@ -1,6 +1,5 @@
 ﻿namespace BarberShop.Domain.Entities;
 
-[Table("TicketDetail", Schema = "BarberShop")]
 public class TicketDetail : BaseEntity
 {
     public int TicketId { get; set; }

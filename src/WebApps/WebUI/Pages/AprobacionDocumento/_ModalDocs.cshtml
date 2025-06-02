@@ -18,9 +18,11 @@
                 class="pagination-sm" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
-    <button type="button" ng-if="docsSelected.length>0" class="btn btn-success btn-lg btn-block" ng-click="addDocs()">
-        Agregar Documentos Seleccionados
-    </button>
+
+    <div class="btn-group" role="group" aria-label="Basic example" ng-if="docsSelected.length>0">
+        <button type="button" class="btn btn-success" ng-click="addDocClose()">Añadir y Cerrar </button>
+        <button type="button" class="btn btn-info" ng-click="addDoc()">Añadir y Continuar</button>
+    </div>
 
     <md-table-container>
         <table md-table md-row-select="optionsTable.rowSelection" multiple="{{optionsTable.multiSelect}}"

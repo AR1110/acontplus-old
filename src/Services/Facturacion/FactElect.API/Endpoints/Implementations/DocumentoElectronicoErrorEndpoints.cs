@@ -6,10 +6,10 @@ public class DocumentoElectronicoErrorEndpoints(IDocumentoElectronicoErrorServic
 {
     public async Task<IResult> GetDocumentoElectronicoErrorByIdAsync(int id)
     {
-        var parameters = new Dictionary<string, object> 
+        var parameters = new Dictionary<string, object>
         {
             { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-            { "id", id } 
+            { "id", id }
         };
         return Results.Ok(await documentoElectronicoErrorService.GetAsync(parameters));
     }

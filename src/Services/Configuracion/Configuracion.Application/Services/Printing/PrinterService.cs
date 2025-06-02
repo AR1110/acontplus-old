@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services.Printing;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services.Printing;
 
 public class PrinterService(ConfigContext context, IAdoRepository repository) : IPrinterService
 {
@@ -39,6 +41,7 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         printerFound.IsActive = printer.IsActive;
         printerFound.Domain = printer.Domain;
         printerFound.UpdatedByUserId = printer.UpdatedByUserId;
+        context.Update(printerFound);
         await context.SaveChangesAsync();
 
         return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };
