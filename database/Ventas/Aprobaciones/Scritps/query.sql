@@ -224,7 +224,7 @@ go
     --ALTER TABLE Ventas.Aprob_Document_Audit DROP COLUMN idDocumento 
 
 
-    select * FROM Ventas.Aprob_Document_Audit au
+    --select * FROM Ventas.Aprob_Document_Audit au
     
 
     

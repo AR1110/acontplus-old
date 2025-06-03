@@ -114,6 +114,7 @@ BEGIN
             UPDATE cc SET
                    cc.idTiempoCredito  = tc.idTiempoCredito
                   ,cc.fechaVencimiento = tc.fechaVencimiento
+                  ,cc.UpdatedAt        = NULL
             FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
             INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 

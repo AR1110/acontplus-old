@@ -54,4 +54,41 @@ go
 
 --ALTER TABLE dbo.GuiaRemision DROP COLUMN idEntidad
 
-SELECT * FROM GuiaRemision
+--SELECT * FROM GuiaRemision
+
+
+--> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 06/03/2025
+
+--ALTER TABLE dbo.GuiaRemision ADD idAprob_Document INT CONSTRAINT FK_idAprob_Document_GuiaRemision FOREIGN KEY REFERENCES Ventas.Aprob_Document(idAprob_Document)
+
+
+--update gr set  idAprob_Document = (
+--		 select top 1 ad.idAprob_Document from Ventas.Aprob_Document ad where ad.idPuntoEmision = de.idPuntoEmision and ad.serieComprobante = ia.valor
+--	   )
+--from guiaremision gr 
+--inner join DocumentoElectronico de on de.idDocumentoElectronico = gr.idDocumentoElectronico
+--inner join infoAdicionalDoc ia on ia.idComprobante              = gr.idGuiaRemision
+--inner join tipodocumento    td on td.idTipoDocumento            = ia.idTipoDocumento
+--where td.codigoSri = '06' AND ia.nombre = 'PREFACTURA'
+
+
+--update gr set idAprob_Document = (
+--		 select top 1 ad.idAprob_Document from Ventas.Aprob_Document ad where ad.idPuntoEmision = de.idPuntoEmision and ad.serieComprobante = ia.valor
+--	   )
+--from guiaremision gr 
+--inner join DocumentoElectronico de on de.idDocumentoElectronico = gr.idDocumentoElectronico
+--inner join infoAdicionalDoc ia on ia.idComprobante              = gr.idGuiaRemision
+--inner join tipodocumento    td on td.idTipoDocumento            = ia.idTipoDocumento
+--where td.codigoSri = '06' AND ia.nombre = 'Aprobacion Documento'
+
+
+--ALTER TABLE dbo.GuiaRemision ADD idNotaEntrega BIGINT CONSTRAINT FK_idNotaEntrega_GuiaRemision FOREIGN KEY REFERENCES dbo.NotaEntrega(idNotaEntrega)
+
+--UPDATE gr SET idNotaEntrega = (
+--		 select top 1 ne.idNotaEntrega from dbo.NotaEntrega ne where ne.idPuntoEmision = de.idPuntoEmision and ne.serieComprobante = ia.valor
+--	   )
+--from guiaremision gr 
+--inner join DocumentoElectronico de on de.idDocumentoElectronico = gr.idDocumentoElectronico
+--inner join infoAdicionalDoc ia on ia.idComprobante              = gr.idGuiaRemision
+--inner join tipodocumento    td on td.idTipoDocumento            = ia.idTipoDocumento
+--where td.codigoSri = '06' AND ia.nombre = 'nota entrega'
