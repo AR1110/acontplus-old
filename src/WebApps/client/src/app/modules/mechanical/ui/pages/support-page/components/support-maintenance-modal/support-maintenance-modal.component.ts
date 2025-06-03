@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewChild} from '@angular/core';
+import { Component, inject, signal, OnInit, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -17,7 +17,6 @@ import {
 } from '@mechanical/domain/models/support-maintenance.model';
 import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
-import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
@@ -28,9 +27,13 @@ import { Tarifa } from '@inventory/domain/models/tarifa.model';
 import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
 import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
 import { MatIcon } from '@angular/material/icon';
-import {MatButton} from "@angular/material/button";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-support-maintenance-modal',
@@ -40,15 +43,18 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
     TabulatorComponent,
     DrawTaxTotalComponent,
     ProductSearchOverlayComponent,
-    InputDateComponent,
-    MatButton,
+    MatButtonModule,
     MatCustomDialogComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    ThemeButtonComponent,
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
-export class SupportMaintenanceModalComponent {
-   params = inject<{
-    id: 0,
+export class SupportMaintenanceModalComponent implements OnInit {
+  params = inject<{
+    id: 0;
   }>(MAT_DIALOG_DATA);
 
   modal = inject(MatDialogRef<SupportMaintenanceModalComponent>);
@@ -59,7 +65,7 @@ export class SupportMaintenanceModalComponent {
   private supportDetailUseCase = inject(SupportDetailUseCase);
   private tS = inject(ToasterService);
 
-  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
+  readonly tabulatorComponent = viewChild.required(TabulatorComponent);
 
   data = {
     id: 0,
@@ -90,13 +96,13 @@ export class SupportMaintenanceModalComponent {
     bodegaId: 0,
     feeId: 0,
   };
-  details = signal< SupportMaintenanceDetail[]>([])
-  detailsDeleted = signal< SupportMaintenanceDetail[]>([])
+  details = signal<SupportMaintenanceDetail[]>([]);
+  detailsDeleted = signal<SupportMaintenanceDetail[]>([]);
 
-  estabs = signal<GroupedEstab[]>([])
-  bodegas = signal<GroupedEstabBodega[]>([])
-  taxes = signal<any[]>([])
-  taxPercents = signal<TarifaImpuesto[]>([])
+  estabs = signal<GroupedEstab[]>([]);
+  bodegas = signal<GroupedEstabBodega[]>([]);
+  taxes = signal<any[]>([]);
+  taxPercents = signal<TarifaImpuesto[]>([]);
 
   decimal: DecimalSale = {
     nroPrecio: 0,
@@ -111,7 +117,7 @@ export class SupportMaintenanceModalComponent {
   };
 
   companyCustomer: any = {};
-  vehicle: any = {};
+  vehicle = signal<any>({});
 
   //Draw Totals Tax
   htmlImpuestoTotal = '';
@@ -124,12 +130,14 @@ export class SupportMaintenanceModalComponent {
   feeds = signal<Tarifa[]>([]);
   validatorNumber = ['required', 'number'];
 
+  fechaLegible = '';
+
   comboEditor = (
     cell: any,
     onRendered: any,
     success: any,
     cancel: any,
-    editorParams: any,
+    editorParams: any
   ) => {
     const column: any = cell.getColumn().getField();
     const data: any = cell.getData();
@@ -158,7 +166,7 @@ export class SupportMaintenanceModalComponent {
 
     if (column === 'taxPercentId') {
       const taxPercents = editorParams.filter(
-        (ti: any) => ti.idImpuesto === Number(data.taxId),
+        (ti: any) => ti.idImpuesto === Number(data.taxId)
       );
 
       for (const ti of taxPercents) {
@@ -220,15 +228,20 @@ export class SupportMaintenanceModalComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          const index = this.details().findIndex((r) => r.rowguid === data.rowguid);
-          this.details().splice(index, 1);
+          const details = structuredClone(this.details());
+          const index = details.findIndex((r) => r.rowguid === data.rowguid);
+          details.splice(index, 1);
+          this.details.set(details);
 
           if (data.id > 0) {
-            this.detailsDeleted().push({
-              ...data,
-              enabled: false,
-              deleted: true,
-            });
+            this.detailsDeleted.update((prev) => [
+              ...prev,
+              {
+                ...data,
+                enabled: false,
+                deleted: true,
+              },
+            ]);
           }
 
           this.drawImpuestoTotales();
@@ -248,7 +261,6 @@ export class SupportMaintenanceModalComponent {
     {
       title: 'Op.',
       formatter: (cell: any) => {
-
         //create delete button
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
@@ -362,7 +374,7 @@ export class SupportMaintenanceModalComponent {
       headerHozAlign: 'center',
       width: '8px',
       editor: this.comboEditor,
-      editorParams: () => this.taxPercents,
+      editorParams: () => this.taxPercents(),
       formatter: function (cell: any, formatterParams: any) {
         for (const ti of formatterParams) {
           if (ti.idTarifaImpuesto == cell.getValue()) {
@@ -370,7 +382,7 @@ export class SupportMaintenanceModalComponent {
           }
         }
       },
-      formatterParams: () => this.taxPercents,
+      formatterParams: () => this.taxPercents(),
       validator: 'required',
     },
     {
@@ -488,7 +500,7 @@ export class SupportMaintenanceModalComponent {
       headerHozAlign: 'center',
       width: '9px',
       editor: this.comboEditor,
-      editorParams: () => this.bodegas,
+      editorParams: () => this.bodegas(),
       formatter: function (cell: any, formatterParams: any) {
         for (const ti of formatterParams) {
           if (ti.idBodega == cell.getValue()) {
@@ -496,7 +508,7 @@ export class SupportMaintenanceModalComponent {
           }
         }
       },
-      formatterParams: () => this.bodegas,
+      formatterParams: () => this.bodegas(),
       validator: 'required',
     },
   ];
@@ -513,15 +525,19 @@ export class SupportMaintenanceModalComponent {
         ...response.data,
       };
 
+      this.fechaLegible = new Date(this.data.fechaEmision).toLocaleDateString(
+        'es-ES'
+      );
+
       this.estabs.set(response.estabs);
       this.taxPercents.set(response.tarifasImpuesto);
       this.feeds.set(response.feeds);
       this.vehicle.set(response.vehicle);
-      this.decimal= response.decimal;
+      this.decimal = response.decimal;
 
       this.details.set(response.details);
       const dataEstab = this.estabs().find(
-        (e) => e.idEstablecimiento === this.data.establecimientoId,
+        (e) => e.idEstablecimiento === this.data.establecimientoId
       );
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
@@ -545,16 +561,16 @@ export class SupportMaintenanceModalComponent {
     Swal.fire({
       title: 'Información del Vehículo',
       html: `
-        <p><strong>Marca:</strong> ${this.vehicle.brand}</p>
-        <p><strong>Modelo:</strong> ${this.vehicle.model}</p>
-        <p><strong>Año de Fabricación:</strong> ${this.vehicle.year}</p>
-        <p><strong>Color:</strong> ${this.vehicle.color}</p>
-        <p><strong>Motor:</strong> ${this.vehicle.engine}</p>
-        <p><strong>Chasis:</strong> ${this.vehicle.chassis}</p>
-        <p><strong>Cilindraje:</strong> ${this.vehicle.cylindraje}</p>
+        <p><strong>Marca:</strong> ${this.vehicle().brand}</p>
+        <p><strong>Modelo:</strong> ${this.vehicle().model}</p>
+        <p><strong>Año de Fabricación:</strong> ${this.vehicle().year}</p>
+        <p><strong>Color:</strong> ${this.vehicle().color}</p>
+        <p><strong>Motor:</strong> ${this.vehicle().engine}</p>
+        <p><strong>Chasis:</strong> ${this.vehicle().chassis}</p>
+        <p><strong>Cilindraje:</strong> ${this.vehicle().cylindraje}</p>
       `,
       icon: 'info',
-      confirmButtonText: 'Cerrar'
+      confirmButtonText: 'Cerrar',
     });
   }
 
@@ -567,7 +583,7 @@ export class SupportMaintenanceModalComponent {
         <p><strong>Correo:</strong> ${this.data.email}</p>
       `,
       icon: 'info',
-      confirmButtonText: 'Cerrar'
+      confirmButtonText: 'Cerrar',
     });
   }
 
@@ -585,11 +601,11 @@ export class SupportMaintenanceModalComponent {
 
     let row = this.getDataRowEmpty();
     const dataTaxPercent = this.taxPercents().find(
-      (d) => d.codigo === product.codigoPorcentaje,
+      (d) => d.codigo === product.codigoPorcentaje
     );
 
     const findDataProduct = tempDetails.find(
-      (item) => item.llevaInventario && item.productId === product.idArticulo,
+      (item) => item.llevaInventario && item.productId === product.idArticulo
     );
 
     row.productId = product.idArticulo;
@@ -625,7 +641,7 @@ export class SupportMaintenanceModalComponent {
     //Producto de tipo Servicio
     if (!product.llevaInventario) {
       tempDetails.push(row);
-      this.details.set(tempDetails)
+      this.details.set(tempDetails);
       this.setCalculoTotales('quantity', row, undefined);
       return;
     }
@@ -634,7 +650,7 @@ export class SupportMaintenanceModalComponent {
     if (product.llevaInventario) {
       let oldValue = 1;
       const productsDuplicated = structuredClone(tempDetails).filter(
-        (item) => item.llevaInventario && item.productId === product.idArticulo,
+        (item) => item.llevaInventario && item.productId === product.idArticulo
       );
 
       productsDuplicated.push({ ...row });
@@ -648,7 +664,7 @@ export class SupportMaintenanceModalComponent {
         row.quantity += 1;
       } else {
         tempDetails.push(row);
-        this.details.set(tempDetails)
+        this.details.set(tempDetails);
       }
 
       const dataProductMerge = mergeProductStock({
@@ -708,7 +724,7 @@ export class SupportMaintenanceModalComponent {
   async onChangeBodega() {
     try {
       const bodega = this.bodegas().find(
-        (item) => item.idBodega === this.data.bodegaId,
+        (item) => item.idBodega === this.data.bodegaId
       );
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -730,19 +746,17 @@ export class SupportMaintenanceModalComponent {
         allowEscapeKey: false,
       });
 
-      if(!isConfirmed) {
+      if (!isConfirmed) {
         this.data.bodegaId = this.cloneData.bodegaId;
         return;
-      };
+      }
 
+      this.cloneData.bodegaId = this.data.bodegaId;
 
-        this.cloneData.bodegaId = this.data.bodegaId;
+      if (this.details().length === 0) return;
 
-        if (this.details.length === 0) return;
-
-        this.setIdBodegaInDetalle();
-        this.resetCantidadToZeroAndRecalculateTotals();
-
+      this.setIdBodegaInDetalle();
+      this.resetCantidadToZeroAndRecalculateTotals();
     } catch (error) {
       console.log(error);
     }
@@ -776,7 +790,9 @@ export class SupportMaintenanceModalComponent {
       //   return
       // }
 
-      const tarifa = this.feeds().find((item) => item.idTarifa === this.data.feeId);
+      const tarifa = this.feeds().find(
+        (item) => item.idTarifa === this.data.feeId
+      );
       const { isConfirmed } = await Swal.fire({
         html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
         icon: 'warning',
@@ -787,25 +803,24 @@ export class SupportMaintenanceModalComponent {
         allowOutsideClick: false,
       });
 
-      if(!isConfirmed){
+      if (!isConfirmed) {
         this.data.feeId = this.cloneData.feeId;
         return;
       }
 
-        this.cloneData.feeId = this.data.feeId;
+      this.cloneData.feeId = this.data.feeId;
 
-        if (this.details().length === 0) return;
+      if (this.details().length === 0) return;
 
-        this.salesDetailCalculationSvc.setFeeInDetail({
-          generalFeeId: this.data.feeId,
-          items: this.details(),
-          decimal: this.decimal,
-          columnDefs: this.columns,
-          tarifasImpuesto: this.taxPercents(),
-        });
+      this.salesDetailCalculationSvc.setFeeInDetail({
+        generalFeeId: this.data.feeId,
+        items: this.details(),
+        decimal: this.decimal,
+        columnDefs: this.columns,
+        tarifasImpuesto: this.taxPercents(),
+      });
 
-        this.drawImpuestoTotales();
-
+      this.drawImpuestoTotales();
     } catch (error) {
       console.log(error);
     }
@@ -820,7 +835,7 @@ export class SupportMaintenanceModalComponent {
   setCalculoTotales(
     column: any,
     data: SupportMaintenanceDetail,
-    oldValue?: string | number,
+    oldValue?: string | number
   ) {
     const obj = this.salesDetailCalculationSvc.calculateColDef({
       data: data,
@@ -831,8 +846,8 @@ export class SupportMaintenanceModalComponent {
       columnDefs: this.columns,
     });
 
-    const row = this.tabulatorComponent.refTabulator
-      .getRows()
+    const row = this.tabulatorComponent()
+      .refTabulator.getRows()
       .find(function (row) {
         return row.getData()['rowguid'] === data.rowguid;
       });
@@ -952,7 +967,9 @@ export class SupportMaintenanceModalComponent {
       return;
     }
 
-    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
+    if (
+      this.details().some((row) => row.llevaInventario && row.quantity === 0)
+    ) {
       this.tS.toastr({
         type: 'warning',
         message:

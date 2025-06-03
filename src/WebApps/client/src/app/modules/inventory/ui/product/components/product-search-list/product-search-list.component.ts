@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
   QueryList,
   SimpleChanges,
   ViewChild,
@@ -12,6 +10,9 @@ import {
   OnInit,
   AfterViewInit,
   OnChanges,
+  input,
+  output,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -38,25 +39,25 @@ import { Pagination } from '@shared/models/pagination.model';
   styleUrl: './product-search-list.component.scss',
 })
 export class ProductSearchListComponent
-  implements OnInit , AfterViewInit, OnChanges
+  implements OnInit, AfterViewInit, OnChanges
 {
-  @Input() tableData: any[] = [];
+  readonly tableData = input<any[]>([]);
 
   @Input() highlightRowIndex!: number;
-  @Input() isLoadingResults = false;
-  @Input() isRateLimitReached = false;
+
+  isLoadingResults = input(false);
+  readonly isRateLimitReached = input(false);
   @Input() pagination!: Pagination;
 
-  @Output() handlePageEvent: EventEmitter<PageEvent> =
-    new EventEmitter<PageEvent>();
-  @Output() rowsEmitter: EventEmitter<QueryList<ViewContainerRef>> =
-    new EventEmitter<QueryList<ViewContainerRef>>();
+  handlePageEvent = output<PageEvent>();
+
+  rowsEmitter = output<QueryList<ViewContainerRef>>();
   @ViewChildren(MatRow, { read: ViewContainerRef })
   rows!: QueryList<ViewContainerRef>;
   @ViewChild(MatSort) sort!: MatSort;
 
-  @Output() rowSelected = new EventEmitter<any>();
-  @Output() onClickPaginator = new EventEmitter<any>();
+  rowSelected = output<any>();
+  onClickPaginator = output<void>();
 
   dataSource = new MatTableDataSource([]);
 
@@ -74,7 +75,7 @@ export class ProductSearchListComponent
   ];
   columns = structuredClone(this.mainColumns);
 
-  productTarifas: any = [];
+  productTarifas = signal<any>([]);
 
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
@@ -92,13 +93,13 @@ export class ProductSearchListComponent
       this.visibleColumns = this.columns.map((x) => x.columnDef);
       this.pagination.totalRecords = 0;
 
-      if (this.tableData.length > 0) {
-        const dataResult = this.tableData[0];
-        this.productTarifas = dataResult.tarifas;
+      if (this.tableData().length > 0) {
+        const dataResult = this.tableData()[0];
+        this.productTarifas.set(dataResult.tarifas);
         this.pagination.totalRecords = dataResult.totalRecords;
       }
 
-      for (const item of this.productTarifas) {
+      for (const item of this.productTarifas()) {
         this.columns.push({
           header: item.tarifa,
           columnDef: item.tarifa,
@@ -106,7 +107,7 @@ export class ProductSearchListComponent
       }
 
       this.visibleColumns = this.columns.map((x) => x.columnDef);
-      this.makeDynamicTarifa(this.tableData);
+      this.makeDynamicTarifa(this.tableData());
     }
   }
 

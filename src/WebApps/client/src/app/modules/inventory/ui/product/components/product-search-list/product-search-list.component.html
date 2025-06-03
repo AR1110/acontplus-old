@@ -2,16 +2,16 @@
 
 <div class="mat-elevation-z8">
   <section class="table-container small-table section-container-table mt-1">
-    @if (isLoadingResults || isRateLimitReached) {
-    <div [ngClass]="{ 'loading-shade': isLoadingResults }">
-      @if (isLoadingResults) {
+    @if (isLoadingResults() || isRateLimitReached()) {
+    <div [ngClass]="{ 'loading-shade': isLoadingResults() }">
+      @if (isLoadingResults()) {
       <mat-spinner></mat-spinner>
       }
     </div>
     }
     <table
       mat-table
-      [dataSource]="dataSource"
+      [dataSource]="dataSource.data"
       tabindex="0"
       matSort
       (matSortChange)="sortData($event)"
