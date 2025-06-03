@@ -44,7 +44,7 @@ export class SettingUserCustomerComponent {
     nombreCompleto: string;
   }>(MAT_DIALOG_DATA);
 
-  userCustomerRoleData = {} as UserCustomerRole;
+  userCustomerRoleData = signal<UserCustomerRole>({} as UserCustomerRole);
 
   private $listUserCustomerRoleUseCase = inject(ListUserCustomerRoleUseCase);
   private $userCustomerStore = inject(UserCustomerStore);
@@ -58,9 +58,9 @@ export class SettingUserCustomerComponent {
       })
       .subscribe((response) => {
         if (response.data.length > 0) {
-          this.userCustomerRoleData = response.data[0];
+          this.userCustomerRoleData.set(response.data[0]);
           this.$userCustomerStore.setUserRoleId(
-            this.userCustomerRoleData.idUsuarioRol,
+            this.userCustomerRoleData().idUsuarioRol,
           );
         }
       });

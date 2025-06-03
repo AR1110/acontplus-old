@@ -19,7 +19,7 @@
           <span class="example-list-section">
             <mat-checkbox
               class="example-margin"
-              [checked]="allCompleteSaleComprobante"
+              [checked]="allCompleteSaleComprobante()"
               [indeterminate]="someCompleteSaleComprobante()"
               (change)="setAllSaleComprobante($event.checked)"
             >

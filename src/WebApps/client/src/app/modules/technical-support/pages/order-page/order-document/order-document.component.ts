@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component,  OnInit, inject } from '@angular/core';
+import {Component, OnInit, inject, signal} from '@angular/core';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,7 @@ export class OrderDocumentComponent implements OnInit {
   private modalRef = inject(MatDialogRef<OrderDocumentComponent>);
   private orderService = inject(OrderService);
   documento: any = {};
-  documentDetails: any = [];
+  documentDetails = signal<any[]>([]);
   data = inject(MAT_DIALOG_DATA);
 
   columns = [
@@ -68,20 +68,12 @@ export class OrderDocumentComponent implements OnInit {
   get() {
     let params = { tipo: 5, id: this.data.id };
 
-    this.orderService.get(params).subscribe({
-      next: (response: any) => {
+    this.orderService.get(params).subscribe(  (response: any) => {
         if (response.code === '1') {
           let { documento, documentoDetalle } = JSON.parse(response.payload);
           this.documento = documento;
-          this.documentDetails = documentoDetalle;
-
-          console.log(this.documento);
+          this.documentDetails.set(documentoDetalle)
         }
-      },
-      complete() {},
-      error(error) {
-        console.log(error);
-      },
     });
   }
 

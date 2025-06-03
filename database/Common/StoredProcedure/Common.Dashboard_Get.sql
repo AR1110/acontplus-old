@@ -62,8 +62,8 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             WHERE ur.idUsuarioRol = @userRoleId
               AND (s.Paid IS NULL OR s.Paid = 0)
-              AND s.[Enabled] = 1 
-              AND s.Deleted IS NULL
+              AND s.[IsActive] = 1 
+              AND s.IsDeleted = CAST(0 AS BIT)
               AND ur.estado = 1
         );
 
@@ -75,8 +75,8 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
             WHERE ur.idUsuarioRol = @userRoleId 
-              AND s.[Enabled] = 1 
-              AND s.Deleted IS NULL
+              AND s.[IsActive] = 1 
+              AND s.IsDeleted = CAST(0 AS BIT)
               AND ur.estado = 1
               AND st.Code = 'G'
         );
@@ -90,8 +90,8 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             WHERE ur.idUsuarioRol = @userRoleId
               AND (s.Paid IS NULL OR s.Paid = 0)
-              AND s.[Enabled] = 1
-              AND s.Deleted IS NULL
+              AND s.[IsActive] = 1
+              AND s.IsDeleted = CAST(0 AS BIT)
               AND ur.estado = 1
               AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
         );
@@ -167,8 +167,8 @@ BEGIN
                 INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
                 INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId
                                     AND (s.Paid IS NULL OR s.Paid = 0)
-                AND s.[Enabled] = 1
-                AND s.Deleted IS NULL
+                AND s.[IsActive] = 1
+                AND s.IsDeleted = CAST(0 AS BIT)
                 INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
                 INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
                 INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id

@@ -11,3 +11,4 @@ global using Newtonsoft.Json.Serialization;
 global using Ventas.API.Extensions;
 global using Ventas.API.Interfaces;
 global using Ventas.API.Services;
+global using Common.Logging;

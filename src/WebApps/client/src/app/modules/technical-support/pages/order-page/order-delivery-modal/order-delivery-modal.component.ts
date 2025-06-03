@@ -70,8 +70,7 @@ export class OrderDeliveryModalComponent implements OnInit {
       receiver: this.orderDeliveryForm.value.receiver,
     };
 
-    this.orderService.delivery(this.data.id, dataModified).subscribe({
-      next: (response) => {
+    this.orderService.delivery(this.data.id, dataModified).subscribe( (response) => {
         if (isApiResponse(response)) {
           this.tS.toastr({
             type: response.code == '1' ? 'success' : 'warning',
@@ -82,11 +81,6 @@ export class OrderDeliveryModalComponent implements OnInit {
             this.modalRef.close(response);
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {},
     });
   }
 }

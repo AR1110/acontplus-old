@@ -22,7 +22,7 @@
             class="form-select form-control-border"
           >
             <option value="">Todos</option>
-            @for (estab of establecimientos; track $index) {
+            @for (estab of establecimientos(); track $index) {
             <option [ngValue]="estab.idEstablecimiento">
               {{ estab.nombreComercial }}
             </option>

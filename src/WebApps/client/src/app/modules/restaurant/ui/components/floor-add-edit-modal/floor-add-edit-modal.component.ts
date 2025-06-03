@@ -9,13 +9,11 @@ import { ToasterService } from '@core/services/toaster.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import { MatButton } from '@angular/material/button';
 import { ApiResponse } from '@core/models/api-response';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RoomService } from '@restaurant/data/services/room.service';
 import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
-import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";

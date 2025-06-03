@@ -1,8 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {Component, OnInit, inject} from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 
 import { OrderListComponent } from '@modules/technical-support/pages/order-page/order-list/order-list.component';
-import { OrderService } from '@modules/technical-support/services/order.service';
 import { StatsService } from '@modules/technical-support/services/stats.service';
 import { Chart, registerables } from 'chart.js';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -16,10 +15,9 @@ Chart.register(...registerables);
   styles: ``,
 })
 export class DashboardComponent implements OnInit {
-  orders: any = [];
-  totalCustomers: number = 0;
-  totalEmployes: number = 0;
-  totalOrders: number = 0;
+  totalCustomers = 0;
+  totalEmployes = 0;
+  totalOrders = 0;
 
   private statsService = inject(StatsService);
   public chartOrders: any;
@@ -29,8 +27,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get() {
-    this.statsService.get({}).subscribe({
-      next: (response) => {
+    this.statsService.get({}).subscribe( (response) => {
         if (isApiResponse(response) && response.code == '1') {
           const { stats, totalOrders, totalCustomers, totalEmployes } =
             JSON.parse(response.payload as string);
@@ -76,11 +73,6 @@ export class DashboardComponent implements OnInit {
             },
           });
         }
-      },
-      complete() {},
-      error(error) {
-        console.log(error);
-      },
     });
   }
 

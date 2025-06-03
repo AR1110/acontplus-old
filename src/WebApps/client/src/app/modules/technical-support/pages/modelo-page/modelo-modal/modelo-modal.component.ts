@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -45,11 +45,11 @@ export class ModeloModalComponent {
     ]),
     year: new FormControl(0),
   });
-  brands: Brand[] = [];
+  brands =  signal<Brand[]>([])
   data = inject<Modelo>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Modelo';
-  series: Serie[] = [];
+  series = signal< Serie[]>([])
 
   ngOnInit(): void {
     if (this.data.id > 0) {
@@ -67,35 +67,25 @@ export class ModeloModalComponent {
     this.onBrandGet($event.target.value);
   }
   onBrandGet(brandId: number) {
-    this.series = [];
-    this.serieService.get({ tipo: 2, brandId }).subscribe({
-      next: (response) => {
+    this.series.set([]);
+    this.serieService.get({ tipo: 2, brandId }).subscribe(  (response) => {
         if (isApiResponse(response) && response.code == '1') {
-          this.series = JSON.parse(response.payload as string) || [];
+          this.series.set(JSON.parse(response.payload as string) || []);
           this.modeloForm.get('serieId')?.enable();
           // const state = false ? 'disable' : 'enable';
           // this.modeloForm.controls['serieId'][state]();
         } else if (this.modeloForm.controls['serieId']) {
           this.modeloForm.get('serieId')?.disable();
         }
-      },
-      error(err) {},
-      complete() {},
     });
   }
   onGet() {
-    this.brandService.get({ tipo: 1 }).subscribe({
-      next: (response) => {
+    this.brandService.get({ tipo: 1 }).subscribe( (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            this.brands = JSON.parse(response.payload as string);
+            this.brands.set(JSON.parse(response.payload as string));
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {},
     });
   }
   onModalClose() {
@@ -106,21 +96,9 @@ export class ModeloModalComponent {
       ...this.modeloForm.value,
     };
     if (this.data.id > 0) {
-      this.modeloService.put(this.data.id, dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.modeloService.put(this.data.id, dataToSave).subscribe( this.successResponse);
     } else {
-      this.modeloService.post(dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.modeloService.post(dataToSave).subscribe( this.successResponse);
     }
   }
   successResponse = (response: object) => {

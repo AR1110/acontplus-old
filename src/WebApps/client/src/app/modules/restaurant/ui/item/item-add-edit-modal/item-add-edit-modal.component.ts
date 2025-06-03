@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 
 import {
   FormControl,
@@ -43,7 +43,7 @@ export class ItemAddEditModalComponent implements OnInit {
     cooking: new FormControl(false),
     productId: new FormControl(0),
   });
-  recipes: Recipe[] = [];
+  recipes = signal<Recipe[]>([]);
   ingredientSearch = '';
   #ingredientService = inject(IngredientService);
   #itemService = inject(ItemService);
@@ -245,12 +245,12 @@ export class ItemAddEditModalComponent implements OnInit {
   ];
 
   removeFromList(id: number) {
-    const newArray = this.recipes.filter((x: Recipe) => x.id !== id);
+    const newArray = this.recipes().filter((x: Recipe) => x.id !== id);
   }
 
   getRecipes() {
     this.#recipeService.getByItem(this.data.id).subscribe((response) => {
-      this.recipes = response.recipes;
+      this.recipes.set(response.recipes);
     });
   }
 
@@ -276,9 +276,8 @@ export class ItemAddEditModalComponent implements OnInit {
     }
     const dataToSave = {
       itemJson: this.itemForm.value,
-      recipeJson: this.recipes,
+      recipeJson: this.recipes(),
     };
-    console.log(dataToSave);
     this.#itemService
       .put(this.data.id, { data: dataToSave })
       .subscribe((response) => {
@@ -293,7 +292,7 @@ export class ItemAddEditModalComponent implements OnInit {
   }
 
   onIngredientSelected($event: Ingredient) {
-    this.recipes.push({
+    this.recipes().push({
       costPrice: 0,
       extentId: 0,
       id: 0,
@@ -314,7 +313,7 @@ export class ItemAddEditModalComponent implements OnInit {
       .get({ productId, tipo: 3 })
       .subscribe((response) => {
         const extents = response.extents;
-        this.recipes.forEach((e: Recipe, index: number) => {
+        this.recipes().forEach((e: Recipe, index: number) => {
           if (e.productId === productId) {
             e.extentId = extents[0].idMedida;
             e.precioCosto = extents[0].precioCosto;

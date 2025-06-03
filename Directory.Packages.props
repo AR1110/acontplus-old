@@ -8,7 +8,7 @@
     <PackageVersion Include="Acontplus.Common.Data" Version="0.1.0" />
     <PackageVersion Include="Acontplus.Common.FactElect" Version="0.3.1" />
     <PackageVersion Include="Acontplus.Common.Infrastructure" Version="1.4.3" />
-    <PackageVersion Include="Acontplus.Common.Logging" Version="0.1.8" />
+    <PackageVersion Include="Acontplus.Common.Logging" Version="1.0.0" />
     <PackageVersion Include="Acontplus.Common.Notifications" Version="0.3.1" />
     <PackageVersion Include="Acontplus.Common.S3Application" Version="1.1.21" />
     <PackageVersion Include="Acontplus.Common.Services" Version="1.0.8" />
@@ -27,5 +27,6 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Ocelot" Version="24.0.0" />
     <PackageVersion Include="Scrutor" Version="6.0.1" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
   </ItemGroup>
 </Project>

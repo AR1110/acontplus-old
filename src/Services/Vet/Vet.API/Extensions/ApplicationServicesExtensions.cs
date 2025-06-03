@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using Common.Infrastructure.Repository.Implementations;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 
@@ -10,6 +11,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddDbContextPool<VetContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 

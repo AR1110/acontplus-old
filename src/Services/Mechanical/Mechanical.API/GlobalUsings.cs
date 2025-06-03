@@ -3,3 +3,4 @@ global using Common.Core.Validation;
 global using Common.Data;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
+global using Common.Logging;

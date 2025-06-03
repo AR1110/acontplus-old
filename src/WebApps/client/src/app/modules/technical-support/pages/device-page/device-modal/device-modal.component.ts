@@ -61,12 +61,12 @@ export class DeviceModalComponent implements OnInit {
   private modalService = inject(DialogService);
   private modeloService = inject(ModeloService);
   private tS = inject(ToasterService);
-  brands: Brand[] = [];
+  brands = signal<Brand[]>([]);
   // --> Variables
   modalIcon = 'add';
   modalTitle = 'Nuevo Equipo';
-  modelos: Modelo[] = [];
-  categories: any = [];
+  modelos = signal<Modelo[]>([]) ;
+  categories =signal<any[]>([]);
   isUpdate = false;
 
   selected = signal(0)
@@ -95,7 +95,7 @@ export class DeviceModalComponent implements OnInit {
     specs: '',
   };
 
-  deviceSpec:DeviceTypeSpec[]= [];
+  deviceSpec=signal<DeviceTypeSpec[]>([]);
 
   deviceFormGroup: IForm<Device> = {
     categoryId: [0, Validators.required],
@@ -122,7 +122,7 @@ export class DeviceModalComponent implements OnInit {
 
   selectedIndexChange($event:number){
     this.selected.set($event)
-    const dataDeviceSpec = this.categories[$event];
+    const dataDeviceSpec = this.categories()[$event];
     if(dataDeviceSpec){
     this.filterAccordion(dataDeviceSpec.uuid)
 
@@ -191,11 +191,11 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onBrandGet(categoryId: number) {
-    this.brands = [];
+    this.brands.set([]);
     this.brandService.get({ tipo: 2, categoryId }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        this.brands = JSON.parse(response.payload as string);
-        if (this.brands.length > 0) {
+        this.brands.set(JSON.parse(response.payload as string));
+        if (this.brands().length > 0) {
           this.unseletedBrand = false;
           // this.deviceForm.get('brandId')?.setValue(this.brands[0].id);
           // this.onModeloGet(this.brands[0].id);
@@ -204,7 +204,7 @@ export class DeviceModalComponent implements OnInit {
     });
   }
   onCategoryChange($event: any) {
-    let categoryId = Number($event.target.value);
+    const categoryId = Number($event.target.value);
     if (!(categoryId > 0)) {
       return;
     }
@@ -213,11 +213,11 @@ export class DeviceModalComponent implements OnInit {
   }
   onModeloChange($event: any) {}
   onModeloGet(brandId: number) {
-    this.modelos = [];
+    this.modelos.set([]);
     this.modeloService.get({ tipo: 2, brandId }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        this.modelos = JSON.parse(response.payload as string);
-        if (this.modelos.length > 0) {
+        this.modelos.set(JSON.parse(response.payload as string))
+        if (this.modelos().length > 0) {
           // this.deviceForm.get('modeloId')?.setValue(this.modelos[0].id);
         }
       }
@@ -241,13 +241,13 @@ export class DeviceModalComponent implements OnInit {
   }
 
   setDataSpecs(device: Device) {
-    let specsTemp: any = device.specs;
+    const specsTemp: any = device.specs;
 
     if (specsTemp.length == 0) return;
     this.deviceSpecs.deviceSpecId = device.deviceSpecId;
 
     for (const item in specsTemp) {
-      this.deviceSpec.push({
+      this.deviceSpec.update(r=>[...r, {
         uuid: specsTemp[item][0].uuid,
         name: item,
         specs: specsTemp[item].map((x: any) => {
@@ -257,7 +257,7 @@ export class DeviceModalComponent implements OnInit {
             value: x.value,
           };
         }),
-      });
+      }])
     }
   }
 
@@ -265,7 +265,7 @@ export class DeviceModalComponent implements OnInit {
     this.deviceService.get({ tipo: 1 }).subscribe((response) => {
       if (isApiResponse(response)) {
         const tempArray = JSON.parse(response.payload as string);
-        this.categories = tempArray.categorias;
+        this.categories.set(tempArray.categorias)
       }
     });
   }
@@ -273,7 +273,7 @@ export class DeviceModalComponent implements OnInit {
   onSave() {
     this.data.customers = [];
     this.data.specs = Object.assign(this.deviceSpecs, {
-      specs: JSON.stringify(this.convertirFormato(this.deviceSpec)),
+      specs: JSON.stringify(this.convertirFormato(this.deviceSpec())),
     });
 
     if (!this.onValidateSpecs()) return;
@@ -301,7 +301,7 @@ export class DeviceModalComponent implements OnInit {
 
   onUpdate() {
     this.data.specs = Object.assign(this.deviceSpecs, {
-      specs: JSON.stringify(this.convertirFormato(this.deviceSpec)),
+      specs: JSON.stringify(this.convertirFormato(this.deviceSpec())),
     });
 
     if (!this.onValidateSpecs()) return;
@@ -353,7 +353,7 @@ export class DeviceModalComponent implements OnInit {
       });
   }
 
-  convertirFormato(arrayObjetos: Array<DeviceTypeSpec>) {
+  convertirFormato(arrayObjetos: DeviceTypeSpec[]) {
     const objetoResultado: any = {};
     for (const item of arrayObjetos) {
       objetoResultado[item.name] = item.specs.map((spec) => ({
@@ -396,7 +396,7 @@ export class DeviceModalComponent implements OnInit {
   onValidateSpecs() {
     let isValid = true;
     try {
-      for (const item of this.deviceSpec) {
+      for (const item of this.deviceSpec()) {
         if (item.specs.filter((x: any) => x.uuid === item.uuid).length === 0) {
           this.tS.toastr({
             type: 'warning',
@@ -418,30 +418,29 @@ export class DeviceModalComponent implements OnInit {
   }
 
   addSpecTypeDevice() {
-    let specName = this.specTypeForm.get('specName')?.value || '';
+    const specName = this.specTypeForm.get('specName')?.value || '';
     if (!specName || !(specName.length >= 3)) {
       return this.tS.toastr({
         type: 'warning',
         message: 'Ingrese una categoría valida!',
       });
     }
-    this.deviceSpec.push({
+    this.deviceSpec.update(r=>[...r, {
       uuid: generateUuidv4(),
       name: specName,
       specs: [],
-    });
+    }])
     this.specTypeForm.patchValue({ specName: '' });
   }
 
   addSpecsDevice(uuid: string) {
-    this.deviceSpec.forEach((item: any) => {
+    this.deviceSpec().forEach((item: any) => {
       if (item.uuid == uuid) {
-        let object = {
+        item.specs.push({
           uuid: uuid,
           name: this.specForm.get('name')?.value,
           value: this.specForm.get('value')?.value,
-        };
-        item.specs.push(object);
+        });
       }
     });
 
@@ -455,11 +454,12 @@ export class DeviceModalComponent implements OnInit {
   }
 
   removeSpecCategory(uuid: string) {
-    this.deviceSpec = this.deviceSpec.filter((x) => x.uuid !== uuid);
+    this.deviceSpec.update(r=>r.filter((x: any) => x.uuid !== uuid))
+
   }
 
   removeSpec(index: any, uuid: string) {
-    this.deviceSpec.forEach((item: any) => {
+    this.deviceSpec().forEach((item: any) => {
       if (item.uuid == uuid) {
         item.specs.splice(index, 1);
       }

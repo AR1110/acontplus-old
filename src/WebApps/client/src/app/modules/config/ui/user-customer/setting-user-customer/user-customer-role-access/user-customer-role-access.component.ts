@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {
   MatTreeFlatDataSource,
   MatTreeFlattener,
@@ -64,7 +64,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   tS = inject(ToasterService);
 
-  accesoMenus: AccesoMenu[] = [];
+  accesoMenus = signal< AccesoMenu[]>([]);
 
   cloneActions: any[] = [];
   actions: any[] = [];
@@ -102,7 +102,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
       .subscribe((response) => {
-        this.accesoMenus = response.menus;
+        this.accesoMenus.set(response.menus);
 
         this.actions = structuredClone(response.actions);
 
@@ -110,7 +110,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
         const makeMenusNode = [
           {
             name: 'Todos',
-            children: this.accesoMenus.map((m) => {
+            children: this.accesoMenus().map((m) => {
               const { subMenus, ...rest } = m;
 
               const nodeSubMenus = subMenus.map((item: any) => {

@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -9,6 +10,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddHttpContextAccessor();
 
         services.AddDbContextPool<CommonContext>(options =>

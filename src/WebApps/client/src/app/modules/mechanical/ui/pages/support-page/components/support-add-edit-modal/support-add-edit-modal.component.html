@@ -22,7 +22,7 @@
               [(ngModel)]="data.establecimientoId"
               disabled
             >
-              @for (item of establishments; track $index) {
+              @for (item of establishments(); track $index) {
                 <mat-option [value]="item.establecimientoId">{{
                     item.nombreComercial
                   }}</mat-option>
@@ -40,7 +40,7 @@
               [(ngModel)]="data.establecimientoId"
               (selectionChange)="onChangeEstab()"
             >
-              @for (item of establishments; track $index) {
+              @for (item of establishments(); track $index) {
                 <mat-option [value]="item.establecimientoId">{{
                     item.nombreComercial
                   }}</mat-option>
@@ -60,7 +60,7 @@
               [(ngModel)]="data.puntoEmisionId"
               disabled
             >
-              @for (item of emissionPoints; track $index) {
+              @for (item of emissionPoints(); track $index) {
                 <mat-option [value]="item.puntoEmisionId">{{
                     item.ptoEmi
                   }}</mat-option>
@@ -77,7 +77,7 @@
               [(ngModel)]="data.puntoEmisionId"
               (selectionChange)="generateSequence()"
             >
-              @for (item of emissionPoints; track $index) {
+              @for (item of emissionPoints(); track $index) {
                 <mat-option [value]="item.puntoEmisionId">{{
                     item.ptoEmi
                   }}</mat-option>
@@ -138,7 +138,7 @@
 
           </ng-container>
           <mat-autocomplete #auto="matAutocomplete">
-            @if(filteredCustomerVehicleLoading){
+            @if(filteredCustomerVehicleLoading()){
               <mat-option
                 disabled
                 style="display: flex; justify-content: center; align-items: center"
@@ -163,7 +163,7 @@
             name="tecnicoEncargado"
             [(ngModel)]="data.userAssignedId"
           >
-            @for (item of users; track $index) {
+            @for (item of users(); track $index) {
               <mat-option [value]="item.userAssignedId">{{item.userName}}</mat-option>
             }
           </mat-select>
