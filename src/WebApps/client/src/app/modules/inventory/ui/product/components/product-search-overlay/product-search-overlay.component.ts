@@ -2,15 +2,15 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  EventEmitter,
   HostListener,
   inject,
-  Input,
-  Output,
   QueryList,
   ViewContainerRef,
   OnInit,
   OnDestroy,
+  input,
+  output,
+  signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
@@ -20,7 +20,7 @@ import { map, Subject } from 'rxjs';
 
 import { ProductSearchListComponent } from '@inventory/ui/product/components/product-search-list/product-search-list.component';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
-import {MatInputModule} from "@angular/material/input";
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-product-search-overlay',
@@ -35,12 +35,12 @@ import {MatInputModule} from "@angular/material/input";
   styleUrl: './product-search-overlay.component.scss',
 })
 export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
-  @Input() searchSale = false;
+  readonly searchSale = input(false);
 
-  @Input() overlayHasFocus = true;
-  @Output() optionSelected = new EventEmitter();
+  readonly overlayHasFocus = input(true);
+  optionSelected = output();
 
-  dataSource: any[] = [];
+  dataSource = signal<any>([]);
 
   _unsubscribeAll: Subject<boolean> = new Subject<boolean>();
 
@@ -49,12 +49,12 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   focusedInput = false;
   clickedPaginator = false;
 
-  productTarifas: any = [];
+  productTarifas = signal<any>([]);
 
   pagination = new Pagination();
 
-  isLoadingResults = false;
-  isRateLimitReached = false;
+  isLoadingResults = signal(false);
+  isRateLimitReached = signal(false);
 
   private _productUseCase = inject(ProductUseCase);
 
@@ -62,7 +62,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
     textSearch: '',
   };
 
-  rows: any = [];
+  rows = signal<any>([]);
 
   currentOption: any;
 
@@ -74,7 +74,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
     this.dataSearch.textSearch = value;
     // if ($event && (["ArrowDown", "ArrowUp", "Enter", 'ArrowLeft', 'ArrowRight'].includes($event.key))) return
 
-    this.dataSource = [];
+    this.dataSource.set([]);
     const text = this.dataSearch.textSearch.trim();
     if (!isValidField(text)) {
       this.closeOverlay();
@@ -97,17 +97,17 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
     };
 
     this.highlightRowIndex = -1;
-    this.productTarifas = [];
-    this.isLoadingResults = true;
+    this.productTarifas.set([]);
+    this.isLoadingResults.set(true);
 
     this._productUseCase
       .search(params)
       .pipe(
         map((response: any) => {
-          this.isLoadingResults = false;
-          this.isRateLimitReached = response.length === 0;
+          this.isLoadingResults.set(false);
+          this.isRateLimitReached.set(response.length === 0);
 
-          if (this.isRateLimitReached) {
+          if (this.isRateLimitReached()) {
             return [];
           }
           return response;
@@ -118,7 +118,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.openOverlay();
           const results = structuredClone(response);
-          this.dataSource = results;
+          this.dataSource.set(results);
 
           // this.pagination.totalRecords = 0;
 
@@ -130,7 +130,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
           // this.makeDynamicTarifa(results)
         },
         error: (err) => {
-          this.isLoadingResults = false;
+          this.isLoadingResults.set(false);
           console.log(err);
         },
       });
@@ -151,12 +151,11 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   }
 
   handleRows(rows: QueryList<ViewContainerRef>) {
-    this.rows = rows;
+    this.rows.set(rows);
   }
 
   showElement(index: number, height: number): void {
-    console.log(this.rows);
-    const row = this.rows.toArray()[index];
+    const row = this.rows().toArray()[index];
 
     if (row != null) {
       const rect = row.element.nativeElement.getBoundingClientRect();
@@ -167,22 +166,21 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
       }
       return;
     }
-    console.log('not found');
   }
 
   onHighlightedRowChange(event: KeyboardEvent): void {
-    let focused = this.dataSource[this.highlightRowIndex];
-    const x: number = this.dataSource.indexOf(focused);
-    const l: number = this.dataSource.length;
+    let focused = this.dataSource()[this.highlightRowIndex];
+    const x: number = this.dataSource().indexOf(focused);
+    const l: number = this.dataSource().length;
     if (event.keyCode === 38) {
       // Up
       if (x > 0) {
-        focused = this.dataSource[x - 1];
+        focused = this.dataSource()[x - 1];
       }
     } else if (event.keyCode === 40) {
       // Down
       if (x < l - 1) {
-        focused = this.dataSource[x + 1];
+        focused = this.dataSource()[x + 1];
       }
     }
     if (focused != null) {
@@ -216,7 +214,6 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
 
   backdropClick() {
     if (this.focusedInput) return;
-    console.log(document.querySelector('.mat-paginator'));
 
     if (this.clickedPaginator) return;
     this.focusedInput = false;
@@ -232,8 +229,8 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
     event.preventDefault();
 
     if (
-      this.overlayHasFocus &&
-      this.highlightRowIndex < this.dataSource.length - 1
+      this.overlayHasFocus() &&
+      this.highlightRowIndex < this.dataSource().length - 1
     ) {
       this.highlightRowIndex += 1;
 
@@ -249,7 +246,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   onArrowUp(event: KeyboardEvent): void {
     event.preventDefault();
 
-    if (this.overlayHasFocus && this.highlightRowIndex > 0) {
+    if (this.overlayHasFocus() && this.highlightRowIndex > 0) {
       this.highlightRowIndex -= 1;
       this.onHighlightedRowChange(event);
     }
@@ -263,12 +260,12 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   onKeyEnter(event: KeyboardEvent): void {
     if (this.isOverlayOpen) {
       if (
-        this.overlayHasFocus &&
+        this.overlayHasFocus() &&
         this.highlightRowIndex >= 0 &&
-        this.highlightRowIndex < this.dataSource.length
+        this.highlightRowIndex < this.dataSource().length
       ) {
         // data
-        this.selectRow(this.dataSource[this.highlightRowIndex]); // data
+        this.selectRow(this.dataSource()[this.highlightRowIndex]); // data
       }
     } else {
       this.openOverlay();
@@ -306,7 +303,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
     this.currentOption = row;
 
     console.log('Overlay, selectRow(), currentOption: ' + JSON.stringify(row));
-    if (this.searchSale) {
+    if (this.searchSale()) {
       this.getDataProductSale(row.idArticulo);
     }
   }

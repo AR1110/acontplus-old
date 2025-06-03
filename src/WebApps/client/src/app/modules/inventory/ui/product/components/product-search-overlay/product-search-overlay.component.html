@@ -1,7 +1,6 @@
-
 <mat-form-field class="w-100">
   <mat-label>Buscar producto:</mat-label>
-   <input
+  <input
     matInput
     #input
     autocomplete="off"
@@ -24,10 +23,10 @@
   >
     <div class="overlay-content">
       <app-product-search-list
-        [tableData]="dataSource"
+        [tableData]="dataSource()"
         [highlightRowIndex]="highlightRowIndex"
-        [isLoadingResults]="isLoadingResults"
-        [isRateLimitReached]="isRateLimitReached"
+        [isLoadingResults]="isLoadingResults()"
+        [isRateLimitReached]="isRateLimitReached()"
         [pagination]="pagination"
         (rowsEmitter)="handleRows($event)"
         (handlePageEvent)="handlePageEvent($event)"

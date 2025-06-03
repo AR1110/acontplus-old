@@ -27,13 +27,13 @@ import { Tarifa } from '@inventory/domain/models/tarifa.model';
 import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
 import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
 import { MatIcon } from '@angular/material/icon';
-import { MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-support-maintenance-modal',
@@ -49,7 +49,6 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     MatInputModule,
     MatSelectModule,
     ThemeButtonComponent,
-
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
@@ -131,7 +130,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   feeds = signal<Tarifa[]>([]);
   validatorNumber = ['required', 'number'];
 
-    fechaLegible = "";
+  fechaLegible = '';
 
   comboEditor = (
     cell: any,
@@ -375,7 +374,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       headerHozAlign: 'center',
       width: '8px',
       editor: this.comboEditor,
-      editorParams: () => this.taxPercents,
+      editorParams: () => this.taxPercents(),
       formatter: function (cell: any, formatterParams: any) {
         for (const ti of formatterParams) {
           if (ti.idTarifaImpuesto == cell.getValue()) {
@@ -383,7 +382,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
           }
         }
       },
-      formatterParams: () => this.taxPercents,
+      formatterParams: () => this.taxPercents(),
       validator: 'required',
     },
     {
@@ -501,7 +500,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       headerHozAlign: 'center',
       width: '9px',
       editor: this.comboEditor,
-      editorParams: () => this.bodegas,
+      editorParams: () => this.bodegas(),
       formatter: function (cell: any, formatterParams: any) {
         for (const ti of formatterParams) {
           if (ti.idBodega == cell.getValue()) {
@@ -509,7 +508,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
           }
         }
       },
-      formatterParams: () => this.bodegas,
+      formatterParams: () => this.bodegas(),
       validator: 'required',
     },
   ];
@@ -526,7 +525,9 @@ export class SupportMaintenanceModalComponent implements OnInit {
         ...response.data,
       };
 
-      this.fechaLegible = new Date(this.data.fechaEmision).toLocaleDateString('es-ES')
+      this.fechaLegible = new Date(this.data.fechaEmision).toLocaleDateString(
+        'es-ES'
+      );
 
       this.estabs.set(response.estabs);
       this.taxPercents.set(response.tarifasImpuesto);
