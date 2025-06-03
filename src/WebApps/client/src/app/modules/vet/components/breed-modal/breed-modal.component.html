@@ -18,7 +18,7 @@
               required
             >
               <option disabled selected>Seleccione la especie</option>
-              @for (item of petTypes; track $index) {
+              @for (item of petTypes(); track $index) {
                 <option [value]="item.id">{{ item.name }}</option>
               }
             </select>

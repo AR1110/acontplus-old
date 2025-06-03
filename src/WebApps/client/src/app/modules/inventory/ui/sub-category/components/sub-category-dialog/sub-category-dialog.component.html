@@ -11,7 +11,7 @@
       <mat-label>Categoria:</mat-label>
       <mat-select [(ngModel)]="data.idFamilia">
         <mat-option [value]="0">Ninguno</mat-option>
-        @for (food of categorias; track $index) {
+        @for (food of categorias(); track $index) {
           <mat-option [value]="food.idFamilia">{{food.descripcion}}</mat-option>
         }
       </mat-select>

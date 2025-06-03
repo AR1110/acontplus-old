@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import {Component, inject, OnInit, signal, ViewChild} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
@@ -84,13 +84,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
-  orderDetails: any[] = [];
-  cloneOrderMaintenances: OrderMaintenance[] = [];
-  orderMaintenances: OrderMaintenance[] = [];
-  bodegas: GroupedEstabBodega[] = [];
-  feeds: Tarifa[] = [];
-  taxes: Impuesto[] = [];
-  taxPercents: TarifaImpuesto[] = [];
+  orderDetails = signal<any[]>([]);
+  cloneOrderMaintenances = signal<OrderMaintenance[]>([]);
+  orderMaintenances = signal<OrderMaintenance[]>([]);
+  bodegas = signal<GroupedEstabBodega[]>([]);
+  feeds = signal<Tarifa[]>([]);
+  taxes = signal<Impuesto[]>([]);
+  taxPercents = signal<TarifaImpuesto[]>([]);
   decimal: DecimalSale = {
     nroPrecio: 0,
     nroCantidad: 0,
@@ -106,8 +106,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
   checkboxDetailCustom = false;
   detailCustom = false;
 
-  establecimientos: GroupedEstab[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
+  establecimientos = signal<GroupedEstab[]>([]) ;
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]) ;
   order = {
     establecimientoId: 0,
     puntoEmisionId: 0,
@@ -202,7 +202,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'bodegaId') {
-      for (const b of this.bodegas) {
+      for (const b of this.bodegas()) {
         const opt = document.createElement('option');
         opt.value = b.idBodega.toString();
         opt.innerHTML = b.descripcion;
@@ -380,7 +380,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerHozAlign: 'center',
       width: '8px',
       editor: this.comboEditor,
-      editorParams: () => this.taxPercents,
+      editorParams: () => this.taxPercents(),
       formatter: function (cell: any, formatterParams: any) {
         for (const ti of formatterParams) {
           if (ti.idTarifaImpuesto == cell.getValue()) {
@@ -388,7 +388,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           }
         }
       },
-      formatterParams: () => this.taxPercents,
+      formatterParams: () => this.taxPercents(),
       validator: 'required',
       editable: () => !this.detailCustom,
     },
@@ -510,7 +510,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerHozAlign: 'center',
       width: '9px',
       editor: this.comboEditor,
-      editorParams: () => this.bodegas,
+      editorParams: () => this.bodegas(),
       formatter: function (cell: any, formatterParams: any) {
         for (const ti of formatterParams) {
           if (ti.idBodega == cell.getValue()) {
@@ -518,7 +518,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           }
         }
       },
-      formatterParams: () => this.bodegas,
+      formatterParams: () => this.bodegas(),
       validator: 'required',
     },
   ];
@@ -542,7 +542,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     groupBy: 'orderDetailId',
     groupValues: [[]] as any,
     groupHeader: (value: any, count: any) => {
-      const dataOrderDetail = this.orderDetails.find(
+      const dataOrderDetail = this.orderDetails().find(
         (od) => od.orderDetailId === value
       );
 
@@ -561,11 +561,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
   getId() {
     this.orderSvc.getId(this.params.id).subscribe({
       next: (response) => {
-        this.establecimientos = response.establecimientos;
+        this.establecimientos.set(response.establecimientos)
         this.order = response.order;
-        this.orderDetails = response.orderDetails;
-        this.orderMaintenances = response.orderMaintenances.map((d: any) => {
-          const od = this.orderDetails.find(
+        this.orderDetails.set(response.orderDetails)
+        const orderMaintenances = response.orderMaintenances.map((d: any) => {
+          const od = this.orderDetails().find(
             (od) => od.orderDetailId === d.orderDetailId
           );
           return {
@@ -573,19 +573,20 @@ export class OrderMaintenanceModalComponent implements OnInit {
             deviceName: od.deviceName,
           };
         });
+        this.orderMaintenances.set(orderMaintenances);
 
-        this.feeds = response.feeds;
-        this.taxes = response.taxes;
-        this.taxPercents = response.taxPercents;
+        this.feeds.set(response.feeds);
+        this.taxes.set(response.taxes);
+        this.taxPercents.set(response.taxPercents);
         this.decimal = response.decimal;
 
-        const dataEstab = this.establecimientos.find(
+        const dataEstab = this.establecimientos().find(
           (e) => e.idEstablecimiento === this.order.establecimientoId
         );
         if (dataEstab) {
-          this.puntosEmision = dataEstab.puntosEmision;
-          this.bodegas = dataEstab.bodegas;
-          const dataBodega = this.bodegas.find((b) => b.defaultBodega);
+          this.puntosEmision.set(dataEstab.puntosEmision);
+          this.bodegas.set(dataEstab.bodegas);
+          const dataBodega = this.bodegas().find((b) => b.defaultBodega);
           if (dataBodega) {
             this.order.bodegaId = dataBodega.idBodega;
             this.cloneOrder.bodegaId = this.order.bodegaId;
@@ -593,13 +594,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
           this.cloneOrder.establecimientoId = this.order.establecimientoId;
         }
 
-        const dataTarifa = this.feeds.find((t) => t.predeterminada);
+        const dataTarifa = this.feeds().find((t) => t.predeterminada);
         if (dataTarifa) {
           this.order.feeId = dataTarifa.idTarifa;
           this.cloneOrder.feeId = dataTarifa.idTarifa;
         }
 
-        const dataOrderDetail = this.orderDetails[0];
+        const dataOrderDetail = this.orderDetails()[0];
 
         this.order.orderDetailId = dataOrderDetail?.orderDetailId;
         this.order.deviceWarranty = dataOrderDetail?.deviceWarranty;
@@ -619,7 +620,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   setGroupValues() {
     // Obtener valores únicos para "orderDetailId"
     const uniqueOrderDetailIds = Array.from(
-      new Set(this.orderDetails.map((item: any) => item.orderDetailId))
+      new Set(this.orderDetails().map((item: any) => item.orderDetailId))
     );
 
     // Crear groupValues con valores únicos de "orderDetailId"
@@ -633,20 +634,20 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
   onChangeOrderDetail() {
-    this.order.obs = this.orderDetails.find(
+    this.order.obs = this.orderDetails().find(
       (x) => x.orderDetailId == this.order.orderDetailId
     ).obs;
   }
 
   setIdBodegaInDetalle() {
-    for (const item of this.orderMaintenances) {
+    for (const item of this.orderMaintenances()) {
       item.bodegaId = this.order.bodegaId;
     }
   }
 
   resetCantidadToZeroAndRecalculateTotals() {
     try {
-      for (const row of this.orderMaintenances) {
+      for (const row of this.orderMaintenances()) {
         if (!row.llevaInventario) continue;
 
         row.quantity = 0;
@@ -677,15 +678,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return;
       }
 
-      const dataEstab = this.establecimientos.find(
+      const dataEstab = this.establecimientos().find(
         (item) => item.idEstablecimiento === this.order.establecimientoId
       );
       if (!dataEstab) return;
 
-      this.puntosEmision = dataEstab.puntosEmision;
-      this.bodegas = dataEstab.bodegas;
+      this.puntosEmision.set(dataEstab.puntosEmision);
+      this.bodegas.set(dataEstab.bodegas);
 
-      if (this.puntosEmision.length === 0) {
+      if (this.puntosEmision().length === 0) {
         this.tS.toastr({
           type: 'warning',
           message:
@@ -694,7 +695,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         this.order.establecimientoId = this.cloneOrder.establecimientoId;
         return;
       }
-      if (this.bodegas.length === 0) {
+      if (this.bodegas().length === 0) {
         this.tS.toastr({
           type: 'warning',
           message: 'No tienes bodegas asignado a este establecimiento',
@@ -703,13 +704,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return;
       }
 
-      const dataPtoEmi = this.puntosEmision.find((item) => item.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision().find((item) => item.defaultPtoEmi);
       if (dataPtoEmi) {
         this.order.puntoEmisionId = dataPtoEmi.idPuntoEmision;
       }
 
       //Bodegas
-      const dataBodega = this.bodegas.find((item) => item.defaultBodega);
+      const dataBodega = this.bodegas().find((item) => item.defaultBodega);
       if (dataBodega) {
         this.order.bodegaId = dataBodega.idBodega;
       }
@@ -725,7 +726,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   async onChangeBodega() {
     try {
-      const bodega = this.bodegas.find(
+      const bodega = this.bodegas().find(
         (item) => item.idBodega === this.order.bodegaId
       );
       const swalWithBootstrapButtons = Swal.mixin({
@@ -751,7 +752,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       if (isConfirmed) {
         this.cloneOrder.bodegaId = this.order.bodegaId;
 
-        if (this.orderMaintenances.length === 0) return;
+        if (this.orderMaintenances().length === 0) return;
 
         this.setIdBodegaInDetalle();
         this.resetCantidadToZeroAndRecalculateTotals();
@@ -784,8 +785,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
           this.tabulatorOptions = {
             columns: this.columnsMain,
           };
-          this.cloneOrderMaintenances = structuredClone(this.orderMaintenances);
-          this.orderMaintenances = [];
+          this.cloneOrderMaintenances.set(structuredClone(this.orderMaintenances()))
+          this.orderMaintenances.set([]);
           this.detailCustom = true;
 
           this.importeTotal = this.order.total;
@@ -802,7 +803,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         ...this.tabGroupOptions,
         columns: this.columnsGroup,
       };
-      this.orderMaintenances = structuredClone(this.cloneOrderMaintenances);
+      this.orderMaintenances.set(structuredClone(this.cloneOrderMaintenances()))
       this.setGroupValues();
       this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
 
@@ -818,7 +819,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       //   return
       // }
 
-      const tarifa = this.feeds.find(
+      const tarifa = this.feeds().find(
         (item) => item.idTarifa === this.order.feeId
       );
       const { isConfirmed } = await Swal.fire({
@@ -834,14 +835,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
       if (isConfirmed) {
         this.cloneOrder.feeId = this.order.feeId;
 
-        if (this.orderMaintenances.length === 0) return;
+        if (this.orderMaintenances().length === 0) return;
 
         this.salesDetailCalculationSvc.setFeeInDetail({
           generalFeeId: this.order.feeId,
-          items: this.orderMaintenances,
+          items: this.orderMaintenances(),
           decimal: this.decimal,
           columnDefs: this.tabulatorOptions.columns,
-          tarifasImpuesto: this.taxPercents,
+          tarifasImpuesto: this.taxPercents(),
         });
 
         this.drawImpuestoTotales();
@@ -865,10 +866,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          const index = this.orderMaintenances.findIndex(
+          const index = this.orderMaintenances().findIndex(
             (r) => r.rowguid === data.rowguid
           );
-          this.orderMaintenances.splice(index, 1);
+          this.orderMaintenances().splice(index, 1);
 
           this.drawImpuestoTotales();
         }
@@ -955,16 +956,16 @@ export class OrderMaintenanceModalComponent implements OnInit {
   onProductSelected($event: any) {
     const { product, medidas, consolidacionesFecha } = $event;
 
-    const taxPercents = this.taxPercents;
+    const taxPercents = this.taxPercents();
     let row = this.getDataRowEmpty();
     const dataTaxPercent = taxPercents.find(
       (d) => d.codigo === product.codigoPorcentaje
     );
-    const dataOrderDetail = this.orderDetails.find(
+    const dataOrderDetail = this.orderDetails().find(
       (od) => od.orderDetailId === this.order.orderDetailId
     );
 
-    const findDataProduct = this.orderMaintenances.find(
+    const findDataProduct = this.orderMaintenances().find(
       (item) => item.llevaInventario && item.productId === product.idArticulo
     );
 
@@ -1014,7 +1015,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
     //cuando el detalle es personalizado
     if (this.detailCustom) {
-      this.orderMaintenances = [];
+      this.orderMaintenances.set([]);
 
       row.price = pricingCalculateUtil.calculatePriceSale(
         this.importeTotal,
@@ -1023,14 +1024,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
       row.precioConIva = this.importeTotal;
       row.taxValue = this.importeTotal - row.price;
 
-      this.orderMaintenances.push(row);
+      this.orderMaintenances.update(r=>[...r, row]);
       this.setCalculoTotales('quantity', row, undefined);
       return;
     }
 
     //Producto de tipo Servicio
     if (!product.llevaInventario) {
-      this.orderMaintenances.push(row);
+      this.orderMaintenances.update(r=>[...r, row]);
+
       this.setCalculoTotales('quantity', row, undefined);
       this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
       return;
@@ -1039,7 +1041,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     //Producto que lleva inventario
     if (product.llevaInventario) {
       let oldValue = 1;
-      const productsDuplicated = structuredClone(this.orderMaintenances).filter(
+      const productsDuplicated = structuredClone(this.orderMaintenances()).filter(
         (item) => item.llevaInventario && item.productId === product.idArticulo
       );
 
@@ -1053,16 +1055,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
         row = findDataProduct;
         row.quantity += 1;
       } else {
-        this.orderMaintenances.push(row);
+        this.orderMaintenances.update(r=>[...r, row]);
+
       }
 
-      console.log(productsDuplicated);
       const dataProductMerge = mergeProductStock({
         rows: structuredClone(productsDuplicated),
         row: structuredClone(row),
       });
 
-      console.log(dataProductMerge);
 
       const cantidadStock = getCantidadStock({
         fechaEmision: this.order.fechaEmision,
@@ -1231,7 +1232,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'taxId') {
-      if (!this.taxPercents.some((t) => t.idImpuesto === Number(value))) {
+      if (!this.taxPercents().some((t) => t.idImpuesto === Number(value))) {
         taxId = oldValue;
       } else {
         const cellInOtherColumn = row.getCell('taxPercentId');
@@ -1300,9 +1301,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
         percentageDiscount,
         propina,
       } = this.salesDetailCalculationSvc.getTaxTotals({
-        items: this.orderMaintenances,
+        items: this.orderMaintenances(),
         decimal: this.decimal,
-        tarifasImpuesto: this.taxPercents,
+        tarifasImpuesto: this.taxPercents(),
       });
 
       this.order.subTotalSinImpuesto = subTotalSinImpuesto;
@@ -1376,7 +1377,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (this.orderMaintenances.length === 0) {
+    if (this.orderMaintenances().length === 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Ingrese al menos un artículo en el detalle',
@@ -1385,7 +1386,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (
-      this.orderMaintenances.some(
+      this.orderMaintenances().some(
         (row) => row.llevaInventario && row.quantity === 0
       )
     ) {
@@ -1397,7 +1398,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (this.orderMaintenances.some((row) => !(row.bodegaId > 0))) {
+    if (this.orderMaintenances().some((row) => !(row.bodegaId > 0))) {
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -1410,8 +1411,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       this.codDoc === DOC_TYPE.NE
     ) {
       if (
-        !this.orderDetails.every((od) =>
-          this.orderMaintenances.some(
+        !this.orderDetails().every((od) =>
+          this.orderMaintenances().some(
             (item) => item.orderDetailId === od.orderDetailId
           )
         )
@@ -1438,7 +1439,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   saveOptions(codDoc?: DOC_TYPE) {
     this.codDoc = codDoc;
-    console.log(codDoc);
     if (!this.isValidForm()) return;
 
     Swal.fire({
@@ -1462,14 +1462,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
       let customDetails: any[] = [];
 
       if (this.detailCustom) {
-        detalles = this.cloneOrderMaintenances.map((item) => {
+        detalles = this.cloneOrderMaintenances().map((item) => {
           return {
             ...item,
             envioSri: false,
           };
         });
 
-        customDetails = this.orderMaintenances.map((item) => {
+        customDetails = this.orderMaintenances().map((item) => {
           return {
             ...item,
             envioSri: true,
@@ -1477,7 +1477,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           };
         });
       } else {
-        detalles = this.orderMaintenances.map((item) => {
+        detalles = this.orderMaintenances().map((item) => {
           return {
             ...item,
             envioSri: true,

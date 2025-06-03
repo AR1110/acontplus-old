@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import {Component, inject, signal, ViewChild} from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -89,9 +89,9 @@ export class ConvertDocDialogComponent {
     total: 0,
   };
 
-  details: SupportDetail[] = [];
+  details  = signal<SupportDetail[]>([]);
 
-  infoAdicionalDoc: any[] = [];
+  infoAdicionalDoc = signal<any[]>([]);
 
   columns = [
     {
@@ -137,8 +137,8 @@ export class ConvertDocDialogComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          let index = this.infoAdicionalDoc.indexOf(data);
-          this.infoAdicionalDoc.splice(index, 1);
+          const index = this.infoAdicionalDoc().indexOf(data);
+          this.infoAdicionalDoc().splice(index, 1);
         }
       });
     } catch (error) {
@@ -170,9 +170,9 @@ export class ConvertDocDialogComponent {
   };
 
   protected convertToKeyName(data: any) {
-    let adicionales = [];
-    for (let item of data) {
-      for (let arr of Object.entries(item)) {
+    const adicionales = [];
+    for (const item of data) {
+      for (const arr of Object.entries(item)) {
         const [name, value] = arr;
 
         adicionales.push({
@@ -196,10 +196,10 @@ export class ConvertDocDialogComponent {
       ...this.data,
       ...this.params.comprobante,
     };
-    this.details = this.params.details;
+    this.details.set(this.params.details);
     this.companyCustomer = this.params.companyCustomer;
 
-    let dataTiempoCredito = this.params.tiemposCredito[0];
+    const dataTiempoCredito = this.params.tiemposCredito[0];
     if (dataTiempoCredito) {
       this.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
       this.data.fechaVencimiento = addDayToDate(
@@ -210,7 +210,7 @@ export class ConvertDocDialogComponent {
 
     //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
     if (this.params.formasPagoSri.length > 0) {
-      let dataFormaPago = this.params.formasPagoSri.find((item) => {
+      const dataFormaPago = this.params.formasPagoSri.find((item) => {
         if (this.params.config.idFormaPagoSri > 0) {
           return item.idFormaPagoSri === this.params.config.idFormaPagoSri;
         } else {
@@ -228,28 +228,24 @@ export class ConvertDocDialogComponent {
     this.dataFormaPago.total = this.data.total;
 
     // InfoAdicional
-    let vehicle = this.params.vehicle;
-    let inspection = this.params.inspection;
+    const vehicle = this.params.vehicle;
+    const inspection = this.params.inspection;
 
-    let adicionalVehicle = this.convertToKeyName(vehicle);
-    let adicionalInspection = this.convertToKeyName(inspection);
-    this.infoAdicionalDoc = [...adicionalVehicle, ...adicionalInspection];
+    const adicionalVehicle = this.convertToKeyName(vehicle);
+    const adicionalInspection = this.convertToKeyName(inspection);
+    this.infoAdicionalDoc.set([...adicionalVehicle, ...adicionalInspection])
   }
 
   protected generateSubTotals() {
     try {
-      let {
+      const {
         subTotalSinImpuesto,
-        htmlImpuestoTotal,
-        htmlIvaTotal,
-        irbpnr,
-        totalIce,
         importeTotal,
         discount,
         percentageDiscount,
         propina,
       } = this.salesDetailCalculationSvc.getTaxTotals({
-        items: this.details,
+        items: this.details(),
         tarifasImpuesto: this.params.taxPercents,
       });
 
@@ -308,7 +304,7 @@ export class ConvertDocDialogComponent {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: this.data.fechaEmision,
       setHoursZero: true,
     });
@@ -365,7 +361,7 @@ export class ConvertDocDialogComponent {
       return;
     }
 
-    if (this.details.some((row) => row.llevaInventario && row.quantity === 0)) {
+    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
       this.tS.toastr({
         type: 'warning',
         message:
@@ -374,7 +370,7 @@ export class ConvertDocDialogComponent {
       return;
     }
 
-    if (this.details.some((row) => !(row.bodegaId > 0))) {
+    if (this.details().some((row) => !(row.bodegaId > 0))) {
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -426,14 +422,14 @@ export class ConvertDocDialogComponent {
   async saveInvoice() {
     try {
       if (!this.isValidForm()) return;
-      let data = {
+      const data = {
         fechaEmision: this.data.fechaEmision,
         total: this.data.total,
         tiemposCredito: this.params.tiemposCredito,
         idTiempoCredito: this.data.idTiempoCredito,
         cuotas: [],
       };
-      let cuotas = isValidGeneratorQuota(data);
+      const cuotas = isValidGeneratorQuota(data);
 
       if (cuotas.length === 0) {
         this.tS.toastr({
@@ -443,7 +439,7 @@ export class ConvertDocDialogComponent {
         return;
       }
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Convertir a Factura',
         text: '¿Estás seguro de convertir a factura?',
         icon: 'warning',
@@ -456,7 +452,7 @@ export class ConvertDocDialogComponent {
 
       if (!isConfirmed) return;
 
-      let details = this.details.map((item) => {
+      const details = this.details().map((item) => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -464,7 +460,7 @@ export class ConvertDocDialogComponent {
         };
       });
 
-      let comprobante = {
+      const comprobante = {
         ...this.data,
         idCliente: this.companyCustomer.idCliente,
         idTipoIdentificacion: this.companyCustomer.idTipoIdentificacion,
@@ -476,7 +472,7 @@ export class ConvertDocDialogComponent {
       const selectedData =
         this.tabulatorComponent.refTabulator.getSelectedData();
 
-      let params = {
+      const params = {
         comprobante,
         details,
         cuotas: cuotas,
@@ -484,7 +480,7 @@ export class ConvertDocDialogComponent {
         infoAdicionalDoc: selectedData,
       };
 
-      let senData = InvoiceAdapter.mainAdapt(params);
+      const senData = InvoiceAdapter.mainAdapt(params);
 
       this.invoiceSvc.post(senData).subscribe(this.successResponse);
     } catch (error) {
@@ -495,14 +491,14 @@ export class ConvertDocDialogComponent {
   async saveNotaEntrega() {
     try {
       if (!this.isValidForm()) return;
-      let dataGenerateQuota = {
+      const dataGenerateQuota = {
         fechaEmision: this.data.fechaEmision,
         total: this.data.total,
         tiemposCredito: this.params.tiemposCredito,
         idTiempoCredito: this.data.idTiempoCredito,
         cuotas: [],
       };
-      let cuotas = isValidGeneratorQuota(dataGenerateQuota);
+      const cuotas = isValidGeneratorQuota(dataGenerateQuota);
 
       if (cuotas.length === 0) {
         this.tS.toastr({
@@ -512,7 +508,7 @@ export class ConvertDocDialogComponent {
         return;
       }
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Convertir a Nota Entrega',
         text: '¿Estás seguro de convertir a Nota Entrega?',
         icon: 'warning',
@@ -525,7 +521,7 @@ export class ConvertDocDialogComponent {
 
       if (!isConfirmed) return;
 
-      let details = this.details.map((item) => {
+      const details = this.details().map((item) => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -533,7 +529,7 @@ export class ConvertDocDialogComponent {
         };
       });
 
-      let comprobante = {
+      const comprobante = {
         ...this.data,
         idCliente: this.companyCustomer.idCliente,
         idTipoIdentificacion: this.companyCustomer.idTipoIdentificacion,
@@ -545,14 +541,14 @@ export class ConvertDocDialogComponent {
       const selectedData =
         this.tabulatorComponent.refTabulator.getSelectedData();
 
-      let params = {
+      const params = {
         comprobante,
         details,
         cuotas: cuotas,
         infoAdicionalDoc: selectedData,
       };
 
-      let senData = NotaEntregaMapper.toApiSave(params);
+      const senData = NotaEntregaMapper.toApiSave(params);
 
       this._notaEntregaUseCase.post(senData).subscribe(this.successResponse);
     } catch (error) {

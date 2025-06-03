@@ -30,7 +30,6 @@ import {DialogService} from "@core/services/dialog.service";
   styles: ``,
 })
 export class ItemListComponent {
-  items: Item[] = [];
   pagination = signal(new MatPagination());
   #itemService = inject(ItemService);
   #modalService = inject(DialogService);

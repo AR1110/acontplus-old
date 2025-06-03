@@ -75,7 +75,7 @@ export class SupportPageComponent {
 
   visibleColumns: string[] = [];
 
-  dataSource: any = [];
+  dataSource = signal<any[]>([]);
   dataSearch = {
     ckDate: true,
     fromDate: formatDateToString(new Date()),
@@ -123,11 +123,6 @@ export class SupportPageComponent {
     });
   }
 
-  onChangeRequiredDate(value: boolean) {
-    this.dataSearch.ckDate = value;
-    this.getSupports();
-  }
-
   onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
@@ -155,7 +150,7 @@ export class SupportPageComponent {
        * si status es 0 la pagina support-page carga en dasboard
        */
 
-      let params = {
+      const params = {
         ckDate: this.dataSearch.ckDate,
         pageIndex: this.pagination().pageIndex + 1,
         pageSize: this.pagination().pageSize,
@@ -165,15 +160,15 @@ export class SupportPageComponent {
         customerId: this.dataSearch.customerId,
         licensePlate: isValidField(this.dataSearch.licensePlate),
       };
-      this.dataSource = [];
+      this.dataSource.set([]);
       this.isLoadingResults.set(true)
       this.supportUseCase
         .getAll(params)
         .pipe(finalize(() => (this.isLoadingResults.set(false))))
         .subscribe((response) => {
-          this.dataSource = response;
-          if (this.dataSource.length > 0) {
-            this.pagination().totalRecords = this.dataSource[0].totalRecords;
+          this.dataSource.set(response);
+          if (this.dataSource().length > 0) {
+            this.pagination().totalRecords = this.dataSource()[0].totalRecords;
           }
         });
     } catch (error) {
@@ -225,15 +220,6 @@ export class SupportPageComponent {
         col.templateOutlet = this.statusTemplate;
       }
     });
-  }
-
-  pageChanged(): void {
-    this.getSupports();
-  }
-
-  changePageSize(): void {
-    this.pagination().pageIndex = 1;
-    this.getSupports();
   }
 
   askToDelete(id: number) {
@@ -301,8 +287,7 @@ export class SupportPageComponent {
   }
 
   askToConvertToDoc(id: number) {
-    this.supportUseCase.getConvertToAprobDoc(id).subscribe({
-      next: (response) => {
+    this.supportUseCase.getConvertToAprobDoc(id).subscribe((response) => {
         const dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
           size: 'lg',
           data: response,
@@ -313,7 +298,6 @@ export class SupportPageComponent {
             this.getSupports();
           }
         });
-      },
     });
   }
 
@@ -339,7 +323,7 @@ export class SupportPageComponent {
 
   //Status Support
   putState(id: number) {
-    let supportStatusId = this.$store.supportStatus().find(
+    const supportStatusId = this.$store.supportStatus().find(
       (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
     )?.id;
     if (!(supportStatusId > 0)) {

@@ -12,7 +12,7 @@ import {
   UpdateAccessUserCustomerRoleUseCase
 } from "@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case";
 import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
-import {ApiResponse, isApiResponse} from "@core/models/api-response";
+import {ApiResponse} from "@core/models/api-response";
 import Swal from "sweetalert2";
 
 interface TreeNode {

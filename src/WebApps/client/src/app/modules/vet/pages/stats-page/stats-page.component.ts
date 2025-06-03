@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { StatsService } from '@modules/vet/services/stats.service';
 import { isApiResponse } from '@core/models/api-response';
@@ -12,9 +12,9 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     styles: ``
 })
 export class StatsPageComponent {
-  totalPetTypes = [];
-  totalBreeds = [];
-  totalGenders = [];
+  totalPetTypes = signal([]);
+  totalBreeds = signal([]);
+  totalGenders = signal([]);
   public chartPetType: any;
   public chartPetBreed: any;
   public chartPetSex: any;
@@ -23,14 +23,14 @@ export class StatsPageComponent {
     if (this.chartPetType != null) {
       this.chartPetType.destroy();
     }
-    let groupedPets = this.totalPetTypes.reduce((groups: any, item: any) => {
+    const groupedPets = this.totalPetTypes().reduce((groups: any, item: any) => {
       const group = groups[item.name] || [];
       group.push(item);
       groups[item.name] = group;
       return groups;
     }, {});
-    let labels = Object.keys(groupedPets);
-    let lengths = labels.map((key) => groupedPets[key][0]['total']);
+    const labels = Object.keys(groupedPets);
+    const lengths = labels.map((key) => groupedPets[key][0]['total']);
 
     this.chartPetType = new Chart('chartPetType', {
       type: 'bar',
@@ -73,14 +73,14 @@ export class StatsPageComponent {
     if (this.chartPetBreed != null) {
       this.chartPetBreed.destroy();
     }
-    let groupedPets = this.totalBreeds.reduce((groups: any, item: any) => {
+    const groupedPets = this.totalBreeds().reduce((groups: any, item: any) => {
       const group = groups[item.name] || [];
       group.push(item);
       groups[item.name] = group;
       return groups;
     }, {});
-    let labels = Object.keys(groupedPets);
-    let lengths = labels.map((key) => groupedPets[key][0]['total']);
+    const labels = Object.keys(groupedPets);
+    const lengths = labels.map((key) => groupedPets[key][0]['total']);
 
     this.chartPetBreed = new Chart('chartPetBreed', {
       type: 'line',
@@ -124,14 +124,14 @@ export class StatsPageComponent {
     if (this.chartPetSex != null) {
       this.chartPetSex.destroy();
     }
-    let groupedPets = this.totalGenders.reduce((groups: any, item: any) => {
+    const groupedPets = this.totalGenders().reduce((groups: any, item: any) => {
       const group = groups[item.name] || [];
       group.push(item);
       groups[item.name] = group;
       return groups;
     }, {});
-    let labels = Object.keys(groupedPets);
-    let lengths = labels.map((key) => groupedPets[key][0]['total']);
+    const labels = Object.keys(groupedPets);
+    const lengths = labels.map((key) => groupedPets[key][0]['total']);
 
     this.chartPetSex = new Chart('chartPetSex', {
       type: 'doughnut',
@@ -166,9 +166,9 @@ export class StatsPageComponent {
         const { totalPetTypes, totalBreeds, totalGenders } = JSON.parse(
           response.payload as string,
         );
-        this.totalPetTypes = totalPetTypes;
-        this.totalBreeds = totalBreeds;
-        this.totalGenders = totalGenders;
+        this.totalPetTypes.set(totalPetTypes) ;
+        this.totalBreeds.set(totalBreeds) ;
+        this.totalGenders.set(totalGenders) ;
         this.drawChartPetType();
         this.drawChartPetBreed();
         this.drawChartPetSex();

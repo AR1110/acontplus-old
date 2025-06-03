@@ -20,7 +20,7 @@
               formControlName="establecimientoId"
             >
               <option value="">Todos</option>
-              @for (estab of establecimientos; track $index) {
+              @for (estab of establecimientos(); track $index) {
               <option [ngValue]="estab.idEstablecimiento">
                 {{ estab.nombreComercial }}
               </option>
@@ -139,16 +139,16 @@
         <thead>
           <tr>
             <th>Test de Salud</th>
-            @for (item of diseasesStatuses; track $index) {
+            @for (item of diseasesStatuses(); track $index) {
             <th>{{ item.name }}</th>
             }
           </tr>
         </thead>
         <tbody>
-          @for (d of diseases; track $index) {
+          @for (d of diseases(); track $index) {
           <tr>
             <td>{{ d.name }}</td>
-            @for (ds of diseasesStatuses; track $index) {
+            @for (ds of diseasesStatuses(); track $index) {
             <td>
               <input
                 (change)="addDiseaseStatus(d.id, ds.id, true)"
@@ -169,16 +169,16 @@
         <thead>
           <tr>
             <th>Test de Comportamiento:</th>
-            @for (item of behaviorsStatuses; track $index) {
+            @for (item of behaviorsStatuses(); track $index) {
             <th>{{ item.name }}</th>
             }
           </tr>
         </thead>
         <tbody>
-          @for (b of behaviors; track $index) {
+          @for (b of behaviors(); track $index) {
           <tr>
             <td>{{ b.name }}</td>
-            @for (bs of behaviorsStatuses; track $index) {
+            @for (bs of behaviorsStatuses(); track $index) {
             <td>
               <input
                 (change)="addBehaviorStatus(b.id, bs.id, true)"

@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import {Component, inject, signal, ViewChild, ViewEncapsulation} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -148,15 +148,15 @@ export class OrderModalComponent {
   customerBusinessName = '';
   data= inject<any>(MAT_DIALOG_DATA)
   deviceFound: any = {};
-  devices: any = [];
-  establecimientos: GroupedEstab[] = [];
+  devices = signal<any>([]);
+  establecimientos = signal<GroupedEstab[]>([]);
   formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
   modalIcon = 'add';
   modalTitle = 'Nueva Orden';
   order: any = {};
-  orderDetails: OrderDetail[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  users: any = [];
+  orderDetails = signal<OrderDetail[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  users = signal<any>([]);
 
   orderForm = new FormGroup({
     id: new FormControl(0),
@@ -171,7 +171,7 @@ export class OrderModalComponent {
   });
 
   addDetail(device: any) {
-    if (this.orderDetails.some((x) => x.deviceId == device.id)) {
+    if (this.orderDetails().some((x) => x.deviceId == device.id)) {
       return this.tS.toastr({
         type: 'warning',
         message: 'Este equipo ya se encuentra agregado en el detalle',
@@ -209,8 +209,7 @@ export class OrderModalComponent {
     deviceToAdd.deviceWarranty = !device.deviceWarranty
       ? ''
       : device.deviceWarranty;
-    this.orderDetails.push(deviceToAdd);
-    console.log(this.orderDetails);
+    this.orderDetails.update(r=>[...r, deviceToAdd])
   }
 
   askToDeleteDetail(detail: OrderDetail) {
@@ -229,9 +228,7 @@ export class OrderModalComponent {
               message: response.message,
             });
             if (response.code == '1') {
-              this.orderDetails = this.orderDetails.filter(
-                (x) => x.id != detail.id,
-              );
+              this.orderDetails.update(r=>r.filter(x=>x.id != detail.id))
             }
           }
         });
@@ -265,11 +262,12 @@ export class OrderModalComponent {
         if (response.code == '1') {
           const parsedResponse = JSON.parse(response.payload as string);
           const { puntosEmision, users } = parsedResponse;
-          this.establecimientos = groupEstabUtil({
+          const establecimientos = groupEstabUtil({
             estabs: puntosEmision,
             isGroupPuntoEmision: true,
           });
-          const dataEstab = this.establecimientos.find(
+          this.establecimientos.set(establecimientos)
+          const dataEstab = this.establecimientos().find(
             (estab) => estab.defaultEstab,
           );
           if (dataEstab) {
@@ -277,8 +275,8 @@ export class OrderModalComponent {
               establecimientoId: dataEstab.idEstablecimiento,
             });
             this.order.codEstab = dataEstab.codEstab;
-            this.puntosEmision = dataEstab.puntosEmision;
-            const dataPuntoEmision = this.puntosEmision.find(
+            this.puntosEmision.set(dataEstab.puntosEmision)
+            const dataPuntoEmision = this.puntosEmision().find(
               (ptoEmi) => ptoEmi.defaultPtoEmi,
             );
             if (dataPuntoEmision) {
@@ -289,10 +287,10 @@ export class OrderModalComponent {
           }
           this.users = users;
           if (this.data.id > 0) {
-            let { order, orderDetails } = parsedResponse;
+            const { order, orderDetails } = parsedResponse;
             this.order = order[0];
             this.customerBusinessName = this.order.businessName;
-            this.orderDetails = orderDetails || [];
+            this.orderDetails.set(orderDetails || []);
             this.orderForm.patchValue(this.order);
           }
         }
@@ -332,12 +330,12 @@ export class OrderModalComponent {
   onChangeEstab() {
     const establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
-      const estabs = this.establecimientos.find(
+      const estabs = this.establecimientos().find(
         (x) => x.idEstablecimiento == Number(establecimientoId),
       );
-      this.puntosEmision = estabs?.puntosEmision || [];
+      this.puntosEmision.set(estabs?.puntosEmision || []);
       const puntoEmisionId =
-        this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
+        this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
           ?.idPuntoEmision || 0;
       this.orderForm.patchValue({
         establecimientoId: establecimientoId,
@@ -355,9 +353,7 @@ export class OrderModalComponent {
   }
 
   removeFromList(deviceId: number) {
-    this.orderDetails = this.orderDetails.filter(
-      (x) => x.deviceId !== deviceId,
-    );
+    this.orderDetails.update(r=>r.filter(x=>x.deviceId !== deviceId))
   }
 
   onChangeDate(event: Event) {
@@ -368,7 +364,7 @@ export class OrderModalComponent {
   }
 
   save() {
-    if (this.orderDetails.length == 0) {
+    if (this.orderDetails().length == 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
@@ -407,11 +403,10 @@ export class OrderModalComponent {
       fechaEmision: fechaEmision,
       setHoursZero: true,
     });
-    console.log(ajusteFechaEmision);
 
     const dataToSave = {
       ...this.orderForm.value,
-      orderDetails: this.orderDetails,
+      orderDetails: this.orderDetails(),
       fechaEmision: formatDateToString(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
@@ -432,7 +427,7 @@ export class OrderModalComponent {
       });
       if (response.code === '1') {
         this.orderForm.patchValue({});
-        this.orderDetails = [];
+        this.orderDetails.set([]);
         this.order = {};
         this.modalRef.close(response);
       }

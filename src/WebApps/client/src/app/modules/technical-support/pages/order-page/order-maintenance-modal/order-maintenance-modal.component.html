@@ -18,7 +18,7 @@
           [(ngModel)]="order.establecimientoId"
           (change)="onChangeEstablecimiento()"
         >
-          @for (item of establecimientos; track $index) {
+          @for (item of establecimientos(); track $index) {
             <option [ngValue]="item.idEstablecimiento">
               {{ item.nombreComercial }}
             </option>
@@ -37,7 +37,7 @@
           class="form-select"
           [(ngModel)]="order.puntoEmisionId"
         >
-          @for (item of puntosEmision; track $index) {
+          @for (item of puntosEmision(); track $index) {
             <option [ngValue]="item.idPuntoEmision">{{ item.ptoEmi }}</option>
           }
         </select>
@@ -63,7 +63,7 @@
           class="form-select"
           (change)="onChangeBodega()"
         >
-          @for (item of bodegas; track $index) {
+          @for (item of bodegas(); track $index) {
             <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
           }
         </select>
@@ -79,7 +79,7 @@
           (change)="onChangeFee()"
           [(ngModel)]="order.feeId"
         >
-          @for (item of feeds; track $index) {
+          @for (item of feeds(); track $index) {
             <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
           }
         </select>
@@ -101,7 +101,7 @@
             [(ngModel)]="order.orderDetailId"
             (change)="onChangeOrderDetail()"
           >
-            @for (item of orderDetails; track $index) {
+            @for (item of orderDetails(); track $index) {
               <option [ngValue]="item.orderDetailId">
                 {{ item.deviceName }}
               </option>
@@ -193,7 +193,7 @@
   <div class="row">
     <div class="col-12">
       <app-tabulator
-        [tableData]="orderMaintenances"
+        [tableData]="orderMaintenances()"
         [options]="tabulatorOptions"
         (cellEdited)="cellEdited($event)"
       ></app-tabulator>

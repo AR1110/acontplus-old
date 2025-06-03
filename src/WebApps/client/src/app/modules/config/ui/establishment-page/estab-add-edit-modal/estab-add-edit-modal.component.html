@@ -59,7 +59,7 @@
           <mat-label>Tipo Contribuyente: <span class="text-danger">*</span></mat-label>
           <mat-select   [(ngModel)]="data.contribuyente"
                         (selectionChange)="onChangeTipoContribuyente()">
-            @for (item of contribuyentes; track $index) {
+            @for (item of contribuyentes(); track $index) {
               <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
@@ -76,7 +76,7 @@
           <mat-select   [(ngModel)]="data.agenteRetencion"
                         [disabled]="isDisabledAgenteRetencion">
             <mat-option [value]="null">Ninguna</mat-option>
-            @for (item of agentesRetencion; track $index) {
+            @for (item of agentesRetencion(); track $index) {
               <mat-option [value]="item.resolucion">
                 {{ item.resolucion }}
               </mat-option>
@@ -95,7 +95,7 @@
         <mat-form-field class="w-100">
           <mat-label>Actividad: <span class="text-danger">*</span></mat-label>
           <mat-select    [(ngModel)]="data.actividad">
-            @for (item of actividadesEconomica; track $index) {
+            @for (item of actividadesEconomica(); track $index) {
               <mat-option [value]="item.codigo">
                 {{ item.descripcion }}
               </mat-option>
@@ -130,13 +130,13 @@
       <div class="col">
         <app-m3-input-chip
          [labelText]="'Correo'"
-         [chips]="emails"
+         [chips]="emails()"
         />
       </div>
       <div class="col">
         <app-m3-input-chip
           [labelText]="'Teléfono'"
-          [chips]="telephones"
+          [chips]="telephones()"
         />
       </div>
     </div>
@@ -148,7 +148,7 @@
         <mat-form-field class="w-100">
           <mat-label>Cantón: <span class="text-danger">*</span></mat-label>
           <mat-select    [(ngModel)]="data.canton">
-            @for (item of cantones; track $index) {
+            @for (item of cantones(); track $index) {
               <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
             }
           </mat-select>

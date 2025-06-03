@@ -30,7 +30,6 @@ export class MenuListComponent {
       tipo: 1,
     };
     this._menuService.get(obj).subscribe((response) => {
-      console.log(response);
       this.menus.set(response.menus);
       // this.pagination().totalRecords = this.menus[0]?.totalRecords ?? 0;
     });

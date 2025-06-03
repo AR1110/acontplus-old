@@ -26,7 +26,7 @@
                 (change)="onCategoryChange($event)"
               >
                 <option [value]="0">Seleccione una categoría</option>
-                @for (item of categories; track $index) {
+                @for (item of categories(); track $index) {
                   <option [value]="item.id">{{ item.name }}</option>
                 }
               </select>
@@ -55,7 +55,7 @@
                 (change)="onBrandChange($event)"
               >
                 <option [value]="0">Seleccione una marca</option>
-                @for (item of brands; track $index) {
+                @for (item of brands(); track $index) {
                   <option [value]="item.id">{{ item.name }}</option>
                 }
               </select>
@@ -84,7 +84,7 @@
                 class="form-select"
                 (change)="onModeloChange($event)"
               >
-                @for (item of modelos; track $index) {
+                @for (item of modelos(); track $index) {
                   <option [value]="item.id">{{ item.name }}</option>
                 }
               </select>
@@ -164,11 +164,11 @@
                   </div>
                 </div>
 
-                @if (deviceSpec.length > 0) {
+                @if (deviceSpec().length > 0) {
 
                   <mat-tab-group [selectedIndex]="selected()"
                                  (selectedIndexChange)="selectedIndexChange($event)">
-                    @for (item of deviceSpec; track  $index) {
+                    @for (item of deviceSpec(); track  $index) {
                       <mat-tab [label]="item.name">
                         <ng-template matTabContent>
                             <div class="row mb-2">
