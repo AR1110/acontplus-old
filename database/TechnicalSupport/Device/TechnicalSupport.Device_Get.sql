@@ -54,7 +54,7 @@ BEGIN
                ,tc.Name
                ,tc.CreatedAt
             FROM TechnicalSupport.Category tc WITH(NOLOCK)
-            WHERE tc.[Enabled] = 1
+            WHERE tc.[IsActive] = 1
                 AND tc.companyId = @companyId
             ORDER BY tc.CreatedAt DESC
 
@@ -77,7 +77,7 @@ BEGIN
                 INNER JOIN TechnicalSupport.Brand b WITH (NOLOCK) ON m.BrandId = b.Id
                 INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id
                 LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
-            WHERE d.Deleted IS NULL
+            WHERE d.IsDeleted = CAST(0 AS BIT)
                 AND c.CompanyId = @companyId
             ORDER BY
                 d.Id DESC

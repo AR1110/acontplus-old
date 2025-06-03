@@ -1,6 +1,4 @@
-import { Directive, HostListener, inject, input, Input, output } from "@angular/core";
-
-import { ModalService } from "@core/services/modal.service";
+import { Directive, HostListener, inject, input,   output } from "@angular/core";
 import { ModelAddEditComponent } from "@inventory/ui/inv-model-page/model-add-edit-modal/model-add-edit.component";
 import {DialogService} from "@core/services/dialog.service";
 

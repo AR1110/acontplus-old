@@ -72,10 +72,6 @@ BEGIN
 							  ,ad.importeTotal                               as total
 							  ,ep.codigo                                     as codEstado
 							  ,ep.descripcion                                as estado
-							  ,CASE ep.codigo WHEN ''A''   THEN ''table-danger'' 
-											  WHEN ''APR'' THEN ''table-success''
-											               ELSE ''''
-							   END                                           as colorFila 
                               ,count(*) over()                               as totalRecords
                               ,us.nombreUsuario                              as userName
 						FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 

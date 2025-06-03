@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { TECH_SUPPORT_PATHS } from '../constants/tech-support.constants';
+import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class CategoryService {
   }
   get<T>(parameters: T) {
     return this.http
-      .get(`${this.url}?json=${JSON.stringify(parameters)}`)
+      .get<ApiResponse>(`${this.url}?json=${JSON.stringify(parameters)}`)
       .pipe(map((response) => response));
   }
   post(data: any) {

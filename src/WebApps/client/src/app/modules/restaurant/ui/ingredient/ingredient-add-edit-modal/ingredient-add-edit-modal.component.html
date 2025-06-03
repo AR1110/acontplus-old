@@ -1,85 +1,67 @@
-<form (ngSubmit)="onSave()" [formGroup]="ingredientForm">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon>
-      {{ modalTitle }}
-    </h5>
-    <button (click)="onModalClose()" class="btn-close" type="button"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col">
-        <label for="summary">Resumen - Descripción</label>
-        <input
-          class="form-control form-control-lg"
-          formControlName="summary"
-          id="summary"
-          type="text"
-        />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="onModalClose()"
+  [title]="modalTitle"
+/>
+<ng-template #body>
+  <form (ngSubmit)="onSave()" id="ingredientForm" [formGroup]="ingredientForm">
+
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Resumen - Descripción</mat-label>
+            <input matInput   formControlName="summary" appToUpperCase>
+          </mat-form-field>
+
+        </div>
+        <div class="col">
+
+          <mat-form-field class="w-100">
+            <mat-label>Tipo</mat-label>
+            <mat-select  formControlName="ingredientTypeId">
+              <mat-option [value]="">Seleccione un tipo</mat-option>
+              @for (item of ingredientTypes(); track $index) {
+                <mat-option [value]="item.id">{{ item.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-      <div class="col">
-        <label for="ingredientTypeId">Tipo</label>
-        <select
-          class="form-control form-control-lg"
-          formControlName="ingredientTypeId"
-          id="ingredientTypeId"
-        >
-          <option value="">Seleccione un tipo</option>
-          @for (item of ingredientTypes; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
-          }
-        </select>
+      <div class="row mt-3">
+        <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Cantidad</mat-label>
+          <input type="number" matInput min="0"   formControlName="quantity" >
+        </mat-form-field>
+
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Unidad</mat-label>
+            <input type="number" matInput min="0"   formControlName="unit" >
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col">
-        <label for="quantity">Cantidad</label>
-        <input
-          class="form-control form-control-lg"
-          formControlName="quantity"
-          id="quantity"
-          min="0"
-          type="number"
-        />
+      <div class="row mt-3">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Contenido</mat-label>
+            <textarea matInput   formControlName="content" placeholder="..." appToUpperCase></textarea>
+          </mat-form-field>
+        </div>
       </div>
-      <div class="col">
-        <label for="unit">Unidad</label>
-        <input
-          class="form-control form-control-lg"
-          formControlName="unit"
-          id="unit"
-          min="0"
-          type="number"
-        />
-      </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col">
-        <label for="content">Contenido</label>
-        <textarea
-          class="form-control"
-          formControlName="content"
-          id="content"
-          rows="3"
-        ></textarea>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      [disabled]="ingredientForm.invalid"
-      mat-raised-button
-      title="Guardar"
-    >
-      <mat-icon>save</mat-icon>
-      Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+
+  </form>
+
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    type="submit"
+    variant="success"
+    icon="save"
+    text="Guardar"
+    form="ingredientForm"
+    [disabled]="ingredientForm.invalid"
+  />
+</ng-template>

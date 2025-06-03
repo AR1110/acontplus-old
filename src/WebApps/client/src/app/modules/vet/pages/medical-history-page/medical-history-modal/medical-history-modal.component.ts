@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   FormControl,
   FormGroup,
@@ -25,36 +24,35 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-medical-history-modal',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        PetSearchComponent,
-        MatCard,
-        MatCardContent,
-        MatIcon,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    PetSearchComponent,
+    MatCard,
+    MatCardContent,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './medical-history-modal.component.html',
   styles: ``,
 })
 export class MedicalHistoryModalComponent {
-  behaviors: Behavior[] = [];
-  behaviorsStatuses: BehaviorStatus[] = [];
-  behaviorTests: BehaviorTest[] = [];
-  data = {} as MedicalHistory;
-  diseases: Disease[] = [];
-  diseasesStatuses: DiseaseStatus[] = [];
-  establecimientos: Array<GroupedEstab> = [];
-  healthChecks: HealthCheck[] = [];
+  behaviors = signal<Behavior[]>([]);
+  behaviorsStatuses = signal<BehaviorStatus[]>([]);
+  behaviorTests = signal<BehaviorTest[]>([]);
+  data = inject<MedicalHistory>(MAT_DIALOG_DATA);
+  diseases = signal<Disease[]>([]);
+  diseasesStatuses = signal<DiseaseStatus[]>([]);
+  establecimientos = signal<GroupedEstab[]>([]);
+  healthChecks = signal<HealthCheck[] >([])
   modalIcon = 'add';
-  modalTitle: string = 'Registrar Nuevo';
+  modalTitle = 'Registrar Nuevo';
   medicalHistoryForm = new FormGroup({
     id: new FormControl(0),
     establecimientoId: new FormControl(0, Validators.required),
@@ -69,16 +67,16 @@ export class MedicalHistoryModalComponent {
   private readonly behaviorTestService = inject(BehaviorTestService);
   private readonly healthCheckService = inject(HealthCheckService);
   private readonly medicalHistoryService = inject(MedicalHistoryService);
-  private readonly modalRef = inject(NgbActiveModal);
+  private readonly modalRef = inject(MatDialogRef<MedicalHistoryModalComponent>);
   private readonly tS = inject(ToasterService);
 
   addBehavior(behaviorId: number, behaviorStatusId: number) {
-    this.behaviorTests.push({
+    this.behaviorTests.update(r=>[...r, {
       id: 0,
       medicalHistoryId: this.data.id > 0 ? this.data.id : 0,
       behaviorId,
       behaviorStatusId,
-    });
+    }])
   }
 
   addBehaviorStatus(
@@ -86,8 +84,8 @@ export class MedicalHistoryModalComponent {
     behaviorStatusId: number,
     dbUp: boolean,
   ) {
-    if (this.behaviorTests.some((test) => test.behaviorId === behaviorId)) {
-      const behaviorTest = this.behaviorTests.find(
+    if (this.behaviorTests().some((test) => test.behaviorId === behaviorId)) {
+      const behaviorTest = this.behaviorTests().find(
         (check: BehaviorTest) => check.behaviorId === behaviorId,
       );
       if (behaviorTest) {
@@ -104,22 +102,22 @@ export class MedicalHistoryModalComponent {
   }
 
   addDisease(diseaseId: number, diseaseStatusId: number) {
-    this.healthChecks.push({
+
+    this.healthChecks.update(r=>[...r, {
       id: 0,
       medicalHistoryId: this.data.id > 0 ? this.data.id : 0,
       diseaseId,
       diseaseStatusId,
-    });
-    console.log(this.healthChecks);
+    }])
   }
 
   addDiseaseStatus(diseaseId: number, diseaseStatusId: number, dbUp: boolean) {
     if (
-      this.healthChecks.some(
+      this.healthChecks().some(
         (check: HealthCheck) => check.diseaseId === diseaseId,
       )
     ) {
-      const healthCheck = this.healthChecks.find(
+      const healthCheck = this.healthChecks().find(
         (check: HealthCheck) => check.diseaseId === diseaseId,
       );
       if (healthCheck) {
@@ -141,7 +139,7 @@ export class MedicalHistoryModalComponent {
         const { medicalHistory, healthChecks, behaviors } = JSON.parse(
           response.payload as string,
         );
-        let objData = medicalHistory[0];
+        const objData = medicalHistory[0];
         this.petSelected.customer = objData.businessName;
         this.petSelected.customerIdCard = objData.idCard;
         this.petSelected.id = objData.petId;
@@ -155,7 +153,7 @@ export class MedicalHistoryModalComponent {
         this.medicalHistoryForm.patchValue(this.data);
         this.medicalHistoryForm.patchValue({ date: objData.date });
 
-        this.healthChecks = healthChecks;
+        this.healthChecks.set(healthChecks);
         healthChecks.forEach((value: any) => {
           this.addDiseaseStatus(value.diseaseId, value.diseaseStatusId, false);
           setTimeout(() => {
@@ -171,7 +169,7 @@ export class MedicalHistoryModalComponent {
           }, 1000);
         });
 
-        this.behaviorTests = behaviors;
+        this.behaviorTests.set(behaviors);
         behaviors.forEach((value: any) => {
           this.addBehaviorStatus(
             value.behaviorId,
@@ -205,12 +203,12 @@ export class MedicalHistoryModalComponent {
           diseasesStatuses,
           estabs,
         } = JSON.parse(response.payload as string);
-        this.behaviors = behaviors;
-        this.behaviorsStatuses = behaviorsStatuses;
-        this.diseases = diseases;
-        this.diseasesStatuses = diseasesStatuses;
-        this.establecimientos = estabs;
-        const dataEstab = this.establecimientos.find(
+        this.behaviors.set(behaviors);
+        this.behaviorsStatuses.set(behaviorsStatuses);
+        this.diseases.set(diseases);
+        this.diseasesStatuses.set(diseasesStatuses);
+        this.establecimientos.set(estabs);
+        const dataEstab = this.establecimientos().find(
           (estab) => estab.defaultEstab,
         );
 
@@ -242,13 +240,13 @@ export class MedicalHistoryModalComponent {
   }
 
   onSave() {
-    if (this.behaviorTests.length === 0) {
+    if (this.behaviorTests().length === 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe seleccionar el rango de comportamientos',
       });
     }
-    if (this.healthChecks.length === 0) {
+    if (this.healthChecks().length === 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe seleccionar el rango de estados de salud',
@@ -256,8 +254,8 @@ export class MedicalHistoryModalComponent {
     }
     const dataToSave = {
       ...this.medicalHistoryForm.value,
-      behaviorTests: this.behaviorTests,
-      healthChecks: this.healthChecks,
+      behaviorTests: this.behaviorTests(),
+      healthChecks: this.healthChecks(),
     };
     if (!(this.data.id > 0)) {
       this.medicalHistoryService.post(dataToSave).subscribe((response) => {
@@ -289,7 +287,7 @@ export class MedicalHistoryModalComponent {
   }
 
   updateBehaviorTest(behaviorId: number, behaviorStatusId: number) {
-    const behaviorTest = this.behaviorTests.find(
+    const behaviorTest = this.behaviorTests().find(
       (check: BehaviorTest) => check.behaviorId === behaviorId,
     );
     if (behaviorTest) {
@@ -317,7 +315,7 @@ export class MedicalHistoryModalComponent {
   }
 
   updateHealthCheck(diseaseId: number, diseaseStatusId: number) {
-    const healthCheck = this.healthChecks.find(
+    const healthCheck = this.healthChecks().find(
       (check: HealthCheck) => check.diseaseId === diseaseId,
     );
     if (healthCheck) {

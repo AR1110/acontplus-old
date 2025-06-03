@@ -26,7 +26,7 @@ public class CategoryController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Category category)
     {
-        category.UserId = User.GetUserId();
+        category.CreatedByUserId = User.GetUserId();
         category.CompanyId = User.GetClaimValue<int>(CompanyId);
         var response = await _categoryService.AddAsync(category);
         return Ok(response);
@@ -35,7 +35,7 @@ public class CategoryController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Category category)
     {
-        category.UserId = User.GetUserId();
+        category.UpdatedByUserId = User.GetUserId();
         category.CompanyId = User.GetClaimValue<int>(CompanyId);
         var response = await _categoryService.UpdateAsync(id, category);
         return Ok(response);

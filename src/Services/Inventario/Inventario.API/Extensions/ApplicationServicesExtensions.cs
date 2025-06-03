@@ -10,7 +10,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddAdvancedLogging(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
         services.AddResponseCompression(options =>
         {
@@ -49,7 +49,7 @@ public static class ApplicationServicesExtensions
         string[] trascientNameSpaces =
         [
             "Common.S3Application.Services",
-            "Common.Infrastructure.Data.Repository.Implementations"
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan

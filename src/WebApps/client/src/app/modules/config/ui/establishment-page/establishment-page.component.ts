@@ -1,15 +1,13 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
+import {ApiResponse } from '@core/models/api-response';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { PuntoEmisionAddEditModalComponent } from '@modules/config/ui/establishment-page/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component';
@@ -26,6 +24,8 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-establishment-page',
@@ -43,6 +43,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatRadioGroup,
     MatRadioButton,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
   ],
   templateUrl: './establishment-page.component.html',
   styleUrl: './establishment-page.component.scss',
@@ -50,13 +51,13 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 })
 export class EstablishmentPageComponent implements OnInit {
   establishments = signal<EstablishmentRead[]>([]);
-  puntosEmision: PuntoEmisionRead[] = [];
+  puntosEmision = signal<PuntoEmisionRead[]>([]);
   fileError: any = null;
   dataSeach = {
     pageIndex: 1,
     pageSize: 25,
   };
-  imageUrl: string | ArrayBuffer | null = null;
+  imageUrl = signal<string | ArrayBuffer | null>(null) ;
   selectedFile: File | null = null;
   data: any = {};
   dataLogo: any = {};
@@ -67,9 +68,8 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _estabService = inject(EstablishmentService);
   private readonly _puntoEmisionService = inject(PuntoEmisionService);
   private readonly _estabLogService = inject(EstablishmentLogoService);
-  private readonly _modalService = inject(ModalService);
+  private readonly _modalService = inject(DialogService);
   private readonly _tS = inject(ToasterService);
-  private readonly _cdr = inject(ChangeDetectorRef)
   setPanelOpen(index: number) {
     this.panelOpenState = index;
     // Only load data when opening a panel (not when closing)
@@ -103,7 +103,7 @@ export class EstablishmentPageComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
-          this.imageUrl = e.target.result;
+          this.imageUrl.set(e.target.result);
           this.newEstablishmentImgUploaded.set(true);
         }
       };
@@ -111,20 +111,18 @@ export class EstablishmentPageComponent implements OnInit {
     }
   }
 
-  commonResponse = (response: any) => {
-    if (isApiResponse(response)) {
+  commonResponse = (response: ApiResponse) => {
       this._tS.toastr({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });
       if (response.code == '1') {
         this.dataLogo = {};
-        this.imageUrl = null;
+        this.imageUrl.set(null);
         this.selectedFile = null;
         this.newEstablishmentImgUploaded.set(false);
         this.getDataLogo(this.data.idEstablecimiento);
       }
-    }
   };
 
   uploadImage(): void {
@@ -156,17 +154,16 @@ export class EstablishmentPageComponent implements OnInit {
   }
 
   openModalAddEdit(id?: number) {
-    const modalRef = this._modalService.openModalCustom(
+    const modalRef = this._modalService.open(
       EstabAddEditModalComponent,
       {
         size: 'lg',
+        data: {
+          id
+        }
       },
     );
-    modalRef.componentInstance.params = {
-      id: id,
-    };
-
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') this.getEstabs();
     });
   }
@@ -193,7 +190,6 @@ export class EstablishmentPageComponent implements OnInit {
 
     if (isConfirmed) {
       this._estabService.closeEstab(id).subscribe((response) => {
-        if (isApiResponse(response)) {
           this._tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -201,20 +197,18 @@ export class EstablishmentPageComponent implements OnInit {
           if (response.code == '1') {
             this.getEstabs();
           }
-        }
       });
     }
   }
 
   onEstabShow(id: number) {
-    this.puntosEmision = [];
+    this.puntosEmision.set([]);
     this.fileError = null;
-    this.imageUrl = null;
+    this.imageUrl.set(null);
 
     this._estabService.getId(id).subscribe((response) => {
-      this.puntosEmision = response.puntosEmision;
+      this.puntosEmision.set(response.puntosEmision);
       this.data = response.data;
-      this._cdr.detectChanges();
     });
 
     this.getDataLogo(id);
@@ -233,15 +227,13 @@ export class EstablishmentPageComponent implements OnInit {
         });
       }
       if (this.dataLogo) {
-        this.imageUrl = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`;
+        this.imageUrl.set(`data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`);
       }
-
-      this._cdr.detectChanges();
     });
   }
 
   onEstabHide() {
-    this.puntosEmision = [];
+    this.puntosEmision.set([]);
     this.data = {};
   }
 
@@ -249,30 +241,30 @@ export class EstablishmentPageComponent implements OnInit {
     data: EstablishmentRead,
     dataPuntoEmision?: PuntoEmisionRead,
   ) {
-    const modalRef = this._modalService.openModalCustom(
+    const modalRef = this._modalService.open(
       PuntoEmisionAddEditModalComponent,
       {
         size: 'sm',
+        data: {
+          codEstab: data.codEstab,
+          establishmentName: data.nombreComercial,
+          idPuntoEmision: dataPuntoEmision?.idPuntoEmision,
+          estado: dataPuntoEmision?.estado ?? false,
+          ptoEmi: dataPuntoEmision?.ptoEmi,
+          ambiente: dataPuntoEmision?.ambiente,
+        }
       },
     );
 
-    modalRef.componentInstance.params = {
-      codEstab: data.codEstab,
-      establishmentName: data.nombreComercial,
-      idPuntoEmision: dataPuntoEmision?.idPuntoEmision,
-      estado: dataPuntoEmision?.estado ?? false,
-      ptoEmi: dataPuntoEmision?.ptoEmi,
-      ambiente: dataPuntoEmision?.ambiente,
-    };
 
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') this.getEstabs();
     });
   }
 
   async clearImage() {
     if (!(this.dataLogo.id > 0)) {
-      this.imageUrl = null;
+      this.imageUrl.set(null);
       this.selectedFile = null;
       return;
     }
@@ -300,18 +292,16 @@ export class EstablishmentPageComponent implements OnInit {
       this._estabLogService
         .removeImage(this.dataLogo.id)
         .subscribe((response) => {
-          if (isApiResponse(response)) {
             this._tS.toastr({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
             if (response.code == '1') {
               this.dataLogo = {};
-              this.imageUrl = null;
+              this.imageUrl.set(null);
               this.selectedFile = null;
               this.getDataLogo(this.data.idEstablecimiento);
             }
-          }
         });
     }
   }
@@ -338,7 +328,6 @@ export class EstablishmentPageComponent implements OnInit {
 
     if (isConfirmed) {
       this._puntoEmisionService.annul(id).subscribe((response) => {
-        if (isApiResponse(response)) {
           this._tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -346,7 +335,6 @@ export class EstablishmentPageComponent implements OnInit {
           if (response.code == '1') {
             this.getEstabs();
           }
-        }
       });
     }
   }
@@ -355,7 +343,6 @@ export class EstablishmentPageComponent implements OnInit {
     this._estabService
       .putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth)
       .subscribe((response) => {
-        if (isApiResponse(response)) {
           this._tS.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -363,7 +350,6 @@ export class EstablishmentPageComponent implements OnInit {
           if (response.code == '1') {
             this.getEstabs();
           }
-        }
       });
   }
 }

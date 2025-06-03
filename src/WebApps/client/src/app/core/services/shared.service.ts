@@ -7,11 +7,8 @@ import { isApiResponse } from '@core/models/api-response';
 import FileSaver from 'file-saver';
 import { map } from 'rxjs';
 import Swal from 'sweetalert2';
-
-import { ModalService } from './modal.service';
 import { ToasterService } from './toaster.service';
 import * as XLSX from 'xlsx';
-import { PdfViewerComponent } from '@shared/components/pdf-viewer/pdf-viewer.component';
 
 interface ReportParams<T> {
   data: T;
@@ -27,7 +24,6 @@ interface ReportParams<T> {
 export class SharedService {
   private http = inject(HttpClient);
   private tS = inject(ToasterService);
-  private modalSvc = inject(ModalService);
 
   saveFile(response: any, format?: string, downloadOnly = false) {
     const contentDisposition = response.headers.get('content-disposition');
@@ -102,15 +98,7 @@ export class SharedService {
       });
   }
 
-  private openPdfInModal(blob: Blob) {
-    const blobURL = URL.createObjectURL(blob);
 
-    const modalRef = this.modalSvc.open(PdfViewerComponent, {
-      size: 'xl',
-    });
-
-    modalRef.componentInstance.params = { pdfSrc: blobURL };
-  }
 
   async askToPrint<T extends { parameters: string }>(obj: T) {
     const { parameters } = obj;

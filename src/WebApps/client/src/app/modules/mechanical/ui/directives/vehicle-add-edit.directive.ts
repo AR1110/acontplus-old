@@ -1,6 +1,6 @@
-import { Directive, EventEmitter, HostListener, inject, input, Input, output, Output } from '@angular/core';
+import { Directive,   HostListener, inject, input,   output,  } from '@angular/core';
 import { VehicleAddEditModalComponent } from '@mechanical/ui/components/vehicle-add-edit-modal/vehicle-add-edit-modal.component';
-import { ModalService } from '@core/services/modal.service';
+
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Common.API.Entities;
-using Common.Infrastructure.Core.Context;
+using Common.Infrastructure.Context;
 using Common.Notifications.Entities;
 
 namespace Common.API.Data;
@@ -39,7 +39,7 @@ public class CommonContext(DbContextOptions<CommonContext> options) : BaseContex
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(modelBuilder,
+        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(CommonContext),
             typeof(Attachment),
             typeof(EmailQueue),
             typeof(WhatsAppMessage));

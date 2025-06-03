@@ -9,7 +9,7 @@ public class BehaviorTestService(VetContext context) : IBehaviorTestService
 
         test.BehaviorId = behaviorTest.BehaviorId;
         test.BehaviorStatusId = behaviorTest.BehaviorStatusId;
-        test.UserId = behaviorTest.UserId;
+        test.UpdatedByUserId = behaviorTest.UpdatedByUserId;
         context.Update(test);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente", Payload = behaviorTest };

@@ -1,4 +1,7 @@
-﻿namespace Identity.API.Controllers.v3;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+namespace Identity.API.Controllers.v3;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
@@ -25,7 +28,7 @@ public class AccountController(
 
         if (response.Code == "1")
         {
-            List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+            List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
             switch (userData.Count)
             {
@@ -40,31 +43,27 @@ public class AccountController(
 
                         userData.ForEach(x => x.Token = token.Token);
 
-                        var logingHistory = new LoginHistory
+                        var loginHistory = new LoginHistory
                         {
-                            UserId = userData[0].UserId,
-                            Username = userData[0].Username,
+                            CreatedByUserId = userData[0].UserId,
                             UserRoleId = userData[0].UserRoleId,
                             UserAgent = authRequest.UserAgent,
                             Token = token.Token,
                             TokenExpiration = token.Expires,
                             FromMobile = fromMobile
                         };
-
-                        await loginHistoryService.AddAsync(logingHistory);
-
-                        return Ok(new
-                        {
-                            code = "1",
-                            message = "Login correcto",
-                            payload = JsonConvert.SerializeObject(userData,
-                                new JsonSerializerSettings
-                                {
-                                    ContractResolver =
-                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                    Formatting = Formatting.Indented
-                                })
-                        });
+                        await loginHistoryService.AddAsync(loginHistory);
+                        loginHistory.UserAgent = authRequest.UserAgent;
+                        await accountService.AddNotificationAsync(loginHistory);
+                        return Ok(ApiResponse.Success(
+                            message: "Login Correcto!",
+                            payload: JsonConvert.SerializeObject(userData,
+                                    new JsonSerializerSettings
+                                    {
+                                        ContractResolver =
+                                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                        Formatting = Formatting.Indented
+                                    })));
                     }
             }
         }
@@ -92,30 +91,21 @@ public class AccountController(
         var token = tokenService.CreateToken(userData);
         if (token == null || string.IsNullOrEmpty(token.Token)) return BadRequest("Error al iniciar session");
 
-        var logingHistory = new LoginHistory
+        var loginHistory = new LoginHistory
         {
-            UserId = userData.UserId,
-            Username = userData.Username,
+            CreatedByUserId = userData.UserId,
             UserRoleId = userData.UserRoleId,
             UserAgent = userData.UserAgent,
             Token = token.Token,
             TokenExpiration = token.Expires,
             FromMobile = fromMobile
         };
-        await loginHistoryService.AddAsync(logingHistory);
-
+        await loginHistoryService.AddAsync(loginHistory);
+        loginHistory.UserAgent = userData.UserAgent;
+        await accountService.AddNotificationAsync(loginHistory);
         userData.Token = token.Token;
-        return Ok(new
-        {
-            code = "1",
-            message = "Login correcto",
-            payload = JsonConvert.SerializeObject(userData,
-                new JsonSerializerSettings
-                {
-                    ContractResolver =
-                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                    Formatting = Formatting.Indented
-                })
-        });
+        return Ok(ApiResponse.Success(
+            message: "Login Correcto!",
+            payload: JsonConvert.SerializeObject(userData, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }, Formatting = Formatting.Indented })));
     }
 }

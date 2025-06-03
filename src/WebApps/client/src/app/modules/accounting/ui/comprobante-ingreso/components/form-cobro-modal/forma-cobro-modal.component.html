@@ -1,14 +1,12 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Forma de Cobro</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="modal.dismiss('Cross click')"
-  ></button>
-</div>
-<div class="modal-body">
-  @if (entidadesFinanciera.length > 0) {
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="'Forma de Cobro'"
+  (close)="close()"
+/>
+
+<ng-template #body>
+  <!-- @if (entidadesFinanciera.length > 0) {
     <div ngbAccordion [closeOthers]="true">
       @for (item of entidadesFinanciera; track $index) {
         <div
@@ -22,7 +20,7 @@
           <div ngbAccordionCollapse>
             <div ngbAccordionBody>
               <ng-template>
-                <!--TARJETA-->
+
                 @if (item.codigo === "TAR") {
                   <div class="row">
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
@@ -76,7 +74,7 @@
                   </div>
                 }
 
-                <!--EFECTIVO-->
+
                 @if (item.codigo === "EFE") {
                   <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-6 col-12">
@@ -95,7 +93,7 @@
                   </div>
                 }
 
-                <!--TRANSFERENCIA-->
+
                 @if (item.codigo === "TRA") {
                   <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-6 col-12">
@@ -133,7 +131,7 @@
                   </div>
                 }
 
-                <!--CHEQUE-->
+
                 @if (item.codigo === "CHE") {
                   <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-6 col-12">
@@ -272,22 +270,14 @@
         </div>
       }
     </div>
-  }
-</div>
-<div class="modal-footer">
-  <button
-    type="button"
-    mat-raised-button
-    (click)="addPaymentType()"
-    id="btnAddFormaPago"
-  >
-    Abonar
-  </button>
+  } -->
+</ng-template>
+<ng-template #footer>
   <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="modal.dismiss()"
+    variant="success"
+    icon="arrow"
+    text="Abonar"
+    (handleClick)="addPaymentType()"
   >
   </app-theme-button>
-</div>
+</ng-template>

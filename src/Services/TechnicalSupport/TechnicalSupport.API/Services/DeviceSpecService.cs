@@ -28,7 +28,8 @@ public class DeviceSpecService : IDeviceSpecService
             return new ApiResponse { Code = "0", Message = "No se encontró registro de especificaciones" };
 
         itemFounded.Specs = data.Specs;
-        itemFounded.UserId = data.UserId;
+        itemFounded.UpdatedByUserId = data.UpdatedByUserId;
+        itemFounded.IsActive = data.IsActive;
         _context.Update(itemFounded);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Especificaciones actualizado exitosamente " };

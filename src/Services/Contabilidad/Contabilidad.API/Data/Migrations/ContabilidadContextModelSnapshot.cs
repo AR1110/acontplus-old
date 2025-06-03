@@ -41,7 +41,7 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -54,9 +54,7 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
@@ -68,7 +66,9 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("varchar(150)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -84,11 +84,6 @@ namespace Contabilidad.API.Data.Migrations
 
                     b.Property<int?>("ParentAccountId")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int?>("TipoId")
                         .HasColumnType("int");
@@ -134,7 +129,7 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -147,15 +142,15 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -165,11 +160,6 @@ namespace Contabilidad.API.Data.Migrations
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("TipoId")
                         .HasColumnType("int");
@@ -219,7 +209,7 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -232,15 +222,15 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -250,11 +240,6 @@ namespace Contabilidad.API.Data.Migrations
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -291,7 +276,7 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -304,15 +289,15 @@ namespace Contabilidad.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -322,11 +307,6 @@ namespace Contabilidad.API.Data.Migrations
                         .HasMaxLength(150)
                         .IsUnicode(false)
                         .HasColumnType("varchar(150)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

@@ -1,24 +1,25 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {Component, OnInit, inject, signal} from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-device-list-modal',
-  imports: [MatIcon, ThemeButtonComponent],
+  imports: [MatIcon, ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './device-list-modal.component.html',
   styles: ``,
 })
 export class DeviceListModalComponent implements OnInit {
   private deviceService = inject(DeviceService);
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<DeviceListModalComponent>);
   private tS = inject(ToasterService);
 
-  data: any = {};
-  devices: any = [];
+  data = inject<any>(MAT_DIALOG_DATA);
+  devices =signal<any>([]);
   onModalClose() {
     this.modalRef.close();
   }
@@ -29,12 +30,11 @@ export class DeviceListModalComponent implements OnInit {
         tipo: 4,
         customerCompanyId: this.data.customerCompanyId,
       })
-      .subscribe({
-        next: (response) => {
+      .subscribe( (response) => {
           if (isApiResponse(response)) {
-            let { devices } = JSON.parse(response.payload as string) || [];
-            this.devices = devices;
-            if (this.devices.length == 0) {
+            const { devices } = JSON.parse(response.payload as string) || [];
+            this.devices.set(devices);
+            if (this.devices().length == 0) {
               this.modalRef.close();
               this.tS.toastr({
                 type: 'info',
@@ -42,7 +42,6 @@ export class DeviceListModalComponent implements OnInit {
               });
             }
           }
-        },
       });
   }
   select(device: any) {

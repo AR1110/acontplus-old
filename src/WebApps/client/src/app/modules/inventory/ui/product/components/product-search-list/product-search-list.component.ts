@@ -1,119 +1,128 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, ViewContainerRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+  ViewContainerRef,
+  OnInit,
+  AfterViewInit,
+  OnChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatRow, MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  MatRow,
+  MatTableDataSource,
+  MatTableModule,
+} from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
-    selector: 'app-product-search-list',
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatProgressSpinnerModule,
-        NgbPopoverModule,
-        MatSortModule
-    ],
-    templateUrl: './product-search-list.component.html',
-    styleUrl: './product-search-list.component.scss'
+  selector: 'app-product-search-list',
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatSortModule,
+  ],
+  templateUrl: './product-search-list.component.html',
+  styleUrl: './product-search-list.component.scss',
 })
-export class ProductSearchListComponent<T>   {
-
+export class ProductSearchListComponent
+  implements OnInit , AfterViewInit, OnChanges
+{
   @Input() tableData: any[] = [];
 
   @Input() highlightRowIndex!: number;
-  @Input() isLoadingResults= false;
+  @Input() isLoadingResults = false;
   @Input() isRateLimitReached = false;
-  @Input() pagination!:Pagination
+  @Input() pagination!: Pagination;
 
-  @Output() handlePageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
-  @Output() rowsEmitter: EventEmitter<QueryList<ViewContainerRef>> = new EventEmitter<QueryList<ViewContainerRef>>();
-  @ViewChildren(MatRow, { read: ViewContainerRef }) rows!: QueryList<ViewContainerRef>;
+  @Output() handlePageEvent: EventEmitter<PageEvent> =
+    new EventEmitter<PageEvent>();
+  @Output() rowsEmitter: EventEmitter<QueryList<ViewContainerRef>> =
+    new EventEmitter<QueryList<ViewContainerRef>>();
+  @ViewChildren(MatRow, { read: ViewContainerRef })
+  rows!: QueryList<ViewContainerRef>;
   @ViewChild(MatSort) sort!: MatSort;
 
-  @Output() rowSelected = new EventEmitter<T>();
-  @Output() onClickPaginator = new EventEmitter<T>();
+  @Output() rowSelected = new EventEmitter<any>();
+  @Output() onClickPaginator = new EventEmitter<any>();
 
   dataSource = new MatTableDataSource([]);
 
-
   visibleColumns: string[] = [];
   mainColumns = [
-    { columnDef: 'position', header: 'No.', },
-    { columnDef: 'codigo', header: 'Código', },
-    { columnDef: 's3ObjectUrl', header: 'Img', },
-    { columnDef: 'descripcion', header: 'Descripción', },
-    { columnDef: 'stock', header: 'Stock', },
-    { columnDef: 'iva', header: 'Iva', },
-    { columnDef: 'subFamilia', header: 'SubFamilia', },
-    { columnDef: 'medida', header: 'Medida', },
+    { columnDef: 'position', header: 'No.' },
+    { columnDef: 'codigo', header: 'Código' },
+    { columnDef: 's3ObjectUrl', header: 'Img' },
+    { columnDef: 'descripcion', header: 'Descripción' },
+    { columnDef: 'stock', header: 'Stock' },
+    { columnDef: 'iva', header: 'Iva' },
+    { columnDef: 'subFamilia', header: 'SubFamilia' },
+    { columnDef: 'medida', header: 'Medida' },
     // { columnDef: 'marca', header: 'Marca', },
-  ]
-  columns = structuredClone(this.mainColumns)
-
+  ];
+  columns = structuredClone(this.mainColumns);
 
   productTarifas: any = [];
 
-
-
-
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.visibleColumns = this.columns.map(x => x.columnDef);
+    this.visibleColumns = this.columns.map((x) => x.columnDef);
   }
 
   ngAfterViewInit() {
-
     this.dataSource.sort = this.sort;
     this.rowsEmitter.emit(this.rows);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
-    if (changes["tableData"] && changes["tableData"].currentValue) {
-      this.columns = structuredClone(this.mainColumns)
-      this.visibleColumns = this.columns.map(x => x.columnDef);
+    if (changes['tableData'] && changes['tableData'].currentValue) {
+      this.columns = structuredClone(this.mainColumns);
+      this.visibleColumns = this.columns.map((x) => x.columnDef);
       this.pagination.totalRecords = 0;
 
       if (this.tableData.length > 0) {
-        let dataResult = this.tableData[0];
+        const dataResult = this.tableData[0];
         this.productTarifas = dataResult.tarifas;
         this.pagination.totalRecords = dataResult.totalRecords;
       }
 
-      for (let item of this.productTarifas) {
+      for (const item of this.productTarifas) {
         this.columns.push({
           header: item.tarifa,
           columnDef: item.tarifa,
-        })
+        });
       }
 
-
-      this.visibleColumns = this.columns.map(x => x.columnDef);
-      this.makeDynamicTarifa(this.tableData)
+      this.visibleColumns = this.columns.map((x) => x.columnDef);
+      this.makeDynamicTarifa(this.tableData);
     }
   }
 
-
-
   makeDynamicTarifa(results: any) {
-    let mapped = results.map((item: any) => {
-      let { tarifas, ...restItem } = item;
+    const mapped = results.map((item: any) => {
+      const { tarifas, ...restItem } = item;
       const tarifasObj = tarifas.reduce((obj: any, item: any) => {
         obj[item.tarifa] = item.precio;
         return obj;
       }, {});
       return {
         ...restItem,
-        ...tarifasObj
-      }
-    })
-    this.dataSource = new MatTableDataSource(mapped)
+        ...tarifasObj,
+      };
+    });
+    this.dataSource = new MatTableDataSource(mapped);
     this.dataSource.sort = this.sort;
   }
 
@@ -121,24 +130,19 @@ export class ProductSearchListComponent<T>   {
     this.handlePageEvent.emit(event);
   }
 
-
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     if (setPageSizeOptionsInput) {
-      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
+      this.pagination.pageSizeOptions = setPageSizeOptionsInput
+        .split(',')
+        .map((str) => +str);
     }
   }
 
-  selectRow(row: T): void {
+  selectRow(row: any): void {
     this.rowSelected.emit(row); // this.selection.selected
   }
 
-  sortData($event:any){
+  sortData($event: any) {
     this.highlightRowIndex = -1;
   }
-
-
-
-
-
-
 }

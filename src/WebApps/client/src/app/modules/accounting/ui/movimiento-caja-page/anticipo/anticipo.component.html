@@ -10,7 +10,7 @@
             [(ngModel)]="dataSearch.codEstab"
             (selectionChange)="refresh()"
           >
-            @for (item of establecimientos; track $index) {
+            @for (item of establecimientos(); track $index) {
               <mat-option [value]="item.codEstab">{{
                 item.nombreComercial
               }}</mat-option>
@@ -52,7 +52,7 @@
 
 <app-mat-dynamic-table
   [isLoadingData]="isLoadingResults()"
-  [tableData]="dataSource"
+  [tableData]="dataSource()"
   [columnDefinitions]="columnsDefs"
   [visibleColumns]="columns"
   [templateOp]="templateOp"

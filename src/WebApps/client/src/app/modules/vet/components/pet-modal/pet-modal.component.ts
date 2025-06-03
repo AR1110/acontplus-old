@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 
 import {
   FormControl,
@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from '@core/services/toaster.service';
 import { isApiResponse } from '@core/models/api-response';
 import { Pet } from '@modules/vet/models/pet.model';
@@ -18,35 +17,34 @@ import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-pet-modal',
   imports: [
-    MatIcon,
     FormsModule,
     ReactiveFormsModule,
     CompanyCustomerSearchComponent,
     MatCard,
     MatCardContent,
-    MatButton,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
   ],
   templateUrl: './pet-modal.component.html',
   styles: ``,
 })
 export class PetModalComponent implements OnInit {
-  breeds: Breed[] = [];
-  breedsFiltered: Breed[] = [];
+  breeds = signal<Breed[]>([]);
+  breedsFiltered = signal<Breed[]>([]);
   customerBusinessName = '';
-  data = {} as Pet;
-  genders: Gender[] = [];
+  data = inject<Pet>(MAT_DIALOG_DATA);
+  genders = signal<Gender[]>([]);
   modalIcon = 'add';
   modalTitle = 'Registrar Mascota';
-  petTypes: PetType[] = [];
+  petTypes = signal<PetType[]>([]);
   petForm = new FormGroup({
     id: new FormControl(0),
     petTypeId: new FormControl(0, [Validators.required]),
@@ -59,7 +57,7 @@ export class PetModalComponent implements OnInit {
     enabled: new FormControl(true),
   });
   private readonly petService = inject(PetService);
-  private readonly modalRef = inject(NgbActiveModal);
+  private readonly modalRef = inject(MatDialogRef<PetModalComponent>);
   private readonly tS = inject(ToasterService);
 
   get() {
@@ -68,9 +66,9 @@ export class PetModalComponent implements OnInit {
         const { petTypes, breeds, genders } = JSON.parse(
           response.payload as string,
         );
-        this.petTypes = petTypes;
-        this.breeds = breeds;
-        this.genders = genders;
+        this.petTypes.set(petTypes);
+        this.breeds.set(breeds);
+        this.genders.set(genders);
       }
     });
   }
@@ -80,7 +78,6 @@ export class PetModalComponent implements OnInit {
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Mascota';
-      console.log(this.data);
       if (this.data?.customer != null) {
         this.customerBusinessName = this.data?.customer;
       }
@@ -97,11 +94,11 @@ export class PetModalComponent implements OnInit {
   }
 
   onPetTypeChange($event: any) {
-    this.breedsFiltered = [];
-    let breedsToFilter = this.breeds;
-    this.breedsFiltered = breedsToFilter.filter(
+    this.breedsFiltered.set([]);
+    const breedsFiltered = this.breeds().filter(
       (x) => x.petTypeId === Number($event.target.value),
     );
+    this.breedsFiltered.set(breedsFiltered)
   }
 
   onSave() {

@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import {Component, inject, signal, ViewChild, ViewEncapsulation} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,7 +12,6 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
@@ -21,8 +20,6 @@ import { DeviceListModalComponent } from '@modules/technical-support/components/
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
 import {
@@ -32,25 +29,29 @@ import {
   formatDateToString,
   isDateValid,
 } from '@core/utils/date.util';
-import { CommonModule, DatePipe } from '@angular/common';
+import {   DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-order-modal',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
 
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
-    NgbAccordionModule,
     TabulatorComponent,
     MatIcon,
     MatButton,
     ThemeButtonComponent,
+    DatePipe,
+    MatCustomDialogComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
@@ -60,8 +61,8 @@ import { CompanyCustomer } from '@customer/domain/models/company-customer';
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
   private datePipe = inject(DatePipe);
-  private modalRef = inject(NgbActiveModal);
-  private modalService = inject(ModalService);
+  private modalRef = inject(MatDialogRef<OrderModalComponent>);
+  private modalService = inject(DialogService);
   private oDS = inject(OrderDetailService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
@@ -145,22 +146,22 @@ export class OrderModalComponent {
   clearSearch = true;
   currentDate = new Date();
   customerBusinessName = '';
-  data: any = {};
+  data= inject<any>(MAT_DIALOG_DATA)
   deviceFound: any = {};
-  devices: any = [];
-  establecimientos: GroupedEstab[] = [];
+  devices = signal<any>([]);
+  establecimientos = signal<GroupedEstab[]>([]);
   formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
   modalIcon = 'add';
   modalTitle = 'Nueva Orden';
   order: any = {};
-  orderDetails: OrderDetail[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  users: any = [];
+  orderDetails = signal<OrderDetail[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  users = signal<any>([]);
 
   orderForm = new FormGroup({
     id: new FormControl(0),
     assignedUserId: new FormControl(0, Validators.required),
-    uuid: new FormControl(uuidv4()),
+    uuid: new FormControl(generateUuidv4()),
     establecimientoId: new FormControl(0, Validators.required),
     puntoEmisionId: new FormControl(0, Validators.required),
     customerCompanyId: new FormControl(0, Validators.required),
@@ -170,13 +171,13 @@ export class OrderModalComponent {
   });
 
   addDetail(device: any) {
-    if (this.orderDetails.some((x) => x.deviceId == device.id)) {
+    if (this.orderDetails().some((x) => x.deviceId == device.id)) {
       return this.tS.toastr({
         type: 'warning',
         message: 'Este equipo ya se encuentra agregado en el detalle',
       });
     }
-    let deviceToAdd: OrderDetail = {
+    const deviceToAdd: OrderDetail = {
       id: 0,
       deviceId: 0,
       deviceName: '',
@@ -196,7 +197,7 @@ export class OrderModalComponent {
       ? device.warranty
       : device.deviceWarranty;
     deviceToAdd.obs = '';
-    deviceToAdd.uuid = uuidv4();
+    deviceToAdd.uuid = generateUuidv4();
     deviceToAdd.assignedUserId = 0;
     deviceToAdd.deviceCustomerId = !device.deviceCustomerId
       ? 0
@@ -208,8 +209,7 @@ export class OrderModalComponent {
     deviceToAdd.deviceWarranty = !device.deviceWarranty
       ? ''
       : device.deviceWarranty;
-    this.orderDetails.push(deviceToAdd);
-    console.log(this.orderDetails);
+    this.orderDetails.update(r=>[...r, deviceToAdd])
   }
 
   askToDeleteDetail(detail: OrderDetail) {
@@ -228,9 +228,7 @@ export class OrderModalComponent {
               message: response.message,
             });
             if (response.code == '1') {
-              this.orderDetails = this.orderDetails.filter(
-                (x) => x.id != detail.id,
-              );
+              this.orderDetails.update(r=>r.filter(x=>x.id != detail.id))
             }
           }
         });
@@ -264,11 +262,12 @@ export class OrderModalComponent {
         if (response.code == '1') {
           const parsedResponse = JSON.parse(response.payload as string);
           const { puntosEmision, users } = parsedResponse;
-          this.establecimientos = groupEstabUtil({
+          const establecimientos = groupEstabUtil({
             estabs: puntosEmision,
             isGroupPuntoEmision: true,
           });
-          const dataEstab = this.establecimientos.find(
+          this.establecimientos.set(establecimientos)
+          const dataEstab = this.establecimientos().find(
             (estab) => estab.defaultEstab,
           );
           if (dataEstab) {
@@ -276,8 +275,8 @@ export class OrderModalComponent {
               establecimientoId: dataEstab.idEstablecimiento,
             });
             this.order.codEstab = dataEstab.codEstab;
-            this.puntosEmision = dataEstab.puntosEmision;
-            const dataPuntoEmision = this.puntosEmision.find(
+            this.puntosEmision.set(dataEstab.puntosEmision)
+            const dataPuntoEmision = this.puntosEmision().find(
               (ptoEmi) => ptoEmi.defaultPtoEmi,
             );
             if (dataPuntoEmision) {
@@ -288,10 +287,10 @@ export class OrderModalComponent {
           }
           this.users = users;
           if (this.data.id > 0) {
-            let { order, orderDetails } = parsedResponse;
+            const { order, orderDetails } = parsedResponse;
             this.order = order[0];
             this.customerBusinessName = this.order.businessName;
-            this.orderDetails = orderDetails || [];
+            this.orderDetails.set(orderDetails || []);
             this.orderForm.patchValue(this.order);
           }
         }
@@ -300,14 +299,16 @@ export class OrderModalComponent {
   }
 
   getDevices() {
-    const modalRef = this.modalService.openModalCustom(
+    const modalRef = this.modalService.open(
       DeviceListModalComponent,
-      { size: 'lg', centered: true, backdrop: true },
+      { size: 'lg',
+
+      data: {
+        customerCompanyId: this.order.customerCompanyId,
+      }
+      },
     );
-    modalRef.componentInstance.data = {
-      customerCompanyId: this.order.customerCompanyId,
-    };
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result) {
         this.addDetail({
           deviceCustomerId: result.deviceCustomerId,
@@ -329,12 +330,12 @@ export class OrderModalComponent {
   onChangeEstab() {
     const establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
-      const estabs = this.establecimientos.find(
+      const estabs = this.establecimientos().find(
         (x) => x.idEstablecimiento == Number(establecimientoId),
       );
-      this.puntosEmision = estabs?.puntosEmision || [];
+      this.puntosEmision.set(estabs?.puntosEmision || []);
       const puntoEmisionId =
-        this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
+        this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
           ?.idPuntoEmision || 0;
       this.orderForm.patchValue({
         establecimientoId: establecimientoId,
@@ -352,9 +353,7 @@ export class OrderModalComponent {
   }
 
   removeFromList(deviceId: number) {
-    this.orderDetails = this.orderDetails.filter(
-      (x) => x.deviceId !== deviceId,
-    );
+    this.orderDetails.update(r=>r.filter(x=>x.deviceId !== deviceId))
   }
 
   onChangeDate(event: Event) {
@@ -365,7 +364,7 @@ export class OrderModalComponent {
   }
 
   save() {
-    if (this.orderDetails.length == 0) {
+    if (this.orderDetails().length == 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
@@ -404,11 +403,10 @@ export class OrderModalComponent {
       fechaEmision: fechaEmision,
       setHoursZero: true,
     });
-    console.log(ajusteFechaEmision);
 
     const dataToSave = {
       ...this.orderForm.value,
-      orderDetails: this.orderDetails,
+      orderDetails: this.orderDetails(),
       fechaEmision: formatDateToString(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
@@ -429,7 +427,7 @@ export class OrderModalComponent {
       });
       if (response.code === '1') {
         this.orderForm.patchValue({});
-        this.orderDetails = [];
+        this.orderDetails.set([]);
         this.order = {};
         this.modalRef.close(response);
       }

@@ -23,7 +23,7 @@ BEGIN
         ,mh.[Observations]
         ,mh.[CreatedAt]
         ,mh.[UpdatedAt]
-        ,mh.[Enabled]
+        ,mh.[IsActive]
         ,mh.[Deleted]
         ,mh.[UserId]
         ,mh.[Age]
@@ -47,7 +47,7 @@ BEGIN
         LEFT JOIN Customer.Customer cc WITH(NOLOCK) ON c.CustomerId = cc.Id
 		INNER JOIN Vet.PetType pt ON b.PetTypeId = pt.Id
 	WHERE mh.id = @id
-	AND mh.Deleted IS NULL
+	AND mh.IsDeleted = CAST(0 AS BIT)
 
 	SELECT * FROM Vet.HealthCheck WITH(NOLOCK) WHERE MedicalHistoryId = @id
 

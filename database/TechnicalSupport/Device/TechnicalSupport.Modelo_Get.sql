@@ -34,7 +34,7 @@ BEGIN
 			FROM TechnicalSupport.Modelo m WITH (NOLOCK) 
 				INNER JOIN TechnicalSupport.Brand b WITH (NOLOCK) ON m.BrandId = b.Id
 				INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id 
-			WHERE m.Deleted IS NULL
+			WHERE m.IsDeleted = CAST(0 AS BIT)
                 AND c.CompanyId = @companyId
 		END
 	IF (@tipo = 2)

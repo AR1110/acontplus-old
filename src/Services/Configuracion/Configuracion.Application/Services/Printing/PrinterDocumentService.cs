@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services.Printing;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services.Printing;
 
 public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentService
 {
@@ -17,6 +19,7 @@ public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentSer
         document.UpdatedByUserId = printerDocument.UpdatedByUserId;
         document.IsActive = printerDocument.IsActive;
         document.Copies = printerDocument.Copies;
+        context.Update(document);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
     }

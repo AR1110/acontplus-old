@@ -10,11 +10,12 @@
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Utilities" />
     <PackageReference Include="Acontplus.Common.Data" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
+    <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Acontplus.Common.Notifications" />
     <PackageReference Include="Acontplus.Common.Services" />
+    <PackageReference Include="Acontplus.Common.Utilities" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -26,6 +27,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Scrutor" />
+    <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />

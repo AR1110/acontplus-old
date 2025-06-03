@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Core.Context;
+using Common.Infrastructure.Context;
 using Mechanical.API.Entities;
 using Microsoft.EntityFrameworkCore;
 

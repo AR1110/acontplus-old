@@ -53,7 +53,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -69,9 +69,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Engine")
                         .IsRequired()
@@ -88,7 +86,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(150)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -105,11 +105,6 @@ namespace Mechanical.API.Data.Migrations
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -164,7 +159,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<int>("CustomerId")
@@ -186,15 +181,15 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -206,11 +201,6 @@ namespace Mechanical.API.Data.Migrations
 
                     b.Property<int>("PuntoEmisionId")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
@@ -267,7 +257,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -289,15 +279,15 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -315,11 +305,6 @@ namespace Mechanical.API.Data.Migrations
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("numeric(18,5), null");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("SupportId")
                         .HasColumnType("int");
@@ -368,7 +353,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -384,23 +369,18 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("SeriesVoucher")
                         .IsRequired()
@@ -449,7 +429,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -462,15 +442,15 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -483,11 +463,6 @@ namespace Mechanical.API.Data.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -541,7 +516,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Cylindraje")
@@ -559,9 +534,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Engine")
                         .IsRequired()
@@ -573,7 +546,9 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -588,11 +563,6 @@ namespace Mechanical.API.Data.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -636,7 +606,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<int>("CustomerId")
@@ -652,15 +622,15 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -669,11 +639,6 @@ namespace Mechanical.API.Data.Migrations
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -713,7 +678,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -732,23 +697,18 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -792,7 +752,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -811,23 +771,18 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(150)");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -866,7 +821,7 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CreatedByUserId")
+                    b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -885,23 +840,18 @@ namespace Mechanical.API.Data.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("FromMobile")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

@@ -15,7 +15,7 @@ public class SubcategoryController(ISubcategoryService subcategoryService) : Bas
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Subcategory subcategory)
     {
-        subcategory.UserId = User.GetUserId();
+        subcategory.CreatedByUserId = User.GetUserId();
         subcategory.CompanyId = User.GetClaimValue<int>("companyId");
         return Ok(await subcategoryService.AddAsync(subcategory));
     }
@@ -23,7 +23,7 @@ public class SubcategoryController(ISubcategoryService subcategoryService) : Bas
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Subcategory subcategory)
     {
-        subcategory.UserId = User.GetUserId();
+        subcategory.UpdatedByUserId = User.GetUserId();
         return Ok(await subcategoryService.UpdateAsync(id, subcategory));
     }
 

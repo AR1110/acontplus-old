@@ -22,7 +22,7 @@ public class ProductPhotoController(
     public async Task<IActionResult> Post(int productId, IFormFile file)
     {
         var data = new ProductPhoto();
-        data.UserId = User.GetUserId();
+        data.CreatedByUserId = User.GetUserId();
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
 
@@ -43,7 +43,7 @@ public class ProductPhotoController(
     {
         var data = new ProductPhoto();
         data = JsonConvert.DeserializeObject<ProductPhoto>(json);
-        data.UserId = User.GetUserId();
+        data.UpdatedByUserId = User.GetUserId();
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
         data.S3ObjectKey = s3ObjectCustom.S3ObjectKey;

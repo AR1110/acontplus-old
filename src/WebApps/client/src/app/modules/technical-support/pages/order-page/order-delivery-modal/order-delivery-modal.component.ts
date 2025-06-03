@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,33 +11,34 @@ import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-order-delivery-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatIcon,
-        MatCheckboxModule,
-        ReactiveFormsModule,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    MatIcon,
+    MatCheckboxModule,
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './order-delivery-modal.component.html',
   styles: ``,
 })
 export class OrderDeliveryModalComponent implements OnInit {
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<OrderDeliveryModalComponent>);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
 
   // * Status
-  isOtherReceiver: boolean = false;
+  isOtherReceiver  = false;
 
   // * Params.
-  @Input() data: any = {};
+    data = inject(MAT_DIALOG_DATA);
 
   // * Forms.
   orderDeliveryForm = new FormGroup({
@@ -70,8 +70,7 @@ export class OrderDeliveryModalComponent implements OnInit {
       receiver: this.orderDeliveryForm.value.receiver,
     };
 
-    this.orderService.delivery(this.data.id, dataModified).subscribe({
-      next: (response) => {
+    this.orderService.delivery(this.data.id, dataModified).subscribe( (response) => {
         if (isApiResponse(response)) {
           this.tS.toastr({
             type: response.code == '1' ? 'success' : 'warning',
@@ -82,11 +81,6 @@ export class OrderDeliveryModalComponent implements OnInit {
             this.modalRef.close(response);
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {},
     });
   }
 }

@@ -27,7 +27,7 @@ public class SubcategoryPhotoController(
         try
         {
             var data = new SubcategoryPhoto();
-            data.UserId = User.GetUserId();
+            data.CreatedByUserId = User.GetUserId();
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
 
@@ -59,7 +59,7 @@ public class SubcategoryPhotoController(
         {
             var data = new SubcategoryPhoto();
             data = JsonConvert.DeserializeObject<SubcategoryPhoto>(json);
-            data.UserId = User.GetUserId();
+            data.UpdatedByUserId = User.GetUserId();
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file,
                     data.S3ObjectKey,

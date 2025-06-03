@@ -1,36 +1,66 @@
 ﻿using Common.Services.Middleware;
 using Mechanical.API.Extensions;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
+    var environment = builder.Environment.EnvironmentName;
 
-builder.Services.AddIdentityService(builder.Configuration);
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-builder.Services.AddOpenApi();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-var app = builder.Build();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    // Add services to the container.
+    builder.Services.AddApplicationServices(builder.Configuration);
+
+    builder.Services.AddIdentityService(builder.Configuration);
+
+    builder.Services.AddOpenApi();
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 
-app.UseResponseCompression();
+    app.UseResponseCompression();
 
-app.UseMiddleware<ExceptionMiddleware>();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseRouting();
+    app.UseRouting();
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 
-app.UseAuthentication();
+    app.UseAuthentication();
 
-app.UseAuthorization();
+    app.UseAuthorization();
 
-app.MapControllers().RequireAuthorization();
+    app.MapControllers().RequireAuthorization();
 
-await app.RunAsync();
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

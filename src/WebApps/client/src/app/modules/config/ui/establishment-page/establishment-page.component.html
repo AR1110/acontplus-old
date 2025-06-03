@@ -1,7 +1,6 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
+<app-mat-dynamic-card>
     <div class="row mb-3">
       <div class="col-md-2 col-12">
         <button (click)="openModalAddEdit()" mat-raised-button type="button">
@@ -59,107 +58,105 @@
                     matStyle="icon"
                     icon="delete"
                     (handleClick)="askToCloseEstab(item.idEstablecimiento)"
-                  >
-                  </app-theme-button>
+                  />
                 }
               </div>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-xl-5 col-lg-5 col-md-12 col-12">
-              <mat-card appearance="outlined" class="mb-3">
-                <mat-card-content>
-                  <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                      <div class="mb-3">
-                        <label for="imageUpload" class="form-label"
-                          >Elige una imagen:</label
-                        >
-                        <input
-                          type="file"
-                          class="form-control"
-                          id="imageUpload"
-                          (change)="onFileSelected($event)"
-                          accept="image/*"
-                        />
-                        <small class="text-warning">Tamaño máximo 500kb</small>
-
-                        @if (fileError) {
-                          <div class="text-danger">
-                            @if (fileError && fileError?.type === "size") {
-                              <p>Archivo muy grande: max 500kb</p>
-                            }
-
-                            @if (fileError && fileError?.type === "type") {
-                              <p>Formato de archivo no aceptado</p>
-                            }
-                          </div>
-                        }
-                      </div>
-                      @if (imageUrl) {
-                        <div class="mt-3">
-                          <h6>Vista previa:</h6>
-
-                          <div class="d-flex flex-column">
-                            <img
-                              [src]="imageUrl"
-                              alt="Image preview"
-                              class="img-thumbnail"
-                              style="max-height: 300px"
+              <div class="vstack gap-2">
+                  <app-mat-dynamic-card class="my-2">
+                      <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                          <div class="mb-3">
+                            <label for="imageUpload" class="form-label"
+                              >Elige una imagen:</label
+                            >
+                            <input
+                              type="file"
+                              class="form-control"
+                              id="imageUpload"
+                              (change)="onFileSelected($event)"
+                              accept="image/*"
                             />
+                            <small class="text-warning">Tamaño máximo 500kb</small>
 
-                            <div class="d-flex flex-row gap-1 p-1">
-                              @if (newEstablishmentImgUploaded()) {
-                                <app-theme-button
-                                  variant="success"
-                                  type="button"
-                                  icon="upload"
-                                  text="Subir"
-                                  (handleClick)="uploadImage()"
-                                >
-                                </app-theme-button>
-                              }
+                            @if (fileError) {
+                              <div class="text-danger">
+                                @if (fileError && fileError?.type === "size") {
+                                  <p>Archivo muy grande: max 500kb</p>
+                                }
 
-                              <app-theme-button
-                                variant="danger"
-                                type="button"
-                                icon="delete"
-                                text="Eliminar"
-                                (handleClick)="clearImage()"
-                              >
-                              </app-theme-button>
-                            </div>
+                                @if (fileError && fileError?.type === "type") {
+                                  <p>Formato de archivo no aceptado</p>
+                                }
+                              </div>
+                            }
                           </div>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-              <mat-card appearance="outlined">
-                <mat-card-header>
-                  <span class="card-title">Autorización Comprobante</span>
-                </mat-card-header>
-                <mat-card-content>
-                  <mat-radio-group
-                    [(ngModel)]="data.autoSriAuth"
-                    (change)="configSaveFactElect()"
-                  >
-                    <mat-radio-button [value]="false">
-                      Manual
-                    </mat-radio-button>
-                    <mat-radio-button [value]="true">
-                      Automática
-                    </mat-radio-button>
-                  </mat-radio-group>
+                          @if (imageUrl()) {
+                            <div class="mt-3">
+                              <h6>Vista previa:</h6>
 
-                  <div class="alert alert-info" role="alert">
-                    En caso de que sea "Automática", los documentos
-                    electrónicos, una vez creados, no se podrán editar más y se
-                    autorizarán automáticamente.
-                  </div>
-                </mat-card-content>
-              </mat-card>
+                              <div class="d-flex flex-column">
+                                <img
+                                  [src]="imageUrl()"
+                                  alt="Image preview"
+                                  class="img-thumbnail"
+                                  style="max-height: 300px"
+                                />
+
+                                <div class="d-flex flex-row gap-1 p-1">
+                                  @if (newEstablishmentImgUploaded()) {
+                                    <app-theme-button
+                                      variant="success"
+                                      type="button"
+                                      icon="upload"
+                                      text="Subir"
+                                      (handleClick)="uploadImage()"
+                                    />
+                                  }
+
+                                  <app-theme-button
+                                    variant="danger"
+                                    type="button"
+                                    icon="delete"
+                                    text="Eliminar"
+                                    (handleClick)="clearImage()"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                  </app-mat-dynamic-card>
+                  <mat-card appearance="outlined">
+                    <mat-card-header>
+                      <span class="card-title">Autorización Comprobante</span>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <mat-radio-group
+                        [(ngModel)]="data.autoSriAuth"
+                        (change)="configSaveFactElect()"
+                      >
+                        <mat-radio-button [value]="false">
+                          Manual
+                        </mat-radio-button>
+                        <mat-radio-button [value]="true">
+                          Automática
+                        </mat-radio-button>
+                      </mat-radio-group>
+
+                      <div class="alert alert-info" role="alert">
+                        En caso de que sea "Automática", los documentos
+                        electrónicos, una vez creados, no se podrán editar más y se
+                        autorizarán automáticamente.
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+
+              </div>
             </div>
             <div class="col-xl-7 col-lg-7 col-md-12 col-12">
               <mat-card appearance="outlined">
@@ -189,7 +186,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        @for (ptoEmi of puntosEmision; track $index) {
+                        @for (ptoEmi of puntosEmision(); track $index) {
                           <tr>
                             <td>
                               <div
@@ -241,5 +238,4 @@
         </mat-expansion-panel>
       }
     </mat-accordion>
-  </mat-card-content>
-</mat-card>
+</app-mat-dynamic-card>

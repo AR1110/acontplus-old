@@ -10,8 +10,8 @@ public class UserData
     public dynamic Establecimientos { get; set; }
     public string Email { get; set; }
     public string Fullname { get; set; }
-    public string IDCardCompany { get; set; }
-    public string IDCardUser { get; set; }
+    public string IdCardCompany { get; set; }
+    public string IdCardUser { get; set; }
     public string LatestVersion { get; set; }
     public dynamic Menus { get; set; }
     public bool NeedAuthorization { get; set; }

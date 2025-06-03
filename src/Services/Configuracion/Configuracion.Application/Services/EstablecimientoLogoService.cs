@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services;
 
 public class EstablecimientoLogoService : IEstablecimientoLogoService
 {
@@ -49,6 +51,7 @@ public class EstablecimientoLogoService : IEstablecimientoLogoService
         logo.IsCompressed = true;
         logo.LatestVersion = data.LatestVersion + 1;
         logo.UpdatedByUserId = data.UpdatedByUserId;
+        _context.Update(logo);
         await _context.SaveChangesAsync();
         return new { code = "1", message = "Actualizado Exitosamente" };
     }

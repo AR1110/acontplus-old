@@ -1,0 +1,17 @@
+﻿namespace Restaurant.Domain.Entities;
+
+[Table("Menu", Schema = "Restaurant")]
+public class Menu : BaseEntity
+{
+    public int ProductId { get; set; }
+
+    [Required][MaxLength(500)] public string Title { get; set; }
+
+    [MaxLength(500)] public string Summary { get; set; }
+
+    public MenuType MenuType { get; set; }
+    public int? MenuTypeId { get; set; }
+    public string Content { get; set; }
+    public bool ForPromotion { get; set; }
+    public List<MenuItem> MenuItems { get; set; }
+}

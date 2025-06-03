@@ -29,10 +29,10 @@ BEGIN
 			SELECT b.*
 				,c.Name CategoryName
 				,c.Code CategoryCode
-                ,series = ISNULL((SELECT s.id, s.code, s.[name], ISNULL(s.[year], 0) as 'year' FROM TechnicalSupport.Serie s WITH (NOLOCK) WHERE s.brandId = b.Id AND s.Deleted IS NULL FOR JSON PATH), '[]')
+                ,series = ISNULL((SELECT s.id, s.code, s.[name], ISNULL(s.[year], 0) as 'year' FROM TechnicalSupport.Serie s WITH (NOLOCK) WHERE s.brandId = b.Id AND s.IsDeleted = CAST(0 AS BIT) FOR JSON PATH), '[]')
 			FROM TechnicalSupport.Brand b WITH (NOLOCK)
 			INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id 
-			WHERE b.Deleted IS NULL
+			WHERE b.IsDeleted = CAST(0 AS BIT)
                 AND c.CompanyId = @companyId
 		END
 	IF (@tipo = 2)

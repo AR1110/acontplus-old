@@ -1,7 +1,8 @@
 ﻿using System.IO.Compression;
-using Common.Infrastructure.Data.Repository.Implementations;
 using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Identity.API.Extensions;
 
@@ -10,7 +11,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddAdvancedLogging(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 

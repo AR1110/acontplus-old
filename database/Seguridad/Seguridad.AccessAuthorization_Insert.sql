@@ -173,14 +173,14 @@ BEGIN
                     WHILE @@FETCH_STATUS = 0
                     BEGIN
                         -- Insert into Notification table
-                        INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
+                        INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [CreatedByUserId], [FromMobile])
                         VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @userId, @fromMobile);
 
                         SET @notificationId = SCOPE_IDENTITY();
 
                         -- Insert into EmailQueue table
                         INSERT INTO Common.EmailQueue ([NotificationId], [EmailSenderConfigId], [RecipientEmail], [Subject], [IsHtml],
-                        [CompressedBody], [PriorityId], [StatusId], [Template], [UserId], [FromMobile])
+                        [CompressedBody], [PriorityId], [StatusId], [Template], [CreatedByUserId], [FromMobile])
                         VALUES (@notificationId, @emailSenderConfigId, @receptor, @subject, CAST(0 AS BIT),
                         COMPRESS(@body), @priorityId, @statusId, @template, @userId, @fromMobile);
 

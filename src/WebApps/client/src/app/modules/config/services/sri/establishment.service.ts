@@ -4,6 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { map } from 'rxjs';
+import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({
   providedIn: 'root',
@@ -98,17 +99,17 @@ export class EstablishmentService {
   }
 
   post<T>(data: T) {
-    return this.#http.post(`${this.#url}`, { data });
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
   }
   put<T>(id: number, data: T) {
-    return this.#http.put(`${this.#url}${id}`, { data });
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
   }
 
   closeEstab(id: number) {
-    return this.#http.delete(`${this.#url}${id}`);
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`);
   }
 
   putSriAuth(id: number, autoSriAuth: boolean) {
-    return this.#http.put(`${this.#url}PutSriAuth/${id}/${autoSriAuth}`, null);
+    return this.#http.put<ApiResponse>(`${this.#url}PutSriAuth/${id}/${autoSriAuth}`, null);
   }
 }

@@ -22,7 +22,7 @@ public class BrandController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Brand brand)
     {
-        brand.UserId = User.GetUserId();
+        brand.CreatedByUserId = User.GetUserId();
         var response = await _brandService.AddAsync(brand);
         return Ok(response);
     }
@@ -30,7 +30,7 @@ public class BrandController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Brand brand)
     {
-        brand.UserId = User.GetUserId();
+        brand.UpdatedByUserId = User.GetUserId();
         var response = await _brandService.UpdateAsync(id, brand);
         return Ok(response);
     }

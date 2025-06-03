@@ -15,14 +15,14 @@ public class CategoryController(ICategoryService categoryService) : BaseApiContr
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Category category)
     {
-        category.UserId = User.GetUserId();
+        category.CreatedByUserId = User.GetUserId();
         return Ok(await categoryService.AddAsync(category));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Category category)
     {
-        category.UserId = User.GetUserId();
+        category.UpdatedByUserId = User.GetUserId();
         return Ok(await categoryService.UpdateAsync(id, category));
     }
 

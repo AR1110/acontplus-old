@@ -1,21 +1,23 @@
-<input
-  (keyup)="onKeyupSearch()"
-  (keyup.enter)="onEnterKeyPressed($event)"
-  (selectItem)="onSelect($event)"
-  [(ngModel)]="textSearch"
-  [class.is-invalid]="searchFailed"
-  [ngbTypeahead]="search"
-  [resultTemplate]="rt"
-  class="form-control"
-  id="typeahead-ingredient-search"
-  onclick="select();"
-  placeholder="Buscar ingrediente"
-  type="text"
-/>
-
-<ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight
-    [result]="r.productDescription + ' - ' + r.summary"
-    [term]="t"
+<mat-form-field class="w-100">
+  <mat-label>Buscar Ingredientes</mat-label>
+  <input
+    type="text"
+    matInput
+    [value]="textSearch"
+    [formControl]="control"
+    [matAutocomplete]="autoProductSearchSimple"
   />
-</ng-template>
+  <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
+    @for (state of filteredProducts | async; track state) {
+    <mat-option
+      [value]="state.descripcion"
+      (onSelectionChange)="onSelect(state)"
+    >
+      <div class="vstack gap-2">
+        <span class="text-muted">{{ state.productDescription }}</span>
+        <span class="description">{{ state.summary }}</span>
+      </div>
+    </mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

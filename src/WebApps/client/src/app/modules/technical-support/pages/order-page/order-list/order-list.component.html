@@ -1,13 +1,13 @@
 <div class="row mt-2">
   @if (orderStatusCode === 2) {
-    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
-      <div class="form-group">
-        <button type="button" mat-raised-button (click)="onModalOpen()">
-          <mat-icon>add</mat-icon>
-          Nueva
-        </button>
-      </div>
+  <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+    <div class="form-group">
+      <button type="button" mat-raised-button (click)="onModalOpen()">
+        <mat-icon>add</mat-icon>
+        Nueva
+      </button>
     </div>
+  </div>
   }
   <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
     <div class="form-group">
@@ -28,7 +28,7 @@
       >
         <option [ngValue]="0" selected>Todos</option>
         @for (item of users; track $index) {
-          <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+        <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
         }
       </select>
     </div>
@@ -47,140 +47,57 @@
     </div>
   </div>
 </div>
-<section class="section-container-table">
-  <table mat-table [dataSource]="orders" class="mat-elevation-z1">
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-    </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="op">
-      <th mat-header-cell *matHeaderCellDef>Op.</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-button [matMenuTriggerFor]="menu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          @if (orderStatusCode === 2 || orderStatusCode === 3) {
-            <button
-              mat-menu-item
-              (click)="openModalMaintenance(element)"
-              title="Iniciar Reparaciones"
-            >
-              <mat-icon>settings</mat-icon>
-              Mantenimiento
-            </button>
-          }
-          @if (orderStatusCode === 2 || orderStatusCode === 3) {
-            <button mat-menu-item (click)="onEdit(element)" title="Editar">
-              <mat-icon>edit</mat-icon>
-              Editar
-            </button>
-          }
-          @if (orderStatusCode === 2) {
-            <button mat-menu-item (click)="askToCancel(element)" title="Anular">
-              <mat-icon>lock</mat-icon>
-              Anular
-            </button>
-          }
-          <button mat-menu-item (click)="getReport(element)" title="Reporte">
-            <mat-icon>download</mat-icon>Reporte
-          </button>
+<app-mat-dynamic-table
+  [tableData]="orders()"
+  [columnDefinitions]="columnsDefs"
+  [visibleColumns]="columns"
+  [templateOp]="templateOp"
+  [paginationConfig]="pagination()"
+  [enablePagination]="true"
+  (pageEvent)="handlePageEvent($event)"
+>
+</app-mat-dynamic-table>
 
-          @if (orderStatusCode === 4) {
-            <button
-              mat-menu-item
-              (click)="askToDelivery(element)"
-              title="Entregar"
-            >
-              <mat-icon>place_item</mat-icon>
-              Entregar
-            </button>
-          }
-          @if (orderStatusCode === 4 || orderStatusCode === 5) {
-            <button
-              mat-menu-item
-              (click)="onOpenDocument(element)"
-              title="Documento"
-            >
-              <mat-icon>settings</mat-icon>
-              Documento vinculado
-            </button>
-          }
-        </mat-menu>
-      </td>
-    </ng-container>
+<ng-template #templateOp let-item="item">
+  <button mat-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    @if (orderStatusCode === 2 || orderStatusCode === 3) {
+    <button
+      mat-menu-item
+      (click)="openModalMaintenance(item)"
+      title="Iniciar Reparaciones"
+    >
+      <mat-icon>settings</mat-icon>
+      Mantenimiento
+    </button>
+    } @if (orderStatusCode === 2 || orderStatusCode === 3) {
+    <button mat-menu-item (click)="onEdit(item)" title="Editar">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+    } @if (orderStatusCode === 2) {
+    <button mat-menu-item (click)="askToCancel(item)" title="Anular">
+      <mat-icon>lock</mat-icon>
+      Anular
+    </button>
+    }
+    <button mat-menu-item (click)="getReport(item)" title="Reporte">
+      <mat-icon>download</mat-icon>Reporte
+    </button>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="fechaEmision">
-      <th mat-header-cell *matHeaderCellDef>Fecha Emisión</th>
-      <td mat-cell *matCellDef="let element">{{ element.fechaEmision }}</td>
-    </ng-container>
-
-    <!-- Symbol Column -->
-    <ng-container matColumnDef="serieComprobante">
-      <th mat-header-cell *matHeaderCellDef>Serie Comprobante</th>
-      <td mat-cell *matCellDef="let element">{{ element.serie }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="razonSocialComprador">
-      <th mat-header-cell *matHeaderCellDef>Cliente</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.razonSocialComprador }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="discount">
-      <th mat-header-cell *matHeaderCellDef>Descuento</th>
-      <td mat-cell *matCellDef="let element">{{ element.discount }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="total">
-      <th mat-header-cell *matHeaderCellDef>Total</th>
-      <td mat-cell *matCellDef="let element">{{ element.total }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="obs">
-      <th mat-header-cell *matHeaderCellDef>Obs.</th>
-      <td mat-cell *matCellDef="let element">{{ element.obs }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="user">
-      <th mat-header-cell *matHeaderCellDef>Usuario Asignado</th>
-      <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="orderStatusName">
-      <th mat-header-cell *matHeaderCellDef>Estado Orden</th>
-      <td mat-cell *matCellDef="let element">{{ element.orderStatusName }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Estado</th>
-      <td mat-cell *matCellDef="let element">
-        <div [innerHTML]="element.enabled | primaryStatus"></div>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: visibleColumns"></tr>
-
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center" colspan="10">Sin registro</td>
-    </tr>
-  </table>
-</section>
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <ngb-pagination
-      [collectionSize]="pagination.totalRecords"
-      [(page)]="pagination.pageIndex"
-      [maxSize]="pagination.maxSize"
-      [pageSize]="pagination.pageSize"
-      [rotate]="true"
-      (pageChange)="onPageChanged()"
-      [boundaryLinks]="true"
-    />
-  </mat-card-content>
-</mat-card>
+    @if (orderStatusCode === 4) {
+    <button mat-menu-item (click)="askToDelivery(item)" title="Entregar">
+      <mat-icon>place_item</mat-icon>
+      Entregar
+    </button>
+    } @if (orderStatusCode === 4 || orderStatusCode === 5) {
+    <button mat-menu-item (click)="onOpenDocument(item)" title="Documento">
+      <mat-icon>settings</mat-icon>
+      Documento vinculado
+    </button>
+    }
+  </mat-menu>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -7,30 +7,32 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SubEntidadFinanciera } from '@accounting/domain/models/subentidad-financiera.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
 import { AnticipoUseCase } from '@accounting/domain/use-cases/anticipo.use-case';
-import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatDialogRef} from "@angular/material/dialog";
+import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 
 @Component({
   selector: 'app-anticipo-modal',
   imports: [
     ReactiveFormsModule,
     CompanyCustomerSearchComponent,
-    MatButton,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
+    ToUpperCaseDirective,
   ],
   templateUrl: './anticipo-modal.component.html',
   styles: ``,
 })
 export class AnticipoModalComponent {
-  private activeModal = inject(NgbActiveModal);
+  private activeModal = inject(MatDialogRef<AnticipoModalComponent>);
   private tS = inject(ToasterService);
   private _anticipoUseCase = inject(AnticipoUseCase);
 
@@ -39,10 +41,10 @@ export class AnticipoModalComponent {
 
   isSimpleModeCompanyCustomer = true;
 
-  private tempSubEntidadesFinanciera: Array<SubEntidadFinanciera> = [];
-  establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
-  entidadesFinanciera: Array<EntidadFinanciera> = [];
-  subEntidadesFinanciera: Array<SubEntidadFinanciera> = [];
+  private tempSubEntidadesFinanciera = signal<SubEntidadFinanciera[]>([])
+  establecimientos = signal<EstablecimientoSelectHtmlOnly[]>([])
+  entidadesFinanciera = signal<EntidadFinanciera[]>([]);
+  subEntidadesFinanciera = signal<SubEntidadFinanciera[]>([]);
 
   dataForm = new FormGroup({
     idCliente: new FormControl(0, [
@@ -74,18 +76,17 @@ export class AnticipoModalComponent {
 
   ngOnInit() {
     this._anticipoUseCase.getDataForm().subscribe((response) => {
-      let { establecimientos, entidadesFinanciera, subEntidadesFinanciera } =
-        response;
+      const { establecimientos, entidadesFinanciera, subEntidadesFinanciera } =  response;
 
-      this.establecimientos = establecimientos;
-      const dataEstab = this.establecimientos.find(
+      this.establecimientos.set(establecimientos);
+      const dataEstab = this.establecimientos().find(
         (estab) => estab.predeterminado,
       );
       if (dataEstab) {
         this.dataForm.get('codEstab')?.setValue(dataEstab.codEstab);
       }
-      this.entidadesFinanciera = entidadesFinanciera;
-      this.tempSubEntidadesFinanciera = subEntidadesFinanciera;
+      this.entidadesFinanciera.set(entidadesFinanciera);
+      this.tempSubEntidadesFinanciera.set(subEntidadesFinanciera);
     });
   }
   onCustomerSelected(data: CompanyCustomer) {
@@ -93,17 +94,17 @@ export class AnticipoModalComponent {
   }
 
   onChangeEntidadFinanciera() {
-    let idEntidadFinanciera = this.dataForm.value.idEntidadFinanciera;
+    const idEntidadFinanciera = this.dataForm.value.idEntidadFinanciera;
     if (idEntidadFinanciera) {
-      this.subEntidadesFinanciera = this.tempSubEntidadesFinanciera.filter(
+      const subEntidadesFinanciera = this.tempSubEntidadesFinanciera().filter(
         (ef) => ef.idEntidadFinanciera === idEntidadFinanciera,
       );
+      this.subEntidadesFinanciera.set(subEntidadesFinanciera)
     }
   }
 
   save() {
     try {
-      console.log(this.dataForm);
       if (this.dataForm.invalid) {
         this.tS.toastr({
           type: 'warning',

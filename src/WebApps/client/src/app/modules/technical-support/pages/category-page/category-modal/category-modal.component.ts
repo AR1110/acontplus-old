@@ -10,20 +10,19 @@ import { ToasterService } from '@core/services/toaster.service';
 
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-category-modal',
-    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
 export class CategoryModalComponent {
   private categoryService = inject(CategoryService);
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<CategoryModalComponent>);
   private tS = inject(ToasterService);
   categoryForm = new FormGroup({
     id: new FormControl(0),
@@ -38,11 +37,7 @@ export class CategoryModalComponent {
       Validators.maxLength(100),
     ]),
   });
-  data: Category = {
-    id: 0,
-    code: '',
-    name: '',
-  };
+  data = inject<Category>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Categoría';
 

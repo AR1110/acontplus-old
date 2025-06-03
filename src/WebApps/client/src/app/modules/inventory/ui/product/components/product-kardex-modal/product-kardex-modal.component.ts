@@ -1,4 +1,4 @@
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -11,7 +11,6 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
 import { TransactionService } from '@inventory/data/services/transaction.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import Swal from 'sweetalert2';
 import { SharedService } from '@core/services/shared.service';
@@ -19,6 +18,8 @@ import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { monthEnd, monthStart } from '@formkit/tempo';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-product-kardex-modal',
@@ -30,15 +31,16 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     DateRangeSelectionComponent,
     TabulatorComponent,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
   ],
   templateUrl: './product-kardex-modal.component.html',
   styles: ``,
 })
-export class ProductKardexModalComponent {
-  @Input() params = {
-    id: 0,
-  };
-  modal = inject(NgbActiveModal);
+export class ProductKardexModalComponent implements OnInit {
+  params = inject<{
+    id: 0;
+  }>(MAT_DIALOG_DATA);
+  modal = inject(MatDialogRef<ProductKardexModalComponent>);
 
   transactionSvc = inject(TransactionService);
   tS = inject(ToasterService);
@@ -298,12 +300,12 @@ export class ProductKardexModalComponent {
       next: (response) => {
         this.establecimientos = response.estabs;
         this.tiposTransaccion = response.tiposTransaccion;
-        let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
+        const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
 
         if (dataEstab) {
           this.bodegas = dataEstab.bodegas;
           this.dataSearch.codEstab = dataEstab.codEstab;
-          let dataBodega = this.bodegas.find((b) => b.defaultBodega);
+          const dataBodega = this.bodegas.find((b) => b.defaultBodega);
           if (dataBodega) {
             this.dataSearch.idBodega = dataBodega.idBodega;
           }
@@ -320,12 +322,12 @@ export class ProductKardexModalComponent {
   }
 
   getBodegas() {
-    let dataEstab = this.establecimientos.find(
-      (item) => item.codEstab === this.dataSearch.codEstab,
+    const dataEstab = this.establecimientos.find(
+      (item) => item.codEstab === this.dataSearch.codEstab
     );
     if (dataEstab) {
       this.bodegas = dataEstab.bodegas;
-      let dataBodega = this.bodegas.find((estab) => estab.defaultBodega);
+      const dataBodega = this.bodegas.find((estab) => estab.defaultBodega);
 
       this.dataSearch.idBodega = dataBodega?.idBodega ?? 0;
       this.getDataKardex();
@@ -333,14 +335,14 @@ export class ProductKardexModalComponent {
   }
 
   onProductSelected($event: any) {
-    let { data } = $event;
+    const { data } = $event;
     this.dataArticulo = data;
     this.dataSearch.idArticulo = data.idArticulo;
     this.getDataKardex();
   }
 
   calculoTotales(prop: string) {
-    let total = this.transacciones
+    const total = this.transacciones
       .map((item) => item[prop] || 0)
       .reduce((obj, cur) => Number(obj) + Number(cur), 0);
     return roundNumber(total, 3);
@@ -348,7 +350,7 @@ export class ProductKardexModalComponent {
 
   getDataKardex() {
     try {
-      let params = {
+      const params = {
         checkBoxFecha: this.dataSearch.option === 1,
         checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
         checkBoxConsolidacion: this.dataSearch.option === 2,
@@ -380,7 +382,7 @@ export class ProductKardexModalComponent {
           this.data.stock = this.calculoTotales('saldo');
           this.data.totalGenetal = this.calculoTotales('totalGeneral');
 
-          for (let value of this.transacciones) {
+          for (const value of this.transacciones) {
             value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2);
           }
           this.tabulatorComponent.refTabulator.setData(this.transacciones);
@@ -453,7 +455,7 @@ export class ProductKardexModalComponent {
 
     if (!formatType) return;
 
-    let dataParams = {
+    const dataParams = {
       tipo: 1,
       checkBoxFecha: this.dataSearch.option === 1,
       checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
@@ -465,7 +467,7 @@ export class ProductKardexModalComponent {
       fechaFin: this.dataSearch.fechaFin,
       estado: this.dataSearch.estado,
     };
-    let parameters = {
+    const parameters = {
       hasIdUsuarioRol: true,
       reportParams: JSON.stringify({
         codigo: INVENTORY_CODE_REPORT.RK,
@@ -479,5 +481,9 @@ export class ProductKardexModalComponent {
     };
 
     this.sharedSvc.getReport({ data: parameters, format: formatType });
+  }
+
+  close() {
+    this.modal.close();
   }
 }

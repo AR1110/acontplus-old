@@ -9,13 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Data" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\BarberShop.Infrastructure\BarberShop.Infrastructure.csproj" />
+    <ProjectReference Include="..\BarberShop.Domain\BarberShop.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mappers\" />
+    <Folder Include="Seats\Validators\" />
+    <Folder Include="Services\Interfaces\" />
+    <Folder Include="Services\Services\" />
   </ItemGroup>
 
 </Project>

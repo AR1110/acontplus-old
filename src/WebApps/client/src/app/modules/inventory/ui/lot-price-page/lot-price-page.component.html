@@ -5,22 +5,27 @@
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Tipo Artículo</mat-label>
-          <mat-select  [(ngModel)]="mainForm.tipo">
+          <mat-select [(ngModel)]="mainForm.tipo">
             @for (item of tiposArticulo; track $index) {
-              <mat-option [value]="item.code">{{item.description}}</mat-option>
+            <mat-option [value]="item.code">{{ item.description }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-        <mat-radio-group aria-label="Select an option catalog" [(ngModel)]="mainForm.opcion">
+        <mat-radio-group
+          aria-label="Select an option catalog"
+          [(ngModel)]="mainForm.opcion"
+        >
           @for (item of catalogs; track $index){
-            <mat-radio-button [value]="item.code">{{ item.description }}</mat-radio-button>
+          <mat-radio-button [value]="item.code">{{
+            item.description
+          }}</mat-radio-button>
           }
         </mat-radio-group>
       </div>
     </div>
-    <mat-divider/>
+    <mat-divider />
     <div
       class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
     >
@@ -43,29 +48,27 @@
         <app-supplier-search
           [isSimpleMode]="isSearchSupplierSimple"
           (supplierSelected)="onSupplierSelected($event)"
-        (clearSearch)="supplierclearSearch($event)"
+          (clearSearch)="supplierclearSearch($event)"
         />
-
       </div>
-
     </div>
-
-
 
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>N° de Documento:</mat-label>
-          <input matInput   [(ngModel)]="mainForm.nroDocumento"
-                 pattern="[0-9]{3}-[0-9]{3}-[0-9]*"
-                 placeholder="000-000-XXXXXXXXXXX"
-                 title="Formato: 000-000-XXXXXXXXXXX"
-                 oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')"
-          >
+          <input
+            matInput
+            [(ngModel)]="mainForm.nroDocumento"
+            pattern="[0-9]{3}-[0-9]{3}-[0-9]*"
+            placeholder="000-000-XXXXXXXXXXX"
+            title="Formato: 000-000-XXXXXXXXXXX"
+            oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')"
+          />
         </mat-form-field>
       </div>
       <div
-        class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center  "
+        class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center"
       >
         <app-theme-button
           variant="info"
@@ -75,7 +78,7 @@
         />
       </div>
       <div
-        class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end  "
+        class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end"
       >
         <app-theme-button
           variant="success"
@@ -98,7 +101,9 @@
                 (selectionChange)="onChangeOptionCalculate()"
               >
                 @for (item of optionsCalculate; track $index) {
-                  <mat-option [value]="item.code">{{item.description}}</mat-option>
+                <mat-option [value]="item.code">{{
+                  item.description
+                }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -107,27 +112,23 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
             <mat-form-field class="w-100">
               <mat-label>Tarifa:</mat-label>
-              <mat-select
-                [formControl]="tarifasSelected"
-                multiple
-              >
+              <mat-select [formControl]="tarifasSelected" multiple>
                 @for (item of tarifas; track $index) {
-                  <mat-option [value]="item.idTarifa">{{
-                      item.descripcion
-                    }}</mat-option>
+                <mat-option [value]="item.idTarifa">{{
+                  item.descripcion
+                }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
-
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
             <mat-form-field class="w-100">
               <mat-label>Opción PVP:</mat-label>
-              <mat-select
-                [(ngModel)]="optionPvp"
-              >
+              <mat-select [(ngModel)]="optionPvp">
                 @for (item of optionsPvps; track $index) {
-                  <mat-option [value]="item.code">{{item.description}}</mat-option>
+                <mat-option [value]="item.code">{{
+                  item.description
+                }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -135,66 +136,81 @@
         </div>
       </div>
       <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
-
-            <mat-form-field class="w-100">
-              <mat-label>Valor/Porcentaje:</mat-label>
-              <input matInput type="number"  [(ngModel)]="mainForm.valueToCalculate">
-              <ng-container matSuffix>
-                <button   mat-icon-button aria-label="Calcular"
-                (click)="  calculate()"
-                >
-                  <svg  xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="icon icon-tabler icons-tabler-outline icon-tabler-calculator">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
-                    <path d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z" />
-                    <path d="M8 14l0 .01" />
-                    <path d="M12 14l0 .01" />
-                    <path d="M16 14l0 .01" />
-                    <path d="M8 17l0 .01" />
-                    <path d="M12 17l0 .01" />
-                    <path d="M16 17l0 .01" />
-                  </svg>
-                </button>
-                <button   mat-icon-button aria-label="Calculo manual"
-                (click)="calculateManual()"
-                >
-                    <svg  xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="icon icon-tabler icons-tabler-outline icon-tabler-hand-click">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                      <path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5" />
-                      <path d="M11 11.5v-2a1.5 1.5 0 0 1 3 0v2.5" />
-                      <path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5" />
-                      <path d="M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
-                      <path d="M5 3l-1 -1" />
-                      <path d="M4 7h-1" />
-                      <path d="M14 3l1 -1" />
-                      <path d="M15 6h1" />
-                    </svg>
-                </button>
-                <button   mat-icon-button aria-label="Deschacer cambios" (click)="refreshToNestedProducts()" >
-                  <mat-icon>refresh</mat-icon>
-                </button>
-
-              </ng-container>
-
-            </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Valor/Porcentaje:</mat-label>
+          <input
+            matInput
+            type="number"
+            [(ngModel)]="mainForm.valueToCalculate"
+          />
+          <ng-container matSuffix>
+            <button mat-icon-button aria-label="Calcular" (click)="calculate()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-calculator"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"
+                />
+                <path
+                  d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z"
+                />
+                <path d="M8 14l0 .01" />
+                <path d="M12 14l0 .01" />
+                <path d="M16 14l0 .01" />
+                <path d="M8 17l0 .01" />
+                <path d="M12 17l0 .01" />
+                <path d="M16 17l0 .01" />
+              </svg>
+            </button>
+            <button
+              mat-icon-button
+              aria-label="Calculo manual"
+              (click)="calculateManual()"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-hand-click"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5" />
+                <path d="M11 11.5v-2a1.5 1.5 0 0 1 3 0v2.5" />
+                <path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5" />
+                <path
+                  d="M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47"
+                />
+                <path d="M5 3l-1 -1" />
+                <path d="M4 7h-1" />
+                <path d="M14 3l1 -1" />
+                <path d="M15 6h1" />
+              </svg>
+            </button>
+            <button
+              mat-icon-button
+              aria-label="Deschacer cambios"
+              (click)="refreshToNestedProducts()"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </ng-container>
+        </mat-form-field>
       </div>
     </div>
     <div class="mt-2">
@@ -208,7 +224,5 @@
         height="400px"
       />
     </div>
-
   </div>
 </app-mat-dynamic-card>
-

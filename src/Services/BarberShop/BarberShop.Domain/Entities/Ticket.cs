@@ -1,11 +1,10 @@
 ﻿namespace BarberShop.Domain.Entities;
 
-[Table("Ticket", Schema = "BarberShop")]
 public class Ticket : BaseEntity
 {
     public int PuntoEmisionId { get; set; }
     public int Sequence { get; set; }
-    [Required] [MaxLength(18)] public required string Serie { get; set; }
+    [Required][MaxLength(18)] public required string Serie { get; set; }
 
     public TicketStatus Status { get; set; }
 

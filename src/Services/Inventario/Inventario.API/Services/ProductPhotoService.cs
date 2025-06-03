@@ -45,7 +45,7 @@ public class ProductPhotoService : IProductPhotoService
         productFound.S3ObjectKey = productPhoto.S3ObjectKey;
         productFound.S3ObjectUrl = productPhoto.S3ObjectUrl;
         productFound.IsActive = productPhoto.IsActive;
-        productFound.UserId = productPhoto.UserId;
+        productFound.UpdatedByUserId = productPhoto.UpdatedByUserId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada exitosamente!" };
@@ -58,14 +58,14 @@ public class ProductPhotoService : IProductPhotoService
 
         ;
         productFound.IsDefault = isDefault;
-        productFound.UserId = userId;
+        productFound.UpdatedByUserId = userId;
         if (isDefault && _context.ProductPhotos.Any(x =>
                 x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true))
         {
             var nonDefaults = await _context.ProductPhotos
                 .Where(x => x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true).ToListAsync();
             nonDefaults.ForEach(x => x.IsDefault = false);
-            nonDefaults.ForEach(x => x.UserId = userId);
+            nonDefaults.ForEach(x => x.UpdatedByUserId = userId);
             _context.UpdateRange(nonDefaults);
             await _context.SaveChangesAsync();
         }

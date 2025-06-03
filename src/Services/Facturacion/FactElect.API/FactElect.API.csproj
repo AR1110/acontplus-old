@@ -27,8 +27,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Scrutor" />
+    <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj" />
+    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

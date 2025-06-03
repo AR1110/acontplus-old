@@ -25,7 +25,7 @@ public class SerieController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Serie serie)
     {
-        serie.UserId = User.GetUserId();
+        serie.CreatedByUserId = User.GetUserId();
         var response = await _serieService.AddAsync(serie);
         return Ok(response);
     }
@@ -33,7 +33,7 @@ public class SerieController : BaseApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Serie serie)
     {
-        serie.UserId = User.GetUserId();
+        serie.UpdatedByUserId = User.GetUserId();
         var response = await _serieService.UpdateAsync(id, serie);
         return Ok(response);
     }
