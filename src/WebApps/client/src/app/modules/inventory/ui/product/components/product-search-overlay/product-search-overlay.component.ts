@@ -20,6 +20,7 @@ import { map, Subject } from 'rxjs';
 
 import { ProductSearchListComponent } from '@inventory/ui/product/components/product-search-list/product-search-list.component';
 import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
   selector: 'app-product-search-overlay',
@@ -27,6 +28,7 @@ import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
     CommonModule,
     OverlayModule,
     ReactiveFormsModule,
+    MatInputModule,
     ProductSearchListComponent,
   ],
   templateUrl: './product-search-overlay.component.html',

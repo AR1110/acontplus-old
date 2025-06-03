@@ -5,93 +5,63 @@
 />
 
 <ng-template #body>
+  <div class="vstack gap-2">
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="row">
           <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="estab">Establecimiento: </label>
-              <input
-                type="text"
-                name="estab"
-                id="estab"
-                [value]="data.establecimiento"
-                class="form-control"
-                disabled="disabled"
-              />
-            </div>
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <input matInput [value]="data.establecimiento" readonly>
+            </mat-form-field>
+
           </div>
           <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="puntoEmision">Punto Emisión: </label>
-              <input
-                type="text"
-                name="puntoEmision"
-                id="puntoEmision"
-                class="form-control"
-                [value]="data.ptoEmi"
-                disabled="disabled"
-              />
-            </div>
+            <mat-form-field class="w-100">
+              <mat-label>Punto Emisión:</mat-label>
+              <input matInput [value]="data.ptoEmi" readonly>
+            </mat-form-field>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="fechaEmision">Fecha Emisión: </label>
-              <app-input-date
-                [(value)]="data.fechaEmision"
-                [disabled]="true"
-              ></app-input-date>
-            </div>
+            <mat-form-field class="w-100">
+              <mat-label>Fecha Emisión:</mat-label>
+              <input matInput [value]="fechaLegible" readonly>
+            </mat-form-field>
           </div>
         </div>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="row">
           <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="businessName">Cliente: </label>
-              <div class="input-group">
-                <input
-                  type="text"
-                  name="businessName"
-                  id="businessName"
-                  class="form-control"
-                  [value]="data.businessName"
-                  readonly
-                />
+            <mat-form-field class="w-100">
+              <mat-label>Cliente:</mat-label>
+              <input matInput [value]="data.businessName" readonly>
+              <ng-container matSuffix>
                 <button
                   type="button"
-                  mat-raised-button
+                  mat-icon-button
                   (click)="showClientInfo()"
                 >
                   <mat-icon>info</mat-icon>
                 </button>
-              </div>
-            </div>
+              </ng-container>
+            </mat-form-field>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="licensePlate">Placa: </label>
-              <div class="input-group">
-                <input
-                  type="text"
-                  name="licensePlate"
-                  id="licensePlate"
-                  class="form-control"
-                  [value]="vehicle.licensePlate"
-                  readonly
-                />
+            <mat-form-field class="w-100">
+              <mat-label>Placa:</mat-label>
+              <input matInput  [value]="vehicle().licensePlate" readonly>
+              <ng-container matSuffix>
                 <button
                   type="button"
-                  mat-raised-button
-
+                  mat-icon-button
                   (click)="showVehicleInfo()"
                 >
                   <mat-icon>info</mat-icon>
                 </button>
+              </ng-container>
+            </mat-form-field>
 
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -99,53 +69,43 @@
 
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="productSearch">Producto: </label>
           <app-product-search-overlay
             (optionSelected)="onResultSelectedProduct($event)"
             [searchSale]="true"
           />
-        </div>
       </div>
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="bodega">Bodega: </label>
-          <select
-            name="bodega"
-            id="bodega"
-            [(ngModel)]="data.bodegaId"
-            class="form-select"
-            (change)="onChangeBodega()"
-          >
+        <mat-form-field class="w-100">
+          <mat-label>Bodega: </mat-label>
+          <mat-select  [(ngModel)]="data.bodegaId" (selectionChange)="onChangeBodega()">
             @for (item of bodegas(); track $index) {
-              <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
+              <mat-option [value]="item.idBodega">{{ item.descripcion }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
+
       </div>
 
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="feed">Tarifa: </label>
-          <select
-            name="feed"
-            id="feed"
-            class="form-select"
-            (change)="onChangeFee()"
-            [(ngModel)]="data.feeId"
-          >
+        <mat-form-field class="w-100">
+          <mat-label>Tarifa: </mat-label>
+          <mat-select  [(ngModel)]="data.feeId" (selectionChange)="onChangeFee()">
             @for (item of feeds(); track $index) {
-              <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
+              <mat-option [value]="item.idTarifa">{{ item.descripcion }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-          <button type="button" mat-raised-button (click)="save()">
-            <mat-icon>save</mat-icon> Guardar
-          </button>
+          <app-theme-button
+            type="button"
+            variant="success"
+            text="Guardar"
+            icon="save"
+            (handleClick)="save()"
+          />
         </div>
       </div>
     </div>
@@ -164,16 +124,10 @@
 
     <div class="row">
       <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="observacion">Observación:</label>
-          <textarea
-            name="observacion"
-            id="observacion"
-            class="form-control"
-            [value]="data.obs"
-            readonly
-          ></textarea>
-        </div>
+        <mat-form-field class="w-100">
+          <mat-label>Observación</mat-label>
+          <textarea matInput   [value]="data.obs" placeholder="..." readonly></textarea>
+        </mat-form-field>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="mt-2">
@@ -187,6 +141,8 @@
         </div>
       </div>
     </div>
+
+  </div>
 
 </ng-template>
 

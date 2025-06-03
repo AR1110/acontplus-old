@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -76,10 +76,10 @@ export class SupportAddEditModalComponent implements OnInit {
   vehicleSvc = inject(VehicleWebRepository);
   tS = inject(ToasterService);
 
-  loading = false;
+  loading = signal(false);
 
-  titleModal = 'Nuevo Soporte';
-  btnText = 'Guardar';
+  titleModal = signal('Nuevo Soporte');
+  btnText = signal('Guardar');
 
   establishments = signal<Estab[]>([]);
   emissionPoints = signal<PuntoEmision[]>([]);
@@ -126,23 +126,23 @@ export class SupportAddEditModalComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.supportUseCase
       .getDataForm()
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe((response) => {
         this.establishments.set(response.establishments);
         this.cloneEmissionPoints.set(response.emissionPoints);
         this.users.set(response.users);
 
         if (this.params.id > 0) {
-          this.titleModal = 'Editar Soporte';
-          this.btnText = 'Actualizar';
+          this.titleModal.set('Editar Soporte');
+          this.btnText.set('Actualizar');
 
-          this.loading = true;
+          this.loading.set(true);
           this.supportUseCase
             .getId(this.params.id)
-            .pipe(finalize(() => (this.loading = false)))
+            .pipe(finalize(() => this.loading.set(false)))
             .subscribe((value) => {
               this.data = value.data as any;
 
@@ -169,7 +169,6 @@ export class SupportAddEditModalComponent implements OnInit {
       this.filteredCustomerVehicleFormControl.valueChanges.pipe(
         distinctUntilChanged(),
         switchMap((val) => {
-          this.filteredCustomerVehicleLoading.set(false);
           if (val && val.length > 2) {
             return this._filterCustomerVehicle(val);
           }
@@ -179,10 +178,10 @@ export class SupportAddEditModalComponent implements OnInit {
   }
 
   private _filterCustomerVehicle(value: string) {
-    this.filteredCustomerVehicleLoading.set(true)
+    this.filteredCustomerVehicleLoading.set(true);
     return this.supportUseCase.search({ textSearch: value }).pipe(
       finalize(() => {
-        this.filteredCustomerVehicleLoading.set(false)
+        this.filteredCustomerVehicleLoading.set(false);
       })
     );
   }
@@ -213,16 +212,14 @@ export class SupportAddEditModalComponent implements OnInit {
   }
 
   getDataVehicleById(id: number) {
-      this.vehicleSvc.getId(id).subscribe(  (response) => {
-          const { customer, vehicle } = response;
-          this.data.vehicleCompanyId = id;
-          this.data.customerId = customer.id;
-          this.vehicle = vehicle as any;
+    this.vehicleSvc.getId(id).subscribe((response) => {
+      const { customer, vehicle } = response;
+      this.data.vehicleCompanyId = id;
+      this.data.customerId = customer.id;
+      this.vehicle = vehicle as any;
 
-          this.filteredCustomerVehicleFormControl.setValue(
-            customer.businessName
-          );
-      });
+      this.filteredCustomerVehicleFormControl.setValue(customer.businessName);
+    });
   }
   resultModalVehicle($event: any) {
     this.getDataVehicleById($event.id);
