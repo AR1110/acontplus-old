@@ -26,6 +26,8 @@ export interface FloorTreeNode {
   numberTable?: number;
   enabled?: boolean;
   roomName?:string
+  floorId?:number
+  code?: string;
 }
 
 
