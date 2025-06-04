@@ -9,7 +9,7 @@
 
     function docElectService($injector) {
         let URL = `${URL_API}DocumentoElectronico/`;
-        let URL_RETENCION_ATS = "FactElect/RetencionAts/";
+        let URL_RETENCION_ATS = "RetencionAts/";
         let mS = $injector.get("mainService");
         let FileSaver = $injector.get("FileSaver");
         let fS = $injector.get("formulario");
