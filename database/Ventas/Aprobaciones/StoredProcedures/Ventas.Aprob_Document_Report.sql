@@ -9,13 +9,13 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @tipo INT
+    DECLARE @tipo INT ,@userRoleId INT
 
     --> Filters Generales
     DECLARE @id INT ,@codDoc VARCHAR(10)
 
     --> Variables
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
+    SELECT @tipo = tipo ,@userRoleId = userRoleId FROM OPENJSON(@json) WITH (tipo INT ,userRoleId INT)
 
     --> Reporte Principal 
     IF @tipo = 1
@@ -248,7 +248,63 @@ BEGIN
     --> Reporte general de historial
     IF  @tipo =  3
         BEGIN
-            
+            DECLARE @idEntidad INT
+
+            SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+            SELECT ad.idAprob_Document 
+                  ,cu.IdCard
+                  ,cu.TradeName
+                  ,og.codigo			                          as codDocOrigen
+	              ,CASE WHEN hs.idNotaEntrega  > 0 THEN un.nombreUsuario
+                        WHEN hs.idProforma     > 0 THEN up.nombreUsuario
+                   END					                          as usuarioOrigen
+	              ,CASE WHEN hs.idNotaEntrega  > 0 THEN ne.serieComprobante
+                        WHEN hs.idProforma     > 0 THEN pr.serieComprobante
+                   END					                          as serieOrigen
+	              ,CASE WHEN hs.idNotaEntrega  > 0 THEN FORMAT(ne.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
+                        WHEN hs.idProforma     > 0 THEN FORMAT(pr.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
+                   END					                          as fechaOrigen
+	              ,ud.nombreUsuario		                          as usuarioCreador
+	              ,td.codigo			                          as codDoc
+	              ,og.descripcion + ' / ' + td.descripcion        as conversion
+                  ,ad.serieComprobante
+	              ,dg.serieComprobante	                          as serieGuia
+                  ,CAST(ad.importeTotal as numeric(18,2))         as importeTotal
+	              ,FORMAT(ad.fechaEmision ,'dd/MM/yyyy hh:mm:ss') as fechaEmision
+	              ,ua.nombreUsuario		                          as usuarioDestino
+	              ,CASE WHEN au.idFactura     > 0 THEN de.serieComprobante
+		                WHEN au.idNotaEntrega > 0 THEN nd.serieComprobante
+	               END					                          as serieDestino 
+	              ,CASE WHEN au.idFactura     > 0 THEN FORMAT(de.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
+		                WHEN au.idNotaEntrega > 0 THEN FORMAT(nd.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
+	               END					                          as fechaDestino 
+	             ,es.descripcion		                          as estado
+            FROM Ventas.Aprob_Document_Hist        hs WITH (NOLOCK)
+             LEFT JOIN dbo.Proforma                pr WITH (NOLOCK) ON pr.idProforma             = hs.idProforma 
+             LEFT JOIN dbo.Usuario                 up WITH (NOLOCK) ON up.idUsuario              = pr.idUsuario
+             LEFT JOIN dbo.NotaEntrega             ne WITH (NOLOCK) ON ne.idNotaEntrega          = hs.idNotaEntrega
+             LEFT JOIN dbo.Usuario                 un WITH (NOLOCK) ON un.idUsuario              = ne.idUsuario
+            INNER JOIN Ventas.Aprob_Document       ad WITH (NOLOCK) ON ad.idAprob_Document       = hs.idAprob_Document
+            INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = ad.idPuntoEmision
+             LEFT JOIN dbo.GuiaRemision            gr WITH (NOLOCK) ON gr.idAprob_Document       = ad.idAprob_Document
+            INNER JOIN dbo.Usuario                 ud WITH (NOLOCK) ON ud.idUsuario              = ad.idUsuario
+            INNER JOIN dbo.TipoDocumento           td WITH (NOLOCK) ON td.idTipoDocumento        = ad.idTipoDocumento
+            INNER JOIN dbo.TipoDocumento           og WITH (NOLOCK) ON og.idTipoDocumento        = ad.idTipoDocOrigen
+            INNER JOIN dbo.EstadoPago              es WITH (NOLOCK) ON es.idEstadoPago           = ad.idEstadoDocumento
+            INNER JOIN dbo.Cliente                 cl WITH (NOLOCK) ON cl.idCliente		         = ad.idCliente
+             LEFT JOIN Ventas.Aprob_Document_Audit au WITH (NOLOCK) ON au.idAprob_Document       = ad.idAprob_Document
+             LEFT JOIN dbo.NotaEntrega             nd WITH (NOLOCK) ON nd.idNotaEntrega          = au.idNotaEntrega
+             LEFT JOIN dbo.Factura                 fa WITH (NOLOCK) ON fa.idFactura		         = au.idFactura
+             LEFT JOIN dbo.Usuario                 ua WITH (NOLOCK) ON ua.idUsuario			     = au.idUsuario
+             LEFT JOIN dbo.DocumentoElectronico    dg WITH (NOLOCK) ON dg.idDocumentoElectronico = gr.idDocumentoElectronico
+             LEFT JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
+            INNER JOIN Customer.Customer           cu WITH (NOLOCK) ON cu.Id			         = cl.CustomerId
+            INNER JOIN Sri.Establecimiento         ss WITH (NOLOCK) ON ss.idEstablecimiento      = pe.idEstablecimiento
+            WHERE ss.idEntidad = @idEntidad
+            order by ad.idAprob_Document,fechaEmision,codDocOrigen,serieOrigen asc
+            --ORDER by cu.TradeName,og.codigo,serieOrigen ASC
+
             RETURN 
         END 
     

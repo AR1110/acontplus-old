@@ -1,4 +1,4 @@
-USE AcontPlus
+   USE AcontPlus
 GO
 CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Report @idUsuarioRol INT,@json NVARCHAR(max)
 AS
