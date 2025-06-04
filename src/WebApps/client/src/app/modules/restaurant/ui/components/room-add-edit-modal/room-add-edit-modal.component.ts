@@ -46,6 +46,7 @@ export class RoomAddEditModalComponent {
   });
   modalIcon = 'add';
   modalTitle = 'Registrar Sala';
+  btnText = 'Guardar';
   _modalRef = inject(MatDialogRef<RoomAddEditModalComponent>);
   data = inject<any>(MAT_DIALOG_DATA);
   #roomService = inject(RoomService);
@@ -56,6 +57,11 @@ export class RoomAddEditModalComponent {
     this.roomForm.patchValue({
       floorId: this.data.floorId,
     });
+    if(this.data.id>0){
+      this.roomForm.patchValue(this.data);
+      this.modalTitle = 'Editar Sala';
+      this.btnText = 'Actualizar';
+    }
   }
 
   onSave() {
