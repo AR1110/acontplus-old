@@ -1,47 +1,50 @@
 <app-breadcrumb />
 
 <app-mat-dynamic-card>
-  <div class="row">
+  <div class="vstack gap-2">
     <div class="row">
       <div class="col-md-2 col-12">
         <app-theme-button
           variant="success"
           icon="add"
-          text="Nueva Historia"
+          text="Nuevo Historial"
           (handleClick)="onModalOpen()"
         ></app-theme-button>
       </div>
     </div>
-    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
-      <div class="form-group">
-        <span>Establecimiento: </span>
-        <div class="input-group">
-          <select
-            (change)="onChangeEstab()"
-            [(ngModel)]="dataSearch.idEstablecimiento"
-            class="form-select form-control-border"
-          >
-            <option value="">Todos</option>
+
+    <div
+      class="row row-cols-2  "
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento: </mat-label>
+          <mat-select  (selectionChange)="refresh()"
+                       [(ngModel)]="dataSearch.idEstablecimiento">
             @for (estab of establecimientos(); track $index) {
-            <option [ngValue]="estab.idEstablecimiento">
-              {{ estab.nombreComercial }}
-            </option>
+              <mat-option [value]="estab.idEstablecimiento">
+                {{ estab.nombreComercial }}
+              </mat-option>
             }
-          </select>
-          <input
-            #input
-            (keyup)="applyFilter($event)"
-            class="form-control"
-            matInput
-            placeholder="Buscar mascota o cliente"
-          />
-        </div>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Buscar mascota o cliente</mat-label>
+          <input matInput [(ngModel)]="dataSearch.textSearch">
+          <ng-container matSuffix>
+            <button type="button" mat-icon-button (click)="refresh()">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </ng-container>
+        </mat-form-field>
       </div>
     </div>
   </div>
 
   <app-mat-dynamic-table
-    [tableData]="dataSource.data"
+    [tableData]="dataSource()"
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [templateOp]="templateOp"

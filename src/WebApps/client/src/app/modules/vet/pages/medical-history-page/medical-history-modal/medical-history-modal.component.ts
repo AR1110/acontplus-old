@@ -27,10 +27,14 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'app-medical-history-modal',
   imports: [
+    MatFormFieldModule,
+    MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
     PetSearchComponent,
@@ -235,6 +239,7 @@ export class MedicalHistoryModalComponent {
   }
 
   onPetSelected($event: any) {
+    console.log($event)
     this.petSelected = { ...$event };
     this.medicalHistoryForm.patchValue({ petId: this.petSelected.id });
   }

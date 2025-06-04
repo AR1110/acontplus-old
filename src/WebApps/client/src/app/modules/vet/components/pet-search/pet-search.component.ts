@@ -68,7 +68,7 @@ export class PetSearchComponent implements OnInit {
   }
 
   onPetSelect($event: any) {
-    this.pet = $event.item;
+    this.pet = $event;
     this.id.set(this.pet.id);
     this.setPetData(this.pet);
   }

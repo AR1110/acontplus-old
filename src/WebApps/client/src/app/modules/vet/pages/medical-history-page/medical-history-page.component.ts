@@ -1,19 +1,14 @@
-import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 import { isApiResponse } from '@core/models/api-response';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
 import {
-  MatPaginator,
-  MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { ThemePalette } from '@angular/material/core';
 
 import { MatPagination } from '@shared/models/pagination.model';
-import { isValidField } from '@core/utils/utils';
 import { GroupedEstab } from '@core/models/estab.model';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
@@ -23,32 +18,35 @@ import { DialogService } from '@core/services/dialog.service';
 import { MatIcon } from '@angular/material/icon';
 
 import { FormsModule } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-medical-history-page',
   imports: [
     BreadcrumbComponent,
-    MatIcon,
     MatDynamicCardComponent,
-    MatPaginatorModule,
     FormsModule,
     MatMenuModule,
     MatDynamicTableComponent,
     ThemeButtonComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatIconButton,
+    MatIcon,
   ],
   templateUrl: './medical-history-page.component.html',
   styles: ``,
 })
 export class MedicalHistoryPageComponent implements OnInit {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  colorToggle: ThemePalette = 'accent';
   visibleColumns: string[] = [
     'op',
     'position',
@@ -59,15 +57,13 @@ export class MedicalHistoryPageComponent implements OnInit {
     'weight',
     'observations',
   ];
-  dataSource = new MatTableDataSource<MedicalHistory>();
+  dataSource =signal<MedicalHistory[]>([]);
   dataSearch = {
     idEstablecimiento: 0,
     textSearch: '',
   };
   data = {} as MedicalHistory;
   establecimientos = signal<GroupedEstab[]>([]);
-  medicalHistories = signal<MedicalHistory[]>([]);
-  searching = false;
   private readonly medicalHistoryService = inject(MedicalHistoryService);
   private readonly modalService = inject(DialogService);
   private readonly sharedService = inject(SharedService);
@@ -87,21 +83,20 @@ export class MedicalHistoryPageComponent implements OnInit {
 
   pagination = signal(new MatPagination());
 
-  applyFilter(event: Event) {
-    this.searching = true;
-    const filterValue = (event.target as HTMLInputElement).value;
-    if (filterValue && filterValue.length >= 3) {
-      this.search(filterValue);
-    }
-    if (filterValue.length == 0) {
-      this.dataSearch.textSearch = '';
-      this.loadHistories();
-    }
-  }
+  // applyFilter(event: Event) {
+  //   this.searching = true;
+  //   const filterValue = (event.target as HTMLInputElement).value;
+  //   if (filterValue && filterValue.length >= 3) {
+  //     this.search(filterValue);
+  //   }
+  //   if (filterValue.length == 0) {
+  //     this.dataSearch.textSearch = '';
+  //     this.loadHistories();
+  //   }
+  // }
 
   initialLoad() {
     this.medicalHistoryService.get({ tipo: 1 }).subscribe((response) => {
-      console.log(response);
       if (isApiResponse(response) && response.code == '1') {
         const { estabs } = JSON.parse(response.payload as string);
         this.establecimientos.set(estabs);
@@ -126,48 +121,31 @@ export class MedicalHistoryPageComponent implements OnInit {
       pageSize: this.pagination().pageSize,
     };
 
-    let historiesModified: any[] = [];
+
     const clonedParams = Object.assign(params, this.dataSearch);
     this.medicalHistoryService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { medicalHistories=[] } = JSON.parse(response.payload as string);
-        this.medicalHistories.set(medicalHistories)
-        historiesModified =
-          medicalHistories &&
-          medicalHistories.map((pet: any, index: number) => ({
+
+        const historiesModified = medicalHistories.map((pet: any, index: number) => ({
             ...pet,
             index: index + 1,
           }));
+        this.dataSource.set(historiesModified);
+         this.pagination.update(r=>({
+           ...r,
+           totalRecords: this.dataSource().length>0 ? (this.dataSource()[0].totalRecords || 0): 0
+         }))
+
       }
-      this.dataSource = new MatTableDataSource(historiesModified);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      setTimeout(() => {
-        this.pagination.update((pag) => {
-          return {
-            ...pag,
-            totalRecords:
-              historiesModified.length > 0
-                ? historiesModified[0].totalRecords
-                : 0,
-          };
-        });
-      });
-    });
+    })
   }
 
   ngOnInit(): void {
     this.initialLoad();
   }
 
-  onChangeEstab() {
-    if (isValidField(this.dataSearch.idEstablecimiento)) {
-      const dataEstab = this.establecimientos().find(
-        (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento
-      );
-      this.loadHistories();
-    }
-  }
+
 
   onDelete(item: Pet) {
     Swal.fire({
