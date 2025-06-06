@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 
 import { AperturaCajaModalComponent } from '@accounting/ui/cashbox-page/apertura-caja-modal/apertura-caja-modal.component';
 import { CajaModalComponent } from '@accounting/ui/cashbox-page/caja-modal/caja-modal.component';
-import { CajaUseCase } from '@accounting/domain/use-cases/caja.use-case';
+import { CajaUseCase } from '@accounting/application/use-cases/caja.use-case';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

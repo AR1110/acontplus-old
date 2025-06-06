@@ -18,7 +18,7 @@ import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateToString } from '@core/utils/date.util';
 import {getValidId, isValidField} from '@core/utils/utils';
-import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/application/use-cases/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatSelectModule} from '@angular/material/select';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';

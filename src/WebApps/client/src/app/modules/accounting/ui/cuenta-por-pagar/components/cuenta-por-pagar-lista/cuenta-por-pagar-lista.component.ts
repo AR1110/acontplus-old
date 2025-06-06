@@ -46,9 +46,9 @@ import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
 import { ParameterReportUtil } from '@shared/utils/parameter-report.util';
 import { SharedService } from '@core/services/shared.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { CuentaPorPagarUseCase } from '@accounting/domain/use-cases/cuenta-por-pagar.use-case';
+import { CuentaPorPagarUseCase } from '@accounting/application/use-cases/cuenta-por-pagar.use-case';
 import { ComprobanteEgresoLoteComponent } from '@accounting/ui/comprobante-egreso/components/comprobante-egreso-lote/comprobante-egreso-lote.component';
-import { ComprobanteEgresoUseCase } from '@accounting/domain/use-cases/comprobante-egreso.use-case';
+import { ComprobanteEgresoUseCase } from '@accounting/application/use-cases/comprobante-egreso.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({

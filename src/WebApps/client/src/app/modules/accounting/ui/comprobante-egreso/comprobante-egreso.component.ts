@@ -3,8 +3,8 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { ListComprobanteEgresoUseCase } from '@accounting/domain/use-cases/comprobante-egreso/list-comprobante-egreso.use-case';
-import { DataFilterComprobanteEgresoUseCase } from '@accounting/domain/use-cases/comprobante-egreso/data-filter-comprobante-egreso.use-case';
+import { ListComprobanteEgresoUseCase } from '@accounting/application/use-cases/comprobante-egreso/list-comprobante-egreso.use-case';
+import { DataFilterComprobanteEgresoUseCase } from '@accounting/application/use-cases/comprobante-egreso/data-filter-comprobante-egreso.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';

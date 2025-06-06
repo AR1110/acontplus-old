@@ -25,7 +25,7 @@ import { DECIMALS } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { minus } from '@core/utils/decimal.util';
-import {ComprobanteEgresoUseCase} from "@accounting/domain/use-cases/comprobante-egreso.use-case";
+import {ComprobanteEgresoUseCase} from "@accounting/application/use-cases/comprobante-egreso.use-case";
 
 interface ComprobanteEgresoStore {
   isLoading: boolean;

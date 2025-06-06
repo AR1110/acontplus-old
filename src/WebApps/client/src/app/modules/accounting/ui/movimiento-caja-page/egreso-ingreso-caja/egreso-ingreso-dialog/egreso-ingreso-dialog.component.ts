@@ -13,7 +13,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { CashboxSelectHtmlOnly } from '@accounting/domain/models/cashbox.model';
 import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
 import { SubEntidadFinanciera } from '@accounting/domain/models/subentidad-financiera.model';
-import { MovimientoCajaUseCase } from '@accounting/domain/use-cases/movimiento-caja.use-case';
+import { MovimientoCajaUseCase } from '@accounting/application/use-cases/movimiento-caja.use-case';
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";

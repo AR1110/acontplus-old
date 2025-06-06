@@ -24,8 +24,8 @@ import {
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { DatePipe } from '@angular/common';
-import { ComprobanteIngresoUseCase } from '@accounting/domain/use-cases/comprobante-ingreso.use-case';
-import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
+import { ComprobanteIngresoUseCase } from '@accounting/application/use-cases/comprobante-ingreso.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/application/use-cases/cuenta-por-cobrar.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PageEvent } from '@angular/material/paginator';
-import { ComprobanteIngresoUseCase } from '@accounting/domain/use-cases/comprobante-ingreso.use-case';
+import { ComprobanteIngresoUseCase } from '@accounting/application/use-cases/comprobante-ingreso.use-case';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ComprobanteIngreso } from '@accounting/domain/models/comp-ingreso.model';
 import { formatDateToString } from '@core/utils/date.util';

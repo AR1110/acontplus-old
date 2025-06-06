@@ -1,14 +1,14 @@
 import {Directive, HostListener, inject, input, output} from '@angular/core';
 import {
   GetComprobanteEgresoForDeletionUseCase
-} from "@accounting/domain/use-cases/comprobante-egreso/get-comprobante-egreso-for-deletion.use-case";
+} from "@accounting/application/use-cases/comprobante-egreso/get-comprobante-egreso-for-deletion.use-case";
 import {getValidId} from "@core/utils/utils";
 import Swal from "sweetalert2";
 import {instanceDecimal, minus} from "@core/utils/decimal.util";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {
   AnularComprobanteEgresoUseCase
-} from "@accounting/domain/use-cases/comprobante-egreso/anular-comprobante-egreso.use-case";
+} from "@accounting/application/use-cases/comprobante-egreso/anular-comprobante-egreso.use-case";
 
 @Directive({
   selector: '[appActionComprobanteEgresoAnular]'

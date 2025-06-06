@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import {CurrencyPipe} from '@angular/common';
 import { NotificacionService } from '@shared/services/notificacion.service';
-import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
+import { ControlCajaUseCase } from '@accounting/application/use-cases/control-caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";

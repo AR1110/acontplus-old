@@ -11,7 +11,7 @@ import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
-import { AnticipoUseCase } from '@accounting/domain/use-cases/anticipo.use-case';
+import { AnticipoUseCase } from '@accounting/application/use-cases/anticipo.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';

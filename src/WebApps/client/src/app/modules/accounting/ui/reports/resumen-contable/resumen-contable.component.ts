@@ -11,7 +11,7 @@ import {
 import { SharedService } from '@core/services/shared.service';
 import { getValidId } from '@core/utils/utils';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/domain/enums/accounting.constants';
-import { ResumenContableUseCase } from '@accounting/domain/use-cases/resumen-contable.use-case';
+import { ResumenContableUseCase } from '@accounting/application/use-cases/resumen-contable.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatFormFieldModule} from "@angular/material/form-field";

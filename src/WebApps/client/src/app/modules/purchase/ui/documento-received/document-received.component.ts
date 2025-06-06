@@ -24,7 +24,7 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 import { DialogService } from '@core/services/dialog.service';
-import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/application/use-cases/sub-category.use-case';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';

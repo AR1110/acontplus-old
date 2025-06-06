@@ -10,7 +10,7 @@ import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
 import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
 import { formatDateToString } from '@core/utils/date.util';
-import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
+import { ControlCajaUseCase } from '@accounting/application/use-cases/control-caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";

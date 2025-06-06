@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/application/use-cases/sub-category.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

@@ -22,7 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';
-import {CuentaPorPagarUseCase} from "@accounting/domain/use-cases/cuenta-por-pagar.use-case";
+import {CuentaPorPagarUseCase} from "@accounting/application/use-cases/cuenta-por-pagar.use-case";
 import {NumberUtil} from "@shared/utils/number.util";
 import {formatDate} from "@core/utils/date.util";
 import {isValidField} from "@core/utils/utils";

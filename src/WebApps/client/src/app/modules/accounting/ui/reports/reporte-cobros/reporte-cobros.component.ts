@@ -16,7 +16,7 @@ import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/co
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { BancoSelectOnly } from '@accounting/domain/models/banco.interface';
 import { formatDateToString } from '@core/utils/date.util';
-import { ComprobanteIngresoUseCase } from '@accounting/domain/use-cases/comprobante-ingreso.use-case';
+import { ComprobanteIngresoUseCase } from '@accounting/application/use-cases/comprobante-ingreso.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";

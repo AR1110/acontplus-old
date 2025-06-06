@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 
-import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/application/use-cases/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

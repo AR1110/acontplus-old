@@ -12,7 +12,7 @@ import { SubEntidadFinanciera } from '@accounting/domain/models/subentidad-finan
 import { ToasterService } from '@core/services/toaster.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/domain/models/entidad-financiera.interface';
-import { AnticipoUseCase } from '@accounting/domain/use-cases/anticipo.use-case';
+import { AnticipoUseCase } from '@accounting/application/use-cases/anticipo.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomer } from '@customer/domain/models/company-customer';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";

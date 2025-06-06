@@ -23,7 +23,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { PagoDetalleModalComponent } from '@accounting/ui/cuenta-por-pagar/components/pago-detalle-modal/pago-detalle-modal.component';
 import { ComprobanteEgresoLista } from '@accounting/domain/models/comprobante-egreso.model';
 import { MatTooltip } from '@angular/material/tooltip';
-import {CuentaPorPagarUseCase} from "@accounting/domain/use-cases/cuenta-por-pagar.use-case";
+import {CuentaPorPagarUseCase} from "@accounting/application/use-cases/cuenta-por-pagar.use-case";
 
 @Component({
   selector: 'app-cuenta-por-pagar-hist-movimiento',

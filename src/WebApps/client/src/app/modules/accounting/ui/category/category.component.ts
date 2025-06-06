@@ -2,7 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CategoryModalComponent } from '@accounting/ui/category/category-modal/category-modal.component';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import {CategoryUseCase} from "@accounting/domain/use-cases/category.use-case";
+import {CategoryUseCase} from "@accounting/application/use-cases/category.use-case";
 import {Category} from "@accounting/domain/models/category";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";

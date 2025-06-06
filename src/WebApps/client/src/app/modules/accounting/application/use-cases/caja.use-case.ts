@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { CajaRepository } from "../repositories/caja.repository";
+import { CajaRepository } from "../../domain/repositories/caja.repository";
 
 
 @Injectable({

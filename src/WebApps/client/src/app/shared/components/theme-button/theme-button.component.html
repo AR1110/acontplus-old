@@ -38,6 +38,7 @@
     [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
+    <ng-content select="svgIcon"></ng-content>
     @if (icon()) {
       <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }
@@ -176,6 +177,9 @@
     [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
+
+    <ng-content select="svgIcon"></ng-content>
+
     @if (icon()) {
       <mat-icon class="button-icon">{{ icon() }}</mat-icon>
     }

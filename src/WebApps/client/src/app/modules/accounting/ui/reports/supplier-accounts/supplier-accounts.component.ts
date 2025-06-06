@@ -26,7 +26,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {
   GetFilterDataCuentaPorPagarUseCase
-} from "@accounting/domain/use-cases/cuenta-por-pagar/get-filter-data-cuenta-por-pagar.use-case";
+} from "@accounting/application/use-cases/cuenta-por-pagar/get-filter-data-cuenta-por-pagar.use-case";
 import {MatRadioModule} from "@angular/material/radio";
 
 

@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { SubEntidadFinancieraUseCase } from '@accounting/domain/use-cases/sub-entidad-financiera.use-case';
+import { SubEntidadFinancieraUseCase } from '@accounting/application/use-cases/sub-entidad-financiera.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';

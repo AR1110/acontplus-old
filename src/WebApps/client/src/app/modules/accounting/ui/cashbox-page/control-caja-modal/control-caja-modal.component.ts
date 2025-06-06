@@ -24,7 +24,7 @@ import { FormsModule } from '@angular/forms';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import { DetalleArqueoControlCajaModalComponent } from '@accounting/ui/cashbox-page/control-caja-modal/components/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { ControlCajaUseCase } from '@accounting/domain/use-cases/control-caja.use-case';
+import { ControlCajaUseCase } from '@accounting/application/use-cases/control-caja.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatMenuModule } from '@angular/material/menu';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

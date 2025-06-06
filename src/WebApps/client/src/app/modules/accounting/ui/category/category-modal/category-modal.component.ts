@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Category } from '@technical-support/models/category';
 import { ApiResponse } from '@core/models/api-response';
-import { CategoryUseCase } from '@accounting/domain/use-cases/category.use-case';
+import { CategoryUseCase } from '@accounting/application/use-cases/category.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";

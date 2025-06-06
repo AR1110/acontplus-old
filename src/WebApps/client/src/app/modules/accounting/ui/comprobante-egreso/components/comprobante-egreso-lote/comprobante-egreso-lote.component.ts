@@ -15,7 +15,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { DialogService } from '@core/services/dialog.service';
 import { FormaPagoComponent } from '@accounting/ui/comprobante-egreso/components/forma-pago/forma-pago.component';
-import { ComprobanteEgresoStore } from '@accounting/ui/store/comprobante-egreso.store';
+import { ComprobanteEgresoStore } from '@accounting/application/store/comprobante-egreso.store';
 import { ToasterService } from '@core/services/toaster.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CuotaPorPagarLista } from '@accounting/domain/models/cuota-por-pagar.interface';
@@ -27,7 +27,7 @@ import {
 } from "@accounting/domain/utils/comprobante-egreso/obtener-cuotas-por-pagar-estado.util";
 import {obtenerCuentasPorPagarEstado} from "@accounting/domain/utils/comprobante-egreso/obtener-cuentas-por-pagar-estado.util";
 import { FormsModule } from '@angular/forms';
-import {ComprobanteEgresoUseCase} from "@accounting/domain/use-cases/comprobante-egreso.use-case";
+import {ComprobanteEgresoUseCase} from "@accounting/application/use-cases/comprobante-egreso.use-case";
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',

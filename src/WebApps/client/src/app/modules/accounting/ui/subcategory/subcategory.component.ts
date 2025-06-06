@@ -9,7 +9,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
-import {SubCategoryUseCase} from "@accounting/domain/use-cases/sub-category.use-case";
+import {SubCategoryUseCase} from "@accounting/application/use-cases/sub-category.use-case";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {DialogService} from "@core/services/dialog.service";
 

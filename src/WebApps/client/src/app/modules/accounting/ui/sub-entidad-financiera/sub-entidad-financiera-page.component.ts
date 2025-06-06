@@ -14,7 +14,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { SubEntidadFinancieraUseCase } from '@accounting/domain/use-cases/sub-entidad-financiera.use-case';
+import { SubEntidadFinancieraUseCase } from '@accounting/application/use-cases/sub-entidad-financiera.use-case';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
