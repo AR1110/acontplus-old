@@ -12,6 +12,7 @@ GO
 CREATE OR ALTER VIEW Contab.V_ComprobanteEgreso
 AS
     SELECT
+        ce.idEntidad,
         -- Identificadores principales
         ce.idComprobanteEgreso,
         ce.CustomerId,
@@ -63,7 +64,7 @@ AS
 
         -- Información del pago
         pag.secuencial AS numeroPago,
-        FORMAT(pag.fechaEmision, 'dd/MM/yyyy') AS fechaPago,
+        FORMAT(pag.fechaEmision, 'dd/MM/yyyy  HH:mm') AS fechaPago,
         pag.fechaEmision AS fechaPagoTimestamp
 
     FROM dbo.ComprobanteEgreso AS ce
@@ -82,3 +83,6 @@ GO
 SELECT TOP 100
     *
 FROM Contab.V_ComprobanteEgreso;
+SELECT TOP 1
+    *
+FROM dbo.ComprobanteEgreso
