@@ -1,14 +1,9 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Core.Entity;
 
 namespace Identity.API.Data;
 
-public class ApplicationDbContext : BaseContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : BaseContext(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<ForgotPassword> ForgotPasswords { get; set; }
     public DbSet<LoginHistory> LoginHistories { get; set; }
     public DbSet<LoginHistoryArchive> LoginHistoryArchives { get; set; }
@@ -33,17 +28,17 @@ public class ApplicationDbContext : BaseContext
                      .SelectMany(t => t.GetProperties())
                      .Where(p => p.ClrType == typeof(string) // Entity is a string
                                  && p.GetColumnType() == null // No column type is set
-                                                              // Next line only required if using ASP.Net Identity:
-                                                              //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
+                         // Next line only required if using ASP.Net Identity:
+                         //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(builder,
+        SimpleEntityRegistration.RegisterEntities(builder, typeof(ApplicationDbContext),
             typeof(AccessAuthorization),
             typeof(LoginHistory),
             typeof(LoginHistoryArchive),
             typeof(LoginFailed),
             typeof(ForgotPassword)
-            );
+        );
     }
 }

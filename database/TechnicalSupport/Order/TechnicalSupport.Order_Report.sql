@@ -89,7 +89,7 @@ BEGIN
     LEFT JOIN dbo.Medida m                              WITH(NOLOCK) ON m.idMedida              = orm.MedidaId
     LEFT JOIN dbo.Articulo a                            WITH(NOLOCK) ON a.idArticulo            = orm.ProductId
     WHERE od.OrderId = @id
-    AND orm.Deleted IS NULL
+    AND orm.IsDeleted = CAST(0 AS BIT)
     ORDER BY orm.OrderDetailId DESC
 END
 GO

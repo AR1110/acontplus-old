@@ -66,7 +66,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  └── user.model.ts
 |  |  |  ├── services
 |  |  |  |  ├── dialog-custom.service.ts
-|  |  |  |  ├── modal.service.ts
 |  |  |  |  ├── shared.service.ts
 |  |  |  |  ├── toaster.service.ts
 |  |  |  ├── theme
@@ -394,7 +393,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |     ├── wizard-config.component.html
 |  |  |  |  |     └── wizard-config.component.ts
 |  |  |  |  ├── services
-|  |  |  |  |  ├── doc-config.service.ts
 |  |  |  |  |  ├── firma-electronica.service.ts
 |  |  |  |  |  ├── printer-doc.service.ts
 |  |  |  |  |  ├── sri
@@ -636,7 +634,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── directives
 |  |  |  |  |  ├── compra-habitual-historial.directive.ts
 |  |  |  |  |  ├── factura-fisica-detalle.directive.ts
-|  |  |  |  |  └── purchase.directive.ts
 |  |  |  |  ├── providers
 |  |  |  |  |  ├── document-received.provider.ts
 |  |  |  |  |  └── index.ts
@@ -753,7 +750,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── components
 |  |  |  |  |  ├── employee-search
 |  |  |  |  |  |  ├── employee-search.component.html
-|  |  |  |  |  |  └── employee-search.component.ts
 |  |  |  |  |  └── nota-entrega-detalle-dialog
 |  |  |  |  |     ├── nota-entrega-detalle-dialog.component.html
 |  |  |  |  |     └── nota-entrega-detalle-dialog.component.ts

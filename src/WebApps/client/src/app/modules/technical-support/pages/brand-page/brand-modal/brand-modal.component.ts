@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -14,22 +14,21 @@ import { Serie } from '@modules/technical-support/models/serie';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-brand-modal',
-    imports: [ReactiveFormsModule, TabulatorComponent, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule, TabulatorComponent,   ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })
 export class BrandModalComponent {
   private brandService = inject(BrandService);
   private categoryService = inject(CategoryService);
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<BrandModalComponent>);
   private serieService = inject(SerieService);
   private tS = inject(ToasterService);
   brandForm = new FormGroup({
@@ -46,7 +45,7 @@ export class BrandModalComponent {
       Validators.maxLength(100),
     ]),
   });
-  categories: Category[] = [];
+  categories =signal<Category[]>([]);
   columnNames = [
     {
       title: 'id',
@@ -113,13 +112,7 @@ export class BrandModalComponent {
       width: 150,
     },
   ];
-  data: Brand = {
-    id: 0,
-    code: '',
-    name: '',
-    categoryId: 0,
-    categoryName: '',
-  };
+  data = inject<Brand>(MAT_DIALOG_DATA)
   modalIcon = 'add';
   modalTitle = 'Registrar Marca';
   series: Serie[] = [];
@@ -142,18 +135,12 @@ export class BrandModalComponent {
     this.onGet();
   }
   onGet() {
-    this.categoryService.get({}).subscribe({
-      next: (response) => {
+    this.categoryService.get({}).subscribe(  (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            this.categories = JSON.parse(response.payload as string);
+            this.categories.set(JSON.parse(response.payload as string));
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {},
     });
   }
   onModalClose() {
@@ -181,21 +168,9 @@ export class BrandModalComponent {
       series: this.series || [],
     };
     if (this.data.id > 0) {
-      this.brandService.put(this.data.id, dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.brandService.put(this.data.id, dataToSave).subscribe(this.successResponse);
     } else {
-      this.brandService.post(dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.brandService.post(dataToSave).subscribe(  this.successResponse);
     }
   }
   onSerieAdd() {
@@ -215,8 +190,7 @@ export class BrandModalComponent {
       confirmButtonText: 'Si',
     }).then((response) => {
       if (response.isConfirmed) {
-        this.serieService.delete(item.id).subscribe({
-          next: (response) => {
+        this.serieService.delete(item.id).subscribe(  (response) => {
             if (isApiResponse(response)) {
               this.tS.toastr({
                 type: response.code === '1' ? 'success' : 'warning',
@@ -229,11 +203,6 @@ export class BrandModalComponent {
                 );
               }
             }
-          },
-          error(err) {
-            console.log(err);
-          },
-          complete() {},
         });
       }
     });

@@ -47,11 +47,11 @@ public class ArticuloController(
         switch (response.Code)
         {
             case "1" when file != null:
-            {
-                var s3Response = await storageService.UploadAsync(s3ObjectCustom);
+                {
+                    var s3Response = await storageService.UploadAsync(s3ObjectCustom);
 
-                break;
-            }
+                    break;
+                }
         }
 
         return Ok(response);

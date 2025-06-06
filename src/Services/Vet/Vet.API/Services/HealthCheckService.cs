@@ -9,7 +9,7 @@ public class HealthCheckService(VetContext context) : IHealthCheckService
 
         healthCheckFound.DiseaseId = healthCheck.DiseaseId;
         healthCheckFound.DiseaseStatusId = healthCheck.DiseaseStatusId;
-        healthCheckFound.UserId = healthCheck.UserId;
+        healthCheckFound.UpdatedByUserId = healthCheck.UpdatedByUserId;
 
         context.Update(healthCheckFound);
         await context.SaveChangesAsync();

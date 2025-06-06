@@ -34,7 +34,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: var(--mdc-elevated-card-container-shape, var(--mat-sys-corner-medium));;
+        border-radius: var(--mat-card-elevated-container-shape, var(--mat-sys-corner-medium));;
       }
 
       .rate-limit-reached {

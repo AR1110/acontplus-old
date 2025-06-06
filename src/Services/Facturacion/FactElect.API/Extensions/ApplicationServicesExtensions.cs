@@ -5,6 +5,7 @@ using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
 using FactElect.Application.Services;
+using FactElect.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -15,7 +16,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddAdvancedLogging(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
         services.AddHttpContextAccessor();
 
@@ -56,11 +57,8 @@ public static class ApplicationServicesExtensions
 
         services.AddDbContextPool<FactElectContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                        x => x.MigrationsAssembly("FactElect.Infrastructure")) //Migrations in infrastructure library
-                    .EnableSensitiveDataLogging(environment.IsDevelopment()) // Enable only in Development
-                    .EnableDetailedErrors(environment.IsDevelopment())
-                    .LogTo(Log.Warning, LogLevel.Warning) // Log EF Core queries using Serilog
-        );
+                        x => x.MigrationsAssembly("FactElect.Infrastructure"))); //Migrations in infrastructure library
+
 
         string[] scopedNameSpaces =
         [
@@ -81,7 +79,7 @@ public static class ApplicationServicesExtensions
 
         string[] transientNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

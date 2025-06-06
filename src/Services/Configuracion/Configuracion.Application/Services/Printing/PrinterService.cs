@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services.Printing;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services.Printing;
 
 public class PrinterService(ConfigContext context, IAdoRepository repository) : IPrinterService
 {
@@ -36,9 +38,9 @@ public class PrinterService(ConfigContext context, IAdoRepository repository) : 
         printerFound.MacAddress = printer.MacAddress;
         printerFound.ServerDevice = printer.ServerDevice;
         printerFound.IsDefault = printer.IsDefault;
-        printerFound.Enabled = printer.Enabled;
-        printerFound.UserId = printer.UserId;
+        printerFound.IsActive = printer.IsActive;
         printerFound.Domain = printer.Domain;
+        printerFound.UpdatedByUserId = printer.UpdatedByUserId;
         context.Update(printerFound);
         await context.SaveChangesAsync();
 

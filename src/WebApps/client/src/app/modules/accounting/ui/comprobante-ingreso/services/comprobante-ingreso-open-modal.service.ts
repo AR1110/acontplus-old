@@ -1,20 +1,20 @@
 
 import { inject, Injectable } from "@angular/core";
-import { ModalService } from "@core/services/modal.service";
 import { ComprobanteIngresoLoteModalComponent } from "@accounting/ui/comprobante-ingreso/components/comprobante-ingreso-lote-modal/comprobante-ingreso-lote-modal.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComprobanteIngresoOpenModalService {
-  #modalSvc = inject(ModalService);
+  #modalSvc = inject(DialogService);
 
   async open<T>(data: T){
-    let modalRef = this.#modalSvc.openModalCustom(ComprobanteIngresoLoteModalComponent, {
-      size: 'xl'
+    const modalRef = this.#modalSvc.open(ComprobanteIngresoLoteModalComponent, {
+      size: 'xl',
+      data: structuredClone(data)
     })
-    modalRef.componentInstance.params = data;
-    await modalRef.result.then(result=>{
+    await modalRef.subscribe(result=>{
       return result;
     })
   }

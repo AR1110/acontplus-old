@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
@@ -46,13 +46,13 @@ export class VehicleAddEditModalComponent {
   vehicleUseCase = inject(VehicleUseCase);
   tS = inject(ToasterService);
 
-  titleModal = 'Nuevo Vehículo';
-  btnText = 'Guardar';
+  titleModal = signal('Nuevo Vehículo');
+  btnText = signal('Guardar');
 
-  countries: any = [];
-  vehicleTypes: VehicleTypeSelectHtmlOnly[] = [];
+  countries  =signal<any[]>([]);
+  vehicleTypes =signal<VehicleTypeSelectHtmlOnly[]>([]);
 
-  loading = false;
+  loading = signal(false);
 
   customer = {
     idType: '',
@@ -80,8 +80,8 @@ export class VehicleAddEditModalComponent {
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   myControlCountry = new FormControl<any>('');
-  optionsCountry: any[] = [];
-  filteredCountryOptions!: any[];
+  optionsCountry = signal<any[]>([]);
+  filteredCountryOptions = signal<any[]>([])
 
   successResponse = {
     next: (response: ApiResponse) => {
@@ -100,7 +100,7 @@ export class VehicleAddEditModalComponent {
         if (this.data.id > 0) {
           id = this.data.id;
         } else {
-          let data = JSON.parse(response.payload as string);
+          const data = JSON.parse(response.payload as string);
           if (Array.isArray(data) && data.length > 0) {
             id = data[0].id;
           }
@@ -116,29 +116,29 @@ export class VehicleAddEditModalComponent {
 
   ngOnInit() {
     if (this.data.id > 0) {
-      this.titleModal = 'Editar Vehículo';
-      this.btnText = 'Actualizar';
+      this.titleModal.set('Editar Vehículo');
+      this.btnText.set('Actualizar');
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.vehicleUseCase
       .getDataForm()
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => (this.loading.set(false))))
       .subscribe((response) => {
         const { countries, vehicleTypes } = response;
-        this.countries = countries;
-        this.vehicleTypes = vehicleTypes;
+        this.countries.set(countries);
+        this.vehicleTypes.set(vehicleTypes);
 
-        this.optionsCountry = countries;
-        this.filteredCountryOptions = countries.slice();
+        this.optionsCountry.set(countries);
+        this.filteredCountryOptions.set(countries.slice())
 
         if (this.data.id > 0) {
-          this.titleModal = 'Editar Vehículo';
-          this.btnText = 'Actualizar';
-          this.loading = true;
+          this.titleModal.set('Editar Vehículo');
+          this.btnText.set('Actualizar')
+          this.loading.set( true)
           this.vehicleUseCase
             .getId(this.data.id)
-            .pipe(finalize(() => (this.loading = false)))
+            .pipe(finalize(() => (this.loading.set(false))))
             .subscribe((response) => {
               // hideLoader()
               this.customer = response.customer as any;
@@ -166,15 +166,16 @@ export class VehicleAddEditModalComponent {
   }
 
   getCountryTitle(countryId: number) {
-    return this.countries.find((item: any) => item.countryId === countryId)
+    return this.countries().find((item: any) => item.countryId === countryId)
       ?.description;
   }
 
   filterCountry(): void {
     const filterValue = this.input.nativeElement.value.toLowerCase();
-    this.filteredCountryOptions = this.optionsCountry.filter((o) =>
+    const filteredCountryOptions = this.optionsCountry().filter((o) =>
       o.description.toLowerCase().includes(filterValue),
     );
+    this.filteredCountryOptions.set(filteredCountryOptions);
   }
 
   isValidForm() {
@@ -243,7 +244,7 @@ export class VehicleAddEditModalComponent {
       if (!this.isValidForm()) return;
 
       this.dataForm.countryId = this.myControlCountry.value as any;
-      let dataParams = {
+      const dataParams = {
         customer: this.customer,
         vehicle: this.dataForm,
       };

@@ -1,48 +1,78 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Serilog;
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-builder.Services.AddApplicationServices(builder.Configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddIdentityService(builder.Configuration);
+    var environment = builder.Environment.EnvironmentName;
 
-builder.Services.AddOpenApi();
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-var app = builder.Build();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-app.UseMiddleware<ExceptionMiddleware>();
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-app.UseResponseCompression();
+    builder.Services.AddIdentityService(builder.Configuration);
 
-app.UseHttpsRedirection();
+    builder.Services.AddOpenApi();
 
-app.UseStatusCodePages();
+    var app = builder.Build();
 
-app.UseRouting();
+    app.UseSerilogRequestLogging();
 
-app.UseAuthentication();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseAuthorization();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.MapControllers().RequireAuthorization();
+    app.UseResponseCompression();
 
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-//var context = services.GetRequiredService<TechnicalSupportContext>();
-//var logger = services.GetRequiredService<ILogger<Program>>();
+    app.UseHttpsRedirection();
 
-//try
-//{
-//    await context.Database.MigrateAsync();
-//    await TechnicalSupportContextSeed.SeedAsync(context);
-//}
-//catch (Exception ex)
-//{
-//    logger.LogError(ex, "An error occured during migration");
-//}
+    app.UseStatusCodePages();
 
-await app.RunAsync();
+    app.UseRouting();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers().RequireAuthorization();
+
+    //using var scope = app.Services.CreateScope();
+    //var services = scope.ServiceProvider;
+    //var context = services.GetRequiredService<TechnicalSupportContext>();
+    //var logger = services.GetRequiredService<ILogger<Program>>();
+
+    //try
+    //{
+    //    await context.Database.MigrateAsync();
+    //    await TechnicalSupportContextSeed.SeedAsync(context);
+    //}
+    //catch (Exception ex)
+    //{
+    //    logger.LogError(ex, "An error occured during migration");
+    //}
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

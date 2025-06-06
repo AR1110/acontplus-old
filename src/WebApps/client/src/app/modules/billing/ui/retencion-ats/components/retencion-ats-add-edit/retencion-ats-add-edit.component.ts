@@ -150,7 +150,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       idRetAtsDocSustento: [0],
       idDocumento: [0],
       uniqueIdDoc: [generateUuidv4(), [Validators.required]],
-      documentoSustentoTributarioId: [0],
+      documentoSustentoTributarioId: [0, [Validators.required]],
       tipoComprobanteId: [0],
       numDocSustento: [''],
       fechaEmisionDocSustento: [''],

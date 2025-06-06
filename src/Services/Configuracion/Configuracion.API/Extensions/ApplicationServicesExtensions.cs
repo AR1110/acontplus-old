@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using Common.Logging;
+using Configuracion.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -10,12 +11,15 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddAdvancedLogging(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
         services.AddHttpContextAccessor();
 
-        services.AddDbContextPool<ConfigContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContextPool<ConfigContext>(opt =>
+        {
+            opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("Configuracion.Infrastructure"));
+        });
 
         services.AddResponseCompression(options =>
         {
@@ -57,7 +61,7 @@ public static class ApplicationServicesExtensions
         // Other services that can be transient
         string[] transientNamespaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Common.Services.Extensions"
         ];
 

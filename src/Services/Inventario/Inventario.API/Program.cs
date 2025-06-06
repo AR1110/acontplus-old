@@ -1,42 +1,74 @@
 ﻿using Inventario.API.Extensions;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    var environment = builder.Environment.EnvironmentName;
+
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
+
+
+    builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.Limits.MaxRequestBufferSize = 1048576;
     serverOptions.Limits.MaxRequestLineSize = 1048576;
 });
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
+    // Add services to the container.
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddIdentityService(builder.Configuration);
 
-builder.Services.AddOpenApi();
+    builder.Services.AddOpenApi();
 
-var app = builder.Build();
+    var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    app.UseSerilogRequestLogging();
 
-app.UseResponseCompression();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseMiddleware<ExceptionMiddleware>();
+    app.UseResponseCompression();
 
-app.UseMiddleware<MobileRequestMiddleware>();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseRouting();
+    app.UseMiddleware<MobileRequestMiddleware>();
 
-app.UseHttpsRedirection();
+    app.UseRouting();
 
-app.UseAuthentication();
+    app.UseHttpsRedirection();
 
-app.UseAuthorization();
+    app.UseAuthentication();
 
-app.MapControllers().RequireAuthorization();
+    app.UseAuthorization();
 
-app.Run();
+    app.MapControllers().RequireAuthorization();
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}
+

@@ -1,6 +1,5 @@
 ﻿namespace BarberShop.Domain.Entities;
 
-[Table("BarberPayment", Schema = "BarberShop")]
 public class BarberPayment : BaseEntity
 {
     public DateTime PaymentDate { get; set; }

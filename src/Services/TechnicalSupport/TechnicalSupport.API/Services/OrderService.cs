@@ -17,7 +17,7 @@ public class OrderService : IOrderService
         var statuses = await _context.OrderStatuses.Where(x => x.Code == "E").ToListAsync();
         var orderFound = await _context.Orders.FindAsync(id);
         orderFound.OrderStatusId = statuses.FirstOrDefault().Id;
-        orderFound.UserId = deliveryDto.UserId;
+        orderFound.CreatedByUserId = deliveryDto.UserId;
 
         // Verification for update
         if (deliveryDto.IsOtherReceiver)

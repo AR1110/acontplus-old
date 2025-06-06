@@ -43,18 +43,23 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c";
 
 
-    function createDataParamDocSri(data) {
-        let id = data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : data.documentoId;
+    function createDataParamDocSri({idDocumentoElectronico, codDoc}) {
+        let id = idDocumentoElectronico > 0 ? idDocumentoElectronico : data.idDocumento;
         return {
+            tipo: 2,
             id,
-            codDoc: data.codDoc,
+             idDocumentoElectronico,
+            codDoc,
             esNotificacionTributaria: true,
         };
     }
     function createDataParamDoc(data) {
+        //estandarizar el codDoc para notificaciones generales
+        const codDoc = data.codDoc === '09' ? 'PF' : data.codDoc;
         return {
-            id: data.documentoId,
-            codDoc: data.codDoc,
+            tipo: 3,
+            id: data.idDocumento,
+            codDoc,
             esNotificacionGeneral: true,
         };
     }
@@ -63,6 +68,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     let dataParamGetDataForm = {
         "01": createDataParamDocSri(data),
         "NE": createDataParamDoc(data),
+        "09": createDataParamDoc(data),
     };
 
     let phoneNumbers = [];
@@ -397,6 +403,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         let dataParms = {
             hasParams: true,
             id: data.idDocumento||data.idDocumentoElectronico,
+            idDocumentoElectronico: data.idDocumentoElectronico,
             versionComp: data.versionComp
         }
         let reportParams = {

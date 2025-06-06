@@ -1,41 +1,73 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Serilog;
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-builder.Services.AddIdentityService(builder.Configuration);
-
-builder.Services.AddSwaggerDocumentation();
-
-builder.Services.AddVersioningAndSwagger();
-
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwaggerAndVersioning();
-    app.MapOpenApi();
+    var builder = WebApplication.CreateBuilder(args);
+
+    var environment = builder.Environment.EnvironmentName;
+
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
+
+
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
+    // Add services to the container.
+    builder.Services.AddApplicationServices(builder.Configuration);
+
+    builder.Services.AddIdentityService(builder.Configuration);
+
+    builder.Services.AddSwaggerDocumentation();
+
+    builder.Services.AddVersioningAndSwagger();
+
+    builder.Services.AddOpenApi();
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwaggerAndVersioning();
+        app.MapOpenApi();
+    }
+
+    app.UseResponseCompression();
+
+    app.UseMiddleware<ExceptionMiddleware>();
+
+    app.UseMiddleware<MobileRequestMiddleware>();
+
+    app.UseRouting();
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    await app.RunAsync();
 }
-
-app.UseResponseCompression();
-
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseMiddleware<MobileRequestMiddleware>();
-
-app.UseRouting();
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

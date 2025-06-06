@@ -8,6 +8,7 @@ export interface MedicalHistory {
   weight?: number;
   enabled: boolean;
   petName: string;
+  totalRecords?: number;
 }
 
 export interface DiseaseStatus {

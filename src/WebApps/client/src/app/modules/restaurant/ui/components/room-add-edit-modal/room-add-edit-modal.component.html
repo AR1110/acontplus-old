@@ -9,11 +9,13 @@
 <ng-template #body>
   <form (ngSubmit)="onSave()" id="roomForm" [formGroup]="roomForm">
     <div class="vstack gap-2">
+      @if(!(data.id>0)){
+        <mat-form-field class="w-100">
+          <mat-label>Piso</mat-label>
+          <input matInput [value]="data.floorName" readonly>
+        </mat-form-field>
 
-      <mat-form-field class="w-100">
-        <mat-label>Piso</mat-label>
-        <input matInput [value]="data.floorName" readonly>
-      </mat-form-field>
+      }
 
       <mat-form-field class="w-100">
         <mat-label>Descripción</mat-label>
@@ -45,7 +47,7 @@
     type="submit"
     icon="save"
     variant="success"
-    text="Añadir piso"
+    [text]="btnText"
     form="roomForm"
     [disabled]="roomForm.invalid"
   />

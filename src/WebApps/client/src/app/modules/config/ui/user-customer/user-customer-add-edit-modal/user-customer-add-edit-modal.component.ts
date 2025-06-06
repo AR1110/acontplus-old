@@ -1,4 +1,4 @@
-import { Component, inject  } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -41,7 +41,11 @@ export class UserCustomerAddEditModalComponent {
   private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase)
   private $getUserCustomerDataFormUseCase = inject(GetUserCustomerFormDataUseCase)
   private dialogRef = inject(MatDialogRef<UserCustomerAddEditModalComponent>)
-
+  titleModal = 'Nuevo Usuario';
+  dataForm!: FormGroup;
+  roles= signal<Role[]>([]);
+  protected tS = inject(ToasterService);
+  private fb = inject(FormBuilder);
   readonly params = inject<{
     idUsuario: 0,
     email: '',
@@ -53,23 +57,6 @@ export class UserCustomerAddEditModalComponent {
     estado: false,
   }>(MAT_DIALOG_DATA);
 
-  // @Input() params = {
-  //   idUsuario: 0,
-  //   email: '',
-  //   username: '',
-  //   firstName: null,
-  //   lastName: null,
-  //   nroIdentificacion: null,
-  //   roleId: 0,
-  //   estado: false,
-  // };
-  titleModal = 'Nuevo Usuario';
-  dataForm!: FormGroup;
-  roles: Role[] = [];
-  protected tS = inject(ToasterService);
-
-
-  constructor(private fb: FormBuilder) {}
 
 
   isUpdate(){
@@ -82,7 +69,7 @@ export class UserCustomerAddEditModalComponent {
 
   ngOnInit() {
     this.$getUserCustomerDataFormUseCase.execute().subscribe(  (response: any) => {
-        this.roles = response.roles;
+        this.roles.set(response.roles)
       } );
 
     if (this.params.idUsuario > 0) {
@@ -158,9 +145,9 @@ export class UserCustomerAddEditModalComponent {
       return;
     }
 
-    let data = {
+    const data = {
       ...this.dataForm.value,
-      roleCode: this.roles.find((i) => i.id === this.dataForm.value.roleId)
+      roleCode: this.roles().find((i) => i.id === this.dataForm.value.roleId)
         ?.roleCode,
     };
 

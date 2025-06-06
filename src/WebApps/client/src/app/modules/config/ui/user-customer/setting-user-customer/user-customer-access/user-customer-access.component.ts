@@ -12,7 +12,7 @@ import {
   UpdateAccessUserCustomerRoleUseCase
 } from "@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case";
 import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
-import {isApiResponse} from "@core/models/api-response";
+import {ApiResponse} from "@core/models/api-response";
 import Swal from "sweetalert2";
 
 interface TreeNode {
@@ -240,23 +240,22 @@ export class UserCustomerAccessComponent {
 
 
 
-  successResponse = (response:any)=>{
-    if (isApiResponse(response)) {
-      if (response.code === "0") {
-        Swal.fire({
-          icon: 'warning',
-          html: response.message
-        })
-      }
-      if (response.code === "1") {
-        Swal.fire({
-          icon: 'success',
-          html: response.message,
-          timer: 1000
-        })
-        this.getAccesses()
-      }
+  successResponse = (response:ApiResponse)=>{
+    if (response.code === "0") {
+      Swal.fire({
+        icon: 'warning',
+        html: response.message
+      })
     }
+    if (response.code === "1") {
+      Swal.fire({
+        icon: 'success',
+        html: response.message,
+        timer: 1000
+      })
+      this.getAccesses()
+    }
+
   }
 
   onSave(){
@@ -264,8 +263,8 @@ export class UserCustomerAccessComponent {
     const menus = this.checklistSelection.selected.filter(cl=>cl.level===3);
     const mergeDuplicateLevel3 = menus.reduce((acc:any, curr:any)=>{
 
-      let existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
-      let action = this.actions.find(a=>a.code===curr.code)
+      const existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
+      const action = this.actions.find(a=>a.code===curr.code)
 
       if(!existingNode ){
 

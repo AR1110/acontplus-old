@@ -749,7 +749,7 @@
 
                             $scope.cliente = cliente;
                             $scope.tiposDoc = tiposDoc;
-                            $scope.recordsQuantity = [5, 10];
+                            $scope.recordsQuantity = [5, 10, 25];
 
                             $scope.dataSearch = {
                                 pageIndex: 1,
@@ -764,8 +764,8 @@
                             $scope.documentos = [];
 
                             $scope.resultRangeFilter = function (item) {
-                                $scope.dataSearch.fechaInicio = item.startDate,
-                                    $scope.dataSearch.fechaFin = item.endDate
+                                $scope.dataSearch.fechaInicio = item.startDate;
+                                $scope.dataSearch.fechaFin = item.endDate
                                 $scope.getDocs();
                             }
 
@@ -894,7 +894,19 @@
         }
         function setDataDocReferenciado(result) {
             let { data, codDoc } = result;
-            if (codDoc === 'FE') {
+            if(codDoc===DOC_TYPE.FE){
+                $scope.data.idFactura = data.idDocumento;
+            }
+
+            if(codDoc===DOC_TYPE.NE){
+                $scope.data.idNotaEntrega = data.idDocumento;
+            }
+            if(codDoc===DOC_TYPE.APROB_DOC){
+                $scope.data.idAprob_Document = data.idDocumento;
+            }
+ 
+
+            if (codDoc === DOC_TYPE.FE) {
                 $scope.dataDocumentoReferenciado = {
                     idDocumento: data.idDocumento,
                     serieComprobante: data.serieComprobante,
@@ -903,7 +915,7 @@
                 };
             } else {
                 $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(item => item.valor !== data.serieComprobante);
-           
+
                 $scope.infoAdicionalDocumento.push({
                     nombre: `${data.nameDoc}`,
                     valor: data.serieComprobante

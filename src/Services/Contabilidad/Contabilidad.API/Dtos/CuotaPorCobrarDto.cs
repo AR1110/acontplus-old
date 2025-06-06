@@ -4,7 +4,7 @@ public class CuotaPorCobrarDto
 {
 }
 
- public class CuentaPorCobrarCuotaUpdateDto
+public class CuentaPorCobrarCuotaUpdateDto
 {
     public int IdCuentaPorCobrar { get; set; }
 
@@ -31,7 +31,7 @@ public class CuotaPorCobrarUpdateDto
 
 
 public class CuotaPorCobrarUpdateParamsDto
-{ 
-    public  CuentaPorCobrarCuotaUpdateDto Cuenta { get; set; }
-    public  List<CuotaPorCobrarUpdateDto> Cuotas { get; set; }
+{
+    public CuentaPorCobrarCuotaUpdateDto Cuenta { get; set; }
+    public List<CuotaPorCobrarUpdateDto> Cuotas { get; set; }
 }

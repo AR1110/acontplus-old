@@ -1,0 +1,18 @@
+{
+  "Comment": "Add DMARC record",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_dmarc.acontplus.com.",
+        "Type": "TXT",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "\"v=DMARC1; p=none\""
+          }
+        ]
+      }
+    }
+  ]
+}

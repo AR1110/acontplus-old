@@ -1,4 +1,4 @@
-USE AcontPlus
+   USE AcontPlus
 GO
 CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Report @idUsuarioRol INT,@json NVARCHAR(max)
 AS
@@ -600,6 +600,7 @@ BEGIN
                               ,@codEstado      = @codEstado
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
+            RETURN 
 
              
         END 
@@ -780,14 +781,13 @@ BEGIN
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     END TRY
+
     BEGIN CATCH
+
           -- Log error details
-        INSERT INTO dbo.ErroresSistema (
-            [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario]
-        )
-        VALUES (
-            'Reports/ReporteTributario', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), 'FactElect.Doc_Elect_Report', ERROR_LINE(), ERROR_MESSAGE(), @idUsuario
-        );
+        INSERT INTO dbo.ErroresSistema 
+        ([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
+        VALUES ('Reports/ReporteTributario', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), 'FactElect.Doc_Elect_Report', ERROR_LINE(), ERROR_MESSAGE(), @idUsuario);
         THROW;
     END CATCH
 END 

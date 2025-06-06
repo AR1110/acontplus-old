@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
-using Common.Infrastructure.Data.Repository.Implementations;
-using Common.Infrastructure.Data.Repository.Interfaces;
+using Common.Core.Abstractions;
+using Common.Infrastructure.Repository.Implementations;
+using Common.Logging;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 using Mechanical.API.Services;
@@ -16,6 +17,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

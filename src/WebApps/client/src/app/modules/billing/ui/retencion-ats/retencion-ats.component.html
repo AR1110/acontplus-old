@@ -44,7 +44,7 @@
 
     <ng-template #templateOp let-item="item">
       <mat-menu #menu="matMenu">
-        @if ([0, 2, 5, 7, 8].includes(item.codEstado)) {
+        @if ([0, 1, 2, 5, 7, 8].includes(item.codEstado)) {
           <button mat-menu-item (click)="edit(item)">
             <mat-icon>edit</mat-icon>
             Editar

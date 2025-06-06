@@ -2,13 +2,11 @@
 global using System.Data;
 global using System.Text;
 global using System.Web;
-global using Common.Core.Data;
+global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;
-global using Common.Infrastructure.Data.Repository.Interfaces;
+global using Common.Data;
 global using FactElect.Application.Interfaces;
 global using FactElect.Application.Interfaces.Logistica;
 global using FactElect.Application.Interfaces.RetencionAts;
 global using FactElect.Application.Interfaces.Sri;
-global using FactElect.Domain.Entities;
-global using FactElect.Infrastructure.Data;

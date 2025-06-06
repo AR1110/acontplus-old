@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Common.Utilities.Format;
+using Common.Utilities.Services;
 
 namespace Configuracion.API.Controllers;
 
@@ -24,11 +25,11 @@ public class EstablecimientoLogoController : BaseApiController
     [HttpPost("{establecimientoId}")]
     public async Task<IActionResult> Post(int establecimientoId, IFormFile file)
     {
-        var logo = new FileModel();
-        await logo.CreateBytesCompressedGzipAsync(file);
-        var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(logo);
+        var fileModel = await FileModelBuilder.CreateCompressedAsync(file, CompressionUtils.CompressGZip);
+        var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(fileModel);
         estabLogo.EstablecimientoId = establecimientoId;
         estabLogo.UserId = User.GetUserId();
+        estabLogo.CreatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.AddAsync(estabLogo);
         if (response == null) return BadRequest($"No response: {establecimientoId}");
 
@@ -40,10 +41,9 @@ public class EstablecimientoLogoController : BaseApiController
     {
         if (file == null) return BadRequest("File not found");
 
-        var logo = new FileModel();
-        await logo.CreateBytesCompressedGzipAsync(file);
-        var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(logo);
-        estabLogo.UserId = User.GetUserId();
+        var fileModel = await FileModelBuilder.CreateCompressedAsync(file, CompressionUtils.CompressGZip);
+        var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(fileModel);
+        estabLogo.UpdatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
         if (response == null) return BadRequest($"No response {id}");
 

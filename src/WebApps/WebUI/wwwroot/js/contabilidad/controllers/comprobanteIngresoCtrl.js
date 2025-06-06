@@ -27,7 +27,8 @@
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 25,
-            maxSize: 5
+            maxSize: 5,
+            isSearchDate: true,
         }
         $scope.recordsQuantity = [25, 50, 100];
 
@@ -105,11 +106,11 @@
                 $scope.cloneCobros = [];
                 setTotalsColumn();
 
-                let isSearchDate = true;
+                let isSearchDate = $scope.dataSearch.isSearchDate;
 
-                if (fS.isValidField($scope.dataSearch.nroIdentificacion)) {
-                    isSearchDate = false;
-                }
+                // if (fS.isValidField($scope.dataSearch.nroIdentificacion)) {
+                //     isSearchDate = false;
+                // }
 
                 if (fS.isValidField($scope.dataSearch.nroSecuencialDoc)) {
                     isSearchDate = false;

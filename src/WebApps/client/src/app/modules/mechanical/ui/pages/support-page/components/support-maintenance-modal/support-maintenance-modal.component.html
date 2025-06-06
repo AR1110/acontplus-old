@@ -1,221 +1,150 @@
-<div class="modal-header">
-  <h6 class="modal-title" id="modal-basic-title">
-    <mat-icon>settings</mat-icon> Mantenimiento
-  </h6>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="modal.dismiss('Cross click')"
-  ></button>
-</div>
-<div class="modal-body">
-  <div class="row">
-    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-      <div class="row">
-        <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="estab">Establecimiento: </label>
-            <input
-              type="text"
-              name="estab"
-              id="estab"
-              [value]="data.establecimiento"
-              class="form-control"
-              disabled="disabled"
-            />
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="puntoEmision">Punto Emisión: </label>
-            <input
-              type="text"
-              name="puntoEmision"
-              id="puntoEmision"
-              class="form-control"
-              [value]="data.ptoEmi"
-              disabled="disabled"
-            />
-          </div>
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="fechaEmision">Fecha Emisión: </label>
-            <app-input-date
-              [(value)]="data.fechaEmision"
-              [disabled]="true"
-            ></app-input-date>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-      <div class="row">
-        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="businessName">Cliente: </label>
-            <div class="input-group">
-              <input
-                type="text"
-                name="businessName"
-                id="businessName"
-                class="form-control"
-                [value]="data.businessName"
-                readonly
-              />
-              <button
-                type="button"
-                mat-raised-button
-                [ngbPopover]="popContent"
-                triggers="mouseenter:mouseleave"
-                popoverTitle="Info.:"
-              >
-                <mat-icon>info</mat-icon>
-              </button>
-              <ng-template #popContent>
-                <p><strong>RUC/Cédula:</strong> {{ data.idCard }}</p>
-                <p><strong>Dirección:</strong> {{ data.address }}</p>
-                <p><strong>Correo:</strong> {{ data.email }}</p>
-              </ng-template>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="licensePlate">Placa: </label>
-            <div class="input-group">
-              <input
-                type="text"
-                name="licensePlate"
-                id="licensePlate"
-                class="form-control"
-                [value]="vehicle.licensePlate"
-                readonly
-              />
-              <button
-                type="button"
-                mat-raised-button
-                [ngbPopover]="popContentVehicle"
-                triggers="mouseenter:mouseleave"
-                popoverTitle="Info.:"
-              >
-                <mat-icon>info</mat-icon>
-              </button>
-              <ng-template #popContentVehicle>
-                <p><strong>Marca:</strong> {{ vehicle.brand }}</p>
-                <p><strong>Modelo:</strong> {{ vehicle.model }}</p>
-                <p><strong>Año de Fabricación:</strong> {{ vehicle.year }}</p>
-                <p><strong>Color:</strong> {{ vehicle.color }}</p>
-                <p><strong>Motor:</strong> {{ vehicle.engine }}</p>
-                <p><strong>Chasis:</strong>{{ vehicle.chassis }}</p>
-                <p><strong>Cilindraje:</strong> {{ vehicle.cylindraje }}</p>
-              </ng-template>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  title="Mantenimiento"
+  (close)="modal.close()"
+/>
 
-  <div class="row">
-    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="productSearch">Producto: </label>
-        <app-product-search-overlay
-          (optionSelected)="onResultSelectedProduct($event)"
-          [searchSale]="true"
-        />
+<ng-template #body>
+  <div class="vstack gap-2">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="row">
+          <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <input matInput [value]="data.establecimiento" readonly>
+            </mat-form-field>
+
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Punto Emisión:</mat-label>
+              <input matInput [value]="data.ptoEmi" readonly>
+            </mat-form-field>
+          </div>
+          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Fecha Emisión:</mat-label>
+              <input matInput [value]="fechaLegible" readonly>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="row">
+          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Cliente:</mat-label>
+              <input matInput [value]="data.businessName" readonly>
+              <ng-container matSuffix>
+                <button
+                  type="button"
+                  mat-icon-button
+                  (click)="showClientInfo()"
+                >
+                  <mat-icon>info</mat-icon>
+                </button>
+              </ng-container>
+            </mat-form-field>
+          </div>
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Placa:</mat-label>
+              <input matInput  [value]="vehicle().licensePlate" readonly>
+              <ng-container matSuffix>
+                <button
+                  type="button"
+                  mat-icon-button
+                  (click)="showVehicleInfo()"
+                >
+                  <mat-icon>info</mat-icon>
+                </button>
+              </ng-container>
+            </mat-form-field>
+
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="bodega">Bodega: </label>
-        <select
-          name="bodega"
-          id="bodega"
-          [(ngModel)]="data.bodegaId"
-          class="form-select"
-          (change)="onChangeBodega()"
+
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+          <app-product-search-overlay
+            (optionSelected)="onResultSelectedProduct($event)"
+            [searchSale]="true"
+          />
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Bodega: </mat-label>
+          <mat-select  [(ngModel)]="data.bodegaId" (selectionChange)="onChangeBodega()">
+            @for (item of bodegas(); track $index) {
+              <mat-option [value]="item.idBodega">{{ item.descripcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Tarifa: </mat-label>
+          <mat-select  [(ngModel)]="data.feeId" (selectionChange)="onChangeFee()">
+            @for (item of feeds(); track $index) {
+              <mat-option [value]="item.idTarifa">{{ item.descripcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+          <app-theme-button
+            type="button"
+            variant="success"
+            text="Guardar"
+            icon="save"
+            (handleClick)="save()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <app-tabulator
+          [columnNames]="columns"
+          [tableData]="details()"
+          [options]="tabulatorOptions"
+          (cellEdited)="cellEdited($event)"
         >
-          @for (item of bodegas; track $index) {
-            <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
-          }
-        </select>
+        </app-tabulator>
       </div>
     </div>
 
-    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="feed">Tarifa: </label>
-        <select
-          name="feed"
-          id="feed"
-          class="form-select"
-          (change)="onChangeFee()"
-          [(ngModel)]="data.feeId"
-        >
-          @for (item of feeds; track $index) {
-            <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
-          }
-        </select>
+    <div class="row">
+      <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Observación</mat-label>
+          <textarea matInput   [value]="data.obs" placeholder="..." readonly></textarea>
+        </mat-form-field>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+        <div class="mt-2">
+          <app-draw-tax-total
+            [subTotalSinImpuesto]="data.subTotalSinImpuesto"
+            [htmlImpuestoTotal]="htmlImpuestoTotal"
+            [discount]="data.discount"
+            [htmlIvaTotal]="htmlIvaTotal"
+            [importeTotal]="data.total"
+          />
+        </div>
       </div>
     </div>
 
-    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-        <button type="button" mat-raised-button (click)="save()">
-          <mat-icon>save</mat-icon> Guardar
-        </button>
-      </div>
-    </div>
   </div>
 
-  <div class="row">
-    <div class="col-12">
-      <app-tabulator
-        [columnNames]="columns"
-        [tableData]="details"
-        [options]="tabulatorOptions"
-        (cellEdited)="cellEdited($event)"
-      >
-      </app-tabulator>
-    </div>
-  </div>
+</ng-template>
 
-  <div class="row">
-    <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="observacion">Observación:</label>
-        <textarea
-          name="observacion"
-          id="observacion"
-          class="form-control"
-          [value]="data.obs"
-          readonly
-        ></textarea>
-      </div>
-    </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="mt-2">
-        <app-draw-tax-total
-          [subTotalSinImpuesto]="data.subTotalSinImpuesto"
-          [htmlImpuestoTotal]="htmlImpuestoTotal"
-          [discount]="data.discount"
-          [htmlIvaTotal]="htmlIvaTotal"
-          [importeTotal]="data.total"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal-footer">
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="modal.close()"
-  >
-    &times; Cerrar
-  </app-theme-button>
-</div>
+
+

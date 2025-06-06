@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Api.Entities;
-using Restaurant.Api.Interfaces;
+using Restaurant.Application.Interfaces;
+using Restaurant.Domain.Entities;
 
 namespace Restaurant.Api.Controllers;
 
@@ -30,7 +30,7 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Ingredient ingredient)
     {
-        ingredient.UserId = User.GetUserId();
+        ingredient.UpdatedByUserId = User.GetUserId();
         return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
 

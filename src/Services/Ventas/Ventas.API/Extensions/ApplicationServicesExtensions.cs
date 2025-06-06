@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -9,6 +10,8 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;
@@ -30,7 +33,7 @@ public static class ApplicationServicesExtensions
 
         string[] nameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations",
+            "Common.Infrastructure.Repository.Implementations",
             "Ventas.API.Services"
         ];
 

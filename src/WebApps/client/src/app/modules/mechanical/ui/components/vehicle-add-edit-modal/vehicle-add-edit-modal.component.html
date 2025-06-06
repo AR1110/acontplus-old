@@ -1,8 +1,8 @@
 <app-mat-custom-dialog
   [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
-  [title]="titleModal"
-  [loading]="loading"
+  [title]="titleModal()"
+  [loading]="loading()"
   (close)="close()"
 />
 
@@ -75,7 +75,7 @@
                      (input)="filterCountry()"
                      (focus)="filterCountry()">
               <mat-autocomplete requireSelection #auto="matAutocomplete"  [displayWith]="getCountryTitle.bind(this)">
-                @for (option of filteredCountryOptions; track $index) {
+                @for (option of filteredCountryOptions(); track $index) {
                   <mat-option [value]="option.countryId">{{option.description}}</mat-option>
                 }
               </mat-autocomplete>
@@ -98,7 +98,7 @@
                 >Tipo de Vehículo <span class="text-danger"> *</span></mat-label
               >
               <mat-select [(ngModel)]="dataForm.vehicleTypeId">
-                @for (item of vehicleTypes; track $index) {
+                @for (item of vehicleTypes(); track $index) {
                 <mat-option [value]="item.vehicleTypeId">{{
                   item.description
                 }}</mat-option>
@@ -219,6 +219,6 @@
 
 <ng-template #actionsTemplate>
   <button type="button" mat-flat-button (click)="onSubmit()">
-    {{ btnText }}
+    {{ btnText() }}
   </button>
 </ng-template>

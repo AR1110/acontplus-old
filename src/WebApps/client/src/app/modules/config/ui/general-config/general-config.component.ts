@@ -107,6 +107,7 @@ export class GeneralConfigComponent {
     idSistema: 0,
     razonSocialComprador: '',
     nombreArticulo: '',
+    diasGracia: null as null | number
   };
   emails: string[] = [];
 
@@ -204,7 +205,7 @@ export class GeneralConfigComponent {
   }
 
   productSelected($event: any) {
-    let data = $event.data;
+    const data = $event.data;
     this.configVenta.idArticulo = data.idArticulo;
     this.configVenta.nombreArticulo = data.descripcion;
   }
@@ -296,6 +297,7 @@ export class GeneralConfigComponent {
       jsonConfig.infoInteres = {
         tipoConfig: this.configVenta.tipoConfig,
         interes: this.configVenta.interes,
+        diasGracia: this.configVenta.diasGracia,
       };
 
       data = {

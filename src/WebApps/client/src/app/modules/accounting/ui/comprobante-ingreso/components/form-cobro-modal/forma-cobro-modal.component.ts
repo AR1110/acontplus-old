@@ -1,7 +1,6 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
-import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SubEntidadFinancieraComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/sub-entidad-financiera/sub-entidad-financiera.component';
 import { ValorAbonoComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/valor-abono/valor-abono.component';
 import { FechaEmisionComponent } from '@accounting/ui/comprobante-ingreso/components/form-cobro-modal/fecha-emision/fecha-emision.component';
@@ -20,14 +19,16 @@ import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import Swal from 'sweetalert2';
 import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
   const filterValue = value.toLowerCase();
 
   return opt.filter((item) =>
-    item.descripcion.toLowerCase().includes(filterValue),
+    item.descripcion.toLowerCase().includes(filterValue)
   );
 };
 
@@ -35,7 +36,6 @@ export const _filter = (opt: any[], value: string): string[] => {
   selector: 'app-forma-cobro-modal',
   imports: [
     ReactiveFormsModule,
-    NgbAccordionModule,
     FormsModule,
     MatAutocompleteModule,
     MatInputModule,
@@ -46,22 +46,24 @@ export const _filter = (opt: any[], value: string): string[] => {
     AsyncPipe,
     MatButton,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
   ],
   templateUrl: './forma-cobro-modal.component.html',
   styles: ``,
 })
-export class FormaCobroModalComponent {
-  @Input() params = {
-    dataFormaCobro: {} as any,
-    comprobante: {
-      razonSocialComprador: null,
-    },
-    saldo: 0,
-    multiplesPaymentType: [],
-  };
+export class FormaCobroModalComponent implements OnInit {
+  // @Input() params = {
+  //   dataFormaCobro: {} as any,
+  //   comprobante: {
+  //     razonSocialComprador: null,
+  //   },
+  //   saldo: 0,
+  //   multiplesPaymentType: [],
+  // };
+  params = inject(MAT_DIALOG_DATA);
   _formBuilder = inject(FormBuilder);
 
-  modal = inject(NgbActiveModal);
+  modal = inject(MatDialogRef<FormaCobroModalComponent>);
   tS = inject(ToasterService);
 
   ciudadesGroupOptions!: Observable<any[]>;
@@ -100,7 +102,7 @@ export class FormaCobroModalComponent {
   selectedIndexTab = 0;
 
   agruparPorProvincia(ciudades: any) {
-    let provincias: any = {};
+    const provincias: any = {};
     ciudades.forEach(function (ciudad: any) {
       if (!provincias[ciudad.provincia]) {
         provincias[ciudad.provincia] = [];
@@ -114,7 +116,7 @@ export class FormaCobroModalComponent {
 
   loadInitialData() {
     try {
-      let { documentos, entidadesFinanciera, bancos, ciudades } =
+      const { documentos, entidadesFinanciera, bancos, ciudades } =
         this.params.dataFormaCobro;
       this.comprobante = this.params.comprobante;
       this.entidadesFinanciera = entidadesFinanciera;
@@ -129,7 +131,7 @@ export class FormaCobroModalComponent {
   }
 
   ngOnInit() {
-    let { saldo } = this.params;
+    const { saldo } = this.params;
     this.VALOR_ABONO_ORIGINAL = roundNumber(saldo, 3);
     this.loadInitialData();
 
@@ -137,7 +139,7 @@ export class FormaCobroModalComponent {
       .get('ciudadGroup')!
       .valueChanges.pipe(
         startWith(''),
-        map((value) => this._filterGroup(value || '')),
+        map((value) => this._filterGroup(value || ''))
       );
   }
 
@@ -200,10 +202,10 @@ export class FormaCobroModalComponent {
   }
 
   isValidData() {
-    let paymentTypeCode = this.entidadesFinanciera.find(
-      (e) => e.idEntidadFinanciera === this.data.idEntidadFinanciera,
+    const paymentTypeCode = this.entidadesFinanciera.find(
+      (e) => e.idEntidadFinanciera === this.data.idEntidadFinanciera
     )?.codigo;
-    let { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
+    const { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
 
     if (!(this.data.idSubEntidadFinanciera > 0)) {
       this.tS.toastr({
@@ -332,19 +334,20 @@ export class FormaCobroModalComponent {
 
   getDataPago(item: any = {}) {
     try {
-      let entidadFinanciera = this.entidadesFinanciera.find(
-        (item) => item.idEntidadFinanciera === this.data.idEntidadFinanciera,
+      const entidadFinanciera = this.entidadesFinanciera.find(
+        (item) => item.idEntidadFinanciera === this.data.idEntidadFinanciera
       );
-      let subEntidadFinanciera = entidadFinanciera?.subEntidadesFinanciera.find(
-        (item: any) =>
-          item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera,
-      );
+      const subEntidadFinanciera =
+        entidadFinanciera?.subEntidadesFinanciera.find(
+          (item: any) =>
+            item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera
+        );
 
-      let ciudad = this.ciudades.find(
-        (item) => item.idCiudad === this.data.idCiudad,
+      const ciudad = this.ciudades.find(
+        (item) => item.idCiudad === this.data.idCiudad
       );
-      let banco = this.bancos.find(
-        (item) => item.idBanco === this.data.idBanco,
+      const banco = this.bancos.find(
+        (item) => item.idBanco === this.data.idBanco
       );
 
       //  let formattedDateTime = formatDateMoment(this.data.fechaEmision);
@@ -359,7 +362,7 @@ export class FormaCobroModalComponent {
         },
       ];
 
-      let obj: PaymentData = {
+      const obj: PaymentData = {
         //Info
         paymentTypeName: entidadFinanciera?.descripcion,
         paymentSubTypeName: subEntidadFinanciera?.descripcion,
@@ -415,7 +418,7 @@ export class FormaCobroModalComponent {
       this.params.multiplesPaymentType.some(
         (d: any) =>
           d.idTipoDocumento === item.idTipoDocumento &&
-          d.idComprobante === item.idDocumento,
+          d.idComprobante === item.idDocumento
       )
     ) {
       this.tS.toastr({
@@ -426,7 +429,9 @@ export class FormaCobroModalComponent {
       return;
     }
     Swal.fire({
-      html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.codDoc == 'A' ? item.serieComprobante : item.tipoDoc}?</small>`,
+      html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${
+        item.codDoc == 'A' ? item.serieComprobante : item.tipoDoc
+      }?</small>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -451,5 +456,11 @@ export class FormaCobroModalComponent {
     }
 
     return this.ciudades;
+  }
+
+  close() {
+    this.modal.close();
+    // this.modal.destroy();
+    // this.modal = null;
   }
 }

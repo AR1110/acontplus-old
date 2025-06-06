@@ -1,5 +1,4 @@
-﻿import { Component, inject } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, inject } from '@angular/core';
 import { ToasterService } from '@core/services/toaster.service';
 import {
   FormControl,
@@ -10,13 +9,13 @@ import {
 import { Category } from '@technical-support/models/category';
 import { ApiResponse } from '@core/models/api-response';
 import { CategoryUseCase } from '@accounting/domain/use-cases/category.use-case';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
 @Component({
   selector: 'app-category-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
@@ -36,13 +35,13 @@ export class CategoryModalComponent {
     ]),
     enabled: new FormControl(true),
   });
-  data: Category = {} as Category;
+  data = inject<Category>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Categoría';
   tipos: any[] = [];
   private _categoryUseCase = inject(CategoryUseCase);
 
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<CategoryModalComponent>);
   private tS = inject(ToasterService);
 
   get() {

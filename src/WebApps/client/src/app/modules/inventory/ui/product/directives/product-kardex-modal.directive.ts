@@ -1,5 +1,4 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
 import { OpenModalProductService } from '@inventory/ui/product/services/open-modal-product.service';
 
 @Directive({

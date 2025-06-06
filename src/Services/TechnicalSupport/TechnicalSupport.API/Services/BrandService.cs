@@ -25,8 +25,7 @@ public class BrandService : IBrandService
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
         var brand = await _context.Brands.FindAsync(id);
-        brand.Enabled = false;
-        brand.Deleted = true;
+        brand.MarkAsDeleted(userId);
         _context.Update(brand);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
@@ -47,13 +46,14 @@ public class BrandService : IBrandService
         if (brand.Series.Count > 0)
             foreach (var item in brand.Series)
                 if (item.Id == 0)
-                    item.UserId = brand.UserId;
+                    item.UpdatedByUserId = brand.UpdatedByUserId;
 
         var brandFound = await _context.Brands.FindAsync(id);
         brandFound.Code = brand.Code;
-        brandFound.Enabled = brand.Enabled;
+        brandFound.IsActive = brand.IsActive;
         brandFound.Name = brand.Name;
         brandFound.Series = brand.Series;
+        brandFound.UpdatedByUserId = brand.UpdatedByUserId;
         _context.Update(brandFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada Exitosamente" };

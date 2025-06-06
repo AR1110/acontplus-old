@@ -76,7 +76,7 @@ BEGIN
 
 	IF NOT EXISTS (SELECT 1 FROM Config.Printer p WITH (NOLOCK)
         INNER JOIN Config.PrinterDocument pd ON p.Id = pd.PrinterId 
-    WHERE p.EstablecimientoId = @establecimientoId AND pd.codDoc = @codDoc AND p.[Enabled] = 1)
+    WHERE p.EstablecimientoId = @establecimientoId AND pd.codDoc = @codDoc AND p.[IsActive] = 1)
 		BEGIN
 			SELECT '0','No tienes ninguna impresora configurada para este tipo de documento' as 'message'
 			RETURN 
@@ -85,11 +85,11 @@ BEGIN
 	SELECT TOP 1 @urlPrinter = IIF(@isMobileUserAgent = 1, IpAddress, p.Domain)
 	FROM Config.PrinterDocument     cd WITH (NOLOCK)
 	INNER JOIN Config.Printer      p WITH (NOLOCK) ON p.Id      = cd.PrinterId
-    AND p.[Enabled] = 1
+    AND p.[IsActive] = 1
 	INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = p.PrinterTypeId
 	WHERE cd.codDoc  = @codDoc
 	  AND p.EstablecimientoId = @establecimientoId 
-	  AND cd.[Enabled]  = 1
+	  AND cd.[IsActive]  = 1
     
     IF (@urlPrinter IS NULL OR LEN(LTRIM(RTRIM(@urlPrinter))) = 0)
         BEGIN
@@ -116,7 +116,7 @@ BEGIN
 	INNER JOIN Config.v_Printer i WITH (NOLOCK) ON i.Id = cd.PrinterId
 	WHERE cd.codDoc  = @codDoc
 	   AND i.EstablecimientoId = @establecimientoId 
-	   AND cd.[Enabled]  = 1 
+	   AND cd.[IsActive]  = 1 
 
 	IF (@totalThermalPrinters = 0 AND @totalInyectionPrinters > 0)
 		BEGIN 
@@ -175,11 +175,11 @@ BEGIN
                             ,ISNULL(@logoName, '') logoName
                             ,ISNULL(@logoMimeType, '') logoMimeType
  						FROM Config.PrinterDocument     cd WITH (NOLOCK)
-						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
+						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[IsActive] = 1
 						INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
 						WHERE cd.codDoc    = @codDoc
 						    AND i.EstablecimientoId = @establecimientoId 
-						    AND cd.[enabled]  = 1
+						    AND cd.[IsActive]  = 1
                             AND (i.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(i.Machine))) > 0)
                             FOR JSON PATH
 					 )

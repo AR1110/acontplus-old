@@ -14,9 +14,7 @@ public class BreedService(VetContext context) : IBreedService
         var breed = await context.Breeds.FindAsync(id);
         if (breed == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
-        breed.UserId = userId;
-        breed.Deleted = true;
-        breed.Enabled = false;
+        breed.MarkAsDeleted(userId);
         context.Update(breed);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -24,7 +22,7 @@ public class BreedService(VetContext context) : IBreedService
 
     public async Task<ApiResponse> GetAsync()
     {
-        var response = await context.Breeds.Include(t => t.PetType).Where(x => x.Deleted == null).ToListAsync();
+        var response = await context.Breeds.Include(t => t.PetType).Where(x => !x.IsDeleted).ToListAsync();
         if (response.Count > 0) return new ApiResponse { Code = "1", Payload = response };
 
         return new ApiResponse { Code = "0", Message = "No data!" };
@@ -46,8 +44,8 @@ public class BreedService(VetContext context) : IBreedService
         breedFound.Code = breed.Code;
         breedFound.Name = breed.Name;
         breedFound.Description = breed.Description;
-        breedFound.Enabled = breed.Enabled;
-        breedFound.UserId = breed.UserId;
+        breedFound.IsActive = breed.IsActive;
+        breedFound.UpdatedByUserId = breed.UpdatedByUserId;
         context.Update(breedFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente", Payload = breed };

@@ -1,8 +1,8 @@
 <app-mat-custom-dialog
   [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
-  [title]="titleModal"
-  [loading]="loading"
+  [title]="titleModal()"
+  [loading]="loading()"
   (close)="close()"
 />
 
@@ -14,76 +14,76 @@
       <div class="col">
         @if (params.id>0) {
 
-          <mat-form-field class="w-100">
-            <mat-label>Establecimiento</mat-label>
-            <mat-select
-              name="establecimientoEdit"
-              id="establecimientoEdit"
-              [(ngModel)]="data.establecimientoId"
-              disabled
-            >
-              @for (item of establishments; track $index) {
-                <mat-option [value]="item.establecimientoId">{{
-                    item.nombreComercial
-                  }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select
+            name="establecimientoEdit"
+            id="establecimientoEdit"
+            [(ngModel)]="data.establecimientoId"
+            disabled
+          >
+            @for (item of establishments(); track $index) {
+            <mat-option [value]="item.establecimientoId">{{
+              item.nombreComercial
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
         }@else {
 
-          <mat-form-field class="w-100">
-            <mat-label>Establecimiento</mat-label>
-            <mat-select
-              name="establecimientoAdd"
-              id="establecimientoAdd"
-              [(ngModel)]="data.establecimientoId"
-              (selectionChange)="onChangeEstab()"
-            >
-              @for (item of establishments; track $index) {
-                <mat-option [value]="item.establecimientoId">{{
-                    item.nombreComercial
-                  }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select
+            name="establecimientoAdd"
+            id="establecimientoAdd"
+            [(ngModel)]="data.establecimientoId"
+            (selectionChange)="onChangeEstab()"
+          >
+            @for (item of establishments(); track $index) {
+            <mat-option [value]="item.establecimientoId">{{
+              item.nombreComercial
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
         }
       </div>
       <div class="col">
         @if (params.id>0) {
 
-          <mat-form-field class="w-100">
-            <mat-label>Punto Emisión</mat-label>
-            <mat-select
-              name="puntoEmision"
-              [(ngModel)]="data.puntoEmisionId"
-              disabled
-            >
-              @for (item of emissionPoints; track $index) {
-                <mat-option [value]="item.puntoEmisionId">{{
-                    item.ptoEmi
-                  }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Punto Emisión</mat-label>
+          <mat-select
+            name="puntoEmision"
+            [(ngModel)]="data.puntoEmisionId"
+            disabled
+          >
+            @for (item of emissionPoints(); track $index) {
+            <mat-option [value]="item.puntoEmisionId">{{
+              item.ptoEmi
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
         }@else {
 
-          <mat-form-field class="w-100">
-            <mat-label>Punto Emisión</mat-label>
-            <mat-select
-              name="puntoEmision"
-              [(ngModel)]="data.puntoEmisionId"
-              (selectionChange)="generateSequence()"
-            >
-              @for (item of emissionPoints; track $index) {
-                <mat-option [value]="item.puntoEmisionId">{{
-                    item.ptoEmi
-                  }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Punto Emisión</mat-label>
+          <mat-select
+            name="puntoEmision"
+            [(ngModel)]="data.puntoEmisionId"
+            (selectionChange)="generateSequence()"
+          >
+            @for (item of emissionPoints(); track $index) {
+            <mat-option [value]="item.puntoEmisionId">{{
+              item.ptoEmi
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
         }
       </div>
       <div class="col">
@@ -102,95 +102,108 @@
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
       </div>
-<!--      <div class="col">-->
-<!--        <mat-form-field class="w-100">-->
-<!--          <mat-label>Secuencia</mat-label>-->
-<!--          <input matInput [value]="data.sequence" disabled />-->
-<!--        </mat-form-field>-->
-<!--      </div>-->
+      <!--      <div class="col">-->
+      <!--        <mat-form-field class="w-100">-->
+      <!--          <mat-label>Secuencia</mat-label>-->
+      <!--          <input matInput [value]="data.sequence" disabled />-->
+      <!--        </mat-form-field>-->
+      <!--      </div>-->
     </div>
 
-    <div class="row row-col-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-col-sm-1 row-cols-1">
+    <div
+      class="row row-col-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-col-sm-1 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
-          <mat-label>Cliente/Vehiculo: <span class="text-danger">*</span></mat-label>
-          <input matInput
-                 aria-label="State"
-                 [matAutocomplete]="auto"
-
-                 [formControl]="filteredCustomerVehicleFormControl">
+          <mat-label
+            >Cliente/Vehiculo: <span class="text-danger">*</span></mat-label
+          >
+          <input
+            matInput
+            aria-label="State"
+            [matAutocomplete]="auto"
+            [formControl]="filteredCustomerVehicleFormControl"
+          />
 
           <ng-container matSuffix>
-
-            <button mat-icon-button aria-label="Add Customer Vehicle" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+            <button
+              mat-icon-button
+              aria-label="Add Customer Vehicle"
+              appVehicleAddEdit
+              (resultModalHandler)="resultModalVehicle($event)"
+            >
               <mat-icon>add</mat-icon>
             </button>
             @if (data.vehicleCompanyId>0) {
-            <button mat-icon-button
-
-                     aria-label="Edit Customer Vehicle"
-                    appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)"
+            <button
+              mat-icon-button
+              aria-label="Edit Customer Vehicle"
+              appVehicleAddEdit
+              [params]="{ id: data.vehicleCompanyId }"
+              (resultModalHandler)="resultModalVehicle($event)"
             >
               <mat-icon>edit</mat-icon>
             </button>
 
             }
-
           </ng-container>
           <mat-autocomplete #auto="matAutocomplete">
-            @if(filteredCustomerVehicleLoading){
-              <mat-option
-                disabled
-                style="display: flex; justify-content: center; align-items: center"
-              >
-                <mat-spinner diameter="35"></mat-spinner>
-              </mat-option>
-            }
-            @for (state of filteredCustomerVehicles | async; track $index) {
-              <mat-option [value]="state.tradeName" (onSelectionChange)="onSelectCustomerVehicle(state)">
-                <span>{{state.tradeName}}</span> |
-                <small>Marca: {{state.brand}}</small> |
-                <small>Placa: {{state.licensePlate}}</small>
-              </mat-option>
+            @if(filteredCustomerVehicleLoading()){
+            <mat-option
+              disabled
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <mat-spinner diameter="35"></mat-spinner>
+            </mat-option>
+            } @for (state of filteredCustomerVehicles | async; track $index) {
+            <mat-option
+              [value]="state.tradeName"
+              (onSelectionChange)="onSelectCustomerVehicle(state)"
+            >
+              <span>{{ state.tradeName }}</span> |
+              <small>Marca: {{ state.brand }}</small> |
+              <small>Placa: {{ state.licensePlate }}</small>
+            </mat-option>
             }
           </mat-autocomplete>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
-          <mat-label>Técnico Encargado: <span class="text-danger">*</span></mat-label>
-          <mat-select
-            name="tecnicoEncargado"
-            [(ngModel)]="data.userAssignedId"
+          <mat-label
+            >Técnico Encargado: <span class="text-danger">*</span></mat-label
           >
-            @for (item of users; track $index) {
-              <mat-option [value]="item.userAssignedId">{{item.userName}}</mat-option>
+          <mat-select name="tecnicoEncargado" [(ngModel)]="data.userAssignedId">
+            @for (item of users(); track $index) {
+            <mat-option [value]="item.userAssignedId">{{
+              item.userName
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
-
     </div>
-
 
     @if (data.vehicleCompanyId>0) {
 
-    <div class="row row-col-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-col-sm-1 row-cols-1">
+    <div
+      class="row row-col-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-col-sm-1 row-cols-1"
+    >
       <div class="col">
-
         <mat-form-field class="w-100">
           <mat-label>Marca</mat-label>
           <input matInput [value]="vehicle.brand" disabled />
         </mat-form-field>
-
       </div>
       <div class="col">
-
         <mat-form-field class="w-100">
           <mat-label>Modelo</mat-label>
           <input matInput [value]="vehicle.model" disabled />
         </mat-form-field>
-
       </div>
       <div class="col">
         <mat-form-field class="w-100">
@@ -201,18 +214,18 @@
     </div>
     }
 
-
     <mat-form-field class="w-100">
-      <mat-label>Soporte a realizar: <span class="text-danger">*</span></mat-label>
+      <mat-label
+        >Soporte a realizar: <span class="text-danger">*</span></mat-label
+      >
       <textarea matInput [(ngModel)]="data.obs"></textarea>
     </mat-form-field>
-
   </div>
 </ng-template>
 
 <ng-template #actionsTemplate>
   <button type="button" mat-flat-button (click)="save()">
-    {{ btnText }}
+    {{ btnText() }}
   </button>
 </ng-template>
 

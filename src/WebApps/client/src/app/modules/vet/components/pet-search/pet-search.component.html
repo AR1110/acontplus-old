@@ -1,21 +1,17 @@
-<div class="input-group">
+<mat-form-field class="w-100">
+  <mat-label>Buscar Mascota</mat-label>
   <input
-    (keyup)="onKeyupSearch()"
-    (selectItem)="onPetSelect($event)"
-    [(ngModel)]="textSearch"
-    [class.is-invalid]="searchFailed"
-    [ngbTypeahead]="search"
-    [resultTemplate]="rt"
-    class="form-control"
-    id="typeahead-pet-customer"
-    onclick="select();"
-    placeholder="Buscar cliente o mascota"
-    type="text"
+    matInput
+    aria-label="State"
+    [matAutocomplete]="auto"
+    [formControl]="control"
   />
-</div>
-<ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight
-    [result]="r.name + ' - ' + r.customer"
-    [term]="t"
-  />
-</ng-template>
+  <mat-autocomplete #auto="matAutocomplete">
+    @for (item of filteredItems | async; track $index) {
+    <mat-option [value]="item.name" (onSelectionChange)="onPetSelect(item)">
+      <!--        <img alt="" class="example-option-img" [src]="item.flag" height="25">-->
+      <span>{{ item.name + " - " + item.customer }}</span>
+    </mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

@@ -39,8 +39,8 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
         ;
         productFound.S3ObjectKey = data.S3ObjectKey;
         productFound.S3ObjectUrl = data.S3ObjectUrl;
-        productFound.Enabled = data.Enabled;
-        productFound.UserId = data.UserId;
+        productFound.IsActive = data.IsActive;
+        productFound.UpdatedByUserId = data.UpdatedByUserId;
         _context.Update(productFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada exitosamente!" };
@@ -50,12 +50,7 @@ public class SubcategoryPhotoService : ISubcategoryPhotoService
     {
         var productFound = await _context.SubcategorytPhotos.FindAsync(id);
         if (productFound == null) return new { code = "0", message = "No existe el registro!" };
-
-        ;
-        productFound.Enabled = false;
-        productFound.Deleted = true;
-        productFound.UserId = userId;
-        _context.Update(productFound);
+        _context.Remove(productFound);
         await _context.SaveChangesAsync();
         return new { code = "1", message = "Eliminada exitosamente!" };
     }

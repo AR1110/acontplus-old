@@ -10,7 +10,7 @@ public class OrderMaintenance : BaseEntity
     public int FeeId { get; set; }
     public int MedidaId { get; set; }
 
-    [Required] [MaxLength(300)] public string Descripcion { get; set; }
+    [Required][MaxLength(300)] public string Descripcion { get; set; }
 
     public OrderDetail OrderDetail { get; set; }
     public int OrderDetailId { get; set; }

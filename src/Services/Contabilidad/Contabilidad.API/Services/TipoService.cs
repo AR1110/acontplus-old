@@ -24,9 +24,7 @@ public class TipoService : ITipoService
         var tipo = await _context.Tipos.FindAsync(id);
         if (tipo == null) return new ApiResponse { Code = "0", Message = "Tipo no existe" };
 
-        tipo.Enabled = false;
-        tipo.Deleted = true;
-        tipo.UserId = userId;
+        tipo.MarkAsDeleted(userId);
         _context.Update(tipo);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado exitosamente" };
@@ -34,7 +32,7 @@ public class TipoService : ITipoService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var tipos = await _context.Tipos.Where(x => x.Enabled == true).ToListAsync();
+        var tipos = await _context.Tipos.Where(x => x.IsActive == true).ToListAsync();
         if (tipos.Count == 0) return new ApiResponse { Code = "0", Message = "Data no existe" };
 
         return new ApiResponse
@@ -51,8 +49,8 @@ public class TipoService : ITipoService
 
         tipoFound.Code = tipo.Code;
         tipoFound.Name = tipo.Name;
-        tipo.Enabled = tipo.Enabled;
-        tipoFound.UserId = tipo.UserId;
+        tipo.IsActive = tipo.IsActive;
+        tipoFound.UpdatedByUserId = tipo.UpdatedByUserId;
         _context.Update(tipoFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };

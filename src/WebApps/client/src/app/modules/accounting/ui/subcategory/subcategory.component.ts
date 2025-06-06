@@ -1,26 +1,26 @@
 import {Component, inject, signal} from '@angular/core';
 import { Subcategory } from '@accounting/domain/models/subcategory';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ModalService } from '@core/services/modal.service';
 import { SubcategoryModalComponent } from '@accounting/ui/subcategory/subcategory-modal/subcategory-modal.component';
 
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatPagination} from "@shared/models/pagination.model";
 import {PageEvent} from "@angular/material/paginator";
 import {SubCategoryUseCase} from "@accounting/domain/use-cases/sub-category.use-case";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-subcategory',
   imports: [
-    MatCardModule,
     MatButtonModule,
     MatIconModule,
     BreadcrumbComponent,
-    MatDynamicTableComponent
+    MatDynamicTableComponent,
+    MatDynamicCardComponent
   ],
   templateUrl: './subcategory.component.html',
   styles: ``,
@@ -28,7 +28,7 @@ import {SubCategoryUseCase} from "@accounting/domain/use-cases/sub-category.use-
 export class SubcategoryComponent {
   data: Subcategory = {} as Subcategory;
   subcategories: Subcategory[] = [];
-  private readonly modalService = inject(ModalService);
+  private readonly modalService = inject(DialogService);
 
   private _subCategoryUseCase = inject(SubCategoryUseCase)
 
@@ -65,14 +65,13 @@ export class SubcategoryComponent {
   }
 
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(
+    const modalRef = this.modalService.open(
       SubcategoryModalComponent,
-      { size: 'sm', centered: true },
+      { size: 'sm',
+        data: this.data.id > 0 ? structuredClone(this.data) : {},
+      },
     );
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = this.data;
-    }
-    modalRef.result.then((response) => {
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.refresh();
       }

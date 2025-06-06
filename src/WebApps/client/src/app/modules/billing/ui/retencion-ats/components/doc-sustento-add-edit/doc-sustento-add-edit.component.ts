@@ -163,7 +163,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
         if (doc.taxes) {
           doc.taxes.forEach((tax) => {
-            this.createTax(this.indexDoc(), tax);
+            this.createTaxWithValue(this.indexDoc(), tax);
           });
         }
         if (doc.retenciones) {
@@ -173,10 +173,15 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
         }
         if (doc.payments) {
           doc.payments.forEach((payment) => {
-            this.createPayment(this.indexDoc(), payment);
+            this.createPaymentWithValue(this.indexDoc(), payment);
           });
         }
       });
+    } else {
+      this.docSustentoArray()
+        .at(this.indexDoc())
+        .get('pagoLocExt')
+        ?.setValue('01');
     }
   }
 
@@ -188,7 +193,8 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       uniqueIdDoc: [this.uniqueIdDoc(), [Validators.required]],
       idImpuesto: [0],
       idTarifaImpuesto: [0],
-      porcentaje: [''],
+      codigo: [''],
+      codigoPorcentaje: [''],
       tarifa: [0],
       baseImponible: [0, Validators.required],
       valorImpuesto: [0],
@@ -220,10 +226,23 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     });
   }
 
-  createTax(indexDoc: number, tax: any): void {
+  createTaxWithValue(indexDoc: number, tax: any): void {
     const taxesArray = this.getTaxesArray(indexDoc);
     const taxGroup = this.createTaxGroup();
+    tax.idRetAtsDocSustento = this.docSustentoArray().controls[
+      this.indexDoc()
+    ].get('idRetAtsDocSustento')?.value;
     taxGroup.patchValue(tax);
+    taxesArray.push(taxGroup);
+  }
+  createTax(indexDoc: number): void {
+    const taxesArray = this.getTaxesArray(indexDoc);
+    const taxGroup = this.createTaxGroup();
+    taxGroup.patchValue({
+      idRetAtsDocSustento: this.docSustentoArray().controls[
+        this.indexDoc()
+      ].get('idRetAtsDocSustento')?.value,
+    });
     taxesArray.push(taxGroup);
   }
 
@@ -233,14 +252,22 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     if (retencion != typeof 'object') {
       retencionGroup.patchValue(retencion);
     }
-    console.log(retencionGroup.value);
     retencionesArray.push(retencionGroup);
   }
-  createPayment(indexDoc: number, payment: RetencionAtsDocPayment): void {
+  createPaymentWithValue(
+    indexDoc: number,
+    payment: RetencionAtsDocPayment,
+  ): void {
     const paymentsArray = this.getPaymentsArray(indexDoc);
     const paymentGroup = this.createPaymentGroup();
 
     paymentGroup.patchValue(payment);
+
+    paymentsArray.push(paymentGroup);
+  }
+  createPayment(indexDoc: number): void {
+    const paymentsArray = this.getPaymentsArray(indexDoc);
+    const paymentGroup = this.createPaymentGroup();
 
     paymentsArray.push(paymentGroup);
   }
@@ -256,18 +283,24 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       .subscribe((response) => {
         let totalSinImpuestos = 0;
         response.taxes.forEach((tax: any) => {
-          this.createTax(indexDoc, tax);
+          this.createTaxWithValue(indexDoc, tax);
           totalSinImpuestos += tax.baseImponible;
         });
-        console.log(totalSinImpuestos);
-        this.docSustentoArray()
-          .controls[indexDoc].get('totalSinImpuestos')
-          ?.setValue(totalSinImpuestos);
 
+        const docSustento = this.docSustentoArray().controls[indexDoc].value;
+        docSustento.totalSinImpuestos = totalSinImpuestos;
+        this.docSustentoArray().controls[this.indexDoc()].setValue(docSustento);
+        const payments = this.docSustentoArray()
+          .at(this.indexDoc())
+          .get('payments') as FormArray;
+        if (docSustento.idRetAtsDocSustento > 0 && payments.length > 0) return;
         response.payments.forEach((payment: RetencionAtsDocPayment) => {
-          this.createPayment(indexDoc, payment);
+          this.createPaymentWithValue(indexDoc, payment);
         });
       });
+  }
+  addTaxesManual(indexDoc: number) {
+    this.createTax(indexDoc);
   }
 
   addRetencion(indexDoc: number) {
@@ -339,7 +372,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
 
   addPayment(indexDoc: number) {
     const payment = {};
-    this.createPayment(indexDoc, payment as RetencionAtsDocPayment);
+    this.createPaymentWithValue(indexDoc, payment as RetencionAtsDocPayment);
   }
 
   onSave(index: number) {

@@ -12,8 +12,8 @@ SELECT id				= rf.Id
 		,capacity		= rf.Capacity
 		,createdAt		= rf.CreatedAt
 		,updatedAt		= rf.UpdatedAt
-		,enabled		= rf.Enabled
-		,deleted		= rf.Deleted
+		,enabled		= rf.IsActive
+		,deleted		= rf.IsDeleted
 		,codEstab		= rf.CodEstab
 		,userId			= rf.UserId
 FROM Restaurant.[Floor] rf

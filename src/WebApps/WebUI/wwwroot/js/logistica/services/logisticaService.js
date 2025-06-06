@@ -191,8 +191,7 @@
                     idCliente: data.idCliente,
                     idTransportista: data.idTransportista,
                     idVehiculo: data.idVehiculo,
-                    idEmpleado: data.idEmpleado,
-                    idFactura: data.idFactura,
+                    idEmpleado: data.idEmpleado, 
                     fechaEmision: fS.formatDateMoment(data.fechaEmision),
                     fechaInicio: fS.formatDateMoment(data.fechaInicio),
                     fechaFin: fS.formatDateMoment(data.fechaFin),
@@ -203,7 +202,9 @@
                     estableDestino: fS.isValidField(data.estableDestino),
                     entregar: data.entregar,
                     motivo: data.motivo,
-                    idFactura: fS.isValidField(data.idDocumento),
+                    idFactura: fS.isValidField(data.idFactura),
+                    idNotaEntrega: fS.isValidField(data.idNotaEntrega),
+                    idAprob_Document: fS.isValidField(data.idAprob_Document),
                 };
             }
 

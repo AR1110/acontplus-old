@@ -1,7 +1,7 @@
-﻿global using Common.Core.Data;
+﻿global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;
-global using Common.Infrastructure.Data.Repository.Interfaces;
+global using Common.Data;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
 global using Common.Services.Middleware;
@@ -11,3 +11,4 @@ global using Newtonsoft.Json.Serialization;
 global using Ventas.API.Extensions;
 global using Ventas.API.Interfaces;
 global using Ventas.API.Services;
+global using Common.Logging;

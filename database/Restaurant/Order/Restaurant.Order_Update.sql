@@ -177,7 +177,7 @@ BEGIN
                         ,Discount           = @Discount
                         ,Total              = @Total
                         ,Obs                = @obs     
-                        ,UserId             = @userId
+                        ,UpdatedByUserId             = @userId
                     WHERE Id = @id
                     
                            -- ========= SELECT EXISTS ========= --
@@ -212,7 +212,7 @@ BEGIN
                     
                     --=========== INSERT IF NOT EXISTS =============--
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    ,Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId
+                                                    ,Price, Discount, Total, [Enabled], CreatedByUserId, FeeId, Obs, BodegaId, ItemTypeId
                                                     ,RemainingQuantity, MedidaId)
                     SELECT @id
                         ,ti.uuid
@@ -249,8 +249,8 @@ BEGIN
                     IF EXISTS(SELECT TOP 1 1 FROM #selectNotExist)
                         BEGIN
                              UPDATE u
-                             SET u.Deleted    = 1
-                                ,u.[Enabled]  = 0
+                             SET u.IsDeleted    = 1
+                                ,u.[IsActive]  = 0
                                 ,u.UpdatedAt  = dbo.ufnGetDateEcuador()
                              FROM Restaurant.OrderItem u
                              INNER JOIN #selectNotExist si ON u.Id = si.Id

@@ -35,12 +35,12 @@ public class InventarioContext : BaseContext
             .HasForeignKey(d => d.StockFisicoId);
 
         modelBuilder.Entity<ProductPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<ProductPhoto>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<ProductPhoto>().Property(x => x.IsActive).HasDefaultValue(true);
 
         modelBuilder.Entity<StockFisicoDetalle>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<StockFisicoDetalle>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<StockFisicoDetalle>().Property(x => x.IsActive).HasDefaultValue(true);
 
         modelBuilder.Entity<SubcategoryPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<SubcategoryPhoto>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<SubcategoryPhoto>().Property(x => x.IsActive).HasDefaultValue(true);
     }
 }

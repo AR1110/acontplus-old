@@ -1,5 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ToasterService } from '@core/services/toaster.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import {
@@ -9,26 +8,31 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PrinterDocService } from '@modules/config/services/printer-doc.service';
-import { isApiResponse } from '@core/models/api-response';
+import { ApiResponse } from '@core/models/api-response';
 import { isValidField } from '@core/utils/utils';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-printer-add-edit-modal',
-    imports: [FormsModule, MatSlideToggleModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [
+    FormsModule,
+    MatSlideToggleModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './printer-add-edit-modal.component.html',
   styles: ``,
 })
-export class PrinterAddEditModalComponent {
-  @Input() params = {
-    data: {} as any,
-    printers: [] as PrinterRead[],
-  };
-  readonly _modalRef = inject(NgbActiveModal);
+export class PrinterAddEditModalComponent implements OnInit {
+  params = inject<{
+    data: any;
+    printers: PrinterRead[];
+  }>(MAT_DIALOG_DATA);
+  readonly _modalRef = inject(MatDialogRef<PrinterAddEditModalComponent>);
   private readonly _printerUseCase = inject(PrinterUseCase);
   private readonly _tS = inject(ToasterService);
   private readonly _printerDocService = inject(PrinterDocService);
@@ -36,11 +40,11 @@ export class PrinterAddEditModalComponent {
   modalTitle = 'Nueva Impresora';
   modalIcon = 'save';
 
-  localPrinters: any[] = [];
+  localPrinters = signal<any[]>([]);
 
-  estabs: EstablecimientoSelectHtmlOnly[] = [];
-  documents: any[] = [];
-  printerTypes: PrinterTypeSelectHtmlOnly[] = [];
+  estabs = signal<EstablecimientoSelectHtmlOnly[]>([]);
+  documents = signal<any[]>([]);
+  printerTypes = signal<PrinterTypeSelectHtmlOnly[]>([]);
 
   data = {
     machine: '',
@@ -54,44 +58,40 @@ export class PrinterAddEditModalComponent {
     domain: '',
   };
 
-  successResponsePrinterDoc = (response: unknown) => {
-    if (isApiResponse(response)) {
-      this._tS.toastr({
-        type: response.code === '1' ? 'success' : 'warning',
-        message: response.message,
-      });
-      if (response.code === '1') {
-        this.getDataEdit(false);
-      }
+  successResponsePrinterDoc = (response: ApiResponse) => {
+    this._tS.toastr({
+      type: response.code === '1' ? 'success' : 'warning',
+      message: response.message,
+    });
+    if (response.code === '1') {
+      this.getDataEdit(false);
     }
   };
 
-  successResponse = (response: unknown) => {
-    if (isApiResponse(response)) {
-      this._tS.toastr({
-        type: response.code === '1' ? 'success' : 'warning',
-        message: response.message,
-      });
-      if (response.code === '1') {
-        this._modalRef.close(response);
-      }
+  successResponse = (response: ApiResponse) => {
+    this._tS.toastr({
+      type: response.code === '1' ? 'success' : 'warning',
+      message: response.message,
+    });
+    if (response.code === '1') {
+      this._modalRef.close(response);
     }
   };
 
   getDataForm(isRegister: boolean) {
     this._printerUseCase.getDataForm().subscribe((response) => {
-      this.estabs = response.estabs;
-      this.printerTypes = response.printerTypes;
+      this.estabs.set(response.estabs);
+      this.printerTypes.set(response.printerTypes);
 
       if (isRegister) {
-        this.documents = response.documents.map((item: any) => {
+        const documents = response.documents.map((item: any) => {
           item.copies = 1;
           return item;
         });
-
-        if (this.estabs.length > 0) {
+        this.documents.set(documents);
+        if (this.estabs().length > 0) {
           this.data.establecimientoId =
-            this.estabs.find((e) => e.predeterminado)?.idEstablecimiento ?? 0;
+            this.estabs().find((e) => e.predeterminado)?.idEstablecimiento ?? 0;
         }
       }
       if (this.estabs.length === 0) {
@@ -106,8 +106,8 @@ export class PrinterAddEditModalComponent {
   getLocalPrinters() {
     this._printerUseCase.getLocalPrinters().subscribe({
       next: (response) => {
-        this.localPrinters = response.localPrinters;
-        this.data.machine = this.localPrinters[0]?.machine;
+        this.localPrinters.set(response.localPrinters);
+        this.data.machine = this.localPrinters()[0]?.machine;
       },
       error: (err) => {
         console.log(err);
@@ -123,10 +123,9 @@ export class PrinterAddEditModalComponent {
   getDataEdit(isReload: boolean) {
     this._printerUseCase.getById(this.params.data.id).subscribe((response) => {
       if (isReload) {
-        console.log(response.printer);
         this.data = response.printer;
       }
-      this.documents = response.documents;
+      this.documents.set(response.documents);
     });
   }
 
@@ -152,12 +151,13 @@ export class PrinterAddEditModalComponent {
   }
 
   async updateDocument(data: any) {
-    if (!data.enabled) {
+    if (!data.isActive) {
       data.copies = 1;
     }
     if (this.params.data.id > 0) {
       if (data.id > 0) {
-        !data.enabled ? (data.labelEnabled = 'Inactiva') : 'Activa';
+        data.isActive = !data.isActive;
+        data.labelisActive = data.isActive ? 'Activa' : 'Inactiva';
 
         this._printerDocService
           .put(data.id, data)
@@ -165,7 +165,7 @@ export class PrinterAddEditModalComponent {
       }
 
       if (!(data.id > 0)) {
-        let params = {
+        const params = {
           ...data,
           printerId: this.params.data.id,
         };
@@ -215,7 +215,7 @@ export class PrinterAddEditModalComponent {
       });
       return;
     }
-    if (this.documents.every((item) => !item.enabled)) {
+    if (this.documents().every((item) => !item.isActive)) {
       this._tS.toastr({
         type: 'warning',
         message: 'Seleccione al menos un documento',
@@ -225,23 +225,27 @@ export class PrinterAddEditModalComponent {
 
     let codDoc = '';
     if (
-      this.documents.some((item) => item.codDoc === DOC_TYPE.FV && item.enabled)
+      this.documents().some(
+        (item) => item.codDoc === DOC_TYPE.FV && item.isActive
+      )
     ) {
       codDoc = 'FV';
     }
     if (
-      this.documents.some((item) => item.codDoc === DOC_TYPE.NE && item.enabled)
+      this.documents().some(
+        (item) => item.codDoc === DOC_TYPE.NE && item.isActive
+      )
     ) {
       codDoc = 'NE';
     }
-    if (this.documents.every((item) => item.enabled)) {
+    if (this.documents().every((item) => item.isActive)) {
       codDoc = 'A';
     }
 
-    let params = {
+    const params = {
       ...this.data,
       codDoc,
-      documents: this.documents.filter((x) => x.enabled),
+      documents: this.documents().filter((x) => x.isActive),
     };
 
     if (this.params.data.id > 0) {
@@ -253,5 +257,8 @@ export class PrinterAddEditModalComponent {
     if (!(this.params.data.id > 0)) {
       this._printerUseCase.create(params).subscribe(this.successResponse);
     }
+  }
+  close() {
+    this._modalRef.close();
   }
 }

@@ -1,77 +1,107 @@
 ﻿using Common.Services.Middleware;
 using Restaurant.Api.Extensions;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-const string corsPolicy = "RestaurantCorsPolicy";
-
-var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
-
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
-
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
-
-builder.Services.AddIdentityService(builder.Configuration);
-
-builder.Services.AddCors(options =>
+try
 {
-    options.AddPolicy(corsPolicy, policy =>
+    var builder = WebApplication.CreateBuilder(args);
+
+    var environment = builder.Environment.EnvironmentName;
+
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
     {
-        policy.WithOrigins(safeOrigins)
-            .SetIsOriginAllowed(_ => true)
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-            .WithExposedHeaders("Content-Disposition")
-            .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
     });
-});
 
-var app = builder.Build();
+    const string corsPolicy = "RestaurantCorsPolicy";
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
 
-app.UseMiddleware<ExceptionMiddleware>();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-app.UseHttpsRedirection();
+    // Add services to the container.
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-app.UseCors(corsPolicy);
+    builder.Services.AddIdentityService(builder.Configuration);
 
-app.UseResponseCompression();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(corsPolicy, policy =>
+        {
+            policy.WithOrigins(safeOrigins)
+                .SetIsOriginAllowed(_ => true)
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .WithExposedHeaders("Content-Disposition")
+                .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+        });
+    });
 
-app.UseStatusCodePages();
+    var app = builder.Build();
 
-app.UseRouting();
+    app.UseSerilogRequestLogging();
 
-app.UseAuthentication();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseAuthorization();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseRateLimiter();
+    app.UseHttpsRedirection();
 
-app.MapControllers().RequireAuthorization();
+    app.UseCors(corsPolicy);
 
-app.UseStaticFiles();
+    app.UseResponseCompression();
 
-app.UseDefaultFiles();
+    app.UseStatusCodePages();
 
-app.MapFallbackToFile("/index.html");
+    app.UseRouting();
 
-// using var scope = app.Services.CreateScope();
-// var services = scope.ServiceProvider;
-// var context = services.GetRequiredService<RestaurantContext>();
-// try
-// {
-//     await context.Database.MigrateAsync();
-//     await RestaurantContextSeed.SeedAsync(context);
-// }
-// catch (Exception ex)
-// {
-//     Console.WriteLine($"An error occured during migration: {ex.Message}");
-// }
+    app.UseAuthentication();
 
-await app.RunAsync();
+    app.UseAuthorization();
+
+    app.UseRateLimiter();
+
+    app.MapControllers().RequireAuthorization();
+
+    app.UseStaticFiles();
+
+    app.UseDefaultFiles();
+
+    app.MapFallbackToFile("/index.html");
+
+    // using var scope = app.Services.CreateScope();
+    // var services = scope.ServiceProvider;
+    // var context = services.GetRequiredService<RestaurantContext>();
+    // try
+    // {
+    //     await context.Database.MigrateAsync();
+    //     await RestaurantContextSeed.SeedAsync(context);
+    // }
+    // catch (Exception ex)
+    // {
+    //     Console.WriteLine($"An error occured during migration: {ex.Message}");
+    // }
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

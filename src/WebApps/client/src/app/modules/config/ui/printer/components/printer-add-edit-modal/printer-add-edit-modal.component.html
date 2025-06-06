@@ -1,15 +1,13 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">
-    <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
-  </h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="_modalRef.dismiss()"
-  ></button>
-</div>
-<div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="modalTitle"
+  (close)="close()"
+  [icon]="modalIcon"
+
+
+/>
+<ng-template #body>
   <div class="row">
     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
       <div class="form-group">
@@ -23,7 +21,7 @@
         >
           <option [ngValue]="0">Seleccione un establecimiento</option>
 
-          @for (item of estabs; track $index) {
+          @for (item of estabs(); track $index) {
             <option [ngValue]="item.idEstablecimiento">
               {{ item.nombreComercial }}
             </option>
@@ -82,7 +80,7 @@
           required
         >
           <option [ngValue]="0">Seleccione un tipo</option>
-          @for (item of printerTypes; track $index) {
+          @for (item of printerTypes(); track $index) {
             <option [ngValue]="item.id">
               {{ item.name }}
             </option>
@@ -93,7 +91,7 @@
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
         <label for="namePrinterEdit">Impresora:</label>
-        @if (localPrinters.length === 0) {
+        @if (localPrinters().length === 0) {
           <input
             type="text"
             id="namePrinterEdit"
@@ -103,11 +101,11 @@
             required
           />
         }
-        @if (localPrinters.length > 0) {
+        @if (localPrinters().length > 0) {
           <select class="form-select" [(ngModel)]="data.name" required>
             <option [ngValue]="0">Seleccione una impresora</option>
 
-            @for (item of localPrinters; track $index) {
+            @for (item of localPrinters(); track $index) {
               <option [ngValue]="item.name">
                 {{ item.name }}
               </option>
@@ -136,14 +134,14 @@
     <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
         <mat-slide-toggle [(ngModel)]="data.isDefault"
-          >Predeterminada</mat-slide-toggle
+        >Predeterminada</mat-slide-toggle
         >
       </div>
     </div>
     <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
         <mat-slide-toggle id="serverDevice" [(ngModel)]="data.serverDevice"
-          >Servidor</mat-slide-toggle
+        >Servidor</mat-slide-toggle
         >
       </div>
     </div>
@@ -152,26 +150,26 @@
   <div class="table-responsive">
     <table class="table">
       <thead>
-        <tr class="small">
-          <th class="text-center">N°</th>
-          <th>Documento</th>
-          <th class="text-center">Estado</th>
-          <th class="text-center">Copia</th>
-        </tr>
+      <tr class="small">
+        <th class="text-center">N°</th>
+        <th>Documento</th>
+        <th class="text-center">Estado</th>
+        <th class="text-center">Copia</th>
+      </tr>
       </thead>
       <tbody>
-        @for (item of documents; track $index) {
+        @for (item of documents(); track $index) {
           <tr class="small">
             <td class="text-center">{{ $index + 1 }}</td>
             <td>{{ item.name }}</td>
             <td class="text-center">
               <mat-slide-toggle
-                [(ngModel)]="item.enabled"
+                [(ngModel)]="item.isActive"
                 (change)="updateDocument(item)"
               ></mat-slide-toggle>
             </td>
             <td class="text-center">
-              @if (item.enabled) {
+              @if (item.isActive) {
                 <input
                   type="number"
                   id="copies{{ $index + 1 }}"
@@ -188,17 +186,12 @@
       </tbody>
     </table>
   </div>
-</div>
-<div class="modal-footer">
-  <button type="button" mat-raised-button (click)="saveEdit()">
-    <mat-icon>save</mat-icon> Guardar
-  </button>
-
+</ng-template>
+<ng-template #footer>
   <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="_modalRef.close()"
-  >
-  </app-theme-button>
-</div>
+    variant="success"
+    icon="save"
+    text="Guardar"
+    (handleClick)="saveEdit()"
+  />
+</ng-template>

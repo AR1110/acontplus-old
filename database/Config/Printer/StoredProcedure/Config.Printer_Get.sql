@@ -32,7 +32,7 @@ BEGIN
             FROM Config.Printer p WITH(NOLOCK) 
                 INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON p.EstablecimientoId = e.idEstablecimiento
                 INNER JOIN Config.PrinterType pt WITH(NOLOCK) ON p.PrinterTypeId = pt.Id
-            WHERE p.Deleted IS NULL
+            WHERE p.IsDeleted = CAST(0 AS BIT)
                 AND e.idEntidad = @idEntidad
         END
 
@@ -48,12 +48,12 @@ BEGIN
 	        WHERE ar.idUsuarioRol = @userRoleId
 	        ORDER BY ar.predeterminado DESC
 
-	        SELECT * FROM Config.PrinterType WHERE Deleted IS NULL AND [Enabled] = 1
+	        SELECT * FROM Config.PrinterType WHERE IsDeleted = CAST(0 AS BIT) AND [IsActive] = 1
 
 	        SELECT id = 0,
 		        codDoc = codigo,
 		        [name] = UPPER(descripcion),
-		        [enabled] = CAST(CASE WHEN codigo IN ('FV', 'NE', 'PR') THEN 1 ELSE 0 END AS BIT),
+		        [IsActive] = CAST(CASE WHEN codigo IN ('FV', 'NE', 'PR') THEN 1 ELSE 0 END AS BIT),
 		        copies = CAST(0 AS BIT)
 	        FROM TipoDocumento WITH (NOLOCK)
             WHERE codigo IN ('FV', 'NE', 'PR', 'IC', 'EC', 'A', 'OR', 'ORC')
@@ -64,7 +64,7 @@ BEGIN
             SELECT * FROM Config.Printer WITH(NOLOCK) WHERE Id = @id
             SELECT td.codigo codDoc
             ,td.descripcion AS 'name'
-            ,CAST(ISNULL(pd.[Enabled], 0) AS bit) AS 'enabled'
+            ,CAST(ISNULL(pd.[IsActive], 0) AS bit) AS 'IsActive'
             ,ISNULL(pd.Copies, 1) Copies
             ,ISNULL(pd.Id, 0) Id 
             FROM TipoDocumento td WITH (NOLOCK)

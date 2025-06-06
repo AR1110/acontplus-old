@@ -1,32 +1,30 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { CategoryModalComponent } from './category-modal/category-modal.component';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
   selector: 'app-category',
   imports: [
     BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
     MatButton,
     MatIcon,
     ThemeButtonComponent,
+    MatDynamicCardComponent,
   ],
   templateUrl: './category-page.component.html',
   styles: ``,
 })
 export class CategoryPageComponent {
   private categoryService = inject(CategoryService);
-  private modalService = inject(ModalService);
-  categories: Category[] = [];
+  private modalService = inject(DialogService);
+  categories = signal<Category[] >([])
   categorySelected: Category = {
     id: 0,
     code: '',
@@ -40,27 +38,19 @@ export class CategoryPageComponent {
     this.onModalOpen();
   }
   onGet() {
-    this.categoryService.get({ tipo: 1 }).subscribe({
-      next: (response) => {
-        if (isApiResponse(response) && response.code == '1') {
-          this.categories = JSON.parse(response.payload as string);
+    this.categoryService.get({ tipo: 1 }).subscribe( (response) => {
+        if ( response.code == '1') {
+          this.categories.set(JSON.parse(response.payload as string))
         }
-      },
-      error(err) {
-        console.error(err);
-      },
-      complete() {},
     });
   }
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(CategoryModalComponent, {
+    const modalRef = this.modalService.open(CategoryModalComponent, {
       size: 'sm',
-      centered: true,
+      data: this.categorySelected.id > 0 ? structuredClone(this.categorySelected) : {},
     });
-    if (this.categorySelected.id > 0) {
-      modalRef.componentInstance.data = this.categorySelected;
-    }
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe((response) => {
       if (this.categorySelected.id > 0) {
         this.categorySelected = {} as Category;
       }

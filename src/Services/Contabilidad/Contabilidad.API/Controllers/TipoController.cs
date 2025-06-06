@@ -15,14 +15,14 @@ public class TipoController(ITipoService tipoService) : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Tipo tipo)
     {
-        tipo.UserId = User.GetUserId();
+        tipo.CreatedByUserId = User.GetUserId();
         return Ok(await tipoService.AddAsync(tipo));
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Tipo tipo)
     {
-        tipo.UserId = User.GetUserId();
+        tipo.UpdatedByUserId = User.GetUserId();
         return Ok(await tipoService.UpdateAsync(id, tipo));
     }
 

@@ -25,10 +25,7 @@ public class SerieService : ISerieService
             // Handle case where serie not found
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
 
-        serie.Enabled = false;
-        serie.Deleted = true;
-        serie.UserId = userId;
-        _context.Update(serie);
+        _context.Remove(serie);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
     }
@@ -50,9 +47,9 @@ public class SerieService : ISerieService
 
         serieFound.BrandId = serie.BrandId;
         serieFound.Code = serie.Code;
-        serieFound.Enabled = serie.Enabled;
+        serieFound.IsActive = serie.IsActive;
         serieFound.Name = serie.Name;
-        serieFound.UserId = serie.UserId;
+        serieFound.UpdatedByUserId = serie.UpdatedByUserId;
         _context.Update(serieFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada Exitosamente" };

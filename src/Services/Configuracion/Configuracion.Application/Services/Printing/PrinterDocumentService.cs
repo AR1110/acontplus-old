@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Application.Services.Printing;
+﻿using Configuracion.Infrastructure.Persistence;
+
+namespace Configuracion.Application.Services.Printing;
 
 public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentService
 {
@@ -14,8 +16,8 @@ public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentSer
         if (id != printerDocument.Id) return new ApiResponse { Code = "0", Message = "Id Incorrecto" };
 
         var document = await context.PrinterDocuments.FindAsync(id);
-        document!.UserId = printerDocument.UserId;
-        document.Enabled = printerDocument.Enabled;
+        document.UpdatedByUserId = printerDocument.UpdatedByUserId;
+        document.IsActive = printerDocument.IsActive;
         document.Copies = printerDocument.Copies;
         context.Update(document);
         await context.SaveChangesAsync();

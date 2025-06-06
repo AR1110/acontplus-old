@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <span>Piso → Habitación → Mesa</span>
+      <span>Piso → Sala → Mesa</span>
 
 
       <div class="tree-container">
@@ -45,7 +45,6 @@
                   {{ getNodeIcon(node.type) }}
                 </mat-icon>
 
-                @if (!node.editing) {
                   <div class="node-info">
                     <span class="node-name">{{ node.description }}</span>
                     @if (node.capacity) {
@@ -55,22 +54,9 @@
                   </span>
                     }
                   </div>
-                } @else {
-                  <div class="node-edit">
-                    <mat-form-field appearance="outline" class="edit-field">
-                      <input matInput [(ngModel)]="node.tempName" placeholder="Name">
-                    </mat-form-field>
-                    @if (node.type === 'table') {
-                      <mat-form-field appearance="outline" class="edit-field capacity-field">
-                        <input matInput type="number" [(ngModel)]="node.tempCapacity" placeholder="Capacity">
-                      </mat-form-field>
-                    }
-                  </div>
-                }
 
                 <div class="node-actions">
                   @if (node.type==='table') {
-
                     <button mat-icon-button color="primary" (click)="addEditTable(node, true)" matTooltip="Edit">
                       <mat-icon>edit</mat-icon>
                     </button>
@@ -79,11 +65,14 @@
                     </button>
 
                   }
-<!--                    @if (node.type !== 'table') {-->
-<!--                      <button mat-icon-button (click)="addEditTable(node)" matTooltip="Añadir {{ getChildType(node.type) }}">-->
-<!--                        <mat-icon>add</mat-icon>-->
-<!--                      </button>-->
-<!--                    }-->
+                  @if (node.type==='room') {
+                    <button mat-icon-button color="primary" (click)="addEditRoom(node)" matTooltip="Edit">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)=" addEditTable(node)" matTooltip="Añadir {{ getChildType(node.type) }}">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  }
                 </div>
               </div>
             </div>
@@ -105,7 +94,6 @@
                   {{ getNodeIcon(node.type) }}
                 </mat-icon>
 
-                @if (!node.editing) {
                   <div class="node-info">
                     <span class="node-name">{{ node.description }}</span>
                     @if (node.capacity) {
@@ -120,21 +108,9 @@
                   </span>
                     }
                   </div>
-                } @else {
-                  <div class="node-edit">
-                    <mat-form-field appearance="outline" class="edit-field">
-                      <input matInput [(ngModel)]="node.tempName" placeholder="Name">
-                    </mat-form-field>
-                    @if (node.type === 'table') {
-                      <mat-form-field appearance="outline" class="edit-field capacity-field">
-                        <input matInput type="number" [(ngModel)]="node.tempCapacity" placeholder="Capacity">
-                      </mat-form-field>
-                    }
-                  </div>
-                }
+
 
                 <div class="node-actions">
-
                     @if( node.type==='floor'){
                       <button mat-icon-button color="primary" (click)="addEditFloor(node)" matTooltip="Edit">
                         <mat-icon>edit</mat-icon>
@@ -147,11 +123,14 @@
 
 
                     @if (node.type === 'floor') {
-                      <button mat-icon-button (click)=" addEditRoom(node)" matTooltip="Añadir {{ getChildType(node.type) }}">
+                      <button mat-icon-button (click)=" addEditRoom(node, true)" matTooltip="Añadir {{ getChildType(node.type) }}">
                         <mat-icon>add</mat-icon>
                       </button>
                     }
                     @if (node.type === 'room') {
+                      <button mat-icon-button color="primary" (click)="addEditRoom(node)" matTooltip="Edit">
+                        <mat-icon>edit</mat-icon>
+                      </button>
                       <button mat-icon-button (click)=" addEditTable(node)" matTooltip="Añadir {{ getChildType(node.type) }}">
                         <mat-icon>add</mat-icon>
                       </button>

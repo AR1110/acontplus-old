@@ -14,7 +14,7 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-info" ng-if="accion.crear" ng-click="askToOpenModalOption()">
+                <button type="button" class="btn btn-info" ng-if="accion.crear" ng-click="openModalNew()">
                     <i class="ti-plus"></i> Nuevo
                 </button>
             </div>
@@ -29,7 +29,7 @@
                     <div class="form-gorup">
                         <span for="establecimiento">Establecimiento</span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getAprobComprobantes()">
+                            class="form-control  border-select" ng-change="refresh()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -61,12 +61,14 @@
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
-                            <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                        <button type="button" class="btn btn-info" uib-tooltip="Más opciones" ng-click="onClickBtnMore()">
+                            <i class="fas fa-eye" ></i>
                         </button>
-                        <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                            ng-click="getAprobComprobantes()">
+                        <button type="button" class="btn btn-warning" uib-tooltip="Recargar" ng-click="refresh()">
                             <i class="fas fa-redo"></i>
+                        </button>
+                        <button type="button" class="btn btn-success" uib-tooltip="Exportar" ng-click="getReportAprobTracking()">
+                            <i class="far fa-file-excel"></i>
                         </button>
                     </div>
                 </div>
@@ -101,7 +103,7 @@
                     <div class="form-group">
                         <span>Estado:</span>
                         <select id="estadoDocumentos" class="form-control border-select" ng-model="dataSearch.byEstado"
-                            ng-change="getAprobComprobantes()">
+                            ng-change="refresh()">
                             <option ng-value="">Todos</option>
                             <option ng-value="item.codEstado" ng-repeat="item in estadoDocumentos">
                                 {{item.descripcion}}
@@ -127,26 +129,28 @@
                 <table resize master md-table>
                     <thead md-trim-column-names fix-head md-head>
                         <tr md-row>
-                            <th md-column><span>Op</span></th>
                             <th md-column><span>N°</span></th>
+                            <th md-column><span>Op</span></th>
+                            <th md-column><span>Estado</span></th>
+
                             <th md-column><span>Doc. Origen/Destino</span></th>
                             <th md-column><span>Nro. Doc</span></th>
-                            <th md-column><span>F. Emisión</span></th>
-                            <th md-column><span>Identificación</span></th>
-                            <th md-column><span>Razon Social Comprador</span></th>
+                            <th md-column><span>Fecha Emisión</span></th>
+                            <th md-column> Cliente</th>
                             <th md-column><span>Total</span></th>
                             <th md-column>Usuario</th>
-                            <th md-column><span>Estado</span></th>
 
                         </tr>
                     </thead>
                     <tbody md-body>
-                        <tr md-row ng-repeat="item in aprobComprobantes track by $index" ng-class="item.colorFila">
+                        <tr md-row ng-repeat="item in dataSource track by $index"
+                            ng-class="getStatusClass(item.codEstado)">
+                            <td md-cell>{{$index+1}}</td>
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
                                         ng-click="$mdMenu.open($event)">
-                                        <icon class="mdi mdi-menu"></icon>
+                                        <i class="mdi mdi-menu"></i>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item>
@@ -194,20 +198,24 @@
                                 </md-menu>
                             </td>
 
-                            <td md-cell>{{$index+1}}</td>
+
+                            <td md-cell>{{item.nombreEstado}}</td>
+
                             <td md-cell>
                                 <span>{{item.docOrigenDesc}} / {{item.docDestinoDesc}} </span>
                             </td>
-                            <td md-cell>{{item.serie}}</td>
+                            <td md-cell>{{item.serieDoc}}</td>
                             <td md-cell>{{item.fechaEmision}}</td>
-                            <td md-cell>{{item.identificacionComprador}}</td>
-                            <td md-cell>{{item.razonSocialComprador}}</td>
+                            <td md-cell>
+                                <div style="display: grid;">
+                                    <b>{{item.identificacionComprador}} </b>
+                                    <span> {{item.razonSocialComprador}}</span>
+                                </div>
                             <td md-cell>${{item.total}}</td>
                             <td md-cell>{{item.userName}}</td>
-                            <td md-cell>{{item.estado}}</td>
                         </tr>
-                        <tr ng-show="aprobComprobantes.length==0" class="text-center">
-                            <td colspan="9">
+                        <tr ng-show="dataSource.length==0" class="text-center">
+                            <td colspan="8" class="text-center">
                                 No hay registros en esta tabla :)
                             </td>
                         </tr>
@@ -216,7 +224,7 @@
                         <tr md-row>
                             <td md-cell colspan="2">
                                 <span class="font-weight-bold">
-                                    {{aprobComprobantes.length}}
+                                    {{dataSource.length}}
                                     Documentos
                                 </span>
                             </td>
@@ -232,7 +240,7 @@
         </div>
         <div class="card-body">
             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
-                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
@@ -248,9 +256,10 @@
 
     <!--Se usa para gestion de datos adicionales-->
     <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/modals/modalAprobacionSeleccionarCtrl.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/modals/modalAddEditAprobarDocCtrl.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/components/aprobarDocumentoComponente.min.js" asp-append-version="true"></script>
+    @* <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script> *@
+    <script src="~/js/ventas/aprobacionDoc/aprobacionDocModule.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/aprobacionDoc/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/aprobacionDoc/modals/modalAprobacionSeleccionarCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/aprobacionDoc/modals/modalAddEditAprobarDocCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/aprobacionDoc/components/aprobarDocumentoComponente.min.js" asp-append-version="true"></script>
 }

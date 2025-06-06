@@ -50,7 +50,7 @@ BEGIN
 
         IF NOT EXISTS (SELECT 1 FROM Config.WhatsAppSenderConfig WHERE CompanyId = @companyId)
             BEGIN 
-                SET @whatsAppSenderConfigId = (SELECT TOP 1 Id FROM Config.WhatsAppSenderConfig WHERE IsGlobal = 1 AND Enabled = 1)
+                SET @whatsAppSenderConfigId = (SELECT TOP 1 Id FROM Config.WhatsAppSenderConfig WHERE IsGlobal = 1 AND IsActive = 1)
             END
 
         SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'H')
@@ -77,14 +77,14 @@ BEGIN
             SET @osName = (SELECT oname  + '_' + oversion FROM OPENJSON (@os) WITH (oname VARCHAR(300) '$.name', oversion VARCHAR(300) '$.version'))
 
 		BEGIN TRAN
-            INSERT INTO Common.[Notification]([NotificationTypeId], [CompressedParameters], [Title], [IsRead], [UserId], [FromMobile])
+            INSERT INTO Common.[Notification]([NotificationTypeId], [CompressedParameters], [Title], [IsRead], [CreatedByUserId], [FromMobile])
             SELECT TOP 1 @notificationTypeId, COMPRESS(params), 'Mensaje de WhatsApp', CAST(1 AS BIT), @userId, @fromMobile 
             FROM @tbl
 
             SET @notificationId = SCOPE_IDENTITY()
 
             INSERT INTO Common.WhatsAppMessage([NotificationId], [WhatsAppSenderConfigId], [CompressedMessage], [Os], [Browser],
-            [RecipientPhoneNumber], [PriorityId], [StatusId], [SentAt], [UserId], [FromMobile])
+            [RecipientPhoneNumber], [PriorityId], [StatusId], [SentAt], [CreatedByUserId], [FromMobile])
 			
             SELECT @notificationId, @whatsAppSenderConfigId, COMPRESS(mensaje), @osName, @browserName,
             receptor, @priorityId, @statusId, dbo.ufnGetDateEcuador(), @userId, @fromMobile
@@ -111,7 +111,7 @@ BEGIN
 				BEGIN
 					UPDATE AcontplusAdmin.Config.WhatsappUsage 
                     SET EndDate = dbo.ufnGetDateEcuador(),
-                    [Enabled] = 0 
+                    [IsActive] = 0 
                     FROM AcontplusAdmin.Config.WhatsappUsage  wau
                     INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId = c.Id
                     WHERE c.Uuid = @companyUuid

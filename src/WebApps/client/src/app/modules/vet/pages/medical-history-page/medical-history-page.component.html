@@ -1,139 +1,76 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
+<app-mat-dynamic-card>
+  <div class="vstack gap-2">
     <div class="row">
-      <div class="row">
-        <div class="col-md-2 col-12">
-          <button (click)="onModalOpen()" mat-raised-button type="button">
-            <mat-icon>add</mat-icon>
-            Nuevo
-          </button>
-        </div>
-      </div>
-      <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
-        <div class="form-group">
-          <span>Establecimiento: </span>
-          <div class="input-group">
-            <select
-              (change)="onChangeEstab()"
-              [(ngModel)]="dataSearch.idEstablecimiento"
-              class="form-select form-control-border"
-            >
-              <option value="">Todos</option>
-              @for (estab of establecimientos; track $index) {
-                <option [ngValue]="estab.idEstablecimiento">
-                  {{ estab.nombreComercial }}
-                </option>
-              }
-            </select>
-            <input
-              #input
-              (keyup)="applyFilter($event)"
-              class="form-control"
-              matInput
-              placeholder="Buscar mascota o cliente"
-            />
-          </div>
-        </div>
+      <div class="col-md-2 col-12">
+        <app-theme-button
+          variant="success"
+          icon="add"
+          text="Nuevo Historial"
+          (handleClick)="onModalOpen()"
+        ></app-theme-button>
       </div>
     </div>
-    <div class="mat-elevation-z8">
-      <section class="section-container-table" tabindex="0">
-        <table [dataSource]="dataSource" mat-table matSort>
-          <!-- Options -->
-          <ng-container matColumnDef="op">
-            <th *matHeaderCellDef mat-header-cell>Op.</th>
-            <td *matCellDef="let element" mat-cell>
-              <button mat-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
 
-              <mat-menu #menu="matMenu">
-                <button (click)="onEdit(element)" mat-menu-item>
-                  <mat-icon>edit</mat-icon>
-                  Editar
-                </button>
-                <button (click)="onDelete(element)" mat-menu-item>
-                  <mat-icon>delete</mat-icon>
-                  Eliminar
-                </button>
-                <button (click)="onReport(element)" mat-menu-item>
-                  <mat-icon>download</mat-icon>
-                  Reporte
-                </button>
-              </mat-menu>
-            </td>
+    <div
+      class="row row-cols-2  "
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento: </mat-label>
+          <mat-select  (selectionChange)="refresh()"
+                       [(ngModel)]="dataSearch.idEstablecimiento">
+            @for (estab of establecimientos(); track $index) {
+              <mat-option [value]="estab.idEstablecimiento">
+                {{ estab.nombreComercial }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Buscar mascota o cliente</mat-label>
+          <input matInput [(ngModel)]="dataSearch.textSearch">
+          <ng-container matSuffix>
+            <button type="button" mat-icon-button (click)="refresh()">
+              <mat-icon>refresh</mat-icon>
+            </button>
           </ng-container>
-
-          <!-- Position Column -->
-          <ng-container matColumnDef="position">
-            <th *matHeaderCellDef mat-header-cell>Nro.</th>
-            <td *matCellDef="let element" mat-cell>{{ element.position }}</td>
-          </ng-container>
-          <ng-container matColumnDef="customer">
-            <th *matHeaderCellDef mat-header-cell>Cliente</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.customer }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="petName">
-            <th *matHeaderCellDef mat-header-cell>Mascota</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.petName }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="date">
-            <th *matHeaderCellDef mat-header-cell>Fecha</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.date }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="age">
-            <th *matHeaderCellDef mat-header-cell>Edad</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.age }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="weight">
-            <th *matHeaderCellDef mat-header-cell>Peso</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.weight }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="observations">
-            <th *matHeaderCellDef mat-header-cell>Obs</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.observations }}
-            </td>
-          </ng-container>
-          <tr
-            *matHeaderRowDef="visibleColumns; sticky: true"
-            mat-header-row
-          ></tr>
-          <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
-
-          <!-- Row shown when there is no matching data. -->
-          <tr *matNoDataRow class="mat-row">
-            <td class="mat-cell" colspan="7">
-              No data matching the filter {{ input.value }}
-            </td>
-          </tr>
-        </table>
-      </section>
-      <mat-paginator
-        #paginator
-        (page)="pageChanged($event)"
-        [length]="pagination.totalRecords"
-        [pageIndex]="pagination.pageIndex"
-        [pageSizeOptions]="pagination.pageSizeOptions"
-        [pageSize]="pagination.pageSize"
-        aria-label="Select page"
-        showFirstLastButtons
-      >
-      </mat-paginator>
+        </mat-form-field>
+      </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  />
+
+  <ng-template #templateOp let-item="item">
+    <app-theme-button
+      variant="primary"
+      [icon]="'edit'"
+      matStyle="icon"
+      (handleClick)="onEdit(item)"
+    ></app-theme-button>
+    <app-theme-button
+      variant="warning"
+      icon="delete "
+      matStyle="icon"
+      (handleClick)="onDelete(item)"
+    ></app-theme-button>
+    <app-theme-button
+      matStyle="icon"
+      variant="secondary"
+      icon="download"
+      (handleClick)="onReport(item)"
+    ></app-theme-button>
+  </ng-template>
+</app-mat-dynamic-card>

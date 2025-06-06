@@ -13,9 +13,9 @@ public class AccountService(IAdoRepository repository) : IAccountService
 
     public async Task<ApiResponse> AuthenticateAsync(AccessAuthorization accessAuthorization)
     {
-        var query = @"UPDATE Seguridad.AccessAuthorization SET Enabled = 0
-                                ,Deleted = 1
-                                ,UpdatedAt = GETDATE()
+        var query = @"UPDATE Seguridad.AccessAuthorization SET IsActive = CAST(0 AS BIT)
+                                ,IsDeleted = CAST(1 AS BIT)
+                                ,UpdatedAt = GETUTCDATE()
                             WHERE Uuid = @uuid AND code = @code";
         var response = await repository.ExecuteNonQueryAsync(query,
             new Dictionary<string, object>

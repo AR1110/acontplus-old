@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 
 import {
   FormControl,
@@ -6,19 +6,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Item } from '@restaurant/domain/models/item.model';
 import { Recipe } from '@restaurant/domain/models/recipe.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { ItemService } from '@restaurant/data/services/item.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-item-add-edit-modal',
@@ -26,15 +25,14 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     ReactiveFormsModule,
     TabulatorSemanticUiComponent,
     IngredientSearchComponent,
-    MatIcon,
-    MatButton,
     ThemeButtonComponent,
+    MatCustomDialogComponent,
   ],
   templateUrl: './item-add-edit-modal.component.html',
   styles: ``,
 })
-export class ItemAddEditModalComponent {
-  data = {} as Item;
+export class ItemAddEditModalComponent implements OnInit {
+  data = inject(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Item';
   itemForm = new FormGroup({
@@ -45,23 +43,23 @@ export class ItemAddEditModalComponent {
     cooking: new FormControl(false),
     productId: new FormControl(0),
   });
-  recipes: Recipe[] = [];
-  ingredientSearch: string = '';
+  recipes = signal<Recipe[]>([]);
+  ingredientSearch = '';
   #ingredientService = inject(IngredientService);
   #itemService = inject(ItemService);
-  #modalRef = inject(NgbActiveModal);
+  #modalRef = inject(MatDialogRef<ItemAddEditModalComponent>);
   #recipeService = inject(RecipeService);
   #tS = inject(ToasterService);
 
   selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
     let medidas = [];
-    let rows = cell.getRow().getData();
+    const rows = cell.getRow().getData();
 
     if (rows.extents !== undefined) {
       medidas = JSON.parse(rows.extents);
     }
 
-    let selectList = document.createElement('select');
+    const selectList = document.createElement('select');
     selectList.style.width = '100%';
     selectList.style.boxSizing = 'border-box';
 
@@ -95,7 +93,7 @@ export class ItemAddEditModalComponent {
 
     // Crear y añadir las opciones
     medidas.forEach((medida: any) => {
-      let option = document.createElement('option');
+      const option = document.createElement('option');
 
       option.value = medida.idMedida.toString();
       option.text = medida.descripcion;
@@ -111,8 +109,8 @@ export class ItemAddEditModalComponent {
 
   formatterMedida = (cell: any) => {
     let medidas = [];
-    let row = cell.getRow().getData();
-    let value = cell.getValue();
+    const row = cell.getRow().getData();
+    const value = cell.getValue();
 
     if (row.extents !== undefined) {
       medidas = JSON.parse(row.extents);
@@ -125,7 +123,7 @@ export class ItemAddEditModalComponent {
   formatterCostPrice = (cell: any) => {
     let medidas = [];
     let value = 0;
-    let row = cell.getRow().getData();
+    const row = cell.getRow().getData();
 
     if (row.extents !== undefined) {
       medidas = JSON.parse(row.extents);
@@ -140,8 +138,8 @@ export class ItemAddEditModalComponent {
   };
 
   priceUpdate = (cell: any) => {
-    let column = cell.getColumn()._column.field;
-    let row = cell.getRow().getData();
+    const column = cell.getColumn()._column.field;
+    const row = cell.getRow().getData();
     let medidas = [];
 
     if (row.extents !== undefined) {
@@ -247,12 +245,12 @@ export class ItemAddEditModalComponent {
   ];
 
   removeFromList(id: number) {
-    let newArray = this.recipes.filter((x: Recipe) => x.id !== id);
+    const newArray = this.recipes().filter((x: Recipe) => x.id !== id);
   }
 
   getRecipes() {
     this.#recipeService.getByItem(this.data.id).subscribe((response) => {
-      this.recipes = response.recipes;
+      this.recipes.set(response.recipes);
     });
   }
 
@@ -278,9 +276,8 @@ export class ItemAddEditModalComponent {
     }
     const dataToSave = {
       itemJson: this.itemForm.value,
-      recipeJson: this.recipes,
+      recipeJson: this.recipes(),
     };
-    console.log(dataToSave);
     this.#itemService
       .put(this.data.id, { data: dataToSave })
       .subscribe((response) => {
@@ -294,21 +291,21 @@ export class ItemAddEditModalComponent {
       });
   }
 
-  onIngredientSelected($event: { ingredient: Ingredient }) {
-    this.recipes.push({
+  onIngredientSelected($event: Ingredient) {
+    this.recipes().push({
       costPrice: 0,
       extentId: 0,
       id: 0,
       itemId: this.data.id,
-      summary: $event.ingredient.summary,
+      summary: $event.summary,
       instructions: '',
       netWeight: 0,
       quantity: 0,
-      ingredientId: $event.ingredient.id,
-      productId: $event.ingredient.productId,
+      ingredientId: $event.id,
+      productId: $event.productId,
       precioCosto: 0,
     });
-    this.getExtent($event.ingredient.productId);
+    this.getExtent($event.productId);
   }
 
   getExtent(productId: number) {
@@ -316,7 +313,7 @@ export class ItemAddEditModalComponent {
       .get({ productId, tipo: 3 })
       .subscribe((response) => {
         const extents = response.extents;
-        this.recipes.forEach((e: Recipe, index: number) => {
+        this.recipes().forEach((e: Recipe, index: number) => {
           if (e.productId === productId) {
             e.extentId = extents[0].idMedida;
             e.precioCosto = extents[0].precioCosto;

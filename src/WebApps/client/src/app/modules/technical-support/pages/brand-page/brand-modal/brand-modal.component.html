@@ -1,79 +1,80 @@
-<form [formGroup]="brandForm" (ngSubmit)="onSave()">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon> {{ modalTitle }}
-    </h5>
-    <button type="button" class="btn-close" (click)="onModalClose()"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="categoryId">Categoría:</label>
-          <select
-            formControlName="categoryId"
-            id="categoryId"
-            class="form-select"
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="modalTitle"
+  (close)="onModalClose()"
+/>
+<ng-template #body>
+  <form [formGroup]="brandForm" id="brandForm" (ngSubmit)="onSave()">
+      <div class="row">
+        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="categoryId">Categoría:</label>
+            <select
+              formControlName="categoryId"
+              id="categoryId"
+              class="form-select"
+            >
+              <option [value]="0">Seleccione una categoría</option>
+              @for (item of categories(); track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+          <div class="form-group">
+            <label for="code">Código:</label>
+            <input
+              type="text"
+              formControlName="code"
+              id="code"
+              class="form-control"
+              maxlength="25"
+            />
+          </div>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input
+              type="text"
+              formControlName="name"
+              id="name"
+              class="form-control"
+              maxlength="100"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+          <app-theme-button
+            icon="add"
+            text="Añadir Serie"
+            (handleClick)="onSerieAdd()"
           >
-            <option [value]="0">Seleccione una categoría</option>
-            @for (item of categories; track $index) {
-              <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
+          </app-theme-button>
+          @if (this.series.length > 0) {
+            <app-tabulator
+              [columnNames]="columnNames"
+              [tableData]="series"
+            ></app-tabulator>
+          }
         </div>
       </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="code">Código:</label>
-          <input
-            type="text"
-            formControlName="code"
-            id="code"
-            class="form-control"
-            maxlength="25"
-          />
-        </div>
-      </div>
-      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="name">Nombre:</label>
-          <input
-            type="text"
-            formControlName="name"
-            id="name"
-            class="form-control"
-            maxlength="100"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <app-theme-button
-          icon="add"
-          text="Añadir Serie"
-          (handleClick)="onSerieAdd()"
-        >
-        </app-theme-button>
-        @if (this.series.length > 0) {
-          <app-tabulator
-            [columnNames]="columnNames"
-            [tableData]="series"
-          ></app-tabulator>
-        }
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="submit" mat-raised-button [disabled]="brandForm.invalid">
-      <mat-icon>save</mat-icon> Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    >
-    </app-theme-button>
-  </div>
-</form>
+
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    [disabled]="brandForm.invalid"
+    variant="success"
+    icon="save"
+    text="Guardar"
+    type="submit"
+    form="brandForm"
+  />
+</ng-template>
+
+

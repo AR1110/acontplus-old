@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
@@ -30,7 +30,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -39,7 +38,6 @@ import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to
 
 import Swal from 'sweetalert2';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { DocConfigService } from '@modules/config/services/doc-config.service';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
@@ -56,7 +54,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
+import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 
 @Component({
   selector: 'app-wizard-config',
@@ -71,7 +71,6 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
     MatStepperPrevious,
     FaIconComponent,
     MatRadioButton,
-    NgbTooltip,
     MatChipGrid,
     MatChipRow,
     MatChipInput,
@@ -86,7 +85,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
   templateUrl: './wizard-config.component.html',
   styles: [],
 })
-export class WizardConfigComponent {
+export class WizardConfigComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
   addOnBlur = true;
   announcer = inject(LiveAnnouncer);
@@ -136,10 +135,10 @@ export class WizardConfigComponent {
   isDisabledAgenteRetencion = false;
   emails: string[] = [];
   telephones: string[] = [];
-  establecimientos: Array<GroupedEstab> = [];
-  currentEstab: string = '';
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  docs: Array<DocConfig> = [];
+  establecimientos: GroupedEstab[] = [];
+  currentEstab = '';
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
+  docs: DocConfig[] = [];
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
     fechaCaducidad: new FormControl('', [Validators.required]),
@@ -160,8 +159,8 @@ export class WizardConfigComponent {
   });
   demoSteps: DemoStep[] = [];
   user = {} as UserData;
-  userUpdated: boolean = false;
-  estabRegistered: boolean = false;
+  userUpdated = false;
+  estabRegistered = false;
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
 
   private _tokenUseCase = inject(TokenUseCase);
@@ -196,7 +195,9 @@ export class WizardConfigComponent {
     bodegas: this.#fb.array([]),
   });
   #firmaElectronicaService = inject(FirmaElectronicaService);
-  #docConfigSvc = inject(DocConfigService);
+  #createDocConfig = inject(CreateDocConfigUseCase);
+  private $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
+
   #companyDemoStepService = inject(CompanyDemoStepService);
 
   get bodegas(): FormArray {
@@ -308,7 +309,7 @@ export class WizardConfigComponent {
   }
 
   fetchDocConfig() {
-    this.#docConfigSvc.getDataForm().subscribe((response) => {
+    this.$formDataDocConfig.execute().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       this.currentEstab = this.establecimientos[0].nombreComercial;
       const combinedData = this.establecimientos[0].puntosEmision.map(
@@ -319,7 +320,7 @@ export class WizardConfigComponent {
             parentId: pto.idPuntoEmision,
             ultimaSecuencia: 0,
           })),
-        }),
+        })
       );
       this.docsConfig = combinedData as [];
     });
@@ -359,14 +360,14 @@ export class WizardConfigComponent {
         message: 'Revise que los datos de los puntos de emisión sean correctos',
       });
     }
-    let telephone =
+    const telephone =
       this.telephones.length > 0
         ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH)
         : null;
 
     this.estabForm.get('telefono')?.setValue(telephone);
 
-    let correo =
+    const correo =
       this.emails.length > 0
         ? this.emails.join(SEPARATOR_KEY_CODE.SLASH)
         : null;
@@ -432,7 +433,7 @@ export class WizardConfigComponent {
   showInfoTipoContribuyente(): void {
     const contribuyente = this.estabForm.get('contribuyente')?.value;
     const dataInfo = this.contribuyentes.find(
-      (item) => item.codigo === contribuyente,
+      (item) => item.codigo === contribuyente
     );
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
@@ -445,7 +446,7 @@ export class WizardConfigComponent {
   showInfoActividadEconomica(): void {
     const actividad = this.estabForm.get('actividad')?.value;
     const groupActEconomica = this.actividadesEconomica.find(
-      (item) => item.codigo === actividad,
+      (item) => item.codigo === actividad
     )?.grupo;
     if (actividad && groupActEconomica) {
       Swal.fire({
@@ -519,7 +520,7 @@ export class WizardConfigComponent {
           idPuntoEmision: pto.idPuntoEmision,
           idTipoDocumento: doc.idTipoDocumento,
           ultimaSecuencia: doc.ultimaSecuencia,
-        })),
+        }))
     );
 
     if (docs.length == 0) {
@@ -534,7 +535,7 @@ export class WizardConfigComponent {
       docs: JSON.stringify(docs),
       demoStepId: this.demoSteps.find((step) => step.code === 'VI')?.id,
     };
-    this.#docConfigSvc.post(dataToSave).subscribe((response) => {
+    this.#createDocConfig.execute(dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code === '0' && this.stepper) {
           this.stepper.previous();

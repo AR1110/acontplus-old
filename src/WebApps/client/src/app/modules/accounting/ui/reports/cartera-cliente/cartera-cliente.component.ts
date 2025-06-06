@@ -212,17 +212,17 @@ export class CarteraClienteComponent {
       return;
     }
 
-    let idCliente = this.dataSearch.checkboxCompanyCustomer
+    const idCliente = this.dataSearch.checkboxCompanyCustomer
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
-    let idEmpresa =
+    const idEmpresa =
       this.dataSearch.idEmpresa > 0 ? this.dataSearch.idEmpresa : null;
 
-    let dirViviendaCliente = this.dataSearch.checkBoxDirViviendaCliente
+    const dirViviendaCliente = this.dataSearch.checkBoxDirViviendaCliente
       ? isValidField(this.dataSearch.dirViviendaCliente)
       : null;
 
-    let dataParams = {
+    const dataParams = {
       tipo: 1,
       ckFecha: this.dataSearch.ckFecha,
       codEstab: this.dataSearch.codEstab,
@@ -241,7 +241,7 @@ export class CarteraClienteComponent {
       userId: this.dataSearch.userId,
     };
 
-    let reportParams = JSON.stringify({
+    const reportParams = JSON.stringify({
       // hasParams: false,
       codigo: this.dataSearch.ckCuotas
         ? ACCOUNTING_CODE_REPORT.CCCR
@@ -265,11 +265,11 @@ export class CarteraClienteComponent {
 
   // Deudores
   private getReportDeudores() {
-    let dirViviendaCliente = this.dataSearch.checkBoxDirViviendaCliente
+    const dirViviendaCliente = this.dataSearch.checkBoxDirViviendaCliente
       ? isValidField(this.dataSearch.dirViviendaCliente)
       : null;
 
-    let dataParams = {
+    const dataParams = {
       tipo: 7,
       codEstab: this.dataSearch.codEstab,
       ckCxcVencida: this.dataSearch.ckCxcVencida,
@@ -278,7 +278,7 @@ export class CarteraClienteComponent {
       idCiudad: this.dataSearch.idCiudad,
     };
 
-    let reportParams = JSON.stringify({
+    const reportParams = JSON.stringify({
       // hasParams: false,
       codigo: 'RDEU',
       format: this.format,
