@@ -248,62 +248,160 @@ BEGIN
     --> Reporte general de historial
     IF  @tipo =  3
         BEGIN
-            DECLARE @idEntidad INT
+            --> Sql
+	        DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX)  
+
+            --> Filters
+            DECLARE @checkBoxFecha BIT 
+                   ,@codEstab      VARCHAR(25) 
+                   ,@idCliente     INT 
+                   ,@idEntidad     INT
+                   ,@idUsuario     INT
+                   ,@codEstado     VARCHAR(5)
+                   ,@dateStart     DATETIME2 
+                   ,@dateEnd       DATETIME2 
+                   ,@secuencial    VARCHAR(100) 
+
+            SELECT @checkBoxFecha = checkBoxFecha
+		          ,@codEstab      = codEstab
+		          ,@idCliente     = byCliente
+		          ,@codEstado     = byEstado
+		          ,@idUsuario     = byUsuario
+		          ,@dateStart     = fechaInicio
+		          ,@dateEnd       = fechaFin
+		          ,@secuencial    = LTRIM(TRIM(nroSecuencial))
+	        FROM OPENJSON(@json) WITH
+            (    
+                 checkBoxFecha   BIT  
+		        ,codEstab        VARCHAR(25)
+		        ,byCliente       INT 
+		        ,byEstado        VARCHAR(5) 
+		        ,byUsuario       INT
+		        ,fechaInicio     DATETIME2
+		        ,fechaFin        DATETIME2
+		        ,nroSecuencial   VARCHAR(20)
+            )
 
             SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-            SELECT ad.idAprob_Document 
-                  ,cu.IdCard
-                  ,cu.TradeName
-                  ,og.codigo			                          as codDocOrigen
-	              ,CASE WHEN hs.idNotaEntrega  > 0 THEN un.nombreUsuario
-                        WHEN hs.idProforma     > 0 THEN up.nombreUsuario
-                   END					                          as usuarioOrigen
-	              ,CASE WHEN hs.idNotaEntrega  > 0 THEN ne.serieComprobante
-                        WHEN hs.idProforma     > 0 THEN pr.serieComprobante
-                   END					                          as serieOrigen
-	              ,CASE WHEN hs.idNotaEntrega  > 0 THEN FORMAT(ne.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
-                        WHEN hs.idProforma     > 0 THEN FORMAT(pr.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
-                   END					                          as fechaOrigen
-	              ,ud.nombreUsuario		                          as usuarioCreador
-	              ,td.codigo			                          as codDoc
-	              ,og.descripcion + ' / ' + td.descripcion        as conversion
-                  ,ad.serieComprobante
-	              ,dg.serieComprobante	                          as serieGuia
-                  ,CAST(ad.importeTotal as numeric(18,2))         as importeTotal
-	              ,FORMAT(ad.fechaEmision ,'dd/MM/yyyy hh:mm:ss') as fechaEmision
-	              ,ua.nombreUsuario		                          as usuarioDestino
-	              ,CASE WHEN au.idFactura     > 0 THEN de.serieComprobante
-		                WHEN au.idNotaEntrega > 0 THEN nd.serieComprobante
-	               END					                          as serieDestino 
-	              ,CASE WHEN au.idFactura     > 0 THEN FORMAT(de.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
-		                WHEN au.idNotaEntrega > 0 THEN FORMAT(nd.fechaEmision ,'dd/MM/yyyy hh:mm:ss')
-	               END					                          as fechaDestino 
-	             ,es.descripcion		                          as estado
-            FROM Ventas.Aprob_Document_Hist        hs WITH (NOLOCK)
-             LEFT JOIN dbo.Proforma                pr WITH (NOLOCK) ON pr.idProforma             = hs.idProforma 
-             LEFT JOIN dbo.Usuario                 up WITH (NOLOCK) ON up.idUsuario              = pr.idUsuario
-             LEFT JOIN dbo.NotaEntrega             ne WITH (NOLOCK) ON ne.idNotaEntrega          = hs.idNotaEntrega
-             LEFT JOIN dbo.Usuario                 un WITH (NOLOCK) ON un.idUsuario              = ne.idUsuario
-            INNER JOIN Ventas.Aprob_Document       ad WITH (NOLOCK) ON ad.idAprob_Document       = hs.idAprob_Document
-            INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = ad.idPuntoEmision
-             LEFT JOIN dbo.GuiaRemision            gr WITH (NOLOCK) ON gr.idAprob_Document       = ad.idAprob_Document
-            INNER JOIN dbo.Usuario                 ud WITH (NOLOCK) ON ud.idUsuario              = ad.idUsuario
-            INNER JOIN dbo.TipoDocumento           td WITH (NOLOCK) ON td.idTipoDocumento        = ad.idTipoDocumento
-            INNER JOIN dbo.TipoDocumento           og WITH (NOLOCK) ON og.idTipoDocumento        = ad.idTipoDocOrigen
-            INNER JOIN dbo.EstadoPago              es WITH (NOLOCK) ON es.idEstadoPago           = ad.idEstadoDocumento
-            INNER JOIN dbo.Cliente                 cl WITH (NOLOCK) ON cl.idCliente		         = ad.idCliente
-             LEFT JOIN Ventas.Aprob_Document_Audit au WITH (NOLOCK) ON au.idAprob_Document       = ad.idAprob_Document
-             LEFT JOIN dbo.NotaEntrega             nd WITH (NOLOCK) ON nd.idNotaEntrega          = au.idNotaEntrega
-             LEFT JOIN dbo.Factura                 fa WITH (NOLOCK) ON fa.idFactura		         = au.idFactura
-             LEFT JOIN dbo.Usuario                 ua WITH (NOLOCK) ON ua.idUsuario			     = au.idUsuario
-             LEFT JOIN dbo.DocumentoElectronico    dg WITH (NOLOCK) ON dg.idDocumentoElectronico = gr.idDocumentoElectronico
-             LEFT JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
-            INNER JOIN Customer.Customer           cu WITH (NOLOCK) ON cu.Id			         = cl.CustomerId
-            INNER JOIN Sri.Establecimiento         ss WITH (NOLOCK) ON ss.idEstablecimiento      = pe.idEstablecimiento
-            WHERE ss.idEntidad = @idEntidad
-            order by ad.idAprob_Document,fechaEmision,codDocOrigen,serieOrigen asc
-            --ORDER by cu.TradeName,og.codigo,serieOrigen ASC
+            SET @params = '@idEntidad         INT
+						  ,@idEstablecimiento INT
+						  ,@idCliente         INT
+						  ,@idUsuario         INT
+                          ,@idEstadoDocumento INT
+						  ,@dateStart         DATETIME2
+						  ,@dateEnd           DATETIME2'
+
+            SET @sql = 'SELECT ad.idAprob_Document 
+                              ,cu.IdCard
+                              ,cu.TradeName
+                              ,og.codigo			                                                                                                                                            as codDocOrigen
+	                          ,CASE WHEN hs.idNotaEntrega  > 0 THEN un.nombreUsuario                              WHEN hs.idProforma > 0 THEN up.nombreUsuario                              END as usuarioOrigen
+	                          ,CASE WHEN hs.idNotaEntrega  > 0 THEN ne.serieComprobante                           WHEN hs.idProforma > 0 THEN pr.serieComprobante                           END as serieOrigen
+	                          ,CASE WHEN hs.idNotaEntrega  > 0 THEN CAST(ne.total as numeric(18,2))               WHEN hs.idProforma > 0 THEN CAST(pr.total as numeric(18,2))               END as totalOrigen
+                              ,CASE WHEN hs.idNotaEntrega  > 0 THEN FORMAT(ne.fechaEmision ,''dd/MM/yyyy hh:mm'') WHEN hs.idProforma > 0 THEN FORMAT(pr.fechaEmision ,''dd/MM/yyyy hh:mm'') END as fechaOrigen
+	                          ,ud.nombreUsuario		                                                                                                                                            as usuarioCreador
+	                          ,IIF(td.codigo = ''FV'',''PF'',td.codigo)			                                                                                                                as codDoc
+	                          ,og.descripcion + '' / '' + td.descripcion                                                                                                                        as conversion
+                              ,ad.serieComprobante
+	                          ,dg.serieComprobante	                                                                                                                                          as serieGuia
+	                          ,FORMAT(dg.fechaEmision ,''dd/MM/yyyy hh:mm'')                                                                                                                  as fechaGuia
+                              ,CAST(ad.importeTotal as numeric(18,2))                                                                                                                         as importeTotal
+	                          ,FORMAT(ad.fechaEmision ,''dd/MM/yyyy hh:mm'')                                                                                                                  as fechaEmision
+	                          ,ua.nombreUsuario		                                                                                                                                          as usuarioDestino
+	                          ,td.codigo                                                                                                                                                      as codDocDestino
+                              ,CASE WHEN au.idFactura > 0 THEN de.serieComprobante                           WHEN au.idNotaEntrega > 0 THEN nd.serieComprobante                           END as serieDestino 
+	                          ,CASE WHEN au.idFactura > 0 THEN FORMAT(de.fechaEmision ,''dd/MM/yyyy hh:mm'') WHEN au.idNotaEntrega > 0 THEN FORMAT(nd.fechaEmision ,''dd/MM/yyyy hh:mm'') END as fechaDestino
+                              ,CASE WHEN au.idFactura > 0 THEN CAST(fa.total as numeric(18,2))               WHEN au.idNotaEntrega > 0 THEN CAST(pr.total as numeric(18,2))               END as totalDestino
+	                          ,es.descripcion		                                                                                                                                          as estado
+                       FROM Ventas.Aprob_Document_Hist        hs WITH (NOLOCK)
+                        LEFT JOIN dbo.Proforma                pr WITH (NOLOCK) ON pr.idProforma             = hs.idProforma 
+                        LEFT JOIN dbo.Usuario                 up WITH (NOLOCK) ON up.idUsuario              = pr.idUsuario
+                        LEFT JOIN dbo.NotaEntrega             ne WITH (NOLOCK) ON ne.idNotaEntrega          = hs.idNotaEntrega
+                        LEFT JOIN dbo.Usuario                 un WITH (NOLOCK) ON un.idUsuario              = ne.idUsuario
+                       INNER JOIN Ventas.Aprob_Document       ad WITH (NOLOCK) ON ad.idAprob_Document       = hs.idAprob_Document
+                       INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = ad.idPuntoEmision
+                        LEFT JOIN dbo.GuiaRemision            gr WITH (NOLOCK) ON gr.idAprob_Document       = ad.idAprob_Document
+                       INNER JOIN dbo.Usuario                 ud WITH (NOLOCK) ON ud.idUsuario              = ad.idUsuario
+                       INNER JOIN dbo.TipoDocumento           td WITH (NOLOCK) ON td.idTipoDocumento        = ad.idTipoDocumento
+                       INNER JOIN dbo.TipoDocumento           og WITH (NOLOCK) ON og.idTipoDocumento        = ad.idTipoDocOrigen
+                       INNER JOIN dbo.EstadoPago              es WITH (NOLOCK) ON es.idEstadoPago           = ad.idEstadoDocumento
+                       INNER JOIN dbo.Cliente                 cl WITH (NOLOCK) ON cl.idCliente		        = ad.idCliente
+                        LEFT JOIN Ventas.Aprob_Document_Audit au WITH (NOLOCK) ON au.idAprob_Document       = ad.idAprob_Document
+                        LEFT JOIN dbo.NotaEntrega             nd WITH (NOLOCK) ON nd.idNotaEntrega          = au.idNotaEntrega
+                        LEFT JOIN dbo.Factura                 fa WITH (NOLOCK) ON fa.idFactura		        = au.idFactura
+                        LEFT JOIN dbo.Usuario                 ua WITH (NOLOCK) ON ua.idUsuario			    = au.idUsuario
+                        LEFT JOIN dbo.DocumentoElectronico    dg WITH (NOLOCK) ON dg.idDocumentoElectronico = gr.idDocumentoElectronico
+                        LEFT JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
+                       INNER JOIN Customer.Customer           cu WITH (NOLOCK) ON cu.Id			            = cl.CustomerId
+                       INNER JOIN Sri.Establecimiento         ss WITH (NOLOCK) ON ss.idEstablecimiento      = pe.idEstablecimiento
+                       WHERE ss.idEntidad = @idEntidad '
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    DECLARE @idEstablecimiento INT
+
+                    SELECT TOP 1 @idEstablecimiento = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+
+                    SET @sql = @sql + 'AND pe.idEstablecimiento = @idEstablecimiento '
+                END
+
+            IF @secuencial IS NOT NULL
+		        BEGIN
+			        SET @sql = @sql + 'AND ad.secuencial BETWEEN ' + REPLACE(@secuencial,'-',' AND ')
+		        END
+
+            IF @idCliente > 0
+				BEGIN
+					SET @sql = @sql + 'AND ad.idCliente = @idCliente '
+				END
+
+            IF @codEstado IS NOT NULL
+				BEGIN
+                    DECLARE @idEstadoDocumento INT 
+
+                    SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = @codEstado
+
+				    SET @sql = @sql + 'AND ad.idEstadoDocumento = @idEstadoDocumento '
+				END
+
+            ELSE 
+                BEGIN
+                    SET @sql = @sql + 'AND es.codigo NOT IN (''A'') '
+                END 
+
+            IF @idUsuario > 0
+				BEGIN
+					SET @sql = @sql + 'AND ad.idUsuario = @idUsuario '
+				END 
+			
+			IF @checkBoxFecha = 1 
+				BEGIN
+					SET @sql = @sql + 'AND CAST(ad.fechaEmision as date) BETWEEN CAST(@dateStart as date) AND CAST(@dateEnd as date) '
+				END
+
+
+            SET @sql = @sql + 'ORDER BY TradeName ASC '
+
+
+             SELECT entidad                                                                   as razonSocial 
+                   ,rucEmpresa                                                                as ruc
+                   ,direccion                                                                 as direccionEntidad 
+                   ,nombreUsuario                                                             as usuario
+                   ,'Reporte - Trasabildiad de Aprobaciones'                                  as tituloReporte
+                   ,FORMAT(@dateStart, 'dd/MM/yyyy') + ' a ' + FORMAT(@dateEnd, 'dd/MM/yyyy') as filtroFechas
+            FROM v_usuario
+            WHERE idUsuarioRol = @userRoleId
+
+            EXEC sp_executesql @sql
+			                  ,@params 
+			                  ,@idEntidad         = @idEntidad
+			                  ,@idEstablecimiento = @idEstablecimiento
+			                  ,@idCliente         = @idCliente
+			                  ,@idEstadoDocumento = @idEstadoDocumento 
+			                  ,@idUsuario         = @idUsuario
+			                  ,@dateStart         = @dateStart
+			                  ,@dateEnd           = @dateEnd
 
             RETURN 
         END 

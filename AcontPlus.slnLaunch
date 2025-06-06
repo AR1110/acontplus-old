@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\ApiGateways\\GatewayAcontplus.API\\GatewayAcontplus.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Common\\Common.API\\Common.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
