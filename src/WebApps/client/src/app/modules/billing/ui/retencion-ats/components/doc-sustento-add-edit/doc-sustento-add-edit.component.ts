@@ -371,7 +371,13 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   }
 
   addPayment(indexDoc: number) {
-    const payment = {};
+    const payment = {
+      idRetAtsDocSustento: this.docSustentoArray()
+        .at(indexDoc)
+        .get('idRetAtsDocSustento')?.value,
+      total: this.docSustentoArray().at(this.indexDoc()).get('importeTotal')
+        ?.value,
+    };
     this.createPaymentWithValue(indexDoc, payment as RetencionAtsDocPayment);
   }
 
