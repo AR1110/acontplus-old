@@ -48,10 +48,7 @@ BEGIN
         SELECT
         @idComprobanteEgreso = id,
         @tipo = tipo
-    FROM OPENJSON(@json) WITH(
-            id INT, 
-            tipo INT
-        );
+    FROM OPENJSON(@json) WITH(id INT, tipo INT);
 
         -- =============================================
         -- VALIDAR TIPO DE PROCESO
@@ -59,12 +56,10 @@ BEGIN
         IF @tipo = 1
         BEGIN
         -- Verificar si existe movimiento de caja asociado
-        IF EXISTS (
-                SELECT 1
+        IF EXISTS (SELECT 1
         FROM MovimientoCaja WITH (NOLOCK)
-        WHERE idComprobanteEgreso = @idComprobanteEgreso
-            )
-            BEGIN
+        WHERE idComprobanteEgreso = @idComprobanteEgreso)
+                BEGIN
             SET @byEgreso = 1;
         END
 
@@ -112,46 +107,64 @@ BEGIN
                 ON es.idEstablecimiento = ce.idEstablecimiento
             WHERE mc.idComprobanteEgreso = @idComprobanteEgreso;
         END
-    END 
-        ELSE 
+            ELSE
+            BEGIN
+            -- =============================================
+            -- CONSULTA ALTERNATIVA - CUENTAS POR PAGAR
+            -- =============================================
+            SELECT
+                cuenta_pp.idCuentaPorPagar AS 'unique',
+                cuenta_pp.codDoc AS tipoDoc,
+                cuenta_pp.serieComprobante AS nroDoc,
+                FORMAT(cuenta_pp.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaEmision,
+                CAST(cuenta_pp.importeTotal AS DECIMAL(18,2)) AS total,
+                ISNULL(se.descripcion, ef.descripcion) AS formaPago,
+                IIF(p.posfechado = 1, 'SI', 'NO') AS posfechado,
+                CASE 
+                            WHEN ef.codigo = 'CHE' THEN b.descripcion 
+                            ELSE NULL
+                        END AS entidadFinanciera,
+                p.nro AS comprobantePago,
+                FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaPago,
+                cuota_pp.nroCuota AS cuota,
+                CAST(cuota_pp.cuota AS DECIMAL(16, 2)) AS valorCuota,
+                CAST(pde.abono AS DECIMAL(16, 2)) AS abono,
+                CAST(pde.saldo - IIF(p.cobro = 1, pde.abono, 0) AS DECIMAL(16, 2)) AS saldo
+            FROM dbo.ComprobanteEgreso ce WITH (NOLOCK)
+                INNER JOIN dbo.Pago p WITH (NOLOCK)
+                ON p.idComprobanteEgreso = ce.idComprobanteEgreso
+                INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK)
+                ON ef.idEntidadFinanciera = p.idEntidadFinanciera
+                LEFT JOIN dbo.SubEntidadFinanciera se WITH (NOLOCK)
+                ON se.idSubEntidadFinanciera = p.idSubEntidadFinanciera
+                LEFT JOIN dbo.Banco b WITH (NOLOCK)
+                ON p.idBanco = b.idBanco
+                INNER JOIN dbo.PagoDetalle pde WITH (NOLOCK)
+                ON pde.idPago = p.idPago
+                INNER JOIN Contabilidad.CuotaPorPagar cuota_pp WITH (NOLOCK)
+                ON cuota_pp.idCuotaPorPagar = pde.idCuotaPorPagar
+                INNER JOIN Contabilidad.CuentaPorPagar cuenta_pp WITH (NOLOCK)
+                ON cuenta_pp.idCuentaPorPagar = cuota_pp.idCuentaPorPagar
+            WHERE ce.idComprobanteEgreso = @idComprobanteEgreso;
+            RETURN
+        END
+
+        --Reporte Listado de comprobantes de egreso
+        IF @tipo = 2
         BEGIN
-        -- =============================================
-        -- CONSULTA ALTERNATIVA - CUENTAS POR PAGAR
-        -- =============================================
-        SELECT
-            cuenta_pp.idCuentaPorPagar AS 'unique',
-            cuenta_pp.codDoc AS tipoDoc,
-            cuenta_pp.serieComprobante AS nroDoc,
-            FORMAT(cuenta_pp.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaEmision,
-            CAST(cuenta_pp.importeTotal AS DECIMAL(18,2)) AS total,
-            ISNULL(se.descripcion, ef.descripcion) AS formaPago,
-            IIF(p.posfechado = 1, 'SI', 'NO') AS posfechado,
-            CASE 
-                    WHEN ef.codigo = 'CHE' THEN b.descripcion 
-                    ELSE NULL
-                END AS entidadFinanciera,
-            p.nro AS comprobantePago,
-            FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaPago,
-            cuota_pp.nroCuota AS cuota,
-            CAST(cuota_pp.cuota AS DECIMAL(16, 2)) AS valorCuota,
-            CAST(pde.abono AS DECIMAL(16, 2)) AS abono,
-            CAST(pde.saldo - IIF(p.cobro = 1, pde.abono, 0) AS DECIMAL(16, 2)) AS saldo
-        FROM dbo.ComprobanteEgreso ce WITH (NOLOCK)
-            INNER JOIN dbo.Pago p WITH (NOLOCK)
-            ON p.idComprobanteEgreso = ce.idComprobanteEgreso
-            INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK)
-            ON ef.idEntidadFinanciera = p.idEntidadFinanciera
-            LEFT JOIN dbo.SubEntidadFinanciera se WITH (NOLOCK)
-            ON se.idSubEntidadFinanciera = p.idSubEntidadFinanciera
-            LEFT JOIN dbo.Banco b WITH (NOLOCK)
-            ON p.idBanco = b.idBanco
-            INNER JOIN dbo.PagoDetalle pde WITH (NOLOCK)
-            ON pde.idPago = p.idPago
-            INNER JOIN Contabilidad.CuotaPorPagar cuota_pp WITH (NOLOCK)
-            ON cuota_pp.idCuotaPorPagar = pde.idCuotaPorPagar
-            INNER JOIN Contabilidad.CuentaPorPagar cuenta_pp WITH (NOLOCK)
-            ON cuenta_pp.idCuentaPorPagar = cuota_pp.idCuentaPorPagar
-        WHERE ce.idComprobanteEgreso = @idComprobanteEgreso;
+            SET @tableNames = 'headerDs,detalleDs';
+
+            RETURN
+        END
+
+
+        --Reporte de Listado de comprobantes de egreso con detalles de pago
+        IF @tipo = 3
+        BEGIN
+
+            RETURN
+        END
+
     END
 
     END TRY

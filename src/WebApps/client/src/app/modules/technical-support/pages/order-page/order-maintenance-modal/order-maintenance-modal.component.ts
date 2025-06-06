@@ -814,7 +814,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   async onChangeFee() {
     try {
       // if (!$scope.permisoComprobanteVenta.tarifa) {
-      //   $scope.data.idTarifa = $scope.dataClone.idTarifa;
+      //   $scope.infrastructure.idTarifa = $scope.dataClone.idTarifa;
       //   tS.toastr('warning', 'No tienes permiso para realizar esta acción');
       //   return
       // }
@@ -1165,7 +1165,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   /**
    *
    * @param {*} column nombre de la columnas
-   * @param {*} data  data row
+   * @param {*} data  infrastructure row
    * @param {*} oldValue valor anterior de la columna
    */
   setCalculoTotales(

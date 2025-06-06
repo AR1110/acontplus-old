@@ -239,7 +239,7 @@ export class InventoryReportComponent implements OnInit {
   }
 
   onSupplierSelected(data: any) {
-    // this.dataSearch.idProveedor = data.idProveedor;
+    // this.dataSearch.idProveedor = infrastructure.idProveedor;
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
     this.dataSearch.nameSupplier = data.name;
   }

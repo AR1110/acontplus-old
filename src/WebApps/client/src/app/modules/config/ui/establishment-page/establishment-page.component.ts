@@ -72,7 +72,7 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _tS = inject(ToasterService);
   setPanelOpen(index: number) {
     this.panelOpenState = index;
-    // Only load data when opening a panel (not when closing)
+    // Only load infrastructure when opening a panel (not when closing)
     if (index >= 0 && index < this.establishments().length) {
       const estab = this.establishments()[index];
       this.onEstabShow(estab.idEstablecimiento);

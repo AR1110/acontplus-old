@@ -31,7 +31,7 @@ export class FacturaFisicaRepository {
 
         }
         return throwError(
-          () => new Error('No se puedo cargar la data filter')
+          () => new Error('No se puedo cargar la infrastructure filter')
         );
       })
     )

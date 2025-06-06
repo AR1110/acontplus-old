@@ -12,7 +12,7 @@ import { TiempoCredito } from '@modules/config/domain/models/tiempo-credito.mode
 })
 export class TiempoCreditoPageComponent {
   buscar: string = '';
-  tiempoCreditos: TiempoCredito[] = []; // Populate this with your data
+  tiempoCreditos: TiempoCredito[] = []; // Populate this with your infrastructure
   filteredCreditos: TiempoCredito[] = [];
   accion = { editar: true, eliminar: true }; // Your action
 

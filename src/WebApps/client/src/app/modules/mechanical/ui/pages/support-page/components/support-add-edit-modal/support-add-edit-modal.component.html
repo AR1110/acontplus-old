@@ -105,7 +105,7 @@
       <!--      <div class="col">-->
       <!--        <mat-form-field class="w-100">-->
       <!--          <mat-label>Secuencia</mat-label>-->
-      <!--          <input matInput [value]="data.sequence" disabled />-->
+      <!--          <input matInput [value]="infrastructure.sequence" disabled />-->
       <!--        </mat-form-field>-->
       <!--      </div>-->
     </div>
@@ -273,8 +273,8 @@
           <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
             <mat-icon>add</mat-icon>
           </button>
-          @if (data.vehicleCompanyId>0) {
-            <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit [params]="{id: data.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
+          @if (infrastructure.vehicleCompanyId>0) {
+            <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit [params]="{id: infrastructure.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
               <mat-icon>edit</mat-icon>
             </button>
           }
@@ -291,7 +291,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="tecnicoEncargado">Técnico Encargado: <span class="text-danger">*</span></label>
-        <select name="tecnicoEncargado" id="tecnicoEncargado" class="form-select" [(ngModel)]="data.userAssignedId">
+        <select name="tecnicoEncargado" id="tecnicoEncargado" class="form-select" [(ngModel)]="infrastructure.userAssignedId">
           @for (item of users; track $index) {
             <option [ngValue]="item.userAssignedId">{{item.userName}}</option>
           }
@@ -301,7 +301,7 @@
     </div>
   </div>
 
-  @if (data.vehicleCompanyId>0) {
+  @if (infrastructure.vehicleCompanyId>0) {
     <div class="row">
 
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
@@ -312,7 +312,7 @@
 
   <div class="form-group">
     <label for="soporteRealizar">Soporte a realizar: <span class="text-danger">*</span></label>
-    <textarea name="soporteRealizar" id="soporteRealizar" class="form-control" [(ngModel)]="data.obs"></textarea>
+    <textarea name="soporteRealizar" id="soporteRealizar" class="form-control" [(ngModel)]="infrastructure.obs"></textarea>
   </div>
 </div>
 <div class="modal-footer">

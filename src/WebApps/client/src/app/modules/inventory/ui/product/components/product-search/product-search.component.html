@@ -34,7 +34,7 @@
       </div>
       @for(item of filteredProducts | async; track $index ){
           <mat-option>
-            <div class="data-row">
+            <div class="infrastructure-row">
               <div class="column column-codigo">{{ item.codigo }}</div>
               <div class="column column-descripcion">{{ item.descripcion }}</div>
               <div class="column column-stock">{{ item.stock }}</div>
@@ -51,7 +51,7 @@
       <div class="column column-stock">Stock</div>
       <div class="column column-medida">Medida</div>
     </div>
-    <!-- <div class="data-container"> -->
+    <!-- <div class="infrastructure-container"> -->
     @for(item of filteredProducts | async; track $index) {
     <mat-option>
       <div class="data-row">
