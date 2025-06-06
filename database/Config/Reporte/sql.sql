@@ -10,10 +10,21 @@ go
 --> 04-21-2025
 
 
-select reportPath, REPLACE(reportPath,'GestionFinanciera','Contabilidad') from Config.reporte where reportPath like '%Contabilidad%' order by reportPath asc
-
 --update Config.reporte set reportPath = REPLACE(reportPath,'GestionFinanciera','Contabilidad') where reportPath like '%GestionFinanciera%' 
 
 --insert into Config.Reporte(codigo,reportPath,contentType,storedProcedure,nombreReporte,fechaRegistro)
 --select 'RRND','/Compras/RecepcionNotaDebito.rdl','application/pdf','Recepcion.Documento_Report','Recepcion Nota Debito',GETDATE()
 
+
+--insert into Config.Reporte(codigo,reportPath,contentType,storedProcedure,nombreReporte,fechaRegistro)
+--select 'RAPTR','/Ventas/AprobTrackingReport.rdl','application/pdf','Ventas.Aprob_Document_Report','Reporte de transacciones de aprobaciones de ventas.',GETDATE()
+
+SELECT * FROM Config.Reporte where codigo = 'RAPTR'
+
+--insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
+--select 93,0,'headerDs',1,GETDATE()
+
+--insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
+--select 93,1,'detalleDs',1,GETDATE()
+
+select * from Config.ReporteDataSource where idReporte = 93

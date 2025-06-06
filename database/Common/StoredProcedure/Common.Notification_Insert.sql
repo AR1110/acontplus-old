@@ -46,7 +46,7 @@ BEGIN
         FROM Common.NotificationType
         WHERE Code = 'E';
 
-        SELECT @priorityId = Id FROM Common.[Priority] WHERE Code = 'M';
+        SELECT @priorityId = Id FROM Common.[Priority] WHERE Code = 'H';
         SELECT @statusId   = Id FROM Common.[Status]   WHERE Code = 'Q';
 
         SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario
@@ -110,13 +110,13 @@ BEGIN
         END
 
         -- Validar receptor si no es tipo "automático"
-        IF @codigo NOT IN ('RCC', 'FG', 'CDA') AND (@receptor IS NULL OR LTRIM(RTRIM(@receptor)) = '')
+        IF @codigo NOT IN ('RCC', 'FG', 'CDA', 'CDAA') AND (@receptor IS NULL OR LTRIM(RTRIM(@receptor)) = '')
         BEGIN
             SELECT '0' code, 'El campo "receptor" es obligatorio para el tipo ' + @codigo AS message;
             RETURN;
         END
         -- Casos por tipo de código
-        IF @codigo IN ('RCC', 'FG', 'CDA')
+        IF @codigo IN ('RCC', 'FG', 'CDA', 'CDAA')
         BEGIN
             SELECT @receptor = STRING_AGG(TRIM(correo), '|')
             FROM (

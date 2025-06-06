@@ -36,6 +36,8 @@
         DOC_TYPE = $injector.get('DOC_TYPE');
         SRI_IDENTIFITION_CODE = $injector.get('SRI_IDENTIFITION_CODE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
+        const DECODE_TOKEN = $injector.get("decodeToken");
+
 
         $scope.dataSource = [];
 
@@ -417,6 +419,35 @@
                         hasParams: true,
                         codigo: "RHA",
                         codEstab: item.codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataParms)
+                }
+                commonSvc.getReport({
+                    parameters,
+                    formatType: format
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.getReportAprobTracking = function (){
+            try {
+
+                let format = 'pdf';
+                let dataParms = {
+                    userRoleId: DECODE_TOKEN.userRoleId,
+                    tipo: 3
+                }
+
+                const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo: "RAPTR",
+                        codEstab: $scope.dataSearch.codEstab,
                         format,
                         aditionalParams: []
                     }),

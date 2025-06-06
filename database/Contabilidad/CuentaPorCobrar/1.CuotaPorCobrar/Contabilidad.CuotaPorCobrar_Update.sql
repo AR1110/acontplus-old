@@ -115,6 +115,8 @@ BEGIN
                    cc.idTiempoCredito  = tc.idTiempoCredito
                   ,cc.fechaVencimiento = tc.fechaVencimiento
                   ,cc.UpdatedAt        = NULL
+                  ,cc.diasMora         = 0
+                  ,cc.mora             = 0 
             FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
             INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
@@ -123,8 +125,8 @@ BEGIN
 				cx.fechaVencimiento  = tb.fechaVencimiento
 	           ,cx.cuota             = tb.cuota
 	           ,cx.interes           = tb.interes
-			   ,cx.mora              = tb.mora
-	           ,cx.diasMora          = tb.diasMora
+			   ,cx.mora              = 0
+	           ,cx.diasMora          = 0
                ,cx.estado            = tb.estado
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 			INNER JOIN @tbCuotas             tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
