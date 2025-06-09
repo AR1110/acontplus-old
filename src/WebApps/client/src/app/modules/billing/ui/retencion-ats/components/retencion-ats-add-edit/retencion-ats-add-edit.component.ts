@@ -336,7 +336,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       .get('tipoIdentificacionSujetoRetenido')
       ?.setValue(data.codigoTipoIdentificacion);
 
-    // if (data.codigoTipoIdentificacion === '06' || data.codigoTipoIdentificacion === '08') {
+    // if (infrastructure.codigoTipoIdentificacion === '06' || infrastructure.codigoTipoIdentificacion === '08') {
     //   this.retencionAtsForm.get('tipoSujetoRetenido')?.setValue('EXTERNO');
     // }
   }

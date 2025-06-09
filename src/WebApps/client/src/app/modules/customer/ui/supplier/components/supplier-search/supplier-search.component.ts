@@ -191,7 +191,7 @@ export class SupplierSearchComponent {
       //         }
       //         this.dialogSvc.open(CompanyCustomerAddEditModalComponent, {
       //           size: 'lg',
-      //           data: params
+      //           infrastructure: params
       //         })
       //       })
       //     } catch (error) {
@@ -222,7 +222,7 @@ export class SupplierSearchComponent {
       //         }
       //         this.dialogSvc.open(CompanyCustomerAddEditModalComponent, {
       //           size: 'lg',
-      //           data: params
+      //           infrastructure: params
       //         })
       //       })
       //     } catch (error) {

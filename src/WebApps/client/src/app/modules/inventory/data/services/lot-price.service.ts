@@ -61,7 +61,7 @@ export class LotPriceService {
             }
           })
 
-          // data.familias = familias.map((item: any) => {
+          // infrastructure.familias = familias.map((item: any) => {
           //   return {
           //     idFamilia: item.idFamilia,
           //     descripcion: item.descripcion,

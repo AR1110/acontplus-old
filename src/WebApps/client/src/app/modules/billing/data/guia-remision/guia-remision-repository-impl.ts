@@ -42,10 +42,10 @@ export class GuiaRemisionRepositoryImpl implements GuiaRemisionRepository {
   // override getById(id: number): Observable<any> {
   //   throw new Error('Method not implemented.');
   // }
-  // override create(data: Partial<any>): Observable<any> {
+  // override create(infrastructure: Partial<any>): Observable<any> {
   //   throw new Error('Method not implemented.');
   // }
-  // override update(data: any): Observable<any> {
+  // override update(infrastructure: any): Observable<any> {
   //   throw new Error('Method not implemented.');
   // }
   // override delete(id: number): Observable<void> {

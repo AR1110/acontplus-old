@@ -1,23 +1,23 @@
 import { Routes } from '@angular/router';
-import { CajaComponent } from './ui/cashbox-page/caja.component';
-import { MovimientoCajaPageComponent } from '@accounting/ui/movimiento-caja-page/movimiento-caja-page.component';
+import { CajaComponent } from './caja/presentation/caja/caja.component';
+import { MovimientoCajaPageComponent } from '@accounting/movimiento-caja/presentation/movimiento-caja-page/movimiento-caja-page.component';
 
-import { SupplierAccountsComponent } from '@accounting/ui/reports/supplier-accounts/supplier-accounts.component';
-import { SubEntidadFinancieraPageComponent } from '@accounting/ui/sub-entidad-financiera/sub-entidad-financiera-page.component';
-import { CuentaPorCobrarComponent } from '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component';
-import { ReporteCobrosComponent } from '@accounting/ui/reports/reporte-cobros/reporte-cobros.component';
-import { CategoryComponent } from '@accounting/ui/category/category.component';
-import { SubcategoryComponent } from '@accounting/ui/subcategory/subcategory.component';
-import { MovimientoCajaReportComponent } from '@accounting/ui/reports/movimiento-caja-report/movimiento-caja-report.component';
+import { SupplierAccountsComponent } from '@accounting/comprobante-egreso/presentation/reports/supplier-accounts/supplier-accounts.component';
+import { SubEntidadFinancieraPageComponent } from '@accounting/sub-entidad-financiera/presentation/sub-entidad-financiera/sub-entidad-financiera-page.component';
+import { CuentaPorCobrarComponent } from '@accounting/cuenta-por-cobrar/presentation/cuenta-por-cobrar/cuenta-por-cobrar.component';
+import { ReporteCobrosComponent } from '@accounting/comprobante-ingreso/presentation/reporte-cobros/reporte-cobros.component';
+import { CategoryComponent } from '@accounting/category/presentation/category/category.component';
+import { SubcategoryComponent } from '@accounting/sub-category/presentation/subcategory/subcategory.component';
+import { MovimientoCajaReportComponent } from '@accounting/movimiento-caja/presentation/movimiento-caja-report/movimiento-caja-report.component';
 
- import { CuentaPorPagarComponent } from '@accounting/ui/cuenta-por-pagar/cuenta-por-pagar.component';
+ import { CuentaPorPagarComponent } from '@accounting/cuenta-por-pagar/presentation/cuenta-por-pagar/cuenta-por-pagar.component';
 import {
   ResumenContableComponent
-} from "@accounting/ui/reports/resumen-contable/resumen-contable.component";
-import {CarteraClienteComponent} from "@accounting/ui/reports/cartera-cliente/cartera-cliente.component";
-import {ComprobanteIngresoComponent} from "@accounting/ui/comprobante-ingreso/comprobante-ingreso.component";
-import {ComprobanteEgresoComponent} from "@accounting/ui/comprobante-egreso/comprobante-egreso.component";
-import {PaymentsReportComponent} from "@accounting/ui/reports/payments-report/payments-report.component";
+} from "@accounting/resumen-contable/presentation/resumen-contable/resumen-contable.component";
+import {CarteraClienteComponent} from "@accounting/cuenta-por-cobrar/presentation/cartera-cliente/cartera-cliente.component";
+import {ComprobanteIngresoComponent} from "@accounting/comprobante-ingreso/presentation/comprobante-ingreso/comprobante-ingreso.component";
+import {ComprobanteEgresoComponent} from "@accounting/comprobante-egreso/presentation/comprobante-egreso/comprobante-egreso.component";
+import {PaymentsReportComponent} from "@accounting/comprobante-egreso/presentation/reports/payments-report/payments-report.component";
 
 export const routes: Routes = [
   {

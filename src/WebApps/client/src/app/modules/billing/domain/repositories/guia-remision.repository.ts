@@ -11,7 +11,7 @@ export abstract class GuiaRemisionRepository {
   abstract getFilterData(): Observable<GuiaRemisionFilterData>;
   abstract list<T>(parameters: T): Observable<GuiasRemisionResponse>;
   // abstract getById(id: number): Observable<any>;
-  // abstract create(data: Partial<any>): Observable<any>;
-  // abstract update(data: any): Observable<any>;
+  // abstract create(infrastructure: Partial<any>): Observable<any>;
+  // abstract update(infrastructure: any): Observable<any>;
   // abstract delete(id: number): Observable<void>;
 }

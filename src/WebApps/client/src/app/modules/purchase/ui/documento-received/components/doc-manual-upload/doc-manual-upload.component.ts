@@ -10,13 +10,13 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { SubCategorySelectHtmlOnly } from '@accounting/domain/models/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToasterService } from '@core/services/toaster.service';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 
-import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";

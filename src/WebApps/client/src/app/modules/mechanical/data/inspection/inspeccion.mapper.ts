@@ -78,7 +78,7 @@ export class InspeccionMapper {
 
       let vehicleParts: any[] = [];
 
-      // Recorre cada propiedad del objeto data
+      // Recorre cada propiedad del objeto infrastructure
       for (const key in mainData) {
         let value = mainData[key]
         if (typeof value === 'string' && isValidJSON(value)) {
