@@ -4,12 +4,8 @@ using Common.Infrastructure.Repository.Implementations;
 
 namespace BarberShop.Infrastructure.Persistence.Repositories;
 
-public class SeatRepository : BaseRepository<Seat>, ISeatRepository
+public class SeatRepository(BarberShopContext context) : BaseRepository<Seat>(context), ISeatRepository
 {
-    public SeatRepository(BarberShopContext context) : base(context)
-    {
-    }
-
     public async Task<Seat> AddSeatAsync(Seat seat)
     {
         return await base.AddAsync(seat);
