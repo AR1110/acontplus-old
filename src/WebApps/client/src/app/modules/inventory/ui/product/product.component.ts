@@ -156,7 +156,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
           this.setResponseGetAll(responseProduct);
         },
         error: (err) => {
-          console.error('Error load data form and products:', err);
+          console.error('Error load infrastructure form and products:', err);
         },
       });
   }

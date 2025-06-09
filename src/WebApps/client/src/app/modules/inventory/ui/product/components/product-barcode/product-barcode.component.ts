@@ -114,7 +114,7 @@ export class ProductBarcodeComponent {
   //
   //     this.$productDataFormUseCase.execute().subscribe((response) => {
   //       this.medidas.set(response.medidas);
-  //       this.data.idMedida = this.medidas().at(
+  //       this.infrastructure.idMedida = this.medidas().at(
   //         this.medidas().length - 1
   //       ).idMedida;
   //     });

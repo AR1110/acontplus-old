@@ -280,7 +280,7 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   private loadDataAdd() {
-    //default data
+    //default infrastructure
     if (this.tiposArticulo().length > 0) {
       this.data.idTipoArticulo = this.tiposArticulo()[0].idTipoArticulo;
     }
@@ -646,7 +646,7 @@ export class AddEditProductDialogComponent implements OnInit {
     if (!dataTipoIva) {
       this.tS.toastr({
         type: 'warning',
-        message: 'No se pudo recuperar la data de tipo iva',
+        message: 'No se pudo recuperar la infrastructure de tipo iva',
       });
       return;
     }

@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormaPagoSri } from '@shared/models/forma-pago-sri';
-import { TiempoCredito } from '@accounting/domain/models/tiempo-credito.interface';
+import { TiempoCredito } from '@accounting/shared/models/tiempo-credito.interface';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { InvoiceService } from '@billing/services/invoice.service';
 import { ToasterService } from '@core/services/toaster.service';
@@ -21,7 +21,7 @@ import {
 } from '@core/utils/date.util';
 import { FORMA_PAGO_SRI_CODE } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
-import { isValidGeneratorQuota } from '@accounting/domain/utils/calculate-quota.util';
+import { isValidGeneratorQuota } from '@accounting/shared/utils/calculate-quota.util';
 import { InvoiceAdapter } from '@billing/data/invoice/mappers/invoice.adapter';
 import { NotaEntregaUseCase } from '@sale/domain/use-cases/nota-entrega.use-case';
 import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
@@ -390,10 +390,10 @@ export class ConvertDocDialogComponent {
 
   // validateCuota() {
   //   let objParamsCuota = {
-  //     fechaEmision: $scope.data.fechaEmision,
+  //     fechaEmision: $scope.infrastructure.fechaEmision,
   //     tiemposCredito: $scope.tiemposCredito,
-  //     idTiempoCredito: $scope.data.idTiempoCredito,
-  //     montoTotal: $scope.data.total,
+  //     idTiempoCredito: $scope.infrastructure.idTiempoCredito,
+  //     montoTotal: $scope.infrastructure.total,
   //     cuotas: $scope.cuotas
   //   }
   //   let cuotas = [];
@@ -411,7 +411,7 @@ export class ConvertDocDialogComponent {
   //     montoTotalCuota = dataCuota.montoTotalCuota;
   //   }
 
-  //   if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+  //   if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.infrastructure.total, 2)) {
   //     tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
   //     return [];
   //   }

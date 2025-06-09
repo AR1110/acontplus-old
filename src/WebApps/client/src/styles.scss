@@ -97,3 +97,7 @@ table {
 .mat-mdc-icon-button {
   font-size: inherit !important;
 }
+
+.mat-mdc-radio-button ~ .mat-mdc-radio-button {
+  margin-left: 16px;
+}

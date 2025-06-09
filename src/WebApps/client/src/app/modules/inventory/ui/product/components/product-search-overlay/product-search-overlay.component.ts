@@ -264,8 +264,8 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
         this.highlightRowIndex >= 0 &&
         this.highlightRowIndex < this.dataSource().length
       ) {
-        // data
-        this.selectRow(this.dataSource()[this.highlightRowIndex]); // data
+        // infrastructure
+        this.selectRow(this.dataSource()[this.highlightRowIndex]); // infrastructure
       }
     } else {
       this.openOverlay();

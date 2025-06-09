@@ -142,7 +142,7 @@ export class LotPricePageComponent implements OnInit {
         if (dataAdded) {
           cell.getElement().style.backgroundColor = '#fad';
         }
-        //var data = parseInt(cell.getValue());
+        //var infrastructure = parseInt(cell.getValue());
       }
       return cell.getValue();
     };

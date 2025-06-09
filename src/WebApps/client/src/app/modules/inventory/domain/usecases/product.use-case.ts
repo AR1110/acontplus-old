@@ -53,12 +53,12 @@ export class ProductUseCase {
 
 
 
-  // create<T>(data: T) {
-  //   return this.repo.create(data)
+  // create<T>(infrastructure: T) {
+  //   return this.repo.create(infrastructure)
   // }
   //
-  // update<T>(id: number, data: T) {
-  //   return this.repo.update(id, data)
+  // update<T>(id: number, infrastructure: T) {
+  //   return this.repo.update(id, infrastructure)
   // }
   //
   // delete(id: number) {
