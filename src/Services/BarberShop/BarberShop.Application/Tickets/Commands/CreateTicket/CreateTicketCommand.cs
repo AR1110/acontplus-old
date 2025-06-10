@@ -1,6 +1,5 @@
-﻿namespace BarberShop.Application.Tickets.Commands.CreateTicket
+﻿namespace BarberShop.Application.Tickets.Commands.CreateTicket;
+
+public class CreateTicketCommand
 {
-    internal class CreateTicketCommand
-    {
-    }
 }
