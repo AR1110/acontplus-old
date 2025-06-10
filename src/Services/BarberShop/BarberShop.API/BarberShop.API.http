@@ -63,18 +63,54 @@ Authorization: {{Token}}
 ###
 
 DELETE {{BarberShop.Api_HostAddress}}/api/work-sessions/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
 
 ###
 
 GET {{BarberShop.Api_HostAddress}}/api/work-sessions/{id:int}?id={{id}}
-
+Content-Type: application/json
+Authorization: {{Token}}
 ###
 
 PUT {{BarberShop.Api_HostAddress}}/api/work-sessions/{id:int}?id={{id}}
 Content-Type: application/json
-
+Authorization: {{Token}}
 {
   //WorkSessionDto
+}
+
+###
+
+GET {{BarberShop.Api_HostAddress}}/api/tickets?pageIndex={{pageIndex}}&pageSize={{pageSize}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+POST {{BarberShop.Api_HostAddress}}/api/tickets
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  //TicketDto
+}
+
+###
+
+DELETE {{BarberShop.Api_HostAddress}}/api/tickets/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+GET {{BarberShop.Api_HostAddress}}/api/tickets/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+PUT {{BarberShop.Api_HostAddress}}/api/tickets/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  //TicketDto
 }
 
 ###

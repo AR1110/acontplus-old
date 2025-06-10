@@ -1,4 +1,5 @@
 ﻿using BarberShop.Api.Endpoints.Interfaces;
+using BarberShop.Application.Tickets.DTOs;
 using BarberShop.Application.WorkSessions.DTOs;
 using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -88,6 +89,45 @@ public static class TicketEndpointsExtensions
             async (IWorkSessionEndpoints workSessionEndpoints, int id) =>
                 await workSessionEndpoints.DeleteWorkSessionAsync(id))
             .WithDescription("Deletes a work session by its ID.");
+
+        var ticketGroup = builder.MapGroup("/api/tickets")
+            .RequireAuthorization()
+            .WithOpenApi()
+            .WithTags("Tickets");
+
+        // GET all tickets with pagination
+        ticketGroup.MapGet("/",
+            async (ITicketEndpoints ticketEndpoints, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
+            {
+                var paginationDto = new PaginationDto { PageIndex = pageIndex, PageSize = pageSize };
+                return await ticketEndpoints.GetTicketsAsync(paginationDto);
+            })
+            .WithDescription("Retrieves a paginated list of all tickets.");
+
+        // GET ticket by ID
+        ticketGroup.MapGet("/{id:int}",
+            async (ITicketEndpoints ticketEndpoints, int id) =>
+                await ticketEndpoints.GetTicketByIdAsync(id))
+            .WithDescription("Retrieves a specific ticket by its ID.");
+
+        // POST (Create) a new ticket
+        ticketGroup.MapPost("/",
+            async (ITicketEndpoints ticketEndpoints, TicketDto ticketDto) =>
+                await ticketEndpoints.CreateTicketAsync(ticketDto))
+            .WithDescription("Creates a new ticket.")
+            .WithName("CreateTicket");
+
+        // PUT (Update) an existing ticket
+        ticketGroup.MapPut("/{id:int}",
+            async (ITicketEndpoints ticketEndpoints, int id, TicketDto ticketDto) =>
+                await ticketEndpoints.UpdateTicketAsync(id, ticketDto))
+            .WithDescription("Updates an existing ticket by ID.");
+
+        // DELETE a ticket by ID
+        ticketGroup.MapDelete("/{id:int}",
+            async (ITicketEndpoints ticketEndpoints, int id) =>
+                await ticketEndpoints.DeleteTicketAsync(id))
+            .WithDescription("Deletes a ticket by its ID.");
 
         return builder;
     }

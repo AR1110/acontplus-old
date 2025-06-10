@@ -1,6 +1,6 @@
 ﻿namespace BarberShop.Application.Tickets.DTOs;
 
-public record TicketDetailDto
+public class TicketDetailDto : BaseDto
 {
     public int Id { get; init; }
     public int LineNumber { get; init; }

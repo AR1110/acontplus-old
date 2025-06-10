@@ -38,6 +38,7 @@ public static class ApplicationServicesExtensions
         [
             "BarberShop.Api.Endpoints.Implementations",
             "BarberShop.Application.Seats.Services",
+            "BarberShop.Application.Tickets.Services",
             "BarberShop.Application.WorkSessions.Services",
             "BarberShop.Application.Services"
         ];
