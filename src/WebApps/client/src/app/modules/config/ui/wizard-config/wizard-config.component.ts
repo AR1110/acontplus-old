@@ -19,7 +19,7 @@ import {
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 import {
@@ -165,9 +165,9 @@ export class WizardConfigComponent implements OnInit {
 
   private _tokenUseCase = inject(TokenUseCase);
 
-  #toasterService = inject(ToasterService);
+  private readonly _toasterService = inject(ToastrNotificationService);
   private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
-  #estabService = inject(EstablishmentService);
+  private readonly _estabService = inject(EstablishmentService);
   #fb = inject(FormBuilder);
   estabForm = this.#fb.group({
     canton: '',
@@ -283,8 +283,6 @@ export class WizardConfigComponent implements OnInit {
           this.demoSteps.find((step) => step.code === 'VII')?.completed ??
           false;
 
-        console.log(this.certificateUpdated);
-
         const incompleteStep = this.demoSteps.find((step) => !step.completed);
 
         if (incompleteStep) {
@@ -320,14 +318,14 @@ export class WizardConfigComponent implements OnInit {
             parentId: pto.idPuntoEmision,
             ultimaSecuencia: 0,
           })),
-        })
+        }),
       );
       this.docsConfig = combinedData as [];
     });
   }
 
   fetchEstabData(): void {
-    this.#estabService.getDataForm().subscribe((response) => {
+    this._estabService.getDataForm().subscribe((response) => {
       this.cantones = response.cantones;
       this.actividadesEconomica = response.actividadesEconomica;
       this.agentesRetencion = response.agentesRetencion;
@@ -339,14 +337,14 @@ export class WizardConfigComponent implements OnInit {
     if (this.bodegas.length > 0 && !this.bodegas.valid) {
       this.bodegas.markAllAsTouched();
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this.#toasterService.toastr({
+      return this._toasterService.toastr({
         type: 'warning',
         message: 'Revise que los datos de las bodegas sean correctos',
       });
     }
     if (this.ptosEmi.length === 0) {
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this.#toasterService.toastr({
+      return this._toasterService.toastr({
         type: 'warning',
         message: 'Ingrese al menos un punto de emisión',
       });
@@ -355,7 +353,7 @@ export class WizardConfigComponent implements OnInit {
     if (!this.ptosEmi.valid) {
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
       this.ptosEmi.markAllAsTouched();
-      return this.#toasterService.toastr({
+      return this._toasterService.toastr({
         type: 'warning',
         message: 'Revise que los datos de los puntos de emisión sean correctos',
       });
@@ -379,9 +377,9 @@ export class WizardConfigComponent implements OnInit {
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
       demoStepId: this.demoSteps.find((step) => step.code === 'V')?.id,
     };
-    this.#estabService.post(dataEstab).subscribe((response) => {
+    this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
-        this.#toasterService.toastr({
+        this._toasterService.toastr({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -414,10 +412,24 @@ export class WizardConfigComponent implements OnInit {
           this.fetchCompanyDemoSteps();
           this.fetchEstabData();
         }
-        this.#toasterService.toastr({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
+        if (response.code !== '1') {
+          this._toasterService.warning({
+            message: response.message,
+            title: 'Error al guardar usuario',
+            options: {
+              positionClass: 'toast-top-center',
+            },
+          });
+        } else {
+          this._toasterService.success({ message: response.message });
+        }
+        // this._toasterService.toastr({
+        //   type: response.code === '1' ? 'success' : 'warning',
+        //   message: response.message,
+        //   options: {
+        //     positionClass: 'toast-top-center',
+        //   },
+        // });
       }
     });
   }
@@ -433,7 +445,7 @@ export class WizardConfigComponent implements OnInit {
   showInfoTipoContribuyente(): void {
     const contribuyente = this.estabForm.get('contribuyente')?.value;
     const dataInfo = this.contribuyentes.find(
-      (item) => item.codigo === contribuyente
+      (item) => item.codigo === contribuyente,
     );
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
@@ -446,7 +458,7 @@ export class WizardConfigComponent implements OnInit {
   showInfoActividadEconomica(): void {
     const actividad = this.estabForm.get('actividad')?.value;
     const groupActEconomica = this.actividadesEconomica.find(
-      (item) => item.codigo === actividad
+      (item) => item.codigo === actividad,
     )?.grupo;
     if (actividad && groupActEconomica) {
       Swal.fire({
@@ -520,12 +532,12 @@ export class WizardConfigComponent implements OnInit {
           idPuntoEmision: pto.idPuntoEmision,
           idTipoDocumento: doc.idTipoDocumento,
           ultimaSecuencia: doc.ultimaSecuencia,
-        }))
+        })),
     );
 
     if (docs.length == 0) {
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this.#toasterService.toastr({
+      return this._toasterService.toastr({
         type: 'warning',
         message: 'Debe ingresar al menos una secuencial de los documentos',
       });
@@ -544,7 +556,7 @@ export class WizardConfigComponent implements OnInit {
           this.docsUpdated = true;
           this.fetchCompanyDemoSteps();
         }
-        this.#toasterService.toastr({
+        this._toasterService.toastr({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -580,7 +592,7 @@ export class WizardConfigComponent implements OnInit {
             if (response.code === '1') {
               this.fetchCompanyDemoSteps();
             }
-            this.#toasterService.toastr({
+            this._toasterService.toastr({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -604,7 +616,7 @@ export class WizardConfigComponent implements OnInit {
             this.fetchCompanyDemoSteps();
             this.stepper.next();
           }
-          this.#toasterService.toastr({
+          this._toasterService.toastr({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

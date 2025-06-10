@@ -3,7 +3,7 @@ import { Device } from '@modules/technical-support/models/device.model';
 import { DeviceModalComponent } from '../device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {DialogService} from "@core/services/dialog.service";
@@ -17,7 +17,7 @@ import {DialogService} from "@core/services/dialog.service";
 export class DeviceListComponent implements OnInit {
   private modalSvc = inject(DialogService);
   private deviceService = inject(DeviceService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   devices = signal<any>([])
 

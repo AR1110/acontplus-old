@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
@@ -124,7 +124,7 @@ export class FloorAddEditModalComponent {
   _modalRef = inject(MatDialogRef<FloorAddEditModalComponent>);
   data = inject<any>(MAT_DIALOG_DATA);
   _roomService = inject(RoomService);
-  _tS = inject(ToasterService);
+  _tS = inject(ToastrNotificationService);
 
   deleteRoom(row: any) {
     const rowData = row.getData();

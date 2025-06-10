@@ -17,7 +17,7 @@ import {
 } from "@inventory/domain/usecases/product-ubication/product-ubication-post.use-case";
 import {ProductUbicationPutUseCase} from "@inventory/domain/usecases/product-ubication/product-ubication-put.use-case";
 import {getValidId, isValidField} from "@core/utils/utils";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {ApiResponse} from "@core/models/api-response";
 import {finalize} from "rxjs/operators";
 import Swal from "sweetalert2";
@@ -42,7 +42,7 @@ import {
   styles: ``,
 })
 export class ProductUbicationComponent {
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
   private $productUbicationPosUseCase = inject(ProductUbicationPostUseCase)
   private $productUbicationPutUseCase = inject(ProductUbicationPutUseCase)

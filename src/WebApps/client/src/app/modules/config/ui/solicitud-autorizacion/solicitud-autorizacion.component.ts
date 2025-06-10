@@ -12,7 +12,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { GroupedEstab } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 
 import { isValidField } from '@core/utils/utils';
@@ -58,7 +58,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
   private readonly $listUseCase = inject(ListSolicitudAutorizacionUseCase);
   private readonly $updateUseCase = inject(UpdateSolicitudAutorizacionUseCase);
   private _dialogSvc = inject(DialogService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   establecimientos: GroupedEstab[] = [];

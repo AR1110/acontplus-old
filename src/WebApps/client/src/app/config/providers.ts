@@ -4,7 +4,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
 import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
-import { accountingProvider } from '@modules/accounting/providers';
 import { customerMainProviders } from '@modules/customer/providers';
 import { purchaseProviders } from '@modules/purchase/providers';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
@@ -23,6 +22,8 @@ import { DATA_CONFIG_IOC } from '@modules/config/data/data-config.ioc';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import 'moment/locale/es';
 import {DATA_RESTAURANT_IOC} from "@restaurant/data/data-restaurant.ioc";
+import {DATA_ACCOUNTING_IOC} from "@accounting/data-accounting.ioc";
+import {DATA_REPORT_IOC} from "@modules/api/reports/data-report.ioc";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -57,14 +58,15 @@ export const uiProviders = [
 
 export const featureProviders = [
   ...customerMainProviders,
-  ...accountingProvider,
   ...DATA_INVENTORY_IOC,
+  ...DATA_ACCOUNTING_IOC,
   ...purchaseProviders,
   ...authMainProvider,
   ...commonProviders,
   ...mechanicalProvider,
   ...DATA_RESTAURANT_IOC,
   ...DATA_CONFIG_IOC,
+  ...DATA_REPORT_IOC,
   ...saleProvider,
   ...billingProviders,
   ...barberShopProviders,

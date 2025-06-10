@@ -1,7 +1,7 @@
 import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import swal from 'sweetalert2';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { ProductionAreaAddEditModalComponent } from '@restaurant/ui/production-area/production-area-add-edit-modal/production-area-add-edit-modal.component';
@@ -38,7 +38,7 @@ export class ProductionAreaListComponent implements OnInit {
   #productionAreaService = inject(ProductionAreaService);
   #modalService = inject(DialogService);
   #sharedService = inject(SharedService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
   selected = signal(0);
 

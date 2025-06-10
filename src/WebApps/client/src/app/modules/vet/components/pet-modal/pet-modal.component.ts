@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isApiResponse } from '@core/models/api-response';
 import { Pet } from '@modules/vet/models/pet.model';
 import { PetService } from '@modules/vet/services/pet.service';
@@ -58,7 +58,7 @@ export class PetModalComponent implements OnInit {
   });
   private readonly petService = inject(PetService);
   private readonly modalRef = inject(MatDialogRef<PetModalComponent>);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   get() {
     this.petService.get({ tipo: 3 }).subscribe((response) => {

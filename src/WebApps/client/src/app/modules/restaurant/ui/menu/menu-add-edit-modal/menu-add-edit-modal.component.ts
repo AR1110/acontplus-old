@@ -4,7 +4,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
 import { MenuService } from '@restaurant/data/services/menu.service';
 import { MenuItemService } from '@restaurant/data/services/menu-item.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
 import { Item } from '@restaurant/domain/models/item.model';
 
@@ -45,7 +45,7 @@ export class MenuAddEditModalComponent {
   validation = [undefined, null, 0, ''];
   private readonly _menuService = inject(MenuService);
   private readonly _menuItemService = inject(MenuItemService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _modalRef = inject(MatDialogRef<MenuAddEditModalComponent>);
 
   // Todo: GRID COLUMNS

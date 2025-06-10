@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {getValidId, isValidField} from '@core/utils/utils';
 
 import {
@@ -70,7 +70,7 @@ export class SupportPageComponent {
 
   dialogSvc = inject(DialogService);
   supportUseCase = inject(SupportUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 
   visibleColumns: string[] = [];

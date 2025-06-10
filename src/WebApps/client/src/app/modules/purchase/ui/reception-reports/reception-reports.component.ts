@@ -11,11 +11,11 @@ import {
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Subcategory } from '@accounting/domain/models/subcategory';
+import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
@@ -82,7 +82,7 @@ export class ReceptionReportsComponent {
   ];
   private docReceivedSvc = inject(DocumentReceivedWebRepository);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {

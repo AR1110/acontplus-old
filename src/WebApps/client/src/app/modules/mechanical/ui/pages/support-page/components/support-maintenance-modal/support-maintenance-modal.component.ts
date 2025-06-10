@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ProductSale } from '@inventory/domain/models/product.model';
 import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
@@ -63,7 +63,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 
   private supportDetailUseCase = inject(SupportDetailUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   readonly tabulatorComponent = viewChild.required(TabulatorComponent);
 
@@ -785,7 +785,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   async onChangeFee() {
     try {
       // if (!$scope.permisoComprobanteVenta.tarifa) {
-      //   $scope.data.idTarifa = $scope.dataClone.idTarifa;
+      //   $scope.infrastructure.idTarifa = $scope.dataClone.idTarifa;
       //   tS.toastr('warning', 'No tienes permiso para realizar esta acción');
       //   return
       // }
@@ -829,7 +829,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   /**
    *
    * @param {*} column nombre de la columnas
-   * @param {*} data  data row
+   * @param {*} data  infrastructure row
    * @param {*} oldValue valor anterior de la columna
    */
   setCalculoTotales(
@@ -882,7 +882,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       this.data.total = importeTotal;
       this.data.discount = discount;
       this.data.percentageDiscount = percentageDiscount;
-      // this.data.tip = propina;
+      // this.infrastructure.tip = propina;
       this.htmlImpuestoTotal = htmlImpuestoTotal;
       this.htmlIvaTotal = htmlIvaTotal;
     } catch (error) {

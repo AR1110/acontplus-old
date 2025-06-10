@@ -1,7 +1,7 @@
 import { Component, inject,   signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -38,7 +38,7 @@ export class TagsAddEditModalComponent {
     etiquetas: string
   }>(MAT_DIALOG_DATA);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _tagUseCase= inject(TagUseCase)
 
   btnText = 'Guardar';

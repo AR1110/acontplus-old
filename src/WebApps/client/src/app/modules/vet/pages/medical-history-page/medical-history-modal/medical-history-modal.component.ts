@@ -19,7 +19,7 @@ import {
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 import { isApiResponse } from '@core/models/api-response';
 import { PetSearchComponent } from '@modules/vet/components/pet-search/pet-search.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
@@ -72,7 +72,7 @@ export class MedicalHistoryModalComponent {
   private readonly healthCheckService = inject(HealthCheckService);
   private readonly medicalHistoryService = inject(MedicalHistoryService);
   private readonly modalRef = inject(MatDialogRef<MedicalHistoryModalComponent>);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   addBehavior(behaviorId: number, behaviorStatusId: number) {
     this.behaviorTests.update(r=>[...r, {

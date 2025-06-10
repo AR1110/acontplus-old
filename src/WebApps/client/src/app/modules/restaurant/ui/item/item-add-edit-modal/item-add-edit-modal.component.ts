@@ -12,7 +12,7 @@ import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semanti
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { ItemService } from '@restaurant/data/services/item.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -49,7 +49,7 @@ export class ItemAddEditModalComponent implements OnInit {
   #itemService = inject(ItemService);
   #modalRef = inject(MatDialogRef<ItemAddEditModalComponent>);
   #recipeService = inject(RecipeService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
   selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
     let medidas = [];

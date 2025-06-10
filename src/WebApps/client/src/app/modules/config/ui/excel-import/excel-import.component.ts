@@ -203,16 +203,16 @@ export class ExcelImportComponent {
     //   const wsname: string = wb.SheetNames[0];
     //   const ws: WorkSheet = wb.Sheets[wsname];
     //
-    //   /* save data */
-    //   const data:any =(utils.sheet_to_json(ws, {header: 1}));
+    //   /* save infrastructure */
+    //   const infrastructure:any =(utils.sheet_to_json(ws, {header: 1}));
     //
-    //   console.log(data)
+    //   console.log(infrastructure)
     //
-    //   const [headers, ...rows] = data;
+    //   const [headers, ...rows] = infrastructure;
     //
     //   this.displayedColumns = headers;
     //   const tempArrayFiles = this._excelImportSvc.mapItems(rows, this.displayedColumns).map(row =>
-    //     this._excelImportSvc.cleanRow(row, this.displayedColumns, this.data().codeModule)
+    //     this._excelImportSvc.cleanRow(row, this.displayedColumns, this.infrastructure().codeModule)
     //   );
     //
     //

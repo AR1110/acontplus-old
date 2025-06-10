@@ -5,7 +5,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { PrinterAddEditModalComponent } from '@modules/config/ui/printer/components/printer-add-edit-modal/printer-add-edit-modal.component';
 import {ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -32,7 +32,7 @@ import {DialogService} from "@core/services/dialog.service";
 export class PrinterComponent implements OnInit {
   private readonly _printerUseCase = inject(PrinterUseCase);
   private readonly _modalService = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   printers = signal<PrinterRead[]>([])
 

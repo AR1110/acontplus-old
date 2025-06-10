@@ -10,7 +10,7 @@ import {
   REPORT_FORMAT,
   SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidEmail, isValidField } from '@core/utils/utils';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { SharedService } from '@core/services/shared.service';
@@ -70,7 +70,7 @@ const imports = [
 })
 export class InventoryReportComponent implements OnInit {
   private pS = inject(UserRoleStateService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
   appNotifiSvc = inject(NotificacionService);
   private readonly _tokenUseCase = inject(TokenUseCase);
@@ -239,7 +239,7 @@ export class InventoryReportComponent implements OnInit {
   }
 
   onSupplierSelected(data: any) {
-    // this.dataSearch.idProveedor = data.idProveedor;
+    // this.dataSearch.idProveedor = infrastructure.idProveedor;
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
     this.dataSearch.nameSupplier = data.name;
   }

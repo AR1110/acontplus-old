@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ApiResponse } from '@core/models/api-response';
 import { Room } from '@restaurant/domain/models/room.model';
 import { TableService } from '@restaurant/data/services/table.service';
@@ -55,7 +55,7 @@ export class TableAddEditModalComponent {
   modalTitle  = 'Registrar Mesa';
   btnText = 'Guardar';
   #tableService = inject(TableService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
 
   ngOnInit() {

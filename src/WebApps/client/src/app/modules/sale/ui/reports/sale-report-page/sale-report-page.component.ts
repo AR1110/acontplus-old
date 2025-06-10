@@ -12,7 +12,7 @@ import {
   REPORT_FORMAT, SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import {isValidEmail, isValidField} from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
-import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
@@ -88,7 +88,7 @@ export class SaleReportPageComponent {
   format: any;
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService);
   private _tokenUseCase = inject(TokenUseCase);

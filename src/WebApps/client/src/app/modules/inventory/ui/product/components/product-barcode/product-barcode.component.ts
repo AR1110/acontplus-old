@@ -7,7 +7,7 @@ import {  MatIconModule} from "@angular/material/icon";
 import {  MatInputModule} from "@angular/material/input";
 import { MatSelectModule} from "@angular/material/select";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
 
 import {
@@ -46,7 +46,7 @@ import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
   `
 })
 export class ProductBarcodeComponent {
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   private $productDataFormUseCase = inject(ProductDataFormUseCase);
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
   private $productBarcodePostUseCase = inject(ProductBarcodePostUseCase)
@@ -114,7 +114,7 @@ export class ProductBarcodeComponent {
   //
   //     this.$productDataFormUseCase.execute().subscribe((response) => {
   //       this.medidas.set(response.medidas);
-  //       this.data.idMedida = this.medidas().at(
+  //       this.infrastructure.idMedida = this.medidas().at(
   //         this.medidas().length - 1
   //       ).idMedida;
   //     });

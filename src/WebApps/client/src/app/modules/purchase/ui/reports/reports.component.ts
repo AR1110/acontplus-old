@@ -5,7 +5,7 @@ import {
   DOC_TYPE,
   PATHS_API,
 } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
+import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
@@ -15,11 +15,11 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { Subcategory } from '@accounting/domain/models/subcategory';
+import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -67,7 +67,7 @@ export class ReportsComponent {
   };
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   ngOnInit() {

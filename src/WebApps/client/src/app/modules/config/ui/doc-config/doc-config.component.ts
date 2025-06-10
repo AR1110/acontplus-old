@@ -11,7 +11,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { isValidField } from '@core/utils/utils';
 import {DocConfigList} from '@modules/config/domain/models/doc-config.model';
@@ -52,7 +52,7 @@ export class DocConfigPageComponent implements OnInit {
   private $listUseCase = inject(ListDocConfigUseCase)
   private $createUseCase = inject(CreateDocConfigUseCase)
   private $formDataDocConfig = inject(GetDocConfigFormDataUseCase)
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _modalService = inject(DialogService);
   private readonly _cdr = inject(ChangeDetectorRef);
 
