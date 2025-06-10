@@ -167,7 +167,7 @@ export class WizardConfigComponent implements OnInit {
 
   private readonly _toasterService = inject(ToastrNotificationService);
   private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
-  #estabService = inject(EstablishmentService);
+  private readonly _estabService = inject(EstablishmentService);
   #fb = inject(FormBuilder);
   estabForm = this.#fb.group({
     canton: '',
@@ -325,7 +325,7 @@ export class WizardConfigComponent implements OnInit {
   }
 
   fetchEstabData(): void {
-    this.#estabService.getDataForm().subscribe((response) => {
+    this._estabService.getDataForm().subscribe((response) => {
       this.cantones = response.cantones;
       this.actividadesEconomica = response.actividadesEconomica;
       this.agentesRetencion = response.agentesRetencion;
@@ -377,7 +377,7 @@ export class WizardConfigComponent implements OnInit {
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
       demoStepId: this.demoSteps.find((step) => step.code === 'V')?.id,
     };
-    this.#estabService.post(dataEstab).subscribe((response) => {
+    this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
         this._toasterService.toastr({
           type: response.code == '1' ? 'success' : 'warning',
@@ -412,13 +412,24 @@ export class WizardConfigComponent implements OnInit {
           this.fetchCompanyDemoSteps();
           this.fetchEstabData();
         }
-        this._toasterService.toastr({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-          options: {
-            positionClass: 'toast-top-center',
-          },
-        });
+        if (response.code !== '1') {
+          this._toasterService.warning({
+            message: response.message,
+            title: 'Error al guardar usuario',
+            options: {
+              positionClass: 'toast-top-center',
+            },
+          });
+        } else {
+          this._toasterService.success({ message: response.message });
+        }
+        // this._toasterService.toastr({
+        //   type: response.code === '1' ? 'success' : 'warning',
+        //   message: response.message,
+        //   options: {
+        //     positionClass: 'toast-top-center',
+        //   },
+        // });
       }
     });
   }

@@ -17,9 +17,8 @@ export const TOASTR_NOTIFICATION_CONFIG =
     }),
   });
 
-//Legacy interface for backward compatibility --> delete when no longer needed
-interface ToastrProps {
-  type: 'success' | 'warning' | 'info' | 'error';
+export interface ToastrCallProps {
+  type?: 'success' | 'error' | 'warning' | 'info'; //Legacy support for backward compatibility
   message: string;
   title?: string;
   options?: Partial<IndividualConfig>;
@@ -34,54 +33,37 @@ export class ToastrNotificationService {
   private readonly config = inject(TOASTR_NOTIFICATION_CONFIG);
 
   // 3. Create ergonomic helper methods for each type for better developer experience
-  success(
-    message: string,
-    title?: string,
-    options?: Partial<IndividualConfig>,
-  ): void {
-    this.show('success', message, title, options);
+  success(props: ToastrCallProps): void {
+    this.show('success', props);
   }
 
-  error(
-    message: string,
-    title?: string,
-    options?: Partial<IndividualConfig>,
-  ): void {
-    this.show('error', message, title, options);
+  error(props: ToastrCallProps): void {
+    this.show('error', props);
   }
 
-  warning(
-    message: string,
-    title?: string,
-    options?: Partial<IndividualConfig>,
-  ): void {
-    this.show('warning', message, title, options);
+  warning(props: ToastrCallProps): void {
+    this.show('warning', props);
   }
 
-  info(
-    message: string,
-    title?: string,
-    options?: Partial<IndividualConfig>,
-  ): void {
-    this.show('info', message, title, options);
+  info(props: ToastrCallProps): void {
+    this.show('info', props);
   }
 
   // 4. A single, private, and efficient `show` method as the core logic
   private show(
     type: 'success' | 'error' | 'warning' | 'info',
-    message: string,
-    title?: string,
-    overrideOptions?: Partial<IndividualConfig>,
+    props: ToastrCallProps,
   ): void {
-    // 5. Merge project-level default config with any per-call overrides
-    const options = { ...this.config, ...overrideOptions };
+    const { message, title, options: overrideOptions } = props;
 
-    // 6. Use a direct method map for clean and maintainable code
-    this.toastrService[type](message, title, options);
+    // Merge project-level defaults with per-call overrides
+    const finalOptions = { ...this.config, ...overrideOptions };
+
+    this.toastrService[type](message, title, finalOptions);
   }
 
   //Legacy method for backward compatibility --> delete when no longer needed
-  toastr(props: ToastrProps) {
+  toastr(props: ToastrCallProps) {
     const { type, message, title } = props;
     const options = { ...this.config, ...props.options };
 
