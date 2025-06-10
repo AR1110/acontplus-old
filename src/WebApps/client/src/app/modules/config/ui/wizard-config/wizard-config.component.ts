@@ -415,6 +415,9 @@ export class WizardConfigComponent implements OnInit {
         this._toasterService.toastr({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
+          options: {
+            positionClass: 'toast-top-center',
+          },
         });
       }
     });
