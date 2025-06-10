@@ -16,7 +16,7 @@ import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-
 import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
 import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
 import {CuentaPorPagarCuota, CuentaPorPagarHistorial, FormaPago} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
 import { ComprobanteEgresoUtil } from '@accounting/comprobante-egreso/application/comprobante-egreso/comprobante-egreso.util';
@@ -149,7 +149,7 @@ export const ComprobanteEgresoStore = signalStore(
 
 
   withMethods(
-    (store, useCase = inject(ComprobanteEgresoUseCase), tS = inject(ToasterService)) => ({
+    (store, useCase = inject(ComprobanteEgresoUseCase), tS = inject(ToastrNotificationService)) => ({
 
 
 

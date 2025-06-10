@@ -17,7 +17,7 @@ import { CuentaPorPagarCuotaConfig } from '@accounting/cuenta-por-pagar/domain/c
 import { TiempoCreditoSelectHtmlOnly } from '@accounting/shared/models/tiempo-credito.interface';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -55,7 +55,7 @@ export class CuentaPorPagarCuotaModalComponent {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarCuotaModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private useCase = inject(CuentaPorPagarUseCase)
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   loading = signal(false);
   tiemposCredito = signal<TiempoCreditoSelectHtmlOnly[]>([]);

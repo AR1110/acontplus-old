@@ -13,7 +13,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
 import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 import {roundNumber} from "@core/utils/round-number.utils";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product-data-form.use-case";
 import {DECIMALS} from "@core/constants/global.constants";
 import {getValidId} from "@core/utils/utils";
@@ -65,7 +65,7 @@ export class AddEditFractionalProductComponent {
   private $fractionalProductPostUseCase = inject(FractionalProductPostUseCase)
   private $fractionalProductPutUseCase = inject(FractionalProductPutUseCase)
   private $fractionalProductGetIdUseCase = inject(FractionalProductGetIdUseCase)
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
 
 
 

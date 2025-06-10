@@ -7,7 +7,7 @@ import { FormaPagoSri } from '@shared/models/forma-pago-sri';
 import { TiempoCredito } from '@accounting/shared/models/tiempo-credito.interface';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { InvoiceService } from '@billing/services/invoice.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
@@ -55,7 +55,7 @@ export class ConvertDocDialogComponent {
 
   private _notaEntregaUseCase = inject(NotaEntregaUseCase);
   private invoiceSvc = inject(InvoiceService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
   @ViewChild(TabulatorComponent, { static: false })
   tabulatorComponent!: TabulatorComponent;

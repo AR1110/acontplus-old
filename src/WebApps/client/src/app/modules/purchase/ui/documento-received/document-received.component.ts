@@ -9,7 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
@@ -91,7 +91,7 @@ export class DocumentReceivedComponent {
   private readonly _sharedService = inject(SharedService);
   private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
 
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   async alertEstabSelected() {
     if (this.establecimientos.length === 0) {

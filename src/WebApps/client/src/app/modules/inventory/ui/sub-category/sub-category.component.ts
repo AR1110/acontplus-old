@@ -8,7 +8,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive';
 import { SubCategoryService } from '@inventory/data/services/sub-category.service';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -47,7 +47,7 @@ export class SubCategoryComponent {
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
   private subCategorySvc = inject(SubCategoryService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   onResultModal($event: any) {

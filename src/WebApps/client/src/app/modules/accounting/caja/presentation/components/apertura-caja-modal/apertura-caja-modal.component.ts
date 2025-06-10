@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -32,7 +32,7 @@ export class AperturaCajaModalComponent {
   private dialogRef = inject(MatDialogRef<AperturaCajaModalComponent>)
   readonly params = inject<{ idCaja: number }>(MAT_DIALOG_DATA);
   private _controlCajaUseCase = inject(ControlCajaUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
 

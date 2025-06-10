@@ -23,7 +23,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
@@ -106,7 +106,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
   estados = signal<any[]>([]);
   private _productUseCase = inject(ProductUseCase);
   private stockSvc = inject(StockService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private $dialogSvc = inject(DialogService);
   private wasEmptyBefore = false; // Indica si alguna vez el campo estuvo vacío
 

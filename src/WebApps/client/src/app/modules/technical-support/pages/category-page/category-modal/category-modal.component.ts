@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
@@ -23,7 +23,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 export class CategoryModalComponent {
   private categoryService = inject(CategoryService);
   private modalRef = inject(MatDialogRef<CategoryModalComponent>);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   categoryForm = new FormGroup({
     id: new FormControl(0),
     code: new FormControl('', [

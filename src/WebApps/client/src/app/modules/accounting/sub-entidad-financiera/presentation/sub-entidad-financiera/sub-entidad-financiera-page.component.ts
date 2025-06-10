@@ -5,7 +5,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { SubEntidadFinancieraRead } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
 import { SubEntidadFinancieraDialogComponent } from '@accounting/sub-entidad-financiera/presentation/sub-entidad-financiera-modal/sub-entidad-financiera-dialog.component';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -32,7 +32,7 @@ import { DialogService } from '@core/services/dialog.service';
 })
 export class SubEntidadFinancieraPageComponent implements OnInit {
   private readonly _dialogSvc = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _sfUseCase = inject(SubEntidadFinancieraUseCase);
   private readonly _cdr = inject(ChangeDetectorRef);
 

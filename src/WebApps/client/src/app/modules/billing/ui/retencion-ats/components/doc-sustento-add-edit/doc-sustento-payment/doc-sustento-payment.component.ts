@@ -4,7 +4,7 @@ import { MatFormField, MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormaPago } from '@sri/domain/models/forma-pago';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocSustentoPaymentUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-payment.use-case';
 import Swal from 'sweetalert2';
 
@@ -30,7 +30,7 @@ export class DocSustentoPaymentComponent {
   private readonly _docSustentoPaymentUseCase = inject(
     DocSustentoPaymentUseCase,
   );
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   async removePayment() {
     const payments = this.docSustentoArray()

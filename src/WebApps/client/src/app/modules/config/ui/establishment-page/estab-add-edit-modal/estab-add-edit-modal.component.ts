@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatRadioModule } from '@angular/material/radio';
 import { isValidEmail, isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import {ApiResponse } from '@core/models/api-response';
 import { forkJoin, Observable } from 'rxjs';
@@ -46,7 +46,7 @@ export class EstabAddEditModalComponent {
 
   modal = inject(MatDialogRef<EstabAddEditModalComponent>);
   private estabSvc = inject(EstablishmentService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nuevo Establecimiento';
   btnText = 'Guardar';

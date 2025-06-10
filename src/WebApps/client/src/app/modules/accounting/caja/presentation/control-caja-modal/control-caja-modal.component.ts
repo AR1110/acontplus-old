@@ -7,7 +7,7 @@ import {
 } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { ControlCaja } from '@accounting/caja/domain/caja.entity';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
@@ -103,7 +103,7 @@ export class ControlCajaModalComponent {
   private dialogSvc = inject(DialogService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private pS = inject(UserRoleStateService);
   private _tokenUseCase = inject(TokenUseCase);
   private format = REPORT_FORMAT.PDF;

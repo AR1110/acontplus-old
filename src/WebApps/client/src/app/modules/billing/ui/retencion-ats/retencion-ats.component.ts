@@ -23,7 +23,7 @@ import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
 import { isApiResponse } from '@core/models/api-response';
 import { DocElectFiltersComponent } from '@shared/components/doc-elect-filters/doc-elect-filters.component';
@@ -81,7 +81,7 @@ export class RetencionAtsComponent implements OnInit {
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _sharedService = inject(SharedService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   pagination = signal(new MatPagination());
 

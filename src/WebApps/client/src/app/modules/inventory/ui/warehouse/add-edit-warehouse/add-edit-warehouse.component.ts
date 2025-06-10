@@ -11,7 +11,7 @@ import {SharedService} from "@core/services/shared.service";
 import {getValidId, isValidField} from "@core/utils/utils";
 import {WarehouseList} from "@inventory/domain/models/warehouse.model";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {UpdateWarehouseUseCase} from "@inventory/domain/usecases/warehouse/update-warehouse.use-case";
 import {CreateWarehouseUseCase} from "@inventory/domain/usecases/warehouse/create-warehouse.use-case";
 import {ApiResponse} from "@core/models/api-response";
@@ -34,7 +34,7 @@ export class AddEditWarehouseComponent {
   private dialogRef = inject(MatDialogRef<AddEditWarehouseComponent>);
   private params = inject<WarehouseList>(MAT_DIALOG_DATA);
   private sharedSvc = inject(SharedService);
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
 
 
   private $updateUseCase = inject(UpdateWarehouseUseCase)

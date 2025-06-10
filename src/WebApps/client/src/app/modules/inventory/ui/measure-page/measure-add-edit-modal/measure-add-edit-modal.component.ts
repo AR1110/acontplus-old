@@ -1,6 +1,6 @@
 import {Component, inject, Input, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { isValidField } from '@core/utils/utils';
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
@@ -34,7 +34,7 @@ export class MeasureAddEditModalComponent {
     id: number;
     descripcion: null | string
   }>(MAT_DIALOG_DATA);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _measureUseCase= inject(MeasureUseCase)
 
   btnText = 'Guardar';

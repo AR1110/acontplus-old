@@ -3,7 +3,7 @@ import { Component, inject,   signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -33,7 +33,7 @@ import {ProductPhotoPutStatusUseCase} from "@inventory/domain/usecases/product-p
 export class ProductPhotoComponent {
   readonly dialogRef = inject(MatDialogRef<ProductPhotoComponent>);
   readonly params = inject(MAT_DIALOG_DATA);
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
   private $productPhotoPostUseCase = inject(ProductPhotoPostUseCase)
   private $productPhotoPutUseCase = inject(ProductPhotoPutUseCase)
   private $getProductPhotoUseCase = inject(GetProductPhotoUseCase)

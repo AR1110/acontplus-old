@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { UserProfileService } from '@modules/config/services/user-profile.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
@@ -25,7 +25,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 })
 export class UserProfilePageComponent {
     private readonly userProfileService = inject(UserProfileService);
-    private tS = inject(ToasterService);
+    private tS = inject(ToastrNotificationService);
 
     user: any = {};
     roles: any = [];

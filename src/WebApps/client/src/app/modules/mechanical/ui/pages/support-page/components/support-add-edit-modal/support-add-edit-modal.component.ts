@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -74,7 +74,7 @@ export class SupportAddEditModalComponent implements OnInit {
 
   supportUseCase = inject(SupportUseCase);
   vehicleSvc = inject(VehicleWebRepository);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   loading = signal(false);
 

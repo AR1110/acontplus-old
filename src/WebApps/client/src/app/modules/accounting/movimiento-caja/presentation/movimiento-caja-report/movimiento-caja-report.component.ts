@@ -7,7 +7,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
@@ -41,7 +41,7 @@ export class MovimientoCajaReportComponent {
   isShowCompanyCustomer = false;
   isShowEmployee = true;
   sharedSvc = inject(SharedService);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   tiposDoc = [
     { codDoc: 'MC', descripcion: 'Movimiento Caja' },

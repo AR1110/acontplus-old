@@ -9,7 +9,7 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-retencion.use-case';
 import Swal from 'sweetalert2';
 
@@ -42,7 +42,7 @@ export class DocSustentoRetencionComponent {
   private readonly _docSustentoRetencionUseCase = inject(
     DocSustentoRetencionUseCase,
   );
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   selectCodigoRetencion(codigo: string) {
     setTimeout(() => {

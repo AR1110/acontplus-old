@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Category } from '@modules/technical-support/models/category';
 import { Serie } from '@modules/technical-support/models/serie';
@@ -30,7 +30,7 @@ export class BrandModalComponent {
   private categoryService = inject(CategoryService);
   private modalRef = inject(MatDialogRef<BrandModalComponent>);
   private serieService = inject(SerieService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   brandForm = new FormGroup({
     id: new FormControl(0),
     categoryId: new FormControl(0, Validators.required),

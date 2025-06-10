@@ -13,7 +13,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
@@ -61,7 +61,7 @@ export class DocManualUploadComponent {
 
   private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
 
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   get claveAccesoDocs() {
     return this.docUploadForm.get('claveAccesoDocs') as FormArray;

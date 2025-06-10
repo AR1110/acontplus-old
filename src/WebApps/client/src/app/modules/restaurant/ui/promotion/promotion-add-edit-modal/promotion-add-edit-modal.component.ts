@@ -8,7 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDate, formatDateToString } from '@core/utils/date.util';
 import { imgDefault, isValidField } from '@core/utils/utils';
 
@@ -53,7 +53,7 @@ export class PromotionAddEditModalComponent {
   params = inject(MAT_DIALOG_DATA);
   private modalRef = inject(MatDialogRef<PromotionAddEditModalComponent>);
   private restaurantStore = inject(RestaurantStoreService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private promotionSvc = inject(PromotionService);
   private promotionMenuSvc = inject(PromotionMenuService);
 

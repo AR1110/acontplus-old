@@ -13,7 +13,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ComprobanteIngreso } from '@accounting/comprobante-ingreso/domain/comp-ingreso.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 
 @Component({
@@ -74,7 +74,7 @@ export class ComprobanteIngresoComponent {
   showEmpleado = false;
   isSearchEmployeeSimple = true;
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   refresh() {
     this.getComprobantesIngreso();

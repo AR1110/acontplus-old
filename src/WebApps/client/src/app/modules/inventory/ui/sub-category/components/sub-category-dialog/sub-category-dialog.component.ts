@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { SubCategoryService } from '@inventory/data/services/sub-category.service';
 import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
@@ -40,7 +40,7 @@ export class SubCategoryDialogComponent implements OnInit {
 
   private subCategorySvc = inject(SubCategoryService);
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nueva SubCategoria';
   categorias = signal<any[]>([])

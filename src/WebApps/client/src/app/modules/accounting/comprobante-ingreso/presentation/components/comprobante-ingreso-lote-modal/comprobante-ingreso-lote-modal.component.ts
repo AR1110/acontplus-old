@@ -22,7 +22,7 @@ import {
   PaymentHistory,
 } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DatePipe } from '@angular/common';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
@@ -64,7 +64,7 @@ export class ComprobanteIngresoLoteModalComponent {
 
   modal = inject(MatDialogRef<ComprobanteIngresoLoteModalComponent>);
   modalSvc = inject(DialogService);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 

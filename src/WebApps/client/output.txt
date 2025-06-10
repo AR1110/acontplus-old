@@ -67,7 +67,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  ├── services
 |  |  |  |  ├── dialog-custom.service.ts
 |  |  |  |  ├── shared.service.ts
-|  |  |  |  ├── toaster.service.ts
+|  |  |  |  ├── toastr-notification.service.ts
 |  |  |  ├── theme
 |  |  |  |  ├── theme-options.ts
 |  |  |  |  ├── theme.service.ts

@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SubEntidadFinanciera } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
@@ -33,7 +33,7 @@ import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directiv
 })
 export class AnticipoModalComponent {
   private activeModal = inject(MatDialogRef<AnticipoModalComponent>);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _anticipoUseCase = inject(AnticipoUseCase);
 
   textBtn = 'Guardar';

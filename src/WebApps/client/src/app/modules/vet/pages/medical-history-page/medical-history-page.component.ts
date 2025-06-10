@@ -12,7 +12,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { GroupedEstab } from '@core/models/estab.model';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import { DialogService } from '@core/services/dialog.service';
 import { MatIcon } from '@angular/material/icon';
@@ -67,7 +67,7 @@ export class MedicalHistoryPageComponent implements OnInit {
   private readonly medicalHistoryService = inject(MedicalHistoryService);
   private readonly modalService = inject(DialogService);
   private readonly sharedService = inject(SharedService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },

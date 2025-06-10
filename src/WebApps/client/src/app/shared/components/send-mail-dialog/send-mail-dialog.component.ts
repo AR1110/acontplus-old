@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SendMailParams } from '@shared/models/send-mail.model';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
@@ -27,7 +27,7 @@ export class SendMailDialogComponent implements OnInit {
 
   readonly data = inject<SendMailParams>(MAT_DIALOG_DATA);
   private readonly _dialogRef = inject(MatDialogRef<SendMailDialogComponent>);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _notificacionSvc = inject(NotificacionService);
   private readonly _notificacionTribSvc = inject(NotificacionTributariaService);
 

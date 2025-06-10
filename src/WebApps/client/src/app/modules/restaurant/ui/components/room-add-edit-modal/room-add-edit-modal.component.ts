@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { RoomService } from '@restaurant/data/services/room.service';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
@@ -50,7 +50,7 @@ export class RoomAddEditModalComponent {
   _modalRef = inject(MatDialogRef<RoomAddEditModalComponent>);
   data = inject<any>(MAT_DIALOG_DATA);
   #roomService = inject(RoomService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
 
   ngOnInit() {

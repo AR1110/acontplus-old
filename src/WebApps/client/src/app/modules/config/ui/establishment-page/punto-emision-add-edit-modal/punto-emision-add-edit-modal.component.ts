@@ -1,7 +1,7 @@
 
 import { Component, inject  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.service';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
@@ -34,7 +34,7 @@ export class PuntoEmisionAddEditModalComponent {
     ambiente: '1',
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<PuntoEmisionAddEditModalComponent>);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   ptoEmisionSvc = inject(PuntoEmisionService);
 
   tiposAmbiente = [

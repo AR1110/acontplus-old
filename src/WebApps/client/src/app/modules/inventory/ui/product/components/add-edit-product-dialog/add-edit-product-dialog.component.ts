@@ -18,7 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoIvaSelectHtmlOnly } from '@inventory/domain/models/tipo-iva.model';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
@@ -108,7 +108,7 @@ export class AddEditProductDialogComponent implements OnInit {
     precioCosto?: number;
   }>(MAT_DIALOG_DATA);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private $productDataFormUseCase = inject(ProductDataFormUseCase);
   private $productPostUseCase = inject(ProductPostUseCase);
   private $productPutUseCase = inject(ProductPutUseCase);

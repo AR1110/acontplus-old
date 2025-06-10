@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
-type ToastrProps = {
+interface ToastrProps {
   type: 'success' | 'warning' | 'info' | 'error';
   message: string;
   title?: string;
@@ -12,35 +12,34 @@ type ToastrProps = {
     | 'toast-top-center'
     | 'toast-top-right'
     | 'toast-top-left';
-};
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class ToasterService {
-  constructor(private tS: ToastrService) {}
+export class ToastrNotificationService {
+  private readonly _tS = inject(ToastrService);
 
   toastr(props: ToastrProps) {
     const { type, message, title, positionClass } = props;
     const options = {
       closeButton: true,
       newestOnTop: true,
-      // progressBar: true,
-      //positionClass: positionClass ? positionClass : 'toast-bottom-center',
+      positionClass: positionClass ? positionClass : 'toast-bottom-center',
       timeOut: 5000,
       extendedTimeOut: 1500,
     };
     if (type === 'success') {
-      this.tS.success(message, title, options);
+      this._tS.success(message, title, options);
     }
     if (type === 'warning') {
-      this.tS.warning(message, title, options);
+      this._tS.warning(message, title, options);
     }
     if (type === 'info') {
-      this.tS.info(message, title, options);
+      this._tS.info(message, title, options);
     }
     if (type === 'error') {
-      this.tS.error(message, title, options);
+      this._tS.error(message, title, options);
     }
   }
 }

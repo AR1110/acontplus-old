@@ -13,7 +13,7 @@ import {DialogService} from "@core/services/dialog.service";
 import {AddEditWarehouseComponent} from "@inventory/ui/warehouse/add-edit-warehouse/add-edit-warehouse.component";
 import Swal from "sweetalert2";
 import {DeleteWarehouseUseCase} from "@inventory/domain/usecases/warehouse/delete-warehouse.use-case";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 
 @Component({
   selector: 'app-warehouse',
@@ -35,7 +35,7 @@ export class WarehouseComponent {
   private $deleteUseCase = inject(DeleteWarehouseUseCase);
 
   private _dialogSvc = inject(DialogService);
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   dataSource = signal<WarehouseList[]>([])
 
   columnsDefs: ColumnDefinition[] = [

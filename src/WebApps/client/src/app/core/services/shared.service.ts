@@ -7,7 +7,7 @@ import { isApiResponse } from '@core/models/api-response';
 import FileSaver from 'file-saver';
 import { map } from 'rxjs';
 import Swal from 'sweetalert2';
-import { ToasterService } from './toaster.service';
+import { ToastrNotificationService } from './toastr-notification.service';
 import * as XLSX from 'xlsx';
 
 interface ReportParams<T> {
@@ -23,7 +23,7 @@ interface ReportParams<T> {
 })
 export class SharedService {
   private http = inject(HttpClient);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   saveFile(response: any, format?: string, downloadOnly = false) {
     const contentDisposition = response.headers.get('content-disposition');

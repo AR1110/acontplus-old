@@ -12,7 +12,7 @@ import { AccesoMenu } from '@modules/config/domain/models/menu.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { isApiResponse } from '@core/models/api-response';
 import { FormsModule } from '@angular/forms';
@@ -62,7 +62,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   private $updateAccessUseCase = inject(UpdateAccessUserCustomerRoleUseCase);
   private $userCustomerStore = inject(UserCustomerStore);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   accesoMenus = signal< AccesoMenu[]>([]);
 

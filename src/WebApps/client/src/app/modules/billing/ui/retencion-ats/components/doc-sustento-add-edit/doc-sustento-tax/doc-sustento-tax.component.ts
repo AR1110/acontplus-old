@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import Swal from 'sweetalert2';
 import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 @Component({
   selector: 'app-doc-sustento-tax',
@@ -37,7 +37,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   tarifaImpuestosFiltered = signal<TarifaImpuesto[]>([]); // Signal mutable
   private readonly _docSustentoTaxUseCase = inject(DocSustentoTaxUseCase);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   selectTax(tax: any) {
     setTimeout(() => {

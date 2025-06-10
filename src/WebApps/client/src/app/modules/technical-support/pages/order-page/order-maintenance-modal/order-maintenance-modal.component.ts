@@ -9,7 +9,7 @@ import {
   GroupedEstabBodega,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -75,7 +75,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   private modalRef = inject(MatDialogRef<OrderMaintenanceModalComponent>);
   private orderSvc = inject(OrderService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
   private openModalProductSvc = inject(OpenModalProductService);

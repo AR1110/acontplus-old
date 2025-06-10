@@ -9,7 +9,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { CashboxSelectHtmlOnly } from '@accounting/caja/domain/caja.entity';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { SubEntidadFinanciera } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
@@ -73,7 +73,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
     customerName: new FormControl(''),
   });
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private tempSubEntidadesFinanciera: SubEntidadFinanciera[] = [];
 
   // greaterThanZeroValidator(

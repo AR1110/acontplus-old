@@ -8,7 +8,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Role } from '@modules/config/domain/models/role.model';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -44,7 +44,7 @@ export class UserCustomerAddEditModalComponent {
   titleModal = 'Nuevo Usuario';
   dataForm!: FormGroup;
   roles= signal<Role[]>([]);
-  protected tS = inject(ToasterService);
+  protected tS = inject(ToastrNotificationService);
   private fb = inject(FormBuilder);
   readonly params = inject<{
     idUsuario: 0,
