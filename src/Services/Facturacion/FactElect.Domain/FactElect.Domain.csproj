@@ -10,8 +10,4 @@
         <PackageReference Include="Acontplus.Common.Utilities" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>

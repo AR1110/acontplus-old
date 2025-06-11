@@ -50,8 +50,4 @@
   <ItemGroup>
     <ProjectReference Include="..\FactElect.Domain\FactElect.Domain.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
 </Project>
