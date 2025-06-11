@@ -49,6 +49,8 @@ try
 
     app.MapFactElectEndpoints();
 
+    app.MapSriEndpoints();
+
     app.UseRouting();
 
     app.UseAuthentication();

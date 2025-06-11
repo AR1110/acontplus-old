@@ -80,7 +80,8 @@ public static class ApplicationServicesExtensions
         string[] transientNameSpaces =
         [
             "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions"
+            "Common.Services.Extensions",
+            "FactElect.Infrastructure.Persistence.Repositories"
         ];
 
         services.Scan(scan => scan
@@ -90,6 +91,7 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
+        services.AddSingleton<IAtsXmlService, AtsXmlService>();
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<ICaptchaService, CaptchaService>();
