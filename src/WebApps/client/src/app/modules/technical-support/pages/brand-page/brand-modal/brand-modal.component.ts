@@ -150,13 +150,13 @@ export class BrandModalComponent {
     if (this.series.length > 0) {
       this.series.forEach((x) => {
         if (!x.code) {
-          return this.tS.toastr({
+          return this.tS.show({
             type: 'warning',
             message: 'Código de la serie invalido',
           });
         }
         if (!x.name) {
-          return this.tS.toastr({
+          return this.tS.show({
             type: 'warning',
             message: 'Nombre de la serie invalido',
           });
@@ -192,7 +192,7 @@ export class BrandModalComponent {
       if (response.isConfirmed) {
         this.serieService.delete(item.id).subscribe(  (response) => {
             if (isApiResponse(response)) {
-              this.tS.toastr({
+              this.tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
               });
@@ -209,7 +209,7 @@ export class BrandModalComponent {
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message,
       });

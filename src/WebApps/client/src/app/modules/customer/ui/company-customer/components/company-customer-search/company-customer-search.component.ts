@@ -268,7 +268,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
           },
           error: (error) => {
             console.error('Error fetching customer details:', error);
-            this.toasterService.toastr({
+            this.toasterService.show({
               type: 'error',
               message: 'Error al obtener detalles del cliente',
             });

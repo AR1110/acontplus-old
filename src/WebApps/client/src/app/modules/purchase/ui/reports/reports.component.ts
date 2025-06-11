@@ -107,7 +107,7 @@ export class ReportsComponent {
 
   getReport(format: 'pdf' | 'excel') {
     if (!isValidField(this.dataSearch.fromDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha inicio',
       });
@@ -115,7 +115,7 @@ export class ReportsComponent {
     }
 
     if (!isValidField(this.dataSearch.toDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha fin',
       });
@@ -124,7 +124,7 @@ export class ReportsComponent {
 
     if (this.dataSearch.supplierChecked) {
       if (!isValidField(this.dataSearch.idProveedor)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el proveedor',
         });

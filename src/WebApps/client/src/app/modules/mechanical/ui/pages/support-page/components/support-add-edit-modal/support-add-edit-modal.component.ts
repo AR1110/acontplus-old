@@ -110,13 +110,13 @@ export class SupportAddEditModalComponent implements OnInit {
 
   successResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -227,7 +227,7 @@ export class SupportAddEditModalComponent implements OnInit {
 
   private isValidForm() {
     if (!(this.data.establecimientoId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el establecimiento!',
       });
@@ -235,7 +235,7 @@ export class SupportAddEditModalComponent implements OnInit {
     }
 
     if (!(this.data.puntoEmisionId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el punto de emisión!',
       });
@@ -243,7 +243,7 @@ export class SupportAddEditModalComponent implements OnInit {
     }
 
     if (!isDateValid(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -251,7 +251,7 @@ export class SupportAddEditModalComponent implements OnInit {
     }
 
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -273,14 +273,14 @@ export class SupportAddEditModalComponent implements OnInit {
     }
 
     if (!(this.data.customerId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el cliente.',
       });
       return;
     }
     if (!(this.data.vehicleCompanyId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el vehículo.',
       });
@@ -288,7 +288,7 @@ export class SupportAddEditModalComponent implements OnInit {
     }
 
     if (!(this.data.userAssignedId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el técnico encargado.',
       });
@@ -296,7 +296,7 @@ export class SupportAddEditModalComponent implements OnInit {
     }
 
     if (!isValidField(this.data.obs)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'Ingrese una breve descripción del soporte que se va a realizar.',

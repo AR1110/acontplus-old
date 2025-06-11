@@ -105,7 +105,7 @@ export class OrderListComponent implements OnInit {
       this.orderService.delete(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -223,7 +223,7 @@ export class OrderListComponent implements OnInit {
 
   openModalMaintenance(item: any) {
     if (!(item.assignedUserId > 0)) {
-      return this.tS.toastr({
+      return this.tS.show({
         type: 'warning',
         message:
           'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',

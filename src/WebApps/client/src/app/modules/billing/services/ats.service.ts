@@ -38,7 +38,7 @@ export class AtsService {
           this._sharedSvc.saveFile(response);
         },
         error: (error: any) => {
-          return this._tS.toastr({
+          return this._tS.show({
             type: 'warning',
             message: `Error en el servidor`,
           });

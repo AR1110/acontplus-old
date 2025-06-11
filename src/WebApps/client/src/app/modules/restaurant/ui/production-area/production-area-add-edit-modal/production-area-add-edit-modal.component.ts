@@ -72,7 +72,7 @@ export class ProductionAreaAddEditModalComponent {
 
   onSave() {
     if (this.productionAreaForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise los datos correctos',
       });
@@ -109,7 +109,7 @@ export class ProductionAreaAddEditModalComponent {
   }
 
   successResponse(response: ApiResponse) {
-    this.#tS.toastr({
+    this.#tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });

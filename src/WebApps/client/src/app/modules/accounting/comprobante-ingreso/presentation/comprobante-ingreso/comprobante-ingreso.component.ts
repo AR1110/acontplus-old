@@ -174,7 +174,7 @@ export class ComprobanteIngresoComponent {
   filterValidation() {
     if (typeof this.dataSearch.byTipoPersona === 'number') {
       if (!isValidField(this.dataSearch.identificacionComprador)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el cliente o el empleado',
         });

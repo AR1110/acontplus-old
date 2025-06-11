@@ -325,7 +325,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
           });
         });
     } else {
-      this._tS.toastr({
+      this._tS.show({
         type: 'info',
         message: 'No disponible para documentos manuales',
       });
@@ -352,7 +352,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
         this._docSustentoUseCase
           .delete(doc.idRetAtsDocSustento)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -403,14 +403,14 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       this._docSustentoUseCase
         .update(docSustento.idRetAtsDocSustento, docSustento)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
       this._docSustentoUseCase.create(docSustento).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

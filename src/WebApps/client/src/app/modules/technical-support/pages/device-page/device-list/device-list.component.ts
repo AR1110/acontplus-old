@@ -67,7 +67,7 @@ export class DeviceListComponent implements OnInit {
   delete(item: Device) {
     this.deviceService.delete(item.id).subscribe((response) => {
       if (isApiResponse(response)) {
-        this.tS.toastr({
+        this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -83,7 +83,7 @@ export class DeviceListComponent implements OnInit {
     this.deviceService.put(item.id, item).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });

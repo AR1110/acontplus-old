@@ -145,14 +145,14 @@ export class DocConfigPageComponent implements OnInit {
 
   saveConfig(item: DocConfigList) {
     if (!(this.dataSearch().idPuntoEmision > 0)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
       });
       return;
     }
     if (!isValidField(item.ultimaSecuencia)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
       });
@@ -168,7 +168,7 @@ export class DocConfigPageComponent implements OnInit {
     };
 
     this.$createUseCase.execute(data).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

@@ -345,7 +345,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
     }));
 
     if (checklistSelection.length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione al menos un SubMenu',
       });
@@ -353,7 +353,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
     }
 
     if (mappedLevel3.some((s: any) => s.actions?.length === 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           '¡Agregue al menos una acción de todos los submenús seleccionados!',

@@ -167,7 +167,7 @@ export class InvoiceComponent {
 
           })
         } else {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'No tienes asignado Establecimiento!'
           })
@@ -208,7 +208,7 @@ export class InvoiceComponent {
       this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
         this.refresh();
     } else {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No tiene puntos de emisión asignados'
         })

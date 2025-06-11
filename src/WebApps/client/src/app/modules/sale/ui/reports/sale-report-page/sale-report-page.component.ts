@@ -245,14 +245,14 @@ export class SaleReportPageComponent {
       this.dataSearch.checkBoxCustomer &&
       !isValidField(this.dataSearch.identificacion)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente',
       });
       return;
     }
     if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Usuario',
       });

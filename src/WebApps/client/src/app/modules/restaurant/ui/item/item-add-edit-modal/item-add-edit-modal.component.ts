@@ -269,7 +269,7 @@ export class ItemAddEditModalComponent implements OnInit {
 
   onSave() {
     if (this.itemForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise los datos ingresados',
       });
@@ -281,7 +281,7 @@ export class ItemAddEditModalComponent implements OnInit {
     this.#itemService
       .put(this.data.id, { data: dataToSave })
       .subscribe((response) => {
-        this.#tS.toastr({
+        this.#tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

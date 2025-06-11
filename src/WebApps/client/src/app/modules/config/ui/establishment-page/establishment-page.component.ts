@@ -112,7 +112,7 @@ export class EstablishmentPageComponent implements OnInit {
   }
 
   commonResponse = (response: ApiResponse) => {
-      this._tS.toastr({
+      this._tS.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });
@@ -190,7 +190,7 @@ export class EstablishmentPageComponent implements OnInit {
 
     if (isConfirmed) {
       this._estabService.closeEstab(id).subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -219,7 +219,7 @@ export class EstablishmentPageComponent implements OnInit {
       this.dataLogo = response;
 
       if (this.dataLogo && !this.dataLogo.isCompressed) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message:
             'Por favor actualize nuevamente el logo del establecimiento, gracias!',
@@ -292,7 +292,7 @@ export class EstablishmentPageComponent implements OnInit {
       this._estabLogService
         .removeImage(this.dataLogo.id)
         .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -328,7 +328,7 @@ export class EstablishmentPageComponent implements OnInit {
 
     if (isConfirmed) {
       this._puntoEmisionService.annul(id).subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -343,7 +343,7 @@ export class EstablishmentPageComponent implements OnInit {
     this._estabService
       .putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth)
       .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

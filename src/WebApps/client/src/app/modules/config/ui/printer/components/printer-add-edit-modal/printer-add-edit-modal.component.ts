@@ -59,7 +59,7 @@ export class PrinterAddEditModalComponent implements OnInit {
   };
 
   successResponsePrinterDoc = (response: ApiResponse) => {
-    this._tS.toastr({
+    this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,
     });
@@ -69,7 +69,7 @@ export class PrinterAddEditModalComponent implements OnInit {
   };
 
   successResponse = (response: ApiResponse) => {
-    this._tS.toastr({
+    this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,
     });
@@ -95,7 +95,7 @@ export class PrinterAddEditModalComponent implements OnInit {
         }
       }
       if (this.estabs.length === 0) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'No tienes asignado los establecimientos',
         });
@@ -111,7 +111,7 @@ export class PrinterAddEditModalComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message:
             'Por favor instale el programa Acontplus Print, para obtener el listado de impresoras',
@@ -178,21 +178,21 @@ export class PrinterAddEditModalComponent implements OnInit {
 
   saveEdit() {
     if (!(this.data.establecimientoId > 0)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
       });
       return;
     }
     if (!isValidField(this.data.name)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Se necesita ingresar el nombre de la Impresora',
       });
       return;
     }
     if (!(this.data.printerTypeId > 0)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el Tipo Impresora',
       });
@@ -202,21 +202,21 @@ export class PrinterAddEditModalComponent implements OnInit {
       this.data.serverDevice &&
       (!this.data.macAddress || this.data.macAddress.length == 0)
     ) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Ingreso la dirección Mac del equipo',
       });
       return;
     }
     if (!isValidField(this.data.ipAddress)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Ingrese el Ip de la máquina',
       });
       return;
     }
     if (this.documents().every((item) => !item.isActive)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione al menos un documento',
       });

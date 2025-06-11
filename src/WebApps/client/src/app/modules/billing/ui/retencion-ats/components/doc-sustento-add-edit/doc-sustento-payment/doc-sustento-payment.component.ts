@@ -54,7 +54,7 @@ export class DocSustentoPaymentComponent {
         this._docSustentoPaymentUseCase
           .delete(paymentSelected.idRetencionAtsPago)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -89,7 +89,7 @@ export class DocSustentoPaymentComponent {
       this._docSustentoPaymentUseCase
         .update(paymentSelected.idRetencionAtsPago, paymentSelected)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -98,7 +98,7 @@ export class DocSustentoPaymentComponent {
       this._docSustentoPaymentUseCase
         .create(paymentSelected)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

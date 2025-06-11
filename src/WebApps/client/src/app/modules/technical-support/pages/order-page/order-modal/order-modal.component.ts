@@ -172,7 +172,7 @@ export class OrderModalComponent {
 
   addDetail(device: any) {
     if (this.orderDetails().some((x) => x.deviceId == device.id)) {
-      return this.tS.toastr({
+      return this.tS.show({
         type: 'warning',
         message: 'Este equipo ya se encuentra agregado en el detalle',
       });
@@ -223,7 +223,7 @@ export class OrderModalComponent {
       if (response.isConfirmed) {
         this.oDS.delete(detail.id).subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -243,7 +243,7 @@ export class OrderModalComponent {
   editDetail(detail: any) {
     this.oDS.put(detail.id, detail).subscribe((response) => {
       if (isApiResponse(response)) {
-        this.tS.toastr({
+        this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -365,7 +365,7 @@ export class OrderModalComponent {
 
   save() {
     if (this.orderDetails().length == 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
       });
@@ -375,7 +375,7 @@ export class OrderModalComponent {
     fechaEmision = formatDate(fechaEmision);
 
     if (!fechaEmision) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione le fecha',
       });
@@ -383,7 +383,7 @@ export class OrderModalComponent {
     }
 
     if (!isDateValid(fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -391,7 +391,7 @@ export class OrderModalComponent {
     }
 
     if (dateIsAfterCurrentDate(fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -421,7 +421,7 @@ export class OrderModalComponent {
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message!,
       });

@@ -86,7 +86,7 @@ export class CompanyCustomerAddEditDialogComponent {
       this._companyCustomerUseCase.checkExistence({ textSearch: id })
      .subscribe( (response) => {
           if (response.code == '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: 'El cliente ya se encuentra registrado en su empresa',
             });
@@ -97,7 +97,7 @@ export class CompanyCustomerAddEditDialogComponent {
 
        this._sriCustomerUseCase.search(codigo, id).subscribe(secondResponse=>{
          if(secondResponse.error){
-           this.tS.toastr({
+           this.tS.show({
              type: 'info',
              message: secondResponse.error,
            });
@@ -226,7 +226,7 @@ export class CompanyCustomerAddEditDialogComponent {
         dataForm.numeroIdentificacion
       ) {
         if (dataForm.numeroIdentificacion?.length != 13) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'El número del ruc debe tener 13 dígitos',
           });
@@ -238,7 +238,7 @@ export class CompanyCustomerAddEditDialogComponent {
         dataForm.numeroIdentificacion
       ) {
         if (dataForm.numeroIdentificacion?.length != 10) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'El número de la cédula debe tener 10 dígitos',
           });
@@ -262,7 +262,7 @@ export class CompanyCustomerAddEditDialogComponent {
     };
 
     if(this.customerForm.invalid){
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese todos datos requeridos'
       })
@@ -273,7 +273,7 @@ export class CompanyCustomerAddEditDialogComponent {
       this._companyCustomerUseCase
         .put(this.params.id, dataForm)
         .subscribe((response) => {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -286,7 +286,7 @@ export class CompanyCustomerAddEditDialogComponent {
     } else if (!(this.params.id > 0)) {
       this._companyCustomerUseCase.post(dataForm).subscribe((response) => {
 
-        this.tS.toastr({
+        this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });

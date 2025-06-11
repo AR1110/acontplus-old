@@ -148,7 +148,7 @@ export class CarteraClienteComponent {
         this.puntosEmision().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ??
         0;
     } else {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No tienes asignados puntos de emisión!',
       });
@@ -205,7 +205,7 @@ export class CarteraClienteComponent {
   // Cartera Cliente
   private getReport() {
     if (this.dataSearch.checkboxCompanyCustomer && !getValidId(this.dataSearch.companyCustomerId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente',
       });

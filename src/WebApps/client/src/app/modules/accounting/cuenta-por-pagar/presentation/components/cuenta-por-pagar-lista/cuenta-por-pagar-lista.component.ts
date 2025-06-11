@@ -171,7 +171,7 @@ export class CuentaPorPagarListaComponent {
       this.dataSearch();
 
     if (esBuscarProveedor && !ValidatorUtils.getValidId(idProveedor)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Proveedor',
       });
@@ -181,7 +181,7 @@ export class CuentaPorPagarListaComponent {
     // Validación de búsqueda por número secuencial
     if (esBuscarPorNro) {
       if (!ValidatorUtils.isValidField(secuencial)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese número secuencial',
         });
@@ -191,7 +191,7 @@ export class CuentaPorPagarListaComponent {
       // Validar que el número secuencial sea numérico si está presente
 
       if (!ValidatorUtils.isNumber(secuencial)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Secuencial tiene que ser un número válido',
         });
@@ -200,7 +200,7 @@ export class CuentaPorPagarListaComponent {
 
       // Desactivar la búsqueda por fecha cuando se usa número secuencial
       params.checkboxFecha = false;
-      this.tS.toastr({
+      this.tS.show({
         type: 'info',
         message: 'Buscando por Nro. Secuencial',
       });
@@ -245,7 +245,7 @@ export class CuentaPorPagarListaComponent {
               };
             });
           } else {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: 'No tienes asignado Establecimiento!',
             });
@@ -318,7 +318,7 @@ export class CuentaPorPagarListaComponent {
   openPaymentModal() {
     const selected = this.selection.selected;
     if (selected.length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione al menos un documento',
       });
@@ -326,7 +326,7 @@ export class CuentaPorPagarListaComponent {
     }
 
     if (!this.tienenMismoProveedorSeleccionado()) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione documentos que pertenezca al mismo proveedor',
       });
@@ -356,7 +356,7 @@ export class CuentaPorPagarListaComponent {
       });
 
       if (selectedMergeCuotas.some((item) => item.cuotas.length === 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Algunos de los documentos seleccionados no tienen cuotas',
         });

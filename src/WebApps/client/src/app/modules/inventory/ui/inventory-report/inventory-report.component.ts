@@ -282,7 +282,7 @@ export class InventoryReportComponent implements OnInit {
     const selectedTab = this.getSelectedTab();
     if (this.dataSearch.checkboxArticuloFiltro) {
       if (!(this.dataSearch.idArticulo > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Artículo!',
         });
@@ -290,7 +290,7 @@ export class InventoryReportComponent implements OnInit {
       }
       if (this.dataSearch.checkboxUsuarioFiltro) {
         if (!(this.dataSearch.idUsuario > 0)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Seleccione el Usuario!',
           });
@@ -301,7 +301,7 @@ export class InventoryReportComponent implements OnInit {
 
     if (this.dataSearch.chkProveedor) {
       if (!this.dataSearch.numeroIdentificacion) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Proveedor!',
         });
@@ -314,7 +314,7 @@ export class InventoryReportComponent implements OnInit {
       this.dataSearch.checkboxSubFamiliaFiltro
     ) {
       if (!this.dataSearch.idSubFamilia) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione la SubFamilia',
         });
@@ -324,7 +324,7 @@ export class InventoryReportComponent implements OnInit {
 
     if (this.dataSearch.checkboxStockFiltro) {
       if (!this.dataSearch.byStock) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Stock',
         });
@@ -334,7 +334,7 @@ export class InventoryReportComponent implements OnInit {
 
     if (this.dataSearch.checkboxUsuarioFiltro) {
       if (!(this.dataSearch.idUsuario > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
@@ -345,7 +345,7 @@ export class InventoryReportComponent implements OnInit {
     if (selectedTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Ingrese la ubicación ',
           });
@@ -378,7 +378,7 @@ export class InventoryReportComponent implements OnInit {
     if (selectedTab === 2) {
       if (this.dataSearch.checkboxObtenerRentabilidad) {
         if (!getValidId(this.dataSearch.idTarifa)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'La Tarifa es obligatorio',
           });

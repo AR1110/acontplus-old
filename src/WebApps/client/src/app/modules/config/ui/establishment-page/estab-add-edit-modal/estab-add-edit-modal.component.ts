@@ -80,13 +80,13 @@ export class EstabAddEditModalComponent {
   successResponse =   (response: ApiResponse) => {
 
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code == '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });
@@ -180,7 +180,7 @@ export class EstabAddEditModalComponent {
   async save() {
     try {
       if (!isValidField(this.data.nombreComercial)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese Nombre Comercial',
         });
@@ -188,7 +188,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.estab)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese Nro. de Establecimiento',
         });
@@ -196,7 +196,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (isNaN(parseFloat(this.data.estab))) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Nro. Establecimiento tiene que ser número',
         });
@@ -204,7 +204,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (isValidField(this.data.estab) && this.data.estab?.length !== 3) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El Nro. de Establecimiento tiene que tener tres dígitos',
         });
@@ -212,7 +212,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.contribuyente)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Tipo Contribuyente',
         });
@@ -221,7 +221,7 @@ export class EstabAddEditModalComponent {
 
       if (isValidField(this.data.contribuyenteEspecial)) {
         if (isNaN(parseFloat(this.data.estab))) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Nro. Contribuyente Especial tiene que ser número',
           });
@@ -231,7 +231,7 @@ export class EstabAddEditModalComponent {
           isValidField(this.data.contribuyenteEspecial) &&
           this.data.contribuyenteEspecial?.length !== 3
         ) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'El Nro. de Establecimiento tiene que tener tres dígitos',
           });
@@ -240,7 +240,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.actividad)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione la Actividad',
         });
@@ -249,7 +249,7 @@ export class EstabAddEditModalComponent {
 
       if (this.emails.length > 0) {
         if (!this.emails().every((item) => isValidEmail(item))) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Verifique que los correos  esten ingresado correctamente',
           });
@@ -258,7 +258,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.canton)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Cantón',
         });
@@ -266,7 +266,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.dirEstablecimiento)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la Dirección',
         });
@@ -287,14 +287,14 @@ export class EstabAddEditModalComponent {
           : null;
 
       if (!isValidField(this.data.correo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Correo es requerido',
         });
         return;
       }
       if (!isValidField(this.data.telefono)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Teléfono es requerido',
         });

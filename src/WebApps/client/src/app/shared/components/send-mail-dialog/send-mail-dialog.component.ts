@@ -33,7 +33,7 @@ export class SendMailDialogComponent implements OnInit {
 
   commonResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this._tS.toastr({
+      this._tS.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });
@@ -56,7 +56,7 @@ export class SendMailDialogComponent implements OnInit {
   send() {
     try {
       if (this.emails().length === 0) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'Ingrese al menos un correo del destinatorio',
         });
@@ -64,7 +64,7 @@ export class SendMailDialogComponent implements OnInit {
       }
 
       if (!this.emails().every((item) => this.isValidEmail(item))) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message:
             'Verifique que los correos del destinatario esten ingresado correctamente',

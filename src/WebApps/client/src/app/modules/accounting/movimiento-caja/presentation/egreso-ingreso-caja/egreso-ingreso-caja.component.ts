@@ -220,13 +220,13 @@ export class EgresoIngresoCajaComponent implements OnInit {
             .delete(item.idMovimientoCaja)
             .subscribe((response) => {
               if (response.code === '0') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
               }
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });

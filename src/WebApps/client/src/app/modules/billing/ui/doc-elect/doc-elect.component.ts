@@ -209,7 +209,7 @@ export class DocElectComponent {
       );
       this.getDocElects();
     } else {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No tiene puntos de emisión asignados',
       });

@@ -215,7 +215,7 @@ private decimal = {
       isNaN(precioCosto)
     ) {
       cell.setValue(oldValue);
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese el precio costo fraccionado',
       });
@@ -367,14 +367,14 @@ private decimal = {
     const precioCosto = this.data.precioCostoFraccionado;
     const porcentajeIva = this.productTarifa[0].porcentajeIva;
     if (!getValidId(precioCosto)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:  "Ingrese un número válido"
       })
       return;
     }
     if (precioCosto === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: "El valor mínimo en el precio de costo es 0.01"
       })
@@ -428,7 +428,7 @@ private decimal = {
    async recalculatePercentage($event:MouseEvent){
     $event.stopPropagation();
     if(!getValidId(this.data.precioCostoFraccionado)){
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese precio costo fraccionado'
       })
@@ -478,7 +478,7 @@ private decimal = {
 
   save(){
     if (!getValidId(this.data.idArticulo)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: "Seleccione el Articulo"
       })
@@ -486,7 +486,7 @@ private decimal = {
     }
 
     if (!getValidId(this.data.conversion)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: "Ingrese la Conversión"
       })
@@ -494,21 +494,21 @@ private decimal = {
     }
 
     if (isNaN(this.data.conversion)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Valor no válido en el campo Conversión'
       })
       return;
     }
     if (!getValidId(this.data.idMedida)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: "Seleccione la Medida"
       })
       return;
     }
     if (!getValidId(this.data.precioCostoFraccionado)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:"Ingrese el Precio Costo Fraccionado"
       })
@@ -516,7 +516,7 @@ private decimal = {
     }
 
     if (isNaN(this.data.precioCostoFraccionado)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: "Valor no válido en el campo Precio Costo Fraccionado"
       })
@@ -544,13 +544,13 @@ private decimal = {
 
   private successResponse = (response:ApiResponse)=>{
     if(response.code==="0"){
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message
       })
     }
     if(response.code==="1"){
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message
       })

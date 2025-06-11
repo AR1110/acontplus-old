@@ -92,13 +92,13 @@ export class InspectionModalComponent {
 
   successResponse = (response: any) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -166,7 +166,7 @@ export class InspectionModalComponent {
   isValidForm() {
 
     if (!isDateValid(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -174,7 +174,7 @@ export class InspectionModalComponent {
     }
 
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -196,12 +196,12 @@ export class InspectionModalComponent {
     }
 
     if (!isValidField(this.data.mileage)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingreso el kimoletraje' });
+      this.tS.show({ type: 'warning', message: 'Ingreso el kimoletraje' });
       return;
     }
 
     if (!isValidField(this.data.fuelLevel)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingreso el nivel de Combustible',
       });
@@ -212,7 +212,7 @@ export class InspectionModalComponent {
       vtn.nodes.some((n) => n.status == 1 || n.status == 2 || n.status == 3),
     );
     if (!isSelectedStatus) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione al menos un tipo de inspección',
       });

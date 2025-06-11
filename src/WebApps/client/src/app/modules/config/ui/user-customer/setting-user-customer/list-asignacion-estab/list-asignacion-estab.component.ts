@@ -87,13 +87,13 @@ this.getList()
   onChangeDefault(data: AsignacionEstabList) {
     this.$updateAsignacionEstabUseCase.execute(data).subscribe((response) => {
         if (response.code === "0") {
-          this._tS.toastr({
+          this._tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code === "1") {
-          this._tS.toastr({
+          this._tS.show({
             type: 'success',
             message: response.message
           })
@@ -133,13 +133,13 @@ this.getList()
       }
       this.$createAsignacionEstabUseCase.execute(params).subscribe((response) => {
           if (response.code === "0") {
-            this._tS.toastr({
+            this._tS.show({
               type: 'warning',
               message: response.message
             })
           }
           if (response.code === "1") {
-            this._tS.toastr({
+            this._tS.show({
               type: 'success',
               message: response.message
             })

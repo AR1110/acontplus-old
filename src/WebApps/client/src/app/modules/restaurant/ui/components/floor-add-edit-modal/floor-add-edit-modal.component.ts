@@ -153,13 +153,13 @@ export class FloorAddEditModalComponent {
 
   onSave() {
     if (this.floorForm.invalid) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Revise los datos correctos',
       });
     }
     if (!(this.rooms.length > 0)) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Debe agregar al menos una sala',
       });
@@ -192,7 +192,7 @@ export class FloorAddEditModalComponent {
   }
 
   successResponse(response: ApiResponse) {
-    this._tS.toastr({
+    this._tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });
@@ -225,7 +225,7 @@ export class FloorAddEditModalComponent {
     if (this.data.id > 0) {
       newRoom.id = 0;
       this._roomService.post(newRoom).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

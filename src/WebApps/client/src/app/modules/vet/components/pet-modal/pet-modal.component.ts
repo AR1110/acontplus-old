@@ -109,7 +109,7 @@ export class PetModalComponent implements OnInit {
     if (this.data.id > 0) {
       this.petService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -121,7 +121,7 @@ export class PetModalComponent implements OnInit {
     } else {
       this.petService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

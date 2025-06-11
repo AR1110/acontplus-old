@@ -60,7 +60,7 @@ export class AperturaCajaModalComponent {
     try {
       let data = this.dataForm.value;
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -72,7 +72,7 @@ export class AperturaCajaModalComponent {
           data.idEntidadFinanciera > 0
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -82,13 +82,13 @@ export class AperturaCajaModalComponent {
       if (data.idCaja && data.idCaja > 0) {
         this._controlCajaUseCase.post(data).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });

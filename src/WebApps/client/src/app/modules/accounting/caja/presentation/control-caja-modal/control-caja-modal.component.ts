@@ -418,7 +418,7 @@ export class ControlCajaModalComponent {
   getReportTransactionPending(format: 'pdf' | 'excel') {
     try {
       if (!(this.params.idUsuario > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'idUsuario no proporcionado!',
         });

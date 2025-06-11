@@ -201,7 +201,7 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
         this.dataSearch.checkBoxCustomer &&
         !isValidField(this.dataSearch.identificacion)
       ) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'Seleccione el Cliente',
         });
@@ -211,7 +211,7 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
         this.dataSearch.checkBoxUser &&
         !isValidField(this.dataSearch.userId)
       ) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });

@@ -226,7 +226,7 @@ export const ComprobanteEgresoStore = signalStore(
         const { idSubEntidadFinanciera, fechaEmision, nro, referencia, lote, aprobacion, idCiudad, idBanco, posfechado } = store.dataFormaPago();
 
         if (!getValidId(idSubEntidadFinanciera)) {
-          tS.toastr({
+          tS.show({
             type: 'warning',
             message: 'Seleccione SubEntidad financiera'
           })
@@ -234,7 +234,7 @@ export const ComprobanteEgresoStore = signalStore(
         }
 
         if (!isDateValid(fechaEmision)) {
-          tS.toastr({
+          tS.show({
             type: 'warning',
             message: 'Ingrese una fecha válida'
           })
@@ -242,7 +242,7 @@ export const ComprobanteEgresoStore = signalStore(
         }
 
         if (!getValidId(valorAbono)) {
-          tS.toastr({
+          tS.show({
             type: 'warning',
             message: 'Ingrese el valor abono'
           })
@@ -272,7 +272,7 @@ export const ComprobanteEgresoStore = signalStore(
           if (store[key as keyof typeof validations]()) {
             for (const { condition, message } of validations[key as keyof typeof validations]) {
               if (condition) {
-                tS.toastr({
+                tS.show({
                   type: 'warning',
                   message: message
                 })

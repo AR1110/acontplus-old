@@ -121,7 +121,7 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
           this._sfUseCase
             .delete(data.idSubEntidadFinanciera)
             .subscribe((value) => {
-              this._tS.toastr({
+              this._tS.show({
                 type: value.code === '1' ? 'success' : 'warning',
                 message: value.message,
               });

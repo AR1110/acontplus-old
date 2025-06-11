@@ -149,7 +149,7 @@ export class ReporteCobrosComponent  {
   getReport(format: 'pdf' | 'excel') {
     try {
       if (!isValidField(this.dataSearch.fromDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese fecha inicio',
         });
@@ -157,7 +157,7 @@ export class ReporteCobrosComponent  {
       }
 
       if (!isValidField(this.dataSearch.toDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese fecha fin',
         });
@@ -166,7 +166,7 @@ export class ReporteCobrosComponent  {
 
       if (this.dataSearch.supplierChecked) {
         if (!isValidField(this.dataSearch.customerId)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Seleccione el cliente',
           });
@@ -210,7 +210,7 @@ export class ReporteCobrosComponent  {
       this.sharedSvc.getReport({ data: parameters, format: format });
     } catch (error: any) {
       if (error.status === 400) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No se pudo obtener el reporte',
         });

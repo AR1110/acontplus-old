@@ -92,13 +92,13 @@ export class CajaModalComponent implements OnInit {
 
   commonResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -110,7 +110,7 @@ export class CajaModalComponent implements OnInit {
     try {
       const data = this.dataForm.value;
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Complete todos los campos requeridos!',
         });

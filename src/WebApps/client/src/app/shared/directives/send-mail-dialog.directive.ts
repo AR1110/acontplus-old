@@ -19,7 +19,7 @@ export class SendMailDialogDirective {
 
   @HostListener('click') onClick() {
     if (!(this.notificationAcontPlus() || this.notificationSri())) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'No ha definido el tipo de notificación',
       });

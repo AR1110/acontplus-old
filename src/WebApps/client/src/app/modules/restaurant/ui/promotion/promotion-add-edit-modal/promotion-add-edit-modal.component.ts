@@ -153,7 +153,7 @@ export class PromotionAddEditModalComponent {
 
   onProductSelected($event: any) {
     if (this.promotionMenus().some((e) => e.menuId === $event.id)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ya existe agregado para la promoción',
       });
@@ -182,7 +182,7 @@ export class PromotionAddEditModalComponent {
   save() {
     try {
       if (!isValidField(this.estabId())) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Estab id undefined',
         });
@@ -190,7 +190,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (!isValidField(this.data.description)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripcón',
         });
@@ -198,7 +198,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (!isValidField(this.data.startDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la fecha de inicio',
         });
@@ -206,7 +206,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (!isValidField(this.data.endDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la fecha de fin',
         });
@@ -220,7 +220,7 @@ export class PromotionAddEditModalComponent {
             !(isValidField(e.horaInicio) || !isValidField(e.horaFin)),
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese hora de inicio o fin',
         });
@@ -230,7 +230,7 @@ export class PromotionAddEditModalComponent {
       if (
         this.daysOfWeek().some((e) => e.checked && !e.horaInicio.includes(':'))
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Hora de inicio formato incorrecto',
         });
@@ -240,7 +240,7 @@ export class PromotionAddEditModalComponent {
       if (
         this.daysOfWeek().some((e) => e.checked && !e.horaFin.includes(':'))
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Hora de fin formato incorrecto',
         });
@@ -248,7 +248,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (this.promotionMenus().length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Agregué al menos un menú',
         });
@@ -277,13 +277,13 @@ export class PromotionAddEditModalComponent {
           .put(this.data.id, newObject, this.file)
           .subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
@@ -293,13 +293,13 @@ export class PromotionAddEditModalComponent {
       } else {
         this.promotionSvc.post(newObject, this.file).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });
