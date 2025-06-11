@@ -10,7 +10,6 @@ import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { provideToastr } from 'ngx-toastr';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
-import { mechanicalProvider } from '@mechanical/providers';
 import { saleProvider } from '@sale/providers';
 import { billingProviders } from '@modules/billing/providers';
 import { DatePipe } from '@angular/common';
@@ -24,6 +23,7 @@ import 'moment/locale/es';
 import {DATA_RESTAURANT_IOC} from "@restaurant/data/data-restaurant.ioc";
 import {DATA_ACCOUNTING_IOC} from "@accounting/data-accounting.ioc";
 import {DATA_REPORT_IOC} from "@modules/api/reports/data-report.ioc";
+import { DATA_MECHANICAL_IOC } from '@modules/mechanical/data/data-mechanical.ioc';
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -63,7 +63,7 @@ export const featureProviders = [
   ...purchaseProviders,
   ...authMainProvider,
   ...commonProviders,
-  ...mechanicalProvider,
+  ...DATA_MECHANICAL_IOC,
   ...DATA_RESTAURANT_IOC,
   ...DATA_CONFIG_IOC,
   ...DATA_REPORT_IOC,

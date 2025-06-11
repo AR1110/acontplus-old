@@ -120,8 +120,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
   vehicle = signal<any>({});
 
   //Draw Totals Tax
-  htmlImpuestoTotal = '';
-  htmlIvaTotal = '';
+  htmlImpuestoTotal = signal('');
+  htmlIvaTotal = signal('');
 
   productSearch = {
     textSearch: '',
@@ -264,8 +264,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
         //create delete button
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
-        delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
+        delBtn.innerHTML = `x`;
+        delBtn.classList.add('btn', 'btn-danger', 'btn-xs', 'btn-sm');
         delBtn.addEventListener('click', () => {
           const rowData = cell.getRow().getData();
           this.askToDelete(rowData);
@@ -883,8 +883,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
       this.data.discount = discount;
       this.data.percentageDiscount = percentageDiscount;
       // this.infrastructure.tip = propina;
-      this.htmlImpuestoTotal = htmlImpuestoTotal;
-      this.htmlIvaTotal = htmlIvaTotal;
+      this.htmlImpuestoTotal.set(htmlImpuestoTotal);
+      this.htmlIvaTotal.set(htmlIvaTotal);
     } catch (error) {
       console.log(error);
     }

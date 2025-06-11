@@ -59,11 +59,10 @@ AS
 
         -- Información bancaria (opcional)
         COALESCE(ban.descripcion, '') AS nombreBanco,
-        pag.idBanco AS idBanco,
-        pag.idSubEntidadFinanciera AS idSubEntidadFinanciera,
+        pag.idBanco,
+        pag.idSubEntidadFinanciera,
 
-        -- Información del pago
-        pag.secuencial AS numeroPago,
+        -- Información del pago 
         FORMAT(pag.fechaEmision, 'dd/MM/yyyy  HH:mm') AS fechaPago,
         pag.fechaEmision AS fechaPagoTimestamp,
         pag.nro,
