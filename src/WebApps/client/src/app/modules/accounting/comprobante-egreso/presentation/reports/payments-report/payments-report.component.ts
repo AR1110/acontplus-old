@@ -24,6 +24,7 @@ import {ReportParameters, ReportParamsBuilder} from "@shared/utils/report-params
 import {ACCOUNTING_CODE_REPORT} from "@accounting/shared/enums/accounting.constants";
 import {getValidId, isValidField} from "@core/utils/utils";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 enum ReportTypeEnum {
   Comprobantes = 'LC',
@@ -52,7 +53,8 @@ enum ReportTypeEnum {
 })
 export class PaymentsReportComponent {
   private $dataFilterUseCase = inject(DataFilterComprobanteEgresoUseCase);
-  private $generateReportUseCase = inject(GenerateReportUseCase)
+  private $generateReportUseCase = inject(GenerateReportUseCase);
+  private readonly _tokenUseCase = inject(TokenUseCase);
   private subscription$!: Subscription;
 
   private format!:string;
@@ -135,6 +137,8 @@ export class PaymentsReportComponent {
       useDateFilter: this.filterParams.useDateFilter,
       reportTypeCode: this.filterParams.reportTypeCode,
       tipo: 0,
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+
     }
 
     if(ReportTypeEnum.Comprobantes===this.filterParams.reportTypeCode){
