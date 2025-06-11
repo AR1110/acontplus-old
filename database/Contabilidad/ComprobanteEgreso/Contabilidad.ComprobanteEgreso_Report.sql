@@ -216,42 +216,46 @@ BEGIN
                                 ,razonSocialProveedor
                                 ,fechaRegistro
                                 ,serieDocumento
+                                ,fechaPago
                                 ,metodoPago
                                 ,nombreBanco
                                 ,nro
                                 ,aprobacion
                                 ,referencia
                                 ,lote
+                                ,observacion
+                                ,totalComprobante
+                                ,totalDocumento
                             FROM Contab.V_ComprobanteEgreso 
                             WHERE idEntidad > 0 
                 '
 
-        -- SET @sql = @sql + ' AND idEstablecimiento = @estabId '
+        SET @sql = @sql + ' AND idEstablecimiento = @estabId '
 
-        -- IF @codDoc IS NOT NULL
-        --     BEGIN
-        --     SET @sql = @sql + ' AND codDoc = @codDoc '
-        -- END
+        IF @codDoc IS NOT NULL
+             BEGIN
+            SET @sql = @sql + ' AND codDoc = @codDoc '
+        END
 
-        -- IF @paymentMethodId > 0
-        --     BEGIN
-        --     SET @sql = @sql + ' AND idSubEntidadFinanciera = @paymentMethodId '
-        -- END
+        IF @paymentMethodId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idSubEntidadFinanciera = @paymentMethodId '
+        END
 
-        -- IF @supplierId > 0
-        --     BEGIN
-        --     SET @sql = @sql + ' AND idProveedor = @supplierId '
-        -- END
+        IF @supplierId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idProveedor = @supplierId '
+        END
 
-        -- IF @bankId > 0
-        --     BEGIN
-        --     SET @sql = @sql + ' AND idBanco = @bankId '
-        -- END
+        IF @bankId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idBanco = @bankId '
+        END
 
-        -- IF @useDateFilter = 1
-        --     BEGIN
-        --     SET @sql = @sql + ' AND CAST(fechaRegistro AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
-        -- END
+        IF @useDateFilter = 1
+             BEGIN
+            SET @sql = @sql + ' AND CAST(fechaRegistro AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+        END
 
         ---> Header
         SELECT TOP 1
