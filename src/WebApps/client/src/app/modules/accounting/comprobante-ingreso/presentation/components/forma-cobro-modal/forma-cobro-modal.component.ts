@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SubEntidadFinancieraComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/sub-entidad-financiera/sub-entidad-financiera.component';
 import { ValorAbonoComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/valor-abono/valor-abono.component';
 import { FechaEmisionComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/fecha-emision/fecha-emision.component';
@@ -64,7 +64,7 @@ export class FormaCobroModalComponent implements OnInit {
   _formBuilder = inject(FormBuilder);
 
   modal = inject(MatDialogRef<FormaCobroModalComponent>);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   ciudadesGroupOptions!: Observable<any[]>;
   ciudadForm = this._formBuilder.group({

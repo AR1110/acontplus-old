@@ -47,7 +47,7 @@ import {
 import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDate } from '@core/utils/date.util';
 
 @Component({
@@ -80,7 +80,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _dialogService = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],

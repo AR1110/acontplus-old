@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ProductSale } from '@inventory/domain/models/product.model';
 import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
@@ -63,7 +63,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 
   private supportDetailUseCase = inject(SupportDetailUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   readonly tabulatorComponent = viewChild.required(TabulatorComponent);
 

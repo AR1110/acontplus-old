@@ -12,7 +12,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
 
@@ -65,7 +65,7 @@ export class OrderModalComponent {
   private modalService = inject(DialogService);
   private oDS = inject(OrderDetailService);
   private orderService = inject(OrderService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   columnNames = [
     { title: 'id', field: 'id', width: 150, visible: false },

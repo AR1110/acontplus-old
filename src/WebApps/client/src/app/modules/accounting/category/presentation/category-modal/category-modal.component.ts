@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   FormControl,
   FormGroup,
@@ -42,7 +42,7 @@ export class CategoryModalComponent {
   private _categoryUseCase = inject(CategoryUseCase);
 
   private modalRef = inject(MatDialogRef<CategoryModalComponent>);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   get() {
     this._categoryUseCase.get({ tipo: 2 }).subscribe((response) => {

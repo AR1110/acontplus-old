@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
@@ -58,7 +58,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
   private $listUseCase = inject(ListMovimientoCajaUseCase)
   $userRoleStateManager = inject(UserRoleStateManager);

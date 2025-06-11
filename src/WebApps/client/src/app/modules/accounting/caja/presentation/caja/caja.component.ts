@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { getPermisosLocal } from '@core/utils/utils';
 import { CashboxList } from '@accounting/caja/domain/caja.entity';
@@ -45,7 +45,7 @@ import { DialogService } from '@core/services/dialog.service';
   templateUrl: './caja.component.html',
 })
 export class CajaComponent implements OnInit {
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _cajaUseCase = inject(CajaUseCase);
   private _dialogSvc = inject(DialogService);
 

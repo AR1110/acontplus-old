@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { IForm } from '@core/models/form-types';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
 import {
   Device,
@@ -60,7 +60,7 @@ export class DeviceModalComponent implements OnInit {
   private deviceSepcsService = inject(DeviceSpecsService);
   private modalService = inject(DialogService);
   private modeloService = inject(ModeloService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   brands = signal<Brand[]>([]);
   // --> Variables
   modalIcon = 'add';

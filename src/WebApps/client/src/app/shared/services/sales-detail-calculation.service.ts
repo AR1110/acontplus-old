@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { ToasterService } from "@core/services/toaster.service";
+import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 import { pricingCalculateUtil } from "@core/utils/pricing-calculate.util";
 import { roundNumber } from "@core/utils/round-number.utils";
 import { MedidaProducto } from "@inventory/domain/models/measure.model";
@@ -54,7 +54,7 @@ type SetFeeDetailProps = {
 })
 export class SalesDetailCalculationService {
 
-  tS = inject(ToasterService)
+  tS = inject(ToastrNotificationService)
 
   calculateColDef(props: CalculateColDefProps) {
     const self = this;

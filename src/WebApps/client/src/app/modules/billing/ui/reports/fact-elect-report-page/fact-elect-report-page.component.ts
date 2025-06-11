@@ -11,7 +11,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
@@ -47,7 +47,7 @@ import { FilterData } from '@billing/domain/models/documento-electronico.model';
 })
 export class FactElectReportPageComponent implements OnInit, OnDestroy {
   private readonly _docElectSvc = inject(DocumentoElectronicoWebRepository);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _sharedSvc = inject(SharedService);
   private destroy$ = new Subject<void>();
 

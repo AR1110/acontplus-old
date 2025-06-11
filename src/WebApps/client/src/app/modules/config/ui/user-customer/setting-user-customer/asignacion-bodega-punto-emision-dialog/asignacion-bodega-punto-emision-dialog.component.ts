@@ -2,7 +2,7 @@ import {Component, inject,  signal, TemplateRef, ViewChild} from "@angular/core"
 import { FormsModule } from "@angular/forms";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {ApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
+import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 
 import {
   AsignacionBodegaList,
@@ -68,7 +68,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent {
   private $updateAsignacionBodegaUseCase = inject(UpdateAsignacionBodegaUseCase)
   private $updateAsignacionPuntoEmisionUseCase = inject(UpdateAsignacionPuntoEmisionUseCase)
 
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
 
   @ViewChild('templatePuntoEmisionDefault') templatePuntoEmisionDefault!: TemplateRef<any>;
   @ViewChild('templateDefaultBodega') templateDefaultBodega!: TemplateRef<any>;

@@ -1,7 +1,7 @@
 import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-type.model';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -44,7 +44,7 @@ export class VehicleAddEditModalComponent {
   }>(MAT_DIALOG_DATA);
 
   vehicleUseCase = inject(VehicleUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   titleModal = signal('Nuevo Vehículo');
   btnText = signal('Guardar');

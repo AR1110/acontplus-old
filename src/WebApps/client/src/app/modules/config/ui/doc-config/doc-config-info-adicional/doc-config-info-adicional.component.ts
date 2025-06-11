@@ -1,7 +1,7 @@
 import {Component, inject, Input, signal, TemplateRef, ViewChild} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import Swal from 'sweetalert2';
 import { isValidField } from '@core/utils/utils';
@@ -32,7 +32,7 @@ export class DocConfigInfoAdicionalComponent {
   private dialogRef = inject(MatDialogRef<DocConfigInfoAdicionalComponent>);
   @Input() params = inject<DocConfigList & {idPuntoEmision:number}>(MAT_DIALOG_DATA)
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private $getInfoAdicional = inject(GetDocConfigInfoAdicionalUseCase);
   private $createUseCase = inject(CreateDocConfigUseCase)
 

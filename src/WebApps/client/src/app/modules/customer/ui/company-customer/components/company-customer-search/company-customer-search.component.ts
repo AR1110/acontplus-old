@@ -27,7 +27,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DialogService } from '@core/services/dialog.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ResponsiveService } from '@shared/services/responsive.service';
 import {
   Observable,
@@ -89,7 +89,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   // Injected services
   private readonly responsiveService = inject(ResponsiveService);
   private readonly companyCustomerUseCase = inject(CompanyCustomerUseCase);
-  private readonly toasterService = inject(ToasterService);
+  private readonly toasterService = inject(ToastrNotificationService);
   private readonly overlay = inject(Overlay);
 
   // Input properties

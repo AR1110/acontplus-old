@@ -12,7 +12,7 @@ import {
   REPORT_FORMAT, SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import {isValidEmail, isValidField} from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
@@ -88,7 +88,7 @@ export class SaleReportPageComponent {
   format: any;
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService);
   private _tokenUseCase = inject(TokenUseCase);

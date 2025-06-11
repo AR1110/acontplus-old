@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ApiResponse } from '@core/models/api-response';
 import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
@@ -48,7 +48,7 @@ export class ProductionAreaAddEditModalComponent {
   #modalRef = inject(MatDialogRef<ProductionAreaAddEditModalComponent>);
   #productionAreaService = inject(ProductionAreaService);
   #sharedService = inject(SharedService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
   getEstabAsign() {
     this.#sharedService.getEstabAsign().subscribe((response) => {

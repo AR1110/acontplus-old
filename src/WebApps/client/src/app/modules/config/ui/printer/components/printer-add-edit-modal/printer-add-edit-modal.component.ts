@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import {
   PrinterRead,
@@ -34,7 +34,7 @@ export class PrinterAddEditModalComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
   readonly _modalRef = inject(MatDialogRef<PrinterAddEditModalComponent>);
   private readonly _printerUseCase = inject(PrinterUseCase);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _printerDocService = inject(PrinterDocService);
 
   modalTitle = 'Nueva Impresora';

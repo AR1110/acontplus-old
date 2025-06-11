@@ -5,7 +5,7 @@ import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -61,7 +61,7 @@ export class InspectionModalComponent {
   }>(MAT_DIALOG_DATA)
 
   _inspectionUseCase = inject(InspectionUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   titleModal = 'Registro Inspección';
   btnText = 'Guardar';

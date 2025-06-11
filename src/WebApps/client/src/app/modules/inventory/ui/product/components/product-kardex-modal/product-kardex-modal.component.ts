@@ -5,7 +5,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
@@ -43,7 +43,7 @@ export class ProductKardexModalComponent implements OnInit {
   modal = inject(MatDialogRef<ProductKardexModalComponent>);
 
   transactionSvc = inject(TransactionService);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;

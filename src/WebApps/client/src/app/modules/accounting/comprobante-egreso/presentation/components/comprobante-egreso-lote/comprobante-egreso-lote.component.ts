@@ -16,7 +16,7 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { DialogService } from '@core/services/dialog.service';
 import { FormaPagoComponent } from '@accounting/comprobante-egreso/presentation/components/forma-pago/forma-pago.component';
 import { ComprobanteEgresoStore } from '@accounting/comprobante-egreso/application/store/comprobante-egreso.store';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
 import Swal from 'sweetalert2';
@@ -54,7 +54,7 @@ export class ComprobanteEgresoLoteComponent {
   readonly dialogRef = inject(MatDialogRef<ComprobanteEgresoLoteComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   comprobanteEgresoStore = inject(ComprobanteEgresoStore);
   private useCase = inject(ComprobanteEgresoUseCase)
 

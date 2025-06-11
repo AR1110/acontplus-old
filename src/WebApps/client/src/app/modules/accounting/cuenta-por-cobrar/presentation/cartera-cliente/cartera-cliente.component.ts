@@ -15,7 +15,7 @@ import {
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import {getValidId, isValidField} from '@core/utils/utils';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
@@ -52,7 +52,7 @@ import {MatInputModule} from "@angular/material/input";
   styles: ``,
 })
 export class CarteraClienteComponent {
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);

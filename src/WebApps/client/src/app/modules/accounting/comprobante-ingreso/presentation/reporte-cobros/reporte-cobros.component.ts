@@ -1,6 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
 import {
   GroupedEstab,
@@ -76,7 +76,7 @@ export class ReporteCobrosComponent  {
     lote: '',
   };
   // Services
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);

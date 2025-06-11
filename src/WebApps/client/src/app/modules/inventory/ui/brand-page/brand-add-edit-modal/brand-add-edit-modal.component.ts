@@ -1,7 +1,7 @@
 import {Component, inject, Input, signal} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
+import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 import { isValidField } from "@core/utils/utils";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -34,7 +34,7 @@ export class BrandAddEditModalComponent {
     descripcion: null | string
   }>(MAT_DIALOG_DATA);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _brandUseCase= inject(BrandUseCase)
 
   btnText = 'Guardar';

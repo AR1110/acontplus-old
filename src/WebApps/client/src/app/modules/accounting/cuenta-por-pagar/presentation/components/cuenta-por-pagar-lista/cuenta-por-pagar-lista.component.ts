@@ -24,7 +24,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { DialogService } from '@core/services/dialog.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { MODAL_SIZE } from '@core/constants/global.constants';
@@ -76,7 +76,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
   templateUrl: './cuenta-por-pagar-lista.component.html',
 })
 export class CuentaPorPagarListaComponent {
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private useCase = inject(CuentaPorPagarUseCase);

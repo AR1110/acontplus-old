@@ -10,7 +10,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
 import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE} from "@core/constants/global.constants";
 import {forkJoin, Observable} from "rxjs";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {CompanyCustomerUseCase} from "@customer/domain/usecases/company-customer.use-case";
 import {SriCustomerUseCase} from "@customer/domain/usecases/sri-customer.use-case";
 
@@ -36,7 +36,7 @@ export class CompanyCustomerAddEditDialogComponent {
       }>(MAT_DIALOG_DATA);
 
   private _sriCustomerUseCase = inject(SriCustomerUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _companyCustomerUseCase = inject(CompanyCustomerUseCase)
 
   title = 'Nuevo Cliente'

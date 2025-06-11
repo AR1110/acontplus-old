@@ -49,7 +49,7 @@ import {
   MatDatepickerInput,
   MatDatepickerToggle,
 } from '@angular/material/datepicker';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { DialogService } from '@core/services/dialog.service';
 import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
@@ -104,7 +104,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   private readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _documentoReceivedUseCase = inject(DocumentReceivedUseCase);
   private readonly _dialogService = inject(DialogService);
 

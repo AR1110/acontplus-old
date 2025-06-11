@@ -5,7 +5,7 @@ import { AnticipoRead } from '@accounting/movimiento-caja/domain/anticipo.model'
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -56,7 +56,7 @@ export class AnticipoComponent {
   };
   private modalSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _anticipoUseCase = inject(AnticipoUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
 

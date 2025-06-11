@@ -7,7 +7,7 @@ import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/c
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 
 import { Pagination } from '@shared/models/pagination.model';
@@ -39,7 +39,7 @@ import {MatButton} from "@angular/material/button";
 })
 export class CompanyCustomerComponent {
   private _companyCustomerUseCase = inject(CompanyCustomerUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 
   visibleColumns: string[] = [

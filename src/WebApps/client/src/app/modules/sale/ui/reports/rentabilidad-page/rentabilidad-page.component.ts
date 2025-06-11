@@ -13,7 +13,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
@@ -86,7 +86,7 @@ export class RentabilidadPageComponent {
     isSimpleMode: true,
   };
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _productUseCase = inject(ProductUseCase);
   private _tokenUseCase = inject(TokenUseCase);
 

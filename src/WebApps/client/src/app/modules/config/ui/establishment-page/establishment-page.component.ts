@@ -8,7 +8,7 @@ import {
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import {ApiResponse } from '@core/models/api-response';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { PuntoEmisionAddEditModalComponent } from '@modules/config/ui/establishment-page/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -69,7 +69,7 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _puntoEmisionService = inject(PuntoEmisionService);
   private readonly _estabLogService = inject(EstablishmentLogoService);
   private readonly _modalService = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   setPanelOpen(index: number) {
     this.panelOpenState = index;
     // Only load infrastructure when opening a panel (not when closing)

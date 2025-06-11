@@ -3,7 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FacturaFisicaService } from '../../data/services/factura-fisica.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
@@ -56,7 +56,7 @@ import { FacturaFisicaAddEditModalComponent } from './components/factura-fisica-
 export class FacturaFisicaComponent {
 
   private facturaFisicaSvc = inject(FacturaFisicaService)
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
   private dialogSvc = inject(DialogService)
 
   estabs: GroupedEstab[] = [];

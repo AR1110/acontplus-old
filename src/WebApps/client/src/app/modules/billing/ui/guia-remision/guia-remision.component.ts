@@ -20,7 +20,7 @@ import {
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { FormsModule } from '@angular/forms';
 import {formatDateToString} from "@core/utils/date.util";
 import {GuiaRemisionList} from "@billing/domain/models/guia-remision/guia-remision.model";
@@ -61,7 +61,7 @@ export class GuiaRemisionComponent   {
     GetGuiaRemisionFilterDataUseCase
   );
   private $listGuiasRemisionUseCase = inject(ListGuiasRemisionUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService)
 
   estabs = signal<GroupedEstab[]>([]);
