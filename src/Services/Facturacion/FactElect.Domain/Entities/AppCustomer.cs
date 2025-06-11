@@ -17,4 +17,6 @@ public class AppCustomer : BaseEntity
     [MaxLength(500)] public string? Address { get; set; }
 
     public bool? SriValidation { get; set; }
+
+    public DateTime? BirthDate { get; set; }
 }
