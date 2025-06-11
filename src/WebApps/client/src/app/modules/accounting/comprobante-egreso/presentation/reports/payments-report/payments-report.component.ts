@@ -74,7 +74,7 @@ export class PaymentsReportComponent {
   filterParams = {
     establecimientoId: 0,
     userId: 0,
-    documentCode: '',
+    documentCode: 'all',
     paymentMethodId: 0,
     bankId: 0,
     startDate: formatDateToString(new Date()),
@@ -126,10 +126,11 @@ export class PaymentsReportComponent {
   generateReport(){
 
     let reportParameters = {} as ReportParameters | undefined;
+    const codDoc = this.filterParams.documentCode==='all'? null: this.filterParams.documentCode;
     const additionalParams = {
       establecimientoId: this.filterParams.establecimientoId,
       userId: getValidId(this.filterParams.userId),
-      documentCode: isValidField(this.filterParams.documentCode),
+      codDoc,
       paymentMethodId: getValidId(this.filterParams.paymentMethodId),
       bankId: getValidId(this.filterParams.bankId),
       startDate: this.filterParams.startDate,

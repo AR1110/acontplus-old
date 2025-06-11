@@ -175,7 +175,7 @@ BEGIN
         SET @tableNames = 'headerDs,listDs';
 
         SELECT
-            @estabId = estabId,
+            @estabId = establecimientoId,
             @userId = userId,
             @codDoc = codDoc,
             @paymentMethodId = paymentMethodId,
@@ -186,7 +186,7 @@ BEGIN
             @supplierId = supplierId
         FROM OPENJSON(@json)
                 WITH(
-                    estabId INT 
+                    establecimientoId INT 
                     ,userId INT 
                     ,codDoc CHAR(5)
                     ,paymentMethodId INT 
