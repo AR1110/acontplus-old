@@ -180,13 +180,19 @@ BEGIN
         ORDER BY defaultEstab DESC
 
         --- Added by Ignacio Manchu ---
+
         SELECT idTipoDocumento
                 , descripcion
-                , codigoSri
-                , codigo
-        FROM dbo.TipoDocumento
-            WITH (NOLOCK)
-        WHERE codigo IN ('FC','LC')
+                , CASE codigo WHEN 'FE' THEN codigoSri
+                            WHEN 'FF' THEN 'FC'
+                            WHEN 'IV' THEN 'DH'
+                            WHEN 'LC' THEN codigoSri
+                            ELSE ''
+                END as customCode
+        FROM Inventario.TipoDocumento WITH (NOLOCK)
+        WHERE codigo IN ('FF','FE','IV','LC')
+
+
 
         SELECT idSubEntidadFinanciera
                     , idEntidadFinanciera
