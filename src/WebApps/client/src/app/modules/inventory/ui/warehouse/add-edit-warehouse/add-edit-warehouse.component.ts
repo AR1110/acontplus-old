@@ -70,7 +70,7 @@ export class AddEditWarehouseComponent {
   save(){
 
     if (!isValidField(this.data.codEstab)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento'
       })
@@ -78,7 +78,7 @@ export class AddEditWarehouseComponent {
     }
 
     if (!isValidField(this.data.descripcion)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Ingrese la descripción'
       })
@@ -94,13 +94,13 @@ export class AddEditWarehouseComponent {
 
   successResponse = (response:ApiResponse)=>{
     if(response.code==="0"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: response.message
       })
     }
     if(response.code==="1"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'success',
         message: response.message
       })

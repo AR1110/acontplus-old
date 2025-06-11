@@ -36,7 +36,7 @@ export class DeviceListModalComponent implements OnInit {
             this.devices.set(devices);
             if (this.devices().length == 0) {
               this.modalRef.close();
-              this.tS.toastr({
+              this.tS.show({
                 type: 'info',
                 message: 'El cliente no cuenta con equipos registrados',
               });

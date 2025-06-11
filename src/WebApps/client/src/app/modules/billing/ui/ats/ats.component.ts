@@ -46,7 +46,7 @@ export class AtsComponent {
     };
     this._atsSvc.checkValidation(json).subscribe((response) => {
       if (response.code === '0') {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: response.message,
         });

@@ -119,14 +119,14 @@ export class ProductUbicationComponent {
   save(){
 
     if(!getValidId(this.productId())){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'No se ha proporcionado el identificador del producto'
       })
       return
     }
     if(!getValidId(this.data().idEstablecimiento)){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento'
       })
@@ -134,7 +134,7 @@ export class ProductUbicationComponent {
     }
 
     if(!getValidId(this.data().idBodega)){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione la Bodega'
       })
@@ -142,7 +142,7 @@ export class ProductUbicationComponent {
     }
 
     if(!isValidField(this.data().ubicacion)){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Ingrese la ubicación'
       })
@@ -189,14 +189,14 @@ export class ProductUbicationComponent {
   }
   private successResponse = (response:ApiResponse)=>{
     if(response.code==="0"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: response.message
       })
       return
     }
     if(response.code==="1"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'success',
         message: response.message
       })

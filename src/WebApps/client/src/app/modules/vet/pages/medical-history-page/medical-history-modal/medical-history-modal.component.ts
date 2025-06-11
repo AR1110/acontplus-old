@@ -246,13 +246,13 @@ export class MedicalHistoryModalComponent {
 
   onSave() {
     if (this.behaviorTests().length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Debe seleccionar el rango de comportamientos',
       });
     }
     if (this.healthChecks().length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Debe seleccionar el rango de estados de salud',
       });
@@ -265,7 +265,7 @@ export class MedicalHistoryModalComponent {
     if (!(this.data.id > 0)) {
       this.medicalHistoryService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -279,7 +279,7 @@ export class MedicalHistoryModalComponent {
         .put(this.data.id, dataToSave)
         .subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -311,7 +311,7 @@ export class MedicalHistoryModalComponent {
       .put(behaviorTest.id, dataToSave)
       .subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -339,7 +339,7 @@ export class MedicalHistoryModalComponent {
       .put(healthCheck.id, dataToSave)
       .subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

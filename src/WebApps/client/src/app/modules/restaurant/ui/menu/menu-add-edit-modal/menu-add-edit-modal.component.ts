@@ -142,7 +142,7 @@ export class MenuAddEditModalComponent {
       } else {
         const oldValue = cell.getOldValue();
         cell.getRow().update({ discountPercent: oldValue });
-        return this._tS.toastr({
+        return this._tS.show({
           type: 'warning',
           message: 'El descuento no puede ser mayor al 100%',
         });
@@ -355,7 +355,7 @@ export class MenuAddEditModalComponent {
     this._menuService
       .put(this.data.id, { data: dataToSave })
       .subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -368,7 +368,7 @@ export class MenuAddEditModalComponent {
   onValidate(): boolean {
     let isValid = true;
     if (this.productsAdded.length <= 0) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Debe agregar productos para crear el combo',
       });
@@ -388,7 +388,7 @@ export class MenuAddEditModalComponent {
       (x: any) => x.productId === $event.productId,
     );
     if (itemExists) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Ya existe agregado para el combo',
       });

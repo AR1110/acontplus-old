@@ -73,7 +73,7 @@ export class BreedModalComponent {
     if (this.data.id > 0) {
       this.breedService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -85,7 +85,7 @@ export class BreedModalComponent {
     } else {
       this.breedService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

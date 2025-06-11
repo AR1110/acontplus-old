@@ -90,7 +90,7 @@ export class ProductionAreaListComponent implements OnInit {
       .then((response) => {
         if (response.isConfirmed) {
           this.#productionAreaService.delete(item.id).subscribe((result) => {
-            this.#tS.toastr({
+            this.#tS.show({
               type: result.code == '1' ? 'success' : 'warning',
               message: result.message,
             });

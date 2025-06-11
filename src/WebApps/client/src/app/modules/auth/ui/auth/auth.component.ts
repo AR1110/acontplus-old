@@ -98,7 +98,7 @@ export class AuthComponent {
       password: this.form.value.password!
     }).subscribe(response => {
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })

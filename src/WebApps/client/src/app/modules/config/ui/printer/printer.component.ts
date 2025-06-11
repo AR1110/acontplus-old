@@ -65,7 +65,7 @@ export class PrinterComponent implements OnInit {
 
   commonResponse = (response: ApiResponse) => {
     this.getPrinters();
-    this._tS.toastr({
+    this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,
     });

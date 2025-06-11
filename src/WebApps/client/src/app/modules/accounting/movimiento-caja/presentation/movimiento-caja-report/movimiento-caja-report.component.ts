@@ -116,7 +116,7 @@ export class MovimientoCajaReportComponent {
 
   protected getReport() {
     if (!isValidField(this.dataSearch.codEstab)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Establecimiento es requerido!',
       });
@@ -124,7 +124,7 @@ export class MovimientoCajaReportComponent {
     }
 
     if (!isValidField(this.dataSearch.codDoc)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el tipo documento!',
       });
@@ -138,7 +138,7 @@ export class MovimientoCajaReportComponent {
           this.dataSearch.employeeId > 0
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el cliente/empleado!',
         });
@@ -148,7 +148,7 @@ export class MovimientoCajaReportComponent {
 
     if (this.dataSearch.checkboxUser) {
       if (!this.dataSearch.userId) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el usuario!',
         });

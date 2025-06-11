@@ -185,7 +185,7 @@ export class CuentaPorCobrarComponent {
     let selectedDocumentos = this.selection.selected;
 
     if (selectedDocumentos.length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione al menos un documento!',
       });
@@ -193,7 +193,7 @@ export class CuentaPorCobrarComponent {
     }
 
     if (!this.verificarClienteIgual(selectedDocumentos)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione documentos que pertenezca al mismo cliente',
       });

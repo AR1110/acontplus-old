@@ -104,13 +104,13 @@ export class TagsComponent {
         if (result.isConfirmed) {
           this._tagUseCase.updateStatus(data.idEtiqueta).subscribe((response) => {
             if (response.code == '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code == '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

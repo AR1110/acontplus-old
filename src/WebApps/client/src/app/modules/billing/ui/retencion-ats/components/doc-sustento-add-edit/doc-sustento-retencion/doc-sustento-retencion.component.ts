@@ -185,7 +185,7 @@ export class DocSustentoRetencionComponent {
         this._docSustentoRetencionUseCase
           .delete(retencionSelected.idRetencionAtsRet)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -223,7 +223,7 @@ export class DocSustentoRetencionComponent {
       this._docSustentoRetencionUseCase
         .update(retencionSelected.idRetencionAtsRet, retencionSelected)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -232,7 +232,7 @@ export class DocSustentoRetencionComponent {
       this._docSustentoRetencionUseCase
         .create(retencionSelected)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

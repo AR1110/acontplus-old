@@ -73,7 +73,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
         this._docSustentoTaxUseCase
           .delete(taxSelected.idRetAtsImpDocSustento)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -160,7 +160,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
     // console.log(importeTotalAdded, 'importeTotalAdded');
 
     if (newTotalDoc != importeTotalAdded) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message:
           'El importe total del documento no puede ser diferente a la suma de las bases imponibles mas los impuestos, revise los valores!',
@@ -199,14 +199,14 @@ export class DocSustentoTaxComponent implements AfterViewInit {
       this._docSustentoTaxUseCase
         .update(taxSelected.idRetAtsImpDocSustento, taxSelected)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
       this._docSustentoTaxUseCase.create(taxSelected).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

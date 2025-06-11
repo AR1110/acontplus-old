@@ -158,7 +158,7 @@ export class RetencionAtsComponent implements OnInit {
         this._retencionAtsUseCase
           .cancel(item.idDocumentoElectronico)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -183,7 +183,7 @@ export class RetencionAtsComponent implements OnInit {
         this._documentoElectronicoUseCase
           .authorize(item.idDocumentoElectronico)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });

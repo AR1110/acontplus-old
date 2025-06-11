@@ -112,7 +112,7 @@ export class FiltroDetalleCajaReportModal {
   getReport(format: 'pdf' | 'excel') {
     try {
       if (!(this.params.id > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'id no proporcionado!',
         });

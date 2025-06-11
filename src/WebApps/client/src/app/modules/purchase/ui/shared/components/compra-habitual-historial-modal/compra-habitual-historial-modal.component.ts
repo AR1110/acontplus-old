@@ -69,7 +69,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
           if (this.comprasHabituales().length > 0) {
             this.articleName = this.comprasHabituales()[0].articulo;
           } else {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message:
                 'Este articulo aun no tiene registros de compra habitual',
@@ -110,14 +110,14 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
 
       this.compraHabitualSvc.delete(params).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
 
         if (response.code === '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });

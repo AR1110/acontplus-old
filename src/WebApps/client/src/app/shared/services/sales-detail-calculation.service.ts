@@ -121,7 +121,7 @@ export class SalesDetailCalculationService {
           data.taxId = dataTarifaImpuesto.idImpuesto;
           calculoColumnas["price"]();
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'error',
             message: `CALCULO TIPO IVA: ${error}`
           })
@@ -146,7 +146,7 @@ export class SalesDetailCalculationService {
           data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
 
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'error',
             message: `CAMBIO DE TARIFA: ${error}`
           })
@@ -166,7 +166,7 @@ export class SalesDetailCalculationService {
           data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
 
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'error',
             message: `CÁLCULO DE PRECIO UNITARIO: ${error}`
           })
@@ -184,7 +184,7 @@ export class SalesDetailCalculationService {
           data.price = roundNumber(precioUnitario, decimal.nroPrecio);
 
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'error',
             message: `CÁLCULO DE PRECIO CON IVA: ${error}`
           })
@@ -204,7 +204,7 @@ export class SalesDetailCalculationService {
 
           } else {
             data.percentageDiscount = Number(oldValue);
-            self.tS.toastr({
+            self.tS.show({
               type: 'warning',
               message: 'El Porcentaje tiene que ser menor o igual a 100',
               title: 'Cálculo de Porcentaje Descuento'
@@ -214,7 +214,7 @@ export class SalesDetailCalculationService {
           data.percentageDiscount = roundNumber(percentageDiscount, decimal.nroPorcentaje);
 
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'error',
             message: `CÁLCULO DE PORCENTAJE DE DESCUENTO: ${error}`,
             title: 'Cálculo de Porcentaje Descuento'
@@ -239,7 +239,7 @@ export class SalesDetailCalculationService {
 
           } else {
             data.discount = Number(oldValue);
-            self.tS.toastr({
+            self.tS.show({
               type: 'warning',
               message: 'El descuento no puede ser mayor al subtotal',
               title: 'Descuento'
@@ -249,7 +249,7 @@ export class SalesDetailCalculationService {
           data.discount = roundNumber(data.discount, decimal.nroDescuentoDetalle);
 
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'warning',
             message: `CÁLCULO DE VALOR DE DESCUENTO: ${error}`,
             title: 'Descuento'
@@ -270,7 +270,7 @@ export class SalesDetailCalculationService {
           data.total = roundNumber(total, decimal.nroTotalDetalle);
 
         } catch (error) {
-          self.tS.toastr({
+          self.tS.show({
             type: 'error',
             message: `CÁLCULO DE TOTAL: ${error}`,
             title: 'Calculate totals detail'
@@ -325,7 +325,7 @@ export class SalesDetailCalculationService {
       return true;
 
     } catch (error) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: `APLICACIÓN DE TARIFA EN TODO EL DOCUMENTO: ${error}`
       })

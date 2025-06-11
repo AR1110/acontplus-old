@@ -93,7 +93,7 @@ export class ComprobanteEgresoLoteComponent {
 
   openFormaPago(row: EntidadFinanciera) {
     if (this.comprobanteEgresoStore.saldo() === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No tienes saldo pendiente',
       });
@@ -183,7 +183,7 @@ export class ComprobanteEgresoLoteComponent {
     let totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0)
 
     if (formasPago().length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese al menos una forma de pago'
       })
@@ -196,7 +196,7 @@ export class ComprobanteEgresoLoteComponent {
     );
 
     if (secuenciasInvalidas.length > 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Se encontraron secuencias inválidas'
       })
@@ -204,7 +204,7 @@ export class ComprobanteEgresoLoteComponent {
     }
 
     if (valorAbonoInput <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El abono ingresado en las formas de pago no puede ser igual o menor a 0.'
       });
@@ -212,7 +212,7 @@ export class ComprobanteEgresoLoteComponent {
     }
 
     if (totalAbonoCuota <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El abono de la cuota ingresado en las formas de pago no puede ser igual o menor a 0.'
       });
@@ -248,14 +248,14 @@ export class ComprobanteEgresoLoteComponent {
 
     this.useCase.post(data).subscribe(response=>{
       if(response.code==="0"){
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
       }
 
       if(response.code==="1"){
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message
         })

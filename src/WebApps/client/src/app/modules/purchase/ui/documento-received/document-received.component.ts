@@ -95,7 +95,7 @@ export class DocumentReceivedComponent {
 
   async alertEstabSelected() {
     if (this.establecimientos.length === 0) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
       });
@@ -200,7 +200,7 @@ export class DocumentReceivedComponent {
           },
         });
       } else {
-        return this._tS.toastr({
+        return this._tS.show({
           type: 'warning',
           message:
             'Debe de registrar subcategorías de compra en el módulo de contabilidad',

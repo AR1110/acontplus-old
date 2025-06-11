@@ -72,7 +72,7 @@ export class OrderDeliveryModalComponent implements OnInit {
 
     this.orderService.delivery(this.data.id, dataModified).subscribe( (response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

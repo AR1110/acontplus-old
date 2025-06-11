@@ -188,7 +188,7 @@ export class FormaCobroModalComponent implements OnInit {
       });
 
       if (this.subEntidadesFinanciera.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: `${descripcion}: No tiene SubEntidad Financiera creada`,
         });
@@ -208,7 +208,7 @@ export class FormaCobroModalComponent implements OnInit {
     const { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
 
     if (!(this.data.idSubEntidadFinanciera > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la SubEntidad Financiera',
       });
@@ -216,7 +216,7 @@ export class FormaCobroModalComponent implements OnInit {
     }
 
     if (!(Number(this.data.valorAbono) > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese el valor de abono',
       });
@@ -266,14 +266,14 @@ export class FormaCobroModalComponent implements OnInit {
 
     if (paymentTypeCode === PaymentTypeCode.TRA) {
       if (!(idBanco && idBanco > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Banco',
         });
         return;
       }
       if (!isValidField(nro)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese el Número',
         });
@@ -285,14 +285,14 @@ export class FormaCobroModalComponent implements OnInit {
 
     if (paymentTypeCode === PaymentTypeCode.CHE) {
       if (!(idBanco && idBanco > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Banco',
         });
         return;
       }
       if (!isValidField(nro)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese el Número',
         });
@@ -300,7 +300,7 @@ export class FormaCobroModalComponent implements OnInit {
       }
 
       if (!(idCiudad && idCiudad > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione la ciudad',
         });
@@ -309,7 +309,7 @@ export class FormaCobroModalComponent implements OnInit {
 
       if (!isValidField(referencia)) {
         if (!(idBanco && idBanco > 0)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Ingrese la referencia',
           });
@@ -407,7 +407,7 @@ export class FormaCobroModalComponent implements OnInit {
 
   addDocumentoElectronico(item: any) {
     if (item.saldo === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El Valor de Abono tiene que ser mayor a 0',
       });
@@ -421,7 +421,7 @@ export class FormaCobroModalComponent implements OnInit {
           d.idComprobante === item.idDocumento
       )
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Este documento ya fue aplicado al cobro',
       });

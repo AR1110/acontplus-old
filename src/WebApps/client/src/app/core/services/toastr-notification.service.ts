@@ -2,6 +2,8 @@ import { inject, Injectable, InjectionToken } from '@angular/core';
 import { IndividualConfig, ToastrService } from 'ngx-toastr';
 
 // 1. Define a configuration interface and InjectionToken for reusability
+export type ToastrType = 'success' | 'error' | 'warning' | 'info';
+
 export type ToastrNotificationConfig = Partial<IndividualConfig>;
 
 export const TOASTR_NOTIFICATION_CONFIG =
@@ -18,10 +20,12 @@ export const TOASTR_NOTIFICATION_CONFIG =
   });
 
 export interface ToastrCallProps {
-  type?: 'success' | 'error' | 'warning' | 'info'; //Legacy support for backward compatibility
   message: string;
   title?: string;
   options?: Partial<IndividualConfig>;
+}
+export interface ToastrShowProps extends ToastrCallProps {
+  readonly type: ToastrType;
 }
 
 @Injectable({
@@ -34,50 +38,25 @@ export class ToastrNotificationService {
 
   // 3. Create ergonomic helper methods for each type for better developer experience
   success(props: ToastrCallProps): void {
-    this.show('success', props);
+    this.show({ type: 'success', ...props });
   }
 
   error(props: ToastrCallProps): void {
-    this.show('error', props);
+    this.show({ type: 'error', ...props });
   }
 
   warning(props: ToastrCallProps): void {
-    this.show('warning', props);
+    this.show({ type: 'warning', ...props });
   }
 
   info(props: ToastrCallProps): void {
-    this.show('info', props);
+    this.show({ type: 'info', ...props });
   }
 
-  // 4. A single, private, and efficient `show` method as the core logic
-  private show(
-    type: 'success' | 'error' | 'warning' | 'info',
-    props: ToastrCallProps,
-  ): void {
-    const { message, title, options: overrideOptions } = props;
-
-    // Merge project-level defaults with per-call overrides
+  show(props: ToastrShowProps): void {
+    const { type, message, title, options: overrideOptions } = props;
     const finalOptions = { ...this.config, ...overrideOptions };
 
     this.toastrService[type](message, title, finalOptions);
-  }
-
-  //Legacy method for backward compatibility --> delete when no longer needed
-  toastr(props: ToastrCallProps) {
-    const { type, message, title } = props;
-    const options = { ...this.config, ...props.options };
-
-    if (type === 'success') {
-      this.toastrService.success(message, title, options);
-    }
-    if (type === 'warning') {
-      this.toastrService.warning(message, title, options);
-    }
-    if (type === 'info') {
-      this.toastrService.info(message, title, options);
-    }
-    if (type === 'error') {
-      this.toastrService.error(message, title, options);
-    }
   }
 }

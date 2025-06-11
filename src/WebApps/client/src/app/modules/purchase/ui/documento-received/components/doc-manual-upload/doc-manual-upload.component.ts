@@ -91,7 +91,7 @@ export class DocManualUploadComponent {
 
     const isValidXml = file.type === 'text/xml' || file.name.endsWith('.xml');
     if (!isValidXml) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'El formato de archivo no es correcto',
       });
@@ -130,7 +130,7 @@ export class DocManualUploadComponent {
     const { codEstab, subcategoryId } = this.docUploadForm.value;
 
     if (!subcategoryId) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Please select a subcategory',
       });
@@ -147,7 +147,7 @@ export class DocManualUploadComponent {
           .uploadXml({ codEstab, subcategoryId }, formData)
           .pipe(
             tap((response) => {
-              this._tS.toastr({
+              this._tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
               });
@@ -160,7 +160,7 @@ export class DocManualUploadComponent {
             }),
             catchError((error) => {
               console.error('Error uploading file:', error);
-              this._tS.toastr({ type: error, message: 'Error uploading file' });
+              this._tS.show({ type: error, message: 'Error uploading file' });
               return throwError(() => error); // Re-throw error to handle in forkJoin
             }),
           );
@@ -170,7 +170,7 @@ export class DocManualUploadComponent {
     });
 
     if (uploadObservables.length === 0) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'No files selected for upload',
       });
@@ -180,14 +180,14 @@ export class DocManualUploadComponent {
 
     forkJoin(uploadObservables).subscribe({
       complete: () => {
-        this._tS.toastr({
+        this._tS.show({
           type: 'success',
           message: 'Archivos subidos exitosamente!',
         });
       },
       error: (error) => {
         console.error('Overall upload error:', error);
-        this._tS.toastr({
+        this._tS.show({
           type: 'error',
           message: 'Error al subir los archivos',
         });

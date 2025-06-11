@@ -101,13 +101,13 @@ export class WarehouseComponent {
 
     this.$deleteUseCase.execute({idBodega: item.idBodega}).subscribe(response=>{
       if(response.code==="0"){
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if(response.code==="1"){
-        this._tS.toastr({
+        this._tS.show({
           type: 'success',
           message: response.message
         })

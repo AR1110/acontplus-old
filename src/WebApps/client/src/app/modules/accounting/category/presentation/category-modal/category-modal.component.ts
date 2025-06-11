@@ -80,7 +80,7 @@ export class CategoryModalComponent {
   }
 
   successResponse = (response: ApiResponse) => {
-    this.tS.toastr({
+    this.tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });

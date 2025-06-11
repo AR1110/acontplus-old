@@ -960,7 +960,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
   private isValidForm() {
     if (this.details().length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese al menos un artículo en el detalle',
       });
@@ -970,7 +970,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     if (
       this.details().some((row) => row.llevaInventario && row.quantity === 0)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -979,7 +979,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     }
 
     if (this.details().some((row) => !(row.bodegaId > 0))) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
       });
@@ -987,7 +987,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     }
 
     if (this.data.total <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No se puede generar el documento con valor total 0!',
       });
@@ -1023,13 +1023,13 @@ export class SupportMaintenanceModalComponent implements OnInit {
       this.supportDetailUseCase.post(params).subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });

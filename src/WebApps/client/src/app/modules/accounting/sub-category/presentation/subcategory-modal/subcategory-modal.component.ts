@@ -73,7 +73,7 @@ export class SubcategoryModalComponent {
       ...this.subcategoryForm.value,
     };
     if (dataToSave.categoryId === 0) {
-      this.toastService.toastr({
+      this.toastService.show({
         type: 'warning',
         message: 'Debe seleccionar una categoría',
       });
@@ -99,7 +99,7 @@ export class SubcategoryModalComponent {
   }
 
   successResponse = (response: ApiResponse) => {
-      this.toastService.toastr({
+      this.toastService.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });

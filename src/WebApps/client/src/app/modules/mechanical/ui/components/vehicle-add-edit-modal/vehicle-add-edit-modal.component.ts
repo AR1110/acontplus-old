@@ -86,13 +86,13 @@ export class VehicleAddEditModalComponent {
   successResponse = {
     next: (response: ApiResponse) => {
       if (response.code === '0') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message,
         });
       }
       if (response.code === '1') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
@@ -180,7 +180,7 @@ export class VehicleAddEditModalComponent {
 
   isValidForm() {
     if (!(this.dataForm.customerId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente / Conductor',
       });
@@ -188,7 +188,7 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!this.dataForm.vehicleTypeId) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el tipo de Vehículo',
       });
@@ -196,22 +196,22 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!(this.dataForm.countryId > 0 || this.myControlCountry.value > 0)) {
-      this.tS.toastr({ type: 'warning', message: 'Selecccion el país' });
+      this.tS.show({ type: 'warning', message: 'Selecccion el país' });
       return;
     }
 
     if (!isValidField(this.dataForm.licensePlate)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese la Placa' });
+      this.tS.show({ type: 'warning', message: 'Ingrese la Placa' });
       return;
     }
 
     if (!isValidField(this.dataForm.brand)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese una marca' });
+      this.tS.show({ type: 'warning', message: 'Ingrese una marca' });
       return;
     }
 
     if (!isValidField(this.dataForm.year)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese un año de fabricación',
       });
@@ -219,21 +219,21 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!isValidField(this.dataForm.color)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el color' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el color' });
       return;
     }
 
     if (!isValidField(this.dataForm.engine)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el Motor' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el Motor' });
       return;
     }
 
     if (!isValidField(this.dataForm.chassis)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el Chasis' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el Chasis' });
       return;
     }
     if (!isValidField(this.dataForm.cylindraje)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el cilindraje' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el cilindraje' });
       return;
     }
     return true;

@@ -123,12 +123,12 @@ export class SharedService {
           next: (response) => {
             if (isApiResponse(response)) {
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });
               } else {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
@@ -150,7 +150,7 @@ export class SharedService {
         next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
@@ -166,7 +166,7 @@ export class SharedService {
       });
     } catch (error) {
       console.log(error);
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: error as string,
       });
@@ -192,12 +192,12 @@ export class SharedService {
         next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
             } else {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });

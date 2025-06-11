@@ -105,7 +105,7 @@ export class GuiaRemisionComponent   {
 
   private getParams() {
     if (!isValidField(this.dataSearch.codEstab)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Establecimiento no seleccionado',
       });
@@ -113,7 +113,7 @@ export class GuiaRemisionComponent   {
     }
 
     if (!getValidId(this.dataSearch.puntoEmisionId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Punto Emisión no seleccionado',
       });
@@ -142,7 +142,7 @@ export class GuiaRemisionComponent   {
 
   private getGuiasRemision() {
     if(this.loading) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Esta cargando los datos...'
       })
@@ -152,7 +152,7 @@ export class GuiaRemisionComponent   {
     if (isValidField(this.dataSearch.nroSecuencial)) {
       if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
        this.dataSearch.filterByDate = true;
-        this.tS.toastr({
+        this.tS.show({
           type: 'error',
           message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
         })

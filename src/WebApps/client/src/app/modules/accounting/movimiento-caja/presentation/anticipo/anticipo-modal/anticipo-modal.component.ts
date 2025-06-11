@@ -106,7 +106,7 @@ export class AnticipoModalComponent {
   save() {
     try {
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -115,7 +115,7 @@ export class AnticipoModalComponent {
       const params = this.dataForm.value;
 
       if (Number(params.valor) === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El valor tiene que ser mayor a 0!',
         });
@@ -124,13 +124,13 @@ export class AnticipoModalComponent {
 
       this._anticipoUseCase.create(params).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code === '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });

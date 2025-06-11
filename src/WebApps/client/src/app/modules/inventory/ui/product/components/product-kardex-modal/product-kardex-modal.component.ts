@@ -366,7 +366,7 @@ export class ProductKardexModalComponent implements OnInit {
           this.dataArticulo = response.dataArticulo || {};
           this.transacciones = response.kardex || [];
           if (this.transacciones.length === 0) {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: 'No se encontraron los resultados',
             });
@@ -396,7 +396,7 @@ export class ProductKardexModalComponent implements OnInit {
   //Search Kardex
   searchKardex() {
     if (!(this.dataSearch.idArticulo > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Articulo',
       });
@@ -405,14 +405,14 @@ export class ProductKardexModalComponent implements OnInit {
 
     if (this.dataSearch.checkBoxFecha) {
       if (!isValidField(this.dataSearch.fechaInicio)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la Fecha de Inicio',
         });
         return;
       }
       if (!isValidField(this.dataSearch.fechaFin)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la Fecha Fin',
         });
@@ -424,7 +424,7 @@ export class ProductKardexModalComponent implements OnInit {
 
   async getReport() {
     if (this.transacciones.length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No hay registros para el reporte',
       });

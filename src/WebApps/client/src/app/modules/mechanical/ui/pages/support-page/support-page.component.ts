@@ -237,13 +237,13 @@ export class SupportPageComponent {
         if (result.isConfirmed) {
           this.supportUseCase.remove(id).subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
@@ -327,7 +327,7 @@ export class SupportPageComponent {
       (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
     )?.id;
     if (!(supportStatusId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: `No se encontró el estado ${supportStatusId}`,
       });
@@ -348,13 +348,13 @@ export class SupportPageComponent {
             .putState(id, supportStatusId)
             .subscribe((response) => {
               if (response.code === '0') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
               }
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });

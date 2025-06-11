@@ -165,14 +165,14 @@ export class ReceptionReportsComponent {
       this.dataSearch.supplierChecked &&
       !isValidField(this.dataSearch.numeroIdentificacion)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el proveedor!',
       });
       return;
     }
     if (this.dataSearch.userChecked && !isValidField(this.dataSearch.userId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el usuario!',
       });

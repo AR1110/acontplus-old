@@ -337,14 +337,14 @@ export class WizardConfigComponent implements OnInit {
     if (this.bodegas.length > 0 && !this.bodegas.valid) {
       this.bodegas.markAllAsTouched();
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this._toasterService.toastr({
+      return this._toasterService.show({
         type: 'warning',
         message: 'Revise que los datos de las bodegas sean correctos',
       });
     }
     if (this.ptosEmi.length === 0) {
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this._toasterService.toastr({
+      return this._toasterService.show({
         type: 'warning',
         message: 'Ingrese al menos un punto de emisión',
       });
@@ -353,7 +353,7 @@ export class WizardConfigComponent implements OnInit {
     if (!this.ptosEmi.valid) {
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
       this.ptosEmi.markAllAsTouched();
-      return this._toasterService.toastr({
+      return this._toasterService.show({
         type: 'warning',
         message: 'Revise que los datos de los puntos de emisión sean correctos',
       });
@@ -379,7 +379,7 @@ export class WizardConfigComponent implements OnInit {
     };
     this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
-        this._toasterService.toastr({
+        this._toasterService.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -537,7 +537,7 @@ export class WizardConfigComponent implements OnInit {
 
     if (docs.length == 0) {
       this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this._toasterService.toastr({
+      return this._toasterService.show({
         type: 'warning',
         message: 'Debe ingresar al menos una secuencial de los documentos',
       });
@@ -556,7 +556,7 @@ export class WizardConfigComponent implements OnInit {
           this.docsUpdated = true;
           this.fetchCompanyDemoSteps();
         }
-        this._toasterService.toastr({
+        this._toasterService.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -592,7 +592,7 @@ export class WizardConfigComponent implements OnInit {
             if (response.code === '1') {
               this.fetchCompanyDemoSteps();
             }
-            this._toasterService.toastr({
+            this._toasterService.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -616,7 +616,7 @@ export class WizardConfigComponent implements OnInit {
             this.fetchCompanyDemoSteps();
             this.stepper.next();
           }
-          this._toasterService.toastr({
+          this._toasterService.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

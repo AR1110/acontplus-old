@@ -160,7 +160,7 @@ export class MedicalHistoryPageComponent implements OnInit {
       if (response.isConfirmed) {
         this.medicalHistoryService.delete(item.id).subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });

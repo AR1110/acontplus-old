@@ -284,13 +284,13 @@ export class DeviceModalComponent implements OnInit {
     this.deviceService.post(deviceInsert).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
           return;
         }
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
@@ -313,13 +313,13 @@ export class DeviceModalComponent implements OnInit {
     this.deviceService.put(this.data.id, deviceUpdate).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
           return;
         }
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
@@ -335,13 +335,13 @@ export class DeviceModalComponent implements OnInit {
         next: (response) => {
           if (isApiResponse(response)) {
             if (response.code == '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
               return;
             }
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });
@@ -370,7 +370,7 @@ export class DeviceModalComponent implements OnInit {
 
     try {
       if (this.validationsNumbers.includes(device.categoryId)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: `La categoría es requerida`,
         });
@@ -378,17 +378,17 @@ export class DeviceModalComponent implements OnInit {
       }
 
       if (this.validations.includes(device.name)) {
-        this.tS.toastr({ type: 'warning', message: `El nombre es requerido` });
+        this.tS.show({ type: 'warning', message: `El nombre es requerido` });
         isValid = false;
       }
       if (this.validations.includes(device.color)) {
-        this.tS.toastr({ type: 'warning', message: `El color es requerido` });
+        this.tS.show({ type: 'warning', message: `El color es requerido` });
         isValid = false;
       }
       return isValid;
     } catch (error) {
       isValid = false;
-      this.tS.toastr({ type: 'success', message: `Error ${error}` });
+      this.tS.show({ type: 'success', message: `Error ${error}` });
     }
     return isValid;
   }
@@ -398,7 +398,7 @@ export class DeviceModalComponent implements OnInit {
     try {
       for (const item of this.deviceSpec()) {
         if (item.specs.filter((x: any) => x.uuid === item.uuid).length === 0) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: `Debe de agregar los valores para el tipo de especificación: ${item.name}}`,
           });
@@ -407,7 +407,7 @@ export class DeviceModalComponent implements OnInit {
       }
     } catch (error) {
       isValid = false;
-      this.tS.toastr({ type: 'success', message: `Error ${error}` });
+      this.tS.show({ type: 'success', message: `Error ${error}` });
     }
     return isValid;
   }
@@ -420,7 +420,7 @@ export class DeviceModalComponent implements OnInit {
   addSpecTypeDevice() {
     const specName = this.specTypeForm.get('specName')?.value || '';
     if (!specName || !(specName.length >= 3)) {
-      return this.tS.toastr({
+      return this.tS.show({
         type: 'warning',
         message: 'Ingrese una categoría valida!',
       });

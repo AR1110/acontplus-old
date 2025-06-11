@@ -66,7 +66,7 @@ export class UserCustomerComponent {
       pageSize: this.pagination().pageSize
     }
     if(this.$loading()) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Hay proceso pendiente'
       })

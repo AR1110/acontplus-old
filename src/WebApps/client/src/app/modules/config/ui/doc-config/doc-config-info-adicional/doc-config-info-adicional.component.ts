@@ -112,7 +112,7 @@ export class DocConfigInfoAdicionalComponent {
           (item) => !(isValidField(item.nombre) || isValidField(item.valor)),
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Los campos no pueden estar vacio',
         });

@@ -373,7 +373,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this._retencionAtsUseCase
         .update(this._data.idRetencionAts, this.retencionAtsForm.value)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -385,7 +385,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this._retencionAtsUseCase
         .create(this.retencionAtsForm.value)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

@@ -56,19 +56,19 @@ export class UserProfilePageComponent {
         const { password, confirmPassword } = this.passwordForm.value;
 
         if (!password || !confirmPassword) {
-            this.tS.toastr({ type: 'info', message: 'Por favor, llene todos los campos' });
+            this.tS.show({ type: 'info', message: 'Por favor, llene todos los campos' });
             return;
         }
 
         // verify length is greater than 6
         if (password.length < 6 || confirmPassword.length < 6) {
-            this.tS.toastr({ type: 'warning', message: 'La contraseña debe tener al menos 6 caracteres' });
+            this.tS.show({ type: 'warning', message: 'La contraseña debe tener al menos 6 caracteres' });
             return;
         }
 
         // Las contraseñas no coinciden
         if (password !== confirmPassword) {
-            this.tS.toastr({ type: 'warning', message: 'Las contraseñas no coinciden' });
+            this.tS.show({ type: 'warning', message: 'Las contraseñas no coinciden' });
             return;
         }
 
@@ -103,11 +103,11 @@ export class UserProfilePageComponent {
 
 
                         if (response.code === "0") {
-                            this.tS.toastr({ type: 'error', message: response.message });
+                            this.tS.show({ type: 'error', message: response.message });
                             return;
                         }
 
-                        this.tS.toastr({ type: 'success', message: response.message });
+                        this.tS.show({ type: 'success', message: response.message });
                         this.resetPasswordForm();
                 })
             }

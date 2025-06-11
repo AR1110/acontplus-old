@@ -48,13 +48,13 @@ export class TarifaEditModalComponent {
 
   successReponse =  (response: ApiResponse) => {
       if (response.code === '0') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message,
         });
       }
       if (response.code === '1') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
@@ -71,7 +71,7 @@ export class TarifaEditModalComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción',
         });
@@ -79,7 +79,7 @@ export class TarifaEditModalComponent {
       }
 
       if (!isValidField(this.data.codigo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la código',
         });

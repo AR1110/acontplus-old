@@ -165,7 +165,7 @@ export class ProductBarcodeComponent {
   save(){
 
     if(!getValidId(this.productId())){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'No se ha proporcionado el identificador del producto'
       })
@@ -173,21 +173,21 @@ export class ProductBarcodeComponent {
     }
 
     if (!getValidId(this.data().idMedida )) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione la Medida'
       })
       return;
     }
     if (!isValidField(this.data().codigoBarra)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message:  "Ingrese el Codigo de Barra"
       })
       return;
     }
     if (!isValidField(this.data().descripcion)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message:   "Ingrese la descripción"
       })
@@ -228,14 +228,14 @@ export class ProductBarcodeComponent {
   }
   private successResponse = (response:ApiResponse)=>{
     if(response.code==="0"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: response.message
       })
       return
     }
     if(response.code==="1"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'success',
         message: response.message
       })

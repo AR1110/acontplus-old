@@ -58,13 +58,13 @@ export class TagsAddEditModalComponent {
     next: (response: ApiResponse) => {
 
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if (response.code === "1") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message
         })
@@ -88,7 +88,7 @@ export class TagsAddEditModalComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción'
         })
@@ -96,7 +96,7 @@ export class TagsAddEditModalComponent {
       }
 
       if (this.etiquetas.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese al menos una etiqueta'
         })
