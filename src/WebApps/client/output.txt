@@ -428,7 +428,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── data
 |  |  |  |  |  ├── company-customer
 |  |  |  |  |  |  ├── company-customer-web.repository.ts
-|  |  |  |  |  |  └── company-customer.mapper.ts
 |  |  |  |  |  ├── customer
 |  |  |  |  |  |  ├── customer-web.repository.ts
 |  |  |  |  |  |  ├── customer.mapper.ts

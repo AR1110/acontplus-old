@@ -2790,29 +2790,29 @@
                 return;
             }
 
-            if (
-                $scope.gridOptions.data.some((item) =>
-                    item.articuloTarifas.some(
-                        (ta) =>
-                            ta.ventaPorMayor && item.cantidad < item.cantMinimaVentaPorMayor
-                    )
-                )
-            ) {
-                for (let item of $scope.gridOptions.data) {
-                    if (
-                        item.articuloTarifas.some(
-                            (ta) =>
-                                ta.ventaPorMayor && item.cantidad < item.cantMinimaVentaPorMayor
-                        )
-                    ) {
-                        fS.sweetAlert(
-                            "warning",
-                            `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`
-                        );
-                    }
-                }
-                return;
-            }
+            // if (
+            //     $scope.gridOptions.data.some((item) =>
+            //         item.articuloTarifas.some(
+            //             (ta) =>
+            //                 ta.ventaPorMayor && item.cantidad < item.cantMinimaVentaPorMayor
+            //         )
+            //     )
+            // ) {
+            //     for (let item of $scope.gridOptions.data) {
+            //         if (
+            //             item.articuloTarifas.some(
+            //                 (ta) =>
+            //                     ta.ventaPorMayor && item.cantidad < item.cantMinimaVentaPorMayor
+            //             )
+            //         ) {
+            //             fS.sweetAlert(
+            //                 "warning",
+            //                 `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`
+            //             );
+            //         }
+            //     }
+            //     return;
+            // }
 
             //validacion de calculos
             let dataValicion = gridOptionsSvc.validarCalculosPorProducto(

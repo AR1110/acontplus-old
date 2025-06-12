@@ -8,7 +8,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { CompanyCustomerSearchComponent } from '@modules/customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {CompanyCustomer} from "@company-customer/domain/company-customer";
 
 @Component({
   selector: 'app-vehicle-add-edit-modal',

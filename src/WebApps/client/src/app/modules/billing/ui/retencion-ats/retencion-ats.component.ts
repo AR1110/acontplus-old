@@ -31,7 +31,7 @@ import {
   FilterOptions,
   getMergedDocElectFilterOptions,
 } from '@billing/domain/models/documento-electronico.model';
-import { PersonType } from '@customer/domain/enums/customer.enum';
+import { PersonType } from '@customer/shared/enums/customer.enum';
 
 @Component({
   selector: 'app-retencion-ats',

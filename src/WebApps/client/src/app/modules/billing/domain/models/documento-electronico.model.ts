@@ -1,5 +1,5 @@
 import { signal, WritableSignal } from '@angular/core';
-import { PersonType } from '@customer/domain/enums/customer.enum';
+import { PersonType } from '@customer/shared/enums/customer.enum';
 
 export interface DocumentoElectronico {
   idDocumentoElectronico: number;

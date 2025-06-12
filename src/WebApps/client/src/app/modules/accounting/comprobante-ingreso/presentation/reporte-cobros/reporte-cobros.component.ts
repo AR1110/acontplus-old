@@ -12,13 +12,13 @@ import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-fina
 import { SharedService } from '@core/services/shared.service';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomer } from '@company-customer/domain/company-customer';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";

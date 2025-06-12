@@ -26,7 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
@@ -36,7 +36,7 @@ import { ReportButtonsComponent } from '@shared/components/report-buttons/report
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomer } from '@company-customer/domain/company-customer';
 
 const imports = [
   FormsModule,

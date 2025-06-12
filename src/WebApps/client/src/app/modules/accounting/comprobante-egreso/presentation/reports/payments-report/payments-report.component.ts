@@ -22,7 +22,7 @@ import {formatDateToString} from "@core/utils/date.util";
 import {REPORT_FORMAT} from "@core/constants/global.constants";
 import {ReportParameters, ReportParamsBuilder} from "@shared/utils/report-params.builder";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/shared/enums/accounting.constants";
-import {getValidId, isValidField} from "@core/utils/utils";
+import {getValidId} from "@core/utils/utils";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
