@@ -52,3 +52,15 @@ export class ListCompanyCustomerResponse {
   data:ListCompanyCustomer[]=[]
   totalRecords =0;
 }
+
+export class FormDataCompanyCustomerResponse {
+  tipoIdentificacion: []=[]
+  tipoContribuyentes: []=[]
+  tiempoCreditos: []=[]
+  ciudades: []=[]
+  tiposCliente: []=[]
+  empresas: []=[]
+  cargos: []=[]
+  formasPagoSri: []=[]
+}
+

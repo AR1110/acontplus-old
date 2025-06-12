@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -11,8 +11,16 @@ import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-
 import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE} from "@core/constants/global.constants";
 import {forkJoin, Observable} from "rxjs";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {CompanyCustomerUseCase} from "@customer/application/usecases/company-customer.use-case";
+import {CompanyCustomerUseCase} from "@company-customer/application/company-customer.use-case";
 import {SriCustomerUseCase} from "@customer/application/usecases/sri-customer.use-case";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import {GetFormDataCompanyCustomerUseCase} from "@company-customer/application/get-form-data-company-customer.use-case";
+import {UpdateCompanyCustomerUseCase} from "@company-customer/application/update-company-customer.use-case";
+import {CreateCompanyCustomerUseCase} from "@company-customer/application/create-company-customer.use-case";
+import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-company-customer-add-edit-dialog',
@@ -21,8 +29,8 @@ import {SriCustomerUseCase} from "@customer/application/usecases/sri-customer.us
     ReactiveFormsModule,
     MatTabsModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatCustomDialogComponent ,
-    M3InputChipComponent
+    MatCustomDialogComponent,
+    M3InputChipComponent, MatDynamicCardComponent, ToUpperCaseDirective, MatCheckbox, MatIcon, MatTooltip
   ],
   templateUrl: './company-customer-add-edit-dialog.component.html',
   styles: ``
@@ -38,6 +46,9 @@ export class CompanyCustomerAddEditDialogComponent {
   private _sriCustomerUseCase = inject(SriCustomerUseCase);
   private tS = inject(ToastrNotificationService);
   private _companyCustomerUseCase = inject(CompanyCustomerUseCase)
+  private $getFormDataUseCase = inject(GetFormDataCompanyCustomerUseCase);
+  private $updateUseCase = inject(UpdateCompanyCustomerUseCase);
+  private $createUseCase = inject(CreateCompanyCustomerUseCase);
 
   title = 'Nuevo Cliente'
   btnText = 'Guardar'
@@ -47,10 +58,15 @@ export class CompanyCustomerAddEditDialogComponent {
   emails: string[] = [];
 
   telephones: string[] = [];
-  tiemposCredito: any[] = [];
-  tipoContribuyentes: any[] = [];
-  tiposCliente: any[] = [];
-  tiposIdentificacion: any[] = [];
+  tiemposCredito = signal<any[]>([])
+  tipoContribuyentes = signal<any[]>([])
+  tiposCliente = signal<any[]>([])
+  tiposIdentificacion = signal<any[]>([]);
+  formasPagoSri =signal<any[]>([])
+  placas = signal<any[]>([])
+  ciudades = signal<any[]>([])
+  cargos = signal<any[]>([])
+  empresas = signal<any[]>([])
 
 
   numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
@@ -67,14 +83,17 @@ export class CompanyCustomerAddEditDialogComponent {
     idTipoClienteProveedor: new FormControl(0),
     idTipoIdentificacion: new FormControl(0, Validators.required),
     idSubContribuyente: new FormControl(0),
-    idTiempoCredito: new FormControl(0),
+     idTiempoCredito: new FormControl(0),
+     idCiudad: new FormControl(0),
     nombreFiscal: new FormControl('', Validators.required),
     nombreComercial: new FormControl(''),
     numeroIdentificacion: this.numeroIdentificacion,
     correo: new FormControl(''),
-    telefono: new FormControl(''),
+     telefono: new FormControl(''),
+     nota: new FormControl(''),
     estado: new FormControl(false),
     validationSri: new FormControl(false),
+     configValorBruto: new FormControl(false),
   });
 
 
@@ -145,14 +164,13 @@ export class CompanyCustomerAddEditDialogComponent {
   }
 
   getLoadData(): Observable<any> {
-    if (this.params.id > 0) {
+    if (this.isUpdate()) {
       return forkJoin([
-        this._companyCustomerUseCase.getDataForm(),
+        this.$getFormDataUseCase.execute(),
         this._companyCustomerUseCase.getId(this.params.id),
       ]);
-    } else {
     }
-    return this._companyCustomerUseCase.getDataForm();
+    return this.$getFormDataUseCase.execute();
   }
 
   ngOnInit(): void {
@@ -166,13 +184,19 @@ export class CompanyCustomerAddEditDialogComponent {
         } else {
           mainDataForm = response;
         }
+        console.log(mainDataForm)
 
-        this.tiposIdentificacion = mainDataForm.tipoIdentificacion;
-        this.tiemposCredito = mainDataForm.tiempoCreditos;
-        this.tipoContribuyentes = mainDataForm.tipoContribuyentes;
+        this.tiposIdentificacion.set(mainDataForm.tipoIdentificacion)
+        this.tiemposCredito.set(mainDataForm.tiempoCreditos)
+        this.tipoContribuyentes.set(mainDataForm.tipoContribuyentes);
+        this.formasPagoSri.set(mainDataForm.formasPagoSri);
+        this.tiposCliente.set(mainDataForm.tiposCliente);
+        this.ciudades.set(mainDataForm.ciudades);
+        this.cargos.set(mainDataForm.cargos);
+        this.empresas.set(mainDataForm.empresas);
 
-        if (!(this.params.id > 0)) {
-          let dataIdentificacion = this.tiposIdentificacion.find(
+        if (this.isCreate()) {
+          const dataIdentificacion = this.tiposIdentificacion().find(
             (ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC,
           );
 
@@ -184,8 +208,8 @@ export class CompanyCustomerAddEditDialogComponent {
 
           this.customerForm.patchValue({
             idTiempoCredito:
-              this.tiemposCredito.length > 0
-                ? this.tiemposCredito[0].idTiempoCredito
+              this.tiemposCredito().length > 0
+                ? this.tiemposCredito()[0].idTiempoCredito
                 : 0,
           });
         } else {
@@ -201,12 +225,10 @@ export class CompanyCustomerAddEditDialogComponent {
     }
   }
 
+  copyTradeName(){
 
-  onChangeTipoIdentificacion() {
-    this.customerForm.patchValue({ numeroIdentificacion: '' });
   }
 
-  copyTradeName() {}
 
   async onKeyDownGovernmentId($event:Event) {
     $event.stopPropagation();
@@ -214,7 +236,7 @@ export class CompanyCustomerAddEditDialogComponent {
     const dataForm = {
       ...this.customerForm.value,
     };
-    let codigoSri = this.tiposIdentificacion.find(
+    const codigoSri = this.tiposIdentificacion().find(
       (x: any) => x.idTipoIdentificacion == dataForm.idTipoIdentificacion,
     ).codigoSri;
     if (
@@ -248,6 +270,9 @@ export class CompanyCustomerAddEditDialogComponent {
     }
   }
 
+  private isCreate = ()=>!(this.params.id>0);
+  private isUpdate = ()=>(this.params.id>0);
+
   onSave() {
 
     this.customerForm.patchValue({
@@ -269,9 +294,13 @@ export class CompanyCustomerAddEditDialogComponent {
       return
     }
 
-    if (this.params.id > 0) {
-      this._companyCustomerUseCase
-        .put(this.params.id, dataForm)
+    if (this.isUpdate()) {
+      const sendParams = {
+        id: this.params.id,
+        data: dataForm
+      }
+      this.$updateUseCase
+        .execute(sendParams)
         .subscribe((response) => {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -283,24 +312,20 @@ export class CompanyCustomerAddEditDialogComponent {
             });
           }
         });
-    } else if (!(this.params.id > 0)) {
-      this._companyCustomerUseCase.post(dataForm).subscribe((response) => {
+    }
 
+    if (this.isCreate()) {
+      this.$createUseCase.execute(dataForm).subscribe((response) => {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });
         if (response.code == '1') {
-          let data = {
-            id: (response.payload as any).id,
-          };
-          this.dialogRef.close(data);
+          this.dialogRef.close(response);
         }
       });
     }
   }
-
-  refreshTiempoCredito() {}
 
 
   close(){

@@ -1,7 +1,7 @@
 
 import {Component, inject, signal} from '@angular/core';
 import {  PageEvent } from '@angular/material/paginator';
-import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/directives/company-customer-add-edit.directive';
+import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isValidField } from '@core/utils/utils';
@@ -14,15 +14,15 @@ import { MatIconButton} from "@angular/material/button";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {ListCompanyCustomerUseCase} from "@customer/application/usecases/list-company-customer.use-case";
-import {ListCompanyCustomer} from "@customer/domain/models/company-customer";
+import {ListCompanyCustomerUseCase} from "@company-customer/application/list-company-customer.use-case";
+import {ListCompanyCustomer} from "@company-customer/domain/company-customer";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
 import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
-import {CUSTOMER_CODE_REPORT} from "@customer/domain/enums/customer.enum";
+import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
 import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {UpdateStateCompanyCustomerUseCase} from "@customer/application/usecases/update-state-company-customer.use-case";
+import {UpdateStateCompanyCustomerUseCase} from "@company-customer/application/update-state-company-customer.use-case";
 
 @Component({
   selector: 'app-company-customer',

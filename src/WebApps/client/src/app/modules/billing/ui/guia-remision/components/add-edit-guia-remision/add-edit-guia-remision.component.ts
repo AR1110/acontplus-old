@@ -22,11 +22,11 @@ import {
 import Swal from 'sweetalert2';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import {
   CompanyCustomer,
   CompanyCustomerSearch,
-} from '@customer/domain/models/company-customer';
+} from '@company-customer/domain/company-customer';
 
 @Component({
   selector: 'app-add-edit-guia-remision',

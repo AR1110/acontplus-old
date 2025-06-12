@@ -20,10 +20,10 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatButtonModule} from "@angular/material/button";
 import {
   CompanyCustomerSearchComponent
-} from "@customer/ui/company-customer/components/company-customer-search/company-customer-search.component";
+} from "@company-customer/presentation/components/company-customer-search/company-customer-search.component";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {getValidId, isValidField} from "@core/utils/utils";
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {CompanyCustomer} from "@company-customer/domain/company-customer";
 
 @Component({
   selector: 'app-egreso-ingreso-dialog',

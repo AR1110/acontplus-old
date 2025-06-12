@@ -1,5 +1,5 @@
 import {ApiResponse} from "@core/models/api-response";
-import {CompanyCustomerSearch, SearchCompanyCustomerParams} from "@customer/domain/models/company-customer";
+import {CompanyCustomerSearch, SearchCompanyCustomerParams} from "@company-customer/domain/company-customer";
 
 export class SearchCompanyCustomerMapper {
 

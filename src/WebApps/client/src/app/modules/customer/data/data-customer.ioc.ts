@@ -5,8 +5,8 @@ import {SupplierRepository} from "@customer/domain/repositories/supplier.reposit
 import {SupplierWebRepository} from "@customer/data/supplier/supplier-web.repository";
 import {CustomerRepository} from "@customer/domain/repositories/customer.repository";
 import {CustomerWebRepository} from "@customer/data/customer/customer-web.repository";
-import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
-import {CompanyCustomerWebRepository} from "@customer/data/company-customer/company-customer-web.repository";
+import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
+import {CompanyCustomerWebRepository} from "@company-customer/infrastructure/company-customer-web.repository";
 
 export const DATA_CUSTOMER_IOC:Provider[]=[
   {

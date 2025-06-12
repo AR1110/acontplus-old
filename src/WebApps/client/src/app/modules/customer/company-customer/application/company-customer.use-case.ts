@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
+import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
 
 
 @Injectable({
@@ -13,30 +13,13 @@ export class CompanyCustomerUseCase {
     return this.repo.getAll(obj)
   }
 
-  updateState(idCliente:number){
-    return this.repo.updateState(idCliente);
-  }
-
   checkExistence<T>(params: T){
     return this.repo.checkExistence(params)
-  }
-
-  getDataForm(){
-    return this.repo.getDataForm();
   }
 
   getId(idCliente: number, loader?: boolean){
     return this.repo.getId(idCliente, loader);
   }
-
-  put<T>(id: number, data: T){
-    return this.repo.put(id, data);
-  }
-
-  post<T>( data: T){
-    return this.repo.post(data);
-  }
-
   search<T extends {textSearch: string}>(obj: T){
     return this.repo.search(obj);
   }

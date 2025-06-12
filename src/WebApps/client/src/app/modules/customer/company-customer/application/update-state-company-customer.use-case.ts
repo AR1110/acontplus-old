@@ -1,6 +1,6 @@
 import {BaseUseCase} from "@core/base-use-case";
 import {inject, Injectable} from "@angular/core";
-import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
+import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
 import {ApiResponse} from "@core/models/api-response";
 
 @Injectable({

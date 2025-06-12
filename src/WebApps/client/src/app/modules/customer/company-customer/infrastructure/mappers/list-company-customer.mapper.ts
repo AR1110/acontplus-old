@@ -1,5 +1,5 @@
 import {ApiResponse} from "@core/models/api-response";
-import {ListCompanyCustomerResponse} from "@customer/domain/models/company-customer";
+import {ListCompanyCustomerResponse} from "@company-customer/domain/company-customer";
 
 export class ListCompanyCustomerMapper {
 

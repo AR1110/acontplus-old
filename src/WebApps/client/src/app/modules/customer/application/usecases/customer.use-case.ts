@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import {AnticipoRepository} from "@accounting/core/repositories/anticipo.repository";
-import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
+import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
 import {SupplierRepository} from "@customer/domain/repositories/supplier.repository";
 import {CustomerRepository} from "@customer/domain/repositories/customer.repository";
 

@@ -1,7 +1,7 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { DialogService } from '@core/services/dialog.service';
-import { CompanyCustomerAddEditDialogComponent } from '../components/company-customer-add-edit-dialog/company-customer-add-edit-dialog.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerAddEditDialogComponent } from '@company-customer/presentation/components/company-customer-add-edit-dialog/company-customer-add-edit-dialog.component';
+import { CompanyCustomer } from '@company-customer/domain/company-customer';
 
 @Directive({
   selector: '[appCompanyCustomerAddEdit]',

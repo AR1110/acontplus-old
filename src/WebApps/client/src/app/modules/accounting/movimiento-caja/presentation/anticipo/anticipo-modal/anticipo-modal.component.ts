@@ -10,11 +10,11 @@ import {
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SubEntidadFinanciera } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomer } from '@company-customer/domain/company-customer';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatDialogRef} from "@angular/material/dialog";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";

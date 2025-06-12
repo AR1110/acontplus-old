@@ -1,8 +1,8 @@
 import {BaseUseCase} from "@core/base-use-case";
 import {Observable} from "rxjs";
 import {inject, Injectable} from "@angular/core";
-import {CompanyCustomerRepository} from "@customer/domain/repositories/company-customer.repository";
-import {ListCompanyCustomerResponse} from "@customer/domain/models/company-customer";
+import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
+import {ListCompanyCustomerResponse} from "@company-customer/domain/company-customer";
 
 @Injectable({
   providedIn: "root",

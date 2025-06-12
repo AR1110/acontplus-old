@@ -39,12 +39,12 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
-import { CompanyCustomerUseCase } from '@customer/application/usecases/company-customer.use-case';
+import { CompanyCustomerUseCase } from '@company-customer/application/company-customer.use-case';
 import {
   CompanyCustomer,
   CompanyCustomerSearch,
-} from '@customer/domain/models/company-customer';
-import { CompanyCustomerAddEditDirective } from '@customer/ui/company-customer/directives/company-customer-add-edit.directive';
+} from '@company-customer/domain/company-customer';
+import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
 
 @Component({
   selector: 'app-company-customer-search',
