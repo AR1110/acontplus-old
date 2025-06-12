@@ -1,34 +1,29 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class ControlCajaService : IControlCajaService
+public class ControlCajaService(IAdoRepository adoRepository) : IControlCajaService
 {
-    private readonly IAdoRepository _repository;
+    private const string NameSchema = "Contabilidad.ControlCaja_";
 
-    public ControlCajaService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
+        var ds = await adoRepository.GetDataSetAsync($"{NameSchema}Get", parameters);
+        return ds.Tables.Count == 0
+            ? new ApiResponse { Code = "0", Message = "No data found." }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Contabilidad.ControlCaja_Get", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Insert", parameters);
     }
 
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ControlCaja_Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Update", parameters);
     }
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.ControlCaja_Update", parameters);
-    }
-
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-    {
-        return await _repository.SpExecuteDeprecatedAsync("", parameters);
+        throw new NotImplementedException("Delete operation is not implemented yet.");
     }
 }

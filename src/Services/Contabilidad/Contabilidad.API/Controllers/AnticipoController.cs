@@ -1,25 +1,16 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class AnticipoController : BaseApiController
+public class AnticipoController(IAnticipoRepository anticipoRepository) : BaseApiController
 {
-    private readonly IAnticipoService _anticipoSvc;
-
-    public AnticipoController(IAnticipoService anticipoSvc)
-    {
-        _anticipoSvc = anticipoSvc;
-    }
+    private const string UserRoleIdClaim = "userRoleId";
 
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
-        var response = await _anticipoSvc.GetAsync(new Dictionary<string, object>
+        return Ok(await anticipoRepository.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        });
-        if (response == null) return NoContent();
-
-        ;
-        return Ok(new { code = "1", payload = response });
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "json", SqlStringParam.Sanitize(json) }
+        }));
     }
 
     [HttpPost]
@@ -27,11 +18,11 @@ public class AnticipoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
-        var response = await _anticipoSvc.AddAsync(parameters);
+        var response = await anticipoRepository.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -41,12 +32,12 @@ public class AnticipoController : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
-        var response = await _anticipoSvc.UpdateAsync(parameters);
+        var response = await anticipoRepository.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -55,8 +46,11 @@ public class AnticipoController : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        var response = await _anticipoSvc.DeleteAsync(parameters);
+        {
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
+            { "id", id }
+        };
+        var response = await anticipoRepository.DeleteAsync(parameters);
         return Ok(response);
     }
 }

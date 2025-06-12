@@ -44,13 +44,13 @@ BEGIN
         --> Validacion de informacion
         IF NOT EXISTS (SELECT 1 FROM AsignacionCaja WITH (NOLOCK) WHERE idCaja = @idCaja AND idUsuario = @idUsuario)
 		    BEGIN
-			    SELECT [Common].[ufnSpResponse]('0','Solo puede aperturar caja a la persona que le fue asignada',DEFAULT)
+			    SELECT '0' as code,'Solo puede aperturar caja a la persona que le fue asignada' as 'message'
 			    RETURN 
 		    END 
 
 	    IF EXISTS(SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idCaja = @idCaja AND estado = 1)
 		    BEGIN
-			    SELECT [Common].[ufnSpResponse]('0','La caja ya se encuentra aperturada',DEFAULT)
+			    SELECT '0' as code,'La caja ya se encuentra aperturada' as 'message'
 			    RETURN 
 		    END 
 
@@ -62,7 +62,7 @@ BEGIN
 			UPDATE Caja SET actividad = 1 WHERE idCaja = @idCaja
 
 		COMMIT TRAN 
-		SELECT [Common].[ufnSpResponse]('1','Aperturada Correctamente',DEFAULT)
+		SELECT '1' as code,'Aperturada Correctamente' as 'message'
 	END TRY
 	
 	BEGIN CATCH 
@@ -70,9 +70,9 @@ BEGIN
 			BEGIN
 				ROLLBACK TRAN; 
 			END
-		SELECT [Common].[ufnSpResponse]('0','Info: Error en el procedimiento',DEFAULT)
-		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/ControlCaja/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT '0' as code,'Info: Error en el procedimiento' as 'message'
+		INSERT INTO ErroresSistema(method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT '/ControlCaja/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 	END CATCH 
 
 END

@@ -1,35 +1,14 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class ChequeService : IChequeService
+public class ChequeService(IAdoRepository adoRepository) : IChequeService
 {
-    private readonly IAdoRepository _repository;
+    private const string NameSchema = "Contabilidad.Cheque_";
 
-    public ChequeService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
-    }
-
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync("Contabilidad.Cheque_Get", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
-    }
-
-
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
-    {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Insert", parameters);
-    }
-
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-    {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Update", parameters);
-    }
-
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-    {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
+        var ds = await adoRepository.GetDataSetAsync($"{NameSchema}Get", parameters);
+        return ds.Tables.Count == 0
+            ? new ApiResponse { Code = "0", Message = "No data found." }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

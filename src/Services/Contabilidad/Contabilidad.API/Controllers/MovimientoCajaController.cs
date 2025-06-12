@@ -2,17 +2,16 @@
 
 public class MovimientoCajaController(IMovimientoCajaService movimientoCajaService) : BaseApiController
 {
+    private const string UserRoleIdClaim = "userRoleId";
+
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var response = await movimientoCajaService.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) return NoContent();
-
-        ;
-        return Ok(new { code = "1", payload = response });
+        return Ok(response);
     }
 
     [HttpPost]
@@ -20,7 +19,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
@@ -33,7 +32,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "id", id } };
         var response = await movimientoCajaService.DeleteAsync(parameters);
         return Ok(response);
     }

@@ -1,30 +1,25 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class MovimientoCajaService : IMovimientoCajaService
+public class MovimientoCajaService(IAdoRepository adoRepository) : IMovimientoCajaService
 {
-    private readonly IAdoRepository _repository;
+    private const string NameSchema = "Contabilidad.MovimientoCaja_";
 
-    public MovimientoCajaService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
-    }
-
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync("Contabilidad.MovimientoCaja_Get", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        var ds = await adoRepository.GetDataSetAsync($"{NameSchema}Get", parameters);
+        return ds.Tables.Count == 0
+            ? new ApiResponse { Code = "0", Message = "No data found." }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
 
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Insert", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Delete", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Delete", parameters);
     }
 }

@@ -1,36 +1,30 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class SubEntidadFinancieraService : ISubEntidadFinancieraService
+public class SubEntidadFinancieraService(IAdoRepository adoRepository) : ISubEntidadFinancieraService
 {
-    private readonly IAdoRepository _repository;
-    private readonly string nameSchema = "Contabilidad.SubEntidadFinanciera";
+    private const string NameSchema = "Contabilidad.SubEntidadFinanciera_";
 
-    public SubEntidadFinancieraService(IAdoRepository repository)
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
-    }
-
-    public async Task<object> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        var ds = await adoRepository.GetDataSetAsync($"{NameSchema}Get", parameters);
+        return ds.Tables.Count == 0
+            ? new ApiResponse { Code = "0", Message = "No data found." }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
 
-    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Insert", parameters);
     }
 
-    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Update", parameters);
     }
 
-    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Delete", parameters);
     }
 }
