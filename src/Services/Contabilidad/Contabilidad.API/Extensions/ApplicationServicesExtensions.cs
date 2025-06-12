@@ -39,10 +39,11 @@ public static class ApplicationServicesExtensions
 
 
         string[] scopedNameSpaces =
-           [
-              "Contabilidad.API.Endpoints.Implementations",
-              "Contabilidad.API.Services",
-           ];
+        [
+            "Contabilidad.API.Endpoints.Implementations",
+            "Contabilidad.API.Repositories",
+            "Contabilidad.API.Services"
+        ];
 
         services.Scan(scan => scan
             .FromApplicationDependencies()
