@@ -29,3 +29,26 @@ export interface CompanyCustomerSearch extends CompanyCustomer {
 export interface SearchCompanyCustomerParams {
   textSearch: string;
 }
+
+export interface ListCompanyCustomer   {
+  idCliente: number
+  idTipoIdentificacion:  number
+  identificacionComprador: string
+  razonSocialComprador: string
+  nombreComercial: string
+  direccion: string
+  telefono: string
+  correo: string
+  validationSri: boolean,
+  codTipoIdentificacion: string,
+  estado:boolean,
+  esConsumidorFinal:boolean,
+  nomValidationSri: string
+  nomEstado: string
+  totalRecords: number
+}
+
+export class ListCompanyCustomerResponse {
+  data:ListCompanyCustomer[]=[]
+  totalRecords =0;
+}

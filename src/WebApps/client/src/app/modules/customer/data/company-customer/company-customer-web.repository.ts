@@ -9,37 +9,22 @@ import {getNoLoader} from "@core/interceptors/loader.interceptor";
 import { SearchCompanyCustomerParams} from "@customer/domain/models/company-customer";
 import {SearchCompanyCustomerMapper} from "@customer/data/company-customer/search-company-customer.mapper";
 import {GetIdCompanyCustomerMapper} from "@customer/data/company-customer/get-id-company-customer.mapper";
+import {ListCompanyCustomerMapper} from "@customer/data/company-customer/list-company-customer.mapper";
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CompanyCustomerWebRepository extends CompanyCustomerRepository{
+export class CompanyCustomerWebRepository implements CompanyCustomerRepository{
 
   private _url =  `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
   private _http = inject(HttpClient);
 
 
-  constructor() {
-    super();
-  }
-
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
-    let json = JSON.stringify({
-      ...obj,
-      tipo: 1,
-      pageIndex: obj.pageIndex,
-      pageSize: obj.pageSize,
-    });
+    const json = ListCompanyCustomerMapper.toJson(obj);
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map((response) => {
-        let results = [];
-          if (response.code === '1') {
-            results = CompanyCustomerMapper.fromApiGetAll( JSON.parse(response.payload as string))
-          }
-
-        return results;
-      }),
+      map((response) =>ListCompanyCustomerMapper.fromJson(response)),
     );
   }
 

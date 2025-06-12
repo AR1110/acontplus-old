@@ -3,10 +3,11 @@
 
 @{
     ViewData["title"] = "Cliente";
-    
-}
 
-<div ng-controller="clienteCtrl">
+}
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+
+@* <div ng-controller="clienteCtrl">
     <div class="row page-titles">
         <div class="col-lg-5 align-self-center">
             <h5 class="text-themecolor">Gestión de Clientes</h5>
@@ -16,10 +17,7 @@
                 <button type="button" class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear" btn-cliente
                         result-modal="resultModal(result)">
                     <i class="fa fa-plus-circle"></i> Nuevo
-                </button>
-                @* <button type="button" class="btn btn-info m-l-15"
-                ng-if="accion.leer && accion.crear"
-                ng-click="nuevoCliente()"><i class="fa fa-plus-circle"></i> Nuevo</button> *@
+                </button> 
             </div>
         </div>
     </div>
@@ -132,4 +130,4 @@
 
 @section Scripts {
     <script src="~/js/ventas/controllers/clienteCtrl.min.js" asp-append-version="true"></script>
-}
+} *@

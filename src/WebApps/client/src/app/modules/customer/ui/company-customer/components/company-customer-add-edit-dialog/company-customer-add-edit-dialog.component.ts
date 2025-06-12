@@ -11,8 +11,8 @@ import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-
 import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE} from "@core/constants/global.constants";
 import {forkJoin, Observable} from "rxjs";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {CompanyCustomerUseCase} from "@customer/domain/usecases/company-customer.use-case";
-import {SriCustomerUseCase} from "@customer/domain/usecases/sri-customer.use-case";
+import {CompanyCustomerUseCase} from "@customer/application/usecases/company-customer.use-case";
+import {SriCustomerUseCase} from "@customer/application/usecases/sri-customer.use-case";
 
 @Component({
   selector: 'app-company-customer-add-edit-dialog',

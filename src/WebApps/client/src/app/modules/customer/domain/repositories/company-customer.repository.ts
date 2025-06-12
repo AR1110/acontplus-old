@@ -1,9 +1,13 @@
 import { ApiResponse } from "@core/models/api-response";
 import { Observable } from "rxjs";
-import {CompanyCustomerSearch, SearchCompanyCustomerParams} from "@customer/domain/models/company-customer";
+import {
+  CompanyCustomerSearch,
+  ListCompanyCustomerResponse,
+  SearchCompanyCustomerParams
+} from "@customer/domain/models/company-customer";
 
 export abstract class CompanyCustomerRepository {
-  abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<any[]>;
+  abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<ListCompanyCustomerResponse>;
   abstract updateState(idCliente: number): Observable<ApiResponse>
   abstract   checkExistence<T>(params: T): Observable<ApiResponse>
   abstract getDataForm():Observable<any>

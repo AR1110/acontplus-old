@@ -1,158 +1,74 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row">
-      <div class="col-md-2 col-12">
-        <button
-          (companyCustomerSaved)="onResultModal()"
-          appCompanyCustomerAddEdit
-          mat-raised-button
-          type="button"
-        >
-          <mat-icon>add</mat-icon>
-          Nuevo
+<app-mat-dynamic-card>
+
+  <div
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+  >
+    <div class="col">
+      <mat-form-field>
+        <mat-label>Buscar</mat-label>
+        <input matInput [(ngModel)]="dataSearch.textSearch">
+        <ng-container matSuffix>
+          <button type="button" mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </ng-container>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <div class="d-flex flex-row gap-2 justify-content-end">
+        <app-theme-button appCompanyCustomerAddEdit (companyCustomerSaved)="refresh()"
+          variant="success"
+          icon="add"
+          text="Nuevo"
+        />
+        <app-theme-button
+          variant="primary"
+          icon="download"
+          text="Excel"
+          (handleClick)="getReport('excel')"
+        />
+        <app-theme-button
+          variant="danger"
+          icon="picture_as_pdf"
+          text="Pdf"
+          title="Obtener reporte de clientes"
+          (handleClick)="getReport('pdf')"
+        />
+        <button mat-icon-button (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
         </button>
       </div>
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="d-flex justify-content-start">
-          <span class="form-group pull-left page-size form-inline">
-            <app-theme-button
-              variant="success"
-              icon="download"
-              text="Excel"
-              (handleClick)="getReport('excel')"
-            >
-            </app-theme-button>
-          </span>
-
-          <span class="form-group pull-left page-size form-inline">
-            <app-theme-button
-              variant="danger"
-              icon="picture_as_pdf"
-              text="Pdf"
-              title="Obtener reporte de clientes"
-              (handleClick)="getReport('pdf')"
-            >
-            </app-theme-button>
-          </span>
-        </div>
-      </div>
-
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="d-flex justify-content-end">
-          <div class="input-group">
-            <input
-              #input
-              (input)="search(input.value)"
-              [(ngModel)]="dataSearch.textSearch"
-              class="form-control"
-              ng-model="dataSearch.textSearch"
-              placeholder="Buscar"
-              type="text"
-            />
-            <app-theme-button
-              variant="secondary"
-              icon="refresh"
-              matStyle="icon"
-              (handleClick)="refresh()"
-              type="button"
-            >
-            </app-theme-button>
-          </div>
-        </div>
-      </div>
     </div>
+  </div>
 
-    <section class="section-container-table">
-      <table [dataSource]="dataSource" class="mat-elevation-z0" mat-table>
-        <!--- Note that these columns can be defined in any order.
-            The actual rendered columns are set as a property on the row definition" -->
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  />
+  <ng-template #templateOp let-item="item">
 
-        <!-- Position Column -->
-        <ng-container matColumnDef="op">
-          <th *matHeaderCellDef mat-header-cell>Op.</th>
-          <td *matCellDef="let element" mat-cell>
-            <div class="d-flex align-items-center">
-              <button
-                (companyCustomerSaved)="onResultModal()"
-                [id]="element.idCliente"
-                appCompanyCustomerAddEdit
-                mat-raised-button
-                type="button"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-              @if (!element.esConsumidorFinal) {
-                <app-theme-button
-                  variant="danger"
-                  icon="work_history"
-                  matStyle="icon"
-                >
-                </app-theme-button>
-              }
-            </div>
-          </td>
-        </ng-container>
+    <app-theme-button  (companyCustomerSaved)="refresh()"
+                       appCompanyCustomerAddEdit
+                       [id]="item.idCliente"
+      variant="success"
+      icon="edit"
+      matStyle="icon"
+    />
+                  @if (!item.esConsumidorFinal) {
+                    <app-theme-button (handleClick)="askToDelete(item)"
+                      variant="danger"
+                      icon="delete"
+                      matStyle="icon"
+                    />
+                  }
+  </ng-template>
 
-        <ng-container matColumnDef="position">
-          <th *matHeaderCellDef mat-header-cell>No.</th>
-          <td *matCellDef="let i = index" mat-cell>{{ i + 1 }}</td>
-        </ng-container>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="ruc">
-          <th *matHeaderCellDef mat-header-cell>R.U.C/Cédula</th>
-          <td *matCellDef="let element" mat-cell>
-            {{ element.identificacionComprador }}
-          </td>
-        </ng-container>
-
-        <!-- Weight Column -->
-        <ng-container matColumnDef="razonSocial">
-          <th *matHeaderCellDef mat-header-cell>Razon Social</th>
-          <td *matCellDef="let element" mat-cell>
-            {{ element.razonSocialComprador }}
-          </td>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="direccion">
-          <th *matHeaderCellDef mat-header-cell>Dirección</th>
-          <td *matCellDef="let element" mat-cell>{{ element.direccion }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="telefono">
-          <th *matHeaderCellDef mat-header-cell>Teléfono</th>
-          <td *matCellDef="let element" mat-cell>{{ element.telefono }}</td>
-        </ng-container>
-        <ng-container matColumnDef="estado">
-          <th *matHeaderCellDef mat-header-cell>Estado</th>
-          <td *matCellDef="let element" mat-cell>
-            <div [innerHTML]="element.estado | primaryStatus"></div>
-          </td>
-        </ng-container>
-
-        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
-
-        <tr *matNoDataRow class="mat-row">
-          <td class="mat-cell text-center m-3" colspan="7">
-            Sin registro "{{ input.value }}"
-          </td>
-        </tr>
-      </table>
-    </section>
-    <mat-paginator
-      #paginator
-      (page)="onPageEvent($event)"
-      [length]="pagination.totalRecords"
-      [pageIndex]="pagination.pageIndex"
-      [pageSizeOptions]="pagination.pageSizeOptions"
-      [pageSize]="pagination.pageSize"
-      [showFirstLastButtons]="true"
-      aria-label="Select page"
-    >
-    </mat-paginator>
-  </mat-card-content>
-</mat-card>
+</app-mat-dynamic-card>
