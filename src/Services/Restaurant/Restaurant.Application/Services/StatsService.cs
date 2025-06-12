@@ -13,7 +13,7 @@ public class StatsService(IAdoRepository adoRepository) : IStatsService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, timeout: true);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, disableTimeout: true);
         return DataValidation.DataSetIsNull(ds, true)
             ? new ApiResponse { Code = "0", Message = "Can't get data" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };

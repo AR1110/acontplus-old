@@ -18,7 +18,7 @@ public class AtsRepository(IAdoRepository adoRepository) : IAtsRepository
 
     public async Task<DataSet> GetAsync(Dictionary<string, object> parameters, CancellationToken cancellationToken)
     {
-        return await adoRepository.GetDataSetAsync($"{_moduleName}Get", parameters, timeout: false,
+        return await adoRepository.GetDataSetAsync($"{_moduleName}Get", parameters, disableTimeout: true,
             cancellationToken: cancellationToken);
     }
 }

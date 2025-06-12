@@ -38,19 +38,23 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
 
     public async Task<FileModel> GetXmlSriAsync(Dictionary<string, object> parameters)
     {
-        var dt = await adoRepository.GetDataTableAsync("FactElect.Doc_Elect_Get_Xml", parameters);
-        if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlSri"))
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Xml", parameters, withTableNames: false);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        switch (dt.Rows.Count)
         {
-            var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
-            var response = new FileModel
+            case > 0 when dt.Columns.Contains("xmlSri"):
             {
-                Content = Encoding.UTF8.GetBytes(xmlSri),
-                FileName = dt.Rows[0].Field<string>("filename") + ".xml"
-            };
-            return response;
+                var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
+                var response = new FileModel
+                {
+                    Content = Encoding.UTF8.GetBytes(xmlSri),
+                    FileName = dt.Rows[0].Field<string>("filename") + ".xml"
+                };
+                return response;
+            }
+            default:
+                return null;
         }
-
-        return null;
     }
 
     public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)

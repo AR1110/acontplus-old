@@ -64,9 +64,10 @@ public class DocumentoRecibidoController(
         var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
         if (!DataValidation.DataTableIsNull(dt))
         {
-            var dtExistent = await adoRepository.GetDataTableAsync("Recepcion.Documento_Check_Existence",
-                new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } });
+            var dsExistentDocument = await adoRepository.GetDataSetAsync("Recepcion.Documento_Check_Existence",
+                new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } }, withTableNames: false);
 
+            var dtExistent = dsExistentDocument.Tables.Count > 0 ? dsExistentDocument.Tables[0] : new DataTable();
             if (DataValidation.DataTableIsNull(dt))
                 return BadRequest(ApiResponse.Success(payload: DataConverters.DataTableToJson(dt)));
 
@@ -79,13 +80,13 @@ public class DocumentoRecibidoController(
             else
             {
                 var diff = (from row1 in dt.AsEnumerable()
-                            join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                            {
-                                Column1 = row2["claveAcceso"]
-                            } into gj
-                            from subRow2 in gj.DefaultIfEmpty()
-                            where subRow2 == null
-                            select row1).ToList();
+                    join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                    {
+                        Column1 = row2["claveAcceso"]
+                    } into gj
+                    from subRow2 in gj.DefaultIfEmpty()
+                    where subRow2 == null
+                    select row1).ToList();
                 var filteredDataTable = diff.CopyToDataTable();
                 response.Code = "1";
                 response.Payload = DataConverters.DataTableToJson(filteredDataTable);
@@ -150,8 +151,11 @@ public class DocumentoRecibidoController(
     {
         var response = new ApiResponse();
 
-        var dt = await adoRepository.GetDataTableAsync("Recepcion.Documento_Get_Id",
-            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
+        var ds = await adoRepository.GetDataSetAsync("Recepcion.Documento_Get_Id",
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } },
+            withTableNames: false);
+
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
         {
             response.Code = "1";
