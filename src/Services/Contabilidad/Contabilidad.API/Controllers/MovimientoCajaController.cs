@@ -1,13 +1,13 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class MovimientoCajaController(IMovimientoCajaService movimientoCajaService) : BaseApiController
+public class MovimientoCajaController(IMovimientoCajaRepository movimientoCajaRepository) : BaseApiController
 {
     private const string UserRoleIdClaim = "userRoleId";
 
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var response = await movimientoCajaService.GetAsync(new Dictionary<string, object>
+        var response = await movimientoCajaRepository.GetAsync(new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "json", SqlStringParam.Sanitize(json) }
         });
@@ -23,7 +23,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
-        var response = await movimientoCajaService.AddAsync(parameters);
+        var response = await movimientoCajaRepository.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -33,7 +33,7 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     {
         var parameters = new Dictionary<string, object>
             { { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "id", id } };
-        var response = await movimientoCajaService.DeleteAsync(parameters);
+        var response = await movimientoCajaRepository.DeleteAsync(parameters);
         return Ok(response);
     }
 }

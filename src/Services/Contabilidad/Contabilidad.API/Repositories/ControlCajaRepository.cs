@@ -1,6 +1,6 @@
-﻿namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Repositories;
 
-public class ControlCajaService(IAdoRepository adoRepository) : IControlCajaService
+public class ControlCajaRepository(IAdoRepository adoRepository) : IControlCajaRepository
 {
     private const string NameSchema = "Contabilidad.ControlCaja_";
 

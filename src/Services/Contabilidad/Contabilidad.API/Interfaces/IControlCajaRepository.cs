@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Interfaces;
 
-public interface IControlCajaService
+public interface IControlCajaRepository
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);

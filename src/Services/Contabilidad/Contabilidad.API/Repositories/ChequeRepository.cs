@@ -1,6 +1,6 @@
-﻿namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Repositories;
 
-public class ChequeService(IAdoRepository adoRepository) : IChequeService
+public class ChequeRepository(IAdoRepository adoRepository) : IChequeRepository
 {
     private const string NameSchema = "Contabilidad.Cheque_";
 

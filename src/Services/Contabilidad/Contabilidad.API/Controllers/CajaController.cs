@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class CajaController(ICajaService cajaService) : BaseApiController
+public class CajaController(ICajaRepository cajaRepository) : BaseApiController
 {
     private const string UserRoleIdClaim = "userRoleId";
 
@@ -11,7 +11,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await cajaService.GetAsync(parameters);
+        var response = await cajaRepository.GetAsync(parameters);
         return Ok(response);
     }
 
@@ -23,7 +23,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await cajaService.AddAsync(parameters);
+        var response = await cajaRepository.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -37,7 +37,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await cajaService.UpdateAsync(parameters);
+        var response = await cajaRepository.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -47,7 +47,7 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
             { { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "id", id } };
-        var response = await cajaService.DeleteAsync(parameters);
+        var response = await cajaRepository.DeleteAsync(parameters);
         return Ok(response);
     }
 }

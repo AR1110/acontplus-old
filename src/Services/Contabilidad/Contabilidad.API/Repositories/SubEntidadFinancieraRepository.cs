@@ -1,8 +1,8 @@
-﻿namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Repositories;
 
-public class CajaService(IAdoRepository adoRepository) : ICajaService
+public class SubEntidadFinancieraRepository(IAdoRepository adoRepository) : ISubEntidadFinancieraRepository
 {
-    private const string NameSchema = "Contabilidad.Caja_";
+    private const string NameSchema = "Contabilidad.SubEntidadFinanciera_";
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {

@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class SubEntidadFinancieraController(ISubEntidadFinancieraService subEntidadFinancieraService)
+public class SubEntidadFinancieraController(ISubEntidadFinancieraRepository subEntidadFinancieraService)
     : BaseApiController
 {
     private const string UserRoleIdClaim = "userRoleId";

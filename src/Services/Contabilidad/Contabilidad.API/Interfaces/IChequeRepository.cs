@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Interfaces;
 
-public interface IChequeService
+public interface IChequeRepository
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Interfaces;
 
-public interface ISubEntidadFinancieraService
+public interface ISubEntidadFinancieraRepository
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);

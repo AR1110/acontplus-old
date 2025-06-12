@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class ChequeController(IChequeService chequeService) : BaseApiController
+public class ChequeController(IChequeRepository chequeRepository) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -9,7 +9,7 @@ public class ChequeController(IChequeService chequeService) : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await chequeService.GetAsync(parameters);
+        var response = await chequeRepository.GetAsync(parameters);
         return Ok(response);
     }
 }

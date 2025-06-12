@@ -1,8 +1,8 @@
-﻿namespace Contabilidad.API.Services;
+﻿namespace Contabilidad.API.Repositories;
 
-public class MovimientoCajaService(IAdoRepository adoRepository) : IMovimientoCajaService
+public class CajaRepository(IAdoRepository adoRepository) : ICajaRepository
 {
-    private const string NameSchema = "Contabilidad.MovimientoCaja_";
+    private const string NameSchema = "Contabilidad.Caja_";
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
@@ -16,6 +16,11 @@ public class MovimientoCajaService(IAdoRepository adoRepository) : IMovimientoCa
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
         return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Insert", parameters);
+    }
+
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await adoRepository.SpExecuteAsync<ApiResponse>($"{NameSchema}Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
