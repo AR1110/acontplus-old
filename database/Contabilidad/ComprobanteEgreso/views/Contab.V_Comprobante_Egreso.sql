@@ -89,3 +89,4 @@ GO
 -- SELECT TOP 1
 --     *
 -- FROM dbo.ComprobanteEgreso
+-- SELECT top 1 * FROM PagoDetalle

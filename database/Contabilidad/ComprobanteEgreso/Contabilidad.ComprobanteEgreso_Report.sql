@@ -40,7 +40,8 @@ BEGIN
         @useDateFilter BIT,
         @supplierId INT,
         @reference VARCHAR(20),
-        @lote VARCHAR(20)
+        @lote VARCHAR(20),
+        @estabName VARCHAR(140)
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX), @params NVARCHAR(MAX)
@@ -172,6 +173,7 @@ BEGIN
         -- Reporte Listado de comprobantes de egreso
         IF @tipo = 2
         BEGIN
+
         SET @tableNames = 'headerDs,listDs';
 
         SELECT
@@ -209,7 +211,7 @@ BEGIN
                               ,@lote VARCHAR(30)'
 
         SET @sql = N'
-                            SELECT top 100 
+                            SELECT  
                                 idProveedor
                                 ,codDoc
                                 ,serieComprobante
@@ -227,8 +229,12 @@ BEGIN
                                 ,totalComprobante
                                 ,totalDocumento
                             FROM Contab.V_ComprobanteEgreso 
-                            WHERE idEntidad > 0 
+                            WHERE idEntidad = @idEntidad 
                 '
+
+        SELECT @estabName = nombreComercial
+        FROM Sri.Establecimiento
+        WHERE idEstablecimiento = @estabId
 
         SET @sql = @sql + ' AND idEstablecimiento = @estabId '
 
@@ -266,6 +272,8 @@ BEGIN
                     , addressBusiness = direccion       
                     , userName = nombreUsuario 
                     , dateRange =  FORMAT(@startDate, 'dd/MM/yyyy')  + '-' +  FORMAT(@endDate, 'dd/MM/yyyy')
+                    , estabName = @estabName
+                    , titleReport='Listado de Pagos'
         FROM v_usuario WITH(NOLOCK)
         WHERE idUsuarioRol = @userRoleId
 
@@ -291,7 +299,138 @@ BEGIN
         -- Reporte Listado de comprobantes de egreso con detalles de pago
         IF @tipo = 3
         BEGIN
-        -- Aquí iría la lógica para el tipo 3
+        SET @tableNames = 'headerDs,listDs';
+
+        SELECT
+            @estabId = establecimientoId,
+            @userId = userId,
+            @codDoc = codDoc,
+            @paymentMethodId = paymentMethodId,
+            @bankId = bankId,
+            @startDate = startDate,
+            @endDate = endDate,
+            @useDateFilter = useDateFilter,
+            @supplierId = supplierId
+        FROM OPENJSON(@json)
+                WITH(
+                establecimientoId INT
+                    ,userId INT
+                    ,codDoc CHAR(5)
+                    ,paymentMethodId INT
+                    ,bankId INT
+                    ,startDate DATETIME2
+                    ,endDate DATETIME2
+                    ,useDateFilter BIT
+                    ,supplierId INT
+                )
+
+        SET @params = '@idEntidad INT
+                              ,@paymentMethodId INT
+                              ,@estabId INT
+                              ,@codDoc CHAR(5)
+                              ,@supplierId INT
+                              ,@startDate DATETIME2
+                              ,@endDate DATETIME2
+                              ,@bankId INT
+                              ,@reference VARCHAR(30)
+                              ,@lote VARCHAR(30)'
+
+
+        SET @sql = N'
+                        SELECT TOP 100
+                            -- Identificadores
+                            idComprobanteEgreso,
+                            nroDocumento,
+                            serieComprobante,
+
+                            -- Información del proveedor
+                            razonSocialProveedor,
+                            cedulaRucProveedor,
+
+                            -- Fechas
+                            fechaRegistro,
+                            fechaPago,
+
+                            -- Montos
+                            totalComprobante,
+                            totalDocumento,
+                            abonoDocumento,
+                            saldoDocumento,
+
+                            -- Método de pago
+                            metodoPago,
+                            nombreBanco,
+
+                            -- Detalles del pago
+                            nro,
+                            referencia,
+                            nroCuota
+
+                        FROM Contab.V_ComprobanteEgresoDetallePago
+                        WHERE idEntidad = @idEntidad 
+                '
+
+
+        SELECT @estabName = nombreComercial
+        FROM Sri.Establecimiento
+        WHERE idEstablecimiento = @estabId
+
+        SET @sql = @sql + ' AND idEstablecimiento = @estabId '
+
+        IF @codDoc IS NOT NULL
+             BEGIN
+            SET @sql = @sql + ' AND codDoc = @codDoc '
+        END
+
+        IF @paymentMethodId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idSubEntidadFinanciera = @paymentMethodId '
+        END
+
+        IF @supplierId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idProveedor = @supplierId '
+        END
+
+        IF @bankId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idBanco = @bankId '
+        END
+
+        IF @useDateFilter = 1
+             BEGIN
+            SET @sql = @sql + ' AND CAST(fechaRegistro AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+        END
+
+        ---> Header
+        SELECT TOP 1
+            nameBusiness = entidad
+                    , rucBusiness = rucEmpresa
+                    , telBusiness = telefono
+                    , emailBusiness = email
+                    , addressBusiness = direccion       
+                    , userName = nombreUsuario 
+                    , dateRange =  FORMAT(@startDate, 'dd/MM/yyyy')  + '-' +  FORMAT(@endDate, 'dd/MM/yyyy')
+                    , estabName = @estabName
+                    , titleReport='REPORTE: DETALLE DE FORMAS DE PAGO - COMPROBANTES DE EGRESO'
+        FROM v_usuario WITH(NOLOCK)
+        WHERE idUsuarioRol = @userRoleId
+
+        ---> Details
+        EXEC sp_executesql @sql
+                              ,@params 
+                              ,@idEntidad = @idEntidad
+                              ,@paymentMethodId = @paymentMethodId
+                              ,@estabId = @estabId
+                              ,@codDoc = @codDoc
+                              ,@supplierId = @supplierId 
+                              ,@startDate = @startDate
+                              ,@endDate = @endDate
+                              ,@bankId = @bankId 
+                              ,@reference = @reference
+                              ,@lote = @lote
+
+
         RETURN;
     END
 
