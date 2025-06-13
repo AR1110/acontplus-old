@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuevo Cliente - Sistema Completo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #e91e63 0%, #ad1457 100%);
+        color: white;
+        padding: 25px 30px;
+        position: relative;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+      }
+
+      .close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .tab-container {
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .tabs {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .tab {
+        flex: 1;
+        text-align: center;
+      }
+
+      .tab button {
+        width: 100%;
+        padding: 15px 20px;
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 3px solid transparent;
+      }
+
+      .tab.active button {
+        color: #e91e63;
+        border-bottom-color: #e91e63;
+        background: white;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 30px;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .form-section {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e91e63;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .form-row.full-width {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row.triple {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .form-group {
+        position: relative;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .required::after {
+        content: " *";
+        color: #dc3545;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+      }
+
+      .form-control[readonly] {
+        background: #f8f9fa;
+        color: #6c757d;
+      }
+
+      .btn-add {
+        background: #28a745;
+        color: white;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-add:hover {
+        background: #218838;
+      }
+
+      .input-with-btn {
+        display: flex;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .input-with-btn .form-control {
+        flex: 1;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #e91e63;
+      }
+
+      .info-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background: #17a2b8;
+        color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 5px;
+        cursor: help;
+      }
+
+      .barcode-section {
+        background: #e8f5e8;
+        border: 2px dashed #28a745;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .barcode-placeholder {
+        width: 200px;
+        height: 80px;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 12px;
+      }
+
+      .btn-generate {
+        background: #17a2b8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .btn-generate:hover {
+        background: #138496;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        padding: 25px 30px;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .btn-cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-cancel:hover {
+        background: #545b62;
+      }
+
+      .btn-save {
+        background: #e91e63;
+        color: white;
+      }
+
+      .btn-save:hover {
+        background: #ad1457;
+      }
+
+      .progress-indicator {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #e3f2fd;
+        border-radius: 8px;
+      }
+
+      .progress-bar {
+        flex: 1;
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: #e91e63;
+        transition: width 0.3s ease;
+      }
+
+      .expired {
+        color: #dc3545 !important;
+        font-weight: bold;
+      }
+
+      .warning {
+        color: #fd7e14 !important;
+        font-weight: bold;
+      }
+
+      .valid {
+        color: #28a745 !important;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-row,
+        .form-row.triple {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          margin: 10px;
+          border-radius: 10px;
+        }
+
+        .header {
+          padding: 20px;
+        }
+
+        .tab-content {
+          padding: 20px;
+        }
+
+        .tabs {
+          flex-direction: column;
+        }
+
+        .tab button {
+          border-bottom: none;
+          border-left: 3px solid transparent;
+        }
+
+        .tab.active button {
+          border-left-color: #e91e63;
+          border-bottom: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>Nuevo Cliente</h1>
+        <button class="close-btn" onclick="closeForm()">×</button>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="progress-indicator">
+        <span>Progreso del formulario:</span>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            id="progress-fill"
+            style="width: 33%"
+          ></div>
+        </div>
+        <span id="progress-text">1 de 3</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-container">
+        <ul class="tabs">
+          <li class="tab active">
+            <button onclick="switchTab(0)">📊 Datos Generales</button>
+          </li>
+          <li class="tab">
+            <button onclick="switchTab(1)">➕ Adicionales</button>
+          </li>
+          <li class="tab">
+            <button onclick="switchTab(2)">💳 Información Crediticia</button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- TAB 1: DATOS GENERALES -->
+      <div class="tab-content active" id="tab-0">
+        <div class="form-grid">
+          <!-- Información Básica -->
+          <div class="form-section">
+            <h3 class="section-title">Información Básica</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contribuyente" class="required"
+                  >Contribuyente:</label
+                >
+                <select id="contribuyente" class="form-control" required>
+                  <option value="">Seleccionar...</option>
+                  <option>RIMPE - NEGOCIOS POPULARES</option>
+                  <option>RIMPE - EMPRENDEDORES</option>
+                  <option>RÉGIMEN GENERAL</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tiempo-credito">Tiempo de Crédito:</label>
+                <div class="input-with-btn">
+                  <select id="tiempo-credito" class="form-control">
+                    <option>VENTAS-CONTADO</option>
+                    <option>15 DÍAS</option>
+                    <option>30 DÍAS</option>
+                    <option>45 DÍAS</option>
+                    <option>60 DÍAS</option>
+                  </select>
+                  <button class="btn-add">🔄</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fecha-vencimiento">Fecha de Vencimiento:</label>
+                <input
+                  type="date"
+                  id="fecha-vencimiento"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label for="dias-vencimiento">Días hasta Vencimiento:</label>
+                <input
+                  type="number"
+                  id="dias-vencimiento"
+                  class="form-control"
+                  placeholder="0"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ciudad" class="required">Ciudad:</label>
+                <select id="ciudad" class="form-control" required>
+                  <option value="">Seleccionar...</option>
+                  <option>Cuenca</option>
+                  <option>Quito</option>
+                  <option>Guayaquil</option>
+                  <option>Ambato</option>
+                  <option>Loja</option>
+                  <option>Machala</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tipo-cliente" class="required">Tipo Cliente:</label>
+                <select id="tipo-cliente" class="form-control" required>
+                  <option value="">Seleccionar...</option>
+                  <option>SOCIEDAD</option>
+                  <option>PERSONA NATURAL</option>
+                  <option>EXTRANJERO</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="empresa">Empresa:</label>
+                <div class="input-with-btn">
+                  <select id="empresa" class="form-control">
+                    <option>Ninguno</option>
+                    <option>Empresa A</option>
+                    <option>Empresa B</option>
+                  </select>
+                  <button class="btn-add">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información Laboral -->
+          <div class="form-section">
+            <h3 class="section-title">Información Laboral</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="empleado">Empleado:</label>
+                <div class="input-with-btn">
+                  <input
+                    type="text"
+                    id="empleado"
+                    class="form-control"
+                    placeholder="Buscar Empleado"
+                  />
+                  <button class="btn-add">+</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cargo">Cargo:</label>
+                <div class="input-with-btn">
+                  <select id="cargo" class="form-control">
+                    <option>Seleccionar cargo...</option>
+                    <option>Gerente</option>
+                    <option>Vendedor</option>
+                    <option>Administrativo</option>
+                    <option>Supervisor</option>
+                  </select>
+                  <button class="btn-add">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="observacion">Observación:</label>
+                <textarea
+                  id="observacion"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Ingrese observaciones..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuración Financiera -->
+          <div class="form-section">
+            <h3 class="section-title">Configuración Financiera</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="forma-pago">Forma de Pago:</label>
+                <select id="forma-pago" class="form-control">
+                  <option>COMPENSACIÓN DE DEUDAS</option>
+                  <option>EFECTIVO</option>
+                  <option>TRANSFERENCIA</option>
+                  <option>CHEQUE</option>
+                  <option>TARJETA DE CRÉDITO</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="placa"
+                  >Placa <span class="info-icon">i</span>:</label
+                >
+                <input
+                  type="text"
+                  id="placa"
+                  class="form-control"
+                  placeholder="Ej: AAC-0123"
+                />
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label
+                  >Configuración de Valor Bruto
+                  <span class="info-icon">i</span>:</label
+                >
+                <div class="checkbox-group">
+                  <input type="checkbox" id="valor-bruto" checked />
+                  <label for="valor-bruto"
+                    >Activar configuración de valor bruto</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Código de Barras -->
+        <div class="barcode-section">
+          <h3 class="section-title">Código de Barras</h3>
+          <div class="barcode-placeholder">© Acontplus</div>
+          <button class="btn-generate" onclick="generateBarcode()">
+            🔄 Generar
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: ADICIONALES -->
+      <div class="tab-content active" id="tab-1">
+        <div class="form-grid">
+          <!-- Información Personal -->
+          <div class="form-section">
+            <h3 class="section-title">Información Personal</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="estado-civil">Estado Civil:</label>
+                <select id="estado-civil" class="form-control">
+                  <option>Seleccionar...</option>
+                  <option>Soltero/a</option>
+                  <option>Casado/a</option>
+                  <option>Divorciado/a</option>
+                  <option>Viudo/a</option>
+                  <option>Unión Libre</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="esposo">Esposo(a):</label>
+                <input
+                  type="text"
+                  id="esposo"
+                  class="form-control"
+                  placeholder="Nombre del cónyuge"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="telefono-personal">Teléfono Personal:</label>
+                <input
+                  type="tel"
+                  id="telefono-personal"
+                  class="form-control"
+                  placeholder="09xxxxxxxx"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefono-referencia">Teléfono Referencia:</label>
+                <input
+                  type="tel"
+                  id="telefono-referencia"
+                  class="form-control"
+                  placeholder="09xxxxxxxx"
+                />
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="referencia-familiar">Referencia Familiar:</label>
+                <input
+                  type="text"
+                  id="referencia-familiar"
+                  class="form-control"
+                  placeholder="Nombre de referencia familiar"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Información de Vivienda -->
+          <div class="form-section">
+            <h3 class="section-title">Información de Vivienda</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tipo-vivienda">Tipo de Vivienda:</label>
+                <select id="tipo-vivienda" class="form-control">
+                  <option>Seleccionar...</option>
+                  <option>Casa Propia</option>
+                  <option>Casa Arrendada</option>
+                  <option>Departamento Propio</option>
+                  <option>Departamento Arrendado</option>
+                  <option>Casa Familiar</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="sector">Sector:</label>
+                <input
+                  type="text"
+                  id="sector"
+                  class="form-control"
+                  placeholder="Nombre del sector"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="barrio">Barrio:</label>
+                <input
+                  type="text"
+                  id="barrio"
+                  class="form-control"
+                  placeholder="Nombre del barrio"
+                />
+              </div>
+              <div class="form-group">
+                <label for="calle">Calle:</label>
+                <input
+                  type="text"
+                  id="calle"
+                  class="form-control"
+                  placeholder="Nombre de la calle"
+                />
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="direccion-completa"
+                  >Dirección Completa <span class="info-icon">i</span>:</label
+                >
+                <textarea
+                  id="direccion-completa"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Dirección completa de vivienda (Sector, Barrio y Calle)"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="punto-referencia"
+                  >Descripción del Punto de Referencia:</label
+                >
+                <textarea
+                  id="punto-referencia"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Descripción detallada del punto de referencia"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: INFORMACIÓN CREDITICIA -->
+      <div class="tab-content active" id="tab-2">
+        <div class="form-grid">
+          <!-- Información Crediticia -->
+          <div class="form-section">
+            <h3 class="section-title">Configuración de Crédito</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="limite-credito">Límite de Crédito:</label>
+                <input
+                  type="number"
+                  id="limite-credito"
+                  class="form-control"
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
+              <div class="form-group">
+                <label for="credito-disponible">Crédito Disponible:</label>
+                <input
+                  type="number"
+                  id="credito-disponible"
+                  class="form-control"
+                  placeholder="0.00"
+                  step="0.01"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dias-credito">Días de Crédito:</label>
+                <input
+                  type="number"
+                  id="dias-credito"
+                  class="form-control"
+                  placeholder="30"
+                />
+              </div>
+              <div class="form-group">
+                <label for="tasa-interes">Tasa de Interés (%):</label>
+                <input
+                  type="number"
+                  id="tasa-interes"
+                  class="form-control"
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="score-crediticio">Score Crediticio:</label>
+                <select id="score-crediticio" class="form-control">
+                  <option>Seleccionar...</option>
+                  <option>Excelente (750-850)</option>
+                  <option>Muy Bueno (700-749)</option>
+                  <option>Bueno (650-699)</option>
+                  <option>Regular (600-649)</option>
+                  <option>Malo (300-599)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="estado-credito">Estado de Crédito:</label>
+                <select id="estado-credito" class="form-control">
+                  <option>Activo</option>
+                  <option>Suspendido</option>
+                  <option>Bloqueado</option>
+                  <option>En Revisión</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="requiere-garantia" />
+                  <label for="requiere-garantia">Requiere Garantía</label>
+                </div>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="cliente-riesgo" />
+                  <label for="cliente-riesgo">Cliente de Riesgo</label>
+                </div>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="alertas-vencimiento" />
+                  <label for="alertas-vencimiento"
+                    >Activar Alertas de Vencimiento</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Historial Crediticio -->
+          <div class="form-section">
+            <h3 class="section-title">Historial y Observaciones</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fecha-ultimo-pago">Fecha Último Pago:</label>
+                <input
+                  type="date"
+                  id="fecha-ultimo-pago"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label for="monto-ultimo-pago">Monto Último Pago:</label>
+                <input
+                  type="number"
+                  id="monto-ultimo-pago"
+                  class="form-control"
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pagos-puntuales">Pagos Puntuales (%):</label>
+                <input
+                  type="number"
+                  id="pagos-puntuales"
+                  class="form-control"
+                  placeholder="0"
+                  max="100"
+                />
+              </div>
+              <div class="form-group">
+                <label for="pagos-tardios">Pagos Tardíos:</label>
+                <input
+                  type="number"
+                  id="pagos-tardios"
+                  class="form-control"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="observaciones-credito"
+                  >Observaciones de Crédito:</label
+                >
+                <textarea
+                  id="observaciones-credito"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Observaciones importantes sobre el historial crediticio del cliente..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Referencias Comerciales -->
+          <div class="form-section">
+            <h3 class="section-title">Referencias Comerciales</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="referencia-comercial-1"
+                  >Referencia Comercial 1:</label
+                >
+                <input
+                  type="text"
+                  id="referencia-comercial-1"
+                  class="form-control"
+                  placeholder="Nombre de la empresa"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefono-comercial-1">Teléfono:</label>
+                <input
+                  type="tel"
+                  id="telefono-comercial-1"
+                  class="form-control"
+                  placeholder="Teléfono de contacto"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="referencia-comercial-2"
+                  >Referencia Comercial 2:</label
+                >
+                <input
+                  type="text"
+                  id="referencia-comercial-2"
+                  class="form-control"
+                  placeholder="Nombre de la empresa"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefono-comercial-2">Teléfono:</label>
+                <input
+                  type="tel"
+                  id="telefono-comercial-2"
+                  class="form-control"
+                  placeholder="Teléfono de contacto"
+                />
+              </div>
+            </div>
+
+            <div class="form-row full-width">
+              <div class="form-group">
+                <label for="evaluacion-referencias"
+                  >Evaluación de Referencias:</label
+                >
+                <select id="evaluacion-referencias" class="form-control">
+                  <option>Pendiente</option>
+                  <option>Positiva</option>
+                  <option>Neutral</option>
+                  <option>Negativa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
