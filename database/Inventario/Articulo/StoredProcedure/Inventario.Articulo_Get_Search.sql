@@ -107,7 +107,7 @@ BEGIN
 			SET @sql = @sql + 'AND a.productoFraccionable = 1 '
 		END
 
-    SET @sql = @sql + 'ORDER BY a.descripcion,a.codigo ASC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
+    SET @sql = @sql + 'ORDER BY a.stock DESC ,a.descripcion ASC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
 	EXEC SP_EXECUTESQL @sql
 		              ,@params
