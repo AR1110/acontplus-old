@@ -87,7 +87,7 @@ angular.module('acontPlusApp')
         }
 
         function accionesSubMenu() {
-            let { submenus } = getUserData(); 
+            let { menus } = getUserData(); 
 
             let accionesDefault = {
                 leer: false,
@@ -111,7 +111,7 @@ angular.module('acontPlusApp')
                 movimiento: false,
             }
           
-            let accionesProduct = submenus.find(sm => sm.code === 'ART');
+            let accionesProduct = menus.find(sm => sm.code === 'ART');
             if (!accionesProduct){
                 return {
                     accionesProduct: accionesDefault 

@@ -67,10 +67,10 @@ BEGIN
 	                                                                        ,m.[url]
 	                                                                        ,isnull(m.icon, '') icon
 	                                                                        ,m.[name]
-	                                                                        ,m.submenu
+	                                                                        ,m.parentId
+                                                                            ,ISNULL(lad.actions, '[]') actions
                                                                         FROM AcontplusAdmin.Seguridad.LicenciaAccesoDetalle lad WITH (NOLOCK)
-	                                                                    INNER JOIN AcontplusAdmin.Config.Submenu             sm WITH (NOLOCK) ON lad.SubmenuId = sm.Id
-	                                                                    INNER JOIN AcontplusAdmin.Config.Menu                 m WITH (NOLOCK) ON sm.MenuId = m.Id
+	                                                                    INNER JOIN AcontplusAdmin.Config.Menu                 m WITH (NOLOCK) ON lad.MenuId = m.Id
 	                                                                    INNER JOIN AcontplusAdmin.Config.Aplicacion         a WITH (NOLOCK) ON m.AplicacionId = a.Id 
                                                                         INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[IsActive] = 1
 	                                                                    INNER JOIN AcontplusAdmin.Config.LicenciaDetalle   ld WITH (NOLOCK) ON a.Id = ld.AplicacionId  AND ld.LicenciaId = la.LicenciaId
@@ -88,100 +88,25 @@ BEGIN
                                                                                                                 WHERE enn.idEntidad = r.idEntidad
                                                                                                                 AND s.[IsActive] = 1
 							                                                                    ORDER BY s.Id DESC
-							                                                                    )
-                                                                            GROUP BY m.Id 
-                                                                                ,m.Code
-	                                                                            ,m.[Url]
-	                                                                            ,m.Icon
-	                                                                            ,m.[Name]
-	                                                                            ,m.Submenu 
-                                                                                ,m.[Order]
-                                                                            ORDER BY m.[Order]     
+							                                                                    )  
                                                                             FOR JSON PATH
                                                                     )
 
                                                                 ELSE
                                                                     (
-                                                                        SELECT me.id
-                                                                              ,me.code
-	                                                                          ,me.[url]
-	                                                                          ,isnull(me.icon, '') icon
-	                                                                          ,me.[name]
-	                                                                          ,me.submenu
+                                                                        SELECT m.id
+                                                                              ,m.code
+	                                                                          ,m.[url]
+	                                                                          ,isnull(m.icon, '') icon
+	                                                                          ,m.[name]
+	                                                                          ,m.parentId
+                                                                             ,ISNULL(ua.actions, '[]') actions
                                                                         FROM Config.v_UserRole_Accesses          ua WITH (NOLOCK)
-                                                                        INNER JOIN AcontplusAdmin.Config.Submenu sm WITH (NOLOCK) ON sm.Id = ua.SubMenuId
-                                                                        INNER JOIN AcontplusAdmin.Config.Menu    me WITH (NOLOCK) ON me.Id = sm.MenuId
-                                                                        WHERE ua.idUsuarioRol = r.idUsuarioRol AND me.Code IN('POS')
-                                                                        GROUP BY me.Id 
-                                                                                ,me.Code
-	                                                                            ,me.[Url]
-	                                                                            ,me.Icon
-	                                                                            ,me.[Name]
-	                                                                            ,me.Submenu 
-                                                                                ,me.[Order]
-                                                                        ORDER BY me.[Order] ASC
+                                                                        INNER JOIN AcontplusAdmin.Config.Menu    m WITH (NOLOCK) ON ua.MenuId = m.Id                                                                        WHERE ua.idUsuarioRol = r.idUsuarioRol AND m.Code IN('POS')
+                                                                        ORDER BY m.[Order] ASC
                                                                         FOR JSON PATH
                                                                     )
                             END)
-
-                        ,submenus = 
-                                    JSON_QUERY(CASE WHEN r.Accesses IS NULL THEN
-                                                                        (SELECT sm.code
-	                                                                           ,sm.[url]
-	                                                                           ,isnull(sm.icon, '') icon
-	                                                                           ,sm.[name]
-	                                                                           ,sm.[order]
-	                                                                           ,sm.menuId
-                                                                               ,isnull(lad.actions, '[]') actions
-                                                                               ,ISNULL(sm.NewUrl, '') newUrl
-                                                                               ,ISNULL(sm.NewUrlExpiration, '') newUrlExpiration
-                                                                        FROM AcontplusAdmin.Seguridad.LicenciaAccesoDetalle lad WITH (NOLOCK)
-	                                                                    INNER JOIN AcontplusAdmin.Config.Submenu sm WITH (NOLOCK) ON lad.SubmenuId = sm.Id
-	                                                                    INNER JOIN AcontplusAdmin.Config.Menu m WITH (NOLOCK) ON sm.MenuId = m.Id
-	                                                                    INNER JOIN AcontplusAdmin.Config.Aplicacion a WITH (NOLOCK) ON m.AplicacionId = a.Id
-                                                                        INNER JOIN AcontplusAdmin.Seguridad.LicenciaAcceso la WITH (NOLOCK) ON lad.LicenciaAccesoId = la.Id AND la.[IsActive] = 1
-	                                                                    INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld WITH (NOLOCK) ON a.Id = ld.AplicacionId  AND ld.LicenciaId = la.LicenciaId
-	                                                                    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
-	                                                                    INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
-	                                                                    INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON s.CompanyId = cc.Id
-	                                                                    INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON cc.Uuid = en.Uuid
-	                                                                    INNER JOIN Acontplus.App.UsuarioRol urr WITH (NOLOCK) ON la.RoleId = urr.RoleId
-                                                                        AND urr.idEntidad = en.idEntidad
-                                                                        WHERE urr.idUsuarioRol = r.idUsuarioRol
-                                                                        AND a.Code='AR' AND a.[IsActive] = 1
-                                                                        AND m.Code  IN ('POS')
-	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) 
-                                                                                                            INNER JOIN AcontplusAdmin.Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
-                                                                                                            INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
-                                                                                                            WHERE enn.idEntidad = r.idEntidad
-                                                                                                                AND s.[IsActive] = 1
-							                                                                    ORDER BY s.Id DESC
-							                                                                    )
-                                                                        ORDER BY m.[Order]      
-                                                                        ,[sm].[Order] 
-                                                                        FOR JSON PATH)
-
-                                                                    ELSE 
-                                                                        (
-                                                                            
-                                                                            SELECT sm.code
-	                                                                              ,sm.[url]
-	                                                                              ,isnull(sm.icon, '') icon
-	                                                                              ,sm.[name]
-	                                                                              ,sm.[order]
-	                                                                              ,sm.menuId
-                                                                                  ,isnull(ua.actions, '[]') actions
-                                                                                  ,ISNULL(sm.NewUrl, '') newUrl
-                                                                                  ,ISNULL(sm.NewUrlExpiration, '') newUrlExpiration
-                                                                            FROM Config.v_UserRole_Accesses          ua WITH (NOLOCK)
-                                                                            INNER JOIN AcontplusAdmin.Config.Submenu sm WITH (NOLOCK) ON sm.Id = ua.SubMenuId
-                                                                            INNER JOIN AcontplusAdmin.Config.Menu    me WITH (NOLOCK) ON me.Id = sm.MenuId
-                                                                            WHERE ua.idUsuarioRol = r.idUsuarioRol  AND me.Code IN ('POS')
-                                                                            ORDER BY sm.[Order] ASC
-                                                                            FOR JSON PATH
-                                                                        )
-                           END)
-
                                 
                                 ,establecimientos = (
                                                         SELECT  v_eai.*
