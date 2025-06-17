@@ -1,86 +1,89 @@
 import {
-  UserCustomerRole, UserCustomerRoleAccessResponse,
-} from "@modules/config/domain/models/user-customer/user-customer-role.model";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
-import {isValidJSON} from "@core/utils/utils";
+  UserCustomerRole,
+  UserCustomerRoleAccessResponse,
+} from '@modules/config/domain/models/user-customer/user-customer-role.model';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { isValidJSON } from '@core/utils/utils';
 
 export class ListAccessUserCustomerRoleMapper {
-
-  static toJson (parameters:Partial<UserCustomerRole>){
+  static toJson(parameters: Partial<UserCustomerRole>) {
     return JSON.stringify({
       tipo: 2,
-      idUsuarioRol: parameters.userRoleId
-    })
+      idUsuarioRol: parameters.userRoleId,
+    });
   }
 
   static fromJson(response: any): UserCustomerRoleAccessResponse {
-
-      let menus = response.submenus.map((sm:any)=>{
-        let actions = isValidJSON(sm.actions) ? JSON.parse(sm.actions) :  [];
-        let unique = generateUuidv4()
-        actions = actions.map((a:any)=>{
-          return {
-            ...a,
-            unique,
-            level: 3
-            //       sub
-          }
-        })
-
-        sm.unique = unique;
+    const menus = response.menus.map((sm: any) => {
+      let actions = isValidJSON(sm.actions) ? JSON.parse(sm.actions) : [];
+      const unique = generateUuidv4();
+      actions = actions.map((a: any) => {
         return {
-          ...sm,
-          children: actions
-        }
-      })
+          ...a,
+          unique,
+          level: 3,
+          //       sub
+        };
+      });
 
-      let menusResults = menus.reduce((acc:any, curr:any) => {
-        // Buscar si ya existe un objeto con el id del menú actual
-        let dataExist = acc.find((m:any) => m.id === curr.menuId);
-          let actions =  curr.children || [];
-          const enabled = actions.some((a:any)=>a.subMenuId===curr.subMenuId && a.enabled);
+      sm.unique = unique;
+      return {
+        ...sm,
+        children: actions,
+      };
+    });
 
-        if (!dataExist) {
-          // Si no existe, crear un nuevo objeto y agregarlo al acumulador
-          acc.push({
-            id: curr.menuId, // Usar curr.menuId aquí para mantener la estructura correcta
-            name: curr.menuName,
-            code: curr.menuCode,
-            enabled,
-            level: 1,
-            children: [{
+    const menusResults = menus.reduce((acc: any, curr: any) => {
+      // Buscar si ya existe un objeto con el id del menú actual
+      const dataExist = acc.find((m: any) => m.id === curr.menuId);
+      const actions = curr.children || [];
+      const isActive = actions.some(
+        (a: any) => a.menuId === curr.menuId && a.isActive,
+      );
+
+      if (!dataExist) {
+        // Si no existe, crear un nuevo objeto y agregarlo al acumulador
+        acc.push({
+          id: curr.menuId, // Usar curr.menuId aquí para mantener la estructura correcta
+          name: curr.menuName,
+          code: curr.menuCode,
+          isActive,
+          level: 1,
+          children: [
+            {
               unique: curr.unique,
-              id: curr.subMenuId,
+              id: curr.menuId,
               menuId: curr.menuId,
-              name: curr.subMenuName,
-              code: curr.subMenuCode,
+              name: curr.name,
+              code: curr.code,
               children: structuredClone(actions),
-              enabled,
-              level: 2
-            }]
-          });
-        } else {
-          // Si existe, agregar el submenú al array subMenus
-          dataExist.children.push({
-            unique: curr.unique,
-            id: curr.subMenuId,
-            menuId: curr.menuId,
-            name: curr.subMenuName,
-            code: curr.subMenuCode,
-            children: structuredClone(actions),
-            enabled,
-            level: 2
-          });
-        }
+              isActive,
+              level: 2,
+            },
+          ],
+        });
+      } else {
+        // Si existe, agregar el submenú al array subMenus
+        dataExist.children.push({
+          unique: curr.unique,
+          id: curr.menuId,
+          menuId: curr.menuId,
+          name: curr.name,
+          code: curr.code,
+          children: structuredClone(actions),
+          isActive,
+          level: 2,
+        });
+      }
 
-        return acc; // No olvidar retornar el acumulador en cada iteración
-      }, []);
+      return acc; // No olvidar retornar el acumulador en cada iteración
+    }, []);
 
-      let actions = response.actions || []
+    let actions = response.actions || [];
     return {
       menus: menusResults,
-      actions
-    }
+      actions,
+    };
   }
 
   // static fromJson(response: any): UserCustomerRoleAccessResponse {
@@ -91,7 +94,7 @@ export class ListAccessUserCustomerRoleMapper {
   //       return {
   //         ...a,
   //         codeAction: a.code,
-  //         enabled: true,
+  //         isActive: true,
   //         unique
   //         //       sub
   //       }
@@ -111,7 +114,7 @@ export class ListAccessUserCustomerRoleMapper {
   //       return {
   //         ...a,
   //         codeAction: a.code,
-  //         enabled: false,
+  //         isActive: false,
   //         unique
   //       }
   //     })
@@ -138,13 +141,13 @@ export class ListAccessUserCustomerRoleMapper {
   //         code: curr.codeMenu,
   //         subMenus: [{
   //           unique: curr.unique,
-  //           subMenuId: curr.id,
+  //           menuId: curr.id,
   //           menuId: curr.menuId,
   //           name: curr.name,
   //           code: curr.code,
   //           actions,
   //           children: structuredClone(actions),
-  //           enabled: curr.enabled
+  //           isActive: curr.isActive
   //         }]
   //       });
   //     } else {
@@ -152,13 +155,13 @@ export class ListAccessUserCustomerRoleMapper {
   //       // Si existe, agregar el submenú al array subMenus
   //       dataExist.subMenus.push({
   //         unique: curr.unique,
-  //         subMenuId: curr.id,
+  //         menuId: curr.id,
   //         menuId: curr.menuId,
   //         name: curr.name,
   //         code: curr.code,
   //         actions,
   //         children: structuredClone(actions),
-  //         enabled: curr.enabled
+  //         isActive: curr.isActive
   //       });
   //     }
   //

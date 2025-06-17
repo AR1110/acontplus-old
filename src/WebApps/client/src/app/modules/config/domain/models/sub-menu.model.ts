@@ -1,6 +1,6 @@
 
 export  interface  AccesoSubMenu {
-  subMenuId: number
+  menuId: number
   menuId: number
   code: string
   url: string

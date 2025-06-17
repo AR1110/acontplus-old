@@ -263,13 +263,13 @@ export class UserCustomerAccessComponent {
     const menus = this.checklistSelection.selected.filter(cl=>cl.level===3);
     const mergeDuplicateLevel3 = menus.reduce((acc:any, curr:any)=>{
 
-      const existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
+      const existingNode  = acc.find((m:any)=>m.menuId===curr.menuId);
       const action = this.actions.find(a=>a.code===curr.code)
 
       if(!existingNode ){
 
         acc.push({
-          subMenuId: curr.subMenuId,
+          menuId: curr.menuId,
           actions: [action]
         })
       }else{
@@ -283,7 +283,7 @@ export class UserCustomerAccessComponent {
     }, [])
 
     let mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
-      subMenuId: acc.subMenuId,
+      menuId: acc.menuId,
       actions: JSON.stringify(acc.actions)
     }))
 

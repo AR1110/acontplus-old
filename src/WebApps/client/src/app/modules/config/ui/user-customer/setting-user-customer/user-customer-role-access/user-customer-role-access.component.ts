@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   MatTreeFlatDataSource,
   MatTreeFlattener,
@@ -25,8 +25,8 @@ interface MenuNode {
   name: string;
   children?: MenuNode[];
   checked?: boolean;
-  subMenuId?: number;
-  enabled?: boolean;
+  menuId?: number;
+  isActive?: boolean;
   codeAction?: string;
   unique?: string;
 }
@@ -37,8 +37,8 @@ interface MenuFlatNode {
   level: number;
   checked?: boolean;
 
-  subMenuId?: number;
-  enabled?: boolean;
+  menuId?: number;
+  isActive?: boolean;
   codeAction?: string;
   unique?: string;
 }
@@ -64,7 +64,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   tS = inject(ToastrNotificationService);
 
-  accesoMenus = signal< AccesoMenu[]>([]);
+  accesoMenus = signal<AccesoMenu[]>([]);
 
   cloneActions: any[] = [];
   actions: any[] = [];
@@ -75,22 +75,22 @@ export class UserCustomerRoleAccessComponent implements OnInit {
       level: level,
       checked: node.checked,
       codeAction: node.codeAction,
-      subMenuId: node.subMenuId,
-      enabled: node.enabled,
+      menuId: node.menuId,
+      isActive: node.isActive,
       unique: node.unique,
     };
   };
 
   treeControl = new FlatTreeControl<MenuFlatNode>(
     (node) => node.level,
-    (node) => node.expandable
+    (node) => node.expandable,
   );
 
   treeFlattener = new MatTreeFlattener<MenuNode, MenuFlatNode>(
     this.transformer,
     (node) => node.level,
     (node) => node.expandable,
-    (node) => node.children
+    (node) => node.children,
   );
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -111,23 +111,23 @@ export class UserCustomerRoleAccessComponent implements OnInit {
           {
             name: 'Todos',
             children: this.accesoMenus().map((m) => {
-              const { subMenus, ...rest } = m;
+              const { menus, ...rest } = m;
 
-              const nodeSubMenus = subMenus.map((item: any) => {
-                const { enabled, ...restSm } = item;
+              const nodeSubMenus = menus.map((item: any) => {
+                const { isActive, ...restSm } = item;
 
                 const childrenActions = this.actions.map((a) => {
-                  const enabled =
-                    (item.enabled &&
+                  const isActive =
+                    (item.isActive &&
                       item.actions.some(
-                        (aRaw: any) => aRaw.code === a.codeAction
+                        (aRaw: any) => aRaw.code === a.codeAction,
                       )) ||
                     false;
 
                   return {
                     ...a,
-                    subMenuId: item.subMenuId,
-                    enabled,
+                    menuId: item.menuId,
+                    isActive,
                   };
                 });
 
@@ -147,10 +147,10 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
         this.dataSource = new MatTreeFlatDataSource(
           this.treeControl,
-          this.treeFlattener
+          this.treeFlattener,
         );
         this.checklistSelection = new SelectionModel<MenuFlatNode>(
-          true /* multiple */
+          true /* multiple */,
         );
         this.dataSource.data = makeMenusNode;
         this.expandFirstLevelNodes();
@@ -158,7 +158,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
         for (const node of this.treeControl.dataNodes) {
           // nivel 3 son las acciones
 
-          if (!node.enabled) {
+          if (!node.isActive) {
             continue;
           }
 
@@ -200,7 +200,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
     const descAllSelected = descendants.every((child) =>
-      this.checklistSelection.isSelected(child)
+      this.checklistSelection.isSelected(child),
     );
     if (nodeSelected && !descAllSelected) {
       this.checklistSelection.deselect(node);
@@ -233,10 +233,10 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   isNodeIndeterminate(node: MenuFlatNode): boolean {
     const descendants = this.treeControl?.getDescendants(node);
     const descAllSelected = descendants.every((child) =>
-      this.checklistSelection.isSelected(child)
+      this.checklistSelection.isSelected(child),
     );
     const descAllDeselected = descendants.every(
-      (child) => !this.checklistSelection.isSelected(child)
+      (child) => !this.checklistSelection.isSelected(child),
     );
 
     return !descAllSelected && !descAllDeselected;
@@ -261,9 +261,9 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   /** toggleAction(action:any){
     for(let item of this.treeControl.dataNodes){
-      if(!item.subMenuId ||  !item.actions) continue;
+      if(!item.menuId ||  !item.actions) continue;
 
-      if(item.subMenuId===this.dataSubNode.subMenuId){
+      if(item.menuId===this.dataSubNode.menuId){
         if(action.checked){
           item.actions.push({
             code: action.code,
@@ -305,27 +305,27 @@ export class UserCustomerRoleAccessComponent implements OnInit {
     const checklistSelection = this.checklistSelection.selected;
 
     const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(
-      (ck) => ck.level === 2
+      (ck) => ck.level === 2,
     ); //Nivel submenus
     const filteredCheckedsLevel3 = checklistSelection.filter(
-      (ck) => ck.level === 3
+      (ck) => ck.level === 3,
     ); //Nivel acciones
 
     const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce(
       (acc: any, curr: any) => {
-        const subMenuId = filteredCheckedsLevel2.find(
-          (l2) => l2.unique === curr.unique
-        )?.subMenuId;
+        const menuId = filteredCheckedsLevel2.find(
+          (l2) => l2.unique === curr.unique,
+        )?.menuId;
 
-        const existingNode = acc.find((m: any) => m.subMenuId === subMenuId);
+        const existingNode = acc.find((m: any) => m.menuId === menuId);
         const action = this.actions.find(
-          (a) => a.codeAction === curr.codeAction
+          (a) => a.codeAction === curr.codeAction,
         );
         const { codeAction, ...restAction } = action;
 
         if (!existingNode) {
           acc.push({
-            subMenuId,
+            menuId,
             actions: [{ ...restAction, code: codeAction }],
           });
         } else {
@@ -336,11 +336,11 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
         return acc;
       },
-      []
+      [],
     );
 
     const mappedLevel3 = mergeDuplicateLevel3.map((acc: any) => ({
-      subMenuId: acc.subMenuId,
+      menuId: acc.menuId,
       actions: JSON.stringify(acc.actions),
     }));
 
