@@ -11,7 +11,7 @@ export class ListAnticipoMapper {
   static fromJson(response:ApiResponse){
     let data = [];
     if(response.code==="1"){
-      let { anticipos=[] } = JSON.parse(response.payload as string)
+      const { anticipos=[] } = JSON.parse(response.payload as string)
       data = anticipos.map((item:any, index: number) => {
         return {
           index: index +1,

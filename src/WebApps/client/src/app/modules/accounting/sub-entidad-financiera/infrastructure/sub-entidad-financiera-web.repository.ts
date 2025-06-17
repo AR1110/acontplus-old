@@ -18,13 +18,19 @@ export class SubEntidadFinancieraWebRepository extends SubEntidadFinancieraRepos
  }
 
   getAll() {
-    let json = JSON.stringify({ tipo: 1 });
-    return this._http.get(`${this._url}?json=${json}`).pipe(
-      map((response: any) => {
-        return {
-          entidadesFinancieras: response.entidadesFinancieras,
-          subEntidadesFinancieras: response.subEntidadesFinancieras
+    const json = JSON.stringify({ tipo: 1 });
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+      map((response) => {
+        const result = {
+          entidadesFinancieras:[],
+          subEntidadesFinancieras: []
         }
+        if(response.code==="1"){
+          const data = JSON.parse(response.payload as string)
+          result.entidadesFinancieras=data.entidadesFinancieras||[];
+          result.subEntidadesFinancieras = data.subEntidadesFinancieras||[];
+        }
+        return result;
       })
     )
   }

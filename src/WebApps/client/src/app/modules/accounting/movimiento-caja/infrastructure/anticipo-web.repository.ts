@@ -6,7 +6,7 @@ import {ApiResponse } from "@core/models/api-response";
 import {map} from "rxjs";
 import {AnticipoRepository} from "@accounting/movimiento-caja/domain/anticipo.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import {ListAnticipoMapper} from "@accounting/movimiento-caja/infrastructure/list-anticipo.mapper";
+import {ListAnticipoMapper} from "@accounting/movimiento-caja/infrastructure/mappers/list-anticipo.mapper";
 
 
 @Injectable({
@@ -29,13 +29,12 @@ export class AnticipoWebRepository implements AnticipoRepository{
   }
 
   getDataFilter(){
-
-    let json = JSON.stringify({ tipo: 3 })
+    const json = JSON.stringify({ tipo: 3 })
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
       .pipe(
         map(response => {
             if (response.code === "1") {
-              let mainData = JSON.parse(response.payload as string);
+              const mainData = JSON.parse(response.payload as string);
               const { establecimiento } = mainData;
               return {
                 establecimientos: establecimiento
@@ -49,7 +48,7 @@ export class AnticipoWebRepository implements AnticipoRepository{
   }
 
   getDataForm(){
-    let json = JSON.stringify({ tipo: 2 })
+    const json = JSON.stringify({ tipo: 2 })
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
       .pipe(
         map((response) => {
@@ -58,7 +57,7 @@ export class AnticipoWebRepository implements AnticipoRepository{
             establecimientos = [],
             subEntidadesFinanciera = [];
           if (response.code==="1") {
-            let mainData = JSON.parse(response.payload as string);
+            const mainData = JSON.parse(response.payload as string);
             const { entidadFinanciera, establecimiento, subEntidadFinanciera } = mainData;
 
             entidadesFinanciera = entidadFinanciera;

@@ -76,12 +76,11 @@ export class CajaComponent implements OnInit {
     };
 
     this._cajaUseCase.getAll(params).subscribe((response) => {
-      this.cashboxs.set(response);
+      this.cashboxs.set(response.data);
       this.pagination.update((item) => {
         return {
           ...item,
-          totalRecords:
-            this.cashboxs.length > 0 ? this.cashboxs()[0]?.totalRecords : 0,
+          totalRecords: response.totalRecords,
         };
       });
     });

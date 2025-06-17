@@ -41,8 +41,7 @@ export class CierreCajaModalComponent {
 
   ngOnInit() {
     this._controlCajaUseCase.getDataFormCashboxClose().subscribe((response) => {
-      const { monedas } = response as { monedas: Modeda[]};
-      this.monedas.set(monedas);
+      this.monedas.set(response.data);
     });
   }
 

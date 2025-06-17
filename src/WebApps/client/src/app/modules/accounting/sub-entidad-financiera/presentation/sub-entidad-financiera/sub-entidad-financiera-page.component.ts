@@ -7,7 +7,6 @@ import { SubEntidadFinancieraDialogComponent } from '@accounting/sub-entidad-fin
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
-import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -16,17 +15,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SubEntidadFinancieraUseCase } from '@accounting/sub-entidad-financiera/application/sub-entidad-financiera.use-case';
 import { DialogService } from '@core/services/dialog.service';
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
   selector: 'app-sub-entidad-financiera-page',
   imports: [
-    MatCardModule,
     MatExpansionModule,
     FormsModule,
     MatIconModule,
     MatButtonModule,
     BreadcrumbComponent,
     MatDynamicTableComponent,
+    MatDynamicCardComponent,
   ],
   templateUrl: './sub-entidad-financiera-page.component.html',
 })
