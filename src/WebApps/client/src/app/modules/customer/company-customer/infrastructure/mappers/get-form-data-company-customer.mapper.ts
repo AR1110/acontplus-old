@@ -1,4 +1,4 @@
-import {FormDataCompanyCustomerResponse} from "@company-customer/domain/company-customer";
+import {FormDataCompanyCustomerResponse} from "@company-customer/domain/entities/company-customer.entity";
 import {ApiResponse} from "@core/models/api-response";
 
 export class GetFormDataCompanyCustomerMapper {
@@ -43,6 +43,9 @@ export class GetFormDataCompanyCustomerMapper {
       result.empresas = mainData[5] || [];
       result.cargos = mainData[6] || [];
       result.formasPagoSri = mainData[7] || [];
+      result.housingTypes= mainData[8] || [];
+      result.maritalStatuses = mainData[9] || [];
+      result.employees = mainData[10] || [];
     }
     return result;
 

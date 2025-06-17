@@ -12,7 +12,7 @@ import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.cons
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CompanyCustomer} from "@company-customer/domain/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatDivider} from "@angular/material/divider";
@@ -91,7 +91,7 @@ export class MovimientoCajaReportComponent {
   clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 

@@ -1,4 +1,4 @@
-import {FormDataCompanyCustomerResponse} from "@company-customer/domain/company-customer";
+import {FormDataCompanyCustomerResponse} from "@company-customer/domain/entities/company-customer.entity";
 import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
 import {BaseUseCase} from "@core/base-use-case";
 import {Injectable} from "@angular/core";

@@ -4,8 +4,8 @@ import {
   CompanyCustomerSearch, FormDataCompanyCustomerResponse,
   ListCompanyCustomerResponse,
   SearchCompanyCustomerParams
-} from "@company-customer/domain/company-customer";
-import {UpdateCompanyCustomerParamsDto} from "@company-customer/application/dtos/company-customer.dto";
+} from "@company-customer/domain/entities/company-customer.entity";
+import {UpdateCompanyCustomerParamsDto} from "@company-customer/domain/dtos/company-customer.dto";
 
 export abstract class CompanyCustomerRepository {
   abstract getAll<T extends { pageIndex: number; pageSize: number }>(obj:T): Observable<ListCompanyCustomerResponse>;

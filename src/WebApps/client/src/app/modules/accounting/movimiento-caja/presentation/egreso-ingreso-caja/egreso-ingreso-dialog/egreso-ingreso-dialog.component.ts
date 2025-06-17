@@ -23,7 +23,7 @@ import {
 } from "@company-customer/presentation/components/company-customer-search/company-customer-search.component";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {getValidId, isValidField} from "@core/utils/utils";
-import {CompanyCustomer} from "@company-customer/domain/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 
 @Component({
   selector: 'app-egreso-ingreso-dialog',
@@ -151,7 +151,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
     }
   }
 
-  onSelectCustomer(params: CompanyCustomer) {
+  onSelectCustomer(params: CompanyCustomerEntity) {
       this.dataForm.get('customerId')?.setValue(params.customerId);
   }
 

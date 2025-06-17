@@ -5,14 +5,14 @@ import {ApiResponse} from "@core/models/api-response";
 import {map } from "rxjs";
 import {CompanyCustomerRepository} from "@company-customer/domain/company-customer.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import { SearchCompanyCustomerParams} from "@company-customer/domain/company-customer";
+import { SearchCompanyCustomerParams} from "@company-customer/domain/entities/company-customer.entity";
 import {SearchCompanyCustomerMapper} from "@company-customer/infrastructure/mappers/search-company-customer.mapper";
 import {GetIdCompanyCustomerMapper} from "@company-customer/infrastructure/mappers/get-id-company-customer.mapper";
 import {ListCompanyCustomerMapper} from "@company-customer/infrastructure/mappers/list-company-customer.mapper";
 import {
   GetFormDataCompanyCustomerMapper
 } from "@company-customer/infrastructure/mappers/get-form-data-company-customer.mapper";
-import {UpdateCompanyCustomerParamsDto} from "@company-customer/application/dtos/company-customer.dto";
+import {UpdateCompanyCustomerParamsDto} from "@company-customer/domain/dtos/company-customer.dto";
 import {
   CreateUpdateCompanyCustomerMapper
 } from "@company-customer/infrastructure/mappers/create-update-company-customer.mapper";

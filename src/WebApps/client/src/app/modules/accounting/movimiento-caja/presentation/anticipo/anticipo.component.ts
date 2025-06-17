@@ -26,7 +26,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { finalize } from 'rxjs/operators';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
-import {CompanyCustomer} from "@company-customer/domain/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 import {DialogService} from "@core/services/dialog.service";
 
 @Component({
@@ -128,7 +128,7 @@ export class AnticipoComponent {
     });
   }
 
-  onCustomerSelected($event: CompanyCustomer) {
+  onCustomerSelected($event: CompanyCustomerEntity) {
     this.dataSearch.customerId = $event.idCliente;
   }
 

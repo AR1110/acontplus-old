@@ -36,7 +36,7 @@ import { ReportButtonsComponent } from '@shared/components/report-buttons/report
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@company-customer/domain/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 const imports = [
   FormsModule,
@@ -258,7 +258,7 @@ export class InventoryReportComponent implements OnInit {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 

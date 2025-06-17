@@ -15,7 +15,7 @@ import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-d
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {ListCompanyCustomerUseCase} from "@company-customer/application/list-company-customer.use-case";
-import {ListCompanyCustomer} from "@company-customer/domain/company-customer";
+import {ListCompanyCustomer} from "@company-customer/domain/entities/company-customer.entity";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
 import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
 import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
@@ -102,7 +102,7 @@ export class CompanyCustomerComponent {
   }
 
   ngOnInit(): void {
- //   this.getList();
+   this.getList();
   }
 
 

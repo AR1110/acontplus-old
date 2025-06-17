@@ -26,7 +26,7 @@ import { DialogService } from '@core/services/dialog.service';
 import {
   EgresoIngresoDialogComponent
 } from "@accounting/movimiento-caja/presentation/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
-import {CompanyCustomer} from "@company-customer/domain/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 import {ListMovimientoCajaUseCase} from "@accounting/movimiento-caja/application/list-movimiento-caja.use-case";
 import {MovimientoCajaList} from "@accounting/movimiento-caja/domain/movimiento-caja.model";
 
@@ -142,7 +142,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     this.getMovimientosCaja();
   }
 
-  onSelectCustomer($event: CompanyCustomer) {
+  onSelectCustomer($event: CompanyCustomerEntity) {
     this.dataSearch.customerId = $event.customerId;
     this.getMovimientosCaja();
   }

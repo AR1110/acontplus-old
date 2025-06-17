@@ -41,9 +41,9 @@ import {
 } from 'rxjs';
 import { CompanyCustomerUseCase } from '@company-customer/application/company-customer.use-case';
 import {
-  CompanyCustomer,
+  CompanyCustomerEntity,
   CompanyCustomerSearch,
-} from '@company-customer/domain/company-customer';
+} from '@company-customer/domain/entities/company-customer.entity';
 import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
 
 @Component({
@@ -102,7 +102,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   textSearch = model<string>('');
 
   // Output events
-  customerSelected = output<CompanyCustomer>();
+  customerSelected = output<CompanyCustomerEntity>();
   clearSearch = output();
 
   // Form control and observables
@@ -167,7 +167,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   }
 
   // Handle customer selection
-  onSelectionChange(customer: CompanyCustomerSearch | CompanyCustomer) {
+  onSelectionChange(customer: CompanyCustomerSearch | CompanyCustomerEntity) {
     if (!customer) return;
 
     if (this.isGetId()) {

@@ -1,4 +1,4 @@
-export interface CompanyCustomer {
+export interface CompanyCustomerEntity {
   id: number;
   idCliente: number;
   nombreFiscal: string;
@@ -22,7 +22,7 @@ export interface CompanyCustomer {
   name: string;
 }
 
-export interface CompanyCustomerSearch extends CompanyCustomer {
+export interface CompanyCustomerSearch extends CompanyCustomerEntity {
   name: string;
 }
 
@@ -61,6 +61,9 @@ export class FormDataCompanyCustomerResponse {
   tiposCliente: []=[]
   empresas: []=[]
   cargos: []=[]
-  formasPagoSri: []=[]
+  formasPagoSri: []=[];
+  housingTypes: any[]=[]
+  maritalStatuses: any[]=[]
+  employees:[]=[];
 }
 

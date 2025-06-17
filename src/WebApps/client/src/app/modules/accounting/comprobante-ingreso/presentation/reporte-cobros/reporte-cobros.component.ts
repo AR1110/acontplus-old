@@ -18,7 +18,7 @@ import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@company-customer/domain/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";
@@ -138,7 +138,7 @@ export class ReporteCobrosComponent  {
     this.dataSearch.toDate = range.to;
   }
 
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.customerId = data.idCliente;
   }
 
