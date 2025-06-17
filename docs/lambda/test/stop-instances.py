@@ -11,41 +11,36 @@ logger.setLevel(logging.INFO)
 region = 'us-east-2'
 ec2 = boto3.client('ec2', region_name=region)
 
-# Define CORS headers for all responses
+# Define CORS headers that will be used in the response
+# We will fix the wildcard issue in API Gateway directly
 CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT'
+    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+    'Access-Control-Allow-Methods': 'OPTIONS,POST'
 }
 
 
 def lambda_handler(event, context):
-    """
-    Handles incoming requests to stop EC2 instances.
-    """
-    # Handle preflight CORS requests from the browser
+    # This correctly handles the preflight OPTIONS request
     if event.get('httpMethod') == 'OPTIONS':
         return {
-            'statusCode': 200,
+            'statusCode': 204,
             'headers': CORS_HEADERS,
-            'body': json.dumps({})
+            'body': ''  # Empty body for OPTIONS response
         }
 
     instances_to_stop = ['i-0c4a1b416aa53319e',
                          'i-0450613a4f20fd941', 'i-0687be93dfa446532']
 
     try:
-        # Initiate the stopping of instances
+        # Stop the instances and wait for them to be stopped
         ec2.stop_instances(InstanceIds=instances_to_stop)
-        logger.info(f"Stop command issued for instances: {instances_to_stop}")
-
-        # Use a waiter to wait until the instances are fully stopped
         waiter = ec2.get_waiter('instance_stopped')
         waiter.wait(InstanceIds=instances_to_stop)
         logger.info(
             f"Instances {instances_to_stop} are now confirmed stopped.")
 
-        # Dynamically create the payload for the external API call
+        # Your external API call logic here...
         payload = [
             {"InstanceId": instance_id, "Enabled": "false"}
             for instance_id in instances_to_stop
@@ -76,8 +71,9 @@ def lambda_handler(event, context):
 
     except Exception as e:
         logger.error(f"An error occurred: {e}")
+        # *** THIS IS THE CORRECTED ERROR RESPONSE ***
         return {
             'statusCode': 500,
             'headers': CORS_HEADERS,
-            'body': json.dumps({'message': 'Failed to stop instances.'})
+            'body': json.dumps({'message': 'An internal error occurred while stopping instances.'})
         }
