@@ -1,0 +1,1 @@
+select * from Config.v_User_Permissions
