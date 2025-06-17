@@ -1,11 +1,15 @@
 import {getValidId, isValidField} from "@core/utils/utils";
 import {ApiResponse} from "@core/models/api-response";
+import {CompanyCustomerPayloadDto} from "@company-customer/domain/dtos/create-update-company-customer.payload";
+import {formatDateToString, setDateWithCurrentTime} from "@core/utils/date.util";
+import {isValidDate} from "rxjs/internal/util/isDate";
 
 export class CreateUpdateCompanyCustomerMapper {
-  static toJson(param:any){
+  static toJson(param:any):CompanyCustomerPayloadDto {
+  //  const birthDate = isValidDate(param.birthDate)? setDateWithCurrentTime(param.birthDate):null;
     return {
-      idCliente:  isValidField(param.idCliente) ,
-      idEmpleado: getValidId(param.idEmpleado),
+      idCliente:  getValidId(param.idCliente as number) ,
+      idEmpleado: getValidId(param.idEmpleado as number),
       idTipoIdentificacion: param.idTipoIdentificacion,
       idTipoClienteProveedor: getValidId(param.idTipoClienteProveedor),
       idTipoEntidad:getValidId(param.idTipoEntidad),
@@ -25,9 +29,10 @@ export class CreateUpdateCompanyCustomerMapper {
       nota:isValidField(param.nota),
       validationSri: param.validationSri,
       idFormaPagoSri: getValidId(param.idFormaPagoSri),
-      estado: param.estado || true,
+      estado: param.estado ?? true,
       infoCrediticia: param.dataInfoCred && JSON.stringify(param.dataInfoCred),
-      configValorBruto : param.configValorBruto || null
+      configValorBruto : param.configValorBruto ?? null,
+      birthDate:  isValidDate(param.birthDate) ?  formatDateToString(param.birthDate): null,
     }
   }
 

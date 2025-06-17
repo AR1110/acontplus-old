@@ -1,10 +1,17 @@
-import {Component, inject, signal} from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {   MatTabsModule } from '@angular/material/tabs';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
@@ -21,6 +28,8 @@ import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directiv
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {provideNativeDateAdapter} from "@angular/material/core";
 
 @Component({
   selector: 'app-company-customer-add-edit-dialog',
@@ -30,10 +39,16 @@ import {MatTooltip} from "@angular/material/tooltip";
     MatTabsModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatCustomDialogComponent,
-    M3InputChipComponent, MatDynamicCardComponent, ToUpperCaseDirective, MatCheckbox, MatIcon, MatTooltip
+    M3InputChipComponent, MatDynamicCardComponent,
+    ToUpperCaseDirective,
+    MatCheckbox,
+    MatIcon,
+    MatTooltip,
+    MatDatepickerModule
   ],
   templateUrl: './company-customer-add-edit-dialog.component.html',
-  styles: ``
+  providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompanyCustomerAddEditDialogComponent {
 
@@ -66,98 +81,137 @@ export class CompanyCustomerAddEditDialogComponent {
   placas = signal<any[]>([])
   ciudades = signal<any[]>([])
   cargos = signal<any[]>([])
-  empresas = signal<any[]>([])
+  empresas = signal<any[]>([]);
+  employees = signal<any[]>([]);
 
+  maritalStatuses =signal<any[]>([])
+  housingTypes = signal<any[]>([])
 
-  numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
-    Validators.required,
-    Validators.minLength(6),
-    Validators.maxLength(15),
-  ]);
+  showRefresh = signal(true)
 
+  endsWith001Validator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (value && value.length >= 3) {
+      if (!value.endsWith('001')) {
+        return { endsWith001: true };
+      }
+    }
+    return null;
+  }
    customerForm = new FormGroup({
     direccion: new FormControl('', Validators.required),
     idCargo: new FormControl(0),
     idCliente: new FormControl(0),
     idEmpresa: new FormControl(0),
+     idFormaPagoSri: new FormControl<number>(0),
     idTipoClienteProveedor: new FormControl(0),
     idTipoIdentificacion: new FormControl(0, Validators.required),
     idSubContribuyente: new FormControl(0),
      idTiempoCredito: new FormControl(0),
      idCiudad: new FormControl(0),
+     idEmpleado: new FormControl<number|undefined>(0),
     nombreFiscal: new FormControl('', Validators.required),
     nombreComercial: new FormControl(''),
-    numeroIdentificacion: this.numeroIdentificacion,
+    numeroIdentificacion: new FormControl({ value: '', disabled: false }, [
+      Validators.required,
+      Validators.minLength(13),
+      Validators.maxLength(13),
+      this.endsWith001Validator
+    ]),
     correo: new FormControl(''),
      telefono: new FormControl(''),
+     placa: new FormControl(''),
      nota: new FormControl(''),
     estado: new FormControl(false),
+     birthDate: new FormControl<Date|null>(null),
     validationSri: new FormControl(false),
      configValorBruto: new FormControl(false),
-  });
+     dataInfoCred: new FormGroup({
+       maritalStatusId: new FormControl<number | null>(null),
+       conyugeNombre: new FormControl<string | null>(null),
+       conyugeTel: new FormControl<string | null>(null),
+       refFamNombre: new FormControl<string | null>(null),
+       refFamTel: new FormControl<string | null>(null),
+       housingTypeId: new FormControl<number | null>(null),
+       dirVivienda: new FormControl<string | null>(null),
+       refDomicilio: new FormControl<string | null>(null),
+       sector: new FormControl<string | null>(null),
+       barrio: new FormControl<string | null>(null),
+       calle: new FormControl<string | null>(null),
+
+
+     }),
+   });
 
 
 
   async getCustomer(codigo: string, id: string) {
-    let exists = false;
-    //check if exists for company
+    this.customerForm.patchValue({
+      validationSri: false,
+    });
+    this._companyCustomerUseCase.checkExistence({ textSearch: id }).subscribe( (response) => {
+      if (response.code == '1') {
+        this.tS.show({
+          type: 'warning',
+          message: 'El cliente ya se encuentra registrado en su empresa',
+        });
+        this.customerForm.patchValue({ numeroIdentificacion: null });
+        return
+      }
 
-      this._companyCustomerUseCase.checkExistence({ textSearch: id })
-     .subscribe( (response) => {
-          if (response.code == '1') {
-            this.tS.show({
-              type: 'warning',
-              message: 'El cliente ya se encuentra registrado en su empresa',
-            });
-            this.customerForm.patchValue({ numeroIdentificacion: '' });
-            return
-          }
-
-
-       this._sriCustomerUseCase.search(codigo, id).subscribe(secondResponse=>{
-         if(secondResponse.error){
+      if(codigo===SRI_IDENTIFICATION_CODE.PASSPORT){
+        this.customerForm.patchValue({
+          validationSri: true,
+        });
+        return;
+      }
+      this._sriCustomerUseCase.search(codigo, id).subscribe(secondResponse=>{
+        const {
+          error,
+          telefono,
+          email,
+          numeroRuc,
+          razonSocial,
+          direccion,
+          identificacion,
+          nombreCompleto
+        } = secondResponse;
+         if(error){
            this.tS.show({
              type: 'info',
-             message: secondResponse.error,
+             message: error,
            });
            return;
          }
 
-
-
-         if (secondResponse.telefono) {
-           this.telephones = secondResponse.telefono.split(SEPARADORES_REGEX) || []
+         if (telefono) {
+           this.telephones = telefono.split(SEPARADORES_REGEX) || []
          }
-         if (secondResponse.email) {
-           this.emails = secondResponse.email.split(SEPARADORES_REGEX) || []
+         if (email) {
+           this.emails = email.split(SEPARADORES_REGEX) || []
          }
 
          if (codigo == SRI_IDENTIFICATION_CODE.RUC) {
-           if (secondResponse.numeroRuc) {
+           if (numeroRuc) {
              this.customerForm.patchValue({
-               numeroIdentificacion: secondResponse.numeroRuc,
-               nombreFiscal: secondResponse.razonSocial,
+               numeroIdentificacion: numeroRuc,
+               nombreFiscal: razonSocial,
                validationSri: true,
-               direccion: secondResponse.direccion,
-               nombreComercial: secondResponse.razonSocial,
+               direccion: direccion,
+               nombreComercial: razonSocial,
              });
            }
          } else {
-           if (secondResponse.identificacion) {
+           if (identificacion) {
              this.customerForm.patchValue({
-               numeroIdentificacion: secondResponse.identificacion,
-               nombreFiscal: secondResponse.nombreCompleto,
-               nombreComercial: secondResponse.nombreCompleto,
-               direccion: secondResponse.direccion,
+               numeroIdentificacion: identificacion,
+               nombreFiscal: nombreCompleto,
+               nombreComercial: nombreCompleto,
+               direccion: direccion,
                validationSri: true,
              });
            }
          }
-
-
-
-
-
        })
     });
 
@@ -194,6 +248,10 @@ export class CompanyCustomerAddEditDialogComponent {
         this.ciudades.set(mainDataForm.ciudades);
         this.cargos.set(mainDataForm.cargos);
         this.empresas.set(mainDataForm.empresas);
+        this.employees.set(mainDataForm.employees);
+        this.maritalStatuses.set(mainDataForm.maritalStatuses);
+        this.housingTypes.set(mainDataForm.housingTypes);
+
 
         if (this.isCreate()) {
           const dataIdentificacion = this.tiposIdentificacion().find(
@@ -204,6 +262,7 @@ export class CompanyCustomerAddEditDialogComponent {
             this.customerForm.patchValue({
               idTipoIdentificacion: dataIdentificacion.idTipoIdentificacion,
             });
+            this.setIdentificationTypeChange(dataIdentificacion.codigoSri)
           }
 
           this.customerForm.patchValue({
@@ -217,7 +276,15 @@ export class CompanyCustomerAddEditDialogComponent {
           this.btnText = 'Actualizar'
           this.emails = dataCompanyCustomer.correos;
           this.telephones = dataCompanyCustomer.telefonos;
-          this.customerForm.patchValue(response[1]);
+          this.placas.set(dataCompanyCustomer.placas)
+          const {dataInfoCred, ...rest}=dataCompanyCustomer;
+          this.customerForm.patchValue(rest);
+          console.log(rest);
+          console.log(dataInfoCred);
+          if (dataInfoCred) {
+            this.customerForm.get('dataInfoCred')?.patchValue(dataInfoCred);
+          }
+          this.setIdentificationTypeChange(rest.codigoSri)
         }
       });
     } catch (error) {
@@ -225,48 +292,66 @@ export class CompanyCustomerAddEditDialogComponent {
     }
   }
 
+  identificationTypeChange(event: MatSelectChange){
+    const dt = this.tiposIdentificacion().find(item=>item.idTipoIdentificacion===Number(event.value))
+    this.setIdentificationTypeChange(dt.codigoSri)
+  }
+
+  setIdentificationTypeChange(codigoSri: SRI_IDENTIFICATION_CODE.RUC | SRI_IDENTIFICATION_CODE.CEDULA){
+    const idNumberControl = this.customerForm.get('numeroIdentificacion');
+    idNumberControl?.reset();
+    idNumberControl?.clearValidators();
+    this.showRefresh.set(false)
+
+    if([SRI_IDENTIFICATION_CODE.RUC, SRI_IDENTIFICATION_CODE.CEDULA].includes(codigoSri)){
+      let lengthValidator;
+      this.showRefresh.set(true)
+
+      if ( codigoSri === SRI_IDENTIFICATION_CODE.CEDULA) {
+        lengthValidator = [ Validators.minLength(10), Validators.maxLength(10)];
+      } else if ( codigoSri===SRI_IDENTIFICATION_CODE.RUC) {
+        lengthValidator = [ Validators.minLength(13), Validators.maxLength(13),
+          this.endsWith001Validator];
+      }
+      if(lengthValidator){
+        idNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^\d+$/),  // Solo números
+          ...lengthValidator,
+        ]);
+      }
+    }  else {
+      idNumberControl?.setValidators([Validators.required]);
+    }
+
+    idNumberControl?.updateValueAndValidity();
+  }
+
+
+  get numeroIdentificacionControl() {
+    return this.customerForm.get('numeroIdentificacion');
+  }
+
+  get birthDateCtrl() {
+    return this.customerForm.get('birthDate');
+  }
+
+
   copyTradeName(){
 
   }
 
 
   async onKeyDownGovernmentId($event:Event) {
-    $event.stopPropagation();
+    $event.preventDefault();
+    if(this.numeroIdentificacionControl?.invalid) return;
 
-    const dataForm = {
-      ...this.customerForm.value,
-    };
-    const codigoSri = this.tiposIdentificacion().find(
-      (x: any) => x.idTipoIdentificacion == dataForm.idTipoIdentificacion,
-    ).codigoSri;
-    if (
-      codigoSri == SRI_IDENTIFICATION_CODE.RUC ||
-      codigoSri == SRI_IDENTIFICATION_CODE.CEDULA
-    ) {
-      if (
-        codigoSri === SRI_IDENTIFICATION_CODE.RUC &&
-        dataForm.numeroIdentificacion
-      ) {
-        if (dataForm.numeroIdentificacion?.length != 13) {
-          this.tS.show({
-            type: 'warning',
-            message: 'El número del ruc debe tener 13 dígitos',
-          });
-        }
-        this.getCustomer(codigoSri, dataForm.numeroIdentificacion);
-      }
-      if (
-        codigoSri === SRI_IDENTIFICATION_CODE.CEDULA &&
-        dataForm.numeroIdentificacion
-      ) {
-        if (dataForm.numeroIdentificacion?.length != 10) {
-          this.tS.show({
-            type: 'warning',
-            message: 'El número de la cédula debe tener 10 dígitos',
-          });
-        }
-        this.getCustomer(codigoSri, dataForm.numeroIdentificacion);
-      }
+    const {idTipoIdentificacion, numeroIdentificacion} = this.customerForm.value;
+
+    const codigoSri = this.tiposIdentificacion().find((x: any) => x.idTipoIdentificacion == idTipoIdentificacion).codigoSri;
+
+    if(numeroIdentificacion){
+      this.getCustomer(codigoSri, numeroIdentificacion);
     }
   }
 
@@ -282,9 +367,13 @@ export class CompanyCustomerAddEditDialogComponent {
     this.customerForm.patchValue({
       correo: this.emails.length > 0 ? this.emails.join(SEPARATOR_KEY_CODE.SLASH) : null,
     });
+    this.customerForm.patchValue({
+      placa: this.placas().length > 0 ? this.placas().join(SEPARATOR_KEY_CODE.SLASH) : null,
+    });
     const dataForm = {
       ...this.customerForm.value,
     };
+    console.log(dataForm);
 
     if(this.customerForm.invalid){
       this.tS.show({

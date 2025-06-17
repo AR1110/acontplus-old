@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import {CompanyCustomer} from "@company-customer/domain/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 
 @Component({
   selector: 'app-vehicle-add-edit-modal',
@@ -153,7 +153,7 @@ export class VehicleAddEditModalComponent {
       });
   }
 
-  onCustomerSelected(dataForm: CompanyCustomer) {
+  onCustomerSelected(dataForm: CompanyCustomerEntity) {
     this.dataForm.customerId = dataForm.idCliente;
     this.customer.idType = dataForm.codigoSri!;
     this.customer.idCard = dataForm.numeroIdentificacion;

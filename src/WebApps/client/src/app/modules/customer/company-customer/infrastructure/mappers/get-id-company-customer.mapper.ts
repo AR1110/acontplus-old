@@ -1,5 +1,6 @@
 import {ApiResponse} from "@core/models/api-response";
 import {SEPARADORES_REGEX} from "@core/constants/global.constants";
+import {isValidField, isValidJSON} from "@core/utils/utils";
 
 export class GetIdCompanyCustomerMapper {
 
@@ -9,45 +10,48 @@ export class GetIdCompanyCustomerMapper {
         console.log(response);
       }
       if (response.code === '1') {
-        let dataRepository = JSON.parse(response.payload as string)[0];
-
+        const data = JSON.parse(response.payload as string)[0];
+        console.log(isValidJSON(data.dataInfoCred));
+        console.log( isValidJSON(data.dataInfoCred)? JSON.parse(data.dataInfoCred) : {});
         result = {
-          idCliente: dataRepository.idCliente,
-          idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
-          idTipoEntidad: dataRepository.idTipoEntidad,
-          idSubContribuyente: dataRepository.idSubContribuyente,
-          idTiempoCredito: dataRepository.idTiempoCredito,
-          idTipoIdentificacion: dataRepository.idTipoIdentificacion,
-          idCiudad: dataRepository.idCiudad,
-          numeroIdentificacion: dataRepository.numeroIdentificacion,
-          identificacionComprador: dataRepository.numeroIdentificacion,
-          razonSocialComprador: dataRepository.nombreFiscal,
-          nombreFiscal: dataRepository.nombreFiscal,
-          montoCredito: dataRepository.montoCredito,
-          nombreComercial: dataRepository.nombreComercial,
-          direccion: dataRepository.direccion,
-          telefono: dataRepository.telefono,
-          correo: dataRepository.correo,
-          estado: dataRepository.estado,
-          idEmpleado: dataRepository.idEmpleado,
-          diasCredito: dataRepository.diasCredito,
-          empleado: dataRepository.empleado,
-          idEmpresa: dataRepository.idEmpresa,
-          idCargo: dataRepository.idCargo,
-          placa: dataRepository.placa,
-          validationSri: dataRepository.validationSri,
-          codigoSri: dataRepository.codigoSri,
-          correos: dataRepository.correo
-            ? dataRepository.correo.split(SEPARADORES_REGEX)
+          idCliente: data.idCliente,
+          idTipoClienteProveedor: data.idTipoClienteProveedor,
+          idTipoEntidad: data.idTipoEntidad,
+          idSubContribuyente: data.idSubContribuyente,
+          idTiempoCredito: data.idTiempoCredito,
+          idTipoIdentificacion: data.idTipoIdentificacion,
+          idCiudad: data.idCiudad,
+          numeroIdentificacion: data.numeroIdentificacion,
+          identificacionComprador: data.numeroIdentificacion,
+          razonSocialComprador: data.nombreFiscal,
+          nombreFiscal: data.nombreFiscal,
+          montoCredito: data.montoCredito,
+          nombreComercial: data.nombreComercial,
+          direccion: data.direccion,
+          telefono: data.telefono,
+          correo: data.correo,
+          estado: data.estado,
+          idEmpleado: data.idEmpleado,
+          diasCredito: data.diasCredito,
+          empleado: data.empleado,
+          idEmpresa: data.idEmpresa,
+          idCargo: data.idCargo,
+          placa: data.placa,
+          validationSri: data.validationSri,
+          codigoSri: data.codigoSri,
+          correos: data.correo
+            ? data.correo.split(SEPARADORES_REGEX)
             : [],
-          telefonos: dataRepository.telefono
-            ? dataRepository.telefono.split(SEPARADORES_REGEX)
+          telefonos: data.telefono
+            ? data.telefono.split(SEPARADORES_REGEX)
             : [],
           placas:
-            dataRepository.placa !== ''
-              ? dataRepository.placa.split(SEPARADORES_REGEX)
+            data.placa? data.placa.split(SEPARADORES_REGEX)
               : [],
-          idFormaPagoSri: dataRepository.idFormaPagoSri,
+          idFormaPagoSri: data.idFormaPagoSri,
+          dataInfoCred: isValidJSON(data.infoCrediticia)? JSON.parse(data.infoCrediticia) : {},
+          nota: isValidField(data.nota),
+          configValorBruto : data.configValorBruto ?? false
         };
       }
 

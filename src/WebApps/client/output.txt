@@ -412,7 +412,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  ├── customer
 |  |  |  |  ├── core
 |  |  |  |  |  ├── domain
-|  |  |  |  |  |  ├── company-customer.ts
+|  |  |  |  |  |  ├── company-customer.entity.ts
 |  |  |  |  |  |  └── supplier.interface.ts
 |  |  |  |  |  ├── enums
 |  |  |  |  |  |  └── customer.enum.ts

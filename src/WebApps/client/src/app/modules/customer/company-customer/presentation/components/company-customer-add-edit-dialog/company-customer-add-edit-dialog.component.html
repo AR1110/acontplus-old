@@ -9,7 +9,7 @@
 <ng-template #containerTemplate>
   <form (ngSubmit)="onSave()" id="formCompanyCustomer" [formGroup]="customerForm" autocomplete="off">
     <mat-tab-group>
-      <mat-tab label="Datos Principales">
+      <mat-tab label="DATOS PRINCIPALES">
         <div class="d-grid gap-2 mx-3 mt-2">
           <div
             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
@@ -17,7 +17,7 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Tipo Identificación: </mat-label>
-                <mat-select formControlName="idTipoIdentificacion">
+                <mat-select formControlName="idTipoIdentificacion" (selectionChange)="identificationTypeChange($event)">
                   @for (item of tiposIdentificacion(); track $index) {
                   <mat-option [value]="item.idTipoIdentificacion">{{
                     item.descripcion
@@ -29,9 +29,47 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Número de Identificación</mat-label>
-                <input matInput  (keydown.enter)="onKeyDownGovernmentId($event)"   formControlName="numeroIdentificacion"
-                       id="numeroIdentificacion"
-                       maxlength="15"/>
+                <input type="text" matInput  (keydown.enter)="onKeyDownGovernmentId($event)" formControlName="numeroIdentificacion"  />
+                @if (numeroIdentificacionControl?.invalid && (numeroIdentificacionControl?.dirty || numeroIdentificacionControl?.touched)) {
+                  @if (numeroIdentificacionControl?.hasError('required')) {
+                    <mat-error>
+                      El número de identificación es obligatorio.
+                    </mat-error>
+                  }
+
+                @if(numeroIdentificacionControl?.hasError('minlength')){
+                  <mat-error>
+                    Debe tener al menos {{ numeroIdentificacionControl?.errors?.["minlength"].requiredLength }} dígitos.
+                  </mat-error>
+
+                }
+                  @if(numeroIdentificacionControl?.hasError('maxlength')){
+                  <mat-error  >
+                    No puede tener más de {{ numeroIdentificacionControl?.errors?.["maxlength"].requiredLength }} dígitos.
+                  </mat-error>
+
+                  }
+                  @if(numeroIdentificacionControl?.hasError('pattern')){
+                      <mat-error >
+                        Solo se permiten caracteres numéricos.
+                      </mat-error>
+
+                  }
+                  @if(numeroIdentificacionControl?.hasError('endsWith001')){
+                    <mat-error >
+                      Los últimos tres dígitos deben ser 001.
+                    </mat-error>
+                  }
+                }
+
+                @if(showRefresh()){
+                  <ng-container matSuffix>
+                    <button type="button" mat-icon-button (click)="onKeyDownGovernmentId($event)">
+                      <mat-icon>refresh</mat-icon>
+                    </button>
+                  </ng-container>
+
+                }
               </mat-form-field>
             </div>
           </div>
@@ -96,7 +134,7 @@
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="Datos Adicionales">
+      <mat-tab label="DATOS ADICIONALES">
 
         <div class="d-grid gap-2 mx-3 mt-2">
           <div
@@ -177,9 +215,19 @@
                     </mat-form-field>
                   </div>
                   <div class="col">
+
                     <mat-form-field class="w-100">
                       <mat-label>Fecha Nacimiento</mat-label>
-                      <input matInput placeholder="Ex. Pizza" value="Sushi">
+                      <input matInput [matDatepicker]="birthDate" formControlName="birthDate">
+                      <mat-hint>MM/DD/YYYY</mat-hint>
+                      <mat-datepicker-toggle matIconSuffix [for]="birthDate"></mat-datepicker-toggle>
+                      <mat-datepicker #birthDate></mat-datepicker>
+                      @if (birthDateCtrl?.invalid && birthDateCtrl?.touched) {
+                      <mat-error  >
+                        Fecha inválida
+                      </mat-error>
+
+                      }
                     </mat-form-field>
                   </div>
 
@@ -198,12 +246,12 @@
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Empleado: </mat-label>
-                      <mat-select formControlName="idSubContribuyente">
+                      <mat-select formControlName="idEmpleado">
                         <mat-option [value]="0">--Ninguno--</mat-option>
 
-                        @for (item of tipoContribuyentes(); track $index) {
-                          <mat-option [value]="item.idSubContribuyente">
-                            {{ item.descripcion }}
+                        @for (item of employees(); track $index) {
+                          <mat-option [value]="item.idEmpleado">
+                            {{ item.nombreCompleto }}
                           </mat-option>
                         }
                       </mat-select>
@@ -252,7 +300,7 @@
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Forma de pago: </mat-label>
-                      <mat-select formControlName="idSubContribuyente">
+                      <mat-select formControlName="idFormaPagoSri">
                         <mat-option [value]="0">--Ninguno--</mat-option>
 
                         @for (item of formasPagoSri(); track $index) {
@@ -296,18 +344,17 @@
           >
             <div class="col">
               <app-mat-dynamic-card title="Información Personal" [showHeader]="true">
-                <div
-                  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 mt-2"
+                <div formGroupName="dataInfoCred" class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 mt-2"
                 >
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Estado Civil: </mat-label>
-                      <mat-select  formControlName="idEstadoCivil">
+                      <mat-select  formControlName="maritalStatusId">
                         <mat-option [value]="0">Seleccionar...</mat-option>
 
-                        @for (item of cargos(); track $index) {
-                          <mat-option [value]="item.idCargo">
-                            {{ item.descripcion }}
+                        @for (item of maritalStatuses(); track $index) {
+                          <mat-option [value]="item.id">
+                            {{ item.name }}
                           </mat-option>
                         }
                       </mat-select>
@@ -316,26 +363,26 @@
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Esposo(a):</mat-label>
-                      <input matInput placeholder="Nombre del cónyuge">
+                      <input matInput formControlName="conyugeNombre" placeholder="Nombre del cónyuge">
                     </mat-form-field>
                   </div>
 
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Teléfono Personal:</mat-label>
-                      <input matInput placeholder="09xxxxxxxx">
+                      <input matInput formControlName="conyugeTel" placeholder="09xxxxxxxx">
                     </mat-form-field>
                   </div>
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Teléfono Referencia:</mat-label>
-                      <input matInput placeholder="09xxxxxxxx">
+                      <input matInput formControlName="refFamTel" placeholder="09xxxxxxxx">
                     </mat-form-field>
                   </div>
                   <div class="col w-100">
                     <mat-form-field class="w-100">
                       <mat-label>Referencia Familiar:</mat-label>
-                      <input matInput placeholder="Nombre de referencia familiar">
+                      <input matInput formControlName="refFamNombre" placeholder="Nombre de referencia familiar">
                     </mat-form-field>
                   </div>
                 </div>
@@ -344,18 +391,16 @@
             <div class="col">
 
               <app-mat-dynamic-card title="Información de Vivienda" [showHeader]="true">
-                <div
-                  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 mt-2"
-                >
+                <div formGroupName="dataInfoCred" class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 mt-2">
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Tipo de Vivienda: </mat-label>
-                      <mat-select  formControlName="idEstadoCivil">
+                      <mat-select  formControlName="housingTypeId">
                         <mat-option [value]="0">Seleccionar...</mat-option>
 
-                        @for (item of cargos(); track $index) {
-                          <mat-option [value]="item.idCargo">
-                            {{ item.descripcion }}
+                        @for (item of housingTypes(); track $index) {
+                          <mat-option [value]="item.id">
+                            {{ item.name }}
                           </mat-option>
                         }
                       </mat-select>
@@ -364,32 +409,32 @@
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Sector:</mat-label>
-                      <input matInput placeholder="Nombre del sector">
+                      <input matInput formControlName="sector" placeholder="Nombre del sector">
                     </mat-form-field>
                   </div>
 
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Barrio:</mat-label>
-                      <input matInput placeholder="Nombre del barrio">
+                      <input matInput formControlName="barrio" placeholder="Nombre del barrio">
                     </mat-form-field>
                   </div>
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Calle:</mat-label>
-                      <input matInput placeholder="Nombre de la calle">
+                      <input matInput formControlName="calle" placeholder="Nombre de la calle">
                     </mat-form-field>
                   </div>
                   <div class="col w-100">
                     <mat-form-field class="w-100">
                       <mat-label>Dirección Completa</mat-label>
-                      <textarea matInput placeholder="Dirección completa de la vivienda (Sector, Barrio y Calle)"></textarea>
+                      <textarea matInput formControlName="dirVivienda" placeholder="Dirección completa de la vivienda (Sector, Barrio y Calle)"></textarea>
                     </mat-form-field>
                   </div>
                   <div class="col w-100">
                     <mat-form-field class="w-100">
                       <mat-label>Descripción del Punto de Referencia:</mat-label>
-                      <textarea matInput placeholder="Descripción detallada del punto de referencia"></textarea>
+                      <textarea matInput formControlName="refDomicilio" placeholder="Descripción detallada del punto de referencia"></textarea>
                     </mat-form-field>
                   </div>
                 </div>

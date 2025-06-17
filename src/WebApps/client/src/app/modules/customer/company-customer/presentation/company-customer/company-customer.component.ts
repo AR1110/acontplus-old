@@ -10,12 +10,12 @@ import {MatPagination} from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 import { MatIconModule} from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import { MatIconButton} from "@angular/material/button";
+import {MatButtonModule, MatIconButton} from "@angular/material/button";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {ListCompanyCustomerUseCase} from "@company-customer/application/list-company-customer.use-case";
-import {ListCompanyCustomer} from "@company-customer/domain/company-customer";
+import {ListCompanyCustomer} from "@company-customer/domain/entities/company-customer.entity";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
 import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
 import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
@@ -23,6 +23,9 @@ import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {UpdateStateCompanyCustomerUseCase} from "@company-customer/application/update-state-company-customer.use-case";
+import { MatButtonToggleModule} from "@angular/material/button-toggle";
+import {MatMenuModule} from "@angular/material/menu";
+import {REPORT_FORMAT} from "@core/constants/global.constants";
 
 @Component({
   selector: 'app-company-customer',
@@ -36,7 +39,10 @@ import {UpdateStateCompanyCustomerUseCase} from "@company-customer/application/u
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatIconButton
+    MatIconButton,
+    MatButtonToggleModule,
+    MatMenuModule,
+    MatButtonModule
 
   ],
   templateUrl: './company-customer.component.html',
@@ -102,7 +108,7 @@ export class CompanyCustomerComponent {
   }
 
   ngOnInit(): void {
- //   this.getList();
+   this.getList();
   }
 
 
@@ -155,6 +161,14 @@ export class CompanyCustomerComponent {
       isOldVersion: true,
       format
     })
+  }
+
+  exportExcel(){
+    this.getReport(REPORT_FORMAT.EXCEL)
+  }
+
+  exportPdf(){
+    this.getReport(REPORT_FORMAT.PDF)
   }
 
   handlePageEvent(e: PageEvent) {
