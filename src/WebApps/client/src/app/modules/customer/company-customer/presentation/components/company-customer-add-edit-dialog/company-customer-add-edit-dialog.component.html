@@ -215,9 +215,19 @@
                     </mat-form-field>
                   </div>
                   <div class="col">
+
                     <mat-form-field class="w-100">
                       <mat-label>Fecha Nacimiento</mat-label>
-                      <input matInput placeholder="Ex. Pizza" value="Sushi">
+                      <input matInput [matDatepicker]="birthDate" formControlName="birthDate">
+                      <mat-hint>MM/DD/YYYY</mat-hint>
+                      <mat-datepicker-toggle matIconSuffix [for]="birthDate"></mat-datepicker-toggle>
+                      <mat-datepicker #birthDate></mat-datepicker>
+                      @if (birthDateCtrl?.invalid && birthDateCtrl?.touched) {
+                      <mat-error  >
+                        Fecha inválida
+                      </mat-error>
+
+                      }
                     </mat-form-field>
                   </div>
 

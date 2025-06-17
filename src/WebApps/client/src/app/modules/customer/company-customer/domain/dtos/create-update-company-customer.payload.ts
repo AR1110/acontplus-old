@@ -24,4 +24,5 @@ export interface CompanyCustomerPayloadDto {
   estado: boolean;
   infoCrediticia: string | null;
   configValorBruto: boolean | null;
+  birthDate?: string |null
 }

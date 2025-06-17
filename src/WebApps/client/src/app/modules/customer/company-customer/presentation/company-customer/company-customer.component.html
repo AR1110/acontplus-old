@@ -3,7 +3,7 @@
 <app-mat-dynamic-card>
 
   <div
-    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4 mb-3"
   >
     <div class="col">
       <mat-form-field>
@@ -18,24 +18,26 @@
     </div>
     <div class="col">
       <div class="d-flex flex-row gap-2 justify-content-end">
-        <app-theme-button appCompanyCustomerAddEdit (companyCustomerSaved)="refresh()"
-          variant="success"
-          icon="add"
-          text="Nuevo"
-        />
-        <app-theme-button
-          variant="primary"
-          icon="download"
-          text="Excel"
-          (handleClick)="getReport('excel')"
-        />
-        <app-theme-button
-          variant="danger"
-          icon="picture_as_pdf"
-          text="Pdf"
-          title="Obtener reporte de clientes"
-          (handleClick)="getReport('pdf')"
-        />
+        <!-- Export Button with Dropdown -->
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">
+           Exportar Reporte
+        </button>
+
+        <mat-menu #exportMenu="matMenu">
+          <button mat-menu-item (click)="exportExcel()">
+            <mat-icon>table_view</mat-icon>
+            <span>Exportar a Excel</span>
+          </button>
+          <button mat-menu-item (click)="exportPdf()">
+            <mat-icon>picture_as_pdf</mat-icon>
+            <span>Exportar a PDF</span>
+          </button>
+        </mat-menu>
+
+        <button mat-icon-button  appCompanyCustomerAddEdit (companyCustomerSaved)="refresh()">
+          <mat-icon>add</mat-icon>
+        </button>
+
         <button mat-icon-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>
         </button>

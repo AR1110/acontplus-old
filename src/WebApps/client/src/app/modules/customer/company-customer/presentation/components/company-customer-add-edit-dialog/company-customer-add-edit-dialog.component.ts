@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -28,6 +28,8 @@ import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directiv
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {provideNativeDateAdapter} from "@angular/material/core";
 
 @Component({
   selector: 'app-company-customer-add-edit-dialog',
@@ -37,10 +39,16 @@ import {MatTooltip} from "@angular/material/tooltip";
     MatTabsModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatCustomDialogComponent,
-    M3InputChipComponent, MatDynamicCardComponent, ToUpperCaseDirective, MatCheckbox, MatIcon, MatTooltip
+    M3InputChipComponent, MatDynamicCardComponent,
+    ToUpperCaseDirective,
+    MatCheckbox,
+    MatIcon,
+    MatTooltip,
+    MatDatepickerModule
   ],
   templateUrl: './company-customer-add-edit-dialog.component.html',
-  styles: ``
+  providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompanyCustomerAddEditDialogComponent {
 
@@ -115,6 +123,7 @@ export class CompanyCustomerAddEditDialogComponent {
      placa: new FormControl(''),
      nota: new FormControl(''),
     estado: new FormControl(false),
+     birthDate: new FormControl<Date|null>(null),
     validationSri: new FormControl(false),
      configValorBruto: new FormControl(false),
      dataInfoCred: new FormGroup({
@@ -322,6 +331,11 @@ export class CompanyCustomerAddEditDialogComponent {
   get numeroIdentificacionControl() {
     return this.customerForm.get('numeroIdentificacion');
   }
+
+  get birthDateCtrl() {
+    return this.customerForm.get('birthDate');
+  }
+
 
   copyTradeName(){
 
