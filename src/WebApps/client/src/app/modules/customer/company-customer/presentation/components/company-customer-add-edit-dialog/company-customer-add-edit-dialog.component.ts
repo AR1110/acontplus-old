@@ -145,12 +145,12 @@ export class CompanyCustomerAddEditDialogComponent {
 
 
 
-  async getCustomer(codigo: string, id: string) {
+    getCustomer(codigo: string, id: string) {
     this.customerForm.patchValue({
       validationSri: false,
     });
     this._companyCustomerUseCase.checkExistence({ textSearch: id }).subscribe( (response) => {
-      if (response.code == '1') {
+      if (response.code == '1' && response.payload) {
         this.tS.show({
           type: 'warning',
           message: 'El cliente ya se encuentra registrado en su empresa',
@@ -238,7 +238,6 @@ export class CompanyCustomerAddEditDialogComponent {
         } else {
           mainDataForm = response;
         }
-        console.log(mainDataForm)
 
         this.tiposIdentificacion.set(mainDataForm.tipoIdentificacion)
         this.tiemposCredito.set(mainDataForm.tiempoCreditos)
@@ -266,9 +265,7 @@ export class CompanyCustomerAddEditDialogComponent {
           }
 
           this.customerForm.patchValue({
-            idTiempoCredito:
-              this.tiemposCredito().length > 0
-                ? this.tiemposCredito()[0].idTiempoCredito
+            idTiempoCredito:  this.tiemposCredito().length > 0  ? this.tiemposCredito()[0].idTiempoCredito
                 : 0,
           });
         } else {
@@ -279,12 +276,10 @@ export class CompanyCustomerAddEditDialogComponent {
           this.placas.set(dataCompanyCustomer.placas)
           const {dataInfoCred, ...rest}=dataCompanyCustomer;
           this.customerForm.patchValue(rest);
-          console.log(rest);
-          console.log(dataInfoCred);
           if (dataInfoCred) {
             this.customerForm.get('dataInfoCred')?.patchValue(dataInfoCred);
           }
-          this.setIdentificationTypeChange(rest.codigoSri)
+          this.updateFormControlNumeroIdentificacion(rest.codigoSri)
         }
       });
     } catch (error) {
@@ -297,10 +292,9 @@ export class CompanyCustomerAddEditDialogComponent {
     this.setIdentificationTypeChange(dt.codigoSri)
   }
 
-  setIdentificationTypeChange(codigoSri: SRI_IDENTIFICATION_CODE.RUC | SRI_IDENTIFICATION_CODE.CEDULA){
+  updateFormControlNumeroIdentificacion(codigoSri: SRI_IDENTIFICATION_CODE.RUC | SRI_IDENTIFICATION_CODE.CEDULA): void {
     const idNumberControl = this.customerForm.get('numeroIdentificacion');
-    idNumberControl?.reset();
-    idNumberControl?.clearValidators();
+
     this.showRefresh.set(false)
 
     if([SRI_IDENTIFICATION_CODE.RUC, SRI_IDENTIFICATION_CODE.CEDULA].includes(codigoSri)){
@@ -327,6 +321,13 @@ export class CompanyCustomerAddEditDialogComponent {
     idNumberControl?.updateValueAndValidity();
   }
 
+  setIdentificationTypeChange(codigoSri: SRI_IDENTIFICATION_CODE.RUC | SRI_IDENTIFICATION_CODE.CEDULA){
+    const idNumberControl = this.customerForm.get('numeroIdentificacion');
+    idNumberControl?.reset();
+    idNumberControl?.clearValidators();
+    this.updateFormControlNumeroIdentificacion(codigoSri)
+  }
+
 
   get numeroIdentificacionControl() {
     return this.customerForm.get('numeroIdentificacion');
@@ -342,7 +343,7 @@ export class CompanyCustomerAddEditDialogComponent {
   }
 
 
-  async onKeyDownGovernmentId($event:Event) {
+  onKeyDownGovernmentId($event:Event) {
     $event.preventDefault();
     if(this.numeroIdentificacionControl?.invalid) return;
 
@@ -373,7 +374,6 @@ export class CompanyCustomerAddEditDialogComponent {
     const dataForm = {
       ...this.customerForm.value,
     };
-    console.log(dataForm);
 
     if(this.customerForm.invalid){
       this.tS.show({

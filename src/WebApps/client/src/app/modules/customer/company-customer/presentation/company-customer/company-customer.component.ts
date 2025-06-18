@@ -158,7 +158,6 @@ export class CompanyCustomerComponent {
 
     this.generateReport.execute({
       data: reportParameters,
-      isOldVersion: true,
       format
     })
   }

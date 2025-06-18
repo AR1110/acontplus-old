@@ -9,112 +9,145 @@ GO
 -- Última Modificación: [Fecha] - [Descripción del cambio]
 -- =============================================
 
-CREATE OR ALTER VIEW Contab.V_ComprobanteEgresoDetallePago
+CREATE OR ALTER VIEW Contabilidad.V_ComprobanteEgresoDetallePago
 AS
-    SELECT
-        -- ==========================================
-        -- IDENTIFICADORES PRINCIPALES
-        -- ==========================================
-        ce.idEntidad,
-        ce.idComprobanteEgreso,
-        ce.CustomerId,
-        ce.nroDocumento,
+        SELECT
+                -- Información de la Cuenta por Pagar
+                cpp.idEntidad,
+                cpp.idCuentaPorPagar,
+                -- CASE cpp.codDoc 
+                --     WHEN '01' THEN 'FE'
+                --     ELSE cpp.codDoc
+                -- END AS codDoc,
+                cpp.codDoc,
+                cpp.serieComprobante AS comprobanteOriginal,
+                cpp.fechaEmision AS fechaComprobanteOriginal,
+                cpp.identificacionProveedor,
+                cpp.razonSocialProveedor,
+                CAST(cpp.importeTotal AS DECIMAL(18,2)) AS importeTotal,
+                CAST(cpp.abono AS DECIMAL(18,2)) AS abonoTotal,
+                CAST(cpp.saldo AS DECIMAL(18,2)) AS saldoPendiente,
 
-        -- ==========================================
-        -- INFORMACIÓN DEL ESTABLECIMIENTO
-        -- ==========================================
-        est.nombreComercial AS nombreEstab,
-        est.idEstablecimiento,
-        CONCAT('CE-', est.estab, '-', Helper.F_Auto_Sequential(ce.nroDocumento)) AS serieComprobante,
+                -- Información del Comprobante de Egreso
+                ce.idComprobanteEgreso,
+                FORMAT(ce.fechaRegistro, 'dd/MM/yyyy hh:mm') AS fechaEmisionEgreso,
+                'CE' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) AS serieComprobanteEgreso,
+                ce.total AS totalEgreso,
+                CASE ce.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END AS estadoEgreso,
+                es.idEstablecimiento,
 
-        -- ==========================================
-        -- FECHAS FORMATEADAS
-        -- ==========================================
-        FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm') AS fechaRegistro,
-        FORMAT(pag.fechaEmision, 'dd/MM/yyyy HH:mm') AS fechaPago,
+                -- Información del Pago
+                p.idPago,
+                p.secuencial AS secuencialPago,
+                CASE p.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END AS esPosfechado,
+                FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaPago,
+                ISNULL(sf.descripcion, ef.descripcion) AS formaPago,
+                ISNULL(bc.descripcion, '-------------') AS banco,
+                ef.codigo AS codigoFormaPago,
+                p.valor AS valorPago,
+                p.abono AS abonoPago,
+                p.vuelto,
+                p.nro AS numeroTransaccion,
+                p.lote,
+                p.aprobacion,
+                p.referencia,
 
-        -- ==========================================
-        -- MONTOS DEL COMPROBANTE
-        -- ==========================================
-        CAST(ce.total AS DECIMAL(18,2)) AS totalComprobante,
-        ce.observacion,
+                -- Información del Detalle de Cuotas
+                cxp.nroCuota,
+                FORMAT(cxp.fechaVencimiento, 'dd/MM/yyyy') AS fechaVencimientoCuota,
+                CAST(cxp.cuota AS DECIMAL(18,2)) AS montoCuota,
+                CAST(pd.abono AS DECIMAL(18,2)) AS abonoCuota,
+                CAST((pd.saldo - pd.abono) AS DECIMAL(18,2)) AS saldoCuota,
 
-        -- ==========================================
-        -- INFORMACIÓN DEL PROVEEDOR
-        -- ==========================================
-        cli.BusinessName AS razonSocialProveedor,
-        cli.IDCard AS cedulaRucProveedor,
+                -- Campos calculados útiles para el reporte
+                CASE 
+        WHEN cpp.saldo = 0 THEN 'PAGADO'
+        WHEN cpp.saldo > 0 AND cpp.abono > 0 THEN 'PAGO PARCIAL'
+        WHEN cpp.abono = 0 THEN 'PENDIENTE'
+        ELSE 'ESTADO INDEFINIDO'
+END AS estadoPago,
 
-        -- ==========================================
-        -- INFORMACIÓN DEL DOCUMENTO POR PAGAR
-        -- ==========================================
-        cpp.idCuentaPorPagar,
-        cpp.idProveedor,
-        cpp.serieComprobante AS serieDocumento,
+                CASE 
+        WHEN cxp.fechaVencimiento < GETDATE
+() AND
+                        (pd.saldo - pd.abono) > 0 THEN 'VENCIDA'
+        WHEN cxp.fechaVencimiento >= GETDATE
+() AND
+                        (pd.saldo - pd.abono) > 0 THEN 'VIGENTE'
+        ELSE 'PAGADA'
+END AS estadoCuota,
 
-        -- Código de documento normalizado
-        CASE cpp.codDoc 
-        WHEN '01' THEN 'FV'
-        ELSE cpp.codDoc 
-    END AS codDoc,
+                -- Cálculo de días de vencimiento
+                CASE 
+        WHEN cxp.fechaVencimiento < GETDATE
+() AND
+                        (pd.saldo - pd.abono) > 0 
+        THEN DATEDIFF
+(DAY, cxp.fechaVencimiento, GETDATE
+())
+        ELSE 0
+END AS diasVencidos
 
-        -- Montos del documento
-        CAST(cpp.importeTotal AS DECIMAL(18,2)) AS totalDocumento,
-        CAST(cpp.abono AS DECIMAL(18,2)) AS abonoDocumento,
-        CAST(cpp.saldo AS DECIMAL(18,2)) AS saldoDocumento,
+        FROM v_CuentaPorPagar cpp
+WITH
+(NOLOCK)
 
-        -- ==========================================
-        -- INFORMACIÓN DE MÉTODOS DE PAGO
-        -- ==========================================
-        ef.descripcion AS metodoPago,
-        ef.codigo AS codigoMetodoPago,
+                -- Join con Historial de Pagos
+                INNER JOIN Contabilidad.Historial_Pago hp
+WITH
+(NOLOCK)
+                ON hp.idCuentaPorPagar = cpp.idCuentaPorPagar
 
-        -- ==========================================
-        -- INFORMACIÓN BANCARIA
-        -- ==========================================
-        COALESCE(ban.descripcion, '') AS nombreBanco,
-        pag.idBanco,
-        pag.idSubEntidadFinanciera,
+                -- Join con Comprobantes de Egreso
+                INNER JOIN dbo.ComprobanteEgreso ce
+WITH
+(NOLOCK)
+                ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+                        AND ce.estado = 1
 
-        -- ==========================================
-        -- DETALLES DEL PAGO
-        -- ==========================================
-        pag.nro,
-        pag.aprobacion,
-        pag.referencia,
-        pag.lote,
-        cpag.nroCuota
+                -- Join con Establecimiento
+                LEFT JOIN Sri.Establecimiento es
+WITH
+(NOLOCK)
+                ON es.idEstablecimiento = ce.idEstablecimiento
 
-    FROM dbo.ComprobanteEgreso AS ce WITH(NOLOCK)
+                -- Join con Pagos
+                LEFT JOIN dbo.Pago p
+WITH
+(NOLOCK)
+                ON p.idPago = hp.idPago
 
-        -- Joins principales
-        INNER JOIN Sri.Establecimiento AS est WITH(NOLOCK)
-        ON est.idEstablecimiento = ce.idEstablecimiento
+                -- Join con Entidades Financieras
+                LEFT JOIN dbo.EntidadFinanciera ef
+WITH
+(NOLOCK)
+                ON ef.idEntidadFinanciera = p.idEntidadFinanciera
 
-        INNER JOIN Customer.Customer AS cli WITH(NOLOCK)
-        ON cli.id = ce.CustomerId
+                -- Join con Sub Entidades Financieras
+                LEFT JOIN dbo.SubEntidadFinanciera sf
+WITH
+(NOLOCK)
+                ON sf.idSubEntidadFinanciera = p.idSubEntidadFinanciera
 
-        INNER JOIN dbo.Pago AS pag WITH(NOLOCK)
-        ON pag.idComprobanteEgreso = ce.idComprobanteEgreso
+                -- Join con Bancos
+                LEFT JOIN dbo.Banco bc
+WITH
+(NOLOCK)
+                ON bc.idBanco = p.idBanco
 
-        INNER JOIN dbo.PagoDetalle AS pd WITH(NOLOCK)
-        ON pd.idPago = pag.idPago
+                -- Join con Detalle de Pagos
+                LEFT JOIN dbo.PagoDetalle pd
+WITH
+(NOLOCK)
+                ON pd.idPago = p.idPago
 
-        INNER JOIN Contabilidad.CuotaPorPagar AS cpag WITH(NOLOCK)
-        ON cpag.idCuotaPorPagar = pd.idCuotaPorPagar
+                -- Join con Cuotas por Pagar
+                LEFT JOIN Contabilidad.CuotaPorPagar cxp
+WITH
+(NOLOCK)
+                ON cxp.idCuotaPorPagar = pd.idCuotaPorPagar
 
-        INNER JOIN Contabilidad.CuentaPorPagar AS cpp WITH(NOLOCK)
-        ON cpp.idCuentaPorPagar = cpag.idCuentaPorPagar
-
-        INNER JOIN dbo.EntidadFinanciera AS ef WITH(NOLOCK)
-        ON ef.idEntidadFinanciera = pag.idEntidadFinanciera
-
-        -- Joins opcionales
-        LEFT JOIN dbo.Banco AS ban WITH(NOLOCK)
-        ON ban.idBanco = pag.idBanco
-
-    WHERE 
-    ce.estado = 1;
+   
 
 GO
 

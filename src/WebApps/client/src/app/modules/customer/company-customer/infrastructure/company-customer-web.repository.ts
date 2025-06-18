@@ -61,9 +61,22 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository{
   }
 
   checkExistence<T>(params: T) {
-    let json = JSON.stringify({ ...params, tipo: 3 })
+    const json = JSON.stringify({ ...params, tipo: 3 })
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+        map(response=>{
+          if(response.code==="1"){
+            const [mainData] = JSON.parse(response.payload as string);
+            const clienteRepository = mainData[0];
+            if(!clienteRepository){
+              response.payload = null;
+            }else{
+              response.payload = clienteRepository;
+            }
+          }
+          return response;
+        })
+      )
   }
 
   updateState(idCliente: number) {
