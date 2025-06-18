@@ -1,6 +1,6 @@
 .container-seat {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px 0 20px 0;
   justify-content: start;
@@ -10,17 +10,19 @@
 
 
 .seat-card {
-
-  border-radius: 12px;
-  overflow: visible; /* Ensure absolutely positioned children aren’t clipped */
-  box-shadow:  0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
   position: relative;
-  border: 1px solid rgba(0, 0, 0, 0.1);
   height: 100%;
   display: flex;
   flex-direction: column;
   cursor: pointer;
+
+  background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  border: 2px solid #c9a96e;
+  transition: all 0.3s ease;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-5px);
@@ -107,6 +109,35 @@
         font-size: 18px;
       }
     }
+  }
+
+  .seat-icon {
+    font-size: 5rem;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #c9a96e;
+  }
+
+  .seat-number {
+    font-size: 1.8rem;
+    color: #c9a96e;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .seat-name {
+    font-size: 1.3rem;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .seat-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
   }
 
 

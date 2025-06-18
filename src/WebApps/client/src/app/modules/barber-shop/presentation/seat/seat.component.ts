@@ -34,6 +34,7 @@ export class SeatComponent implements OnInit {
   private getList() {
     this.$listUseCase.execute({}).subscribe((response) => {
       this.dataSource.set(response.data);
+      console.log(response.data)
     });
   }
   refresh() {

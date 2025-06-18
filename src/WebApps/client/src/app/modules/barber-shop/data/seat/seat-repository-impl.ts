@@ -30,7 +30,8 @@ export class SeatRepositoryImpl implements SeatRepository {
     //     throw new Error("Method not implemented.");
     // }
     list()  {
-      return this.http.get<ApiResponse>(`${this.url}`).pipe(
+       const params = ListSeatMapper.toJson();
+      return this.http.get<ApiResponse>(`${this.url}`, {params}).pipe(
         map(res => ListSeatMapper.fromJson(res)),
       )
   }

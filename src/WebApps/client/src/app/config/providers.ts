@@ -14,7 +14,6 @@ import { billingProviders } from '@modules/billing/providers';
 import { DatePipe } from '@angular/common';
 import { importProvidersFrom } from '@angular/core';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
-import { barberShopProviders } from '@barber-shop/providers';
 import { DATA_INVENTORY_IOC } from '@inventory/data/inventory.ioc';
 import { DATA_CONFIG_IOC } from '@modules/config/data/data-config.ioc';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
@@ -24,6 +23,7 @@ import {DATA_ACCOUNTING_IOC} from "@accounting/data-accounting.ioc";
 import {DATA_REPORT_IOC} from "@modules/api/reports/data-report.ioc";
 import { DATA_MECHANICAL_IOC } from '@modules/mechanical/data/data-mechanical.ioc';
 import {DATA_CUSTOMER_IOC} from "@customer/data/data-customer.ioc";
+import {DATA_BARBER_SHOP_IOC} from "@barber-shop/data/data-barber-shop.ioc";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -67,7 +67,7 @@ export const featureProviders = [
   ...DATA_CONFIG_IOC,
   ...DATA_REPORT_IOC,
   ...DATA_CUSTOMER_IOC,
+  ...DATA_BARBER_SHOP_IOC,
   ...saleProvider,
   ...billingProviders,
-  ...barberShopProviders,
 ];
