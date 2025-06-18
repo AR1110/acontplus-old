@@ -1,7 +1,7 @@
 
 import { Component, inject  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.service';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
@@ -34,7 +34,7 @@ export class PuntoEmisionAddEditModalComponent {
     ambiente: '1',
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<PuntoEmisionAddEditModalComponent>);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   ptoEmisionSvc = inject(PuntoEmisionService);
 
   tiposAmbiente = [
@@ -52,13 +52,13 @@ export class PuntoEmisionAddEditModalComponent {
   };
   successResponse = (response: any) => {
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code == '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });
@@ -79,7 +79,7 @@ export class PuntoEmisionAddEditModalComponent {
   save() {
     try {
       if (isNaN(parseFloat(this.data.ptoEmi))) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El punto de emisión tiene que ser número',
         });
@@ -87,7 +87,7 @@ export class PuntoEmisionAddEditModalComponent {
       }
 
       if (isValidField(this.data.ptoEmi) && this.data.ptoEmi?.length !== 3) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El punto de emisión es requerido',
         });
@@ -96,7 +96,7 @@ export class PuntoEmisionAddEditModalComponent {
 
       const regex = /^\d{3}$/;
       if (!regex.test(this.data.ptoEmi)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El punto de emisión tiene que ser de tres dígitos',
         });

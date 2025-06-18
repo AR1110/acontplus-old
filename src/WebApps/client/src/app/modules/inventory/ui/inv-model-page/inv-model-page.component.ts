@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
@@ -38,7 +38,7 @@ export class InvModelPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   columnsDefs: ColumnDefinition[] = [
@@ -115,13 +115,13 @@ export class InvModelPageComponent {
         if (result.isConfirmed) {
           this._modeloUseCase.updateStatus(data.idModelo).subscribe((response) => {
             if (response.code == '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code == '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

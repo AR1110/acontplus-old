@@ -1,46 +1,41 @@
-﻿namespace TechnicalSupport.API.Services;
+﻿using System.Data;
 
-public class SerieService : ISerieService
+namespace TechnicalSupport.API.Services;
+
+public class SerieService(TechnicalSupportContext context, IAdoRepository adoRepository)
+    : ISerieService
 {
-    private readonly IAdoRepository _adoRepository;
-    private readonly TechnicalSupportContext _context;
-
-    public SerieService(TechnicalSupportContext context, IAdoRepository adoRepository)
-    {
-        _context = context;
-        _adoRepository = adoRepository;
-    }
-
     public async Task<ApiResponse> AddAsync(Serie serie)
     {
-        _context.Series.Add(serie);
-        await _context.SaveChangesAsync();
+        context.Series.Add(serie);
+        await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Guardada Exitosamente" };
     }
 
     public async Task<ApiResponse> DeleteAsync(int userId, int id)
     {
-        var serie = await _context.Series.FindAsync(id);
+        var serie = await context.Series.FindAsync(id);
         if (serie == null)
             // Handle case where serie not found
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
 
-        _context.Remove(serie);
-        await _context.SaveChangesAsync();
+        context.Remove(serie);
+        await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
     }
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Serie_Get", parameters);
-        if (DataValidation.DataTableIsNull(dt)) return new ApiResponse { Code = "0", Message = "No data" };
-
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+        var ds = await adoRepository.GetDataSetAsync("TechnicalSupport.Serie_Get", parameters, withTableNames: false);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        return DataValidation.DataTableIsNull(dt)
+            ? new ApiResponse { Code = "0", Message = "No data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, Serie serie)
     {
-        var serieFound = await _context.Series.FindAsync(id);
+        var serieFound = await context.Series.FindAsync(id);
         if (serieFound == null)
             // Handle case where serie not found
             return new ApiResponse { Code = "0", Message = "Serie no encontrada" };
@@ -50,8 +45,8 @@ public class SerieService : ISerieService
         serieFound.IsActive = serie.IsActive;
         serieFound.Name = serie.Name;
         serieFound.UpdatedByUserId = serie.UpdatedByUserId;
-        _context.Update(serieFound);
-        await _context.SaveChangesAsync();
+        context.Update(serieFound);
+        await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada Exitosamente" };
     }
 }

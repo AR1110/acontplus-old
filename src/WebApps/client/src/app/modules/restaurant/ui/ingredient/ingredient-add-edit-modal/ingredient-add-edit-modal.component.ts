@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { IngredientType } from '@restaurant/domain/models/ingredient-type';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -52,7 +52,7 @@ export class IngredientAddEditModalComponent {
   ingredientTypes = signal<IngredientType[]>([])
   #ingredientService = inject(IngredientService);
   #modalRef = inject(MatDialogRef<IngredientAddEditModalComponent>);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
   ngOnInit() {
     if (this.data.id > 0) {
@@ -68,7 +68,7 @@ export class IngredientAddEditModalComponent {
 
   onSave() {
     if (this.ingredientForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise que los datos esten correctos',
       });
@@ -80,7 +80,7 @@ export class IngredientAddEditModalComponent {
       this.#ingredientService
         .put(this.data.id, dataToSave)
         .subscribe((response) => {
-          this.#tS.toastr({
+          this.#tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

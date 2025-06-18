@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Modelo } from '@modules/technical-support/models/modelo';
 import { Serie } from '@modules/technical-support/models/serie';
@@ -28,7 +28,7 @@ export class ModeloModalComponent {
   private brandService = inject(BrandService);
   private modalRef = inject(MatDialogRef<ModeloModalComponent>);
   private serieService = inject(SerieService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   modeloForm = new FormGroup({
     id: new FormControl(0),
     brandId: new FormControl(0, Validators.required),
@@ -103,7 +103,7 @@ export class ModeloModalComponent {
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message,
       });

@@ -1,6 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
 import {
   GroupedEstab,
@@ -12,13 +12,13 @@ import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-fina
 import { SharedService } from '@core/services/shared.service';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatRadioModule} from "@angular/material/radio";
@@ -76,7 +76,7 @@ export class ReporteCobrosComponent  {
     lote: '',
   };
   // Services
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
@@ -138,7 +138,7 @@ export class ReporteCobrosComponent  {
     this.dataSearch.toDate = range.to;
   }
 
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.customerId = data.idCliente;
   }
 
@@ -149,7 +149,7 @@ export class ReporteCobrosComponent  {
   getReport(format: 'pdf' | 'excel') {
     try {
       if (!isValidField(this.dataSearch.fromDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese fecha inicio',
         });
@@ -157,7 +157,7 @@ export class ReporteCobrosComponent  {
       }
 
       if (!isValidField(this.dataSearch.toDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese fecha fin',
         });
@@ -166,7 +166,7 @@ export class ReporteCobrosComponent  {
 
       if (this.dataSearch.supplierChecked) {
         if (!isValidField(this.dataSearch.customerId)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Seleccione el cliente',
           });
@@ -210,7 +210,7 @@ export class ReporteCobrosComponent  {
       this.sharedSvc.getReport({ data: parameters, format: format });
     } catch (error: any) {
       if (error.status === 400) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No se pudo obtener el reporte',
         });

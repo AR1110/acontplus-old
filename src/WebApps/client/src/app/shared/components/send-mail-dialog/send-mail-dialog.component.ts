@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SendMailParams } from '@shared/models/send-mail.model';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
@@ -27,13 +27,13 @@ export class SendMailDialogComponent implements OnInit {
 
   readonly data = inject<SendMailParams>(MAT_DIALOG_DATA);
   private readonly _dialogRef = inject(MatDialogRef<SendMailDialogComponent>);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _notificacionSvc = inject(NotificacionService);
   private readonly _notificacionTribSvc = inject(NotificacionTributariaService);
 
   commonResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this._tS.toastr({
+      this._tS.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });
@@ -56,7 +56,7 @@ export class SendMailDialogComponent implements OnInit {
   send() {
     try {
       if (this.emails().length === 0) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'Ingrese al menos un correo del destinatorio',
         });
@@ -64,7 +64,7 @@ export class SendMailDialogComponent implements OnInit {
       }
 
       if (!this.emails().every((item) => this.isValidEmail(item))) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message:
             'Verifique que los correos del destinatario esten ingresado correctamente',

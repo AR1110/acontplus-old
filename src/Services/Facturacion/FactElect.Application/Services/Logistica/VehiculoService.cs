@@ -16,7 +16,8 @@ public class VehiculoService(IAdoRepository adoRepository) : IVehiculoService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await adoRepository.GetDataTableAsync($"{ModuleName}Get", parameters);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, withTableNames: false);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "Data not found" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
@@ -24,7 +25,8 @@ public class VehiculoService(IAdoRepository adoRepository) : IVehiculoService
 
     public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
     {
-        var dt = await adoRepository.GetDataTableAsync($"{ModuleName}Search", parameters);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Search", parameters, withTableNames: false);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "Data not found" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };

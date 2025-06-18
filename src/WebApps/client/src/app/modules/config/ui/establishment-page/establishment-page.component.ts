@@ -8,7 +8,7 @@ import {
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import {ApiResponse } from '@core/models/api-response';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { PuntoEmisionAddEditModalComponent } from '@modules/config/ui/establishment-page/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -69,7 +69,7 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _puntoEmisionService = inject(PuntoEmisionService);
   private readonly _estabLogService = inject(EstablishmentLogoService);
   private readonly _modalService = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   setPanelOpen(index: number) {
     this.panelOpenState = index;
     // Only load infrastructure when opening a panel (not when closing)
@@ -112,7 +112,7 @@ export class EstablishmentPageComponent implements OnInit {
   }
 
   commonResponse = (response: ApiResponse) => {
-      this._tS.toastr({
+      this._tS.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });
@@ -190,7 +190,7 @@ export class EstablishmentPageComponent implements OnInit {
 
     if (isConfirmed) {
       this._estabService.closeEstab(id).subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -219,7 +219,7 @@ export class EstablishmentPageComponent implements OnInit {
       this.dataLogo = response;
 
       if (this.dataLogo && !this.dataLogo.isCompressed) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message:
             'Por favor actualize nuevamente el logo del establecimiento, gracias!',
@@ -292,7 +292,7 @@ export class EstablishmentPageComponent implements OnInit {
       this._estabLogService
         .removeImage(this.dataLogo.id)
         .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -328,7 +328,7 @@ export class EstablishmentPageComponent implements OnInit {
 
     if (isConfirmed) {
       this._puntoEmisionService.annul(id).subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -343,7 +343,7 @@ export class EstablishmentPageComponent implements OnInit {
     this._estabService
       .putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth)
       .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

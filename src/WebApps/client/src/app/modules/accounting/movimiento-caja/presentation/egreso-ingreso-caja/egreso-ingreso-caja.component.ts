@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
@@ -12,7 +12,7 @@ import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/m
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -26,7 +26,7 @@ import { DialogService } from '@core/services/dialog.service';
 import {
   EgresoIngresoDialogComponent
 } from "@accounting/movimiento-caja/presentation/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 import {ListMovimientoCajaUseCase} from "@accounting/movimiento-caja/application/list-movimiento-caja.use-case";
 import {MovimientoCajaList} from "@accounting/movimiento-caja/domain/movimiento-caja.model";
 
@@ -58,7 +58,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
   private $listUseCase = inject(ListMovimientoCajaUseCase)
   $userRoleStateManager = inject(UserRoleStateManager);
@@ -142,7 +142,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     this.getMovimientosCaja();
   }
 
-  onSelectCustomer($event: CompanyCustomer) {
+  onSelectCustomer($event: CompanyCustomerEntity) {
     this.dataSearch.customerId = $event.customerId;
     this.getMovimientosCaja();
   }
@@ -220,13 +220,13 @@ export class EgresoIngresoCajaComponent implements OnInit {
             .delete(item.idMovimientoCaja)
             .subscribe((response) => {
               if (response.code === '0') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
               }
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });

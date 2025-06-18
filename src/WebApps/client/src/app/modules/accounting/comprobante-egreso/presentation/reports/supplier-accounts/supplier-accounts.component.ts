@@ -10,7 +10,7 @@ import {
 } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {getValidId, isValidField} from '@core/utils/utils';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
@@ -81,7 +81,7 @@ export class SupplierAccountsComponent {
   };
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private $getFilterDataUseCase = inject(GetFilterDataCuentaPorPagarUseCase)
 
   reportTypeCode = {
@@ -159,7 +159,7 @@ export class SupplierAccountsComponent {
 
   private isValidSearchFilter(){
     if (!isValidField(this.searchFilters.fromDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha inicio',
       });
@@ -167,7 +167,7 @@ export class SupplierAccountsComponent {
     }
 
     if (!isValidField(this.searchFilters.toDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha fin',
       });
@@ -175,7 +175,7 @@ export class SupplierAccountsComponent {
     }
 
     if (this.searchFilters.supplierSelected && !getValidId(this.searchFilters.supplierId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el proveedor',
       });

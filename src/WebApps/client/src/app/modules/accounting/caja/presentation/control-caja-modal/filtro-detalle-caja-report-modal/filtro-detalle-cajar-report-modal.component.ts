@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { stringToDate } from '@core/utils/string-to-date';
 import { isValidField } from '@core/utils/utils';
@@ -56,16 +56,16 @@ export class FiltroDetalleCajaReportModal {
 
   private _controlCajaUseCase = inject(ControlCajaUseCase);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   ngOnInit() {
-    let fromDate = stringToDate(
+    const fromDate = stringToDate(
       this.params.fechaApertura,
       'dd/MM/yyyy HH:ii',
       '/',
     );
-    let toDate =
+    const toDate =
       this.params.fechaCierre &&
       stringToDate(this.params.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
 
@@ -75,7 +75,7 @@ export class FiltroDetalleCajaReportModal {
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
-          let { formaPagos, tipoDocumento } = response as {
+          const { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
           };
@@ -112,7 +112,7 @@ export class FiltroDetalleCajaReportModal {
   getReport(format: 'pdf' | 'excel') {
     try {
       if (!(this.params.id > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'id no proporcionado!',
         });

@@ -3,56 +3,41 @@ import {PATHS_API} from "@core/constants/global.constants";
 import {ACCOUNTING_PATHS} from "@accounting/shared/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
-import {CajaMapper} from "@accounting/caja/infrastructure/caja.mapper";
+import {ListCajaMapper} from "@accounting/caja/infrastructure/mappers/list-caja.mapper";
 import {CajaRepository} from "@accounting/caja/domain/caja.repository";
 import {ApiResponse} from "@core/models/api-response";
+import {FormDataCajaMapper} from "@accounting/caja/infrastructure/mappers/form-data-caja.mapper";
+import {GetIdCajaMapper} from "@accounting/caja/infrastructure/mappers/get-id-caja.mapper";
 
 @Injectable({
   providedIn: 'root',
 })
-export class CajaWebRepository extends CajaRepository{
+export class CajaWebRepository implements CajaRepository{
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CASHBOX}`
   private _http = inject(HttpClient);
 
-  constructor() {
-    super();
-  }
 
   getAll<T>(params: T) {
-    let json = JSON.stringify({ ...params, tipo: 1 })
-    return this._http.get(`${this._url}?json=${json}`).pipe(
-      map((res)=>{
-
-       return CajaMapper.fromApiGetAll(res)
-      })
+    const json = ListCajaMapper.toJson(params);
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+      map((res)=> ListCajaMapper.fromJson(res))
     )
   }
 
   getId(id: number) {
-    let paramsStr = JSON.stringify({ id, tipo: 3 })
-    return this._http.get(`${this._url}?json=${paramsStr}`)
+    const json = GetIdCajaMapper.toJson(id)
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
       .pipe(
-        map((response) => {
-          if (response) {
-            let { caja, asignaciones } = response as { caja: any, asignaciones: Array<any> }
-
-
-            return {
-              caja: caja[0],
-              asignaciones
-            };
-          }
-          return {
-            caja: {},
-            asignaciones: []
-          }
-        })
+        map((response) => GetIdCajaMapper.fromJson(response))
       )
   }
 
   getDataForm() {
-    let json = JSON.stringify({ tipo: 2 })
-    return this._http.get(`${this._url}?json=${json}`)
+    const json = FormDataCajaMapper.toJson()
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe(
+        map((response) => FormDataCajaMapper.fromJson(response))
+      )
   }
 
 

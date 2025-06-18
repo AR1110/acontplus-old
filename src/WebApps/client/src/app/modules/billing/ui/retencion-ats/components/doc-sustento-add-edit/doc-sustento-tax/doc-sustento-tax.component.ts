@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import Swal from 'sweetalert2';
 import { DocSustentoTaxUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-tax.use-case';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 @Component({
   selector: 'app-doc-sustento-tax',
@@ -37,7 +37,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   tarifaImpuestos = input.required<TarifaImpuesto[]>();
   tarifaImpuestosFiltered = signal<TarifaImpuesto[]>([]); // Signal mutable
   private readonly _docSustentoTaxUseCase = inject(DocSustentoTaxUseCase);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   selectTax(tax: any) {
     setTimeout(() => {
@@ -73,7 +73,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
         this._docSustentoTaxUseCase
           .delete(taxSelected.idRetAtsImpDocSustento)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -160,7 +160,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
     // console.log(importeTotalAdded, 'importeTotalAdded');
 
     if (newTotalDoc != importeTotalAdded) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message:
           'El importe total del documento no puede ser diferente a la suma de las bases imponibles mas los impuestos, revise los valores!',
@@ -199,14 +199,14 @@ export class DocSustentoTaxComponent implements AfterViewInit {
       this._docSustentoTaxUseCase
         .update(taxSelected.idRetAtsImpDocSustento, taxSelected)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
       this._docSustentoTaxUseCase.create(taxSelected).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

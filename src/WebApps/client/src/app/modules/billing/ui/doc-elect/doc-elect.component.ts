@@ -17,7 +17,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
@@ -48,7 +48,7 @@ import { finalize, forkJoin, switchMap } from 'rxjs';
 })
 export class DocElectComponent {
   private docElectSvc = inject(DocumentoElectronicoWebRepository);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -209,7 +209,7 @@ export class DocElectComponent {
       );
       this.getDocElects();
     } else {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No tiene puntos de emisión asignados',
       });

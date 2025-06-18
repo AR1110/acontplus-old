@@ -1,5 +1,5 @@
 import { Component, inject, ViewChild, OnInit } from '@angular/core';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isApiResponse } from '@core/models/api-response';
 import { PetService } from '@modules/vet/services/pet.service';
 import { PetModalComponent } from '@modules/vet/components/pet-modal/pet-modal.component';
@@ -94,7 +94,7 @@ export class PetPageComponent implements OnInit {
 
   private readonly petService = inject(PetService);
   private readonly modalService = inject(DialogService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   applyFilter(event: Event) {
     this.searching = true;
@@ -188,7 +188,7 @@ export class PetPageComponent implements OnInit {
       if (response.isConfirmed) {
         this.petService.delete(item.id).subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });

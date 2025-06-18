@@ -4,6 +4,7 @@ public class DocumentoTempService(IAdoRepository repository) : IDocumentoTempSer
 {
     public Task<int> AddAsync(Dictionary<string, object> parameters)
     {
-        return repository.ExecuteNonQueryAsync("Recepcion.Doc_Detail_Temp_Insert_All", parameters, timeout: false);
+        return repository.ExecuteNonQueryAsync("Recepcion.Doc_Detail_Temp_Insert_All", parameters,
+            disableTimeout: true);
     }
 }

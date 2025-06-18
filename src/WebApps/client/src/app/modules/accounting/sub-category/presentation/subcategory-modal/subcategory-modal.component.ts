@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { Category } from '@accounting/category/domain/category';
 import {ApiResponse } from '@core/models/api-response';
@@ -45,7 +45,7 @@ export class SubcategoryModalComponent {
   modalTitle = 'Registrar Subcategoría';
   tipos: any[] = [];
   private readonly modalRef = inject(MatDialogRef<SubcategoryModalComponent>);
-  private readonly toastService = inject(ToasterService);
+  private readonly toastService = inject(ToastrNotificationService);
 
   private _subCategoryUseCase = inject(SubCategoryUseCase);
 
@@ -73,7 +73,7 @@ export class SubcategoryModalComponent {
       ...this.subcategoryForm.value,
     };
     if (dataToSave.categoryId === 0) {
-      this.toastService.toastr({
+      this.toastService.show({
         type: 'warning',
         message: 'Debe seleccionar una categoría',
       });
@@ -99,7 +99,7 @@ export class SubcategoryModalComponent {
   }
 
   successResponse = (response: ApiResponse) => {
-      this.toastService.toastr({
+      this.toastService.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
       });

@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
@@ -124,7 +124,7 @@ export class FloorAddEditModalComponent {
   _modalRef = inject(MatDialogRef<FloorAddEditModalComponent>);
   data = inject<any>(MAT_DIALOG_DATA);
   _roomService = inject(RoomService);
-  _tS = inject(ToasterService);
+  _tS = inject(ToastrNotificationService);
 
   deleteRoom(row: any) {
     const rowData = row.getData();
@@ -153,13 +153,13 @@ export class FloorAddEditModalComponent {
 
   onSave() {
     if (this.floorForm.invalid) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Revise los datos correctos',
       });
     }
     if (!(this.rooms.length > 0)) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Debe agregar al menos una sala',
       });
@@ -192,7 +192,7 @@ export class FloorAddEditModalComponent {
   }
 
   successResponse(response: ApiResponse) {
-    this._tS.toastr({
+    this._tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });
@@ -225,7 +225,7 @@ export class FloorAddEditModalComponent {
     if (this.data.id > 0) {
       newRoom.id = 0;
       this._roomService.post(newRoom).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

@@ -49,7 +49,7 @@ import {
   MatDatepickerInput,
   MatDatepickerToggle,
 } from '@angular/material/datepicker';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { DialogService } from '@core/services/dialog.service';
 import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
@@ -104,7 +104,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   private readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _documentoReceivedUseCase = inject(DocumentReceivedUseCase);
   private readonly _dialogService = inject(DialogService);
 
@@ -325,7 +325,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
           });
         });
     } else {
-      this._tS.toastr({
+      this._tS.show({
         type: 'info',
         message: 'No disponible para documentos manuales',
       });
@@ -352,7 +352,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
         this._docSustentoUseCase
           .delete(doc.idRetAtsDocSustento)
           .subscribe((response) => {
-            this._tS.toastr({
+            this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -403,14 +403,14 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       this._docSustentoUseCase
         .update(docSustento.idRetAtsDocSustento, docSustento)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
       this._docSustentoUseCase.create(docSustento).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ApiResponse } from '@core/models/api-response';
 import { Room } from '@restaurant/domain/models/room.model';
 import { TableService } from '@restaurant/data/services/table.service';
@@ -55,7 +55,7 @@ export class TableAddEditModalComponent {
   modalTitle  = 'Registrar Mesa';
   btnText = 'Guardar';
   #tableService = inject(TableService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
 
   ngOnInit() {
@@ -72,7 +72,7 @@ export class TableAddEditModalComponent {
 
   onSave() {
     if (this.tableForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise los datos correctos',
       });
@@ -98,7 +98,7 @@ export class TableAddEditModalComponent {
   }
 
   successResponse(response: ApiResponse) {
-    this.#tS.toastr({
+    this.#tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });

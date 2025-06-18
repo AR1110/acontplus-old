@@ -7,7 +7,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { DOC_TYPE, DOC_TYPE_SRI } from '@core/constants/global.constants';
 import { GroupedEstab } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 
 import { ComprobanteIngresoOpenModalService } from '@accounting/comprobante-ingreso/application/services/comprobante-ingreso-open-modal.service';
@@ -37,7 +37,7 @@ import { MatButton } from '@angular/material/button';
 })
 export class CuentaPorCobrarComponent {
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService);
 
   visibleColumns: string[] = [
@@ -185,7 +185,7 @@ export class CuentaPorCobrarComponent {
     let selectedDocumentos = this.selection.selected;
 
     if (selectedDocumentos.length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione al menos un documento!',
       });
@@ -193,7 +193,7 @@ export class CuentaPorCobrarComponent {
     }
 
     if (!this.verificarClienteIgual(selectedDocumentos)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione documentos que pertenezca al mismo cliente',
       });

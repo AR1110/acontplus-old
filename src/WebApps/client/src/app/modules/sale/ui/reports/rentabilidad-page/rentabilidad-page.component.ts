@@ -13,7 +13,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
@@ -86,7 +86,7 @@ export class RentabilidadPageComponent {
     isSimpleMode: true,
   };
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _productUseCase = inject(ProductUseCase);
   private _tokenUseCase = inject(TokenUseCase);
 
@@ -164,7 +164,7 @@ export class RentabilidadPageComponent {
     let checkedSubCategorias = this.checkedSubCategorias.value;
 
     if (!isValidField(this.dataSearch.fromDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha inicio',
       });
@@ -172,7 +172,7 @@ export class RentabilidadPageComponent {
     }
 
     if (!isValidField(this.dataSearch.toDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha fin',
       });
@@ -181,7 +181,7 @@ export class RentabilidadPageComponent {
 
     if (this.dataSearch.productChecked) {
       if (!isValidField(this.dataSearch.idArticulo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Artículo',
         });
@@ -194,7 +194,7 @@ export class RentabilidadPageComponent {
         !isValidField(this.dataSearch.porcentajeRenta) &&
         !isValidField(this.dataSearch.porcentajeComision)
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message:
             'Ingrese el valor del porcentaje de renta o el valor del porcentaje de comisión.',
@@ -216,7 +216,7 @@ export class RentabilidadPageComponent {
         Array.isArray(checkedSubCategorias) &&
         checkedSubCategorias.length === 0
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione al menos una SubFamilia',
         });
@@ -226,7 +226,7 @@ export class RentabilidadPageComponent {
 
     if (this.dataSearch.userChecked) {
       if (!isValidField(this.dataSearch.idUsuario)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });

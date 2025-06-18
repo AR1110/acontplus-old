@@ -15,7 +15,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -67,7 +67,7 @@ export class ReportsComponent {
   };
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   ngOnInit() {
@@ -107,7 +107,7 @@ export class ReportsComponent {
 
   getReport(format: 'pdf' | 'excel') {
     if (!isValidField(this.dataSearch.fromDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha inicio',
       });
@@ -115,7 +115,7 @@ export class ReportsComponent {
     }
 
     if (!isValidField(this.dataSearch.toDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha fin',
       });
@@ -124,7 +124,7 @@ export class ReportsComponent {
 
     if (this.dataSearch.supplierChecked) {
       if (!isValidField(this.dataSearch.idProveedor)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el proveedor',
         });

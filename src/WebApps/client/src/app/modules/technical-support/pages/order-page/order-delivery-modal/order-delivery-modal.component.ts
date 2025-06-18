@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { MatIcon } from '@angular/material/icon';
@@ -32,7 +32,7 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
 export class OrderDeliveryModalComponent implements OnInit {
   private modalRef = inject(MatDialogRef<OrderDeliveryModalComponent>);
   private orderService = inject(OrderService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   // * Status
   isOtherReceiver  = false;
@@ -72,7 +72,7 @@ export class OrderDeliveryModalComponent implements OnInit {
 
     this.orderService.delivery(this.data.id, dataModified).subscribe( (response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

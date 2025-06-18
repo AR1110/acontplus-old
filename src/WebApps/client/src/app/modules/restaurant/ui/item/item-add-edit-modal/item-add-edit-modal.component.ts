@@ -12,7 +12,7 @@ import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semanti
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { ItemService } from '@restaurant/data/services/item.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -49,7 +49,7 @@ export class ItemAddEditModalComponent implements OnInit {
   #itemService = inject(ItemService);
   #modalRef = inject(MatDialogRef<ItemAddEditModalComponent>);
   #recipeService = inject(RecipeService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
   selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
     let medidas = [];
@@ -269,7 +269,7 @@ export class ItemAddEditModalComponent implements OnInit {
 
   onSave() {
     if (this.itemForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise los datos ingresados',
       });
@@ -281,7 +281,7 @@ export class ItemAddEditModalComponent implements OnInit {
     this.#itemService
       .put(this.data.id, { data: dataToSave })
       .subscribe((response) => {
-        this.#tS.toastr({
+        this.#tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

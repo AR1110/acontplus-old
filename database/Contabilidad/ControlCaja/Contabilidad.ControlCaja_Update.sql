@@ -45,13 +45,13 @@ BEGIN
 		--> VALIDACION DE DATOS 
 		IF (SELECT COUNT(*) FROM OPENJSON(@arqueoCaja)) = 0 
 			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Error en el arqueo de caja',DEFAULT)
+				SELECT '0' as code,'Error en el arqueo de caja' as 'message'
 				RETURN 
 			END
 
 		IF EXISTS (SELECT 1 FROM ControlCaja WHERE idControlCaja = @id AND estado = 0 )
 			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','La caja ya se encuentra cerrada',DEFAULT)
+				SELECT '0' as code,'La caja ya se encuentra cerrada' as 'message'
 				RETURN 
 			END 
 
@@ -73,7 +73,7 @@ BEGIN
                             FROM dbo.Entidad WHERE idEntidad = @idEntidad FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
 
 			COMMIT TRAN 
-		SELECT [Common].[ufnSpResponse]('1','Cerrada Correctamente',@payload)
+		SELECT '1' as code,'Cerrada Correctamente' as 'message',@payload as 'payload'
 	END TRY 
 	
 	BEGIN CATCH
@@ -81,9 +81,9 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END
-		SELECT [Common].[ufnSpResponse]('0','Info: Error en el procedimiento: ',DEFAULT)
-		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/ControlCaja/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT '0' as code,'Info: Error en el procedimiento: ' as 'message'
+		INSERT INTO ErroresSistema(method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,idUsuario)
+		SELECT '/ControlCaja/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),@idUsuario
 	END CATCH 
 
 END

@@ -67,7 +67,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  ├── services
 |  |  |  |  ├── dialog-custom.service.ts
 |  |  |  |  ├── shared.service.ts
-|  |  |  |  ├── toaster.service.ts
+|  |  |  |  ├── toastr-notification.service.ts
 |  |  |  ├── theme
 |  |  |  |  ├── theme-options.ts
 |  |  |  |  ├── theme.service.ts
@@ -157,7 +157,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  ├── caja
 |  |  |  |  |  |  ├── caja-web.repository.ts
 |  |  |  |  |  |  ├── caja.entity.ts
-|  |  |  |  |  |  └── caja.mapper.ts
+|  |  |  |  |  |  └── list-caja.mapper.ts
 |  |  |  |  |  ├── category
 |  |  |  |  |  |  ├── category-web.repository.ts
 |  |  |  |  |  |  └── category.mapper.ts
@@ -169,7 +169,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  └── comprobante-ingreso.mapper.ts
 |  |  |  |  |  ├── control-caja
 |  |  |  |  |  |  ├── control-caja-web.repository.ts
-|  |  |  |  |  |  └── control-caja.mapper.ts
+|  |  |  |  |  |  └── control-list-caja.mapper.ts
 |  |  |  |  |  ├── cuenta-por-cobrar
 |  |  |  |  |  |  ├── cuenta-por-cobrar-web.repository.ts
 |  |  |  |  |  |  └── cuenta-por-cobrar.mapper.ts
@@ -179,7 +179,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  |  |  └── cuenta-por-pagar.mapper.ts
 |  |  |  |  |  ├── movimiento-caja
 |  |  |  |  |  |  ├── movimiento-caja-web.repository.ts
-|  |  |  |  |  |  └── movimiento-caja.mapper.ts
+|  |  |  |  |  |  └── movimiento-list-caja.mapper.ts
 |  |  |  |  |  ├── resumen-contable
 |  |  |  |  |  |  ├── resumen-contable-web.repository.ts
 |  |  |  |  |  |  └── resumen-contable.mapper.ts
@@ -412,7 +412,7 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  ├── customer
 |  |  |  |  ├── core
 |  |  |  |  |  ├── domain
-|  |  |  |  |  |  ├── company-customer.ts
+|  |  |  |  |  |  ├── company-customer.entity.ts
 |  |  |  |  |  |  └── supplier.interface.ts
 |  |  |  |  |  ├── enums
 |  |  |  |  |  |  └── customer.enum.ts
@@ -428,7 +428,6 @@ C:\Users\sengu\source\repos\AcontPlus\src\WebApps\client
 |  |  |  |  ├── data
 |  |  |  |  |  ├── company-customer
 |  |  |  |  |  |  ├── company-customer-web.repository.ts
-|  |  |  |  |  |  └── company-customer.mapper.ts
 |  |  |  |  |  ├── customer
 |  |  |  |  |  |  ├── customer-web.repository.ts
 |  |  |  |  |  |  ├── customer.mapper.ts

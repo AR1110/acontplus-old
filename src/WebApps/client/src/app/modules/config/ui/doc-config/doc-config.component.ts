@@ -11,7 +11,7 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { isValidField } from '@core/utils/utils';
 import {DocConfigList} from '@modules/config/domain/models/doc-config.model';
@@ -52,7 +52,7 @@ export class DocConfigPageComponent implements OnInit {
   private $listUseCase = inject(ListDocConfigUseCase)
   private $createUseCase = inject(CreateDocConfigUseCase)
   private $formDataDocConfig = inject(GetDocConfigFormDataUseCase)
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _modalService = inject(DialogService);
   private readonly _cdr = inject(ChangeDetectorRef);
 
@@ -145,14 +145,14 @@ export class DocConfigPageComponent implements OnInit {
 
   saveConfig(item: DocConfigList) {
     if (!(this.dataSearch().idPuntoEmision > 0)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
       });
       return;
     }
     if (!isValidField(item.ultimaSecuencia)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
       });
@@ -168,7 +168,7 @@ export class DocConfigPageComponent implements OnInit {
     };
 
     this.$createUseCase.execute(data).subscribe((response) => {
-        this._tS.toastr({
+        this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });

@@ -1,6 +1,6 @@
 import {Component, OnInit, inject, signal} from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -16,7 +16,7 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
 export class DeviceListModalComponent implements OnInit {
   private deviceService = inject(DeviceService);
   private modalRef = inject(MatDialogRef<DeviceListModalComponent>);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   data = inject<any>(MAT_DIALOG_DATA);
   devices =signal<any>([]);
@@ -36,7 +36,7 @@ export class DeviceListModalComponent implements OnInit {
             this.devices.set(devices);
             if (this.devices().length == 0) {
               this.modalRef.close();
-              this.tS.toastr({
+              this.tS.show({
                 type: 'info',
                 message: 'El cliente no cuenta con equipos registrados',
               });

@@ -2,37 +2,37 @@
 @Token = Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InphcmF0ZWNAYWNvbnRwbHVzLmNvbS5lYyIsImdpdmVuX25hbWUiOiJaQVJBVEUgScORSUdVRVogQ0hSSVNUSUFOIElWQU4iLCJqdGkiOiJlOWUyN2RhNi03ZDgwLTRlNmItOTZjYi02YTNlNzdhYTA2YmUiLCJuYW1lIjoiWkFSQVRFIEnDkUlHVUVaIENIUklTVElBTiBJVkFOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdWIiOiIxMCIsInVuaXF1ZV9uYW1lIjoiemFyYXRlYyIsInVzZXJSb2xlSWQiOiIyNyIsImlkQ2FyZENvbXBhbnkiOiIwMTAyNzYyNTMxMDAxIiwiY29tcGFueUlkIjoiMSIsInRyYWRlTmFtZSI6IlpBUkFURSBJw5FJR1VFWiBDSFJJU1RJQU4gSVZBTiIsImJ1c2luZXNzTmFtZSI6IlpBUkFURSBJw5FJR1VFWiBDSFJJU1RJQU4gSVZBTiIsInVybEdhdGV3YXkiOiJodHRwczovL2xvY2FsaG9zdDo3MDYwIiwiZXhwIjoxNzc2NzgyMDgwfQ.wT1ncKWBTcK-zW54vw1cqafEBcOLrZOWukaw_BoWFos
 
 
-GET {{BarberShop.Api_HostAddress}}/seat?pageIndex=1&pageSize=10
+GET {{BarberShop.Api_HostAddress}}/seats?pageIndex=1&pageSize=10
 Content-Type: application/json
 Authorization: {{Token}}
 
 ###
 
-POST {{BarberShop.Api_HostAddress}}/seat
+POST {{BarberShop.Api_HostAddress}}/seats
 Content-Type: application/json
 Authorization: {{Token}}
 {
-  "SeatNumber": 2,
-  "Code": "A2",
-  "Name": "Asiento 2"
+  "SeatNumber": 3,
+  "Code": "A3",
+  "Name": "Asiento 3"
 }
 
 ###
 
 @id=1
-DELETE {{BarberShop.Api_HostAddress}}/seat/{{id}}
+DELETE {{BarberShop.Api_HostAddress}}/seats/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 
 ###
 
-GET {{BarberShop.Api_HostAddress}}/seat/{{id}}
+GET {{BarberShop.Api_HostAddress}}/seats/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 
 ###
 @id=1
-PUT {{BarberShop.Api_HostAddress}}/seat/{{id}}
+PUT {{BarberShop.Api_HostAddress}}/seats/{{id}}
 Content-Type: application/json
 Authorization: {{Token}}
 {
@@ -40,6 +40,77 @@ Authorization: {{Token}}
   "SeatNumber": 1,
   "Code": "A1",
   "Name": "Asiento Modificado"
+}
+
+###
+
+@pageIndex=0
+@pageSize=0
+GET {{BarberShop.Api_HostAddress}}/api/work-sessions?pageIndex={{pageIndex}}&pageSize={{pageSize}}
+
+###
+
+POST {{BarberShop.Api_HostAddress}}/api/work-sessions
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  "puntoEmisionId": 225,
+  "userBarberId": 10,
+  "startDate": "2023-11-01T00:00:00Z",
+  "endDate": "2023-11-30T23:59:59Z"
+}
+
+###
+
+DELETE {{BarberShop.Api_HostAddress}}/api/work-sessions/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+
+###
+
+GET {{BarberShop.Api_HostAddress}}/api/work-sessions/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+PUT {{BarberShop.Api_HostAddress}}/api/work-sessions/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  //WorkSessionDto
+}
+
+###
+
+GET {{BarberShop.Api_HostAddress}}/api/tickets?pageIndex={{pageIndex}}&pageSize={{pageSize}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+POST {{BarberShop.Api_HostAddress}}/api/tickets
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  //TicketDto
+}
+
+###
+
+DELETE {{BarberShop.Api_HostAddress}}/api/tickets/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+GET {{BarberShop.Api_HostAddress}}/api/tickets/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+###
+
+PUT {{BarberShop.Api_HostAddress}}/api/tickets/{id:int}?id={{id}}
+Content-Type: application/json
+Authorization: {{Token}}
+{
+  //TicketDto
 }
 
 ###

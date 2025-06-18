@@ -15,7 +15,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { InvoiceService } from '@billing/services/invoice.service';
@@ -49,7 +49,7 @@ import { finalize, switchMap, throwError } from 'rxjs';
 export class InvoiceComponent {
 
   private invoiceSvc = inject(InvoiceService)
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -167,7 +167,7 @@ export class InvoiceComponent {
 
           })
         } else {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'No tienes asignado Establecimiento!'
           })
@@ -208,7 +208,7 @@ export class InvoiceComponent {
       this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
         this.refresh();
     } else {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No tiene puntos de emisión asignados'
         })

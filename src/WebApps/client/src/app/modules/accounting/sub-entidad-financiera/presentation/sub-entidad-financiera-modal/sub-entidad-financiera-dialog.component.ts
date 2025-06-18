@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SubEntidadFinancieraUseCase } from '@accounting/sub-entidad-financiera/application/sub-entidad-financiera.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -41,7 +41,7 @@ export class SubEntidadFinancieraDialogComponent {
   );
   readonly data = inject<any>(MAT_DIALOG_DATA);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private useCase = inject(SubEntidadFinancieraUseCase);
 
   params = {
@@ -108,7 +108,7 @@ export class SubEntidadFinancieraDialogComponent {
   save() {
     try {
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -119,13 +119,13 @@ export class SubEntidadFinancieraDialogComponent {
       if (!(this.params.idSubEntidadFinanciera > 0)) {
         this.useCase.create(data).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });
@@ -139,13 +139,13 @@ export class SubEntidadFinancieraDialogComponent {
           .update(this.params.idSubEntidadFinanciera, data)
           .subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

@@ -36,12 +36,11 @@ export function isValidJSON(texto: string) {
 }
 
 
-export const getValidId =  (id?: number) => {
-  if (typeof id === "number" && id > 0) return id  ;  // Retorna id como T
-
+export function getValidId(id?: number): number | null | undefined {
   if (id === undefined) return undefined;
-  return null;
+  return id > 0 ? id : null;
 }
+
 
 
 

@@ -5,7 +5,7 @@ import { AnticipoRead } from '@accounting/movimiento-caja/domain/anticipo.model'
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -18,7 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -26,7 +26,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { finalize } from 'rxjs/operators';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 import {DialogService} from "@core/services/dialog.service";
 
 @Component({
@@ -56,7 +56,7 @@ export class AnticipoComponent {
   };
   private modalSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _anticipoUseCase = inject(AnticipoUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
 
@@ -116,10 +116,11 @@ export class AnticipoComponent {
   ngOnInit() {
     this._anticipoUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos.set(response.establecimientos)
-      if (this.establecimientos.length > 0) {
+      if (this.establecimientos().length > 0) {
         const dataEstab = this.establecimientos().find(
           (item) => item.predeterminado,
         );
+
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
           this.getAnticipos();
@@ -128,7 +129,7 @@ export class AnticipoComponent {
     });
   }
 
-  onCustomerSelected($event: CompanyCustomer) {
+  onCustomerSelected($event: CompanyCustomerEntity) {
     this.dataSearch.customerId = $event.idCliente;
   }
 
@@ -211,13 +212,13 @@ export class AnticipoComponent {
             .delete(data.idAnticipo)
             .subscribe((response) => {
               if (response.code === '0') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
               }
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });

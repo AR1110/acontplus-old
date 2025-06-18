@@ -53,13 +53,13 @@ BEGIN
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @tbAsig) = 0 
             BEGIN
-			    SELECT [Common].[ufnSpResponse]('0','Error en la asignacion de usuario',DEFAULT)
+			    SELECT '0' as code,'Error en la asignacion de usuario' as 'message'
 			    RETURN 
 		    END
 
         IF EXISTS(SELECT 1 FROM dbo.AsignacionCaja WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM @tbAsig) AND idEntidad = @idEntidad)
 		    BEGIN
-			    SELECT [Common].[ufnSpResponse]('0','Este Usuario ya cuenta con una Caja asignada en la empresa',DEFAULT)
+			    SELECT '0' as code,'Este Usuario ya cuenta con una Caja asignada en la empresa' as 'message'
 			    RETURN 
 		    END
 
@@ -74,7 +74,7 @@ BEGIN
 			SELECT @id    ,idTurno,idUsuario,@idUsuarioRegistro,@idEntidad FROM @tbAsig
 
         COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1','Registrado Correctamen',DEFAULT)
+        SELECT '1' as code,'Registrado Correctamen' as 'message'
     END TRY 
 
     BEGIN CATCH
@@ -82,11 +82,11 @@ BEGIN
 			BEGIN
 				ROLLBACK TRAN; 
 			END
-		SELECT [Common].[ufnSpResponse]( '0','Info: Error en el procedimiento',DEFAULT)
+		SELECT  '0' as code,'Info: Error en el procedimiento' as 'message'
 
 		INSERT INTO ErroresSistema
-		       (token,method,errorNumber,errorSeverity ,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/Caja/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuarioRegistro
+		       (method,errorNumber,errorSeverity ,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT '/Caja/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuarioRegistro
     END CATCH
 
 END

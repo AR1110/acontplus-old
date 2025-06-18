@@ -5,14 +5,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
 
@@ -33,7 +33,7 @@ import {   DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {generateUuidv4} from "@core/utils/generate-uuidv4";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
@@ -65,7 +65,7 @@ export class OrderModalComponent {
   private modalService = inject(DialogService);
   private oDS = inject(OrderDetailService);
   private orderService = inject(OrderService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   columnNames = [
     { title: 'id', field: 'id', width: 150, visible: false },
@@ -172,7 +172,7 @@ export class OrderModalComponent {
 
   addDetail(device: any) {
     if (this.orderDetails().some((x) => x.deviceId == device.id)) {
-      return this.tS.toastr({
+      return this.tS.show({
         type: 'warning',
         message: 'Este equipo ya se encuentra agregado en el detalle',
       });
@@ -223,7 +223,7 @@ export class OrderModalComponent {
       if (response.isConfirmed) {
         this.oDS.delete(detail.id).subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -243,7 +243,7 @@ export class OrderModalComponent {
   editDetail(detail: any) {
     this.oDS.put(detail.id, detail).subscribe((response) => {
       if (isApiResponse(response)) {
-        this.tS.toastr({
+        this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
         });
@@ -343,7 +343,7 @@ export class OrderModalComponent {
       });
     }
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.order.customerCompanyId = data.idCliente;
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
@@ -365,7 +365,7 @@ export class OrderModalComponent {
 
   save() {
     if (this.orderDetails().length == 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
       });
@@ -375,7 +375,7 @@ export class OrderModalComponent {
     fechaEmision = formatDate(fechaEmision);
 
     if (!fechaEmision) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione le fecha',
       });
@@ -383,7 +383,7 @@ export class OrderModalComponent {
     }
 
     if (!isDateValid(fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -391,7 +391,7 @@ export class OrderModalComponent {
     }
 
     if (dateIsAfterCurrentDate(fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -421,7 +421,7 @@ export class OrderModalComponent {
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message!,
       });

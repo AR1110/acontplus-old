@@ -17,7 +17,9 @@ public class ImportacionService(IAdoRepository adoRepository) : IImportacionServ
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var dt = await adoRepository.GetDataTableAsync("Importaciones.TipoImportacion_Get", parameters);
+        var ds = await adoRepository.GetDataSetAsync("Importaciones.TipoImportacion_Get", parameters,
+            withTableNames: false);
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "No hay Datos de Importaciones." }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };

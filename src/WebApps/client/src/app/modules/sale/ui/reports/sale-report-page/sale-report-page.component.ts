@@ -12,7 +12,7 @@ import {
   REPORT_FORMAT, SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import {isValidEmail, isValidField} from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
@@ -22,7 +22,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
@@ -88,7 +88,7 @@ export class SaleReportPageComponent {
   format: any;
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService);
   private _tokenUseCase = inject(TokenUseCase);
@@ -245,14 +245,14 @@ export class SaleReportPageComponent {
       this.dataSearch.checkBoxCustomer &&
       !isValidField(this.dataSearch.identificacion)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente',
       });
       return;
     }
     if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Usuario',
       });

@@ -9,16 +9,16 @@ import {
 } from '@angular/forms';
 
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isApiResponse } from '@core/models/api-response';
 import { Pet } from '@modules/vet/models/pet.model';
 import { PetService } from '@modules/vet/services/pet.service';
 import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 
@@ -58,7 +58,7 @@ export class PetModalComponent implements OnInit {
   });
   private readonly petService = inject(PetService);
   private readonly modalRef = inject(MatDialogRef<PetModalComponent>);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   get() {
     this.petService.get({ tipo: 3 }).subscribe((response) => {
@@ -85,7 +85,7 @@ export class PetModalComponent implements OnInit {
     }
   }
 
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.petForm.patchValue({ customerCompanyId: data.idCliente });
   }
 
@@ -109,7 +109,7 @@ export class PetModalComponent implements OnInit {
     if (this.data.id > 0) {
       this.petService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -121,7 +121,7 @@ export class PetModalComponent implements OnInit {
     } else {
       this.petService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

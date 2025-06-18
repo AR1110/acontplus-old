@@ -1,18 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { SharedService } from '@core/services/shared.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatDivider} from "@angular/material/divider";
@@ -41,7 +41,7 @@ export class MovimientoCajaReportComponent {
   isShowCompanyCustomer = false;
   isShowEmployee = true;
   sharedSvc = inject(SharedService);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   tiposDoc = [
     { codDoc: 'MC', descripcion: 'Movimiento Caja' },
@@ -91,7 +91,7 @@ export class MovimientoCajaReportComponent {
   clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 
@@ -116,7 +116,7 @@ export class MovimientoCajaReportComponent {
 
   protected getReport() {
     if (!isValidField(this.dataSearch.codEstab)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Establecimiento es requerido!',
       });
@@ -124,7 +124,7 @@ export class MovimientoCajaReportComponent {
     }
 
     if (!isValidField(this.dataSearch.codDoc)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el tipo documento!',
       });
@@ -138,7 +138,7 @@ export class MovimientoCajaReportComponent {
           this.dataSearch.employeeId > 0
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el cliente/empleado!',
         });
@@ -148,7 +148,7 @@ export class MovimientoCajaReportComponent {
 
     if (this.dataSearch.checkboxUser) {
       if (!this.dataSearch.userId) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el usuario!',
         });

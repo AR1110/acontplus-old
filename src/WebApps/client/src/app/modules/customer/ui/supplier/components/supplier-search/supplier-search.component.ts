@@ -19,7 +19,7 @@ import {
   switchMap,
   tap, debounceTime,
 } from 'rxjs';
-import { SupplierUseCase } from '@customer/domain/usecases/supplier.use-case';
+import { SupplierUseCase } from '@customer/application/usecases/supplier.use-case';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 
 @Component({

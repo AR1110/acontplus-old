@@ -1,6 +1,6 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { SendMailDialogComponent } from '@shared/components/send-mail-dialog/send-mail-dialog.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
@@ -15,11 +15,11 @@ export class SendMailDialogDirective {
   dialogResult = output();
 
   private readonly _dialogService = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   @HostListener('click') onClick() {
     if (!(this.notificationAcontPlus() || this.notificationSri())) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'No ha definido el tipo de notificación',
       });

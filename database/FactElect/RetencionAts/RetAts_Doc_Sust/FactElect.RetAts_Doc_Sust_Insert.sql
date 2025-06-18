@@ -17,6 +17,8 @@ CREATE OR ALTER PROCEDURE FactElect.RetAts_Doc_Sust_Insert @userRoleId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET LANGUAGE SPANISH;
+
 	DECLARE @userId INT,
         @id INT;
 
@@ -74,8 +76,8 @@ BEGIN
                 uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
                 documentoSustentoTributarioId INT '$.documentoSustentoTributarioId',
                 numDocSustento VARCHAR(17) '$.numDocSustento',
-                fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento',
-                fechaRegistroContable DATETIME '$.fechaRegistroContable',
+                fechaEmisionDocSustento DATETIME2 '$.fechaEmisionDocSustento',
+                fechaRegistroContable DATETIME2 '$.fechaRegistroContable',
                 numAutDocSustento VARCHAR(49) '$.numAutDocSustento',
                 pagoLocExt VARCHAR(2) '$.pagoLocExt',
                 tipoRegimenFiscalExteriorId INT '$.tipoRegi',
@@ -160,8 +162,11 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN;
 
-		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
-		VALUES ('RetAtsDocumentoSustento/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
+		INSERT INTO ErroresSistema(method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario,
+        additionalInfo)
+		VALUES ('RetAtsDocumentoSustento/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId, 
+        N'{"userRoleId": ' + CAST(@userRoleId AS NVARCHAR) + N',"params": ' + CAST(@json AS NVARCHAR(MAX)) + N'}'
+        )
 	END CATCH
 END
 GO

@@ -16,7 +16,7 @@ import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-
 import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
 import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
 import {CuentaPorPagarCuota, CuentaPorPagarHistorial, FormaPago} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
 import { ComprobanteEgresoUtil } from '@accounting/comprobante-egreso/application/comprobante-egreso/comprobante-egreso.util';
@@ -149,7 +149,7 @@ export const ComprobanteEgresoStore = signalStore(
 
 
   withMethods(
-    (store, useCase = inject(ComprobanteEgresoUseCase), tS = inject(ToasterService)) => ({
+    (store, useCase = inject(ComprobanteEgresoUseCase), tS = inject(ToastrNotificationService)) => ({
 
 
 
@@ -226,7 +226,7 @@ export const ComprobanteEgresoStore = signalStore(
         const { idSubEntidadFinanciera, fechaEmision, nro, referencia, lote, aprobacion, idCiudad, idBanco, posfechado } = store.dataFormaPago();
 
         if (!getValidId(idSubEntidadFinanciera)) {
-          tS.toastr({
+          tS.show({
             type: 'warning',
             message: 'Seleccione SubEntidad financiera'
           })
@@ -234,7 +234,7 @@ export const ComprobanteEgresoStore = signalStore(
         }
 
         if (!isDateValid(fechaEmision)) {
-          tS.toastr({
+          tS.show({
             type: 'warning',
             message: 'Ingrese una fecha válida'
           })
@@ -242,7 +242,7 @@ export const ComprobanteEgresoStore = signalStore(
         }
 
         if (!getValidId(valorAbono)) {
-          tS.toastr({
+          tS.show({
             type: 'warning',
             message: 'Ingrese el valor abono'
           })
@@ -272,7 +272,7 @@ export const ComprobanteEgresoStore = signalStore(
           if (store[key as keyof typeof validations]()) {
             for (const { condition, message } of validations[key as keyof typeof validations]) {
               if (condition) {
-                tS.toastr({
+                tS.show({
                   type: 'warning',
                   message: message
                 })

@@ -9,7 +9,7 @@ import {
   GroupedEstabBodega,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -75,7 +75,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   private modalRef = inject(MatDialogRef<OrderMaintenanceModalComponent>);
   private orderSvc = inject(OrderService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
   private openModalProductSvc = inject(OpenModalProductService);
@@ -687,7 +687,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       this.bodegas.set(dataEstab.bodegas);
 
       if (this.puntosEmision().length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message:
             'No tienes Puntos de Emisión asignado a este establecimiento',
@@ -696,7 +696,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return;
       }
       if (this.bodegas().length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No tienes bodegas asignado a este establecimiento',
         });
@@ -777,7 +777,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         cancelButtonText: 'No',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'info',
             message: 'Seleccione el producto de tipo servicio ',
           });
@@ -1005,7 +1005,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
     //cuando es detalle personalizado el producto tiene que ser de tipo servicio
     if (this.detailCustom && product.llevaInventario) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'Cuando la opción es Detalle Personlizado el producto tiene que ser de tipo servicio',
@@ -1324,7 +1324,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   isValidForm() {
     if (!(this.order.establecimientoId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
       });
@@ -1332,7 +1332,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (!(this.order.puntoEmisionId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Punto de emisión',
       });
@@ -1340,7 +1340,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (!(this.order.customerCompanyId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el cliente',
       });
@@ -1348,7 +1348,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (!isDateValid(this.order.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -1356,7 +1356,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (dateIsAfterCurrentDate(this.order.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -1378,7 +1378,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (this.orderMaintenances().length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese al menos un artículo en el detalle',
       });
@@ -1390,7 +1390,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         (row) => row.llevaInventario && row.quantity === 0
       )
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -1399,7 +1399,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (this.orderMaintenances().some((row) => !(row.bodegaId > 0))) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
       });
@@ -1417,7 +1417,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           )
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message:
             'Cuando el orden se guarda como documento, todos los equipos deben tener al menos un producto agregado.',
@@ -1427,7 +1427,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (this.order.total <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No se puede generar el documento con valor total 0!',
       });
@@ -1500,13 +1500,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
         next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

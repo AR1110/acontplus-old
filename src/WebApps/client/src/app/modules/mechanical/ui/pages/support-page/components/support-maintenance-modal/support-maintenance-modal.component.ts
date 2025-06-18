@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ProductSale } from '@inventory/domain/models/product.model';
 import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
@@ -63,7 +63,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 
   private supportDetailUseCase = inject(SupportDetailUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   readonly tabulatorComponent = viewChild.required(TabulatorComponent);
 
@@ -120,8 +120,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
   vehicle = signal<any>({});
 
   //Draw Totals Tax
-  htmlImpuestoTotal = '';
-  htmlIvaTotal = '';
+  htmlImpuestoTotal = signal('');
+  htmlIvaTotal = signal('');
 
   productSearch = {
     textSearch: '',
@@ -264,8 +264,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
         //create delete button
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
-        delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
+        delBtn.innerHTML = `x`;
+        delBtn.classList.add('btn', 'btn-danger', 'btn-xs', 'btn-sm');
         delBtn.addEventListener('click', () => {
           const rowData = cell.getRow().getData();
           this.askToDelete(rowData);
@@ -883,8 +883,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
       this.data.discount = discount;
       this.data.percentageDiscount = percentageDiscount;
       // this.infrastructure.tip = propina;
-      this.htmlImpuestoTotal = htmlImpuestoTotal;
-      this.htmlIvaTotal = htmlIvaTotal;
+      this.htmlImpuestoTotal.set(htmlImpuestoTotal);
+      this.htmlIvaTotal.set(htmlIvaTotal);
     } catch (error) {
       console.log(error);
     }
@@ -960,7 +960,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
   private isValidForm() {
     if (this.details().length === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese al menos un artículo en el detalle',
       });
@@ -970,7 +970,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     if (
       this.details().some((row) => row.llevaInventario && row.quantity === 0)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -979,7 +979,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     }
 
     if (this.details().some((row) => !(row.bodegaId > 0))) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
       });
@@ -987,7 +987,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     }
 
     if (this.data.total <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No se puede generar el documento con valor total 0!',
       });
@@ -1023,13 +1023,13 @@ export class SupportMaintenanceModalComponent implements OnInit {
       this.supportDetailUseCase.post(params).subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });

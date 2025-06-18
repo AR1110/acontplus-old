@@ -7,7 +7,7 @@ import {
 } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { ControlCaja } from '@accounting/caja/domain/caja.entity';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
@@ -22,7 +22,7 @@ import { CierreCajaModalComponent } from '@accounting/caja/presentation/componen
 import { FiltroDetalleCajaReportModal } from '@accounting/caja/presentation/control-caja-modal/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
 import { FormsModule } from '@angular/forms';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
-import { DetalleArqueoControlCajaModalComponent } from '@accounting/caja/presentation/control-caja-modal/detalle-arqueo-control-caja-modal/detalle-arqueo-control-caja-modal.component';
+import { DetalleArqueoControlCajaComponent } from '@accounting/caja/presentation/control-caja-modal/detalle-arqueo-control-caja/detalle-arqueo-control-caja.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
@@ -103,7 +103,7 @@ export class ControlCajaModalComponent {
   private dialogSvc = inject(DialogService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private pS = inject(UserRoleStateService);
   private _tokenUseCase = inject(TokenUseCase);
   private format = REPORT_FORMAT.PDF;
@@ -118,14 +118,14 @@ export class ControlCajaModalComponent {
     { key: 'faltante', label: 'Faltante', type: 'string' },
     { key: 'sobrante', label: 'Sobrante', type: 'string' },
     { key: 'totalArqueo', label: 'Total', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
+    { key: 'statusName', label: 'Estado', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
 
   pagination = signal(new MatPagination());
 
   getMovimientosCaja() {
-    let dataSearch = {
+    const dataSearch = {
       idCaja: this.params.idCaja,
       pageIndex: this.dataSearch.pageIndex,
       pageSize: this.dataSearch.pageSize,
@@ -137,21 +137,11 @@ export class ControlCajaModalComponent {
         : this.dataSearch.statusMovement,
     };
     this._controlCajaUseCase.getAll(dataSearch).subscribe( (response) => {
-        const { movimientos=[] } = response as { movimientos: Array<ControlCaja> };
-        const movimientosCaja = movimientos.map((item:any, index: number)=>{
-          return {
-            ...item,
-            index: index+1,
-            nomEstado: item.estado ? 'ABIERTO': 'CERRADO',
-          }
-        })
-        this.movimientosCaja.set(movimientosCaja);
+        this.movimientosCaja.set(response.data);
         this.pagination.update(item=>{
           return {
             ...item,
-            totalRecords: this.movimientosCaja.length > 0
-              ? this.movimientosCaja()[0].totalRecords
-              : 0
+            totalRecords: response.totalRecords
           }
         })
     });
@@ -418,7 +408,7 @@ export class ControlCajaModalComponent {
   getReportTransactionPending(format: 'pdf' | 'excel') {
     try {
       if (!(this.params.idUsuario > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'idUsuario no proporcionado!',
         });
@@ -434,16 +424,16 @@ export class ControlCajaModalComponent {
         toDate = new Date();
       }
 
-      let parts: string[] =
+      const parts: string[] =
         this.dataMovientoControCaja.fechaApertura.split(' ');
-      let dateParts: number[] = parts[0]
+      const dateParts: number[] = parts[0]
         .split('/')
         .map((part) => parseInt(part, 10));
-      let timeParts: number[] = parts[1]
+      const timeParts: number[] = parts[1]
         .split(':')
         .map((part) => parseInt(part, 10));
 
-      let convertedFromDate: Date = new Date(
+      const convertedFromDate: Date = new Date(
         dateParts[2],
         dateParts[1] - 1,
         dateParts[0],
@@ -451,7 +441,7 @@ export class ControlCajaModalComponent {
         timeParts[1],
       );
 
-      let dataParams = {
+      const dataParams = {
         tipo: 2,
         ckFecha: true,
         codDoc: null,
@@ -500,7 +490,7 @@ export class ControlCajaModalComponent {
   openModalDetalleArqureoCaja(params: ControlCaja) {
     try {
        this.dialogSvc.open(
-        DetalleArqueoControlCajaModalComponent,
+        DetalleArqueoControlCajaComponent,
         {
           data: params || {}
         }

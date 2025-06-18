@@ -3,7 +3,7 @@ import { Component, inject,   signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -33,7 +33,7 @@ import {ProductPhotoPutStatusUseCase} from "@inventory/domain/usecases/product-p
 export class ProductPhotoComponent {
   readonly dialogRef = inject(MatDialogRef<ProductPhotoComponent>);
   readonly params = inject(MAT_DIALOG_DATA);
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
   private $productPhotoPostUseCase = inject(ProductPhotoPostUseCase)
   private $productPhotoPutUseCase = inject(ProductPhotoPutUseCase)
   private $getProductPhotoUseCase = inject(GetProductPhotoUseCase)
@@ -73,7 +73,7 @@ export class ProductPhotoComponent {
     if (file) {
       // Validate the file size
       if (file.size > 1 * 1024 * 1024) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El archivo debe ser menor de 1MB.'
         })
@@ -83,7 +83,7 @@ export class ProductPhotoComponent {
       // Validate the file type
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!allowedTypes.includes(file.type)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Solo se permiten imágenes PNG o JPEG.'
         })
@@ -100,7 +100,7 @@ export class ProductPhotoComponent {
 
   async upload() {
     if (!this.selectedFile) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No hay archivo seleccionado.'
       })
@@ -136,13 +136,13 @@ export class ProductPhotoComponent {
           file: this.selectedFile
         }).subscribe(response => {
           if (response.code === "0") {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message
             })
           }
           if (response.code === "1") {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message
             })
@@ -157,13 +157,13 @@ export class ProductPhotoComponent {
           file: this.selectedFile
         }).subscribe(response => {
           if (response.code === "0") {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message
             })
           }
           if (response.code === "1") {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message
             })
@@ -195,13 +195,13 @@ export class ProductPhotoComponent {
 
       this.$productPhotoDefaultUseCase.execute(item.id, !item.isDefault).subscribe(response => {
         if (response.code === "0") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code === "1") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message
           })
@@ -227,13 +227,13 @@ export class ProductPhotoComponent {
     if (isConfirmed) {
       this.$productPhotoPutStatusUseCase.execute(item.id).subscribe(response => {
         if (response.code === "0") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code === "1") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message
           })

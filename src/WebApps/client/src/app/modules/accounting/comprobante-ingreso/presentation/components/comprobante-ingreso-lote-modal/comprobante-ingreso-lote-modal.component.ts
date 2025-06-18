@@ -22,7 +22,7 @@ import {
   PaymentHistory,
 } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DatePipe } from '@angular/common';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
@@ -64,7 +64,7 @@ export class ComprobanteIngresoLoteModalComponent {
 
   modal = inject(MatDialogRef<ComprobanteIngresoLoteModalComponent>);
   modalSvc = inject(DialogService);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
@@ -175,7 +175,7 @@ export class ComprobanteIngresoLoteModalComponent {
 
   openModalFormaCobro() {
     if (this.data.totalSaldo <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No hay cuotas pendientes.',
       });
@@ -248,7 +248,7 @@ export class ComprobanteIngresoLoteModalComponent {
 
           this.data.valorCambio = roundNumber(dataSubTotal.valorCambio, 5);
 
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: 'Agregado Correctamente',
           });
@@ -411,7 +411,7 @@ export class ComprobanteIngresoLoteModalComponent {
 
           this.data.valorCambio = roundNumber(dataSubTotal.valorCambio, 5);
 
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: 'Eliminado correctamente',
           });
@@ -425,7 +425,7 @@ export class ComprobanteIngresoLoteModalComponent {
   save() {
     try {
       if (!(this.comprobante.idCliente > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el cliente',
         });
@@ -433,7 +433,7 @@ export class ComprobanteIngresoLoteModalComponent {
         return;
       }
       if (this.multiplesPaymentType.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese al menos un abono',
         });
@@ -441,7 +441,7 @@ export class ComprobanteIngresoLoteModalComponent {
       }
 
       if (this.paymentDetails.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Cobro detalle vacio!',
         });
@@ -504,13 +504,13 @@ export class ComprobanteIngresoLoteModalComponent {
 
           this._comprobanteIngresoUseCase.create(data).subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

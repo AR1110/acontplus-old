@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { SharedService } from '@core/services/shared.service';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class AtsService {
   #url = `${PATHS_API.BILLING}${BILLING_PATHS.ATS}`;
   #http = inject(HttpClient);
   private readonly _sharedSvc = inject(SharedService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   constructor() {}
 
@@ -38,7 +38,7 @@ export class AtsService {
           this._sharedSvc.saveFile(response);
         },
         error: (error: any) => {
-          return this._tS.toastr({
+          return this._tS.show({
             type: 'warning',
             message: `Error en el servidor`,
           });

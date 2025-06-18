@@ -14,7 +14,7 @@ import {FormsModule} from "@angular/forms";
 import {
   UpdateAsignacionEstabUseCase
 } from "@modules/config/application/use-cases/asignacion-estab/update-asignacion-estab.use-case";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import Swal from "sweetalert2";
 import {
   CreateAsignacionEstabUseCase
@@ -42,7 +42,7 @@ export class ListAsignacionEstabComponent {
   private $updateAsignacionEstabUseCase = inject(UpdateAsignacionEstabUseCase)
   private $createAsignacionEstabUseCase = inject(CreateAsignacionEstabUseCase)
   private $userCustomerStore = inject(UserCustomerStore);
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   private _dialogSvc = inject(DialogService)
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
@@ -87,13 +87,13 @@ this.getList()
   onChangeDefault(data: AsignacionEstabList) {
     this.$updateAsignacionEstabUseCase.execute(data).subscribe((response) => {
         if (response.code === "0") {
-          this._tS.toastr({
+          this._tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code === "1") {
-          this._tS.toastr({
+          this._tS.show({
             type: 'success',
             message: response.message
           })
@@ -133,13 +133,13 @@ this.getList()
       }
       this.$createAsignacionEstabUseCase.execute(params).subscribe((response) => {
           if (response.code === "0") {
-            this._tS.toastr({
+            this._tS.show({
               type: 'warning',
               message: response.message
             })
           }
           if (response.code === "1") {
-            this._tS.toastr({
+            this._tS.show({
               type: 'success',
               message: response.message
             })

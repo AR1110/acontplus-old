@@ -1,7 +1,7 @@
 import { Component, inject, Input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
+import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 import {getValidId, isValidField} from "@core/utils/utils";
 import { BrandAddEditDirective } from "@inventory/ui/directives/brand-add-edit.directive";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
@@ -39,7 +39,7 @@ export class ModelAddEditComponent {
   readonly dialogRef = inject(MatDialogRef<ModelAddEditComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _productUseCase = inject(ProductUseCase)
 
   private  _modeloUseCase= inject(InventarioModeloUseCase)
@@ -61,13 +61,13 @@ export class ModelAddEditComponent {
     next: (response: ApiResponse) => {
 
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if (response.code === "1") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message
         })
@@ -107,7 +107,7 @@ export class ModelAddEditComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción'
         })

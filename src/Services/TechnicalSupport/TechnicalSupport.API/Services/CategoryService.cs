@@ -1,4 +1,6 @@
-﻿namespace TechnicalSupport.API.Services;
+﻿using System.Data;
+
+namespace TechnicalSupport.API.Services;
 
 public class CategoryService : ICategoryService
 {
@@ -35,10 +37,12 @@ public class CategoryService : ICategoryService
     {
         if (!await _context.Categories.AnyAsync()) return new ApiResponse { Code = "0", Message = "No data" };
 
-        var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
-        if (DataValidation.DataTableIsNull(dt)) return new ApiResponse { Code = "0", Message = "No data" };
-
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+        var ds = await _adoRepository.GetDataSetAsync("TechnicalSupport.Category_Get", parameters,
+            withTableNames: false);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        return DataValidation.DataTableIsNull(dt)
+            ? new ApiResponse { Code = "0", Message = "No data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
 

@@ -17,7 +17,7 @@ import { CuentaPorPagarCuotaConfig } from '@accounting/cuenta-por-pagar/domain/c
 import { TiempoCreditoSelectHtmlOnly } from '@accounting/shared/models/tiempo-credito.interface';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -55,7 +55,7 @@ export class CuentaPorPagarCuotaModalComponent {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarCuotaModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private useCase = inject(CuentaPorPagarUseCase)
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   loading = signal(false);
   tiemposCredito = signal<TiempoCreditoSelectHtmlOnly[]>([]);
@@ -158,13 +158,13 @@ export class CuentaPorPagarCuotaModalComponent {
       )
       .subscribe(response => {
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if (response.code === "1") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message
         })
@@ -185,14 +185,14 @@ export class CuentaPorPagarCuotaModalComponent {
 
   private isConfigDateValid(sameDay?: keyof typeof this.configDateOptions){
     if (!isValidField(this.configDate.value)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: "Configuración fecha inválida"
       })
       return
     }
     if (this.configDate.value?.getFullYear().toString().length !== 4) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El Formato del Año es incorrecto'
       })
@@ -200,7 +200,7 @@ export class CuentaPorPagarCuotaModalComponent {
     }
 
     if (this.configDateOptions.SAME_DAY===sameDay && this.configDate.value?.getDate() >= 28) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Para la opción  "Mismo Día", el día tiene que ser menor a 28 días!'
       })
@@ -278,7 +278,7 @@ export class CuentaPorPagarCuotaModalComponent {
     totalCuotaIndexMenor = roundNumber(totalCuotaIndexMenor, DECIMALS.CINCO)
 
     if (totalCuotaIndexMenor > this.data.total) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'El valor de la cuota tiene que ser menor al Total del Documento',

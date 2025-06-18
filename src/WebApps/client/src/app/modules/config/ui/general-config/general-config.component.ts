@@ -24,9 +24,9 @@ import { UpdateGeneralConfigUseCase } from '@modules/config/application/use-case
 import { DecimalSelectComponent } from '@modules/config/ui/general-config/decimal-select/decimal-select.component';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({
   selector: 'app-general-config',
@@ -193,7 +193,7 @@ export class GeneralConfigComponent {
     this.notificacionesSelected = $event;
   }
 
-  selectedCustomer($event: CompanyCustomer) {
+  selectedCustomer($event: CompanyCustomerEntity) {
     // console.log($event)
     this.configVenta.idCliente = $event.idCliente;
     this.configVenta.razonSocialComprador = $event.nombreFiscal;

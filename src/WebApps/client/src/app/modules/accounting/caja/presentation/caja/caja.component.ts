@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { getPermisosLocal } from '@core/utils/utils';
 import { CashboxList } from '@accounting/caja/domain/caja.entity';
@@ -45,23 +45,13 @@ import { DialogService } from '@core/services/dialog.service';
   templateUrl: './caja.component.html',
 })
 export class CajaComponent implements OnInit {
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _cajaUseCase = inject(CajaUseCase);
   private _dialogSvc = inject(DialogService);
 
   acciones: any = {};
 
   cashboxs = signal<CashboxList[]>([]);
-
-  dataSearch = {
-    pageIndex: 1,
-    pageSize: 10,
-    maxSize: 5,
-  };
-
-  page = 1;
-
-  totalRecords = 0;
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -81,17 +71,16 @@ export class CajaComponent implements OnInit {
 
   getCashboxs() {
     const params = {
-      pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize,
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
     };
 
     this._cajaUseCase.getAll(params).subscribe((response) => {
-      this.cashboxs.set(response);
+      this.cashboxs.set(response.data);
       this.pagination.update((item) => {
         return {
           ...item,
-          totalRecords:
-            this.cashboxs.length > 0 ? this.cashboxs()[0]?.totalRecords : 0,
+          totalRecords: response.totalRecords,
         };
       });
     });
@@ -132,13 +121,13 @@ export class CajaComponent implements OnInit {
         if (result.isConfirmed) {
           this._cajaUseCase.delete(id).subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

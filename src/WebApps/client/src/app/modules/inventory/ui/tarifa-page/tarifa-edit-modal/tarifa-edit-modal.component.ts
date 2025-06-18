@@ -1,7 +1,7 @@
 import { Component, inject,  signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -31,7 +31,7 @@ export class TarifaEditModalComponent {
     ventaPorMayor: false,
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<TarifaEditModalComponent>);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   tarifaSvc = inject(TarifaService);
 
   btnText = 'Actualizar';
@@ -48,13 +48,13 @@ export class TarifaEditModalComponent {
 
   successReponse =  (response: ApiResponse) => {
       if (response.code === '0') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message,
         });
       }
       if (response.code === '1') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
@@ -71,7 +71,7 @@ export class TarifaEditModalComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción',
         });
@@ -79,7 +79,7 @@ export class TarifaEditModalComponent {
       }
 
       if (!isValidField(this.data.codigo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la código',
         });

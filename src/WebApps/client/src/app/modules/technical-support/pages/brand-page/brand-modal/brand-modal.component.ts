@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Category } from '@modules/technical-support/models/category';
 import { Serie } from '@modules/technical-support/models/serie';
@@ -30,7 +30,7 @@ export class BrandModalComponent {
   private categoryService = inject(CategoryService);
   private modalRef = inject(MatDialogRef<BrandModalComponent>);
   private serieService = inject(SerieService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   brandForm = new FormGroup({
     id: new FormControl(0),
     categoryId: new FormControl(0, Validators.required),
@@ -150,13 +150,13 @@ export class BrandModalComponent {
     if (this.series.length > 0) {
       this.series.forEach((x) => {
         if (!x.code) {
-          return this.tS.toastr({
+          return this.tS.show({
             type: 'warning',
             message: 'Código de la serie invalido',
           });
         }
         if (!x.name) {
-          return this.tS.toastr({
+          return this.tS.show({
             type: 'warning',
             message: 'Nombre de la serie invalido',
           });
@@ -192,7 +192,7 @@ export class BrandModalComponent {
       if (response.isConfirmed) {
         this.serieService.delete(item.id).subscribe(  (response) => {
             if (isApiResponse(response)) {
-              this.tS.toastr({
+              this.tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
               });
@@ -209,7 +209,7 @@ export class BrandModalComponent {
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message,
       });

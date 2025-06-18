@@ -7,7 +7,7 @@ import { FormaPagoSri } from '@shared/models/forma-pago-sri';
 import { TiempoCredito } from '@accounting/shared/models/tiempo-credito.interface';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { InvoiceService } from '@billing/services/invoice.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
@@ -55,7 +55,7 @@ export class ConvertDocDialogComponent {
 
   private _notaEntregaUseCase = inject(NotaEntregaUseCase);
   private invoiceSvc = inject(InvoiceService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
   @ViewChild(TabulatorComponent, { static: false })
   tabulatorComponent!: TabulatorComponent;
@@ -155,13 +155,13 @@ export class ConvertDocDialogComponent {
 
   successResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -261,34 +261,34 @@ export class ConvertDocDialogComponent {
 
   isValidForm() {
     if (!(this.data.supportId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'supportId no proporcionado',
       });
     }
     if (!isValidField(this.data.codEstab)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
       });
       return;
     }
     if (!(this.data.idPuntoEmision > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Punto de Emisión',
       });
       return;
     }
     if (!(this.data.idTiempoCredito > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Tiempo Credito',
       });
       return;
     }
     if (!isDateValid(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -296,7 +296,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -317,7 +317,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (!isDateValid(this.data.fechaVencimiento)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la Fecha de vencimiento',
       });
@@ -325,28 +325,28 @@ export class ConvertDocDialogComponent {
     }
 
     if (!(this.companyCustomer.idCliente > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El cliente es requerido',
       });
     }
 
     if (!(this.companyCustomer.idTipoIdentificacion > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: `idTipoIdentificacion no proporcionada: ${this.companyCustomer.idTipoIdentificacion} `,
       });
     }
 
     if (!isValidField(this.companyCustomer.identificacionComprador)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'identificacionComprador es requerido',
       });
       return;
     }
     if (!isValidField(this.companyCustomer.razonSocialComprador)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'razonSocialComprador es requerido',
       });
@@ -354,7 +354,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (!(this.data.idUsuario > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Vendedor',
       });
@@ -362,7 +362,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -371,7 +371,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (this.details().some((row) => !(row.bodegaId > 0))) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
       });
@@ -379,7 +379,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (this.data.total <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No se puede generar el documento con valor total 0!',
       });
@@ -432,7 +432,7 @@ export class ConvertDocDialogComponent {
       const cuotas = isValidGeneratorQuota(data);
 
       if (cuotas.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No se generó las cuotas correctamente',
         });
@@ -501,7 +501,7 @@ export class ConvertDocDialogComponent {
       const cuotas = isValidGeneratorQuota(dataGenerateQuota);
 
       if (cuotas.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No se generó las cuotas correctamente',
         });

@@ -10,7 +10,7 @@ import {
   REPORT_FORMAT,
   SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidEmail, isValidField } from '@core/utils/utils';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { SharedService } from '@core/services/shared.service';
@@ -26,7 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
@@ -36,7 +36,7 @@ import { ReportButtonsComponent } from '@shared/components/report-buttons/report
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 const imports = [
   FormsModule,
@@ -70,7 +70,7 @@ const imports = [
 })
 export class InventoryReportComponent implements OnInit {
   private pS = inject(UserRoleStateService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
   appNotifiSvc = inject(NotificacionService);
   private readonly _tokenUseCase = inject(TokenUseCase);
@@ -258,7 +258,7 @@ export class InventoryReportComponent implements OnInit {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 
@@ -282,7 +282,7 @@ export class InventoryReportComponent implements OnInit {
     const selectedTab = this.getSelectedTab();
     if (this.dataSearch.checkboxArticuloFiltro) {
       if (!(this.dataSearch.idArticulo > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Artículo!',
         });
@@ -290,7 +290,7 @@ export class InventoryReportComponent implements OnInit {
       }
       if (this.dataSearch.checkboxUsuarioFiltro) {
         if (!(this.dataSearch.idUsuario > 0)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Seleccione el Usuario!',
           });
@@ -301,7 +301,7 @@ export class InventoryReportComponent implements OnInit {
 
     if (this.dataSearch.chkProveedor) {
       if (!this.dataSearch.numeroIdentificacion) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Proveedor!',
         });
@@ -314,7 +314,7 @@ export class InventoryReportComponent implements OnInit {
       this.dataSearch.checkboxSubFamiliaFiltro
     ) {
       if (!this.dataSearch.idSubFamilia) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione la SubFamilia',
         });
@@ -324,7 +324,7 @@ export class InventoryReportComponent implements OnInit {
 
     if (this.dataSearch.checkboxStockFiltro) {
       if (!this.dataSearch.byStock) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Stock',
         });
@@ -334,7 +334,7 @@ export class InventoryReportComponent implements OnInit {
 
     if (this.dataSearch.checkboxUsuarioFiltro) {
       if (!(this.dataSearch.idUsuario > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
@@ -345,7 +345,7 @@ export class InventoryReportComponent implements OnInit {
     if (selectedTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Ingrese la ubicación ',
           });
@@ -378,7 +378,7 @@ export class InventoryReportComponent implements OnInit {
     if (selectedTab === 2) {
       if (this.dataSearch.checkboxObtenerRentabilidad) {
         if (!getValidId(this.dataSearch.idTarifa)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'La Tarifa es obligatorio',
           });

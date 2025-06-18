@@ -33,9 +33,9 @@ AS
         CAST(ce.total AS DECIMAL(18,2)) AS totalComprobante,
         ce.observacion,
 
-        -- Información del cliente
-        cli.BusinessName AS razonSocialCliente,
-        cli.IDCard AS cedulaRucCliente,
+        -- Información del proveedor
+        cli.BusinessName AS razonSocialProveedor,
+        cli.IDCard AS cedulaRucProveedor,
 
         -- Información del documento por pagar
         cpp.serieComprobante AS serieDocumento,
@@ -59,13 +59,16 @@ AS
 
         -- Información bancaria (opcional)
         COALESCE(ban.descripcion, '') AS nombreBanco,
-        pag.idBanco AS idBanco,
-        pag.idSubEntidadFinanciera AS idSubEntidadFinanciera,
+        pag.idBanco,
+        pag.idSubEntidadFinanciera,
 
-        -- Información del pago
-        pag.secuencial AS numeroPago,
+        -- Información del pago 
         FORMAT(pag.fechaEmision, 'dd/MM/yyyy  HH:mm') AS fechaPago,
-        pag.fechaEmision AS fechaPagoTimestamp
+        pag.fechaEmision AS fechaPagoTimestamp,
+        pag.nro,
+        pag.aprobacion,
+        pag.referencia,
+        pag.lote
 
     FROM dbo.ComprobanteEgreso AS ce
         INNER JOIN Sri.Establecimiento AS est ON est.idEstablecimiento = ce.idEstablecimiento
@@ -80,9 +83,10 @@ AS
 GO
 
 -- Consulta de prueba
-SELECT TOP 100
-    *
-FROM Contab.V_ComprobanteEgreso;
-SELECT TOP 1
-    *
-FROM dbo.ComprobanteEgreso
+-- SELECT TOP 100
+--     *
+-- FROM Contab.V_ComprobanteEgreso;
+-- SELECT TOP 1
+--     *
+-- FROM dbo.ComprobanteEgreso
+-- SELECT top 1 * FROM PagoDetalle

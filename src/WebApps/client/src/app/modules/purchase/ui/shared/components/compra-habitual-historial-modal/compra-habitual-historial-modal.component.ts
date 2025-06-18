@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { CompraHabitual } from '@purchase/domain/compra-habitual.model';
 import { CompraHabitualService } from '@purchase/data/services/compra-habitual.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -28,7 +28,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 export class CompraHabitualHistorialModalComponent implements OnInit {
   private modal = inject(MatDialogRef<CompraHabitualHistorialModalComponent>);
   private compraHabitualSvc = inject(CompraHabitualService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   params = inject(MAT_DIALOG_DATA);
 
   articleName = '';
@@ -69,7 +69,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
           if (this.comprasHabituales().length > 0) {
             this.articleName = this.comprasHabituales()[0].articulo;
           } else {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message:
                 'Este articulo aun no tiene registros de compra habitual',
@@ -110,14 +110,14 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
 
       this.compraHabitualSvc.delete(params).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
 
         if (response.code === '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });

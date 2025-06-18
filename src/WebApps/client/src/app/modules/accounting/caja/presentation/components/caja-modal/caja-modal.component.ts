@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { User } from '@core/models/user.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Turno } from '@accounting/shared/models/turno.model';
 import { CajaUseCase } from '@accounting/caja/application/use-cases/caja.use-case';
@@ -36,7 +36,7 @@ export class CajaModalComponent implements OnInit {
   private _dialogRef = inject(MatDialogRef<CajaModalComponent>);
   private _cajaUseCase = inject(CajaUseCase);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   readonly params = inject<{
     idCaja: 0;
     descripcion: '';
@@ -92,13 +92,13 @@ export class CajaModalComponent implements OnInit {
 
   commonResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -110,7 +110,7 @@ export class CajaModalComponent implements OnInit {
     try {
       const data = this.dataForm.value;
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Complete todos los campos requeridos!',
         });

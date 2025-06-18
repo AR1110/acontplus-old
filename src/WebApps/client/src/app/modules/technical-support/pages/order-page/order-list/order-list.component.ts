@@ -2,7 +2,7 @@ import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
@@ -73,7 +73,7 @@ export class OrderListComponent implements OnInit {
   private modalService = inject(DialogService);
   private orderService = inject(OrderService);
   private sharedService = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
@@ -105,7 +105,7 @@ export class OrderListComponent implements OnInit {
       this.orderService.delete(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -223,7 +223,7 @@ export class OrderListComponent implements OnInit {
 
   openModalMaintenance(item: any) {
     if (!(item.assignedUserId > 0)) {
-      return this.tS.toastr({
+      return this.tS.show({
         type: 'warning',
         message:
           'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',

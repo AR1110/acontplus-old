@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ApiResponse } from '@core/models/api-response';
 import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
@@ -48,7 +48,7 @@ export class ProductionAreaAddEditModalComponent {
   #modalRef = inject(MatDialogRef<ProductionAreaAddEditModalComponent>);
   #productionAreaService = inject(ProductionAreaService);
   #sharedService = inject(SharedService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
   getEstabAsign() {
     this.#sharedService.getEstabAsign().subscribe((response) => {
@@ -72,7 +72,7 @@ export class ProductionAreaAddEditModalComponent {
 
   onSave() {
     if (this.productionAreaForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise los datos correctos',
       });
@@ -109,7 +109,7 @@ export class ProductionAreaAddEditModalComponent {
   }
 
   successResponse(response: ApiResponse) {
-    this.#tS.toastr({
+    this.#tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,
     });

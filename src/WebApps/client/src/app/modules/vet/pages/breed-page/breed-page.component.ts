@@ -5,7 +5,7 @@ import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
 import { BreedModalComponent } from '@modules/vet/components/breed-modal/breed-modal.component';
 import swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -33,7 +33,7 @@ export class BreedPageComponent implements OnInit {
   breeds = signal<Breed[]>([]);
   private readonly breedService = inject(BreedService);
   private readonly modalService = inject(DialogService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   loadBreeds() {
     this.breedService.get({}).subscribe((response) => {
@@ -62,7 +62,7 @@ export class BreedPageComponent implements OnInit {
         if (response.isConfirmed) {
           this.breedService.delete(item.id).subscribe((response) => {
             if (isApiResponse(response)) {
-              this.tS.toastr({
+              this.tS.show({
                 type: response.code == '1' ? 'success' : 'warning',
                 message: response.message,
               });

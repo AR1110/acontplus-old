@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { SubCategoryService } from '@inventory/data/services/sub-category.service';
 import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
@@ -40,7 +40,7 @@ export class SubCategoryDialogComponent implements OnInit {
 
   private subCategorySvc = inject(SubCategoryService);
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nueva SubCategoria';
   categorias = signal<any[]>([])
@@ -99,13 +99,13 @@ export class SubCategoryDialogComponent implements OnInit {
 
   private successResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -114,7 +114,7 @@ export class SubCategoryDialogComponent implements OnInit {
   };
   save() {
     if (!isValidField(this.data.descripcion)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese la Descripción',
       });
@@ -122,7 +122,7 @@ export class SubCategoryDialogComponent implements OnInit {
     }
 
     if (!isValidField(this.data.siglas)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese la Sigla',
       });
@@ -130,7 +130,7 @@ export class SubCategoryDialogComponent implements OnInit {
     }
     if (this.esEditar() && this.data.ultimoSecuencial) {
       if (!this.data.ultimoSecuencial) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese Nro. Secuencial',
         });
@@ -138,7 +138,7 @@ export class SubCategoryDialogComponent implements OnInit {
       }
 
       if (isNaN(this.data.ultimoSecuencial) || this.data.ultimoSecuencial < 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Nro. Secuencial tiene que ser un número',
         });
@@ -179,13 +179,13 @@ export class SubCategoryDialogComponent implements OnInit {
         .put(obj, this.data.subcategoryPhotoId, this.selectedFile())
         .subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });
@@ -202,13 +202,13 @@ export class SubCategoryDialogComponent implements OnInit {
         .post(this.params.idSubFamilia, this.selectedFile())
         .subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });

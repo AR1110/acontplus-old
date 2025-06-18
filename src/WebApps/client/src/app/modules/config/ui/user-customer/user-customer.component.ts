@@ -8,7 +8,7 @@ import {MatPagination} from "@shared/models/pagination.model";
 import { MatIconModule} from "@angular/material/icon";
 import {MatButtonModule } from "@angular/material/button";
 import {PageEvent} from "@angular/material/paginator";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {UserCustomerList} from "@modules/config/domain/models/user-customer/user-customer.model";
 import {finalize} from "rxjs/operators";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -35,7 +35,7 @@ import {
 })
 export class UserCustomerComponent {
   private $listUserCustomerUseCase = inject(ListUserCustomerUseCase)
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   private _dialogSvc = inject(DialogService)
 
   $loading = signal(false)
@@ -66,7 +66,7 @@ export class UserCustomerComponent {
       pageSize: this.pagination().pageSize
     }
     if(this.$loading()) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Hay proceso pendiente'
       })

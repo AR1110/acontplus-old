@@ -9,12 +9,12 @@ import {
 } from '@angular/forms';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SubEntidadFinanciera } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
-import { ToasterService } from '@core/services/toaster.service';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatDialogRef} from "@angular/material/dialog";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
@@ -33,7 +33,7 @@ import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directiv
 })
 export class AnticipoModalComponent {
   private activeModal = inject(MatDialogRef<AnticipoModalComponent>);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _anticipoUseCase = inject(AnticipoUseCase);
 
   textBtn = 'Guardar';
@@ -89,7 +89,7 @@ export class AnticipoModalComponent {
       this.tempSubEntidadesFinanciera.set(subEntidadesFinanciera);
     });
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataForm.get('idCliente')?.setValue(data.idCliente);
   }
 
@@ -106,7 +106,7 @@ export class AnticipoModalComponent {
   save() {
     try {
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -115,7 +115,7 @@ export class AnticipoModalComponent {
       const params = this.dataForm.value;
 
       if (Number(params.valor) === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El valor tiene que ser mayor a 0!',
         });
@@ -124,13 +124,13 @@ export class AnticipoModalComponent {
 
       this._anticipoUseCase.create(params).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code === '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });

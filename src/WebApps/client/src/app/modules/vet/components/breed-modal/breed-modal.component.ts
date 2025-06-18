@@ -9,7 +9,7 @@ import { Breed } from '@modules/vet/models/breed.model';
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -42,7 +42,7 @@ export class BreedModalComponent {
   private readonly breedService = inject(BreedService);
   private readonly modalRef = inject(MatDialogRef<BreedModalComponent>);
   private readonly petTypeService = inject(PetTypeService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   loadPetTypes() {
     this.petTypeService.get({}).subscribe((response) => {
@@ -73,7 +73,7 @@ export class BreedModalComponent {
     if (this.data.id > 0) {
       this.breedService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -85,7 +85,7 @@ export class BreedModalComponent {
     } else {
       this.breedService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

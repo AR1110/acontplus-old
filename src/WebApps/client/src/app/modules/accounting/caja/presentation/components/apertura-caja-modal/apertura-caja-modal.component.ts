@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -32,7 +32,7 @@ export class AperturaCajaModalComponent {
   private dialogRef = inject(MatDialogRef<AperturaCajaModalComponent>)
   readonly params = inject<{ idCaja: number }>(MAT_DIALOG_DATA);
   private _controlCajaUseCase = inject(ControlCajaUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
 
@@ -60,7 +60,7 @@ export class AperturaCajaModalComponent {
     try {
       let data = this.dataForm.value;
       if (this.dataForm.invalid) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -72,7 +72,7 @@ export class AperturaCajaModalComponent {
           data.idEntidadFinanciera > 0
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
         });
@@ -82,13 +82,13 @@ export class AperturaCajaModalComponent {
       if (data.idCaja && data.idCaja > 0) {
         this._controlCajaUseCase.post(data).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });

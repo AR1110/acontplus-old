@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {getValidId, isValidField} from '@core/utils/utils';
 
 import {
@@ -38,9 +38,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
 
 @Component({
@@ -70,7 +70,7 @@ export class SupportPageComponent {
 
   dialogSvc = inject(DialogService);
   supportUseCase = inject(SupportUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 
   visibleColumns: string[] = [];
@@ -135,7 +135,7 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.customerId = data.customerId;
     this.getSupports();
   }
@@ -237,13 +237,13 @@ export class SupportPageComponent {
         if (result.isConfirmed) {
           this.supportUseCase.remove(id).subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
@@ -327,7 +327,7 @@ export class SupportPageComponent {
       (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
     )?.id;
     if (!(supportStatusId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: `No se encontró el estado ${supportStatusId}`,
       });
@@ -348,13 +348,13 @@ export class SupportPageComponent {
             .putState(id, supportStatusId)
             .subscribe((response) => {
               if (response.code === '0') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
               }
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });

@@ -7,7 +7,7 @@ import {  MatIconModule} from "@angular/material/icon";
 import {  MatInputModule} from "@angular/material/input";
 import { MatSelectModule} from "@angular/material/select";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
 
 import {
@@ -46,7 +46,7 @@ import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
   `
 })
 export class ProductBarcodeComponent {
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   private $productDataFormUseCase = inject(ProductDataFormUseCase);
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
   private $productBarcodePostUseCase = inject(ProductBarcodePostUseCase)
@@ -165,7 +165,7 @@ export class ProductBarcodeComponent {
   save(){
 
     if(!getValidId(this.productId())){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'No se ha proporcionado el identificador del producto'
       })
@@ -173,21 +173,21 @@ export class ProductBarcodeComponent {
     }
 
     if (!getValidId(this.data().idMedida )) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: 'Seleccione la Medida'
       })
       return;
     }
     if (!isValidField(this.data().codigoBarra)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message:  "Ingrese el Codigo de Barra"
       })
       return;
     }
     if (!isValidField(this.data().descripcion)) {
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message:   "Ingrese la descripción"
       })
@@ -228,14 +228,14 @@ export class ProductBarcodeComponent {
   }
   private successResponse = (response:ApiResponse)=>{
     if(response.code==="0"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'warning',
         message: response.message
       })
       return
     }
     if(response.code==="1"){
-      this._tS.toastr({
+      this._tS.show({
         type: 'success',
         message: response.message
       })

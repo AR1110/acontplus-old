@@ -18,7 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoIvaSelectHtmlOnly } from '@inventory/domain/models/tipo-iva.model';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
@@ -108,7 +108,7 @@ export class AddEditProductDialogComponent implements OnInit {
     precioCosto?: number;
   }>(MAT_DIALOG_DATA);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private $productDataFormUseCase = inject(ProductDataFormUseCase);
   private $productPostUseCase = inject(ProductPostUseCase);
   private $productPutUseCase = inject(ProductPutUseCase);
@@ -604,14 +604,14 @@ export class AddEditProductDialogComponent implements OnInit {
 
   private validateCalculateTarifa() {
     if (this.isUpdate() && !this.isChangePrecio) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No tienes permiso para realizar esta acción',
       });
       return;
     }
     if (!(this.data.precioCosto > 0) || isNaN(this.data.precioCosto)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese un número válido',
       });
@@ -619,7 +619,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
 
     if (this.data.precioCosto === 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El valor mínimo en el precio de costo es 0.01',
       });
@@ -644,7 +644,7 @@ export class AddEditProductDialogComponent implements OnInit {
       (item) => item.idTipoIva === this.data.idTipoIva
     );
     if (!dataTipoIva) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No se pudo recuperar la infrastructure de tipo iva',
       });
@@ -682,7 +682,7 @@ export class AddEditProductDialogComponent implements OnInit {
         item.utilidad = utilidad;
       }
     } catch (error) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: error as string,
       });
@@ -720,7 +720,7 @@ export class AddEditProductDialogComponent implements OnInit {
       isNaN(this.data.precioCosto)
     ) {
       cell.setValue(oldValue);
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese el Precio de Costo',
       });
@@ -823,13 +823,13 @@ export class AddEditProductDialogComponent implements OnInit {
         file: this.selectedFile()
       }).subscribe(response => {
         if (response.code == "0") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code == "1") {
-         this.tS.toastr({
+         this.tS.show({
            type: 'success',
            message: response.message
          })
@@ -843,13 +843,13 @@ export class AddEditProductDialogComponent implements OnInit {
         file: this.selectedFile()
       }).subscribe(response => {
         if (response.code == "0") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code == "1") {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message
           })
@@ -860,7 +860,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
   private isValidForm() {
     const showWarning = (message: string) => {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message,
       });
@@ -994,13 +994,13 @@ export class AddEditProductDialogComponent implements OnInit {
     if (this.isAdd()) {
       this.$productPostUseCase.execute(senData).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code === '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });
@@ -1014,13 +1014,13 @@ export class AddEditProductDialogComponent implements OnInit {
     if (this.isUpdate()) {
       this.$productPutUseCase.execute(senData).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code === '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });
