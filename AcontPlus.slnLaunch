@@ -21,6 +21,10 @@
       {
         "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Contabilidad\\Contabilidad.API\\Contabilidad.API.csproj",
+        "Action": "Start"
       }
     ]
   }

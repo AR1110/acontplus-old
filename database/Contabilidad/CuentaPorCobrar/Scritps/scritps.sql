@@ -202,3 +202,6 @@ go
 
 
 --alter table Contabilidad.CuentaPorCobrar add UpdatedAt DATETIME2
+
+
+--alter table Contabilidad.CuotaPorCobrar add UpdatedAt DATETIME2
