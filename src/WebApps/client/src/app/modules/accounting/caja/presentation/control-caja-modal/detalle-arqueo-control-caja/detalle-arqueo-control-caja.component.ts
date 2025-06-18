@@ -14,10 +14,10 @@ import {SharedService} from "@core/services/shared.service";
     MatCustomDialogComponent,
     MatDynamicTableComponent
   ],
-  templateUrl: './detalle-arqueo-control-caja-modal.component.html',
+  templateUrl: './detalle-arqueo-control-caja.component.html',
 })
-export class DetalleArqueoControlCajaModalComponent {
-  private dialogRef = inject(MatDialogRef<DetalleArqueoControlCajaModalComponent>)
+export class DetalleArqueoControlCajaComponent {
+  private dialogRef = inject(MatDialogRef<DetalleArqueoControlCajaComponent>)
    params = inject(MAT_DIALOG_DATA)
 
   dataSearch = {
@@ -42,7 +42,7 @@ export class DetalleArqueoControlCajaModalComponent {
     this._controlCajaUseCase
       .getArqueoCaja(this.params.id)
       .subscribe((response) => {
-        this.arqueoCajaDetalle.set(response.arqueoCajaDetalle||[]);
+        this.arqueoCajaDetalle.set(response.data||[]);
         this.total = this.arqueoCajaDetalle().reduce(
           (acc:number, current:any) => acc + current.total,
           0,

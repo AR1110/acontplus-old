@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ProductKardexModalComponent } from '@inventory/ui/product/components/product-kardex-modal/product-kardex-modal.component';
+import { ProductKardexComponent } from '@inventory/ui/product/components/product-kardex/product-kardex.component';
 import { AddEditProductDialogComponent } from '@inventory/ui/product/components/add-edit-product-dialog/add-edit-product-dialog.component';
 import { DialogService } from '@core/services/dialog.service';
 
@@ -23,7 +23,7 @@ export class OpenModalProductService {
   }
 
   async openKardex<T extends { id: number }>(data?: T) {
-    const dialogRef = this._dialogService.open(ProductKardexModalComponent, {
+    const dialogRef = this._dialogService.open(ProductKardexComponent, {
       size: 'xl',
       data: {
         id: data?.id,

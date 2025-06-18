@@ -60,12 +60,12 @@ export class FiltroDetalleCajaReportModal {
   private sharedSvc = inject(SharedService);
 
   ngOnInit() {
-    let fromDate = stringToDate(
+    const fromDate = stringToDate(
       this.params.fechaApertura,
       'dd/MM/yyyy HH:ii',
       '/',
     );
-    let toDate =
+    const toDate =
       this.params.fechaCierre &&
       stringToDate(this.params.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
 
@@ -75,7 +75,7 @@ export class FiltroDetalleCajaReportModal {
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
         next: (response) => {
-          let { formaPagos, tipoDocumento } = response as {
+          const { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
           };

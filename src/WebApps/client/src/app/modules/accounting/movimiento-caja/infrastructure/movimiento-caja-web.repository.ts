@@ -3,10 +3,10 @@ import {PATHS_API} from "@core/constants/global.constants";
 import {ACCOUNTING_PATHS} from "@accounting/shared/enums/accounting.constants";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
-import {ApiResponse } from "@core/models/api-response";
+import {ApiResponse} from "@core/models/api-response";
 import {MovimientoCajaRepository} from "@accounting/movimiento-caja/domain/movimiento-caja.repository";
 import {getNoLoader} from "@core/interceptors/loader.interceptor";
-import {ListMovimientoCajaMapper} from "@accounting/movimiento-caja/infrastructure/list-movimiento-caja.mapper";
+import {ListMovimientoCajaMapper} from "@accounting/movimiento-caja/infrastructure/mappers/list-movimiento-caja.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -32,12 +32,12 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository{
 
 
   getDataFilter() {
-    let json = JSON.stringify({ tipo: 3 })
+    const json = JSON.stringify({ tipo: 3 })
     return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`)
       .pipe(
         map(response => {
             if (response.code === "1") {
-              let { establecimiento } = JSON.parse(response.payload as string)
+              const { establecimiento=[] } = JSON.parse(response.payload as string)
               return {
                 establecimientos: establecimiento
               };
@@ -50,37 +50,32 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository{
   }
 
   getDataForm() {
-    let json = JSON.stringify({ tipo: 2 })
+    const json = JSON.stringify({ tipo: 2 })
     return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`)
       .pipe(
         map((response) => {
-          let cajas = [],
-            entidadesFinanciera = [],
-            establecimientos = [],
-            subEntidadesFinanciera = [],
-            tiposDocumento = []
+          const result ={
+            cajas : [],
+            entidadesFinanciera : [],
+            establecimientos : [],
+            subEntidadesFinanciera : [],
+            tiposDocumento : []
+          }
           if (response.code==="1") {
-            let mainData = JSON.parse(response.payload as string);
-            const { caja, entidadFinanciera, establecimiento, subEntidadFinanciera, tipoDocumento } = mainData;
-
-            cajas = caja.map((c: any) => {
+            const mainData = JSON.parse(response.payload as string);
+            const { caja=[],  entidadFinanciera, establecimiento, subEntidadFinanciera, tipoDocumento } = mainData;
+            result.cajas = (caja || []).map((c: any) => {
               return {
                 idCaja: c.idCaja,
                 descripcion: c.caja
               }
-            }),
-              entidadesFinanciera = entidadFinanciera;
-            establecimientos = establecimiento;
-            subEntidadesFinanciera = subEntidadFinanciera;
-            tiposDocumento = tipoDocumento
+            });
+            result.entidadesFinanciera = entidadFinanciera;
+            result.establecimientos = establecimiento;
+            result.subEntidadesFinanciera = subEntidadFinanciera;
+            result.tiposDocumento = tipoDocumento
           }
-          return {
-            cajas,
-            entidadesFinanciera,
-            establecimientos,
-            subEntidadesFinanciera,
-            tiposDocumento
-          }
+          return result;
         })
       )
   }

@@ -1,7 +1,6 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
+<app-mat-dynamic-card>
     <mat-accordion>
 
       @for (item of entidadesFinanciera; track $index) {
@@ -29,8 +28,7 @@
         </mat-expansion-panel>
       }
     </mat-accordion>
-  </mat-card-content>
-</mat-card>
+</app-mat-dynamic-card>
 
 <ng-template #templateOp let-item="item">
   <button type="button" mat-icon-button (click)="openDialog(item)">

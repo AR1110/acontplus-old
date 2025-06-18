@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, OnInit } from '@angular/core';
+import {Component, inject, ViewChild, OnInit, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -20,12 +20,18 @@ import { monthEnd, monthStart } from '@formkit/tempo';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatFormFieldModule} from "@angular/material/form-field";
 
 @Component({
-  selector: 'app-product-kardex-modal',
+  selector: 'app-product-kardex',
   imports: [
     FormsModule,
     MatSlideToggleModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     MatChipsModule,
     ProductSearchComponent,
     DateRangeSelectionComponent,
@@ -33,14 +39,14 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     ThemeButtonComponent,
     MatCustomDialogComponent,
   ],
-  templateUrl: './product-kardex-modal.component.html',
+  templateUrl: './product-kardex.component.html',
   styles: ``,
 })
-export class ProductKardexModalComponent implements OnInit {
+export class ProductKardexComponent implements OnInit {
   params = inject<{
     id: 0;
   }>(MAT_DIALOG_DATA);
-  modal = inject(MatDialogRef<ProductKardexModalComponent>);
+  modal = inject(MatDialogRef<ProductKardexComponent>);
 
   transactionSvc = inject(TransactionService);
   tS = inject(ToastrNotificationService);
@@ -52,10 +58,10 @@ export class ProductKardexModalComponent implements OnInit {
     columnHeaderVertAlign: 'bottom',
   };
 
-  establecimientos: GroupedEstab[] = [];
-  bodegas: GroupedEstabBodega[] = [];
+  establecimientos = signal<GroupedEstab[]>([]);
+  bodegas = signal<GroupedEstabBodega[]>([]);
 
-  tiposTransaccion: any[] = [];
+  tiposTransaccion = signal<any[]>([]);
 
   startOfMonth: any = monthStart(new Date());
   endOfMonth: any = monthEnd(new Date());
@@ -65,7 +71,7 @@ export class ProductKardexModalComponent implements OnInit {
     idBodega: 0,
     option: 1,
     estado: false,
-    tipoTransaccion: '',
+    tipoTransaccion: 'all',
     idArticulo: 0,
     checkBoxFecha: true,
     fechaInicio: formatDateToString(this.startOfMonth),
@@ -88,7 +94,7 @@ export class ProductKardexModalComponent implements OnInit {
     totalGenetal: 0,
   };
 
-  transacciones: any[] = [];
+  transacciones = signal<any[]>([])
 
   sumCantidadEntrada = () => {
     return this.data.cantTotalEntrada || 0;
@@ -296,16 +302,15 @@ export class ProductKardexModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.transactionSvc.getDataFilter().subscribe({
-      next: (response) => {
-        this.establecimientos = response.estabs;
-        this.tiposTransaccion = response.tiposTransaccion;
-        const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
+    this.transactionSvc.getDataFilter().subscribe( (response) => {
+        this.establecimientos.set(response.estabs);
+        this.tiposTransaccion.set( response.tiposTransaccion);
+        const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
 
         if (dataEstab) {
-          this.bodegas = dataEstab.bodegas;
+          this.bodegas.set(dataEstab.bodegas);
           this.dataSearch.codEstab = dataEstab.codEstab;
-          const dataBodega = this.bodegas.find((b) => b.defaultBodega);
+          const dataBodega = this.bodegas().find((b) => b.defaultBodega);
           if (dataBodega) {
             this.dataSearch.idBodega = dataBodega.idBodega;
           }
@@ -314,20 +319,16 @@ export class ProductKardexModalComponent implements OnInit {
         //set params
         this.dataSearch.idArticulo = this.params.id;
         this.getDataKardex();
-      },
-      error(err) {
-        console.log(err);
-      },
     });
   }
 
   getBodegas() {
-    const dataEstab = this.establecimientos.find(
+    const dataEstab = this.establecimientos().find(
       (item) => item.codEstab === this.dataSearch.codEstab
     );
     if (dataEstab) {
-      this.bodegas = dataEstab.bodegas;
-      const dataBodega = this.bodegas.find((estab) => estab.defaultBodega);
+      this.bodegas.set(dataEstab.bodegas);
+      const dataBodega = this.bodegas().find((estab) => estab.defaultBodega);
 
       this.dataSearch.idBodega = dataBodega?.idBodega ?? 0;
       this.getDataKardex();
@@ -342,30 +343,28 @@ export class ProductKardexModalComponent implements OnInit {
   }
 
   calculoTotales(prop: string) {
-    const total = this.transacciones
-      .map((item) => item[prop] || 0)
-      .reduce((obj, cur) => Number(obj) + Number(cur), 0);
+    const total = this.transacciones().map((item) => item[prop] || 0).reduce((obj, cur) => Number(obj) + Number(cur), 0);
     return roundNumber(total, 3);
   }
 
   getDataKardex() {
     try {
+      const tipoTransaccion = this.dataSearch.tipoTransaccion==='all'? null: isValidField(this.dataSearch.tipoTransaccion);
       const params = {
         checkBoxFecha: this.dataSearch.option === 1,
         checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
         checkBoxConsolidacion: this.dataSearch.option === 2,
-        movement: isValidField(this.dataSearch.tipoTransaccion),
+        movement:tipoTransaccion,
         byBodega: isValidField(this.dataSearch.idBodega),
         byArticulo: this.dataSearch.idArticulo,
         fechaInicio: this.dataSearch.fechaInicio,
         fechaFin: this.dataSearch.fechaFin,
         estado: this.dataSearch.estado,
       };
-      this.transactionSvc.getDataKardex(params).subscribe({
-        next: (response) => {
+      this.transactionSvc.getDataKardex(params).subscribe(  (response) => {
           this.dataArticulo = response.dataArticulo || {};
-          this.transacciones = response.kardex || [];
-          if (this.transacciones.length === 0) {
+          this.transacciones.set(response.kardex || []);
+          if (this.transacciones().length === 0) {
             this.tS.show({
               type: 'warning',
               message: 'No se encontraron los resultados',
@@ -382,11 +381,11 @@ export class ProductKardexModalComponent implements OnInit {
           this.data.stock = this.calculoTotales('saldo');
           this.data.totalGenetal = this.calculoTotales('totalGeneral');
 
-          for (const value of this.transacciones) {
+          for (const value of this.transacciones()) {
             value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2);
           }
-          this.tabulatorComponent.refTabulator.setData(this.transacciones);
-        },
+          this.tabulatorComponent.refTabulator.setData(this.transacciones());
+
       });
     } catch (error) {
       console.log(error);
@@ -423,7 +422,7 @@ export class ProductKardexModalComponent implements OnInit {
   }
 
   async getReport() {
-    if (this.transacciones.length === 0) {
+    if (this.transacciones().length === 0) {
       this.tS.show({
         type: 'warning',
         message: 'No hay registros para el reporte',
