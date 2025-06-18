@@ -116,10 +116,11 @@ export class AnticipoComponent {
   ngOnInit() {
     this._anticipoUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos.set(response.establecimientos)
-      if (this.establecimientos.length > 0) {
+      if (this.establecimientos().length > 0) {
         const dataEstab = this.establecimientos().find(
           (item) => item.predeterminado,
         );
+
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
           this.getAnticipos();

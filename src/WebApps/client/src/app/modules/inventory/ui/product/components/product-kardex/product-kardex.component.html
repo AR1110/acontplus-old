@@ -28,44 +28,30 @@
   <hr />
   <div class="row">
     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-      <div class="form-group">
-        <label for="establecimiento"
-          >Establecimiento. <span class="text-danger">*</span></label
-        >
-        <select
-          name="establecimiento"
-          id="establecimiento"
-          class="form-select"
-          [(ngModel)]="dataSearch.codEstab"
-          (change)="getBodegas()"
-        >
-          @for (item of establecimientos; track $index) {
-          <option [ngValue]="item.codEstab">
-            {{ item.nombreComercial }}
-          </option>
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select  [(ngModel)]="dataSearch.codEstab"
+                     (selectionChange)="getBodegas()">
+          @for (item of establecimientos(); track $index){
+          <mat-option [value]="item.codEstab">{{item.nombreEstab}}</mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-      <div class="form-group">
-        <label for="bodega">Bodega</label>
-        <select
-          name="bodega"
-          id="bodega"
-          class="form-select"
-          [(ngModel)]="dataSearch.idBodega"
-          (change)="searchKardex()"
-        >
-          @for (item of bodegas; track $index) {
-          <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
+      <mat-form-field class="w-100">
+        <mat-label>Bodega</mat-label>
+        <mat-select  [(ngModel)]="dataSearch.idBodega"
+                     (selectionChange)="searchKardex()">
+          @for (item of bodegas(); track $index){
+            <mat-option [value]="item.idBodega">{{item.descripcion}}</mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
       <div class="form-group">
-        <app-date-range-selection
+        <app-date-range-selection [showInputMaterial]="true"
           [from]="dataSearch.fechaInicio"
           [to]="dataSearch.fechaFin"
           (onChangeDateRange)="onDateRangeSelection($event)"
@@ -73,21 +59,16 @@
       </div>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-      <div class="form-group">
-        <label for="tiposTransaccion">Tipo Transacción</label>
-        <select
-          name="tiposTransaccion"
-          id="tiposTransaccion"
-          [(ngModel)]="dataSearch.tipoTransaccion"
-          class="form-select"
-          (change)="searchKardex()"
-        >
-          <option value="">Todos</option>
-          @for (item of tiposTransaccion; track $index) {
-          <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+      <mat-form-field class="w-100">
+        <mat-label>Tipo Transacción</mat-label>
+        <mat-select  [(ngModel)]="dataSearch.tipoTransaccion"
+                     (selectionChange)="searchKardex()">
+          <mat-option value="all">--Todos--</mat-option>
+          @for (item of tiposTransaccion(); track $index){
+            <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
           }
-        </select>
-      </div>
+        </mat-select>
+      </mat-form-field>
     </div>
   </div>
 
@@ -95,16 +76,13 @@
     <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
       <div class="row">
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-          <div class="form-group">
-            <label for="product">Producto</label>
-            <app-product-search
+            <app-product-search [isInputMat]="true"
               [textSearch]="dataArticulo.descripcion"
               (onProductSelected)="onProductSelected($event)"
               [props]="{
                 isSimpleMode: true,
               }"
             />
-          </div>
         </div>
         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
           <div class="form-group">
@@ -165,7 +143,7 @@
       <app-tabulator
         [columnNames]="columns"
         [options]="tabulatorOptions"
-      ></app-tabulator>
+      />
     </div>
   </div>
 </ng-template>

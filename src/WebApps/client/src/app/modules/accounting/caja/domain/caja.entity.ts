@@ -24,4 +24,21 @@ export interface ControlCaja {
   totalRecords: number,
 }
 
-export interface CashboxSelectHtmlOnly extends Pick<CashboxList, 'idCaja' | 'descripcion'> {}
+export interface CashboxSelectHtmlOnly extends Pick<CashboxList, 'idCaja' | 'descripcion'> {};
+
+export class ListCajaResponse {
+  data: CashboxList[]=[];
+  totalRecords = 0;
+}
+
+export class FormDataCajaResponse {
+  usuarios:any[]=[];
+  turnos:any[]=[];
+
+}
+
+
+export class GetIdCajaResponse {
+  caja:any={}
+  asignaciones:any[]=[]
+}
