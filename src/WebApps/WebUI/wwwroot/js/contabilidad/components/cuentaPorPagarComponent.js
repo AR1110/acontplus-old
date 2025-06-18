@@ -33,6 +33,7 @@
 
             $scope.establecimientos = [];
             $scope.estadosDoc = [];
+            $scope.subCategorys = [];
 
             $scope.recordsQuantity = [25, 50, 100]
 
@@ -114,6 +115,7 @@
                         codEstado: fS.isValidField($scope.dataSearch.codEstado),
                         codDoc: fS.isValidField($scope.dataSearch.codDoc),
                         idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
+                        subcategoryId: fS.isValidField($scope.dataSearch.subcategoryId),
                         dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                         dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
                         pageIndex: $scope.dataSearch.pageIndex,
@@ -154,11 +156,13 @@
                         const {
                             estabs,
                             estadosDoc,
-                            tiposDoc
+                            tiposDoc,
+                            subCategorys
                         } = response;
                         $scope.establecimientos = estabs;
                         $scope.estadosDoc = estadosDoc;
                         $scope.tipoDocumentos = tiposDoc || []
+                        $scope.subCategorys = subCategorys || []
 
                         if ($scope.establecimientos.length > 0) {
                             let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);

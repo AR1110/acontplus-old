@@ -36,16 +36,8 @@ BEGIN
     --> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
-	-->Filters
-	DECLARE @idProveedor INT
-	       ,@idCuentaPorPagar INT 
-           ,@checkboxFecha BIT 
-		   ,@codEstab VARCHAR(100)
-		   ,@codDoc VARCHAR(10)
-		   ,@codEstado VARCHAR(5)
-		   ,@dateStart DATETIME2 
-		   ,@dateEnd DATETIME2
-           ,@secuencial INT
+	--> Variables generales
+	DECLARE @idCuentaPorPagar INT
     
     --> Variables
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
@@ -55,6 +47,17 @@ BEGIN
     --> Get
 	IF @tipo = 1
 		BEGIN
+            -->Filters
+	        DECLARE @idProveedor INT
+                   ,@subcategoryId INT
+                   ,@checkboxFecha BIT 
+		           ,@codEstab VARCHAR(100)
+		           ,@codDoc VARCHAR(10)
+		           ,@codEstado VARCHAR(5)
+		           ,@dateStart DATETIME2 
+		           ,@dateEnd DATETIME2
+                   ,@secuencial INT
+
 			SET @sql  = 'SELECT pp.idCuentaPorPagar
                                ,pp.idDocumento
 							   ,ISNULL(pp.idTiempoCredito,0)                as idTiempoCredito
@@ -82,22 +85,24 @@ BEGIN
 					    FROM v_CuentaPorPagar pp WITH (NOLOCK)
 					    WHERE pp.idEntidad = @idEntidad '
 
-			SET @params  = '@idEntidad   INT
-						   ,@codEstab    VARCHAR(100)
-						   ,@codDoc      VARCHAR(5)
-						   ,@codEstado   VARCHAR(10)
-						   ,@idProveedor INT
-						   ,@dateStart   DATETIME2
-						   ,@dateEnd     DATETIME2
-                           ,@pageIndex   INT
-                           ,@pageSize    INT
-                           ,@secuencial  INT'
+			SET @params  = '@idEntidad     INT
+						   ,@codEstab      VARCHAR(100)
+						   ,@codDoc        VARCHAR(5)
+						   ,@codEstado     VARCHAR(10)
+						   ,@idProveedor   INT
+                           ,@subcategoryId INT
+						   ,@dateStart     DATETIME2
+						   ,@dateEnd       DATETIME2
+                           ,@pageIndex     INT
+                           ,@pageSize      INT
+                           ,@secuencial    INT'
 
 			SELECT @checkboxFecha = checkboxFecha
 				  ,@codEstab      = codEstab
 				  ,@codDoc        = codDoc
 				  ,@codEstado     = codEstado
 				  ,@idProveedor   = idProveedor
+                  ,@subcategoryId = subcategoryId
 				  ,@dateStart     = dateStart
 				  ,@dateEnd       = dateEnd
                   ,@secuencial    = secuencial
@@ -109,7 +114,8 @@ BEGIN
 				,codEstab      VARCHAR(100) 
 				,codDoc        VARCHAR(10)
 				,codEstado     VARCHAR(5)
-				,idProveedor   INT 
+				,idProveedor   INT
+                ,subcategoryId INT
 				,dateStart     DATETIME2 
 				,dateEnd       DATETIME2
                 ,secuencial    INT
@@ -153,6 +159,11 @@ BEGIN
 					SET @sql = @sql + 'AND pp.idProveedor= @idProveedor '
 				END 
 
+            IF @subcategoryId > 0
+                BEGIN
+                    SET @sql = @sql + 'AND pp.subcategoryId = @subcategoryId '
+                END 
+
             IF @secuencial IS NOT NULL
                 BEGIN
                     SET @sql = @sql + 'AND  TRY_CAST(REVERSE(SUBSTRING(REVERSE(pp.serieComprobante),1, CHARINDEX(''-'', REVERSE(pp.serieComprobante))-1)) AS INT) = @secuencial '
@@ -162,16 +173,17 @@ BEGIN
 			
 			EXEC sp_executesql @sql
 			                  ,@params 
-			                  ,@idEntidad    = @idEntidad
-				              ,@codEstab     = @codEstab
-				              ,@codDoc       = @codDoc
-				              ,@codEstado    = @codEstado
-				              ,@idProveedor  = @idProveedor
-				              ,@dateStart    = @dateStart
-				              ,@dateEnd      = @dateEnd
-                              ,@secuencial   = @secuencial
-                              ,@pageIndex    = @pageIndex
-                              ,@pageSize     = @pageSize
+			                  ,@idEntidad     = @idEntidad
+				              ,@codEstab      = @codEstab
+				              ,@codDoc        = @codDoc
+				              ,@codEstado     = @codEstado
+				              ,@idProveedor   = @idProveedor
+                              ,@subcategoryId = @subcategoryId
+				              ,@dateStart     = @dateStart
+				              ,@dateEnd       = @dateEnd
+                              ,@secuencial    = @secuencial
+                              ,@pageIndex     = @pageIndex
+                              ,@pageSize      = @pageSize
             RETURN 
 		END 
 
