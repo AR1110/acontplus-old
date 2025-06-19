@@ -31,5 +31,6 @@ export class InventoryAdjustmentFormDataResponse {
 }
 
 export class InventoryAdjustmentDetailResponse {
-
+  header:any = {};
+  items: any[]=[]
 }

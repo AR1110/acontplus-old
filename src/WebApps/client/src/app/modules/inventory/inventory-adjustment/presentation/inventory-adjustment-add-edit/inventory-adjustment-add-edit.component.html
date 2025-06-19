@@ -7,42 +7,75 @@
 />
 
 <ng-template #body>
-  <div class="d-grid gap-2">
-    <div class="row  row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
+  <div class="container-fluid vstack gap-2">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
       <div class="col">
-        <mat-form-field class="w-100">
+        <mat-form-field   class="w-100">
           <mat-label>Tipo Documento</mat-label>
           <mat-select>
-            <mat-option></mat-option>
+            <mat-option value="">Seleccione</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
-        <mat-form-field class="w-100">
+        <mat-form-field   class="w-100">
           <mat-label>Tipo Movimiento</mat-label>
           <mat-select>
-            <mat-option></mat-option>
+            <mat-option value="">Seleccione</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
-        <mat-form-field class="w-100">
+        <mat-form-field   class="w-100">
           <mat-label>Establecimiento</mat-label>
           <mat-select>
-            <mat-option></mat-option>
+            <mat-option value="">Seleccione</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
-        <mat-form-field class="w-100">
+        <mat-form-field   class="w-100">
           <mat-label>Punto de Emisión</mat-label>
           <mat-select>
-            <mat-option></mat-option>
+            <mat-option value="">Seleccione</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
     </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
+      <div class="col">
+        <mat-form-field class="w-100" >
+          <mat-label>Fecha Emisión</mat-label>
+          <input matInput placeholder="Ex. Pizza" value="Sushi">
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field   class="w-100">
+          <mat-label>Bodega</mat-label>
+          <mat-select>
+            <mat-option value="">Seleccione</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+
+      </div>
+      <div class="col">
+         <div class="hstack gap-2">
+           <app-theme-button
+             variant="info"
+             icon="search"
+             text="Búsqueda avanzada"
+             matStyle="basic"
+             (handleClick)="openSearchAdvanced()"
+           />
+         </div>
+      </div>
+    </div>
+
   </div>
+
 </ng-template>
 <ng-template #footer>
   <app-theme-button

@@ -35,5 +35,6 @@ export const enum INVENTORY_CODE_REPORT {
   ARTICULO_PVP = 'INVAT',
   RAF='RAF', //REPORTE DE ARTICULOS FRACCIONADOS
   RCAA='RCAA',//REPORTE DE CADUCIDAD DE ARTICULOS
-  RASR = 'RASR' //Reporte de Articulo Stock Valoración
+  RASR = 'RASR', //Reporte de Articulo Stock Valoración
+  RCD='RCD' //Reporte Consolidacion Detalle
 }
