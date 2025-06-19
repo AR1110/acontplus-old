@@ -492,8 +492,8 @@ BEGIN
             SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
 
             INSERT INTO NotaEntrega 
-                   (idCliente         ,idPuntoEmision,  nroDocumento,  subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
-            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
+                   (idCliente         ,idPuntoEmision,serieComprobante,  nroDocumento,  subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
+            SELECT @customerCompanyId,@puntoEmisionId,@serieDocument, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 
