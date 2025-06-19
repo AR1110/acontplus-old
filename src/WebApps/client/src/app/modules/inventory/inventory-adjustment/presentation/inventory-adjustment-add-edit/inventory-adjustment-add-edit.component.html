@@ -1,0 +1,54 @@
+<app-mat-custom-dialog
+  (close)="close()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="title()"
+
+/>
+
+<ng-template #body>
+  <div class="d-grid gap-2">
+    <div class="row  row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Documento</mat-label>
+          <mat-select>
+            <mat-option></mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Movimiento</mat-label>
+          <mat-select>
+            <mat-option></mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select>
+            <mat-option></mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Punto de Emisión</mat-label>
+          <mat-select>
+            <mat-option></mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    variant="success"
+    [icon]="icon()"
+    [text]="btnText()"
+    matStyle="basic"
+  />
+</ng-template>

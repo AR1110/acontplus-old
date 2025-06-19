@@ -1,3 +1,7 @@
+import {
+  InventoryAdjustmentRepositoryImpl
+} from "@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl";
+
 export const enum INVENTORY_PATHS {
   PRODUCT_OLD = 'Articulo/',
   PRODUCT = 'Product/',
@@ -18,7 +22,8 @@ export const enum INVENTORY_PATHS {
   PRODUCT_UBICATION = 'ArticuloUbicacion',
   PRODUCT_BARCODE='ArticuloCodigoBarra',
   FRACTIONAL_PRODUCT = 'ArticuloFraccionado',
-  WAREHOUSE='Bodega'
+  WAREHOUSE='Bodega',
+  INVENTORY_ADJUSTMENT='Consolidacion'
 }
 
 
