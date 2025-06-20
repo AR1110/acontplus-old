@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { Category } from '@accounting/category/domain/category';
@@ -11,21 +11,28 @@ import {
 } from '@angular/forms';
 
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-subcategory-modal',
-  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent,
+  MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSlideToggleModule
+  ],
   templateUrl: './subcategory-modal.component.html',
   styles: ``,
 })
 export class SubcategoryModalComponent {
   data = inject<Subcategory>(MAT_DIALOG_DATA)
-  categories: Category[] = [];
+  categories = signal<Category[]>([])
   subcategoryForm = new FormGroup({
     id: new FormControl(0),
     categoryId: new FormControl(0, Validators.required),
@@ -51,7 +58,7 @@ export class SubcategoryModalComponent {
 
   get() {
     this._subCategoryUseCase.getDataForm().subscribe((response) => {
-      this.categories = response.categories;
+      this.categories.set(response.categories);
     });
   }
 

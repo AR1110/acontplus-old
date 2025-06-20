@@ -27,7 +27,7 @@ import {DialogService} from "@core/services/dialog.service";
 })
 export class SubcategoryComponent {
   data: Subcategory = {} as Subcategory;
-  subcategories: Subcategory[] = [];
+  subcategories = signal<Subcategory[]>([])
   private readonly modalService = inject(DialogService);
 
   private _subCategoryUseCase = inject(SubCategoryUseCase)
@@ -55,8 +55,12 @@ export class SubcategoryComponent {
   }
 
   private  getAll(){
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
-      this.subcategories = response
+    const params = {
+      pageIndex: this.pagination().pageIndex+1,
+      pageSize: this.pagination().pageSize
+    }
+    this._subCategoryUseCase.getAll(params).subscribe((response) => {
+      this.subcategories.set(response)
     })
   }
 
