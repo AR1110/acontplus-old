@@ -2,6 +2,7 @@ import { PURCHASE_CODE_REPORT } from "@purchase/domain/enums/purchase.constants"
 import { REPORT_FORMAT } from "@core/constants/global.constants";
 import { ACCOUNTING_CODE_REPORT } from "@accounting/shared/enums/accounting.constants";
 import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
+import {INVENTORY_CODE_REPORT} from "@inventory/domain/enums/inventory.enum";
 
 export interface ReportOptions {
   id?: number;
@@ -62,6 +63,12 @@ export class ReportParamsBuilder {
       hasParams: false,
       reportCode: CUSTOMER_CODE_REPORT.RCL,
       format: REPORT_FORMAT.PDF,
+      hasService: false,
+    },
+    [INVENTORY_CODE_REPORT.RCD]: {
+      hasParams: true,
+      reportCode: INVENTORY_CODE_REPORT.RCD,
+      format: REPORT_FORMAT.EXCEL,
       hasService: false,
     }
   };

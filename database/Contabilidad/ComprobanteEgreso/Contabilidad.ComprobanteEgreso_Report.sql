@@ -228,7 +228,7 @@ BEGIN
                                 ,observacion
                                 ,totalComprobante
                                 ,totalDocumento
-                            FROM Contab.V_ComprobanteEgreso 
+                            FROM Contabilidad.V_ComprobanteEgreso 
                             WHERE idEntidad = @idEntidad 
                 '
 
@@ -337,36 +337,33 @@ BEGIN
 
 
         SET @sql = N'
-                        SELECT TOP 100
-                            -- Identificadores
-                            idComprobanteEgreso,
-                            nroDocumento,
-                            serieComprobante,
-
-                            -- Información del proveedor
+                        SELECT 
+                            codDoc,
+                            idCuentaPorPagar,
+                            comprobanteOriginal,
+                            fechaComprobanteOriginal,
+                            identificacionProveedor,
                             razonSocialProveedor,
-                            cedulaRucProveedor,
-
-                            -- Fechas
-                            fechaRegistro,
-                            fechaPago,
-
-                            -- Montos
-                            totalComprobante,
-                            totalDocumento,
-                            abonoDocumento,
-                            saldoDocumento,
-
-                            -- Método de pago
-                            metodoPago,
-                            nombreBanco,
-
-                            -- Detalles del pago
-                            nro,
-                            referencia,
-                            nroCuota
-
-                        FROM Contab.V_ComprobanteEgresoDetallePago
+                            importeTotal,
+                            abonoTotal,
+                            saldoPendiente,
+                            estadoPago,
+                            idComprobanteEgreso,
+                            serieComprobanteEgreso,
+                            fechaEmisionEgreso,
+                            idPago,
+                            formaPago,
+                            banco,
+                            valorPago,
+                            abonoPago,
+                            nroCuota,
+                            fechaVencimientoCuota,
+                            montoCuota,
+                            abonoCuota,
+                            saldoCuota,
+                            estadoCuota,
+                            diasVencidos
+                        FROM Contabilidad.V_ComprobanteEgresoDetallePago
                         WHERE idEntidad = @idEntidad 
                 '
 

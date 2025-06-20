@@ -343,7 +343,7 @@
                 })
 
                 if (!isConfirmed) return;
-                aprobacionDocSvc.delete(item.id).then(response => {
+                aprobacionDocSvc.anular(item.id).then(response => {
                     if (response.code === '0') {
                         fS.sweetAlert('warning', response.message);
                     }
@@ -436,10 +436,18 @@
         $scope.getReportAprobTracking = function (){
             try {
 
-                let format = 'pdf';
+                let format = 'excel';
                 let dataParms = {
                     userRoleId: DECODE_TOKEN.userRoleId,
-                    tipo: 3
+                    tipo: 3,
+                    codEstab: $scope.dataSearch.codEstab,
+                    byCliente: $scope.dataSearch.byCliente,
+                    checkBoxFecha : true,
+                    byUsuario: $scope.dataSearch.byUsuario,
+                    byEstado: ["", 0, null, undefined].includes($scope.dataSearch.byEstado) ? null : $scope.dataSearch.byEstado,
+                    fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                 }
 
                 const parameters = {

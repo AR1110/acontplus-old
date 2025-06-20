@@ -112,7 +112,7 @@
                     console.log(response)
                     return {}
                 }
-                const [tempEstabs, tempEstados, tiposDoc] = JSON.parse(response.payload)
+                const [tempEstabs ,tempEstados ,tiposDoc ,subCategorys] = JSON.parse(response.payload)
 
                 let dataToGroup = {
                     estabs: tempEstabs, //Establecimientos con puntos de emision 
@@ -130,7 +130,8 @@
                 return {
                     estabs,
                     estadosDoc,
-                    tiposDoc
+                    tiposDoc,
+                    subCategorys
                 }
 
             })

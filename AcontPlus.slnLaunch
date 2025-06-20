@@ -13,6 +13,14 @@
       {
         "Path": "src\\Services\\Facturacion\\FactElect.API\\FactElect.API.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Contabilidad\\Contabilidad.API\\Contabilidad.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
+        "Action": "Start"
       }
     ]
   }

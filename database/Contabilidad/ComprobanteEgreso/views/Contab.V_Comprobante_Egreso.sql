@@ -9,7 +9,7 @@ GO
 -- Última Modificación: [Fecha] - [Descripción del cambio]
 -- =============================================
 
-CREATE OR ALTER VIEW Contab.V_ComprobanteEgreso
+CREATE OR ALTER VIEW Contabilidad.V_ComprobanteEgreso
 AS
     SELECT
         ce.idEntidad,
