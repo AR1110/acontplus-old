@@ -53,16 +53,6 @@ export class CajaComponent implements OnInit {
 
   cashboxs = signal<CashboxList[]>([]);
 
-  dataSearch = {
-    pageIndex: 1,
-    pageSize: 10,
-    maxSize: 5,
-  };
-
-  page = 1;
-
-  totalRecords = 0;
-
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'usuario', label: 'Usuario', type: 'string' },
@@ -81,17 +71,16 @@ export class CajaComponent implements OnInit {
 
   getCashboxs() {
     const params = {
-      pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize,
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
     };
 
     this._cajaUseCase.getAll(params).subscribe((response) => {
-      this.cashboxs.set(response);
+      this.cashboxs.set(response.data);
       this.pagination.update((item) => {
         return {
           ...item,
-          totalRecords:
-            this.cashboxs.length > 0 ? this.cashboxs()[0]?.totalRecords : 0,
+          totalRecords: response.totalRecords,
         };
       });
     });

@@ -1,12 +1,15 @@
 import { PURCHASE_CODE_REPORT } from "@purchase/domain/enums/purchase.constants";
 import { REPORT_FORMAT } from "@core/constants/global.constants";
 import { ACCOUNTING_CODE_REPORT } from "@accounting/shared/enums/accounting.constants";
+import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
+import {INVENTORY_CODE_REPORT} from "@inventory/domain/enums/inventory.enum";
 
 export interface ReportOptions {
   id?: number;
   codEstab?: string;
   estabId?: number;
   tipo?: number;
+  format?:string
   [key: string]: any;
 }
 
@@ -55,6 +58,18 @@ export class ReportParamsBuilder {
       reportCode: ACCOUNTING_CODE_REPORT.ACELC,
       format: REPORT_FORMAT.PDF,
       hasService: true,
+    },
+    [CUSTOMER_CODE_REPORT.RCL]: {
+      hasParams: false,
+      reportCode: CUSTOMER_CODE_REPORT.RCL,
+      format: REPORT_FORMAT.PDF,
+      hasService: false,
+    },
+    [INVENTORY_CODE_REPORT.RCD]: {
+      hasParams: true,
+      reportCode: INVENTORY_CODE_REPORT.RCD,
+      format: REPORT_FORMAT.EXCEL,
+      hasService: false,
     }
   };
 
@@ -76,6 +91,8 @@ export class ReportParamsBuilder {
         ...options, // Spread de parámetros adicionales
     };
 
+
+
     // Construye los parámetros del reporte
     const reportParams = {
       hasParams: config.hasParams,
@@ -83,6 +100,10 @@ export class ReportParamsBuilder {
       format: config.format,
       additionalParams: []
     };
+
+    if(options.format){
+      reportParams.format = options.format;
+    }
 
     return {
       dataParams: JSON.stringify(dataParams),

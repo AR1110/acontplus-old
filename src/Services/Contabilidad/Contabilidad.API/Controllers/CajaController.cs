@@ -1,17 +1,17 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class CajaController(ICajaService cajaService) : BaseApiController
+public class CajaController(ICajaRepository cajaRepository) : BaseApiController
 {
+    private const string UserRoleIdClaim = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await cajaService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
+        var response = await cajaRepository.GetAsync(parameters);
         return Ok(response);
     }
 
@@ -20,12 +20,10 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await cajaService.AddAsync(parameters);
-        if (response == null) return NoContent();
-
+        var response = await cajaRepository.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -35,13 +33,11 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await cajaService.UpdateAsync(parameters);
-        if (response == null) return NoContent();
-
+        var response = await cajaRepository.UpdateAsync(parameters);
         return Ok(response);
     }
 
@@ -50,8 +46,8 @@ public class CajaController(ICajaService cajaService) : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        var response = await cajaService.DeleteAsync(parameters);
+            { { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "id", id } };
+        var response = await cajaRepository.DeleteAsync(parameters);
         return Ok(response);
     }
 }

@@ -9,7 +9,7 @@ GO
 -- Última Modificación: [Fecha] - [Descripción del cambio]
 -- =============================================
 
-CREATE OR ALTER VIEW Contab.V_ComprobanteEgreso
+CREATE OR ALTER VIEW Contabilidad.V_ComprobanteEgreso
 AS
     SELECT
         ce.idEntidad,
@@ -59,11 +59,10 @@ AS
 
         -- Información bancaria (opcional)
         COALESCE(ban.descripcion, '') AS nombreBanco,
-        pag.idBanco AS idBanco,
-        pag.idSubEntidadFinanciera AS idSubEntidadFinanciera,
+        pag.idBanco,
+        pag.idSubEntidadFinanciera,
 
-        -- Información del pago
-        pag.secuencial AS numeroPago,
+        -- Información del pago 
         FORMAT(pag.fechaEmision, 'dd/MM/yyyy  HH:mm') AS fechaPago,
         pag.fechaEmision AS fechaPagoTimestamp,
         pag.nro,
@@ -90,3 +89,4 @@ GO
 -- SELECT TOP 1
 --     *
 -- FROM dbo.ComprobanteEgreso
+-- SELECT top 1 * FROM PagoDetalle

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map } from 'rxjs';
 import { SupplierRepository } from '@customer/domain/repositories/supplier.repository';
-import { CUSTOMER_PATHS } from '@customer/domain/enums/customer.enum';
+import { CUSTOMER_PATHS } from '@customer/shared/enums/customer.enum';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { SupplierMapper } from '@customer/data/supplier/supplier.mapper';

@@ -1,7 +1,7 @@
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import {Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
@@ -27,7 +27,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MatDivider} from "@angular/material/divider";
 import {MatInputModule} from "@angular/material/input";
 
@@ -164,7 +164,7 @@ export class CarteraClienteComponent {
   clearSearchCustomer() {
     this.dataSearch.companyCustomerId = 0;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 

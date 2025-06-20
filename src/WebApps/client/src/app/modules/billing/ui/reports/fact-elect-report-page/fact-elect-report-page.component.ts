@@ -8,7 +8,7 @@ import {
 import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
 import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -20,7 +20,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FilterData } from '@billing/domain/models/documento-electronico.model';
@@ -173,7 +173,7 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
     this.dataSearch.companyCustomerId = 0;
     this.dataSearch.identificacion = null;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.identificacion = data.numeroIdentificacion;
     this.dataSearch.companyCustomerId = data.idCliente;
   }

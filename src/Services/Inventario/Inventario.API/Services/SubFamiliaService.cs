@@ -11,14 +11,15 @@ public class SubFamiliaService : ISubFamiliaService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataTableAsync("Inventario.Subfamilia_Get", parameters);
-        if (ds.Rows.Count == 0) return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
+        var ds = await _repository.GetDataSetAsync("Inventario.Subfamilia_Get", parameters, withTableNames: false);
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        if (dt.Rows.Count == 0) return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
 
         return new ApiResponse
         {
             Code = "1",
             Message = "Listado exitosamente",
-            Payload = DataConverters.DataTableToJson(ds)
+            Payload = DataConverters.DataTableToJson(dt)
         };
     }
 

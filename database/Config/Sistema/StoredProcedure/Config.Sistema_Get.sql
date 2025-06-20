@@ -43,6 +43,7 @@ BEGIN
 				  ,dt.configDeuda     
 				  ,dt.tipoConfig 
 				  ,dt.interes
+                  ,dt.diasGracia
                   ,dt.idFormaPagoSri
                   ,dt.idArticulo
                   ,dt.idCliente 

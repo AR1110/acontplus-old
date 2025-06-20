@@ -30,9 +30,10 @@ public class CustomerService(IAdoRepository adoRepository) : ICustomerService
         throw new NotImplementedException();
     }
 
-    public Task<DataTable> GetByIdCardAsync(Dictionary<string, object> parameters)
+    public async Task<DataTable> GetByIdCardAsync(Dictionary<string, object> parameters)
     {
-        return adoRepository.GetDataTableAsync("Customer.Customer_IDCard_Get", parameters);
+        var ds = await adoRepository.GetDataSetAsync("Customer.Customer_IDCard_Get", parameters, withTableNames: false);
+        return ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
     }
 
     //public async Task<ApiResponse> UpdateAsync(int id, AppCustomer customer)

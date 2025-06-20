@@ -5,53 +5,63 @@ import {HttpClient} from "@angular/common/http";
 import {ApiResponse} from "@core/models/api-response";
 import {map} from "rxjs";
 import {ControlCajaRepository} from "@accounting/caja/domain/control-caja.repository";
+import {FilterDataControlCajaMapper} from "@accounting/caja/infrastructure/mappers/filter-data-control-caja.mapper";
+import {ListControlCajaMapper} from "@accounting/caja/infrastructure/mappers/list-control-caja.mapper";
+import {FormDataControlCajaMapper} from "@accounting/caja/infrastructure/mappers/form-data-control-caja.mapper";
+import {ArqueoControlCajaMapper} from "@accounting/caja/infrastructure/mappers/arqueo-control-caja.mapper";
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ControlCajaWebRepository extends ControlCajaRepository{
+export class ControlCajaWebRepository implements ControlCajaRepository{
 
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CONTROL_CAJA}`
   private _http = inject(HttpClient);
 
-  constructor() {
-    super();
-  }
-
   getAll<T>(params: T) {
-    let json = JSON.stringify({ ...params, tipo: 1 })
-    return this._http.get(`${this._url}?json=${json}`)
+    const json = ListControlCajaMapper.toJson(params)
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe(map(response=>ListControlCajaMapper.fromJson(response)))
   }
 
   getDataFilter() {
-    let json = JSON.stringify({ tipo: 5 })
-    return this._http.get(`${this._url}?json=${json}`)
-      .pipe(
-        map((response:any) => {
-          const {estadoPago} = response;
-          return {
-            estados: estadoPago
-          }
-        })
+    const json = FilterDataControlCajaMapper.toJson()
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe( map((response) => FilterDataControlCajaMapper.fromJson(response))
       )
   }
 
 
   getDataForm() {
-    let json = JSON.stringify({ tipo: 2 })
-    return this._http.get(`${this._url}?json=${json}`)
+    const json = FormDataControlCajaMapper.toJson()
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe(
+        map(response=>FormDataControlCajaMapper.fromJson(response))
+      )
   }
 
 
   getArqueoCaja(id: number) {
-    let json = JSON.stringify({id, tipo: 8 })
-    return this._http.get(`${this._url}?json=${json}`)
+    const json = ArqueoControlCajaMapper.toJson(id)
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe(map(response=>ArqueoControlCajaMapper.fromJson(response)))
   }
 
   getDataFormCashboxClose() {
-    let json = JSON.stringify({ tipo: 3 })
-    return this._http.get(`${this._url}?json=${json}`)
+    const json = JSON.stringify({ tipo: 3 })
+    return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe(
+        map(response=>{
+          let data = [] as any[]
+          if(response.code==="1"){
+            data = JSON.parse(response.payload as string).monedas || []
+          }
+          return {
+            data
+          }
+        })
+      )
   }
 
 

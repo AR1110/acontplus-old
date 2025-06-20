@@ -19,9 +19,11 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Documento</mat-label>
+
           <mat-select [(ngModel)]="filterParams.documentCode" >
+            <mat-option value="all">--Todos--</mat-option>
             @for (item of tiposDoc(); track $index) {
-            <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
+            <mat-option [value]="item.customCode">{{item.descripcion}}</mat-option>
             }
           </mat-select>
         </mat-form-field>

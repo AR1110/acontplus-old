@@ -38,9 +38,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
 
 @Component({
@@ -135,7 +135,7 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.customerId = data.customerId;
     this.getSupports();
   }

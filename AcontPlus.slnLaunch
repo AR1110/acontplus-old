@@ -1,17 +1,9 @@
 [
   {
-    "Name": "New Profile",
+    "Name": "Customer-Gateway",
     "Projects": [
       {
         "Path": "src\\ApiGateways\\GatewayAcontplus.API\\GatewayAcontplus.API.csproj",
-        "Action": "Start"
-      },
-      {
-        "Path": "src\\Services\\Common\\Common.API\\Common.API.csproj",
-        "Action": "Start"
-      },
-      {
-        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
         "Action": "Start"
       },
       {
@@ -19,7 +11,15 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
+        "Path": "src\\Services\\Facturacion\\FactElect.API\\FactElect.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Contabilidad\\Contabilidad.API\\Contabilidad.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
         "Action": "Start"
       }
     ]

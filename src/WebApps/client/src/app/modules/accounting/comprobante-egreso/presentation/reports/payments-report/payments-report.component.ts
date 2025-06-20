@@ -22,7 +22,7 @@ import {formatDateToString} from "@core/utils/date.util";
 import {REPORT_FORMAT} from "@core/constants/global.constants";
 import {ReportParameters, ReportParamsBuilder} from "@shared/utils/report-params.builder";
 import {ACCOUNTING_CODE_REPORT} from "@accounting/shared/enums/accounting.constants";
-import {getValidId, isValidField} from "@core/utils/utils";
+import {getValidId} from "@core/utils/utils";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
@@ -74,7 +74,7 @@ export class PaymentsReportComponent {
   filterParams = {
     establecimientoId: 0,
     userId: 0,
-    documentCode: '',
+    documentCode: 'all',
     paymentMethodId: 0,
     bankId: 0,
     startDate: formatDateToString(new Date()),
@@ -126,10 +126,11 @@ export class PaymentsReportComponent {
   generateReport(){
 
     let reportParameters = {} as ReportParameters | undefined;
+    const codDoc = this.filterParams.documentCode==='all'? null: this.filterParams.documentCode;
     const additionalParams = {
       establecimientoId: this.filterParams.establecimientoId,
       userId: getValidId(this.filterParams.userId),
-      documentCode: isValidField(this.filterParams.documentCode),
+      codDoc,
       paymentMethodId: getValidId(this.filterParams.paymentMethodId),
       bankId: getValidId(this.filterParams.bankId),
       startDate: this.filterParams.startDate,

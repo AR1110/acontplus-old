@@ -323,11 +323,12 @@ BEGIN
 			BEGIN
 				ROLLBACK TRAN; 
 			END
-		SELECT '0'code,'Info: Error en el procedimiento: ' as  'message'
 
 		INSERT INTO ErroresSistema
 		      (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		SELECT NEWID(),'/Aprobacion/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT '0'code,'Info: Error en el procedimiento: ' as  'message'
 	END CATCH 
 
 END

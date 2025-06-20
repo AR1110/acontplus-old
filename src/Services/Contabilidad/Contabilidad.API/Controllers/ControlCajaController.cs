@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class ControlCajaController(IControlCajaService controlCajaService) : BaseApiController
+public class ControlCajaController(IControlCajaRepository controlCajaRepository) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -10,7 +10,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-        var response = await controlCajaService.GetAsync(parameters);
+        var response = await controlCajaRepository.GetAsync(parameters);
         if (response == null) return NoContent();
 
         return Ok(response);
@@ -25,7 +25,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await controlCajaService.AddAsync(parameters);
+        var response = await controlCajaRepository.AddAsync(parameters);
         if (response == null) return NoContent();
 
         ;
@@ -41,7 +41,7 @@ public class ControlCajaController(IControlCajaService controlCajaService) : Bas
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
         };
-        var response = await controlCajaService.UpdateAsync(parameters);
+        var response = await controlCajaRepository.UpdateAsync(parameters);
         if (response == null) return NoContent();
 
         ;

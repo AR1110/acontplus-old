@@ -336,6 +336,11 @@ BEGIN
                        INNER JOIN Customer.Customer           cu WITH (NOLOCK) ON cu.Id			            = cl.CustomerId
                        INNER JOIN Sri.Establecimiento         ss WITH (NOLOCK) ON ss.idEstablecimiento      = pe.idEstablecimiento
                        WHERE ss.idEntidad = @idEntidad '
+            
+            IF EXISTS(SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs=0)
+                BEGIN 
+                    SELECT TOP 1 @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
+                END
 
             IF @codEstab IS NOT NULL
                 BEGIN
@@ -389,7 +394,7 @@ BEGIN
                    ,direccion                                                                 as direccionEntidad 
                    ,nombreUsuario                                                             as usuario
                    ,'Reporte - Trasabildiad de Aprobaciones'                                  as tituloReporte
-                   ,FORMAT(@dateStart, 'dd/MM/yyyy') + ' a ' + FORMAT(@dateEnd, 'dd/MM/yyyy') as filtroFechas
+                   ,FORMAT(@dateStart, 'dd/MM/yyyy') + ' a ' + FORMAT(@dateEnd, 'dd/MM/yyyy') as filtroFecha
             FROM v_usuario
             WHERE idUsuarioRol = @userRoleId
 

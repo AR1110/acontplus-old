@@ -309,18 +309,9 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   }
 
   getDataProductSale(id: number) {
-    try {
-      this._productUseCase.getForSale(id).subscribe({
-        next: (response) => {
-          this.optionSelected.emit(response);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    this.dataSearch.textSearch = '';
+      this._productUseCase.getForSale(id).subscribe( (response) =>   this.optionSelected.emit(response));
+
   }
 
   onClickPaginator() {

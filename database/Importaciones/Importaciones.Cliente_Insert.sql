@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Importaciones.Cliente_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Importaciones.Cliente_Insert 
-GO
-CREATE PROCEDURE Importaciones.Cliente_Insert @idRol INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Importaciones.Cliente_Insert @idRol INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -72,19 +69,14 @@ BEGIN
 		BEGIN TRAN 
 
             INSERT INTO Customer.Customer WITH (ROWLOCK)
-                     (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
-            SELECT	ti.codigoSri,t.numeroIdentificacion,t.nombreFiscal,t.nombreComercial,t.correo,t.telefono,t.direccion
+                     (IdTypeId,IDCard,BusinessName,TradeName,email,telephone,[Address])
+            SELECT t.idTipoIdentificacion,t.numeroIdentificacion,t.nombreFiscal,t.nombreComercial,t.correo,t.telefono,t.direccion
 			FROM @table t
-            INNER JOIN TipoIdentificacion ti ON ti.idTipoIdentificacion = t.idTipoIdentificacion
             WHERE t.numeroIdentificacion NOT IN (SELECT IDCard FROM Customer.Customer )
 
 
             INSERT INTO dbo.Cliente
 				(idSubContribuyente
-				,idTipoIdentificacion
-				,numeroIdentificacion
-				,nombreComercial
-				,nombreFiscal
 				,correo
 				,direccion
 				,telefono
@@ -92,14 +84,9 @@ BEGIN
 				,fechaRegistro
 				,idUsuario
 				,idEntidad
-                ,validationSri
                 ,CustomerId)
 			SELECT	
 				 idSubContribuyente
-				,idTipoIdentificacion
-				,numeroIdentificacion
-				,nombreComercial
-				,nombreFiscal
 				,correo
 				,direccion
 				,telefono
@@ -107,9 +94,7 @@ BEGIN
 				,dbo.ufnGetDateEcuador()
 				,@idUsuario
 				,@idEntidad
-                ,1
-                ,(SELECT TOP 1 c.Id FROM Customer.Customer c WHERE c.IDCard = t.numeroIdentificacion)
-			FROM @table t
+                ,(SELECT TOP 1 c.Id FROM Customer.Customer c WHERE c.IDCard = t.numeroIdentificacion)FROM @table t
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Ventas/Cliente',@count,dbo.ufnGetDateEcuador()

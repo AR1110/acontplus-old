@@ -6,6 +6,8 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,gr.idCliente
         ,gr.idUsuario
         ,gr.idFactura
+        ,gr.idNotaEntrega
+        ,gr.idAprob_Document
         ,gr.fechaInicio
         ,gr.fechaFin
         ,gr.emision

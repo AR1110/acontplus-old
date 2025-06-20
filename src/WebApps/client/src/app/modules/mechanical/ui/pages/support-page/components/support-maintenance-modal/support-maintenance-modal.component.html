@@ -12,20 +12,19 @@
           <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
             <mat-form-field class="w-100">
               <mat-label>Establecimiento</mat-label>
-              <input matInput [value]="data.establecimiento" readonly>
+              <input matInput [value]="data.establecimiento" readonly />
             </mat-form-field>
-
           </div>
           <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
             <mat-form-field class="w-100">
               <mat-label>Punto Emisión:</mat-label>
-              <input matInput [value]="data.ptoEmi" readonly>
+              <input matInput [value]="data.ptoEmi" readonly />
             </mat-form-field>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <mat-form-field class="w-100">
               <mat-label>Fecha Emisión:</mat-label>
-              <input matInput [value]="fechaLegible" readonly>
+              <input matInput [value]="fechaLegible" readonly />
             </mat-form-field>
           </div>
         </div>
@@ -35,7 +34,7 @@
           <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
             <mat-form-field class="w-100">
               <mat-label>Cliente:</mat-label>
-              <input matInput [value]="data.businessName" readonly>
+              <input matInput [value]="data.businessName" readonly />
               <ng-container matSuffix>
                 <button
                   type="button"
@@ -50,7 +49,7 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
             <mat-form-field class="w-100">
               <mat-label>Placa:</mat-label>
-              <input matInput  [value]="vehicle().licensePlate" readonly>
+              <input matInput [value]="vehicle().licensePlate" readonly />
               <ng-container matSuffix>
                 <button
                   type="button"
@@ -61,7 +60,6 @@
                 </button>
               </ng-container>
             </mat-form-field>
-
           </div>
         </div>
       </div>
@@ -69,29 +67,38 @@
 
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-          <app-product-search-overlay
-            (optionSelected)="onResultSelectedProduct($event)"
-            [searchSale]="true"
-          />
+        <app-product-search-overlay
+          (optionSelected)="onResultSelectedProduct($event)"
+          [searchSale]="true"
+        />
       </div>
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Bodega: </mat-label>
-          <mat-select  [(ngModel)]="data.bodegaId" (selectionChange)="onChangeBodega()">
+          <mat-select
+            [(ngModel)]="data.bodegaId"
+            (selectionChange)="onChangeBodega()"
+          >
             @for (item of bodegas(); track $index) {
-              <mat-option [value]="item.idBodega">{{ item.descripcion }}</mat-option>
+            <mat-option [value]="item.idBodega">{{
+              item.descripcion
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
-
       </div>
 
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Tarifa: </mat-label>
-          <mat-select  [(ngModel)]="data.feeId" (selectionChange)="onChangeFee()">
+          <mat-select
+            [(ngModel)]="data.feeId"
+            (selectionChange)="onChangeFee()"
+          >
             @for (item of feeds(); track $index) {
-              <mat-option [value]="item.idTarifa">{{ item.descripcion }}</mat-option>
+            <mat-option [value]="item.idTarifa">{{
+              item.descripcion
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -126,25 +133,25 @@
       <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Observación</mat-label>
-          <textarea matInput   [value]="data.obs" placeholder="..." readonly></textarea>
+          <textarea
+            matInput
+            [value]="data.obs"
+            placeholder="..."
+            readonly
+          ></textarea>
         </mat-form-field>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="mt-2">
           <app-draw-tax-total
             [subTotalSinImpuesto]="data.subTotalSinImpuesto"
-            [htmlImpuestoTotal]="htmlImpuestoTotal"
+            [htmlImpuestoTotal]="htmlImpuestoTotal()"
             [discount]="data.discount"
-            [htmlIvaTotal]="htmlIvaTotal"
+            [htmlIvaTotal]="htmlIvaTotal()"
             [importeTotal]="data.total"
           />
         </div>
       </div>
     </div>
-
   </div>
-
 </ng-template>
-
-
-
