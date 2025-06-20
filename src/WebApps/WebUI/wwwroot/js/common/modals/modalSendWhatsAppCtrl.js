@@ -43,12 +43,12 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c";
 
 
-    function createDataParamDocSri({idDocumentoElectronico, codDoc}) {
+    function createDataParamDocSri({ idDocumentoElectronico, codDoc }) {
         let id = idDocumentoElectronico > 0 ? idDocumentoElectronico : data.idDocumento;
         return {
             tipo: 2,
             id,
-             idDocumentoElectronico,
+            idDocumentoElectronico,
             codDoc,
             esNotificacionTributaria: true,
         };
@@ -76,7 +76,9 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     let esNotificacionGeneral = false;
 
     let telefonoEstab;
-    let nombreEstab
+    let nombreEstab;
+    let customerName;
+    let serieDocumento; 
 
     getDataForm();
     function getDataForm() {
@@ -131,8 +133,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
 
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
-            (response) => {
-                console.log(response)
+            (response) => { 
                 let { stateInstance } = response.data
                 if (stateInstance === "authorized") {
                     $scope.session.is_logged_in = true
@@ -271,7 +272,41 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         })
     }
 
-    let totalMessages = 1
+    let totalMessages = 1;
+
+    function getMessageText() {
+
+        let tipoDocNombre = null;
+        let contactoNombre = null;
+        let serieComprobante = null;
+        if (data.codDoc === '01') {
+            tipoDocNombre = 'Factura';
+        }
+
+        if (data.codDoc === 'NE') {
+            tipoDocNombre = 'Nota Entrega';
+        }
+        if (data.codDoc === '09') {
+            tipoDocNombre = 'Proforma';
+        }
+
+        if(telefonoEstab){
+            contactoNombre = `Contactos: ${telefonoEstab}`
+        }
+      
+
+        const mainMessage = `Estimado(a) *${data.razonSocialComprador || data.nombreComercial}*\n Adjunto su ${tipoDocNombre} Nro. ${data.serieComprobante} emitida por *${nombreEstab}*\n ${contactoNombre}`;
+
+        const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n' + 
+                            'Optimiza tu facturación con **Acontplus**. Visita nuestro sitio web para conocer más:\n' +
+                            '👉 https://acontplus.com.ec';
+
+                            return {
+                                mainMessage,
+                                promoMessage
+                            }
+    }
+
 
     function sendSms(message, firstMessage = null) {
         return new Promise((resolve, reject) => {
@@ -280,7 +315,8 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                 let url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`
                 let payload = {
                     chatId: phoneNumberFormatter($scope.whatsapp.number),
-                    message: message ? message : $scope.whatsapp.message,
+                    //message: message ? message : $scope.whatsapp.message,
+                    message: message ? message:  getMessageText().mainMessage
                 }
 
                 $http.post(url, payload).then(
@@ -332,17 +368,18 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                             let messageAdd = '';
 
 
-                            if (telefonoEstab) {
-                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${nombreEstab}* al siguiente número: *${telefonoEstab}*`;
-                                sendSms(messageAdd)
-                            }
+                            // if (telefonoEstab) {
+                            //     messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${nombreEstab}* al siguiente número: *${telefonoEstab}*`;
+                            //     sendSms(messageAdd)
+                            // }
+
+                            // setTimeout(() => {
+                            //     sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
+                            // }, 2000)
 
                             setTimeout(() => {
-                                sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
-                            }, 2000)
-
-                            setTimeout(() => {
-                                sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
+                             //   sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
+                             sendSms(getMessageText().promoMessage)
                                 saveHistory()
                             }, 3000)
                         }
@@ -402,7 +439,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         let format = 'pdf'
         let dataParms = {
             hasParams: true,
-            id: data.idDocumento||data.idDocumentoElectronico,
+            id: data.idDocumento || data.idDocumentoElectronico,
             idDocumentoElectronico: data.idDocumentoElectronico,
             versionComp: data.versionComp
         }
