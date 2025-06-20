@@ -81,7 +81,6 @@ BEGIN
 	                                                                    INNER JOIN Acontplus.App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
                                                                         WHERE urr.idUsuarioRol = r.idUsuarioRol 
                                                                         AND a.Code='AR' AND a.[IsActive] = 1
-                                                                        AND m.Code IN('POS')
 	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) 
                                                                                                                 INNER JOIN AcontplusAdmin.Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
                                                                                                                 INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
