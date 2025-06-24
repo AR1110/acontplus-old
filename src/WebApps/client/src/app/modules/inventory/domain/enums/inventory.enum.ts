@@ -1,3 +1,7 @@
+import {
+  InventoryAdjustmentRepositoryImpl
+} from "@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl";
+
 export const enum INVENTORY_PATHS {
   PRODUCT_OLD = 'Articulo/',
   PRODUCT = 'Product/',
@@ -18,7 +22,8 @@ export const enum INVENTORY_PATHS {
   PRODUCT_UBICATION = 'ArticuloUbicacion',
   PRODUCT_BARCODE='ArticuloCodigoBarra',
   FRACTIONAL_PRODUCT = 'ArticuloFraccionado',
-  WAREHOUSE='Bodega'
+  WAREHOUSE='Bodega',
+  INVENTORY_ADJUSTMENT='Consolidacion'
 }
 
 
@@ -30,5 +35,6 @@ export const enum INVENTORY_CODE_REPORT {
   ARTICULO_PVP = 'INVAT',
   RAF='RAF', //REPORTE DE ARTICULOS FRACCIONADOS
   RCAA='RCAA',//REPORTE DE CADUCIDAD DE ARTICULOS
-  RASR = 'RASR' //Reporte de Articulo Stock Valoración
+  RASR = 'RASR', //Reporte de Articulo Stock Valoración
+  RCD='RCD' //Reporte Consolidacion Detalle
 }

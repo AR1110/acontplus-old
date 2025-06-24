@@ -27,9 +27,7 @@ try
 
     builder.Services.AddIdentityService(builder.Configuration);
 
-    builder.Services.AddSwaggerDocumentation();
-
-    builder.Services.AddVersioningAndSwagger();
+    builder.Services.AddApiVersioningAndDocumentation();
 
     builder.Services.AddOpenApi();
 
@@ -39,7 +37,7 @@ try
 
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwaggerAndVersioning();
+        app.UseApiVersioningAndDocumentation();
         app.MapOpenApi();
     }
 

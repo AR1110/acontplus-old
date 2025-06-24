@@ -1,0 +1,94 @@
+<app-breadcrumb/>
+
+<app-mat-dynamic-card>
+
+  <div class="d-grid gap-2">
+    <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Documento</mat-label>
+          <mat-select [(ngModel)]="dataFilter.tipoDocId">
+            <mat-option [value]="0">--Todos--</mat-option>
+            @for (item of tiposDoc(); track $index) {
+              <mat-option [value]="item.idTipoDocumento">{{item.descripcion}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select [(ngModel)]="dataFilter.estabId">
+            @for (item of estabs(); track $index) {
+              <mat-option [value]="item.idEstablecimiento">{{item.nombreEstab}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          [showMatPrefix]="true"
+          [(checkbox)]="dataFilter.useFilterDate"
+          (onCheckboxChange)="refresh()"
+        />
+      </div>
+      <div class="col">
+        <div class="hstack gap-2">
+          <app-theme-button
+            icon="add"
+            matStyle="basic"
+            text="Agregar"
+            (handleClick)="addEdit()"
+          />
+          <app-theme-button
+            variant="light"
+            icon="refresh"
+            matStyle="icon"
+            text="Agregar"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  />
+
+  <ng-template #templateOp let-item="item">
+    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="openDetail(item)">
+        <mat-icon>menu</mat-icon>
+        <span>Detalle</span>
+      </button>
+      <button mat-menu-item disabled>
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>file_copy</mat-icon>
+        <span>Duplicar</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>clear</mat-icon>
+        <span>Anular</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Reporte</span>
+      </button>
+    </mat-menu>
+
+  </ng-template>
+
+</app-mat-dynamic-card>

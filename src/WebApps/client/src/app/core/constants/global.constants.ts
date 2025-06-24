@@ -41,6 +41,8 @@ export const enum DOC_TYPE {
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
   NE = 'NE', //Nota Entrega
   CDV = 'CDV', //Consolidao diario venta
+  AC='AC', //Ajuste Consolidacion
+  CI='CI'
 }
 
 export const enum DOC_TYPE_SRI {

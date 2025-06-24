@@ -1,4 +1,4 @@
-use AcontPlus
+USE AcontPlus
 GO
 CREATE OR ALTER VIEW v_usuario AS (
 	SELECT u.idUsuario
@@ -19,6 +19,7 @@ CREATE OR ALTER VIEW v_usuario AS (
     ,r.Id RoleId
     ,u.correo email
     ,u.customerId
+    ,ur.accesses
 	FROM dbo.Usuario u WITH (NOLOCK)
 	INNER JOIN App.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
 	INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad

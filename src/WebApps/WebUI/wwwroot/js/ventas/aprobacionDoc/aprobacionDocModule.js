@@ -498,8 +498,11 @@ const aprobacionDocRepository = {
         return api.getData('post', `${this.url}Insert`, { data }, true)
 
     },
-    update(api, params) {
-
+    update(id, api, params, options) {
+        const data = CreateUpdtateAprobacionDocMapper.toJson(params, {
+            fS: options.fS
+        });
+        return api.getData('put', `${this.url}Update/${id}`, { data }, true)
     },
     getDetalle(api, id, options) {
         const json = DetalleAprobacionDocMapper.toJson(id);
@@ -560,7 +563,8 @@ app.factory('aprobacionDocService', [
             anular,
             convertToDoc,
             convertToDocAprobacionDocMapper,
-            addRow
+            addRow,
+            update
         };
 
         return service;
@@ -617,6 +621,12 @@ app.factory('aprobacionDocService', [
             });
         }
 
+        function update(id, params) {
+            return aprobacionDocRepository.update(id, api, params, {
+                fS
+            });
+        }
+
         function getDetalle(id) {
             return aprobacionDocRepository.getDetalle(api, id, {
                 fS,
@@ -631,7 +641,7 @@ app.factory('aprobacionDocService', [
             });
         }
         function anular(id) {
-            return aprobacionDocRepository.delete(api, id);
+            return aprobacionDocRepository.anular(api, id);
         }
 
 

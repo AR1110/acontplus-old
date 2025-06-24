@@ -25,6 +25,10 @@ import {
 } from "@inventory/data/transferencia-bodega/transferencia-bodega-web.repository";
 import {WarehouseRepository} from "@inventory/domain/repositories/warehouse.repository";
 import {WarehouseRepositoryImpl} from "@inventory/data/warehouse/warehouse-repository.impl";
+import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/inventory-adjustment.repository";
+import {
+  InventoryAdjustmentRepositoryImpl
+} from "@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl";
 
 
 export const DATA_INVENTORY_IOC:Provider[]=[
@@ -76,6 +80,10 @@ export const DATA_INVENTORY_IOC:Provider[]=[
   {
     provide: WarehouseRepository,
     useClass: WarehouseRepositoryImpl
+  },
+  {
+    provide: InventoryAdjustmentRepository,
+    useClass: InventoryAdjustmentRepositoryImpl,
   }
 
 ]
