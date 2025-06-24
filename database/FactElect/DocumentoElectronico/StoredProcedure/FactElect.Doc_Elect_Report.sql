@@ -451,7 +451,7 @@ BEGIN
                               ,lc.claveAcceso
                               ,dbo.AFTGenerarNroDocumento(es.estab+pt.ptoEmi,lc.secuencial) as serieComprobante										
                               ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision	
-                               ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+                              ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'')              as fechaAutorizacion
                               ,lc.identificacionProveedor
                               ,lc.razonSocialProveedor										
                               ,ISNULL((
@@ -848,7 +848,7 @@ BEGIN
                         INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision	      = de.idPuntoEmision
                         INNER JOIN Sri.Establecimiento      et WITH (NOLOCK) ON et.idEstablecimiento      = pe.idEstablecimiento
                          LEFT JOIN dbo.DocumentoElectronico df WITH (NOLOCK) ON df.idDocumentoElectronico = fa.idDocumentoElectronico
-                        WHERE et.idEntidad > 0 '
+                        WHERE et.idEntidad = @idEntidad '
 
             IF LEN(@codEstab) > 5
                 BEGIN
