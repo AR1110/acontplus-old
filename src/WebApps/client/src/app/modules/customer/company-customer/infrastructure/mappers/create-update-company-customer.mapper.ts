@@ -1,12 +1,11 @@
 import {getValidId, isValidField} from "@core/utils/utils";
 import {ApiResponse} from "@core/models/api-response";
 import {CompanyCustomerPayloadDto} from "@company-customer/domain/dtos/create-update-company-customer.payload";
-import {formatDateToString, setDateWithCurrentTime} from "@core/utils/date.util";
+import {formatDateToString} from "@core/utils/date.util";
 import {isValidDate} from "rxjs/internal/util/isDate";
 
 export class CreateUpdateCompanyCustomerMapper {
   static toJson(param:any):CompanyCustomerPayloadDto {
-  //  const birthDate = isValidDate(param.birthDate)? setDateWithCurrentTime(param.birthDate):null;
     return {
       idCliente:  getValidId(param.idCliente as number) ,
       idEmpleado: getValidId(param.idEmpleado as number),

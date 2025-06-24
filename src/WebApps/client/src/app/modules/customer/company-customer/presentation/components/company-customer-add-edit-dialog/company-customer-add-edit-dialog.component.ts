@@ -30,6 +30,7 @@ import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {provideNativeDateAdapter} from "@angular/material/core";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-company-customer-add-edit-dialog',
@@ -38,6 +39,7 @@ import {provideNativeDateAdapter} from "@angular/material/core";
     ReactiveFormsModule,
     MatTabsModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatSlideToggleModule,
     MatCustomDialogComponent,
     M3InputChipComponent, MatDynamicCardComponent,
     ToUpperCaseDirective,
@@ -357,7 +359,7 @@ export class CompanyCustomerAddEditDialogComponent {
   }
 
   private isCreate = ()=>!(this.params.id>0);
-  private isUpdate = ()=>(this.params.id>0);
+    isUpdate = ()=>(this.params.id>0);
 
   onSave() {
 
