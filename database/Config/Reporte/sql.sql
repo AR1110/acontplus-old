@@ -27,4 +27,16 @@ SELECT * FROM Config.Reporte where codigo = 'RAPTR'
 --insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
 --select 93,1,'detalleDs',1,GETDATE()
 
-select * from Config.ReporteDataSource where idReporte = 93
+--select * from Config.ReporteDataSource where idReporte = 94
+
+
+
+SELECT * FROM Config.Reporte where codigo = 'LCRG'
+
+--UPDATE Config.Reporte set reportPath = '/FactElect/LiquidacionRG.rdl', storedProcedure = 'FactElect.Doc_Elect_Report' where idReporte = 22
+
+--UPDATE Config.ReporteDataSource set dataSource = 'headerDs' where idReporteDataSource = 22
+
+--UPDATE Config.ReporteDataSource set dataSource = 'detalleDs' where idReporteDataSource = 37
+
+select * from Config.ReporteDataSource where idReporte = 22
