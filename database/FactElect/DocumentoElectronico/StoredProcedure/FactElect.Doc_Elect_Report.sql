@@ -451,7 +451,7 @@ BEGIN
                               ,lc.claveAcceso
                               ,dbo.AFTGenerarNroDocumento(es.estab+pt.ptoEmi,lc.secuencial) as serieComprobante										
                               ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision	
-                               ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+                               ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'')             as fechaAutorizacion
                               ,lc.identificacionProveedor
                               ,lc.razonSocialProveedor										
                               ,ISNULL((
@@ -460,7 +460,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje   = ''7''
                                       AND li.[Enabled]   = 1
-                              ),0) AS subTotalExento
+                              ),0)                                                          as subTotalExento
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -468,7 +468,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje     = ''6''
                                       AND li.[Enabled]   = 1
-                              ),0) as subTotalNoObjetoIva
+                              ),0)                                                          as subTotalNoObjetoIva
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -476,7 +476,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje     = ''5''
                                       AND li.[Enabled]   = 1
-                              ),0) AS subTotalIvaCinco
+                              ),0)                                                          as subTotalIvaCinco
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -484,7 +484,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje     = ''4''
                                       AND li.[Enabled]   = 1
-                              ),0) AS subTotalIvaQuince
+                              ),0)                                                          as subTotalIvaQuince
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -498,7 +498,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra
-                                      AND li.codigo               = ''2'' 
+                                      AND li.codigoPorcentaje   = ''2'' 
                                       AND li.[Percent] > 0
                                       AND li.[Enabled]   = 1
                                ),0) as subTotalIva
@@ -509,7 +509,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2))
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId          = lc.idLiquidacionCompra 
-                                      AND li.codigo                 = ''2''
+                                      AND li.codigoPorcentaje       = ''2''
                                       AND li.[Enabled]   = 1
                                ),0) AS iva
 
@@ -517,7 +517,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId          = lc.idLiquidacionCompra 
-                                      AND li.codigo                   = ''5''
+                                      AND li.codigoPorcentaje       = ''5''
                                       AND li.[Enabled]   = 1
                                ),0) AS iva5
 
@@ -525,7 +525,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2))
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId          = lc.idLiquidacionCompra
-                                      AND li.codigo                   = ''4''
+                                      AND li.codigoPorcentaje       = ''4''
                                       AND li.[Enabled]   = 1
                                ),0) as iva15
 
@@ -542,7 +542,7 @@ BEGIN
                         INNER JOIN Usuario              us WITH (NOLOCK) ON us.idUsuario	     = lc.idUsuario
                         WHERE lc.idEntidad = @idEntidad '
 
-            IF @codEstab IS NOT NULL
+            IF LEN(@codEstab) > 5
                 BEGIN
                     SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END 

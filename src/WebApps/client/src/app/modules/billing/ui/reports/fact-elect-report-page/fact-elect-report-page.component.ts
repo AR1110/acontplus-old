@@ -102,7 +102,7 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
     },
     [DOC_TYPE_SRI.LC]: {
       tipo: 4,
-      codigo: BILLING_CODE_REPORT.NCRG,
+      codigo: BILLING_CODE_REPORT.LCRG,
     },
     [DOC_TYPE_SRI.R]: {
       tipo: 5,
