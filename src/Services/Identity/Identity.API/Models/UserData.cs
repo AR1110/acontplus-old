@@ -19,7 +19,6 @@ public class UserData
     public string ProfilePicture { get; set; }
     public string Role { get; set; }
     public string ReturnUrl { get; set; }
-    public dynamic Submenus { get; set; }
     public string Token { get; set; }
     public string TradeName { get; set; }
     public string UserAgent { get; set; }

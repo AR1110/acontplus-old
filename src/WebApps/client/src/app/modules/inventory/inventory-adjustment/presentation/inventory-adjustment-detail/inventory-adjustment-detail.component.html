@@ -1,0 +1,93 @@
+<app-mat-custom-dialog
+  (close)="close()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="'Detalle Consolidación'"
+/>
+
+<ng-template #body>
+  <app-mat-dynamic-card>
+      <div class="row mb-4">
+        <div class="col-sm-6">
+          <h3 class="text-dark mb-1">Nro. Doc #BBB10234</h3>
+          <div><span class="text-muted">Tipo Doc:</span> {{ header.tipoDocNombre }}</div>
+          <div><span class="text-muted">Movimiento:</span> {{ header.movimientoNombre }}</div>
+          <div><span class="text-muted">Fecha Registro:</span> {{ header.fechaEmision }}</div>
+          <div><span class="text-muted">Establecimiento:</span> {{ header.estabNombre }}</div>
+          <div><span class="text-muted">Punto Emisión:</span> {{ header.ptoEmision }}</div>
+          <div><span class="text-muted">Obs:</span> {{ header.observacion }}</div>
+        </div>
+        <div class="col-sm-6 ">
+
+        </div>
+      </div>
+      <div class="table-responsive-sm">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th class="center">#</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th class="right">Cantidad</th>
+            <th class="center">Medida</th>
+            <th class="right">Stock</th>
+            <th class="right">Precio Costo</th>
+            <th class="right">Total</th>
+            <th class="right">Bodega</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (item of items(); track $index){
+              <tr>
+                <td class="center">{{$index+1}}</td>
+                <td class="left strong">{{ item.codigo }}</td>
+                <td class="left">{{ item.descripcion }}</td>
+                <td class="right">{{ item.cantidad }}</td>
+                <td class="center">{{ item.medidaNombre }}</td>
+                <td class="right">{{ item.stock }}</td>
+                <td class="right">{{ item.precioCosto }}</td>
+                <td class="right">{{ item.total }}</td>
+                <td class="right">{{ item.bodegaNombre }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td [colSpan]="9">Sin datos</td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-sm-5">
+        </div>
+        <div class="col-lg-4 col-sm-5 ml-auto">
+          <table class="table table-clear">
+            <tbody>
+
+            <tr>
+              <td class="left">
+                <strong class="text-dark">Total</strong>
+              </td>
+              <td class="right">
+                <strong class="text-dark">{{ header.total }}</strong>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+  </app-mat-dynamic-card>
+</ng-template>
+
+<ng-template #footer>
+  <app-theme-button
+    icon="table_view"
+    matStyle="basic"
+    text="Exportar a Excel"
+    (handleClick)="exportToExcel()"
+  />
+
+</ng-template>
+

@@ -451,7 +451,7 @@ BEGIN
                               ,lc.claveAcceso
                               ,dbo.AFTGenerarNroDocumento(es.estab+pt.ptoEmi,lc.secuencial) as serieComprobante										
                               ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision	
-                              ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'')              as fechaAutorizacion
+                               ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
                               ,lc.identificacionProveedor
                               ,lc.razonSocialProveedor										
                               ,ISNULL((

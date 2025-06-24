@@ -18,4 +18,5 @@ export const enum BILLING_CODE_REPORT {
   FEG = 'FEG',
   NCRG = 'NCRG',
   FCRRG = 'FCRRG', ////Facturación Retención Reporte General
+  LCRG = 'LCRG'
 }

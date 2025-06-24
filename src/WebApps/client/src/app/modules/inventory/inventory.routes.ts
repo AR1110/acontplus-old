@@ -14,6 +14,9 @@ import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/frac
 import { ProductComponent } from '@inventory/ui/product/product.component';
 import {TransferenciaBodegaComponent} from "@inventory/ui/transferencia-bodega/transferencia-bodega.component";
 import {WarehouseComponent} from "@inventory/ui/warehouse/warehouse.component";
+import {
+  InventoryAdjustmentComponent
+} from "@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component";
 
 export const routes: Route[] = [
   {
@@ -128,4 +131,11 @@ export const routes: Route[] = [
       breadcrumb: 'Bodega',
     },
   },
+  {
+    path: 'inventory-adjustment',
+    component: InventoryAdjustmentComponent,
+    data: {
+      breadcrumb: 'Ajuste Inventario',
+    }
+  }
 ];

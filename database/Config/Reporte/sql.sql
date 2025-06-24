@@ -19,21 +19,19 @@ go
 --insert into Config.Reporte(codigo,reportPath,contentType,storedProcedure,nombreReporte,fechaRegistro)
 --select 'RAPTR','/Ventas/AprobTrackingReport.rdl','application/pdf','Ventas.Aprob_Document_Report','Reporte de transacciones de aprobaciones de ventas.',GETDATE()
 
-SELECT * FROM Config.Reporte where codigo = 'RAPTR'
+--SELECT * FROM Config.Reporte where codigo = 'RAPTR'
 
---insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
---select 93,0,'headerDs',1,GETDATE()
+----insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
+----select 94,0,'headerDs',1,GETDATE()
 
---insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
---select 93,1,'detalleDs',1,GETDATE()
+----insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
+----select 94,1,'detalleDs',1,GETDATE()
 
-<<<<<<< Updated upstream
-select * from Config.ReporteDataSource where idReporte = 93
-=======
 --select * from Config.ReporteDataSource where idReporte = 94
 
 
 
+SELECT * FROM Config.Reporte where codigo = 'LCRG'
 
 --UPDATE Config.Reporte set reportPath = '/FactElect/LiquidacionRG.rdl', storedProcedure = 'FactElect.Doc_Elect_Report' where idReporte = 22
 
@@ -41,20 +39,4 @@ select * from Config.ReporteDataSource where idReporte = 93
 
 --UPDATE Config.ReporteDataSource set dataSource = 'detalleDs' where idReporteDataSource = 37
 
-
-
-
-SELECT * FROM Config.Reporte where codigo = 'RGGR'
-
-
---insert into Config.Reporte (codigo,reportPath,contentType,storedProcedure,nombreReporte,fechaRegistro) 
---select 'RGGR','/FactElect/GuiaRemisionRG.rdl','application/pdf','FactElect.Doc_Elect_Report','Reporte Guía de Remisión',GETDATE()
-
---insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
---select 98,0,'headerDs',1,GETDATE()
-
---insert into Config.ReporteDataSource (idReporte,position,dataSource,estado,fechaRegistro)
---select 98,1,'detalleDs',1,GETDATE()
-
-select * from Config.ReporteDataSource where idReporte = 98
->>>>>>> Stashed changes
+select * from Config.ReporteDataSource where idReporte = 93

@@ -343,7 +343,7 @@
                 })
 
                 if (!isConfirmed) return;
-                aprobacionDocSvc.delete(item.id).then(response => {
+                aprobacionDocSvc.anular(item.id).then(response => {
                     if (response.code === '0') {
                         fS.sweetAlert('warning', response.message);
                     }
