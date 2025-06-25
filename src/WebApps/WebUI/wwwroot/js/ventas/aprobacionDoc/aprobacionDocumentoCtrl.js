@@ -367,7 +367,7 @@
             try {
 
                 let codigo = null;
-                if (item.docDestino === DOC_TYPE.FV) {
+                if (item.docDestino === DOC_TYPE.FV_SRI) {
                     codigo = CODE_REPORT.PRE_F
                 }
                 if (item.docDestino === DOC_TYPE.NE) {
