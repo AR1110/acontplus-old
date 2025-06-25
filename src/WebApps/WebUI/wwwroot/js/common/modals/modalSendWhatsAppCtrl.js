@@ -297,9 +297,11 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
 
         const mainMessage = `Estimado(a) *${data.razonSocialComprador || data.nombreComercial}*\n Adjunto su ${tipoDocNombre} Nro. ${data.serieComprobante} emitida por *${nombreEstab}*\n ${contactoNombre}`;
 
-        const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n' + 
-                            'Optimiza tu facturación con **Acontplus**. Visita nuestro sitio web para conocer más:\n' +
-                            '👉 https://acontplus.com.ec';
+        const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n';
+
+        // const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n' + 
+        //                     'Optimiza tu facturación con **Acontplus**. Visita nuestro sitio web para conocer más:\n' +
+        //                     '👉 https://acontplus.com.ec';
 
                             return {
                                 mainMessage,

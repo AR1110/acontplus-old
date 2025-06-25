@@ -61,7 +61,7 @@ BEGIN
             SET @sql = 'SELECT ad.idAprob_Document
 							  ,ad.idAprob_Document                           as uniqueId
 							  --,ad.docOrigen  
-							  --,ad.codDoc
+							  ,td.codigo                                     as docDestino
 							  ,es.codEstab
                               ,og.descripcion                                as docOrigenDesc
 							  ,td.descripcion                                as docDestinoDesc
