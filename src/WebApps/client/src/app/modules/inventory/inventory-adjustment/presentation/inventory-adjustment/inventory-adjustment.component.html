@@ -3,6 +3,31 @@
 <app-mat-dynamic-card>
 
   <div class="d-grid gap-2">
+    <div class="app-product-search-bar">
+
+
+    <app-product-search-bar
+      [data]="countries"
+      [searchKeyword]="keyword"
+      placeHolder="Enter the company name"
+      iconName = "search"
+      (selected)='selectEvent($event)'
+      (inputChanged)='onChangeSearch($event)'
+      (inputFocused)='onFocused($event)'
+      historyIdentifier="countries"
+      [itemTemplate]="itemTemplate"
+      [notFoundTemplate]="notFoundTemplate"/>
+
+
+    <ng-template #itemTemplate let-item>
+      <a [innerHTML]="item.name"></a>
+    </ng-template>
+
+    <ng-template #notFoundTemplate let-notFound>
+      <div [innerHTML]="notFound"></div>
+    </ng-template>
+    </div>
+
     <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">

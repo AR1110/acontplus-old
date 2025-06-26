@@ -1,0 +1,175 @@
+
+  <div class="acp-autocomplete-container"
+       [ngClass]="{ 'acp-active': isOpen()}">
+    <div class="acp-input-container"  cdkOverlayOrigin #overlayPosition="cdkOverlayOrigin">
+      @if (iconName) {
+      <div class="acp-search"   (click)="remove($event)">
+        <i class="material-icons">{{iconName}}</i>
+      </div>
+
+      }
+      <input #searchInput type="text" placeholder={{placeHolder}}
+             [(ngModel)]=query
+             (input)="onChange($event)"
+             (focus)=handleFocus($event)
+             (click)="overlayOpen.set(true)"
+             [disabled]="disabled">
+      @if (query && !isLoading && !disabled) {
+      <div class="acp-x"   (click)="remove($event)">
+        <i class="material-icons">close</i>
+      </div>
+
+      }
+      <!--Loading mask-->
+      @if (isLoading) {
+      <div class="sk-fading-circle"  >
+        <div class="sk-circle1 sk-circle"></div>
+        <div class="sk-circle2 sk-circle"></div>
+        <div class="sk-circle3 sk-circle"></div>
+        <div class="sk-circle4 sk-circle"></div>
+        <div class="sk-circle5 sk-circle"></div>
+        <div class="sk-circle6 sk-circle"></div>
+        <div class="sk-circle7 sk-circle"></div>
+        <div class="sk-circle8 sk-circle"></div>
+        <div class="sk-circle9 sk-circle"></div>
+        <div class="sk-circle10 sk-circle"></div>
+        <div class="sk-circle11 sk-circle"></div>
+        <div class="sk-circle12 sk-circle"></div>
+      </div>
+
+      }
+    </div>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="overlayPosition"
+      [cdkConnectedOverlayOpen]="overlayOpen()"
+      (overlayOutsideClick)="overlayOpen.set(false)"
+    >
+      <!--FilteredList items-->
+      <div class="acp-suggestions-container"
+           [ngClass]="{ 'acp-is-hidden': isHistoryListVisible, 'acp-is-visible': !isHistoryListVisible}">
+
+        <div [class.overlay-container]="isOpen()">
+
+
+          <!--FilteredList heading-->
+          @if (filteredList.length > 0 && heading) {
+            <div class="acp-heading"  >
+              <div class="acp-text">{{heading}}</div>
+            </div>
+
+          }
+
+          <ul #filteredListElement>
+            @for (item of filteredList; track item; let idx = $index){
+
+              <li   class="acp-item">
+                <!--string logic-->
+                @if (isType(item)) {
+                  <div [class.acp-complete-selected]="idx === selectedIdx()"
+                       (click)="select(item)">
+                    <ng-container
+                      *ngTemplateOutlet="itemTemplate;  context: { $implicit: item | highlight: toHighlight }">
+                    </ng-container>
+                  </div>
+
+                }
+                <!--object logic-->
+                @if (!isType(item)) {
+                  <div [class.acp-complete-selected]="idx === selectedIdx()"
+                       (click)="select(item)">
+                    <ng-container
+                      *ngTemplateOutlet="itemTemplate; context: { $implicit: item | highlight: toHighlight : searchKeyword }">
+                    </ng-container>
+                  </div>
+
+                }
+              </li>
+            }
+          </ul>
+
+
+          @if (isOpen()) {
+            <div class="search-footer">
+              <button mat-button color="primary" class="advanced-search-btn">
+                Búsqueda avanzada
+              </button>
+
+              <button mat-button class="all-results-btn">
+                <mat-icon>arrow_back</mat-icon>
+                Todos los resultados
+              </button>
+            </div>
+
+          }
+        </div>
+
+      </div>
+
+
+      <!--HistoryList items-->
+      <div class="acp-suggestions-container"
+           [ngClass]="{ 'acp-is-hidden': !isHistoryListVisible, 'acp-is-visible': isHistoryListVisible}">
+        <!--HistoryList heading-->
+        <div [class.overlay-container]="isOpen()">
+        @if (historyList.length > 0 && historyHeading) {
+          <div class="acp-heading"  >
+            <div class="acp-text">{{historyHeading}}</div>
+            <div class="acp-x" (click)="resetHistoryList($event)">
+              <i class="material-icons">delete</i>
+            </div>
+          </div>
+
+        }
+
+        <ul #historyListElement>
+          @for (item of historyList; track $index){
+            <li   class="acp-item">
+              <!--string logic-->
+              @if (isType(item)) {
+                <div [class.acp-complete-selected]="$index === selectedIdx()"   (click)="select(item)">
+                  <ng-container
+                    *ngTemplateOutlet="itemTemplate;  context: { $implicit: item }">
+                  </ng-container>
+                </div>
+
+              }
+              <!--object logic-->
+              @if (!isType(item)) {
+                <div [class.acp-complete-selected]="$index === selectedIdx()"   (click)="select(item)">
+                  <ng-container
+                    *ngTemplateOutlet="itemTemplate; context: { $implicit: item }">
+                  </ng-container>
+                </div>
+
+              }
+              <div class="acp-x" (click)="removeHistoryItem($index, $event)">
+                <i class="material-icons">close</i>
+              </div>
+            </li>
+
+          }
+        </ul>
+
+        </div>
+      </div>
+
+      <!--Not found-->
+      @if (isLoading ? !isLoading && notFound : notFound){
+        <div class="acp-not-found"  >
+          <ng-container
+            *ngTemplateOutlet="notFoundTemplate;  context: { $implicit: notFoundText  }">
+          </ng-container>
+        </div>
+
+      }
+    </ng-template>
+
+
+  </div>
+  @if (overlay()) {
+  <div class="acp-overlay"   (click)="handleOverlay()"></div>
+  }
+
+

@@ -19,6 +19,9 @@ import {
 import {
   InventoryAdjustmentDetailMapper
 } from "@inventory/inventory-adjustment/infrastructure/mappers/inventory-adjustment-detail.mapper";
+import {
+  InventoryAdjustmentListProductsMapper
+} from "@inventory/inventory-adjustment/infrastructure/mappers/inventory-adjustment-list-products.mapper";
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +48,13 @@ export class InventoryAdjustmentRepositoryImpl implements InventoryAdjustmentRep
     const json = InventoryAdjustmentDetailMapper.toJson(id);
     return this.#http.get<any>(`${this.#url}?json=${json}`).pipe(
       map((response) => InventoryAdjustmentDetailMapper.fromJson(response))
+    )
+  }
+
+  listProducts(params:any)  {
+    const json = InventoryAdjustmentListProductsMapper.toJson(params);
+    return this.#http.get<any>(`${this.#url}?json=${json}`).pipe(
+      map((response) => InventoryAdjustmentListProductsMapper.fromJson(response))
     )
   }
 

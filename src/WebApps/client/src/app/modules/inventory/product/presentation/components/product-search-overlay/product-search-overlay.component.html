@@ -1,0 +1,25 @@
+<div class="overlay-container mat-elevation-z8">
+  <mat-divider></mat-divider>
+  <mat-action-list>
+    @for (item of recentSearches(); track $index) {
+      <mat-list-item (click)="performSearch(item)">
+        <mat-icon matListItemIcon>history</mat-icon>
+        <h3 matListItemTitle>{{item}}</h3>
+        <button matListItemMeta mat-icon-button (click)="deleteRecentSearch(item)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-list-item>
+    }
+  </mat-action-list>
+
+  <div class="search-footer">
+    <button mat-button color="primary" class="advanced-search-btn">
+      Búsqueda avanzada
+    </button>
+
+    <button mat-button class="all-results-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Todos los resultados
+    </button>
+  </div>
+</div>
