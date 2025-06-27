@@ -1,0 +1,211 @@
+import {inject, Injectable} from "@angular/core";
+import {PATHS_API} from "@core/constants/global.constants";
+import {HttpClient} from "@angular/common/http";
+import {ApiResponse } from "@core/models/api-response";
+import {map, Observable} from "rxjs";
+import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
+import {getNoLoader} from "@core/interceptors/loader.interceptor"; ;
+import {ProductRepository} from "@inventory/product/domain/repositories/product.repository";
+import {GroupedEstab} from "@core/models/estab.model";
+import {ProductDataForm, ProductSale, ProductSearch} from "@inventory/product/domain/entities/product.model";
+import {MedidaProducto} from "@inventory/domain/models/measure.model";
+import {ProductMapper} from "@inventory/product/infrastructure/product/product.mapper";
+import {ProductDataFormMapper} from "@inventory/product/infrastructure/product/product-data-form.mapper";
+import {ProductSaveMapper} from "@inventory/product/infrastructure/product/product-save.mapper";
+import {ProductGetIdMapper} from "@inventory/product/infrastructure/product/product-get-id.mapper";
+
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProductRepositoryImpl implements ProductRepository{
+
+
+
+  private _url =   `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT_OLD}`;
+  private _http = inject(HttpClient);
+
+
+  getAll<T >(obj: T) {
+    let params = {
+      json: JSON.stringify({ ...obj, tipo: 1 })
+    }
+    return this._http.get<ApiResponse>(`${this._url}`, {
+      params,
+      context: getNoLoader()
+    }).pipe(map((response) => {
+      let result = {
+        products: [] as any[],
+        totalRecords: 0,
+      }
+      if (response.code === "1") {
+        result.products = ProductMapper.fromApiGetAll(response);
+
+        result.totalRecords = result.products.length>0? result.products[0].totalRecords : 0;
+      }
+
+      return result;
+
+    }))
+  }
+
+  getDataFilter() {
+    let params = JSON.stringify({ tipo: 11 })
+    return this._http.get<ApiResponse>(`${this._url}?json=${params}`, {
+      context: getNoLoader()
+    }).pipe(
+      map(response => {
+        let data = {
+          subCategorias: [],
+          medidas: [],
+          marcas: [],
+          modelos: [],
+          tiposIva: []
+        };
+        if (response.code === "1") {
+          data = ProductMapper.fromApiDataFilter(response)
+        }
+        return data;
+      })
+    )
+  }
+
+
+  getDataForm() {
+    let params = {
+      json: JSON.stringify({ tipo: 5 })
+    }
+    return this._http.get<ApiResponse>(`${this._url}`, {
+      params
+    }).pipe(
+      map((response) => {
+        let result =  new ProductDataForm()
+
+        if (response.code === "1") {
+          result = ProductDataFormMapper.fromJson(response)
+        }
+        return result;
+      })
+    )
+  }
+
+  search<T extends { textSearch: string, pageIndex?: number, pageSize?: number }>(
+    data: T
+  ): Observable<Array<ProductSearch>> {
+   let json = JSON.stringify(  {
+      pageIndex: data.pageIndex ?? 1,
+      pageSize: data.pageSize ?? 15,
+      busqueda: data.textSearch,
+    } )
+    return this._http
+      .get<ApiResponse>(`${this._url}Search?json=${json}`, {
+        context: getNoLoader()
+      })
+      .pipe(
+        map((response) => {
+          if (response.code==="1") {
+            let results = response.payload && JSON.parse(response.payload as string) || [];
+            return ProductMapper.searchFrom(results);
+          }
+          return [];
+        })
+      );
+  }
+
+
+  getForSale(id: number) {
+    let params = {
+      json: JSON.stringify({ idArticulo: id, tipo: 6 })
+    }
+    return this._http.get<ApiResponse>(`${this._url}`, {
+      params
+    }).pipe(
+      map((response) => {
+        let data = {
+          product: {} as ProductSale,
+          medidas: [] as MedidaProducto[],
+          consolidacionesFecha: [] as any[]
+        }
+
+        if (response.code === "1") {
+          data = ProductMapper.fromApiSale(response)
+        }
+
+        return data;
+      })
+    )
+  }
+
+
+  checkNotificationStock<T extends {
+    idArticulo: number
+    cantidad: number
+    idBodega: number
+    idMedida: number
+  }>(obj: T) {
+
+    let params = {
+      json: JSON.stringify({ ...obj, tipo: 7 })
+    }
+    return this._http.get(`${this._url}`, {
+      params
+    }).pipe(map((response: any) => ProductMapper.fromApiCheckStockNotificacion(response)))
+
+  }
+
+
+  getDataReport() {
+    let params = {
+      json: JSON.stringify({ tipo: 13 })
+    }
+    return this._http.get<ApiResponse>(`${this._url}`, {
+      params
+    }).pipe(
+      map(response => {
+        let estabs: GroupedEstab[] = [];
+        let data = {
+          estabs,
+          subCategorias: [],
+          marcas: [],
+          tiposDoc: [],
+          tarifas: [],
+          taxes: []
+        }
+        if (response && response.code==="1") {
+          data = ProductMapper.fromApiDataReport(response)
+        }
+        return data;
+      })
+    )
+  }
+
+  updateStatus(id: number) {
+    return this._http.delete<ApiResponse>(`${this._url}${id}`)
+  }
+
+  getId(id: number): Observable<ApiResponse> {
+   return this._http.get<ApiResponse>(`${this._url}${id}`).pipe(
+     map(response=>ProductGetIdMapper.fromJson(response))
+   )
+  }
+
+
+   post<T>(obj: T, file?: Blob)  {
+    let data = ProductSaveMapper.toJson(obj)
+     let paramsJson = JSON.stringify({data})
+     const formData = new FormData();
+    if(file){
+     formData.append('file', file);
+    }
+    return  this._http.post<ApiResponse>(`${this._url}?json=${paramsJson}`, formData)
+      .pipe(
+        map((response) => ProductSaveMapper.fromJson(response))
+      )
+  }
+   put<T>(id: number, obj: T): Observable<ApiResponse> {
+    throw new Error("Method not implemented.");
+  }
+
+
+}

@@ -12,6 +12,9 @@ import {
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
 import {roundNumber} from "@core/utils/round-number.utils";
+import {
+  ProductSearchBarComponent
+} from "@inventory/product/presentation/components/product-search-bar/product-search-bar.component";
 
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
@@ -20,10 +23,10 @@ import {roundNumber} from "@core/utils/round-number.utils";
     ThemeButtonComponent,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    ProductSearchBarComponent
   ],
   templateUrl: './inventory-adjustment-add-edit.component.html',
-  styles: ``
 })
 export class InventoryAdjustmentAddEditComponent {
   $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);

@@ -1,31 +1,38 @@
-<div class="acp-suggestions-container acp-is-visible">
-  <div class="overlay-container">
-    <ul #filteredListElement>
-      @for (item of filteredList; track item; let idx = $index){
+<mat-form-field class="w-100">
+  <mat-label>Buscar producto:</mat-label>
+  <input
+    matInput
+    #input
+    autocomplete="off"
+    cdkOverlayOrigin
+    #trigger="cdkOverlayOrigin"
+    (input)="applyFilter(input.value)"
+    [value]="dataSearch.textSearch"
+    (focus)="onFocus($event)"
+    (blur)="onBlur($event)"
+    (keydown)="handleKeyDown($event)"
+    placeholder="Buscar producto"
+  />
 
-        <li   class="acp-item">
-          <!--string logic-->
-          @if (isType(item)) {
-            <div [class.acp-complete-selected]="idx === selectedIdx()"
-                 (click)="select(item)">
-              <ng-container
-                *ngTemplateOutlet="itemTemplate;  context: { $implicit: item | highlight: toHighlight }">
-              </ng-container>
-            </div>
-
-          }
-          <!--object logic-->
-          @if (!isType(item)) {
-            <div [class.acp-complete-selected]="idx === selectedIdx()"
-                 (click)="select(item)">
-              <ng-container
-                *ngTemplateOutlet="itemTemplate; context: { $implicit: item | highlight: toHighlight : searchKeyword }">
-              </ng-container>
-            </div>
-
-          }
-        </li>
-      }
-    </ul>
-  </div>
-</div>
+  <!-- [cdkConnectedOverlayHasBackdrop]="true" -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="isOverlayOpen"
+    (overlayOutsideClick)="backdropClick()"
+  >
+    <div class="overlay-content">
+      <app-product-search-list
+        [tableData]="dataSource()"
+        [highlightRowIndex]="highlightRowIndex"
+        [isLoadingResults]="isLoadingResults()"
+        [isRateLimitReached]="isRateLimitReached()"
+        [pagination]="pagination"
+        (rowsEmitter)="handleRows($event)"
+        (handlePageEvent)="handlePageEvent($event)"
+        (rowSelected)="selectRow($event)"
+        (onClickPaginator)="onClickPaginator()"
+      />
+    </div>
+  </ng-template>
+</mat-form-field>

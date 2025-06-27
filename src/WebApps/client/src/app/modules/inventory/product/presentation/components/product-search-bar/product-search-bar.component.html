@@ -1,437 +1,84 @@
-<!-- product-search-bar.component.html -->
-<div
-  class="acp-autocomplete-container"
-  [ngClass]="{ 'acp-active': overlayOpen() }"
->
-  <div
-    class="acp-input-container"
-    cdkOverlayOrigin
-    #overlayPosition="cdkOverlayOrigin"
-  >
-    <div class="acp-input-wrapper">
-      <mat-icon class="acp-search-icon">search</mat-icon>
-      <input
-        #searchInput
-        type="text"
-        class="acp-input"
-        [placeholder]="placeHolder"
-        [(ngModel)]="query"
-        (input)="onChange($event)"
-        (click)="overlayOpen.set(true)"
-        (keydown)="onKeyDown($event)"
-        [disabled]="disabled"
-        autocomplete="off"
-      />
-      @if (query && query.length > 0) {
-        <button
-          class="acp-clear-btn"
-          (click)="clearSearch()"
-          type="button"
-          mat-icon-button
-        >
-          <mat-icon>clear</mat-icon>
-        </button>
-      }
-    </div>
+<div class="app-product-search-bar">
 
-    @if (isLoading) {
-      <div class="acp-loading-spinner">
-<!--        <mat-spinner diameter="20"></mat-spinner>-->
+  <app-reusable-autocomplete
+    [config]="productConfig"
+    [searchFunction]="productSearchFunction"
+    [itemTemplate]="itemTemplate"
+    (itemSelected)="onProductSelected($event)"
+    [notFoundTemplate]="notFoundTemplate"
+  />
+
+
+  <ng-template #itemTemplate let-item>
+    <div class="product-item">
+      <div class="product-image">
+        <img [src]="item.imagen || '/assets/no-image.png'"
+             [alt]="item.position"
+             class="product-thumb">
       </div>
-    }
-  </div>
-</div>
+      <div class="product-details">
+        <div class="product-header">
+          <div class="product-name" [innerHTML]="item.nombre"></div>
+          <div class="product-category"
+               [style.background-color]="item.categoria?.color || '#e0e0e0'">
+            @if (item.categoria?.icono) {
 
-<ng-template
-  cdkConnectedOverlay
-  [cdkConnectedOverlayOrigin]="overlayPosition"
-  [cdkConnectedOverlayOpen]="overlayOpen()"
-  [cdkConnectedOverlayWidth]="overlayWidth"
-  [cdkConnectedOverlayHeight]="overlayMaxHeight"
-  (overlayOutsideClick)="overlayOpen.set(false)"
-  (backdropClick)="overlayOpen.set(false)"
->
-  <div class="acp-suggestions-container" [class.acp-active]="overlayOpen()">
-    <div class="acp-overlay-container">
-
-      <!-- Historial de búsquedas -->
-      @if (isHistoryListVisible() && historyList.length > 0) {
-        <div class="acp-section">
-          <div class="acp-section-header">
-            <span class="acp-section-title">Búsquedas recientes</span>
-            <button
-              class="acp-clear-history"
-              (click)="clearHistory()"
-              mat-icon-button
-            >
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </div>
-
-          <ul class="acp-list acp-scrollable-list" #historyListElement>
-            @for (item of historyList; track $index) {
-              <li class="acp-item acp-history-item">
-                <div
-                  class="acp-item-content"
-                  [class.acp-complete-selected]="$index === selectedIdx()"
-                  (click)="select(item)"
-                >
-                  <mat-icon class="acp-history-icon">history</mat-icon>
-                  <div class="acp-item-details">
-                    <ng-container
-                      *ngTemplateOutlet="itemTemplate; context: { $implicit: item }"
-                    >
-                    </ng-container>
-                  </div>
-                </div>
-                <button
-                  class="acp-remove-btn"
-                  (click)="removeHistoryItem($index, $event)"
-                  mat-icon-button
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </li>
+              <mat-icon  >{{ item.categoria.icono }}</mat-icon>
             }
-          </ul>
-        </div>
-      }
-
-      <!-- Lista de productos filtrados -->
-      @if (!isHistoryListVisible() && totalFilteredItems() > 0) {
-        <div class="acp-section">
-          <div class="acp-section-header">
-            <span class="acp-section-title">Productos ({{ totalFilteredItems() }})</span>
-
-            <!-- Paginación en header -->
-            <div class="acp-pagination-header">
-              <div class="acp-pagination-info">
-                <span>Página {{ currentPage() }} de {{ totalPages() }}</span>
-              </div>
-              <div class="acp-pagination-controls">
-                <button
-                  class="acp-pagination-btn"
-                  (click)="goToFirstPage()"
-                  [disabled]="currentPage() === 1"
-                  mat-icon-button
-                >
-                  <mat-icon>first_page</mat-icon>
-                </button>
-                <button
-                  class="acp-pagination-btn"
-                  (click)="goToPreviousPage()"
-                  [disabled]="currentPage() === 1"
-                  mat-icon-button
-                >
-                  <mat-icon>chevron_left</mat-icon>
-                </button>
-                <input
-                  type="number"
-                  class="acp-page-input"
-                  [value]="currentPage()"
-                  [min]="1"
-                  [max]="totalPages()"
-                  (change)="goToPage($event)"
-                />
-                <button
-                  class="acp-pagination-btn"
-                  (click)="goToNextPage()"
-                  [disabled]="currentPage() === totalPages()"
-                  mat-icon-button
-                >
-                  <mat-icon>chevron_right</mat-icon>
-                </button>
-                <button
-                  class="acp-pagination-btn"
-                  (click)="goToLastPage()"
-                  [disabled]="currentPage() === totalPages()"
-                  mat-icon-button
-                >
-                  <mat-icon>last_page</mat-icon>
-                </button>
-              </div>
-            </div>
+            {{ item.categoria?.nombre }}
           </div>
+        </div>
+        <div class="product-description">{{ item.descripcion }}</div>
+        @if (item.codigo || item.codigoBarras) {
+          <div class="product-codes"  >
+            @if (item.codigo) {
 
-          <ul class="acp-list acp-scrollable-list" #filteredListElement>
-            @for (item of paginatedList(); track item; let idx = $index) {
-              <li class="acp-item acp-product-item">
-                @if (isType(item)) {
-                  <div
-                    class="acp-item-content"
-                    [class.acp-complete-selected]="idx === selectedIdx()"
-                    (click)="select(item)"
-                  >
-                    <div class="acp-product-info">
-                      <ng-container
-                        *ngTemplateOutlet="
-                          itemTemplate;
-                          context: { $implicit: item }
-                        "
-                      >
-                      </ng-container>
-                    </div>
-                  </div>
-                } @else {
-                  <div
-                    class="acp-item-content"
-                    [class.acp-complete-selected]="idx === selectedIdx()"
-                    (click)="select(item)"
-                  >
-                    <div class="acp-product-info">
-                      <ng-container
-                        *ngTemplateOutlet="
-                          itemTemplate;
-                          context: {
-                            $implicit: item
-                          }
-                        "
-                      >
-                      </ng-container>
-                    </div>
-                  </div>
-                }
-              </li>
+              <span  class="product-code">COD: {{ item.codigo }}</span>
             }
-          </ul>
-        </div>
-      }
+            @if (item.codigoBarras) {
+              <span   class="product-barcode">{{ item.codigoBarras }}</span>
 
-      <!-- Sin resultados -->
-      @if (!isLoading && notFound()) {
-        <div class="acp-no-results">
-          <mat-icon class="acp-no-results-icon">search_off</mat-icon>
-          <div class="acp-no-results-content">
-            <ng-container
-              *ngTemplateOutlet="notFoundTemplate; context: { $implicit: notFoundText }"
-            >
-            </ng-container>
+            }
           </div>
-        </div>
-      }
 
-      <!-- Footer con acciones y paginación -->
-      @if (overlayOpen() && (totalFilteredItems() > 0 || isHistoryListVisible())) {
-        <div class="acp-footer">
-          @if (!isHistoryListVisible() && totalFilteredItems() > 0) {
-            <!-- Información de paginación -->
-            <div class="acp-pagination-footer">
-              <div class="acp-pagination-summary">
-                Mostrando {{ startItem() }}-{{ endItem() }} de {{ totalFilteredItems() }} resultados
-              </div>
-
-              <!-- Controles de paginación en footer -->
-              <div class="acp-pagination-controls-footer">
-                <button
-                  class="acp-pagination-btn"
-                  (click)="goToPreviousPage()"
-                  [disabled]="currentPage() === 1"
-                  mat-icon-button
-                >
-                  <mat-icon>chevron_left</mat-icon>
-                </button>
-                <span class="acp-page-indicator">{{ currentPage() }} / {{ totalPages() }}</span>
-                <button
-                  class="acp-pagination-btn"
-                  (click)="goToNextPage()"
-                  [disabled]="currentPage() === totalPages()"
-                  mat-icon-button
-                >
-                  <mat-icon>chevron_right</mat-icon>
-                </button>
-              </div>
+        }
+        <div class="product-prices">
+          <div class="price-main">
+            3.00
+          </div>
+          @if (item.pvps?.length > 1) {
+            <div class="price-options"  >
+              +{{ item.pvps.length - 1 }} precio(s) más
             </div>
-          } @else {
-            <!-- Botones de acción cuando no hay paginación -->
-            <button
-              mat-stroked-button
-              color="primary"
-              class="acp-footer-btn acp-advanced-search"
-              (click)="openAdvancedSearch()"
-            >
-              <mat-icon>tune</mat-icon>
-              <span class="acp-btn-text">Búsqueda avanzada</span>
-            </button>
 
-            <button
-              mat-stroked-button
-              class="acp-footer-btn acp-all-results"
-              (click)="showAllResults()"
-            >
-              <mat-icon>list</mat-icon>
-              <span class="acp-btn-text">Todos los resultados</span>
-            </button>
           }
         </div>
-      }
+        @if (item.impuestos?.length > 0) {
+          <div class="product-taxes"  >
+            @for (impuesto of item.impuestos; track $index){
+              <span
+                class="tax-badge"
+                [class]="'tax-' + impuesto.tipo.toLowerCase()">
+                {{ impuesto.nombre }} {{ impuesto.porcentaje }}%
+              </span>
+
+            }
+          </div>
+
+        }
+      </div>
+      <div class="product-stock"
+           [class.out-of-stock]="item.stock <= 0">
+        {{ item.stock > 0 ? 'En stock' : 'Agotado' }}
+      </div>
     </div>
-  </div>
-</ng-template>
-<!--  <div class="acp-autocomplete-container"-->
-<!--       [ngClass]="{ 'acp-active': isOpen()}">-->
-<!--    <div class="acp-input-container"  cdkOverlayOrigin #overlayPosition="cdkOverlayOrigin">-->
-<!--      @if (iconName) {-->
-<!--      <div class="acp-search"   (click)="remove($event)">-->
-<!--        <i class="material-icons">{{iconName}}</i>-->
-<!--      </div>-->
+  </ng-template>
 
-<!--      }-->
-<!--      <input #searchInput type="text" placeholder={{placeHolder}}-->
-<!--             [(ngModel)]=query-->
-<!--             (input)="onChange($event)"-->
-<!--             (focus)=handleFocus($event)-->
-<!--             (click)="overlayOpen.set(true)"-->
-<!--             [disabled]="disabled">-->
-<!--      @if (query && !isLoading && !disabled) {-->
-<!--      <div class="acp-x"   (click)="remove($event)">-->
-<!--        <i class="material-icons">close</i>-->
-<!--      </div>-->
-
-<!--      }-->
-<!--      &lt;!&ndash;Loading mask&ndash;&gt;-->
-<!--      @if (isLoading) {-->
-<!--      <div class="sk-fading-circle"  >-->
-<!--        <div class="sk-circle1 sk-circle"></div>-->
-<!--        <div class="sk-circle2 sk-circle"></div>-->
-<!--        <div class="sk-circle3 sk-circle"></div>-->
-<!--        <div class="sk-circle4 sk-circle"></div>-->
-<!--        <div class="sk-circle5 sk-circle"></div>-->
-<!--        <div class="sk-circle6 sk-circle"></div>-->
-<!--        <div class="sk-circle7 sk-circle"></div>-->
-<!--        <div class="sk-circle8 sk-circle"></div>-->
-<!--        <div class="sk-circle9 sk-circle"></div>-->
-<!--        <div class="sk-circle10 sk-circle"></div>-->
-<!--        <div class="sk-circle11 sk-circle"></div>-->
-<!--        <div class="sk-circle12 sk-circle"></div>-->
-<!--      </div>-->
-
-<!--      }-->
-<!--    </div>-->
-
-<!--    <ng-template-->
-<!--      cdkConnectedOverlay-->
-<!--      [cdkConnectedOverlayOrigin]="overlayPosition"-->
-<!--      [cdkConnectedOverlayOpen]="overlayOpen()"-->
-<!--      (overlayOutsideClick)="overlayOpen.set(false)"-->
-<!--    >-->
-<!--      &lt;!&ndash;FilteredList items&ndash;&gt;-->
-<!--      <div class="acp-suggestions-container"-->
-<!--           [ngClass]="{ 'acp-is-hidden': isHistoryListVisible, 'acp-is-visible': !isHistoryListVisible}">-->
-
-<!--        <div [class.overlay-container]="isOpen()">-->
-
-<!--          &lt;!&ndash;FilteredList heading&ndash;&gt;-->
-<!--          @if (filteredList.length > 0 && heading) {-->
-<!--            <div class="acp-heading"  >-->
-<!--              <div class="acp-text">{{heading}}</div>-->
-<!--            </div>-->
-
-<!--          }-->
-
-<!--          <ul #filteredListElement>-->
-<!--            @for (item of filteredList; track item; let idx = $index){-->
-
-<!--              <li   class="acp-item">-->
-<!--                &lt;!&ndash;string logic&ndash;&gt;-->
-<!--                @if (isType(item)) {-->
-<!--                  <div [class.acp-complete-selected]="idx === selectedIdx()"-->
-<!--                       (click)="select(item)">-->
-<!--                    <ng-container-->
-<!--                      *ngTemplateOutlet="itemTemplate;  context: { $implicit: item | highlight: toHighlight }">-->
-<!--                    </ng-container>-->
-<!--                  </div>-->
-
-<!--                }-->
-<!--                &lt;!&ndash;object logic&ndash;&gt;-->
-<!--                @if (!isType(item)) {-->
-<!--                  <div [class.acp-complete-selected]="idx === selectedIdx()"-->
-<!--                       (click)="select(item)">-->
-<!--                    <ng-container-->
-<!--                      *ngTemplateOutlet="itemTemplate; context: { $implicit: item | highlight: toHighlight : searchKeyword }">-->
-<!--                    </ng-container>-->
-<!--                  </div>-->
-
-<!--                }-->
-<!--              </li>-->
-<!--            }-->
-<!--          </ul>-->
-
-<!--          @if (isOpen()) {-->
-<!--            <div class="search-footer">-->
-<!--              <button mat-button color="primary" class="advanced-search-btn">-->
-<!--                Búsqueda avanzada-->
-<!--              </button>-->
-
-<!--              <button mat-button class="all-results-btn">-->
-<!--                <mat-icon>arrow_back</mat-icon>-->
-<!--                Todos los resultados-->
-<!--              </button>-->
-<!--            </div>-->
-
-<!--          }-->
-<!--        </div>-->
-
-<!--      </div>-->
-
-<!--      &lt;!&ndash;HistoryList items&ndash;&gt;-->
-<!--      <div class="acp-suggestions-container"-->
-<!--           [ngClass]="{ 'acp-is-hidden': !isHistoryListVisible, 'acp-is-visible': isHistoryListVisible}">-->
-<!--        &lt;!&ndash;HistoryList heading&ndash;&gt;-->
-<!--        <div [class.overlay-container]="isOpen()">-->
-<!--        @if (historyList.length > 0 && historyHeading) {-->
-<!--          <div class="acp-heading"  >-->
-<!--            <div class="acp-text">{{historyHeading}}</div>-->
-<!--            <div class="acp-x" (click)="resetHistoryList($event)">-->
-<!--              <i class="material-icons">delete</i>-->
-<!--            </div>-->
-<!--          </div>-->
-
-<!--        }-->
-
-<!--        <ul #historyListElement>-->
-<!--          @for (item of historyList; track $index){-->
-<!--            <li   class="acp-item">-->
-<!--              &lt;!&ndash;string logic&ndash;&gt;-->
-<!--              @if (isType(item)) {-->
-<!--                <div [class.acp-complete-selected]="$index === selectedIdx()"   (click)="select(item)">-->
-<!--                  <ng-container-->
-<!--                    *ngTemplateOutlet="itemTemplate;  context: { $implicit: item }">-->
-<!--                  </ng-container>-->
-<!--                </div>-->
-
-<!--              }-->
-<!--              &lt;!&ndash;object logic&ndash;&gt;-->
-<!--              @if (!isType(item)) {-->
-<!--                <div [class.acp-complete-selected]="$index === selectedIdx()"   (click)="select(item)">-->
-<!--                  <ng-container-->
-<!--                    *ngTemplateOutlet="itemTemplate; context: { $implicit: item }">-->
-<!--                  </ng-container>-->
-<!--                </div>-->
-
-<!--              }-->
-<!--              <div class="acp-x" (click)="removeHistoryItem($index, $event)">-->
-<!--                <i class="material-icons">close</i>-->
-<!--              </div>-->
-<!--            </li>-->
-
-<!--          }-->
-<!--        </ul>-->
-
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      &lt;!&ndash;Not found&ndash;&gt;-->
-<!--      @if (isLoading ? !isLoading && notFound : notFound){-->
-<!--        <div class="acp-not-found"  >-->
-<!--          <ng-container-->
-<!--            *ngTemplateOutlet="notFoundTemplate;  context: { $implicit: notFoundText  }">-->
-<!--          </ng-container>-->
-<!--        </div>-->
-
-<!--      }-->
-<!--    </ng-template>-->
-
-<!--  </div>-->
-<!--  @if (overlay()) {-->
-<!--  <div class="acp-overlay"   (click)="handleOverlay()"></div>-->
-<!--  }-->
+  <!-- Template para "sin resultados" -->
+  <ng-template #notFoundTemplate let-text>
+    <div class="no-results-message">
+      <p>{{ text }}</p>
+      <small>Intenta con términos más específicos o revisa la ortografía</small>
+    </div>
+  </ng-template>
+</div>

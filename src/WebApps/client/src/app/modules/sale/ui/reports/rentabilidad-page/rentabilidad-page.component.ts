@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -19,7 +19,7 @@ import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 
 import { formatDateToString } from '@core/utils/date.util';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";

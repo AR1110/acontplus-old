@@ -1,0 +1,69 @@
+import {inject, Injectable} from "@angular/core";
+import {ProductRepository} from "@inventory/product/domain/repositories/product.repository";
+
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class ProductUseCase {
+  private repo = inject(ProductRepository)
+
+
+  getAll<T>(obj:T) {
+    return this.repo.getAll(obj)
+  }
+
+  getDataFilter(){
+    return this.repo.getDataFilter()
+  }
+
+
+  getDataForm(){
+    return this.repo.getDataForm();
+  }
+
+
+   search = <T extends { textSearch: string, pageIndex?: number, pageSize?: number }>(obj:T)=>{
+    return this.repo.search(obj)
+   }
+
+
+  getForSale(id: number){
+    return this.repo.getForSale(id)
+  }
+
+  checkNotificationStock<T extends {
+    idArticulo: number
+    cantidad: number
+    idBodega: number
+    idMedida: number
+  }>(obj:T){
+    return this.repo.checkNotificationStock(obj)
+  }
+
+  getDataReport(){
+    return this.repo.getDataReport()
+  }
+
+  updateStatus(id: number){
+    return this.repo.updateStatus(id)
+  }
+
+
+
+
+
+  // create<T>(infrastructure: T) {
+  //   return this.repo.create(infrastructure)
+  // }
+  //
+  // update<T>(id: number, infrastructure: T) {
+  //   return this.repo.update(id, infrastructure)
+  // }
+  //
+  // delete(id: number) {
+  //   return this.repo.delete(id)
+  // }
+
+}

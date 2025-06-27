@@ -20,7 +20,7 @@ import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatInput} from "@angular/material/input";

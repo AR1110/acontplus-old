@@ -25,7 +25,7 @@ import { DecimalSelectComponent } from '@modules/config/ui/general-config/decima
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({
