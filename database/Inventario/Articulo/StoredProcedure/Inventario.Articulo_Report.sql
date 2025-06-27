@@ -341,7 +341,7 @@ BEGIN
 		BEGIN 
             DECLARE @viewCostPrice BIT 
                    ,@checkboxPrecioCostoFiltro BIT
-                   ,@tiposDocSelected VARCHAR(50)
+                   ,@tiposDocSelected VARCHAR(250)
 
 			SET @params =  '@idArticulo          INT
 	                       ,@idUsuario           INT
@@ -354,7 +354,7 @@ BEGIN
 						   ,@codTransaccion      VARCHAR(5)
                            ,@rucClienteProveedor VARCHAR(20)
                            ,@viewCostPrice       BIT
-                           ,@tiposDocSelected    VARCHAR(50) '
+                           ,@tiposDocSelected    VARCHAR(250) '
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
@@ -415,11 +415,16 @@ BEGIN
                ,codEstab                  VARCHAR(100)
                ,idCliente                 INT
                ,numeroIdentificacion      VARCHAR(25)
-               ,tiposDocSelected          VARCHAR(50)
+               ,tiposDocSelected          VARCHAR(250)
 			)
 
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
+
+            IF @tiposDocSelected IS NOT NULL
+			BEGIN
+			    SET @sql = @sql + 'AND tt.idTipoDocumento IN (SELECT value FROM STRING_SPLIT(@tiposDocSelected, '','')) '
+			END
 
             IF @checkBoxFecha = 1
 	            BEGIN
@@ -457,10 +462,7 @@ BEGIN
                     SET @sql = @sql + ' AND tt.rucClienteProveedor = @rucClienteProveedor '
                 END
 
-            IF @tiposDocSelected IS NOT NULL
-               BEGIN
-                    SET @sql = @sql + 'AND tt.idTipoDocumento IN (SELECT value FROM STRING_SPLIT(@tiposDocSelected, '','')) '
-               END
+
 
 			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
