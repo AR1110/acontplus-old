@@ -341,6 +341,7 @@ BEGIN
 		BEGIN 
             DECLARE @viewCostPrice BIT 
                    ,@checkboxPrecioCostoFiltro BIT
+                   ,@tiposDocSelected VARCHAR(50)
 
 			SET @params =  '@idArticulo          INT
 	                       ,@idUsuario           INT
@@ -352,7 +353,8 @@ BEGIN
 						   ,@idEntidad           INT
 						   ,@codTransaccion      VARCHAR(5)
                            ,@rucClienteProveedor VARCHAR(20)
-                           ,@viewCostPrice       BIT'
+                           ,@viewCostPrice       BIT
+                           ,@tiposDocSelected    VARCHAR(50) '
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
@@ -397,6 +399,7 @@ BEGIN
                   ,@idBodega                  = idBodega
                   ,@codEstab                  = codEstab 
                   ,@rucClienteProveedor       = numeroIdentificacion
+			      ,@tiposDocSelected          = tiposDocSelected
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo          BIT 
@@ -412,6 +415,7 @@ BEGIN
                ,codEstab                  VARCHAR(100)
                ,idCliente                 INT
                ,numeroIdentificacion      VARCHAR(25)
+               ,tiposDocSelected          VARCHAR(50)
 			)
 
 
@@ -451,7 +455,12 @@ BEGIN
             IF @rucClienteProveedor IS NOT NULL
                 BEGIN 
                     SET @sql = @sql + ' AND tt.rucClienteProveedor = @rucClienteProveedor '
-                END 
+                END
+
+            IF @tiposDocSelected IS NOT NULL
+               BEGIN
+                    SET @sql = @sql + 'AND tt.idTipoDocumento IN (SELECT value FROM STRING_SPLIT(@tiposDocSelected, '','')) '
+               END
 
 			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
@@ -481,6 +490,7 @@ BEGIN
 							  ,@fechaFin            = @fechaFin
                               ,@rucClienteProveedor = @rucClienteProveedor
                               ,@viewCostPrice       = @viewCostPrice
+			                  ,@tiposDocSelected    = @tiposDocSelected
 
 			RETURN 
 
@@ -580,9 +590,9 @@ BEGIN
 				  ,e.nombreComercial	
 				  ,ISNULL(e.telefono, '')telefonoEntidad
 				  ,ISNULL(e.direccion, '')direccionEntidad			
-				  ,tituloReporte = CASE @estado WHEN 'PA' THEN 'ARTICULOS QUE DE 1 A 5 DÍAS CADUCAN ' 
+				  ,tituloReporte = CASE @estado WHEN 'PA' THEN 'ARTICULOS QUE DE 1 A 5 Dï¿½AS CADUCAN ' 
 				                                WHEN 'VI' THEN 'ARTICULO VIGENTES'
-				                                          ELSE 'CADUCIDAD DE ARTÍCULOS' END 
+				                                          ELSE 'CADUCIDAD DE ARTï¿½CULOS' END 
 				  ,usuario       = @usuario
 				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
 			FROM Entidad e WITH (NOLOCK)

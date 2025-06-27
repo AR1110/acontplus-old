@@ -106,6 +106,16 @@
               class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
             >
               <div class="col">
+                <mat-form-field class="w-100">
+                  <mat-label>Tipo Documneto</mat-label>
+                  <mat-select [formControl]="tiposDocSelected" multiple>
+                    @for (item of tiposDoc(); track $index) {
+                      <mat-option [value]="item.idTipoDocumento">{{item.descripcion}}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col">
                 <app-company-customer-search
                   (customerSelected)="onCustomerSelected($event)"
                   (clearSearch)="clearSearchCustomer()"
