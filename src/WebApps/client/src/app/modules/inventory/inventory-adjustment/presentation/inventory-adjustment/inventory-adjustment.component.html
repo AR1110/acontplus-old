@@ -1,31 +1,95 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <app-mat-dynamic-card>
-
   <div class="d-grid gap-2">
     <div class="app-product-search-bar">
+      <app-product-search-bar
+        [dataSource]="products"
+        [itemTemplate]="itemTemplate"
+        [notFoundTemplate]="notFoundTemplate"
+        [itemsPerPage]="itemsPerPage"
+        [minSearchLength]="1"
+        placeHolder="Buscar productos..."
+        (itemSelected)="onItemSelected($event)"
+        (searchChanged)="onSearchChanged($event)"
+        (pageChanged)="onPageChanged($event)"
+        (advancedSearchClicked)="onAdvancedSearch()"
+        (allResultsClicked)="onAllResults($event)"
+      />
 
+      <!-- Template para mostrar cada item -->
+      <ng-template #itemTemplate let-item>
+        <div class="product-item">
+          <div class="product-image">
+            <img [src]="item.imagen || '/assets/no-image.png'"
+                 [alt]="item.nombre"
+                 class="product-thumb">
+          </div>
+          <div class="product-details">
+            <div class="product-header">
+              <div class="product-name" [innerHTML]="item.nombre"></div>
+              <div class="product-category"
+                   [style.background-color]="item.categoria?.color || '#e0e0e0'">
+                @if (item.categoria?.icono) {
 
-    <app-product-search-bar
-      [data]="countries"
-      [searchKeyword]="keyword"
-      placeHolder="Enter the company name"
-      iconName = "search"
-      (selected)='selectEvent($event)'
-      (inputChanged)='onChangeSearch($event)'
-      (inputFocused)='onFocused($event)'
-      historyIdentifier="countries"
-      [itemTemplate]="itemTemplate"
-      [notFoundTemplate]="notFoundTemplate"/>
+                <mat-icon  >{{ item.categoria.icono }}</mat-icon>
+                }
+                {{ item.categoria?.nombre }}
+              </div>
+            </div>
+            <div class="product-description">{{ item.descripcion }}</div>
+            @if (item.codigo || item.codigoBarras) {
+            <div class="product-codes"  >
+              @if (item.codigo) {
 
+              <span  class="product-code">COD: {{ item.codigo }}</span>
+              }
+              @if (item.codigoBarras) {
+              <span   class="product-barcode">{{ item.codigoBarras }}</span>
 
-    <ng-template #itemTemplate let-item>
-      <a [innerHTML]="item.name"></a>
-    </ng-template>
+              }
+            </div>
 
-    <ng-template #notFoundTemplate let-notFound>
-      <div [innerHTML]="notFound"></div>
-    </ng-template>
+            }
+            <div class="product-prices">
+              <div class="price-main">
+                3.00
+              </div>
+              @if (item.pvps?.length > 1) {
+              <div class="price-options"  >
+                +{{ item.pvps.length - 1 }} precio(s) más
+              </div>
+
+              }
+            </div>
+            @if (item.impuestos?.length > 0) {
+            <div class="product-taxes"  >
+              @for (impuesto of item.impuestos; track $index){
+              <span
+                    class="tax-badge"
+                    [class]="'tax-' + impuesto.tipo.toLowerCase()">
+                {{ impuesto.nombre }} {{ impuesto.porcentaje }}%
+              </span>
+
+              }
+            </div>
+
+            }
+          </div>
+          <div class="product-stock"
+               [class.out-of-stock]="item.stock <= 0">
+            {{ item.stock > 0 ? 'En stock' : 'Agotado' }}
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Template para "sin resultados" -->
+      <ng-template #notFoundTemplate let-text>
+        <div class="no-results-message">
+          <p>{{ text }}</p>
+          <small>Intenta con términos más específicos o revisa la ortografía</small>
+        </div>
+      </ng-template>
     </div>
 
     <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
@@ -35,7 +99,9 @@
           <mat-select [(ngModel)]="dataFilter.tipoDocId">
             <mat-option [value]="0">--Todos--</mat-option>
             @for (item of tiposDoc(); track $index) {
-              <mat-option [value]="item.idTipoDocumento">{{item.descripcion}}</mat-option>
+            <mat-option [value]="item.idTipoDocumento">{{
+              item.descripcion
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -45,7 +111,9 @@
           <mat-label>Establecimiento</mat-label>
           <mat-select [(ngModel)]="dataFilter.estabId">
             @for (item of estabs(); track $index) {
-              <mat-option [value]="item.idEstablecimiento">{{item.nombreEstab}}</mat-option>
+            <mat-option [value]="item.idEstablecimiento">{{
+              item.nombreEstab
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -88,7 +156,11 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+    <button
+      matIconButton
+      [matMenuTriggerFor]="menu"
+      aria-label="Example icon-button with a menu"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
@@ -113,7 +185,5 @@
         <span>Reporte</span>
       </button>
     </mat-menu>
-
   </ng-template>
-
 </app-mat-dynamic-card>

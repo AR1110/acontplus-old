@@ -4,26 +4,26 @@ import {Pipe, PipeTransform} from '@angular/core';
   name: 'highlight'
 })
 export class HighlightPipe implements PipeTransform {
-  transform(text: any, search: any, searchKeyword?: any): any {
-    let pattern = search.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-    pattern = pattern.split(' ').filter((t:any) => {
-      return t.length > 0;
-    }).join('|');
-    const regex = new RegExp(pattern, 'gi');
-
-    if (!search) {
+  transform(text: any, search: string | null, searchKey?: string): string {
+    if (!text || !search) {
       return text;
     }
 
-    if (searchKeyword) {
-      const name = text[searchKeyword].replace(regex, (match:any) => `<b>${match}</b>`);
-      // copy original object
-      const text2 = {...text};
-      // set bold value into searchKeyword of copied object
-      text2[searchKeyword] = name;
-      return text2;
-    } else {
-      return search ? text.replace(regex, (match:any) => `<b>${match}</b>`) : text;
+    // Si es un objeto, obtener el valor de la propiedad especificada
+    let textToHighlight = text;
+    if (typeof text === 'object' && searchKey) {
+      textToHighlight = text[searchKey] || text.name || text.value || '';
     }
+
+    if (typeof textToHighlight !== 'string') {
+      textToHighlight = String(textToHighlight);
+    }
+
+    const regex = new RegExp(`(${this.escapeRegExp(search)})`, 'gi');
+    return textToHighlight.replace(regex, '<mark class="highlight">$1</mark>');
+  }
+
+  private escapeRegExp(string: string): string {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 }

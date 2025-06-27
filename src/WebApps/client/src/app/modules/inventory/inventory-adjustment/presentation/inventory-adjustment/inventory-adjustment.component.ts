@@ -51,10 +51,444 @@ import {
     MatIconButton,
     MatIcon,
     MatMenuModule,
-    ProductSearchBarComponent
+    ProductSearchBarComponent,
   ],
   templateUrl: './inventory-adjustment.component.html',
-  styles: ``,
+  styles: `
+
+    /* Estilos para items en la lista */
+    .product-item {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .product-image {
+      flex-shrink: 0;
+    }
+
+    .product-thumb {
+      width: 50px;
+      height: 50px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid #e0e0e0;
+    }
+
+    .product-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .product-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .product-name {
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .product-category {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 500;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    .product-category mat-icon {
+      font-size: 12px;
+      width: 12px;
+      height: 12px;
+    }
+
+    .product-description {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .product-codes {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .product-code, .product-barcode {
+      font-size: 10px;
+      color: #888;
+      background: #f5f5f5;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .product-prices {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .price-main {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1976d2;
+    }
+
+    .price-options {
+      font-size: 10px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .product-taxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tax-badge {
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 8px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .tax-iva { background: #e3f2fd; color: #1565c0; }
+    .tax-ieps { background: #fff3e0; color: #ef6c00; }
+    .tax-isr { background: #f3e5f5; color: #7b1fa2; }
+    .tax-otro { background: #e8f5e8; color: #2e7d32; }
+
+    .product-stock {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      background: #e8f5e8;
+      color: #2e7d32;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .product-stock mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-bottom: 2px;
+    }
+
+    .product-stock.out-of-stock {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .product-stock.low-stock {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    /* Card del producto seleccionado */
+    .selected-product {
+      margin-top: 30px;
+      padding: 24px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+
+    .product-card {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .product-card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid #e0e0e0;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-title-section {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .product-info h4 {
+      margin: 0;
+      color: #333;
+      font-size: 20px;
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .product-category-large {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      color: white;
+      font-weight: 500;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .product-category-large mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .product-info p {
+      margin: 0 0 16px 0;
+      color: #666;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .product-codes-large {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    /* Sección PVP */
+    .pvp-section h5, .taxes-section h5 {
+      margin: 16px 0 8px 0;
+      color: #333;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .pvp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pvp-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+    }
+
+    .pvp-item.pvp-active {
+      background: #e3f2fd;
+      border-color: #1976d2;
+    }
+
+    .pvp-item.pvp-inactive {
+      background: #f5f5f5;
+      opacity: 0.7;
+    }
+
+    .pvp-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .pvp-price {
+      font-weight: 600;
+      color: #1976d2;
+      font-size: 16px;
+    }
+
+    .pvp-check {
+      color: #4caf50;
+      font-size: 18px;
+    }
+
+    /* Sección impuestos */
+    .taxes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tax-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .tax-item.tax-iva {
+      background: #e3f2fd;
+      border-color: #1976d2;
+    }
+
+    .tax-item.tax-ieps {
+      background: #fff3e0;
+      border-color: #f57c00;
+    }
+
+    .tax-item.tax-isr {
+      background: #f3e5f5;
+      border-color: #7b1fa2;
+    }
+
+    .tax-item.tax-otro {
+      background: #e8f5e8;
+      border-color: #4caf50;
+    }
+
+    .tax-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tax-name {
+      font-weight: 500;
+    }
+
+    .tax-type {
+      font-size: 11px;
+      opacity: 0.8;
+      text-transform: uppercase;
+    }
+
+    .tax-percentage {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .product-stock-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .no-results-message {
+      text-align: center;
+      color: #666;
+    }
+
+    .no-results-message p {
+      margin: 0 0 8px 0;
+      font-weight: 500;
+    }
+
+    .no-results-message small {
+      color: #999;
+    }
+
+    /* Estilos para el highlight */
+    :global(.highlight) {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 1px 2px;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .product-item {
+        gap: 8px;
+      }
+
+      .product-thumb {
+        width: 40px;
+        height: 40px;
+      }
+
+      .product-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .product-category {
+        align-self: flex-start;
+      }
+
+      .product-card {
+        flex-direction: column;
+      }
+
+      .product-card img {
+        width: 100px;
+        height: 100px;
+        align-self: center;
+      }
+
+      .product-title-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .pvp-list, .taxes-list {
+        gap: 6px;
+      }
+
+      .pvp-item, .tax-item {
+        padding: 6px 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-codes {
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .product-prices {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+
+      .product-stock {
+        min-width: 50px;
+        padding: 3px 4px;
+      }
+    }
+  `,
 })
 export class InventoryAdjustmentComponent   {
   private $listUseCase = inject(InventoryAdjustmentListUseCase);
@@ -193,126 +627,69 @@ export class InventoryAdjustmentComponent   {
 
 
 
-  title = "Auto-Complete using Angular "  ;
-  keyword = "name";
-  public countries = [
-    { id: 1, name: "Twiyo" },
-    { id: 2, name: "Demimbu" },
-    { id: 3, name: "Jaxworks" },
-    { id: 4, name: "Skajo" },
-    { id: 5, name: "Shufflebeat" },
-    { id: 6, name: "Thoughtmix" },
-    { id: 7, name: "Mycat" },
-    { id: 8, name: "Photobug" },
-    { id: 9, name: "Zazio" },
-    { id: 10, name: "Vitz" },
-    { id: 11, name: "Dablist" },
-    { id: 12, name: "Ntag" },
-    { id: 13, name: "Kwinu" },
-    { id: 14, name: "Trudoo" },
-    { id: 15, name: "Yodoo" },
-    { id: 16, name: "Demimbu" },
-    { id: 17, name: "Thoughtstorm" },
-    { id: 18, name: "Trudeo" },
-    { id: 19, name: "Tambee" },
-    { id: 20, name: "Eayo" },
-    { id: 21, name: "Linkbuzz" },
-    { id: 22, name: "Avaveo" },
-    { id: 23, name: "Twitterlist" },
-    { id: 24, name: "Oyoyo" },
-    { id: 25, name: "Wordify" },
-    { id: 26, name: "Zoomzone" },
-    { id: 27, name: "Flashpoint" },
-    { id: 28, name: "Katz" },
-    { id: 29, name: "Blogpad" },
-    { id: 30, name: "Fliptune" },
-    { id: 31, name: "Agimba" },
-    { id: 32, name: "Mydo" },
-    { id: 33, name: "Geba" },
-    { id: 34, name: "Katz" },
-    { id: 35, name: "Ozu" },
-    { id: 36, name: "Photolist" },
-    { id: 37, name: "Browsecat" },
-    { id: 38, name: "Mydo" },
-    { id: 39, name: "Gabvine" },
-    { id: 40, name: "Twimm" },
-    { id: 41, name: "Buzzshare" },
-    { id: 42, name: "Aivee" },
-    { id: 43, name: "Jaxbean" },
-    { id: 44, name: "Demivee" },
-    { id: 45, name: "Dynava" },
-    { id: 46, name: "Skyble" },
-    { id: 47, name: "Feedfire" },
-    { id: 48, name: "Edgepulse" },
-    { id: 49, name: "Browsecat" },
-    { id: 50, name: "Flashspan" },
-    { id: 51, name: "Yotz" },
-    { id: 52, name: "Tagchat" },
-    { id: 53, name: "DabZ" },
-    { id: 54, name: "Skidoo" },
-    { id: 55, name: "Skipstorm" },
-    { id: 56, name: "Dynabox" },
-    { id: 57, name: "Feedfire" },
-    { id: 58, name: "Jabbertype" },
-    { id: 59, name: "Livepath" },
-    { id: 60, name: "Oyoloo" },
-    { id: 61, name: "Wordify" },
-    { id: 62, name: "Topicshots" },
-    { id: 63, name: "Youspan" },
-    { id: 64, name: "Voomm" },
-    { id: 65, name: "Voomm" },
-    { id: 66, name: "InnoZ" },
-    { id: 67, name: "Linkbridge" },
-    { id: 68, name: "Fatz" },
-    { id: 69, name: "Photobug" },
-    { id: 70, name: "Mymm" },
-    { id: 71, name: "Skyble" },
-    { id: 72, name: "Rhynyx" },
-    { id: 73, name: "Fadeo" },
-    { id: 74, name: "Riffwire" },
-    { id: 75, name: "Buzzshare" },
-    { id: 76, name: "Abata" },
-    { id: 77, name: "Oyoloo" },
-    { id: 78, name: "Photolist" },
-    { id: 79, name: "Quire" },
-    { id: 80, name: "Meejo" },
-    { id: 81, name: "Dabjam" },
-    { id: 82, name: "Gigaclub" },
-    { id: 83, name: "Kwilith" },
-    { id: 84, name: "Lajo" },
-    { id: 85, name: "Ozu" },
-    { id: 86, name: "Livetube" },
-    { id: 87, name: "Yombu" },
-    { id: 88, name: "Feedfish" },
-    { id: 89, name: "Meejo" },
-    { id: 90, name: "Agimba" },
-    { id: 91, name: "Edgeblab" },
-    { id: 92, name: "Linktype" },
-    { id: 93, name: "Buzzshare" },
-    { id: 94, name: "Yodo" },
-    { id: 95, name: "Flashpoint" },
-    { id: 96, name: "Oyoloo" },
-    { id: 97, name: "Photofeed" },
-    { id: 98, name: "Jaxbean" },
-    { id: 99, name: "Tagcat" },
-    { id: 100, name: "Realpoint" }
+  itemsPerPage = 3;
+  selectedProduct: any | null = null;
+
+  // Datos de ejemplo
+  products: any[] = [
+    { id: 1, name: 'iPhone 14 Pro', description: 'Smartphone Apple con chip A16 Bionic', category: 'Electrónicos', price: 999 },
+    { id: 2, name: 'Samsung Galaxy S23', description: 'Flagship Android con cámara de 200MP', category: 'Electrónicos', price: 799 },
+    { id: 3, name: 'MacBook Air M2', description: 'Laptop ultradelgada con chip M2', category: 'Computadoras', price: 1199 },
+    { id: 4, name: 'Dell XPS 13', description: 'Laptop Windows premium con pantalla InfinityEdge', category: 'Computadoras', price: 899 },
+    { id: 5, name: 'AirPods Pro', description: 'Auriculares inalámbricos con cancelación de ruido', category: 'Audio', price: 249 },
+    { id: 6, name: 'Sony WH-1000XM4', description: 'Auriculares over-ear con cancelación de ruido', category: 'Audio', price: 299 },
+    { id: 7, name: 'iPad Air', description: 'Tablet con chip M1 y pantalla Liquid Retina', category: 'Tablets', price: 599 },
+    { id: 8, name: 'Surface Pro 9', description: 'Tablet 2 en 1 con Windows 11', category: 'Tablets', price: 999 },
+    { id: 9, name: 'Nintendo Switch', description: 'Consola híbrida de Nintendo', category: 'Gaming', price: 299 },
+    { id: 10, name: 'PlayStation 5', description: 'Consola de Sony con gráficos 4K', category: 'Gaming', price: 499 },
+    { id: 11, name: 'Xbox Series X', description: 'Consola de Microsoft con 12 teraflops', category: 'Gaming', price: 499 },
+    { id: 12, name: 'Apple Watch Series 8', description: 'Smartwatch con monitoreo de salud', category: 'Wearables', price: 399 },
+    { id: 13, name: 'Fitbit Charge 5', description: 'Pulsera fitness con GPS integrado', category: 'Wearables', price: 179 },
+    { id: 14, name: 'Google Pixel 7', description: 'Smartphone Android con cámara computacional', category: 'Electrónicos', price: 599 },
+    { id: 15, name: 'OnePlus 11', description: 'Flagship killer con carga rápida 100W', category: 'Electrónicos', price: 699 },
+    // Agregar más productos para probar la paginación...
+    ...Array.from({ length: 35 }, (_, i) => ({
+      id: 16 + i,
+      name: `Producto ${16 + i}`,
+      description: `Descripción del producto ${16 + i}`,
+      category: ['Electrónicos', 'Computadoras', 'Audio', 'Gaming'][i % 4],
+      price: Math.floor(Math.random() * 1000) + 100
+    }))
   ];
 
-  selectEvent(item:any) {
-    // do something with selected item
-    console.log(item);
+  onItemSelected(item: any) {
+    this.selectedProduct = item;
+    console.log('Producto seleccionado:', item);
   }
 
-  onChangeSearch(val: string) {
-    // fetch remote data from here
-    // And reassign the 'data' which is binded to 'data' property.
-    console.log(val);
+  onSearchChanged(query: string) {
+    console.log('Búsqueda cambió:', query);
   }
 
-  onFocused(e:any) {
-    // do something when input is focused
-    console.log(e);
+  onPageChanged(page: number) {
+    console.log('Página cambió:', page);
   }
 
+  onAdvancedSearch() {
+    console.log('Abrir búsqueda avanzada');
+    // Implementar lógica de búsqueda avanzada
+  }
 
+  onAllResults(query: string) {
+    console.log('Mostrar todos los resultados para:', query);
+    // Implementar lógica para mostrar todos los resultados
+  }
+
+  updateItemsPerPage() {
+    // El componente se actualizará automáticamente debido al binding
+    console.log('Items por página cambiado a:', this.itemsPerPage);
+  }
+
+  getInitials(item: any): string {
+    if (typeof item === 'string') {
+      return item.substring(0, 2).toUpperCase();
+    }
+    const name = item.name || item.value || '';
+    return name.substring(0, 2).toUpperCase();
+  }
 }

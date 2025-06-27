@@ -1,10 +1,13 @@
+// product-search-bar.component.ts
 import {
-  Component,
+  ChangeDetectorRef,
+  Component, computed,
   ContentChild, effect,
   ElementRef,
+  EventEmitter,
   forwardRef,
   inject,
-  Input,
+  Input, Output,
   output,
   Renderer2, signal,
   SimpleChanges,
@@ -19,9 +22,13 @@ import {
 } from "@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component";
 import {NgClass, NgTemplateOutlet} from "@angular/common";
 import {ProductSearchBarService} from "@inventory/product/application/services/product-search-bar.service";
-import {debounceTime, filter, fromEvent, map, Observable} from "rxjs";
+import {debounceTime, distinctUntilChanged, filter, fromEvent, map, Observable, Subject} from "rxjs";
 import {FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule} from "@angular/forms";
 import {HighlightPipe} from "@inventory/product/presentation/components/product-search-bar/highlight-pipe.pipe";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {takeUntil} from "rxjs/operators";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
 
 /**
  * Keyboard events
@@ -34,6 +41,14 @@ const isBackspace =(keyCode:any) => keyCode === 8;
 const isDelete = (keyCode:any) => keyCode === 46;
 const isESC = (keyCode:any) => keyCode === 27;
 const isTab = (keyCode:any) => keyCode === 9;
+
+export interface AutocompleteItem {
+  id?: string | number;
+  name?: string;
+  value?: string;
+  [key: string]: any;
+}
+
 @Component({
   selector: 'app-product-search-bar',
   imports: [
@@ -45,839 +60,517 @@ const isTab = (keyCode:any) => keyCode === 9;
     ReactiveFormsModule,
     NgTemplateOutlet,
     HighlightPipe,
-    FormsModule
+    FormsModule,
+    MatFormFieldModule,
+    MatProgressSpinner,
   ],
   templateUrl: './product-search-bar.component.html',
   styleUrl: './product-search-bar.component.scss',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ProductSearchBarComponent),
-      multi: true
-    }
-  ],
-  encapsulation: ViewEncapsulation.None,
-  host: {
-    '(document:click)': 'handleClick($event)',
-    'class': 'app-product-search-bar'
-  },
 })
 export class ProductSearchBarComponent {
+  @Input() placeHolder = 'Buscar productos...';
+  @Input() disabled = false;
+  @Input() debounceTime = 300;
+  @Input() minSearchLength = 2;
+  @Input() maxHistoryItems = 10;
+  @Input() overlayWidth = 'auto';
+  @Input() overlayMaxHeight = '500px';
+  @Input() searchKeyword = 'name';
+  @Input() notFoundText = 'No se encontraron productos';
+  @Input() itemsPerPage = 10; // Nueva propiedad para paginación
+
+  // Templates
+  @Input() itemTemplate!: TemplateRef<any>;
+  @Input() notFoundTemplate!: TemplateRef<any>;
+
+  // Data
+  @Input() dataSource: AutocompleteItem[] = [];
+
+  // Outputs
+  @Output() itemSelected = new EventEmitter<AutocompleteItem>();
+  @Output() searchChanged = new EventEmitter<string>();
+  @Output() advancedSearchClicked = new EventEmitter<void>();
+  @Output() allResultsClicked = new EventEmitter<string>();
+  @Output() pageChanged = new EventEmitter<number>(); // Nuevo evento para cambio de página
+
+  // ViewChild references
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('historyListElement') historyListElement!: ElementRef<HTMLUListElement>;
+  @ViewChild('filteredListElement') filteredListElement!: ElementRef<HTMLUListElement>;
+
+  // Reactive properties
+  query = '';
+  filteredList = signal<AutocompleteItem[]>([]);
+  historyList: AutocompleteItem[] = [];
+  isLoading = false;
   overlayOpen = signal(false);
-  @ViewChild('searchInput') searchInput!: ElementRef; // input element
- // @ViewChild('filteredListElement' ) filteredListElement!: ElementRef; // element of items
-  @ViewChild('historyListElement') historyListElement!: ElementRef; // element of history items
+  selectedIdx = signal(-1);
 
-  inputKeyUp$!: Observable<any>; // input events
-  inputKeyDown$!: Observable<any>; // input events
+  // Propiedades de paginación
+  currentPage = signal(1);
 
-  public query = ''; // search query
-  public filteredList:any[] = []; // list of items
-  public historyList = []; // list of history items
-  public isHistoryListVisible = true;
-  public elementRef = inject(ElementRef);
-  private renderer = inject(Renderer2)
-  public selectedIdx = signal(-1);
-  public toHighlight = '';
-  public notFound = false;
-  public isFocused = false;
-  public isOpen = signal(false);
-  public isScrollToEnd = false;
-  public overlay = signal(false);
-  private manualOpen: boolean | undefined = undefined;
-  private manualClose:undefined|boolean = undefined;
+  // Computed properties
+  isHistoryListVisible = computed(() => {
+    return this.query.length < this.minSearchLength && this.historyList.length > 0;
+  });
 
+  notFound = computed(() => {
+    return this.query.length >= this.minSearchLength &&
+      this.filteredList().length === 0 &&
+      !this.isLoading;
+  });
 
-  // @Inputs
-  /**
-   * Data of items list.
-   * It can be array of strings or array of objects.
-   */
-  @Input() public data:any[] = [];
-  @Input() public searchKeyword!: string; // keyword to filter the list
-  @Input() public placeHolder = ''; // input placeholder
-  @Input() public heading = '';
-  @Input() public initialValue: any; // set initial value
-  @Input() public iconName = ''; // material iconName
-  /**
-   * History identifier of history list
-   * When valid history identifier is given, then component stores selected item to local storage of user's browser.
-   * If it is null then history is hidden.
-   * History list is visible if at least one history item is stored.
-   */
-  @Input() public historyIdentifier!: string;
-  /**
-   * Heading text of history list.
-   * If it is null then history heading is hidden.
-   */
-  @Input() public historyHeading = 'Recently selected';
-  @Input() public historyListMaxNumber = 15; // maximum number of items in the history list.
-  @Input() public notFoundText = 'Not found'; // set custom text when filter returns empty result
-  @Input() public isLoading!: boolean; // loading mask
-  @Input() public debounceTime = 400; // delay time while typing
-  @Input() public disabled!:boolean; // input disable/enable
-  /**
-   * The minimum number of characters the user must type before a search is performed.
-   */
-  @Input() public minQueryLength = 1;
+  toHighlight = computed(() => this.query);
 
+  // Computed properties para paginación
+  totalFilteredItems = computed(() => this.filteredList().length);
 
-  // @Output events
-  /** Event that is emitted whenever an item from the list is selected. */
-   selected = output<any>();
+  totalPages = computed(() => {
+    const total = this.totalFilteredItems();
+    return total > 0 ? Math.ceil(total / this.itemsPerPage) : 1;
+  });
 
-  /** Event that is emitted whenever an input is changed. */
-   inputChanged = output<any>();
+  paginatedList = computed(() => {
+    const list = this.filteredList();
+    const page = this.currentPage();
+    const startIndex = (page - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return list.slice(startIndex, endIndex);
+  });
 
-  /** Event that is emitted whenever an input is focused. */
-   readonly inputFocused = output<void>();
+  startItem = computed(() => {
+    const total = this.totalFilteredItems();
+    if (total === 0) return 0;
+    return (this.currentPage() - 1) * this.itemsPerPage + 1;
+  });
 
-  /** Event that is emitted whenever an input is cleared. */
-   readonly inputCleared = output<void>();
+  endItem = computed(() => {
+    const total = this.totalFilteredItems();
+    const calculated = this.currentPage() * this.itemsPerPage;
+    return Math.min(calculated, total);
+  });
 
-  /** Event that is emitted when the autocomplete panel is opened. */
-   readonly opened = output<void>();
+  // Private properties
+  private destroy$ = new Subject<void>();
+  private searchSubject = new Subject<string>();
+  private readonly HISTORY_STORAGE_KEY = 'autocomplete_history';
 
-  /** Event that is emitted when the autocomplete panel is closed. */
-   readonly closed = output<void>();
-
-  /** Event that is emitted when scrolled to the end of items. */
-   readonly scrolledToEnd = output<void>();
-
-
-  // Custom templates
-  @Input() itemTemplate !: TemplateRef<any>;
-  @Input() notFoundTemplate !: TemplateRef<any>;
-  @ContentChild(TemplateRef) customTemplate !: TemplateRef<any>;
-
-
-  filteredListElement = viewChild<ElementRef>("filteredListElement");
-
-
-  /**
-   * Propagates new value when model changes
-   */
-  propagateChange: any = () => {
-  };
-
-
-  /**
-   * Writes a new value from the form model into the view,
-   * Updates model
-   */
-  writeValue(value: any) {
-    this.query = value;
-  }
-
-  /**
-   * Registers a handler that is called when something in the view has changed
-   */
-  registerOnChange(fn:any) {
-    this.propagateChange = fn;
-  }
-
-  /**
-   * Registers a handler specifically for when a control receives a touch event
-   */
-  registerOnTouched(fn: () => void): void {
-  }
-
-  /**
-   * Event that is called when the value of an input element is changed
-   */
-  onChange(event:any) {
-    this.propagateChange(event.target.value);
-  }
-
-
-
-  /**
-   * Event that is called when the control status changes to or from DISABLED
-   */
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    this.setInitialValue(this.initialValue);
+    this.setupSearch();
+    this.loadHistoryFromStorage();
   }
 
-  ngAfterViewInit() {
-    this.initEventStream();
-     this.handleScroll();
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
+  // Setup search with debounce
+  private setupSearch() {
+    this.searchSubject
+      .pipe(
+        debounceTime(this.debounceTime),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(query => {
+        this.performSearch(query);
+      });
+  }
 
+  // Input change handler
+  onChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.query = target.value;
+    this.selectedIdx.set(-1);
+    this.currentPage.set(1); // Reset página al cambiar búsqueda
 
-  /**
-   * Set initial value
-   * @param value
-   */
-  public setInitialValue(value: any) {
-    if (this.initialValue) {
-      this.select(value);
+    if (this.query.length >= this.minSearchLength) {
+      this.isLoading = true;
+      this.searchSubject.next(this.query);
+    } else {
+      this.filteredList.set([]);
+      this.isLoading = false;
+    }
+
+    this.overlayOpen.set(true);
+    this.searchChanged.emit(this.query);
+  }
+
+  // Perform the actual search
+  private performSearch(query: string) {
+    if (query.length < this.minSearchLength) {
+      this.filteredList.set([]);
+      this.isLoading = false;
+      return;
+    }
+
+    // Simulate API call delay
+    setTimeout(() => {
+      const filteredList = this.dataSource.filter(item => {
+        if (this.isType(item)) {
+          return item.toString().toLowerCase().includes(query.toLowerCase());
+        } else {
+          const searchValue = item[this.searchKeyword] || item.name || item.value || '';
+          return searchValue.toString().toLowerCase().includes(query.toLowerCase());
+        }
+      });
+
+      this.filteredList.set(filteredList);
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }, 100);
+  }
+
+  // Métodos de paginación
+  goToPage(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const page = parseInt(target.value);
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(page);
+    } else {
+      // Resetear al valor actual si es inválido
+      target.value = this.currentPage().toString();
     }
   }
 
-  /**
-   * Update search results
-   */
-  ngOnChanges(changes: SimpleChanges): void {
-    if (
-      changes &&
-      changes["data"] &&
-      Array.isArray(changes["data"].currentValue)
-    ) {
-      this.handleItemsChange();
-      if (!changes["data"].firstChange && this.isFocused) {
-        this.handleOpen();
+  goToFirstPage() {
+    if (this.currentPage() !== 1) {
+      this.currentPage.set(1);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(1);
+    }
+  }
+
+  goToPreviousPage() {
+    const prevPage = this.currentPage() - 1;
+    if (prevPage >= 1) {
+      this.currentPage.set(prevPage);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(prevPage);
+    }
+  }
+
+  goToNextPage() {
+    const nextPage = this.currentPage() + 1;
+    if (nextPage <= this.totalPages()) {
+      this.currentPage.set(nextPage);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(nextPage);
+    }
+  }
+
+  goToLastPage() {
+    const lastPage = this.totalPages();
+    if (this.currentPage() !== lastPage) {
+      this.currentPage.set(lastPage);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(lastPage);
+    }
+  }
+
+  // Keyboard navigation - Actualizado para paginación
+  onKeyDown(event: KeyboardEvent) {
+    const currentList = this.isHistoryListVisible() ? this.historyList : this.paginatedList();
+    const maxIndex = currentList.length - 1;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (maxIndex >= 0) {
+          const nextIndex = this.selectedIdx() < maxIndex ? this.selectedIdx() + 1 : 0;
+          this.selectedIdx.set(nextIndex);
+          this.scrollToSelected();
+        }
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        if (maxIndex >= 0) {
+          const prevIndex = this.selectedIdx() > 0 ? this.selectedIdx() - 1 : maxIndex;
+          this.selectedIdx.set(prevIndex);
+          this.scrollToSelected();
+        }
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (this.selectedIdx() >= 0 && this.selectedIdx() <= maxIndex) {
+          this.select(currentList[this.selectedIdx()]);
+        }
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        this.overlayOpen.set(false);
+        this.selectedIdx.set(-1);
+        break;
+
+      case 'PageDown':
+        event.preventDefault();
+        if (!this.isHistoryListVisible()) {
+          this.goToNextPage();
+        }
+        break;
+
+      case 'PageUp':
+        event.preventDefault();
+        if (!this.isHistoryListVisible()) {
+          this.goToPreviousPage();
+        }
+        break;
+    }
+  }
+
+  // Scroll to selected item
+  private scrollToSelected() {
+    const listElement = this.isHistoryListVisible()
+      ? this.historyListElement?.nativeElement
+      : this.filteredListElement?.nativeElement;
+
+    if (listElement) {
+      const selectedElement = listElement.children[this.selectedIdx()] as HTMLElement;
+      if (selectedElement) {
+        selectedElement.scrollIntoView({
+          block: 'nearest',
+          behavior: 'smooth'
+        });
       }
     }
   }
 
-  /**
-   * Items change
-   */
-  public handleItemsChange() {
-    this.isScrollToEnd = false;
-    if (!this.isOpen()) {
-      return;
-    }
-
-    this.filteredList = this.data;
-    this.notFound = !this.filteredList || this.filteredList.length === 0;
-  }
-
-  /**
-   * Filter data
-   */
-  public filterList() {
-    this.selectedIdx.set(-1);
-    this.initSearchHistory();
-    if (this.query != null && this.data) {
-      this.toHighlight = this.query;
-      this.filteredList = this.data.filter((item: any) => {
-        if (typeof item === 'string') {
-          // string logic, check equality of strings
-          return item.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
-        } else if (typeof item === 'object' && item.constructor === Object) {
-          // object logic, check property equality
-          return item[this.searchKeyword].toLowerCase().indexOf(this.query.toLowerCase()) > -1;
-        }
-        return []
-      });
+  // Select item
+  select(item: AutocompleteItem) {
+    if (this.isType(item)) {
+      this.query = item.toString();
     } else {
-      this.notFound = false;
+      this.query = item[this.searchKeyword] || item.name || item.value || '';
+    }
+
+    this.overlayOpen.set(false);
+    this.selectedIdx.set(-1);
+    this.currentPage.set(1); // Reset página al seleccionar
+    this.addToHistory(item);
+    this.itemSelected.emit(item);
+
+    // Focus back to input
+    setTimeout(() => {
+      this.searchInput?.nativeElement?.focus();
+    }, 100);
+  }
+
+  // Clear search
+  clearSearch() {
+    this.query = '';
+    this.filteredList.set([]);
+    this.selectedIdx.set(-1);
+    this.currentPage.set(1); // Reset página
+    this.searchInput?.nativeElement?.focus();
+    this.searchChanged.emit('');
+  }
+
+  // History management
+  private addToHistory(item: AutocompleteItem) {
+    // Remove if already exists
+    this.historyList = this.historyList.filter(historyItem => {
+      if (this.isType(item) && this.isType(historyItem)) {
+        return item.toString() !== historyItem.toString();
+      } else if (!this.isType(item) && !this.isType(historyItem)) {
+        return (item.id || item.name) !== (historyItem.id || historyItem.name);
+      }
+      return true;
+    });
+
+    // Add to beginning
+    this.historyList.unshift(item);
+
+    // Limit history size
+    if (this.historyList.length > this.maxHistoryItems) {
+      this.historyList = this.historyList.slice(0, this.maxHistoryItems);
+    }
+
+    this.saveHistoryToStorage();
+  }
+
+  removeHistoryItem(index: number, event: Event) {
+    event.stopPropagation();
+    this.historyList.splice(index, 1);
+    this.saveHistoryToStorage();
+
+    // Adjust selected index if necessary
+    if (this.selectedIdx() >= index && this.selectedIdx() > 0) {
+      this.selectedIdx.set(this.selectedIdx() - 1);
+    } else if (this.selectedIdx() === index) {
+      this.selectedIdx.set(-1);
     }
   }
 
+  clearHistory() {
+    this.historyList = [];
+    this.selectedIdx.set(-1);
+    this.saveHistoryToStorage();
+  }
 
-  /**
-   * Check type of item in the list.
-   * @param item
-   */
-  isType(item:any) {
+  // Storage management
+  private loadHistoryFromStorage() {
+    try {
+      const stored = localStorage.getItem(this.HISTORY_STORAGE_KEY);
+      if (stored) {
+        this.historyList = JSON.parse(stored);
+      }
+    } catch (error) {
+      console.warn('Error loading autocomplete history:', error);
+      this.historyList = [];
+    }
+  }
+
+  private saveHistoryToStorage() {
+    try {
+      localStorage.setItem(this.HISTORY_STORAGE_KEY, JSON.stringify(this.historyList));
+    } catch (error) {
+      console.warn('Error saving autocomplete history:', error);
+    }
+  }
+
+  // Advanced search
+  openAdvancedSearch() {
+    this.overlayOpen.set(false);
+    this.advancedSearchClicked.emit();
+  }
+
+  // Show all results
+  showAllResults() {
+    this.overlayOpen.set(false);
+    this.allResultsClicked.emit(this.query);
+  }
+
+  // Type checking utility
+  isType(item: any): item is string {
     return typeof item === 'string';
   }
 
-  /**
-   * Select item in the list.
-   * @param item
-   */
-  public select(item:any) {
-    this.query = !this.isType(item) ? item[this.searchKeyword] : item;
-    this.isOpen.set(true);
-    this.overlay.set(false);
-    this.selected.emit(item);
-    this.propagateChange(item);
-
-    if (this.initialValue) {
-      // check if history already exists in localStorage and then update
-      const history = window.localStorage.getItem(`${this.historyIdentifier}`);
-      if (history) {
-        let existingHistory = JSON.parse(localStorage[`${this.historyIdentifier}`]);
-        if (!(existingHistory instanceof Array)) existingHistory = [];
-
-        // check if selected item exists in existingHistory
-        if (!existingHistory.some((existingItem:any) => !this.isType(existingItem)
-          ? existingItem[this.searchKeyword] == item[this.searchKeyword] : existingItem == item)) {
-          existingHistory.unshift(item);
-          localStorage.setItem(`${this.historyIdentifier}`, JSON.stringify(existingHistory));
-
-          // check if items don't exceed max allowed number
-          if (existingHistory.length >= this.historyListMaxNumber) {
-            existingHistory.splice(existingHistory.length - 1, 1);
-            localStorage.setItem(`${this.historyIdentifier}`, JSON.stringify(existingHistory));
-          }
-        } else {
-          // if selected item exists in existingHistory swap to top in array
-          if (!this.isType(item)) {
-            // object logic
-            const copiedExistingHistory = existingHistory.slice(); // copy original existingHistory array
-            const selectedIndex = copiedExistingHistory.map((el:any) => el[this.searchKeyword]).indexOf(item[this.searchKeyword]);
-            copiedExistingHistory.splice(selectedIndex, 1);
-            copiedExistingHistory.splice(0, 0, item);
-            localStorage.setItem(`${this.historyIdentifier}`, JSON.stringify(copiedExistingHistory));
-          } else {
-            // string logic
-            const copiedExistingHistory = existingHistory.slice(); // copy original existingHistory array
-            copiedExistingHistory.splice(copiedExistingHistory.indexOf(item), 1);
-            copiedExistingHistory.splice(0, 0, item);
-            localStorage.setItem(`${this.historyIdentifier}`, JSON.stringify(copiedExistingHistory));
-          }
-        }
-      } else {
-        this.saveHistory(item);
-      }
-    } else {
-      this.saveHistory(item);
-    }
-    this.handleClose();
+  // Focus management
+  focusInput() {
+    this.searchInput?.nativeElement?.focus();
   }
 
-  private isClickInsideComponent(target: EventTarget | null): boolean {
-    let current = target as HTMLElement | null;
-
-    while (current) {
-      if (current === this.elementRef.nativeElement) {
-        return true;
-      }
-      current = current.parentElement;
+  // Public API methods
+  public setQuery(query: string) {
+    this.query = query;
+    this.currentPage.set(1); // Reset página
+    if (query.length >= this.minSearchLength) {
+      this.performSearch(query);
+    } else {
+      this.filteredList.set([]);
     }
+  }
 
+  public clearAll() {
+    this.clearSearch();
+    this.clearHistory();
+  }
+
+  public getSelectedItem(): AutocompleteItem | null {
+    const currentList = this.isHistoryListVisible() ? this.historyList : this.paginatedList();
+    return this.selectedIdx() >= 0 && this.selectedIdx() < currentList.length
+      ? currentList[this.selectedIdx()]
+      : null;
+  }
+
+  // Métodos públicos para paginación
+  public getCurrentPage(): number {
+    return this.currentPage();
+  }
+
+  public getTotalPages(): number {
+    return this.totalPages();
+  }
+
+  public getTotalItems(): number {
+    return this.totalFilteredItems();
+  }
+
+  public setItemsPerPage(items: number) {
+    this.itemsPerPage = items;
+    this.currentPage.set(1); // Reset página al cambiar items por página
+  }
+
+  public setCurrentPage(page: number) {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(page);
+    }
+  }
+
+  // Método para obtener información de paginación
+  public getPaginationInfo() {
+    return {
+      currentPage: this.currentPage(),
+      totalPages: this.totalPages(),
+      totalItems: this.totalFilteredItems(),
+      itemsPerPage: this.itemsPerPage,
+      startItem: this.startItem(),
+      endItem: this.endItem(),
+      hasNextPage: this.currentPage() < this.totalPages(),
+      hasPreviousPage: this.currentPage() > 1
+    };
+  }
+
+  // Método para buscar programáticamente
+  public search(query: string) {
+    this.query = query;
+    this.currentPage.set(1);
+    if (query.length >= this.minSearchLength) {
+      this.isLoading = true;
+      this.searchSubject.next(query);
+      this.overlayOpen.set(true);
+    } else {
+      this.filteredList.set([]);
+      this.isLoading = false;
+      if (query.length === 0) {
+        this.overlayOpen.set(false);
+      }
+    }
+    this.searchChanged.emit(query);
+  }
+
+  // Método para navegar a una página específica con validación
+  public navigateToPage(page: number): boolean {
+    if (page >= 1 && page <= this.totalPages() && page !== this.currentPage()) {
+      this.currentPage.set(page);
+      this.selectedIdx.set(-1);
+      this.pageChanged.emit(page);
+      return true;
+    }
     return false;
   }
-  /**
-   * Document click
-   * @param e event
-   */
-  public handleClick(e:any) {
-    //
-    // let clickedComponent = e.target;
-    // let inside = false;
-    // do {
-    //   if (clickedComponent === this.elementRef.nativeElement) {
-    //     inside = true;
-    //     if (this.filteredList.length) {
-    //       this.handleOpen();
-    //     }
-    //   }
-    //   clickedComponent = clickedComponent.parentNode;
-    // } while (clickedComponent);
-    // if (!inside) {
-    //   this.handleClose();
-    // }
-    const wasInside = this.isClickInsideComponent(e.target);
 
-    console.log('Clicked inside?', wasInside);
-
-    if (wasInside) {
-      if (this.filteredList.length > 0) {
-        this.handleOpen();
-      }
-    } else {
-      this.handleClose();
-    }
-
+  // Método para obtener los elementos de la página actual
+  public getCurrentPageItems(): AutocompleteItem[] {
+    return this.paginatedList();
   }
 
-  /**
-   * Handle body overlay
-   */
-  handleOverlay() {
-    console.log('hanclee')
-    this.overlay.set(false);
+  // Método para verificar si hay resultados
+  public hasResults(): boolean {
+    return this.totalFilteredItems() > 0;
   }
 
-  /**
-   * Scroll items
-   */
-  public handleScroll() {
-    setTimeout(()=>{
-      console.log(this.filteredListElement)
-    }, 3000)
-    this.renderer.listen(this.filteredListElement()?.nativeElement, 'scroll', () => {
-      this.scrollToEnd();
-    });
-  }
-
-  /**
-   * Define panel state
-   */
-  setPanelState(event:any) {
-    if (event) {
-      event.stopPropagation();
-    }
-    // If controls are untouched
-    if (typeof this.manualOpen === 'undefined'
-      && typeof this.manualClose === 'undefined') {
-      this.isOpen.set(false);
-      this.handleOpen();
-    }
-
-    // If one of the controls is untouched and other is deactivated
-    if (typeof this.manualOpen === 'undefined'
-      && this.manualClose === false
-      || typeof this.manualClose === 'undefined'
-      && this.manualOpen === false) {
-      this.isOpen.set(false);
-      this.handleOpen();
-    }
-
-    // if controls are touched but both are deactivated
-    if (this.manualOpen === false && this.manualClose === false) {
-      this.isOpen.set(false);
-      this.handleOpen();
-    }
-
-    // if open control is touched and activated
-    if (this.manualOpen) {
-      this.isOpen.set(false);
-      this.handleOpen();
-      this.manualOpen = false;
-    }
-
-    // if close control is touched and activated
-    if (this.manualClose) {
-      this.isOpen.set(true);
-      this.handleClose();
-      this.manualClose = false;
-    }
-  }
-
-  /**
-   * Manual controls
-   */
-  open() {
-    this.manualOpen = true;
-    this.isOpen.set(false);
-    this.handleOpen();
-  }
-
-  close() {
-    this.manualClose = true;
-    this.isOpen.set(true);
-    this.handleClose();
-  }
-
-  focus() {
-    this.handleFocus(event);
-  }
-
-  clear() {
-    this.remove(event);
-  }
-
-  /**
-   * Remove search query
-   */
-  public remove(e:any) {
-    e.stopPropagation();
-    this.query = '';
-    this.inputCleared.emit();
-    this.propagateChange(this.query);
-    this.setPanelState(e);
-  }
-
-  /**
-   * Initialize historyList search
-   */
-  initSearchHistory() {
-    this.isHistoryListVisible = false;
-    if (this.historyIdentifier && !this.query) {
-      const history = window.localStorage.getItem(`${this.historyIdentifier}`);
-      if (history) {
-        this.isHistoryListVisible = true;
-        this.filteredList = [];
-        this.historyList = history ? JSON.parse(history) : [];
-      } else {
-        this.isHistoryListVisible = false;
-      }
-    } else {
-      this.isHistoryListVisible = false;
-    }
-  }
-
-  handleOpen() {
-    if (this.isOpen() || this.isOpen() && !this.isLoading) {
-      return;
-    }
-    // If data exists
-    if (this.data && this.data.length) {
-      this.isOpen.set(true);
-      this.overlay.set(true);
-      this.filterList();
-      this.opened.emit();
-    }
-  }
-
-  handleClose() {
-    if (!this.isOpen()) {
-      this.isFocused = false;
-      return;
-    }
-    this.isOpen.set(false);
-    this.overlay.set(false);
-    this.filteredList = [];
-    this.selectedIdx.set(-1);
-    this.notFound = false;
-    this.isHistoryListVisible = false;
-    this.isFocused = false;
-    this.closed.emit();
-  }
-
-  handleFocus(e:any) {
-
-    this.searchInput.nativeElement.focus();
-    if (this.isFocused) {
-      return;
-    }
-    this.inputFocused.emit(e);
-    // if data exists then open
-    if (this.data && this.data.length) {
-      this.setPanelState(event);
-    }
-    this.isFocused = true;
-  }
-
-  scrollToEnd(): void {
-    if (this.isScrollToEnd) {
-      return;
-    }
-
-    const scrollTop = this.filteredListElement()?.nativeElement
-      .scrollTop;
-    const scrollHeight = this.filteredListElement()?.nativeElement
-      .scrollHeight;
-    const elementHeight = this.filteredListElement()?.nativeElement
-      .clientHeight;
-    const atBottom = scrollHeight === scrollTop + elementHeight;
-    if (atBottom) {
-      this.scrolledToEnd.emit();
-      this.isScrollToEnd = true;
-    }
-  }
-
-  /**
-   * Initialize keyboard events
-   */
-  initEventStream() {
-    this.inputKeyUp$ = fromEvent(
-      this.searchInput.nativeElement, 'keyup'
-    ).pipe(map(
-      (e: any) => e
-    ));
-
-    this.inputKeyDown$ = fromEvent(
-      this.searchInput.nativeElement,
-      'keydown'
-    ).pipe(map(
-      (e: any) => e
-    ));
-
-    this.listenEventStream();
-  }
-
-  /**
-   * Listen keyboard events
-   */
-  listenEventStream() {
-    // key up event
-    this.inputKeyUp$
-      .pipe(
-        filter(e =>
-          !isArrowUpDown(e.keyCode) &&
-          !isEnter(e.keyCode) &&
-          !isESC(e.keyCode) &&
-          !isTab(e.keyCode)),
-        debounceTime(this.debounceTime)
-      ).subscribe(e => {
-      this.onKeyUp(e);
-    });
-
-    // cursor up & down
-    this.inputKeyDown$.pipe(filter(
-      e => isArrowUpDown(e.keyCode)
-    )).subscribe(e => {
-      e.preventDefault();
-      this.onFocusItem(e);
-    });
-
-    // enter keyup
-    this.inputKeyUp$.pipe(filter(e => isEnter(e.keyCode))).subscribe(e => {
-      //this.onHandleEnter();
-    });
-
-    // enter keydown
-    this.inputKeyDown$.pipe(filter(e => isEnter(e.keyCode))).subscribe(e => {
-      this.onHandleEnter();
-    });
-
-    // ESC
-    this.inputKeyUp$.pipe(
-      filter(e => isESC(e.keyCode),
-        debounceTime(100))
-    ).subscribe(e => {
-      this.onEsc();
-    });
-
-    // TAB
-    this.inputKeyDown$.pipe(
-      filter(e => isTab(e.keyCode))
-    ).subscribe(e => {
-      this.onTab();
-    });
-
-    // delete
-    this.inputKeyDown$.pipe(
-      filter(e => isBackspace(e.keyCode) || isDelete(e.keyCode))
-    ).subscribe(e => {
-      this.onDelete();
-    });
-  }
-
-  /**
-   * on keyup == when input changed
-   * @param e event
-   */
-  onKeyUp(e:any) {
-    this.notFound = false; // search results are unknown while typing
-    // if input is empty
-    if (!this.query) {
-      this.notFound = false;
-      this.inputChanged.emit(e.target.value);
-      this.inputCleared.emit();
-      //this.filterList();
-      this.setPanelState(e);
-    }
-    // note that '' can be a valid query
-    if (!this.query && this.query !== '') {
-      return;
-    }
-    // if query >= to minQueryLength
-    if (this.query.length >= this.minQueryLength) {
-      this.inputChanged.emit(e.target.value);
-      this.filterList();
-
-      // If no results found
-      if (!this.filteredList.length && !this.isLoading) {
-        if(this.notFoundText){
-          this.notFound = true;
-        }else{
-          this.notFound = false;
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Keyboard arrow top and arrow bottom
-   * @param e event
-   */
-  onFocusItem(e:any) {
-    // move arrow up and down on filteredList or historyList
-    if (!this.historyList.length || !this.isHistoryListVisible) {
-      // filteredList
-      const totalNumItem = this.filteredList.length;
-      if (e.key === 'ArrowDown') {
-        let sum = this.selectedIdx();
-        console.log(sum)
-        sum = (this.selectedIdx() === null) ? 0 : sum + 1;
-        console.log("sum2", sum)
-        this.selectedIdx.set((totalNumItem + sum) % totalNumItem);
-        console.log(this.selectedIdx)
-        this.scrollToFocusedItem(this.selectedIdx());
-      } else if (e.key === 'ArrowUp') {
-        if (this.selectedIdx() == -1) {
-          this.selectedIdx.set(0);
-        }
-        this.selectedIdx.set((totalNumItem + this.selectedIdx() - 1) % totalNumItem);
-        this.scrollToFocusedItem(this.selectedIdx());
-      }
-    } else {
-      // historyList
-      const totalNumItem = this.historyList.length;
-      if (e.key === 'ArrowDown') {
-        let sum = this.selectedIdx();
-        sum = (this.selectedIdx() === null) ? 0 : sum + 1;
-        this.selectedIdx.set((totalNumItem + sum) % totalNumItem);
-        this.scrollToFocusedItem(this.selectedIdx());
-      } else if (e.key === 'ArrowUp') {
-        if (this.selectedIdx() == -1) {
-          this.selectedIdx.set(0);
-        }
-        this.selectedIdx.set((totalNumItem + this.selectedIdx() - 1) % totalNumItem);
-        this.scrollToFocusedItem(this.selectedIdx());
-      }
-    }
-  }
-
-  /**
-   * Scroll to focused item
-   * * @param index
-   */
-  scrollToFocusedItem(index: number) {
-    let listElement = null;
-    // Define list element
-    if (!this.historyList.length || !this.isHistoryListVisible) {
-      // filteredList element
-      listElement = this.filteredListElement()?.nativeElement;
-    } else {
-      // historyList element
-      listElement = this.historyListElement.nativeElement;
-    }
-
-    const items = Array.prototype.slice.call(listElement.childNodes).filter((node: any) => {
-      if (node.nodeType === 1) {
-        // if node is element
-        return node.className.includes('item');
-      } else {
-        return false;
-      }
-    });
-
-    if (!items.length) {
-      return;
-    }
-
-    const listHeight = listElement.offsetHeight;
-    const itemHeight = items[index].offsetHeight;
-    const visibleTop = listElement.scrollTop;
-    const visibleBottom = listElement.scrollTop + listHeight - itemHeight;
-    const targetPosition = items[index].offsetTop;
-
-    if (targetPosition < visibleTop) {
-      listElement.scrollTop = targetPosition;
-    }
-
-    if (targetPosition > visibleBottom) {
-      listElement.scrollTop = targetPosition - listHeight + itemHeight;
-    }
-  }
-
-  /**
-   * Select item on enter click
-   */
-  onHandleEnter() {
-    // click enter to choose item from filteredList or historyList
-    if (this.selectedIdx() > -1) {
-      if (!this.historyList.length || !this.isHistoryListVisible) {
-        // filteredList
-        this.query = !this.isType(this.filteredList[this.selectedIdx()])
-          ? this.filteredList[this.selectedIdx()][this.searchKeyword]
-          : this.filteredList[this.selectedIdx()];
-
-        this.saveHistory(this.filteredList[this.selectedIdx()]);
-        this.select(this.filteredList[this.selectedIdx()]);
-      } else {
-        // historyList
-        this.query = !this.isType(this.historyList[this.selectedIdx()])
-          ? this.historyList[this.selectedIdx()][this.searchKeyword]
-          : this.historyList[this.selectedIdx()];
-        this.saveHistory(this.historyList[this.selectedIdx()]);
-        this.select(this.historyList[this.selectedIdx()]);
-      }
-    }
-    this.isHistoryListVisible = false;
-    this.handleClose();
-  }
-
-  /**
-   * Esc click
-   */
-  onEsc() {
-    this.searchInput.nativeElement.blur();
-    this.handleClose();
-  }
-
-  /**
-   * Tab click
-   */
-  onTab() {
-    this.searchInput.nativeElement.blur();
-    this.handleClose();
-  }
-
-  /**
-   * Delete click
-   */
-  onDelete() {
-    // panel is open on delete
-    this.isOpen.set(true);
-  }
-
-
-  /**
-   * Select item to save in localStorage
-   * @param selected
-   */
-  saveHistory(selected:never|any) {
-    if (this.historyIdentifier) {
-      // check if selected item exists in historyList
-      if (!this.historyList.some((item) => !this.isType(item)
-        ? item[this.searchKeyword] == selected[this.searchKeyword] : item == selected)) {
-        this.saveHistoryToLocalStorage([selected, ...this.historyList]);
-
-        // check if items don't exceed max allowed number
-        if (this.historyList.length >= this.historyListMaxNumber) {
-          this.historyList.splice(this.historyList.length - 1, 1);
-          this.saveHistoryToLocalStorage([selected, ...this.historyList]);
-        }
-      } else {
-        // if selected item exists in historyList swap to top in array
-        // if (!this.isType(selected)) {
-        //
-        //   const copiedHistoryList = this.historyList.slice(); // copy original historyList array
-        //   const selectedIndex = copiedHistoryList.map((item) => item[this.searchKeyword]).indexOf(selected[this.searchKeyword]);
-        //   copiedHistoryList.splice(selectedIndex, 1);
-        //   copiedHistoryList.splice(0, 0, selected);
-        //   this.saveHistoryToLocalStorage([...copiedHistoryList]);
-        // } else {
-        //
-        //   const copiedHistoryList = this.historyList.slice(); // copy original historyList array
-        //   copiedHistoryList.splice(this.historyList.indexOf(selected), 1);
-        //   copiedHistoryList.splice(0, 0, selected);
-        //   this.saveHistoryToLocalStorage([...copiedHistoryList]);
-        // }
-      }
-    }
-  }
-
-  /**
-   * Save item in localStorage
-   * @param selected
-   */
-  saveHistoryToLocalStorage(selected:any) {
-    window.localStorage.setItem(
-      `${this.historyIdentifier}`,
-      JSON.stringify(selected)
-    );
-  }
-
-  /**
-   * Remove item from localStorage
-   * @param index
-   * @param e event
-   */
-  removeHistoryItem(index:number, e:any) {
-    e.stopPropagation();
-    this.historyList = this.historyList.filter((v, i) => i !== index);
-    this.saveHistoryToLocalStorage(this.historyList);
-    if (this.historyList.length == 0) {
-      window.localStorage.removeItem(`${this.historyIdentifier}`);
-      this.filterList();
-    }
-  }
-
-  /**
-   * Reset localStorage
-   * @param e event
-   */
-  resetHistoryList(e:any) {
-    e.stopPropagation();
-    this.historyList = [];
-    window.localStorage.removeItem(`${this.historyIdentifier}`);
-    this.filterList();
+  // Método para obtener el estado del componente
+  public getState() {
+    return {
+      query: this.query,
+      isLoading: this.isLoading,
+      overlayOpen: this.overlayOpen(),
+      selectedIndex: this.selectedIdx(),
+      pagination: this.getPaginationInfo(),
+      hasResults: this.hasResults(),
+      isHistoryVisible: this.isHistoryListVisible(),
+      historyCount: this.historyList.length
+    };
   }
 }
