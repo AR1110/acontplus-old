@@ -9,7 +9,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FractionalProductGetAllUseCase } from '@inventory/domain/usecases/fractional-product/fractional-product-get-all.use-case';
+import { FractionalProductGetAllUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-get-all.use-case';
 import { isValidField } from '@core/utils/utils';
 import { finalize } from 'rxjs/operators';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';

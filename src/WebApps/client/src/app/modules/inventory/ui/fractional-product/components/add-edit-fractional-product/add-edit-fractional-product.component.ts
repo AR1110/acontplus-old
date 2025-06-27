@@ -14,20 +14,20 @@ import {TabulatorComponent} from "@core/components/tabulator/tabulator.component
 import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {ProductDataFormUseCase} from "@inventory/domain/usecases/product/product-data-form.use-case";
+import {ProductDataFormUseCase} from "@inventory/product/application/use-cases/product/product-data-form.use-case";
 import {DECIMALS} from "@core/constants/global.constants";
 import {getValidId} from "@core/utils/utils";
-import {ProductGetIdUseCase} from "@inventory/domain/usecases/product/product-get-id.use-case";
+import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/product-get-id.use-case";
 import {
   FractionalProductPostUseCase
-} from "@inventory/domain/usecases/fractional-product/fractional-product-post.use-case";
+} from "@inventory/product/application/use-cases/fractional-product/fractional-product-post.use-case";
 import {ApiResponse} from "@core/models/api-response";
 import {
   FractionalProductPutUseCase
-} from "@inventory/domain/usecases/fractional-product/fractional-product-put.use-case";
+} from "@inventory/product/application/use-cases/fractional-product/fractional-product-put.use-case";
 import {
   FractionalProductGetIdUseCase
-} from "@inventory/domain/usecases/fractional-product/fractional-product-get-id.use-case";
+} from "@inventory/product/application/use-cases/fractional-product/fractional-product-get-id.use-case";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
 import Swal from "sweetalert2";

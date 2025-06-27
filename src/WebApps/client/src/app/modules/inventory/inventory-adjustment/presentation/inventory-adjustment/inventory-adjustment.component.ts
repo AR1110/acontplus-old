@@ -4,8 +4,8 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { InventoryAdjustmentListUseCase } from '@inventory/inventory-adjustment/application/inventory-adjustment-list.use-case';
-import { InventoryAdjustmentFormDataUseCase } from '@inventory/inventory-adjustment/application/inventory-adjustment-form-data.use-case';
+import { InventoryAdjustmentListUseCase } from '@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-list.use-case';
+import { InventoryAdjustmentFormDataUseCase } from '@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-form-data.use-case';
 import { PageEvent } from '@angular/material/paginator';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -17,7 +17,10 @@ import {FormsModule} from "@angular/forms";
 import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {InventoryAdjustmentList} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+import {
+  InventoryAdjustmentFormDataResponse,
+  InventoryAdjustmentList
+} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
 import {DialogService} from "@core/services/dialog.service";
 import {
   InventoryAdjustmentAddEditComponent
@@ -28,6 +31,11 @@ import {MatMenuModule} from "@angular/material/menu";
 import {
   InventoryAdjustmentDetailComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment-detail/inventory-adjustment-detail.component";
+import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
+import {
+  ProductSearchBarComponent
+} from "@inventory/product/presentation/components/product-search-bar/product-search-bar.component";
+import {ReusableAutocompleteComponent} from "@shared/components/reusable-autocomplete/reusable-autocomplete.component";
 
 @Component({
   selector: 'app-inventory-adjustment',
@@ -43,17 +51,22 @@ import {
     ThemeButtonComponent,
     MatIconButton,
     MatIcon,
-    MatMenuModule
+    MatMenuModule,
+    ProductSearchBarComponent,
+    ReusableAutocompleteComponent,
   ],
   templateUrl: './inventory-adjustment.component.html',
-  styles: ``,
+  styles: `
+
+
+  `,
 })
-export class InventoryAdjustmentComponent implements OnInit {
+export class InventoryAdjustmentComponent   {
   private $listUseCase = inject(InventoryAdjustmentListUseCase);
   private $formDataUseCase = inject(InventoryAdjustmentFormDataUseCase);
   private _tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService);
-
+  private $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore)
   dataSource = signal<InventoryAdjustmentList[]>([]);
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
@@ -83,6 +96,8 @@ export class InventoryAdjustmentComponent implements OnInit {
     startDate: formatDateToString(new Date()),
     endDate: formatDateToString(new Date()),
   };
+
+  private mainFormData = signal({} as InventoryAdjustmentFormDataResponse)
 
   refresh() {
     this.getList()
@@ -131,17 +146,18 @@ export class InventoryAdjustmentComponent implements OnInit {
     })
   }
 
-  ngOnInit() {
-    // this.$formDataUseCase.execute().subscribe((response) => {
-    //   this.tiposDoc.set(response.tiposDoc);
-    //   this.estabs.set(response.estabs);
-    //   const dataEstab = this.estabs().find(e=>e.defaultEstab);
-    //   if(dataEstab) {
-    //     this.dataFilter.estabId = dataEstab.idEstablecimiento;
-    //   }
-    //   this.refresh()
-    // });
-  }
+  // ngOnInit() {
+  //   this.$formDataUseCase.execute().subscribe((response) => {
+  //     this.$inventoryAdjustmentStore.setMainFormData(response)
+  //     this.tiposDoc.set(response.tiposDoc);
+  //     this.estabs.set(response.estabs);
+  //     const dataEstab = this.estabs().find(e=>e.defaultEstab);
+  //     if(dataEstab) {
+  //       this.dataFilter.estabId = dataEstab.idEstablecimiento;
+  //     }
+  //      this.refresh()
+  //   });
+  // }
 
   addEdit(item?: InventoryAdjustmentList){
     const ref = this._dialogSvc.open(InventoryAdjustmentAddEditComponent, {
@@ -177,4 +193,11 @@ export class InventoryAdjustmentComponent implements OnInit {
     });
     this.refresh();
   }
+
+
+
+
+
+
+
 }

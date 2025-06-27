@@ -5,7 +5,7 @@ import { ToastrNotificationService } from "@core/services/toastr-notification.se
 import {getValidId, isValidField} from "@core/utils/utils";
 import { BrandAddEditDirective } from "@inventory/ui/directives/brand-add-edit.directive";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {ProductUseCase} from "@inventory/product/application/use-cases/product.use-case";
 import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";

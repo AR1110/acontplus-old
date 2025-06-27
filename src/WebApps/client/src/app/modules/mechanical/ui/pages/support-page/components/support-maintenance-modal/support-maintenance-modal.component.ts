@@ -5,8 +5,8 @@ import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
-import { ProductSale } from '@inventory/domain/models/product.model';
-import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
+import { ProductSale } from '@inventory/product/domain/entities/product.model';
+import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';
 import {
   getCantidadStock,
   mergeProductStock,
@@ -20,7 +20,7 @@ import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-ta
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { ConsolidacionBodega } from '@inventory/domain/models/consolidacion-bodega.model';
 import { Tarifa } from '@inventory/domain/models/tarifa.model';

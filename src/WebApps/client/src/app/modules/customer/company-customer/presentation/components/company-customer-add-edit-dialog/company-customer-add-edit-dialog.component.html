@@ -132,6 +132,16 @@
               />
             </div>
           </div>
+
+          @if(isUpdate()){
+            <div class="vstack gap-2 mt-2">
+              <span>Estado</span>
+              <mat-slide-toggle formControlName="estado">
+                {{customerForm.value.estado?'Activo': 'Inactivo'}}
+              </mat-slide-toggle>
+            </div>
+          }
+
         </div>
       </mat-tab>
       <mat-tab label="DATOS ADICIONALES">

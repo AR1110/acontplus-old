@@ -9,6 +9,12 @@ import {DialogService} from "@core/services/dialog.service";
 import {
   InventoryAdjustmentSearchAdvancedComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced.component";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
+import {roundNumber} from "@core/utils/round-number.utils";
+import {
+  ProductSearchBarComponent
+} from "@inventory/product/presentation/components/product-search-bar/product-search-bar.component";
 
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
@@ -17,12 +23,14 @@ import {
     ThemeButtonComponent,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    ProductSearchBarComponent
   ],
   templateUrl: './inventory-adjustment-add-edit.component.html',
-  styles: ``
 })
 export class InventoryAdjustmentAddEditComponent {
+  $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);
+
   #dialogSvc = inject(DialogService)
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentAddEditComponent>);
   private params = inject(MAT_DIALOG_DATA);
@@ -30,17 +38,42 @@ export class InventoryAdjustmentAddEditComponent {
   btnText = signal('Guardar');
   icon = signal('save');
 
+  dataSourceItems = signal<any[]>([])
+
+  dataForm = new FormGroup({
+    bodegaId: new FormControl(null, [Validators.required]),
+  })
+
+  decimal = signal(this.$inventoryAdjustmentStore.mainFormData().decimal)
+
 
   openSearchAdvanced(){
+    console.log(this.params);
     const ref = this.#dialogSvc.open(InventoryAdjustmentSearchAdvancedComponent, {
       size: 'xl',
       data: {
 
       }
     })
-    ref.subscribe(res => {
-      if(res && typeof res  == 'object'){
-
+    ref.subscribe(result => {
+      if (result && Array.isArray(result.selectedRows)) {
+        const {
+          selectedRows,
+          opcion,
+          isExcelImport
+        } = result;
+        for (const a of selectedRows) {
+          if (!this.dataSourceItems().some(x => x.idArticulo == a.idArticulo)) {
+            const obj = structuredClone(a);
+            if (!isExcelImport) {
+              obj.cantidad = opcion && opcion === 6 ? obj.cantidad : 1;
+            }
+            obj.idBodega = this.dataForm.value.bodegaId;
+            const total = obj.cantidad * obj.precioUnitario;
+            obj.total = roundNumber(total,this.decimal().nroPrecio);
+            this.dataSourceItems.set([...this.dataSourceItems(), obj]);
+          }
+        }
       }
     })
   }

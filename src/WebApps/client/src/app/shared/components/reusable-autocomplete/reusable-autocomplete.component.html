@@ -1,0 +1,270 @@
+<div class="autocomplete-container" [class.active]="overlayOpen()">
+  <!-- Input Container -->
+  <div class="input-container" cdkOverlayOrigin #overlayPosition="cdkOverlayOrigin">
+    <div class="input-wrapper">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        #searchInput
+        type="text"
+        class="search-input"
+        [placeholder]="config.placeholder"
+        [(ngModel)]="query"
+        (input)="onInput($event)"
+        (click)="showOverlay()"
+        (keydown)="onKeyDown($event)"
+        [disabled]="config.disabled||false"
+        autocomplete="off"
+      />
+      @if (query && query.length > 0 && !isLoading) {
+        <button    mat-icon-button (click)="clearSearch()" type="button">
+          <mat-icon>clear</mat-icon>
+        </button>
+      }
+    </div>
+
+    @if (isLoading) {
+      <div class="loading-spinner">
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+    }
+  </div>
+
+  <!-- Overlay -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="overlayPosition"
+    [cdkConnectedOverlayOpen]="overlayOpen()"
+    [cdkConnectedOverlayWidth]="'auto'"
+    [cdkConnectedOverlayHeight]="'500px'"
+    (overlayOutsideClick)="hideOverlay()"
+    (backdropClick)="hideOverlay()"
+  >
+    <div class="suggestions-container" [class.active]="overlayOpen()">
+      <div class="overlay-container">
+
+        <!-- History Section -->
+        @if (isHistoryVisible() && historyList.length > 0) {
+          <div class="section">
+            <div class="section-header">
+              <span class="section-title">Búsquedas recientes</span>
+              <button class="clear-history" (click)="clearHistory()">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+            <ul class="item-list scrollable-list" #historyListElement>
+              @for (item of historyList; track $index) {
+                <li class="list-item history-item">
+                  <div
+                    class="item-content"
+                    [class.selected]="$index === selectedIndex()"
+                    (click)="selectItem(item)"
+                  >
+                    <mat-icon class="history-icon">history</mat-icon>
+                    <div class="item-details">
+                      <ng-container *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }">
+                      </ng-container>
+                    </div>
+                  </div>
+                  <button class="remove-btn" (click)="removeHistoryItem($index, $event)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!-- Results Section -->
+        @if (!isHistoryVisible() && totalItems() > 0) {
+          <div class="section">
+            <!-- Header with filters and pagination -->
+            @if (config.enableFilters || config.enablePagination) {
+              <div class="section-header">
+                <span class="section-title">{{ sectionTitle() }}</span>
+
+                <!-- Filters -->
+                @if (config.enableFilters) {
+                  <div class="filter-controls">
+                    @if (config.searchFields && config.searchFields.length > 1) {
+                      <div class="filter-group">
+                        <label class="filter-label">Buscar por:</label>
+                        <select
+                          class="filter-select"
+                          [(ngModel)]="filters.searchBy"
+                          (change)="onFilterChange()"
+                        >
+                          @for (field of config.searchFields; track field.value) {
+                            <option [value]="field.value">{{ field.label }}</option>
+                          }
+                        </select>
+                      </div>
+                    }
+
+                    @if (config.enableStockFilter && config.stockOptions) {
+                      <div class="filter-group">
+                        <label class="filter-label">Stock:</label>
+                        <select
+                          class="filter-select"
+                          [(ngModel)]="filters.stockFilter"
+                          (change)="onFilterChange()"
+                        >
+                          @for (option of config.stockOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- Pagination Controls -->
+                @if (config.enablePagination && totalPages() > 1) {
+                  <div class="pagination-header">
+                    <div class="pagination-info">
+                      <span>Página {{ currentPage() }} de {{ totalPages() }}</span>
+                    </div>
+                    <div class="pagination-controls">
+                      <button
+                        class="pagination-btn"
+                        (click)="goToFirstPage()"
+                        [disabled]="currentPage() === 1"
+                      >
+                        <mat-icon>first_page</mat-icon>
+                      </button>
+                      <button
+                        class="pagination-btn"
+                        (click)="goToPreviousPage()"
+                        [disabled]="currentPage() === 1"
+                      >
+                        <mat-icon>chevron_left</mat-icon>
+                      </button>
+                      <input
+                        type="number"
+                        class="page-input"
+                        [value]="currentPage()"
+                        [min]="1"
+                        [max]="totalPages()"
+                        (change)="goToPage($event)"
+                      />
+                      <button
+                        class="pagination-btn"
+                        (click)="goToNextPage()"
+                        [disabled]="currentPage() === totalPages()"
+                      >
+                        <mat-icon>chevron_right</mat-icon>
+                      </button>
+                      <button
+                        class="pagination-btn"
+                        (click)="goToLastPage()"
+                        [disabled]="currentPage() === totalPages()"
+                      >
+                        <mat-icon>last_page</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="section-header">
+                <span class="section-title">{{ sectionTitle() }}</span>
+              </div>
+            }
+
+            <!-- Items List -->
+            <ul class="item-list scrollable-list" #resultsListElement>
+              @for (item of currentPageItems(); track item; let idx = $index) {
+                <li class="list-item result-item">
+                  <div
+                    class="item-content"
+                    [class.selected]="idx === selectedIndex()"
+                    (click)="selectItem(item)"
+                  >
+                    <div class="item-info">
+                      <ng-container *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }">
+                      </ng-container>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!-- No Results -->
+        @if (!isLoading && isNoResults()) {
+          <div class="no-results">
+            <mat-icon class="no-results-icon">search_off</mat-icon>
+            <div class="no-results-content">
+              <ng-container *ngTemplateOutlet="notFoundTemplate || defaultNotFoundTemplate; context: { $implicit: noResultsText() }">
+              </ng-container>
+            </div>
+          </div>
+        }
+
+        <!-- Footer -->
+        @if (overlayOpen() && (totalItems() > 0 || isHistoryVisible()) && config.enableFooterActions) {
+          <div class="acp-footer">
+            @if (!isHistoryVisible() && totalItems() > 0 && config.enablePagination) {
+              <div class="pagination-footer">
+                <div class="pagination-summary">
+                  Mostrando {{ startItem() }}-{{ endItem() }} de {{ totalCount() }} resultados
+                </div>
+                <div class="pagination-controls-footer">
+                  <button
+                    class="pagination-btn"
+                    (click)="goToPreviousPage()"
+                    [disabled]="currentPage() === 1"
+                  >
+                    <mat-icon>chevron_left</mat-icon>
+                  </button>
+                  <span class="page-indicator">{{ currentPage() }} / {{ totalPages() }}</span>
+                  <button
+                    class="pagination-btn"
+                    (click)="goToNextPage()"
+                    [disabled]="currentPage() === totalPages()"
+                  >
+                    <mat-icon>chevron_right</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+
+            <div class="footer-actions">
+              <button class="footer-btn create-btn" (click)="onCreateNew()">
+                <mat-icon>add</mat-icon>
+                <span class="btn-text">Crear</span>
+              </button>
+              <button class="footer-btn search-btn" (click)="onAdvancedSearch()">
+                <mat-icon>tune</mat-icon>
+                <span class="btn-text">Avanzada</span>
+              </button>
+              @if (!isHistoryVisible() && totalItems() > 0) {
+                <button class="footer-btn results-btn" (click)="onShowAllResults()">
+                  <mat-icon>list</mat-icon>
+                  <span class="btn-text">Todos</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Default Templates -->
+  <ng-template #defaultItemTemplate let-item>
+    <div class="default-item">
+      <div class="item-name">{{ getItemDisplayText(item) }}</div>
+      @if (item.description && typeof item === 'object') {
+        <div class="item-description">{{ item.description }}</div>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #defaultNotFoundTemplate let-text>
+    <div class="default-no-results">
+      <p>{{ text }}</p>
+      <p>Intenta con otros términos de búsqueda</p>
+    </div>
+  </ng-template>
+</div>

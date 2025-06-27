@@ -4,7 +4,7 @@ import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { FormControl, FormsModule } from '@angular/forms';
 import { Brand } from '@inventory/domain/models/brand.model';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
   REPORT_FORMAT,
@@ -30,7 +30,7 @@ import { CompanyCustomerSearchComponent } from '@company-customer/presentation/c
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';

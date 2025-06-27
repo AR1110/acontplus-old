@@ -1,8 +1,8 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <app-mat-dynamic-card>
-
   <div class="d-grid gap-2">
+    <app-product-search-bar/>
     <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
@@ -10,7 +10,9 @@
           <mat-select [(ngModel)]="dataFilter.tipoDocId">
             <mat-option [value]="0">--Todos--</mat-option>
             @for (item of tiposDoc(); track $index) {
-              <mat-option [value]="item.idTipoDocumento">{{item.descripcion}}</mat-option>
+            <mat-option [value]="item.idTipoDocumento">{{
+              item.descripcion
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -20,7 +22,9 @@
           <mat-label>Establecimiento</mat-label>
           <mat-select [(ngModel)]="dataFilter.estabId">
             @for (item of estabs(); track $index) {
-              <mat-option [value]="item.idEstablecimiento">{{item.nombreEstab}}</mat-option>
+            <mat-option [value]="item.idEstablecimiento">{{
+              item.nombreEstab
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -63,7 +67,11 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+    <button
+      matIconButton
+      [matMenuTriggerFor]="menu"
+      aria-label="Example icon-button with a menu"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
@@ -88,7 +96,5 @@
         <span>Reporte</span>
       </button>
     </mat-menu>
-
   </ng-template>
-
 </app-mat-dynamic-card>

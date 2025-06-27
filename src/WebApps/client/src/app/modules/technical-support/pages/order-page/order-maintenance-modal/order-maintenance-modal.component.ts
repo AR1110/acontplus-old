@@ -18,9 +18,9 @@ import {
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 
-import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
+import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';
 import { Tarifa } from '@inventory/domain/models/tarifa.model';
-import { OpenModalProductService } from '@inventory/ui/product/services/open-modal-product.service';
+import { OpenModalProductService } from '@inventory/product/application/services/open-modal-product.service';
 import {
   getCantidadStock,
   mergeProductStock,
@@ -39,7 +39,7 @@ import { Impuesto } from '@shared/models/impuesto.model';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MatIcon } from '@angular/material/icon';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatButton } from '@angular/material/button';

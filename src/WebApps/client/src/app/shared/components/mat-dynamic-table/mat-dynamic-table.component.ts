@@ -2,11 +2,10 @@ import {
   Component,
   ContentChild,
   ContentChildren, EmbeddedViewRef,
-  EventEmitter, inject, Injector,
+   inject, Injector,
   input,
   Input,
   output,
-  Output,
   QueryList,
   SimpleChanges,
   TemplateRef,
@@ -79,19 +78,20 @@ export class MatDynamicTableComponent<T> {
   private embeddedViews: EmbeddedViewRef<any>[] = [];
 
   @Input() showExpand = false;
-  @Input() showFooter: boolean = false;
-  @Input() locale: string = '';
-  @Input() highlightRowIndex: number = 0;
+  @Input() showFooter = false;
+  @Input() locale = '';
+  @Input() highlightRowIndex = 0;
 
   @Input() visibleColumns: string[] = [];
   @Input() columnDefinitions: ColumnDefinition[] = [];
 
   //  columnsToDisplayWithExpand = this.showExpand ? [...this.visibleColumns, 'expand'] : this.visibleColumns
 
-  @Input() showSelectBox: boolean = false;
+  @Input() showSelectBox = false;
   @Input() tableData: T[] = [];
-  @Output() rowSelected = new EventEmitter<T[]>();
-  @Output() copyRow = new EventEmitter<T>();
+  rowAllSelected =output<T[]>();
+  rowSelected =output<T[]>();
+  copyRow =output<T>();
   showExpanded = output<T>();
   hideExpanded = output<T>();
 
@@ -203,10 +203,12 @@ export class MatDynamicTableComponent<T> {
     console.log('moveNextRow(): ' + JSON.stringify(cell));
   }
 
-  selectRow(row: T): void {
+  selectRow(row: any): void {
     // this.rowSelected.emit(row);
-    this.rowSelected.emit(this.selection.selected);
+    this.rowSelected.emit(row);
   }
+
+
 
   // ----START CHECKBOX LOGIC
 
@@ -219,9 +221,13 @@ export class MatDynamicTableComponent<T> {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle(): void {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
+    if(this.isAllSelected()){
+      this.selection.clear();
+    }else{
+      this.dataSource.data.forEach((row) => this.selection.select(row));
+    }
+    this.rowAllSelected.emit(this.selection.selected);
+
   }
 
   /** The label for the checkbox on the passed row */
