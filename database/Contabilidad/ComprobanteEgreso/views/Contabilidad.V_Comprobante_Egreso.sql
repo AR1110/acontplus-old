@@ -38,6 +38,7 @@ AS
         cli.IDCard AS cedulaRucProveedor,
 
         -- Información del documento por pagar
+        cpp.idCuentaPorPagar,
         cpp.serieComprobante AS serieDocumento,
         cpp.idProveedor,
 
@@ -50,8 +51,10 @@ AS
 
         -- Montos del documento
         CAST(cpp.importeTotal AS DECIMAL(18,2)) AS totalDocumento,
-        CAST(hp.abono AS DECIMAL(18,2)) AS abonoDocumento,
+        CAST(cpp.abono AS DECIMAL(18,2)) AS abonoDocumento,
+--        CAST(hp.abono AS DECIMAL(18,2)) AS abonoDocumento,
         CAST(hp.saldo - hp.abono AS DECIMAL(18,2)) AS saldoPendiente,
+        CAST(pag.abono AS DECIMAL(18,2)) as abonoPago,
 
         -- Información de la entidad financiera
         ef.descripcion AS metodoPago,
