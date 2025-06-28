@@ -214,6 +214,8 @@ BEGIN
                             SELECT  
                                 idProveedor
                                 ,codDoc
+                                ,idComprobanteEgreso
+                                ,idCuentaPorPagar
                                 ,serieComprobante
                                 ,razonSocialProveedor
                                 ,fechaRegistro
@@ -227,6 +229,7 @@ BEGIN
                                 ,lote
                                 ,observacion
                                 ,totalComprobante
+                                ,abonoPago
                                 ,totalDocumento
                             FROM Contabilidad.V_ComprobanteEgreso 
                             WHERE idEntidad = @idEntidad 

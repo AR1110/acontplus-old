@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { FormControl, FormsModule } from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Brand } from '@inventory/domain/models/brand.model';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
 import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
@@ -49,6 +49,7 @@ const imports = [
   MatSelectModule,
   MatFormFieldModule,
   MatInputModule,
+  ReactiveFormsModule,
   NgTemplateOutlet,
   BreadcrumbComponent,
   SubCategoryGroupComponent,
@@ -143,6 +144,9 @@ export class InventoryReportComponent implements OnInit {
 
   private format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL | null = null;
 
+  tiposDoc = signal<any[]>([])
+  tiposDocSelected = new FormControl([]);
+
   getDatFormReport() {
     this._productUseCase.getDataReport().subscribe((response) => {
       const { estabs, subCategorias, marcas } = response;
@@ -151,6 +155,7 @@ export class InventoryReportComponent implements OnInit {
       this.marcas = marcas;
       this.tarifas = response.tarifas;
       this.taxes.set(response.taxes);
+      this.tiposDoc.set(response.tiposDoc)
       const dataEstab = this.estabs.find((e) => e.defaultEstab);
 
       if (dataEstab) {
@@ -424,16 +429,16 @@ export class InventoryReportComponent implements OnInit {
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
+    const idUsuario = this.dataSearch.checkboxUsuarioFiltro ? isValidField(this.dataSearch.idUsuario) : null;
+    const idArticulo = this.dataSearch.checkboxArticuloFiltro ? isValidField(this.dataSearch.idArticulo) : null;
+    const tiposDocSelected = Array.isArray(this.tiposDocSelected.value) && this.tiposDocSelected.value.join(',');
+
     return {
       tipo: 4,
       checkBoxFecha: true,
       checkboxPrecioCostoFiltro: this.dataSearch.checkboxPrecioCostoFiltro,
-      idUsuario: this.dataSearch.checkboxUsuarioFiltro
-        ? isValidField(this.dataSearch.idUsuario)
-        : null,
-      idArticulo: this.dataSearch.checkboxArticuloFiltro
-        ? isValidField(this.dataSearch.idArticulo)
-        : null,
+      idUsuario,
+      idArticulo ,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       codEstab: this.getCodEstab(),
@@ -441,6 +446,7 @@ export class InventoryReportComponent implements OnInit {
       idSubFamilia,
       numeroIdentificacion,
       userRoleId: this._tokenUseCase.getUserRoleId(),
+      tiposDocSelected: tiposDocSelected || null,
     };
   }
   // REPORTE DE CONSUMO DIARIO DE ARTICULOS

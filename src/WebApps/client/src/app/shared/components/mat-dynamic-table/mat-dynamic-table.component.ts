@@ -1,10 +1,16 @@
 import {
+  AfterContentInit,
   Component,
   ContentChild,
-  ContentChildren, EmbeddedViewRef,
-   inject, Injector,
+  ContentChildren,
+  EmbeddedViewRef,
+  inject,
+  Injector,
   input,
   Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   output,
   QueryList,
   SimpleChanges,
@@ -41,7 +47,7 @@ import {
 import { Pagination } from '@shared/models/pagination.model';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
-import {DYNAMIC_INPUT} from "@shared/input/dynamic-input";
+import { DYNAMIC_INPUT } from '@shared/input/dynamic-input';
 
 @Component({
   selector: 'app-mat-dynamic-table',
@@ -72,10 +78,13 @@ import {DYNAMIC_INPUT} from "@shared/input/dynamic-input";
   templateUrl: './mat-dynamic-table.component.html',
   styleUrl: `./mat-dynamic-table.component.scss`,
 })
-export class MatDynamicTableComponent<T> {
+export class MatDynamicTableComponent<T>
+  implements AfterContentInit, OnInit, OnChanges, OnDestroy
+{
   private viewContainerRef = inject(ViewContainerRef);
   private injector = inject(Injector);
   private embeddedViews: EmbeddedViewRef<any>[] = [];
+  _selectedRows = new Set<T>();
 
   @Input() showExpand = false;
   @Input() showFooter = false;
@@ -89,9 +98,9 @@ export class MatDynamicTableComponent<T> {
 
   @Input() showSelectBox = false;
   @Input() tableData: T[] = [];
-  rowAllSelected =output<T[]>();
-  rowSelected =output<T[]>();
-  copyRow =output<T>();
+  rowAllSelected = output<T[]>();
+  rowSelected = output<T[]>();
+  copyRow = output<T>();
   showExpanded = output<T>();
   hideExpanded = output<T>();
 
@@ -176,39 +185,41 @@ export class MatDynamicTableComponent<T> {
       parent: this.injector,
     });
 
-
   createEmbeddedView(column: any, element: any): void {
-    console.log(column)
-      const templateRef = column.body as TemplateRef<any>;
+    console.log(column);
+    const templateRef = column.body as TemplateRef<any>;
 
-      // Create context for the template
-      const context = {
-        $implicit: element,
-        ...column.body
-      };
+    // Create context for the template
+    const context = {
+      $implicit: element,
+      ...column.body,
+    };
 
-      // Create the embedded view
-      const viewRef = templateRef.createEmbeddedView(context);
-      this.embeddedViews.push(viewRef);
+    // Create the embedded view
+    const viewRef = templateRef.createEmbeddedView(context);
+    this.embeddedViews.push(viewRef);
 
-      // Attach to the view container
-      this.viewContainerRef.insert(viewRef);
-
+    // Attach to the view container
+    this.viewContainerRef.insert(viewRef);
   }
-
-
-
 
   moveNextRow(cell: TableCellIndex): void {
     console.log('moveNextRow(): ' + JSON.stringify(cell));
   }
 
-  selectRow(row: any): void {
-    // this.rowSelected.emit(row);
-    this.rowSelected.emit(row);
+  selectRow(row: T): void {
+    // Toggle selection state
+    if (this._selectedRows.has(row)) {
+      this._selectedRows.delete(row);
+      this.selection.deselect(row);
+    } else {
+      this._selectedRows.add(row);
+      this.selection.select(row);
+    }
+
+    // Emit the current selection
+    this.rowSelected.emit([...this._selectedRows]);
   }
-
-
 
   // ----START CHECKBOX LOGIC
 
@@ -220,16 +231,27 @@ export class MatDynamicTableComponent<T> {
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
+  // Update masterToggle to emit all selections
   masterToggle(): void {
-    if(this.isAllSelected()){
+    if (this.isAllSelected()) {
       this.selection.clear();
-    }else{
-      this.dataSource.data.forEach((row) => this.selection.select(row));
+      this._selectedRows.clear();
+    } else {
+      this.dataSource.data.forEach((row) => {
+        this.selection.select(row);
+        this._selectedRows.add(row);
+      });
     }
-    this.rowAllSelected.emit(this.selection.selected);
-
+    // Emit both events to keep parent components in sync
+    this.rowAllSelected.emit([...this.selection.selected]);
+    this.rowSelected.emit([...this._selectedRows]);
   }
 
+  clearSelection(): void {
+    this.selection.clear();
+    this._selectedRows.clear();
+    this.rowSelected.emit([]);
+  }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row?: T): string {
     if (!row) {
@@ -291,6 +313,6 @@ export class MatDynamicTableComponent<T> {
 
   ngOnDestroy(): void {
     // Clean up components and views to prevent memory leaks
-    this.embeddedViews.forEach(view => view.destroy());
+    this.embeddedViews.forEach((view) => view.destroy());
   }
 }

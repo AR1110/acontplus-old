@@ -155,7 +155,7 @@ BEGIN
 			    ELSE IF @byStock = 2
 				    SET @sql += ' AND a.stock <= 0 AND a.llevaInventario = 1 ';
 
-			    -- Filtro adicional de búsqueda dinámica
+			    -- Filtro adicional de bï¿½squeda dinï¿½mica
 			    IF @bySearch IS NOT NULL 
 				    SET @sql += ' ' + @dynamicFilterCondition;
      
@@ -492,7 +492,7 @@ BEGIN
                       ,@notifMNM = CASE WHEN EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1) THEN 1 ELSE 0 END
 
                 
-                --> Verificación y notificación de stock negativo (NPS)
+                --> Verificaciï¿½n y notificaciï¿½n de stock negativo (NPS)
                 IF @notifNPS = 1 AND @stock < 0
                     BEGIN
                         SELECT '0' as code
@@ -501,7 +501,7 @@ BEGIN
                         RETURN
                     END
 
-                --> Verificación y notificación de stock cero (MNS)
+                --> Verificaciï¿½n y notificaciï¿½n de stock cero (MNS)
                 IF @notifMNS = 1 AND @stock <= 0
                     BEGIN
                         SELECT '2' AS code
@@ -510,12 +510,12 @@ BEGIN
                         RETURN
                     END
 
-                --> Verificación y notificación de stock mínimo (MNM)
+                --> Verificaciï¿½n y notificaciï¿½n de stock mï¿½nimo (MNM)
                 IF @notifMNM = 1 AND @stock <= @stockMinimo
                     BEGIN
                         SELECT '2' AS code
                               ,'EL ARTICULO: <b>' + @descripcion + '</b> TIENE UN STOCK DE ' + CAST(@stock AS nvarchar) AS message
-                              ,'ARTICULO BAJO STOCK MÍNIMO' AS titleSms;
+                              ,'ARTICULO BAJO STOCK Mï¿½NIMO' AS titleSms;
                         RETURN
                     END
 
@@ -657,7 +657,8 @@ BEGIN
 
                 SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
 
-                SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+                --SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+                SELECT idTipoDocumento, descripcion, codigoSri,codigo FROM Inventario.TipoDocumento WHERE codigo IN ('FE', 'NE')
 
                 SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
                   SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
