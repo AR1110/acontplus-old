@@ -984,11 +984,13 @@ BEGIN
             SELECT @codEstab           = codEstab
                   ,@dirViviendaCliente = dirViviendaCliente
                   ,@idCiudad           = idCiudad
+                  ,@ckCxcVencida       = ckCxcVencida
             FROM OPENJSON(@json) WITH 
             (
                 codEstab           VARCHAR(25) 
                ,dirViviendaCliente VARCHAR(150) 
                ,idCiudad           INT
+               ,ckCxcVencida       BIT
             )
 
             SET @sql = 'SELECT dt.razonSocial
@@ -1034,6 +1036,11 @@ BEGIN
                     SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END
 
+
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = @sql + 'AND cc.diasMora > 0 '
+                END 
 
             IF @dirViviendaCliente IS NOT NULL 
                 BEGIN 
