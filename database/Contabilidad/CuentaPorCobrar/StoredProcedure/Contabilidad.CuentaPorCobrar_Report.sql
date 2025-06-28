@@ -1036,6 +1036,10 @@ BEGIN
                     SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END
 
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = @sql + 'AND cc.diasMora > 0 '
+                END 
 
             IF @ckCxcVencida = 1
                 BEGIN
