@@ -349,12 +349,14 @@ BEGIN
     --> DataForm
     IF @tipo = 5
         BEGIN
-            DECLARE @idCliente INT
+            DECLARE @idCliente INT ,@serieComprobante VARCHAR(15)
 
             SET @tableNames = 'entidadFinanciera,subEntidadFinanciera,banco,provincia,documentos,estadoPago,cuentaPorCobrar,config'
 
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar ,@idCliente = idCliente FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT ,idCliente INT)
 			
+            SELECT TOP 1 @serieComprobante = REPLACE(serieComprobante,'-','') FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+
             IF @idCliente IS NULL
                 BEGIN
                     SELECT TOP 1 @idCliente = idCliente FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
@@ -379,9 +381,20 @@ BEGIN
 	              ,FORMAT(cc.fechaEmision,'MM/dd/yyyy') as fechaEmision
                   ,cc.codDoc
             FROM v_CuentaPorCobrar cc WITH (NOLOCK)
+			LEFT JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento            = cc.idDocumento AND cc.codDoc = '07'
+			LEFT JOIN FactElect.DocRelacionado    rd WITH (NOLOCK) ON rd.idDocumentoRecibido    = dr.idDocumento
+            LEFT JOIN dbo.NotaCredito			  nc WITH (NOLOCK) ON nc.idNotaCredito		    = cc.idDocumento AND cc.codDoc = '04'
+		    LEFT JOIN dbo.Factura				  fa WITH (NOLOCK) ON fa.idFactura			    = nc.idFactura
+		    LEFT JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
             WHERE cc.codDoc IN ('A','04','07')
               AND cc.idCliente = @idCliente
               AND cc.codEstado = 'PE'
+			  AND (
+                     (cc.codDoc = 'A' AND rd.numDocSustento IS NULL AND de.serieComprobante IS NULL) 
+                     OR rd.numDocSustento  = @serieComprobante
+                     OR REPLACE(de.serieComprobante,'-','') = @serieComprobante 
+                     OR @serieComprobante IS NULL
+                  )
             
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','CBR')
 
