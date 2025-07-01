@@ -230,20 +230,20 @@
             }
 
             <div class="footer-actions">
-              <button class="footer-btn create-btn" (click)="onCreateNew()">
+              <button class="footer-btn create-btn" (click)="onCreateNew($event)">
                 <mat-icon>add</mat-icon>
                 <span class="btn-text">Crear</span>
               </button>
-              <button class="footer-btn search-btn" (click)="onAdvancedSearch()">
-                <mat-icon>tune</mat-icon>
-                <span class="btn-text">Avanzada</span>
-              </button>
-              @if (!isHistoryVisible() && totalItems() > 0) {
-                <button class="footer-btn results-btn" (click)="onShowAllResults()">
-                  <mat-icon>list</mat-icon>
-                  <span class="btn-text">Todos</span>
-                </button>
-              }
+<!--              <button class="footer-btn search-btn" (click)="onAdvancedSearch()">-->
+<!--                <mat-icon>tune</mat-icon>-->
+<!--                <span class="btn-text">Avanzada</span>-->
+<!--              </button>-->
+<!--              @if (!isHistoryVisible() && totalItems() > 0) {-->
+<!--                <button class="footer-btn results-btn" (click)="onShowAllResults()">-->
+<!--                  <mat-icon>list</mat-icon>-->
+<!--                  <span class="btn-text">Todos</span>-->
+<!--                </button>-->
+<!--              }-->
             </div>
           </div>
         }

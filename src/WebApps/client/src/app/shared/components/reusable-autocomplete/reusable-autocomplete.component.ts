@@ -58,7 +58,7 @@ export class ReusableAutocompleteComponent {
   @Output() filterChanged = new EventEmitter<AutocompleteFilters>();
   @Output() advancedSearchClicked = new EventEmitter<void>();
   @Output() allResultsClicked = new EventEmitter<string>();
-  @Output() createProductClicked = new EventEmitter<string>();
+  @Output() createClicked = new EventEmitter<string>();
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('historyListElement') historyListElement?: ElementRef<HTMLUListElement>;
@@ -386,9 +386,10 @@ export class ReusableAutocompleteComponent {
   }
 
   // Footer Actions
-  onCreateNew() {
-    this.hideOverlay();
-    this.createProductClicked.emit(this.query);
+  onCreateNew($event:MouseEvent) {
+    //$event.stopPropagation();
+   // this.hideOverlay();
+    this.createClicked.emit(this.query);
   }
 
   onAdvancedSearch() {

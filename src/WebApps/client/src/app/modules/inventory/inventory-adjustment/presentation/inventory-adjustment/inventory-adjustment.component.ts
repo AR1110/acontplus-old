@@ -36,6 +36,9 @@ import {
   ProductSearchBarComponent
 } from "@inventory/product/presentation/components/product-search-bar/product-search-bar.component";
 import {ReusableAutocompleteComponent} from "@shared/components/reusable-autocomplete/reusable-autocomplete.component";
+import {
+  ProductAutocompleteAdvancedComponent
+} from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
 
 @Component({
   selector: 'app-inventory-adjustment',
@@ -54,6 +57,7 @@ import {ReusableAutocompleteComponent} from "@shared/components/reusable-autocom
     MatMenuModule,
     ProductSearchBarComponent,
     ReusableAutocompleteComponent,
+    ProductAutocompleteAdvancedComponent,
   ],
   templateUrl: './inventory-adjustment.component.html',
   styles: `
