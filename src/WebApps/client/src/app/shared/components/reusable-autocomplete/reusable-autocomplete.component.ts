@@ -1,17 +1,16 @@
 import {
   Component,
   Input,
-  Output,
-  EventEmitter,
   TemplateRef,
   ViewChild,
   ElementRef,
   computed,
   signal,
   inject,
-  ChangeDetectorRef
+  output,
+  input
 } from '@angular/core';
-import {Subject, takeUntil, debounceTime, distinctUntilChanged, Observable, of} from 'rxjs';
+import {Subject, takeUntil, debounceTime, Observable, of,  distinctUntilChanged } from 'rxjs';
 
 import { AutocompleteService } from '../../services/autocomplete.service';
 import {
@@ -51,14 +50,19 @@ export class ReusableAutocompleteComponent {
   @Input() searchFunction?: SearchFunction;
 
   @Input() notFoundTemplate?: TemplateRef<any>;
-  @Output() itemSelected = new EventEmitter<AutocompleteItem>();
-  @Output() searchChanged = new EventEmitter<string>();
-  @Output() searchRequested = new EventEmitter<{query: string, filters: AutocompleteFilters, page: number}>(); // Nuevo evento
-  @Output() pageChanged = new EventEmitter<number>();
-  @Output() filterChanged = new EventEmitter<AutocompleteFilters>();
-  @Output() advancedSearchClicked = new EventEmitter<void>();
-  @Output() allResultsClicked = new EventEmitter<string>();
-  @Output() createClicked = new EventEmitter<string>();
+
+
+   overlayWidth = input('auto');
+   overlayMaxHeight = input('400px');
+
+   itemSelected = output<AutocompleteItem>();
+   searchChanged = output<string>();
+   searchRequested = output<{query: string, filters: AutocompleteFilters, page: number}>(); // Nuevo evento
+   pageChanged = output<number>();
+   filterChanged = output<AutocompleteFilters>();
+   advancedSearchClicked = output<void>();
+   allResultsClicked = output<string>();
+   createClicked = output<string>();
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('historyListElement') historyListElement?: ElementRef<HTMLUListElement>;
@@ -66,12 +70,12 @@ export class ReusableAutocompleteComponent {
 
   // State
   query = '';
-  isLoading = false;
+  isLoading = signal(false);
   overlayOpen = signal(false);
   selectedIndex = signal(-1);
   currentPage = signal(1);
   filteredItems = signal<AutocompleteItem[]>([]);
-  historyList: AutocompleteItem[] = [];
+  historyList = signal<AutocompleteItem[]>([]);
   totalCount = signal(0);
   // Filters
   filters: AutocompleteFilters = {
@@ -81,7 +85,7 @@ export class ReusableAutocompleteComponent {
 
   // Computed properties
   isHistoryVisible = computed(() => {
-    return this.query.length < (this.config.minSearchLength || 2) && this.historyList.length > 0;
+    return this.query.length < (this.config.minSearchLength || 2) && this.historyList().length > 0  ;
   });
 
   totalItems = computed(() => this.filteredItems().length);
@@ -120,16 +124,13 @@ export class ReusableAutocompleteComponent {
   });
 
   isNoResults = computed(() => {
-    return this.query.length >= (this.config.minSearchLength || 2) &&
-      this.filteredItems().length === 0 &&
-      !this.isLoading;
+    return    this.totalItems() === 0 &&  !this.isLoading() && this.query.length >= (this.config.minSearchLength || 2)
   });
 
   // Private
   private destroy$ = new Subject<void>();
-  private searchSubject = new Subject<string>();
+  private searchSubject = new Subject<{ query: string; filters: any; page: number }>();
   private autocompleteService = inject(AutocompleteService);
-  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     this.mergeDefaultConfig();
@@ -149,27 +150,72 @@ export class ReusableAutocompleteComponent {
   }
 
   private setupSearch() {
+    this.filteredItems.set([])
     this.searchSubject
       .pipe(
         debounceTime(this.config.debounceTime || 300),
        // distinctUntilChanged(),
+       //  distinctUntilChanged((prev, curr) => {
+       //    console.log(prev);
+       //    console.log(curr);
+       //      return  prev.query === curr.query &&
+       //        JSON.stringify(prev.filters) === JSON.stringify(curr.filters) &&
+       //        prev.page === curr.page
+       //
+       //    }
+       //
+       //  ),
         takeUntil(this.destroy$),
-        switchMap(query => this.performSearch(query))
+        switchMap(({query}) => this.performSearch(query))
       )
       .subscribe(result => {
         this.filteredItems.set(result.items);
         this.totalCount.set(result.totalCount);
-        this.isLoading = false;
+        this.isLoading.set(false);
       });
   }
+
+  private performSearch(query: string): Observable<SearchResult> {
+    if (query.length < (this.config.minSearchLength || 2)) {
+      return of({ items: [], totalCount: 0 });
+    }
+
+    // ESTRATEGIA A: Función de búsqueda personalizada
+    if (this.searchFunction) {
+      return this.searchFunction(query, this.filters, this.currentPage(), this.config.itemsPerPage || 10)
+        .pipe(catchError(() => of({ items: [], totalCount: 0 })));
+    }
+
+    // ESTRATEGIA B: Emit evento para que el padre maneje
+    if (this.config.searchMode === 'remote') {
+      this.searchRequested.emit({
+        query,
+        filters: this.filters,
+        page: this.currentPage()
+      });
+      return of({ items: [], totalCount: 0 }); // El padre actualizará los datos
+    }
+
+    // ESTRATEGIA C: Búsqueda local (fallback)
+    return this.autocompleteService.searchLocal(this.dataSource, query, this.filters, this.config);
+  }
+
 
   private loadHistory() {
     this.autocompleteService.history$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(history => {
-      this.historyList = history;
-      this.cdr.detectChanges();
+      this.historyList.set(history);
     });
+  }
+
+  private searchSubjectNext(){
+    this.searchSubject.next({
+      query: this.query,
+      filters: this.filters,
+      page: this.currentPage()
+    });
+
   }
 
   // Event Handlers
@@ -180,11 +226,11 @@ export class ReusableAutocompleteComponent {
     this.currentPage.set(1);
 
     if (this.query.length >= (this.config.minSearchLength || 2)) {
-      this.isLoading = true;
-      this.searchSubject.next(this.query);
+      this.isLoading.set(true);
+      this.searchSubjectNext();
     } else {
       this.filteredItems.set([]);
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
 
     this.showOverlay();
@@ -192,7 +238,7 @@ export class ReusableAutocompleteComponent {
   }
 
   onKeyDown(event: KeyboardEvent) {
-    const currentList = this.isHistoryVisible() ? this.historyList : this.currentPageItems();
+    const currentList = this.isHistoryVisible() ? this.historyList() : this.currentPageItems();
     const maxIndex = currentList.length - 1;
 
     switch (event.key) {
@@ -246,41 +292,17 @@ export class ReusableAutocompleteComponent {
     this.currentPage.set(1);
      if (this.query.length >= (this.config.minSearchLength || 2)) {
         this.performSearch(this.query);
-    this.searchSubject.next(this.query)
+       this.searchSubjectNext()
       }
     // this.filterChanged.emit(this.filters);
   }
 
-  private performSearch(query: string): Observable<SearchResult> {
-    if (query.length < (this.config.minSearchLength || 2)) {
-      return of({ items: [], totalCount: 0 });
-    }
-
-    // ESTRATEGIA A: Función de búsqueda personalizada
-    if (this.searchFunction) {
-      return this.searchFunction(query, this.filters, this.currentPage(), this.config.itemsPerPage || 10)
-        .pipe(catchError(() => of({ items: [], totalCount: 0 })));
-    }
-
-    // ESTRATEGIA B: Emit evento para que el padre maneje
-    if (this.config.searchMode === 'remote') {
-      this.searchRequested.emit({
-        query,
-        filters: this.filters,
-        page: this.currentPage()
-      });
-      return of({ items: [], totalCount: 0 }); // El padre actualizará los datos
-    }
-
-    // ESTRATEGIA C: Búsqueda local (fallback)
-    return this.autocompleteService.searchLocal(this.dataSource, query, this.filters, this.config);
-  }
 
   // Método público para actualizar resultados desde el padre
   public updateSearchResults(result: SearchResult) {
     this.filteredItems.set(result.items);
     this.totalCount.set(result.totalCount);
-    this.isLoading = false;
+    this.isLoading.set(false);
   }
 
 
@@ -300,7 +322,11 @@ export class ReusableAutocompleteComponent {
 
   // Selection Methods
   selectItem(item: AutocompleteItem) {
-    this.query = this.getItemDisplayText(item);
+    if(this.config.clearInput){
+      this.query = '';
+    }else{
+      this.query = this.getItemDisplayText(item);
+    }
     this.hideOverlay();
     this.currentPage.set(1);
     this.autocompleteService.addToHistory(item, this.config.maxHistoryItems);
@@ -340,7 +366,7 @@ export class ReusableAutocompleteComponent {
       this.currentPage.set(page);
       this.selectedIndex.set(-1);
       this.pageChanged.emit(page);
-      this.searchSubject.next(this.query)
+      this.searchSubjectNext()
     } else {
       target.value = this.currentPage().toString();
     }
@@ -351,7 +377,7 @@ export class ReusableAutocompleteComponent {
       this.currentPage.set(1);
       this.selectedIndex.set(-1);
       this.pageChanged.emit(1);
-      this.searchSubject.next(this.query)
+      this.searchSubjectNext()
     }
   }
 
@@ -361,7 +387,7 @@ export class ReusableAutocompleteComponent {
       this.currentPage.set(prevPage);
       this.selectedIndex.set(-1);
       this.pageChanged.emit(prevPage);
-      this.searchSubject.next(this.query)
+      this.searchSubjectNext()
     }
   }
 
@@ -371,7 +397,7 @@ export class ReusableAutocompleteComponent {
       this.currentPage.set(nextPage);
       this.selectedIndex.set(-1);
       this.pageChanged.emit(nextPage);
-      this.searchSubject.next(this.query)
+      this.searchSubjectNext()
     }
   }
 
@@ -381,7 +407,7 @@ export class ReusableAutocompleteComponent {
       this.currentPage.set(lastPage);
       this.selectedIndex.set(-1);
       this.pageChanged.emit(lastPage);
-      this.searchSubject.next(this.query)
+      this.searchSubjectNext()
     }
   }
 
@@ -431,7 +457,7 @@ export class ReusableAutocompleteComponent {
   public getState(): AutocompleteState {
     return {
       query: this.query,
-      isLoading: this.isLoading,
+      isLoading: this.isLoading(),
       overlayOpen: this.overlayOpen(),
       selectedIndex: this.selectedIndex(),
       pagination: {
@@ -446,7 +472,7 @@ export class ReusableAutocompleteComponent {
       },
       hasResults: this.totalItems() > 0,
       isHistoryVisible: this.isHistoryVisible(),
-      historyCount: this.historyList.length,
+      historyCount: this.historyList().length,
       filters: this.filters
     };
   }

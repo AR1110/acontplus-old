@@ -335,19 +335,20 @@
 }
 
 .remove-btn {
-  color: #999;
   margin-right: 8px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-    color: #333;
-  }
+  //color: #999;
+  //margin-right: 8px;
+  //background: none;
+  //border: none;
+  //cursor: pointer;
+  //padding: 4px;
+  //border-radius: 4px;
+  //transition: all 0.2s ease;
+  //
+  //&:hover {
+  //  background-color: rgba(0, 0, 0, 0.04);
+  //  color: #333;
+  //}
 }
 
 // Result Item Styles
@@ -395,6 +396,8 @@
   font-size: 48px;
   color: #ccc;
   margin-bottom: 16px;
+  width: 45px;
+  height: 45px;
 }
 
 .no-results-content {

@@ -25,6 +25,7 @@ export type SearchFunction = (
 
 export interface AutocompleteConfig {
   placeholder?: string;
+  clearInput?: boolean;
   disabled?: boolean;
   debounceTime?: number;
   minSearchLength?: number;
@@ -107,10 +108,11 @@ export const DEFAULT_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
   enableFilters: true,
   enableFooterActions: true,
   searchFields: [
-    { value: 'name', label: 'Nombre', property: 'name' },
+    // { value: 'name', label: 'Nombre', property: 'name' },
     { value: 'description', label: 'Descripción', property: 'description' },
     { value: 'code', label: 'Código', property: 'code' },
-    { value: 'barcode', label: 'Código de Barras', property: 'barcode' }
+    { value: 'barcode', label: 'Código de Barras', property: 'barcode' },
+    { value: 'auxCode', label: 'Código Auxiliar', property: 'auxCode' } // <- nuevo campo
   ],
   stockOptions: [
     { value: 'all', label: 'Todos' },

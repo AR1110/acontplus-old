@@ -15,7 +15,7 @@ import {ProductSaveMapper} from "@inventory/product/infrastructure/product/produ
 import {ProductGetIdMapper} from "@inventory/product/infrastructure/product/product-get-id.mapper";
 import {
   ListProductWithPricesUseCaseMapper
-} from "@inventory/product/infrastructure/product/mappers/list-product-with-prices.use-case.mapper";
+} from "@inventory/product/infrastructure/product/mappers/list-product-with-prices.mapper";
 
 
 

@@ -64,10 +64,13 @@
 
 .product-name {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 11px;
   line-height: 1.2;
-  color: #333;
+  color: #666;
   margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .product-brand {
@@ -108,13 +111,15 @@
   flex-wrap: wrap;
 }
 
- .category, .subcategory, .unit, .weight {
+ .category, .subcategory, .unit, .weight, .tracking {
   font-size: 9px;
   background: #e3f2fd;
   color: #1976d2;
   padding: 1px 4px;
   border-radius: 8px;
 }
+
+.tracking { background: #e8f5e8; color: #2e7d32; }
 
 /* Sección de precios */
 .product-prices-section {

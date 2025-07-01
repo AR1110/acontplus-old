@@ -19,7 +19,7 @@
 
       <div class="stock-badge"
            [class.in-stock]="product.stock > 0"
-           [class.out-of-stock]="product.stock === 0"
+           [class.out-of-stock]="product.stock <= 0"
            [class.low-stock]="product.stock > 0 && product.stock <= 5">
         {{ getStockLabel(product.stock) }}
       </div>
@@ -71,8 +71,8 @@
         }
         @if (product.weight) {
         <span class="weight"  >{{ product.weight }}kg</span>
-
         }
+        <span class="tracking">Iva {{product.taxName }}</span>
       </div>
     </div>
 
@@ -146,15 +146,15 @@
           }
 
           <!-- Indicador de más precios -->
-          @if (product.prices.length > 3) {
-          <div   class="more-prices-indicator">
-            <span class="more-prices-text">+{{ product.prices.length - 3 }} más</span>
-            <button class="view-all-prices-btn" (click)="onViewAllPrices(product, $event)">
-              Ver todos
-            </button>
-          </div>
+<!--          @if (product.prices.length > 3) {-->
+<!--          <div   class="more-prices-indicator">-->
+<!--            <span class="more-prices-text">+{{ product.prices.length - 3 }} más</span>-->
+<!--            <button class="view-all-prices-btn" (click)="onViewAllPrices(product, $event)">-->
+<!--              Ver todos-->
+<!--            </button>-->
+<!--          </div>-->
 
-          }
+<!--          }-->
         </div>
 
         }

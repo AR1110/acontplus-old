@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output, output} from '@angular/core';
 import {AutocompleteConfig, PRODUCT_AUTOCOMPLETE_CONFIG} from "@shared/models/autocomplete.interfaces";
 import {ProductUseCase} from "@inventory/product/application/use-cases/product.use-case";
 import {AutocompleteService} from "@shared/services/autocomplete.service";
@@ -33,17 +33,17 @@ export class ProductAutocompleteAdvancedComponent {
   @Input() autoRotateImages = false;
   @Input() showQuickActions = true;
   @Input() maxLocationsToShow = 4;
-  @Input() maxPricesToShow = 1;
+  @Input() maxPricesToShow = 5;
 
-  @Output() itemSelected = new EventEmitter<any>();
-  @Output() searchChanged = new EventEmitter<string>();
-  @Output() pageChanged = new EventEmitter<number>();
-  @Output() filterChanged = new EventEmitter<any>();
-  @Output() createProductClicked = new EventEmitter<string>();
-  @Output() stockDetails = new EventEmitter<any>();
-  @Output() quickAdd = new EventEmitter<any>();
-  @Output() imageClicked = new EventEmitter<{product: any, image: any}>();
-  @Output() quickViewClicked = new EventEmitter<any>();
+   itemSelected =output<any>();
+   searchChanged =output<string>();
+   pageChanged =output<number>();
+   filterChanged =output<any>();
+   createProductClicked =output<string>();
+   stockDetails =output<any>();
+   quickAdd =output<any>();
+   imageClicked =output<{product: any, image: any}>();
+   quickViewClicked =output<any>();
 
   private autocompleteService = inject(AutocompleteService);
   public $listProductWithPricesUseCase = inject(ListProductWithPricesUseCase);
@@ -51,8 +51,9 @@ export class ProductAutocompleteAdvancedComponent {
   get finalConfig(): AutocompleteConfig {
     return {
       ...PRODUCT_AUTOCOMPLETE_CONFIG,
-      placeholder: 'Buscar productos con precios...',
+      placeholder: 'Buscar productos por nombre, SKU o código de barras...',
       itemsPerPage: 8, // Menos items por el mayor tamaño
+      clearInput: true,
       ...this.config
     };
   }
@@ -95,9 +96,6 @@ export class ProductAutocompleteAdvancedComponent {
     return price.type === 'promotional' && !!price.validTo;
   }
 
-  trackByPrice(index: number, price: any): any {
-    return price.id || `${price.type}-${price.value}`;
-  }
 
   onQuickAdd(product: any, event: Event) {
     event.stopPropagation();

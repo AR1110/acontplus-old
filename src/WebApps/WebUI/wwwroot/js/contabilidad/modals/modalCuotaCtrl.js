@@ -176,9 +176,9 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
         );
 
         // Mapear cuotas con sus datos
-        const resultCuotas = cuotas.map((nroCuota, index) => {
-            const esEntrada = entrada && nroCuota === 0;
-            const diasSumados = esEntrada ? 0 : (entrada ? index - 1 : index) * diasPorCuota;
+        const resultCuotas = cuotas.map((nroCuota) => {
+            const esEntrada =   nroCuota === 0;
+            const diasSumados = nroCuota * diasPorCuota;
             const fechaVencimiento = new Date($scope.comprobante.fechaEmision.getTime() + diasSumados * 24 * 60 * 60 * 1000);
 
             return {

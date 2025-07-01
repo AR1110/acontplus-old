@@ -215,7 +215,7 @@ export class AutocompleteService {
 
 
   createGenericSearchFunction(config: {
-    search(params: any): Observable<any>;
+    search (params: any): Observable<any>;
     queryParam?: string;
     searchByParam?: string;
     pageParam?: string;
@@ -223,23 +223,25 @@ export class AutocompleteService {
     responseMapper?: (response: any) => SearchResult;
   }): SearchFunction {
     return (query: string, filters: AutocompleteFilters, page = 1, pageSize = 10) => {
-      console.log(query, filters, page, pageSize);
+
+      const {searchBy, ...rest} = filters;
       const params =  {
-        [config.queryParam || 'textSearch']: query,
-          [config.searchByParam || 'searchBy']: filters.searchBy,
-        [config.pageParam || 'pageIndex']: page,
-        [config.pageSizeParam || 'pageSize']: pageSize
+        [config.queryParam || 'q']: query,
+          [config.searchByParam || 'searchBy']: searchBy,
+        [config.pageParam || 'page']: page,
+        [config.pageSizeParam || 'pageSize']: pageSize,
+        ...rest
       }
+
       return config.search(params).pipe(
         map(response => {
-          console.log(response);
           if (config.responseMapper) {
             return config.responseMapper(response);
           }
 
           // Mapper por defecto
           const items =  response.data || response.items || response;
-          const totalRecords = items.length>0? items[0].totalRecords : 0;
+          const totalRecords = response.totalRecords || response.totalCount || response.total || 0;
           return {
             items,
             // items: [
@@ -363,7 +365,7 @@ export class AutocompleteService {
             //     ]
             //   }
             // ],
-            totalCount: totalRecords|| response.totalCount || response.total || 0,
+            totalCount: totalRecords ,
             hasMore: response.hasMore || false
           };
         })
