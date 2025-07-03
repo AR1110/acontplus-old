@@ -1,11 +1,11 @@
 import {inject, Injectable} from "@angular/core";
-import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/inventory-adjustment.repository";
+import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/repositories/inventory-adjustment.repository";
 import {map, Observable} from "rxjs";
 import {
   InventoryAdjustmentListResponse,
   InventoryAdjustmentFormDataResponse,
   InventoryAdjustmentDetailResponse
-} from "../domain/inventory-adjustment.entity";
+} from "../domain/entities/inventory-adjustment.entity";
 import {PATHS_API} from "@core/constants/global.constants";
 import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
 import {HttpClient} from "@angular/common/http";

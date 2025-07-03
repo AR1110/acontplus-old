@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/product/product-get-id.use-case';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,6 +23,7 @@ import Swal from "sweetalert2";
 import {
   ProductUbicationRemoveUseCase
 } from "@inventory/product/application/use-cases/product-ubication/product-ubication-remove.use-case";
+import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
 
 @Component({
   selector: 'app-product-ubication',
@@ -86,7 +86,7 @@ export class ProductUbicationComponent {
         finalize(()=>this.loading=false)
       )
       .subscribe(response=>{
-      this.dataSource = new MatTableDataSource(response.payload?.productLocations || [])
+      this.dataSource = new MatTableDataSource(response?.productLocations || [])
     })
   }
 

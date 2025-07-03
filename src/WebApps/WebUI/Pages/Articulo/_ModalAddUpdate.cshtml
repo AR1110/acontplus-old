@@ -44,7 +44,7 @@
                         </div>
                     </div>
 
-                    <div class="row" ng-show="tipoRegistro===1">
+                    <div class="row">
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <div class="row">
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
@@ -121,7 +121,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" ng-show="tipoRegistro===1">
+                    <div class="row">
                         <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12">
                             <label for="">Tipo Iva: </label>
                             <select class="form-control border-select tipoIva" ng-model="data.idTipoIva"
@@ -131,11 +131,48 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
-                            <label for="">Precio Costo: <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control border-select precioCosto" decimal
-                                ng-focus="delayFocus('.precioCosto')" ng-model="data.precioCosto"
-                                ng-blur="redondearPrecioCosto()" ng-change="recalculateTarifaAdd()" placeholder="0.00">
+
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-6 col-12">
+
+                            <div class="form-group" ng-if="tipoRegistro===1">
+                                @* <label for="">Precio Costo: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control border-select precioCosto" decimal
+                                    ng-focus="delayFocus('.precioCosto')" ng-model="data.precioCosto"
+                                    ng-blur="redondearPrecioCosto()" ng-change="recalculateTarifaAdd()" placeholder="0.00"> *@
+                                <label for="">Precio Costo: <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control precioCosto border-select" decimal
+                                    ng-focus="delayFocus('.precioCosto')" ng-blur="redondearPrecioCosto()"
+                                    ng-change="recalculateTarifaAdd()" ng-model="data.precioCosto" placeholder="0.00">
+
+                            </div>
+
+                            <div class="form-group" ng-if="tipoRegistro===2 && articlePermission.isUpdatePrice">
+                                <label for="">Precio Costo: <span class="text-danger">*</span></label>
+
+                                <div class="input-group">
+                                    <input type="number" class="form-control precioCosto"
+                                        ng-disabled="!dataTarifaOption.opcionCalculate"
+                                        ng-focus="delayFocus('.precioCosto')" ng-blur="redondearPrecioCosto()"
+                                        ng-change="recalculateTarifaUpdate()" ng-model="data.precioCosto" step="any"
+                                        placeholder="0.00">
+                                    <div class="input-group-append">
+                                        <select class="form-control" ng-model="dataTarifaOption.opcionCalculate">
+                                            <option disabled>Seleccione...</option>
+                                            <option value="optionPvp">PVP</option>
+                                            <option value="optionPorcentaje">% Util</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-6 col-12"
+                            ng-if="articlePermission.isUpdatePrice">
+                            <div class="form-grou">
+                                <label for="precioCostoConIva">Precio Costo con Iva</label>
+                                <input type="text" class="form-control" ng-model="data.precioCostoConIva"
+                                    placeholder="0.00" ng-change="calculatePrecioCosto()">
+                            </div>
                         </div>
                         <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
                             <label for="">Precio Sin Subsidio:</label>
@@ -143,126 +180,29 @@
                                 ng-focus="delayFocus('.precioSinSubsidio')" ng-model="data.precioSinSubsidio"
                                 placeholder="0.00">
                         </div>
-                        <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12 text-center ">
-                            <label>Inventario: </label>
-                            <div class="icheck-primary ">
-                                <input type="checkbox" id="llevarInventarioAgregar1" name="llevarInventarioAgregar1"
-                                    ng-model="data.llevaInventario" />
-                                <label for="llevarInventarioAgregar1"></label>
+
+
+                        <div class="col-lg-2 col-md-6 col-sm-6 col-xs-6 xol-12" ng-if="tipoRegistro===2">
+                            <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-6" ng-if="!showEstado">
+                                <label for="">Estado: </label>
+                                <md-switch ng-model="data.estado" aria-label="Estado">
+                                    {{ data.estado?'Activo':'Inactivo' }}
+                                </md-switch>
                             </div>
+
                         </div>
-                        <div class="form-group col-lg-2 col-md-3 col-sm-6 col-12 text-center">
-                            <label>Adicionales: </label>
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="datosAdicionalesAgregar1" name="datosAdicionalesAgregar1"
-                                    ng-model="data.datosAdicionales" />
-                                <label for="datosAdicionalesAgregar1"></label>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-2 col-md-3 col-sm-6 col-12 text-center"
-                            ng-show="data.datosAdicionales">
-                            <label>Etiqueta: </label>
-                            <select ng-model="data.idEtiqueta" class="form-control">
-                                <option ng-value="item.idEtiqueta" ng-repeat="item in etiquetaActividades">
-                                    {{item.descripcion}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-lg-2 col-md-3 col-sm-6 col-12 text-center">
-                            <label for="">Fraccionable: </label>
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="productoFraccionableAgregar1"
-                                    name="productoFraccionableAgregar1" ng-model="data.productoFraccionable" />
-                                <label for="productoFraccionableAgregar1"></label>
-                            </div>
-                        </div>
+
                     </div>
 
-                    <!--ACTUALIZAR-->
-                    <div ng-show="tipoRegistro==2">
-
-                        <div class="row">
-                            <div class="form-group col-lg-3 col-md-2 col-sm-6 col-xs-6">
-                                <label for="">Código: <span class="text-danger">*</span></label>
-                                <input type="text" ng-model="data.codigo"
-                                    class="form-control border-select codigoUpdate"
-                                    ng-focus="delayFocus('.codigoUpdate')" placeholder="Ej: COM050">
-                            </div>
-                            <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6">
-                                <label for="codigoAuxiliar">Código Aux: <span class="text-danger">*</span> </label>
-                                <input type="text" name="codigoAuxiliar" id="codigoAuxiliar"
-                                    ng-model="data.codigoAuxiliar" class="form-control border-select codigoAuxiliarUp"
-                                    ng-focus="delayFocus('.codigoAuxiliarUp')" placeholder="Ej: COM050">
-                            </div>
-                            <div class="form-group col-lg-2 col-md-2">
-                                <div class="form-group">
-                                    <label for="">Código de Barra: <span class="text-danger">*</span> </label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control border-select codigoBarraUp"
-                                            ng-focus="delayFocus('.codigoBarraUp')" ng-model="data.codigoBarra"
-                                            touppercase placeholder="H20089" value="" />
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" ng-click="getBarcode()">
-                                                <i class="fas fa-barcode"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-lg-2 col-md-4 col-sm-6 col-xs-6">
-                                <label for="">Tipo Artículo: <span class="text-danger">*</span> </label>
-                                <select class="form-control border-select tipoArticulo" ng-model="data.idTipoArticulo"
-                                    ng-focus="delayFocus('.tipoArticulo')">
-                                    <option ng-value="item.idTipoArticulo" ng-repeat="item in tipoArticulos">
-                                        {{item.descripcion}}
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <label for="medida">U. Medida <span class="text-danger">*</span> </label>
-                                <div class="input-group">
-                                    <select id="medida" name="medida" class="form-control border-select medida"
-                                        ng-model="data.idMedida" ng-focus="delayFocus('.medida')">
-                                        <option ng-value="item.idMedida" ng-repeat="item in medidas">
-                                            {{item.descripcion}}
-                                        </option>
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-medida
-                                            results="resultModalMedida(item)" tabindex="-1">
-                                            <i class="fa fa-plus fa-xs"></i>
-                                        </button>
-                                        <button class="btn btn-outline-secondary btn-sm" ng-click="refreshMedida()"
-                                            type="button" tabindex="-1">
-                                            <i class="fa fa-redo fa-xs"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-12">
+                            <div ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav
+                                ui-grid-auto-resize class="grid"></div>
                         </div>
-
-
-                        <div class="row">
-                            <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6">
-                                <label>Adicionales: </label>
-                                <div class="icheck-primary">
-                                    <input type="checkbox" id="datosAdicionalesUpdate" name="datosAdicionalesUpdate"
-                                        ng-model="data.datosAdicionales" />
-                                    <label for="datosAdicionalesUpdate"></label>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-lg-2 col-md-2 col-sm-4 col-xs-6 text-center"
-                                ng-show="data.datosAdicionales">
-                                <label for="etiqueta">Etiqueta: </label>
-                                <select ng-model="data.idEtiqueta" id="etiqueta" class="form-control">
-                                    <option ng-value="item.idEtiqueta" ng-repeat="item in etiquetaActividades">
-                                        {{item.descripcion}}</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6 text-center">
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
+                            <div class="form-group text-center">
                                 <label for="">Llevar Inventario: </label>
                                 <div class="icheck-primary">
                                     <input type="checkbox" id="llevaInventarioUpdate" name="llevaInventarioUpdate"
@@ -270,7 +210,10 @@
                                     <label for="llevaInventarioUpdate"></label>
                                 </div>
                             </div>
-                            <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6 text-center">
+                        </div>
+
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
+                            <div class="form-group text-center">
                                 <label for="">Fraccionable: </label>
                                 <div class="icheck-primary">
                                     <input type="checkbox" id="productoFraccionableUpdate"
@@ -278,63 +221,30 @@
                                     <label for="productoFraccionableUpdate"></label>
                                 </div>
                             </div>
-                            <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-6" ng-if="!showEstado">
-                                <label for="">Estado: </label>
-                                <md-switch ng-model="data.estado" aria-label="Estado">
-                                    {{ data.estado?'Activo':'Inactivo' }}
-                                </md-switch>
+                        </div>
+
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
+                            <div class="form-group  text-center">
+                                <label>Adicionales: </label>
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="datosAdicionalesUpdate" name="datosAdicionalesUpdate"
+                                        ng-model="data.datosAdicionales" />
+                                    <label for="datosAdicionalesUpdate"></label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6">
-                                <label for="tipoIva">Tipo Iva: <span class="text-danger">*</span> </label>
-                                <select class="form-control border-select tipoIva" name="tipoIva"
-                                    ng-model="data.idTipoIva" ng-change="recalculateTarifaAdd()"
-                                    ng-focus="delayFocus('.tipoIva')" ng-disabled="!articlePermission.isUpdatePrice">
-                                    <option ng-value="item.idTipoIva" ng-repeat="item in tipoIvas">{{item.descripcion}}
-                                    </option>
+                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
+                            <div class="form-group  text-center" ng-show="data.datosAdicionales">
+                                <label for="etiqueta">Etiqueta: </label>
+                                <select ng-model="data.idEtiqueta" id="etiqueta" class="form-control">
+                                    <option ng-value="item.idEtiqueta" ng-repeat="item in etiquetaActividades">
+                                        {{item.descripcion}}</option>
                                 </select>
                             </div>
-                            <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-6"
-                                ng-if="articlePermission.isUpdatePrice">
-                                <label for="">Precio Costo: <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control precioCostoUp"
-                                    ng-disabled="!dataTarifaOption.opcionCalculate"
-                                    ng-focus="delayFocus('.precioCostoUp')" ng-change="recalculateTarifaUpdate()"
-                                    ng-model="data.precioCosto" step="any" placeholder="0.00">
-                            </div>
-
-                            <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
-                                <label for="">Precio Sin Subsidio:</label>
-                                <input type="text" class="form-control border-select precioSinSubsidio" decimal
-                                    ng-focus="delayFocus('.precioSinSubsidio')" ng-model="data.precioSinSubsidio"
-                                    placeholder="0.00">
-                            </div>
-                            <!--Opcion para calcular pvp-tarifas-->
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mt-4"
-                                ng-show="articlePermission.isUpdatePrice">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="optionPvp" ng-model="dataTarifaOption.opcionCalculate"
-                                        value="optionPvp" name="optionCalculatePVP" class="custom-control-input">
-                                    <label class="custom-control-label" for="optionPvp">PVP</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="optionPorcentaje"
-                                        ng-model="dataTarifaOption.opcionCalculate" value="optionPorcentaje"
-                                        name="optionCalculatePVP" class="custom-control-input">
-                                    <label class="custom-control-label" for="optionPorcentaje">% Util</label>
-                                </div>
-                            </div>
                         </div>
-                    </div>
 
 
-                    <div class="row">
-                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-12">
-                            <div ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav
-                                ui-grid-auto-resize class="grid"></div>
-                        </div>
                     </div>
                 </div>
 

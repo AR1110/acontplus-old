@@ -414,6 +414,7 @@ function modalArticuloCtrl(
                     } else {
                         $scope.data.codigoAuxiliar = params.codigo;
                     }
+                    setPrecioCostoConIva();
                     return;
                 }
 
@@ -545,6 +546,8 @@ function modalArticuloCtrl(
 
 
                     $scope.showEstado = $scope.data.estado;
+
+                    setPrecioCostoConIva();
 
                 })
                 .catch((error) => {
@@ -708,7 +711,42 @@ function modalArticuloCtrl(
     function getTarifaGanacia(precioVenta, precioCosto) {
         return precioVenta - precioCosto;
     }
+
+    function getDataTipoIva() {
+        return $scope.tipoIvas.find(
+            (item) => item.idTipoIva === $scope.data.idTipoIva
+        );
+    }
    
+    function setPrecioCostoConIva(){ 
+        let precioConIva = pricingUtils.calcularPrecioConIva(
+                   $scope.data.precioCosto || 0,
+                   getDataTipoIva().porcentaje
+                );
+
+        $scope.data.precioCostoConIva = fS.roundNumber(
+            precioConIva,
+            $scope.decimal.nroPrecio
+        );
+    }
+
+
+    $scope.calculatePrecioCosto = calculatePrecioCosto;
+    function calculatePrecioCosto(){
+
+        const precioCosto = pricingUtils.calcularPrecioVenta(
+                            $scope.data.precioCostoConIva,
+                            getDataTipoIva().porcentaje
+                        );
+
+         $scope.data.precioCosto = fS.roundNumber(
+            precioCosto,
+            $scope.decimal.nroPrecio
+        );
+
+    }
+
+
     function recalculateTarifaRegister() {
         if (
             [null, undefined, ""].includes($scope.data.precioCosto) ||
@@ -720,15 +758,12 @@ function modalArticuloCtrl(
         if ($scope.data.precioCosto === 0) {
             tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
             return;
-        }
+        } 
 
-        let dataIVA = $scope.tipoIvas.find(
-            (item) => item.idTipoIva === $scope.data.idTipoIva
-        );
         try {
             let index = 0;
             for (let val of $scope.gridOptions.data) {
-                $scope.gridOptions.data[index].porcentajeIva = dataIVA.porcentaje;
+                $scope.gridOptions.data[index].porcentajeIva = getDataTipoIva().porcentaje;
 
                 let precioVenta = pricingUtils.calcularPrecioVenta(
                     val.precioConIva,
@@ -767,6 +802,7 @@ function modalArticuloCtrl(
         } catch (error) {
             toastr.error(error);
         }
+        setPrecioCostoConIva();
     }
 
     function recalculateTarifaUpdateArticle(opcionCalculate) {
@@ -829,6 +865,7 @@ function modalArticuloCtrl(
         } catch (error) {
             toastr.error(error);
         }
+        setPrecioCostoConIva();
     }
 
     //Calcular Tarifa al momento de agregar el articulo

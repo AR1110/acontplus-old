@@ -1,7 +1,7 @@
 import {ApiResponse} from "@core/models/api-response";
 import {groupSubCategoryUtil} from "@inventory/domain/utils/group-sub-category.util";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {ProductSearch} from "@inventory/product/domain/entities/product.model";
+import {ProductSearch} from "@inventory/product/domain/entities/product.entity";
 import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
 import {imgDefault} from "@core/utils/utils";
 
@@ -138,7 +138,7 @@ export class ProductMapper {
 
 
   static fromApiCheckStockNotificacion(responseApi: any) {
-    let { stockCheckResponse } = JSON.parse(responseApi.payload);
+    const { stockCheckResponse } = JSON.parse(responseApi.payload);
     return stockCheckResponse[0];
   }
 }

@@ -1,5 +1,5 @@
 import { InventoryAdjustmentListProductsResponse,
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
 export class InventoryAdjustmentListProductsMapper {
   static toJson(params:any){

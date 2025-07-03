@@ -1,6 +1,6 @@
 import {
   InventoryAdjustmentListResponse
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {ApiResponse} from "@core/models/api-response";
 
 export class InventoryAdjustmentListMapper {

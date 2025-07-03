@@ -4,6 +4,7 @@ import { TarifaProductSearch } from "../../../domain/models/tarifa.model";
 import {ProductRepository} from "@inventory/product/domain/repositories/product.repository";
 import {GroupedEstab} from "@core/models/estab.model";
 import {GroupedSubFamilia} from "@inventory/domain/models/sub-category.model";
+import {MedidaProducto} from "@inventory/domain/models/measure.model";
 
 export interface ProductList {
   position: number;
@@ -95,4 +96,19 @@ export class ProductDataForm {
   tiposIva: any[] = [];
 
   constructor() {}
+}
+
+
+export class ProductGetIdResult {
+  data= {} as any
+  productPvps: any[] = []
+  productBarcodes:any[] = []
+  productLocations:any[] = []
+  productMeasures: any[] = []
+}
+
+export class GetProductPurchaseResult {
+  data = {} as any;
+  measures: MedidaProducto[]=[];
+  tags = [] as any[]
 }

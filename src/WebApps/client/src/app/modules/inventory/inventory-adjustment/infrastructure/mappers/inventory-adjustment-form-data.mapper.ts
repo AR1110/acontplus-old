@@ -1,4 +1,4 @@
-import {InventoryAdjustmentFormDataResponse} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+import {InventoryAdjustmentFormDataResponse} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {ApiResponse} from "@core/models/api-response";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
 
@@ -18,7 +18,8 @@ export class InventoryAdjustmentFormDataMapper {
       {
         estabs: ptoEmision,
         bodegas: bodegas,
-        isGroupBodega: true
+        isGroupBodega: true,
+        isGroupPuntoEmision: true,
       }
     );
     result.subFamilias = subFamilia.map((item:any)=>{

@@ -3,7 +3,7 @@ import {
   InventoryAdjustmentDetailResponse,
   InventoryAdjustmentFormDataResponse, InventoryAdjustmentListProductsResponse,
   InventoryAdjustmentListResponse
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 
 export abstract class InventoryAdjustmentRepository {
   abstract list(params:any):Observable<InventoryAdjustmentListResponse>;

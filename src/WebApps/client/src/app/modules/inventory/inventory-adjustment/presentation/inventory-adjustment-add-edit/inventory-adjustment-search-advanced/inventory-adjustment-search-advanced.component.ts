@@ -102,16 +102,18 @@ export class InventoryAdjustmentSearchAdvancedComponent {
   }
 
   rowSelected(row:any){
+    console.log(row)
     const current = this.selectedRows();
     const exists = current.some(r => r.idArticulo === row.idArticulo);
     if (exists) {
-      this.selectedRows.set(current.filter(r => r.idArticulo !== row.idArticulo));
+      this.selectedRows.set([...current.filter(r => r.idArticulo !== row.idArticulo)]);
     } else {
       this.selectedRows.set([...current, row]);
     }
   }
 
   rowAllSelected(event:any){
+    console.log(event);
     this.selectedRows.set([...event]);
   }
   onFileSelected(event: Event): void {
@@ -125,6 +127,7 @@ export class InventoryAdjustmentSearchAdvancedComponent {
   }
 
   applySelected(){
+    console.log(this.selectedRows())
     this.dialogRef.close({
       selectedRows: this.selectedRows(),
       opcion: this.dataForm.opcion,

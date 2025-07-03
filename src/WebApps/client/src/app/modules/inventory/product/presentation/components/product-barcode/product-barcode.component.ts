@@ -8,7 +8,6 @@ import {  MatInputModule} from "@angular/material/input";
 import { MatSelectModule} from "@angular/material/select";
 import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/product-get-id.use-case";
 
 import {
   ProductUbicationRemoveUseCase
@@ -19,11 +18,14 @@ import {getValidId, isValidField} from "@core/utils/utils";
 import Swal from "sweetalert2";
 import {ApiResponse} from "@core/models/api-response";
 import {MatButtonModule, MatIconButton} from "@angular/material/button";
-import {ProductDataFormUseCase} from "@inventory/product/application/use-cases/product/product-data-form.use-case";
 import {NgxColorsModule} from "ngx-colors";
 import {ProductBarcodePostUseCase} from "@inventory/product/application/use-cases/product-barcode/product-barcode-post.use-case";
 import {ProductBarcodePutUseCase} from "@inventory/product/application/use-cases/product-barcode/product-barcode-put.use-case";
 import {MECHANICAL_STATUS} from "@mechanical/domain/enums/mechanical.enum";
+import {
+  ProductDataFormUseCase,
+  ProductGetIdUseCase
+} from "@inventory/product/application/use-cases/product/get-product.use-case";
 
 @Component({
   selector: 'app-product-barcode',
@@ -104,7 +106,7 @@ export class ProductBarcodeComponent {
         finalize(()=>this.loading=false)
       )
       .subscribe(response=>{
-        this.dataSource =  response.payload?.productBarcodes || []
+        this.dataSource =  response.productBarcodes || []
       })
   }
 

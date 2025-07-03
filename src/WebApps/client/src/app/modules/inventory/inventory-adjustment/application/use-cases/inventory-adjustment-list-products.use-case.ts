@@ -1,11 +1,11 @@
 
 import {inject, Injectable} from "@angular/core";
 import {BaseUseCase} from "@core/base-use-case";
-import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/inventory-adjustment.repository";
+import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/repositories/inventory-adjustment.repository";
 import {Observable} from "rxjs";
 import {
   InventoryAdjustmentListProductsResponse
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 
 @Injectable({
   providedIn: 'root'

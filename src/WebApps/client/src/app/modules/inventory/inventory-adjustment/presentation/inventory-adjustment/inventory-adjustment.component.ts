@@ -4,8 +4,6 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { InventoryAdjustmentListUseCase } from '@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-list.use-case';
-import { InventoryAdjustmentFormDataUseCase } from '@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-form-data.use-case';
 import { PageEvent } from '@angular/material/paginator';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -20,7 +18,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 import {
   InventoryAdjustmentFormDataResponse,
   InventoryAdjustmentList
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {DialogService} from "@core/services/dialog.service";
 import {
   InventoryAdjustmentAddEditComponent
@@ -36,6 +34,12 @@ import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/applicat
 import {
   ProductAutocompleteAdvancedComponent
 } from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
+import {
+  GetAllInventoryAdjustmentsUseCase
+} from "@inventory/inventory-adjustment/application/use-cases/get-all-inventory-adjustments.use-case";
+import {
+  InventoryAdjustmentService
+} from "@inventory/inventory-adjustment/application/services/inventory-adjustment.service";
 
 @Component({
   selector: 'app-inventory-adjustment',
@@ -61,8 +65,8 @@ import {
   `,
 })
 export class InventoryAdjustmentComponent   {
-  private $listUseCase = inject(InventoryAdjustmentListUseCase);
-  private $formDataUseCase = inject(InventoryAdjustmentFormDataUseCase);
+  private inventorySvc = inject(InventoryAdjustmentService);
+
   private _tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService);
   private $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore)
@@ -136,7 +140,7 @@ export class InventoryAdjustmentComponent   {
   private getList() {
     const params = this.getDataParams();
     if (!params) return;
-    this.$listUseCase.execute(params).subscribe(response => {
+    this.inventorySvc.getAll(params).subscribe(response => {
       this.dataSource.set(response.data);
       this.pagination.update(pag=>({
         ...pag,

@@ -99,7 +99,12 @@ export class MatDynamicTableComponent<T>
   @Input() showSelectBox = false;
   @Input() tableData: T[] = [];
   rowAllSelected = output<T[]>();
-  rowSelected = output<T[]>();
+  rowSelected = output<any>();
+
+  //agrego por tema de que el rowAllSelected esta mesclado con rowSelected
+  //deberia gestionar independientemente rowSelected para cuando seleccionan una fila y rowAllSelected checkbox general
+  returnMultiple = input(true)
+
   copyRow = output<T>();
   showExpanded = output<T>();
   hideExpanded = output<T>();
@@ -218,7 +223,13 @@ export class MatDynamicTableComponent<T>
     }
 
     // Emit the current selection
-    this.rowSelected.emit([...this._selectedRows]);
+    if(this.returnMultiple()){
+      this.rowSelected.emit([...this._selectedRows]);
+    }else{
+      this.rowSelected.emit(row);
+    }
+
+
   }
 
   // ----START CHECKBOX LOGIC
@@ -243,8 +254,12 @@ export class MatDynamicTableComponent<T>
       });
     }
     // Emit both events to keep parent components in sync
-    this.rowAllSelected.emit([...this.selection.selected]);
-    this.rowSelected.emit([...this._selectedRows]);
+    if(this.returnMultiple()){
+      this.rowAllSelected.emit([...this.selection.selected]);
+      this.rowSelected.emit([...this._selectedRows]);
+    }else{
+      this.rowAllSelected.emit([...this.selection.selected]);
+    }
   }
 
   clearSelection(): void {

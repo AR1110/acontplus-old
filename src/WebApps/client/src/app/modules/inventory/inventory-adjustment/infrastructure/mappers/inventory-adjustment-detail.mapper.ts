@@ -1,6 +1,6 @@
 import {
   InventoryAdjustmentDetailResponse,
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {fechaString} from "@core/utils/date.util";
 
 export class InventoryAdjustmentDetailMapper {
