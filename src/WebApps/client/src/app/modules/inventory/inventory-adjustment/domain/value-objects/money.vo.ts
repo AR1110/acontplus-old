@@ -67,7 +67,8 @@ export class Money extends ValueObject<number> {
 
   // Mathematical operations
   add(other: Money): Money {
-    return Money.from(this.value + other.value);
+
+    return Money.from(DecimalUtils.addAsNumber(this.value, other.value));
   }
 
   subtract(other: Money): Money {

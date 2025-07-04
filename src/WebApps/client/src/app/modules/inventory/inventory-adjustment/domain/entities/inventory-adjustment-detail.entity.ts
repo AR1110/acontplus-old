@@ -8,8 +8,8 @@ export class InventoryAdjustmentDetail {
     private _orderIndex: number,
     private readonly _productId: ProductId,
     private readonly _code: string,
-    private readonly _warehouseId: number,
-    private readonly _unitOfMeasureId: number | null,
+    private  _warehouseId: number,
+    private _unitOfMeasureId: number,
     private _measures: MedidaProducto[],
     private _quantity: Quantity,
     private _transactionQuantity: Quantity,
@@ -27,7 +27,7 @@ export class InventoryAdjustmentDetail {
     productId: number;
     code: string;
     warehouseId: number;
-    unitOfMeasureId?: number;
+    unitOfMeasureId: number;
     measures: MedidaProducto[];
     quantity: number;
     transactionQuantity: number;
@@ -57,7 +57,7 @@ export class InventoryAdjustmentDetail {
       productId,
       params.code,
       params.warehouseId,
-      params.unitOfMeasureId || null,
+      params.unitOfMeasureId,
       params.measures,
       quantity,
       transactionQuantity,
@@ -97,6 +97,16 @@ export class InventoryAdjustmentDetail {
     this.calculateTotal();
   }
 
+  updateMeasure(unitOfMeasureId: number){
+    console.log('udpate meadoe', unitOfMeasureId)
+    const dataMedida = this._measures.find(val => val.idMedida === unitOfMeasureId);
+    this._unitOfMeasureId = unitOfMeasureId;
+    this._unitPrice = Money.from(dataMedida?.precioUnitario || 0);                   // ← Automatic validation
+    this._costPrice = Money.from(dataMedida?.precioCosto || 0);
+    this._fractionalCostPrice = Money.from(dataMedida?.precioCostoFraccionado || 0)// ← Automatic validation
+    this.calculateTotal();
+  }
+
   updatePricing(unitPrice: number, costPrice: number): void {
     this._unitPrice = Money.from(unitPrice);                   // ← Automatic validation
     this._costPrice = Money.from(costPrice);                   // ← Automatic validation
@@ -105,6 +115,10 @@ export class InventoryAdjustmentDetail {
 
   updateOrderIndex(newIndex: number): void {
     this._orderIndex = newIndex;
+  }
+
+  updateWarehouseId(newId: number): void {
+    this._warehouseId = newId;
   }
 
   private calculateTotal(): void {
@@ -133,7 +147,7 @@ export class InventoryAdjustmentDetail {
   toPlainObject() {
     return {
       orderIndex: this._orderIndex,
-      articleId: this._productId.value,
+      productId: this._productId.value,
       code: this._code,
       warehouseId: this._warehouseId,
       unitOfMeasureId: this._unitOfMeasureId,

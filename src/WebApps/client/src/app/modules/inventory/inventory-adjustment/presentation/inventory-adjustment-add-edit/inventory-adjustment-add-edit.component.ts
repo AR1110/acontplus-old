@@ -33,6 +33,10 @@ import {GetProductPurchaseUseCase} from "@inventory/product/application/use-case
 import Swal from 'sweetalert2';
 import {roundNumber} from "@core/utils/round-number.utils";
 import {Quantity} from "@inventory/inventory-adjustment/domain/value-objects/quantity.vo";
+import {ColSupportMaintenanceDetail} from "@mechanical/domain/models/support-maintenance.model";
+import {
+  InventoryAdjustmentDetail
+} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment-detail.entity";
 
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
@@ -116,18 +120,21 @@ export class InventoryAdjustmentAddEditComponent {
     // const value = cell.getValue();
 
     const editor: any = document.createElement('select');
-        const opt = document.createElement('option');
 
     if (column === 'unitOfMeasureId') {
       for (const m of data.measures) {
+        const opt = document.createElement('option');
         opt.value = m.idMedida.toString();
         opt.innerHTML = m.descripcion;
+        console.log(m)
         editor.appendChild(opt);
       }
     }
 
     if (column === 'warehouseId') {
       for (const b of this.warehouses()) {
+        const opt = document.createElement('option');
+
         opt.value = b.idBodega.toString();
         opt.innerHTML = b.descripcion;
         editor.appendChild(opt);
@@ -395,16 +402,16 @@ export class InventoryAdjustmentAddEditComponent {
   }
   //
   private addSelectedItemsToDataSource(selectedRows: any[], opcion?: number, isExcelImport?: boolean): void {
-    const currentItems = this.dataSourceItems();
-   selectedRows
-      .filter(item => !currentItems.some(existingItem => existingItem.idArticulo === item.idArticulo))
-      .forEach(item => this.createItemForDataSource(item, opcion, isExcelImport));
+    const existItem = (productId: number)=>!this.dataSourceItems().some(existingItem => existingItem.productId === productId)
+     selectedRows
+      .filter(item =>existItem(item.idArticulo))
+      .map(item => this.createItemForDataSource(item, opcion, isExcelImport));
 
-   const {details} = this.currentAdjustment.toPlainObject();
-    if (details.length > 0) {
-      this.dataSourceItems.set([...currentItems, ...details]);
+    const currentItems = this.currentAdjustment.toPlainObject().details.filter(item =>existItem(item.productId))
+    console.log(currentItems);
+    if (currentItems.length > 0) {
+      this.dataSourceItems.set([...this.dataSourceItems(), ...currentItems]);
     }
-    console.log(details);
   }
 
 
@@ -415,7 +422,7 @@ export class InventoryAdjustmentAddEditComponent {
    //   opcion 6 productos importados
       clonedItem.cantidad = (opcion === 6) ? clonedItem.cantidad : 1;
     }
-    this.inventorySvc.addDetail({
+     this.inventorySvc.addDetail({
       adjustment: this.currentAdjustment,
       productId: +item.idArticulo,
       code: item.codigo,
@@ -434,6 +441,8 @@ export class InventoryAdjustmentAddEditComponent {
   }
 
 
+
+
   itemSelected($event:any){
     this.$GetProductPurchaseUseCase.execute($event.id).subscribe(result => {
        console.log(result);
@@ -446,7 +455,7 @@ export class InventoryAdjustmentAddEditComponent {
          return
        }
 
-       const existingDetailIndex  = this.dataSourceItems().findIndex(detail => detail.articleId === data.id);
+       const existingDetailIndex  = this.currentAdjustment.getDetailIndex(data.id);
        console.log(existingDetailIndex);
       if (existingDetailIndex !== -1) {
         Swal.fire({
@@ -459,7 +468,8 @@ export class InventoryAdjustmentAddEditComponent {
           cancelButtonText: 'No'
         }).then(result => {
           if (result) {
-            this.updateExistingDetail(existingDetailIndex);
+            const existingDetail = this.currentAdjustment.updateDetail(existingDetailIndex);
+            this.updateDataSourceItems(existingDetailIndex, existingDetail);
           }
         })
         return;
@@ -489,15 +499,15 @@ export class InventoryAdjustmentAddEditComponent {
         costPrice:  roundNumber(costPrice, this.decimal().nroPrecio),
         fractionalCostPrice,
         description: data.description,
-      })
+      });
+      console.log(this.currentAdjustment.toPlainObject())
 
       this.dataSourceItems.set([...this.currentAdjustment.toPlainObject().details])
 
     })
   }
 
-  updateExistingDetail(detailIndex: number, additionalQuantity = 1) {
-    const existingDetail = this.currentAdjustment.updateDetail(detailIndex, additionalQuantity);
+  updateDataSourceItems(detailIndex:number, existingDetail: InventoryAdjustmentDetail) {
     this.dataSourceItems.update(ds=>{
       const newDs = [...ds]; // Copia el array
       newDs[detailIndex] = existingDetail.toPlainObject();
@@ -508,8 +518,59 @@ export class InventoryAdjustmentAddEditComponent {
 
 
 
-  cellEdited(data: any) {
-    console.log(data);
+  cellEdited(cell: any) {
+    const row = cell.getRow();
+    const column = cell.getColumn().getField();
+    const oldValue = parseFloat(cell.getOldValue());
+    const value = parseFloat(cell.getValue());
+    const data = cell.getData();
+
+    const existingDetailIndex  = this.currentAdjustment.getDetailIndex(data.productId);
+
+    if (isNaN(value) || cell.getValue() === '') {
+      cell.setValue(oldValue);
+      return;
+    }
+
+    if (value < 0) {
+      data[column] = oldValue;
+    }
+
+    if(column==="quantity"){
+    const existingDetail = this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
+    this.updateDataSourceItems(existingDetailIndex, existingDetail);
+    }
+
+    if(column==="unitOfMeasureId"){
+      const existingDetail = this.currentAdjustment.updateMeasure(existingDetailIndex, value);
+      console.log(existingDetail)
+      this.updateDataSourceItems(existingDetailIndex, existingDetail);
+    }
+
+    if(column==="unitPrice"){
+      const existingDetail = this.currentAdjustment.updatePricing(existingDetailIndex, value);
+      this.updateDataSourceItems(existingDetailIndex, existingDetail);
+    }
+
+    if (column === "warehouseId" && value !== oldValue) {
+      Swal.fire({
+        icon: 'warning',
+        html: `¿Estas seguro de cambiar la bodega?`,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No'
+      }).then(result => {
+        let warehouseId = value;
+        if (!result.isConfirmed) {
+         warehouseId = oldValue;
+        }
+        const existingDetail = this.currentAdjustment.updateWarehouseId(existingDetailIndex, warehouseId);
+        this.updateDataSourceItems(existingDetailIndex, existingDetail);
+      })
+      return
+    }
+
   }
 
 

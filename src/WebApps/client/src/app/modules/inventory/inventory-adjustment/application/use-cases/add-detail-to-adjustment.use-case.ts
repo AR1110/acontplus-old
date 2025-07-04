@@ -9,7 +9,7 @@ export interface AddDetailToAdjustmentCommand {
   productId: number;
   code: string;
   warehouseId: number;
-  unitOfMeasureId?: number;
+  unitOfMeasureId: number;
   measures: MedidaProducto[]
   quantity: number;
   unitConversion: number

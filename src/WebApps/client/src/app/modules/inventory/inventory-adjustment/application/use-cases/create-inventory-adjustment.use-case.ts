@@ -23,7 +23,7 @@ export interface CreateInventoryAdjustmentDetailCommand {
   productId: number;
   code: string;
   warehouseId: number;
-  unitOfMeasureId?: number;
+  unitOfMeasureId: number;
   measures:MedidaProducto[];
   quantity: number;
   transactionQuantity: number;

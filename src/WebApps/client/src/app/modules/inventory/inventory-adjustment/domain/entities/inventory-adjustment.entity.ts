@@ -41,7 +41,7 @@ export class InventoryAdjustmentListProductsResponse {
 
 //new formats DDD
 import { BaseEntity } from '@core/domain/base-entity';
-import { DomainException } from '@core/domain/domain-exception';
+import {DomainException, ValidationException} from '@core/domain/domain-exception';
 import {
   InventoryAdjustmentDetail
 } from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment-detail.entity";
@@ -97,7 +97,7 @@ export class InventoryAdjustment {
     productId: number;
     code: string;
     warehouseId: number;
-    unitOfMeasureId?: number;
+    unitOfMeasureId: number;
     measures:MedidaProducto[];
     quantity: number;
     transactionQuantity: number;
@@ -117,17 +117,68 @@ export class InventoryAdjustment {
     this.recalculateTotal();
   }
 
-  updateDetail(detailIndex: number, additionalQuantity = 1){
-    const existingDetail = this.details[detailIndex];
+  getDetailIndex(productId: number){
+    console.log(productId)
+    console.log(this.toPlainObject().details)
+    return  this.toPlainObject().details.findIndex(detail => detail.productId === productId);
+  }
 
-    // Update quantity using Value Object operations
-    const newQuantity = existingDetail.quantity.add(Quantity.from(additionalQuantity));
-    const newTransactionQuantity = existingDetail.transactionQuantity.add(Quantity.from(additionalQuantity));
+  getDetail(index: number): InventoryAdjustmentDetail {
+    this.validateDetailIndex(index);
+    return this._details[index];
+  }
 
-    existingDetail.updateQuantity(newQuantity.value, newTransactionQuantity.value);
-    this.recalculateTotal();
+  private executeDetailUpdate(
+    detailIndex: number,
+    updateFn: (detail: InventoryAdjustmentDetail) => void,
+    shouldRecalculateTotal = true
+  ): InventoryAdjustmentDetail {
+    this.validateDetailIndex(detailIndex);
+
+    const existingDetail = this._details[detailIndex];
+    updateFn(existingDetail);
+
+    if (shouldRecalculateTotal) {
+      this.recalculateTotal();
+    }
+
     return existingDetail;
   }
+
+  updateDetail(detailIndex: number, additionalQuantity = 1){
+
+    return this.executeDetailUpdate(detailIndex, (detail) => {
+      const newQuantity = detail.quantity.add(Quantity.from(additionalQuantity));
+      const newTransactionQuantity = detail.transactionQuantity.multiply(additionalQuantity);
+      detail.updateQuantity(newQuantity.value, newTransactionQuantity.value);
+    });
+  }
+
+  updateQuantityDetail(detailIndex:number, newQuantity: number) {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
+      const newTransactionQuantity = detail.transactionQuantity.multiply(newQuantity);
+      detail.updateQuantity(newQuantity, newTransactionQuantity.value);
+    });
+  }
+
+  updateMeasure(detailIndex:number, unitOfMeasureId: number) {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
+      detail.updateMeasure(unitOfMeasureId);
+    });
+  }
+
+  updatePricing(detailIndex:number, unitPrice: number) {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
+      detail.updatePricing(unitPrice, detail.costPrice.value);
+    });
+  }
+
+  updateWarehouseId(detailIndex:number, warehouseId: number) {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
+      detail.updateWarehouseId(warehouseId);
+    }, false);
+  }
+
 
   removeDetail(index: number): void {
     this._details.splice(index, 1);
@@ -137,6 +188,12 @@ export class InventoryAdjustment {
 
   updateObservations(observations: string): void {
     this._observations = observations;
+  }
+
+  private validateDetailIndex(index: number): void {
+    if (index < 0 || index >= this._details.length) {
+      throw new ValidationException("index", index, `Invalid detail index: ${index}. Must be between 0 and ${this._details.length - 1}` )
+    }
   }
 
   private recalculateTotal(): void {
