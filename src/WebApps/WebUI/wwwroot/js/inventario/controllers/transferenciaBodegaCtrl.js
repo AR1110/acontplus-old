@@ -883,7 +883,7 @@
             entity.descripcion = item.descripcion;
             entity.stock = item.stock;
             entity.precioActual = dataMedida.precioCostoFraccionado;
-            entity.total = dataMedida.precioCosto;
+        //    entity.total = dataMedida.precioCosto;
             entity.llevaInventario = item.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto    
@@ -891,6 +891,7 @@
             entity.precioCosto = dataMedida.precioCosto;
             entity.precioUnitario = dataMedida.precioUnitario;
             entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+            $scope.setTotal(entity);
         }
 
 
