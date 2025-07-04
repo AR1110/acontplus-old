@@ -263,7 +263,7 @@ BEGIN
 
         IF @useDateFilter = 1
              BEGIN
-            SET @sql = @sql + ' AND CAST(fechaRegistro AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+            SET @sql = @sql + ' AND CAST(fechaRegistroTimestamp AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
         END
 
         ---> Header
