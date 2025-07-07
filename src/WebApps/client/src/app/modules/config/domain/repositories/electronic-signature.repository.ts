@@ -9,4 +9,5 @@ export abstract class ElectronicSignatureRepository {
   abstract create(params: ElectronicSignatureParam):Observable<ApiResponse>
   abstract update(params: Partial<ElectronicSignatureParam>):Observable<ApiResponse>
   abstract updateSignature(params: Partial<ElectronicSignatureParam>):Observable<ApiResponse>
+  abstract downloadSignature(id:number):Observable<any>
 }

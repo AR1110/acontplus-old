@@ -1,7 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {ActionAddDirective} from "@shared/directives/permission/action-add.directive";
 import { MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {
@@ -9,7 +8,6 @@ import {
 } from "@modules/config/application/use-cases/electronic-signature/list-electronic-signature.use-case";
 import {ElectronicSignatureList} from "@modules/config/domain/models/electronic-signature.model";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {DialogService} from "@core/services/dialog.service";
 import {
@@ -22,18 +20,21 @@ import {
 } from "@modules/config/application/use-cases/electronic-signature/update-signature-electronic-signature.use-case";
 import {ApiResponse} from "@core/models/api-response";
 import {SvgIconComponent} from "@shared/components/svg-icon/svg-icon.component";
+import {
+  DownloadSignatureUseCase
+} from "@modules/config/application/use-cases/electronic-signature/download-signature.use-case";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-electronic-signature',
   imports: [
     BreadcrumbComponent,
     MatDynamicCardComponent,
-    ActionAddDirective,
     MatButtonModule,
     MatIconModule,
     MatDynamicTableComponent,
-    ThemeButtonComponent,
-    SvgIconComponent
+    SvgIconComponent,
+    MatTooltip
   ],
   templateUrl: './electronic-signature.component.html',
   styles: ``
@@ -41,7 +42,8 @@ import {SvgIconComponent} from "@shared/components/svg-icon/svg-icon.component";
 export class ElectronicSignatureComponent {
 
   private $listUseCase = inject(ListElectronicSignatureUseCase)
-  private $updateSignature = inject(UpdateSignatureElectronicSignatureUseCase)
+  private $updateSignature = inject(UpdateSignatureElectronicSignatureUseCase);
+  private $downloadSignature = inject(DownloadSignatureUseCase)
   private _dialogSvc = inject(DialogService)
 
   dataSource = signal<ElectronicSignatureList[]>([])
@@ -134,5 +136,43 @@ export class ElectronicSignatureComponent {
       })
       this.refresh()
     }
+  }
+
+
+  private getFileNameFromResponse(response: any): string | null {
+    const contentDisposition = response.headers.get('content-disposition');
+    let fileName = '';
+    // Extract filename safely using regex
+    const filenameMatch = contentDisposition.match(
+      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
+    );
+    if (filenameMatch && filenameMatch[1]) {
+      fileName = filenameMatch[1].replace(/['"]/g, '');
+
+      // Decode URL encoded characters
+      fileName = decodeURIComponent(fileName);
+
+      // Replace problematic characters
+      fileName = fileName.replaceAll('+', ' ');
+
+      // Additional sanitization if needed
+      fileName = fileName.replace(/[\/\?<>\\:\*\|"]/g, '_');
+    }
+    return fileName;
+  }
+
+
+  downloadSignature(item:ElectronicSignatureList){
+    this.$downloadSignature.execute(item.idFirmaElectronica).subscribe(response=>{ 
+      const filename = this.getFileNameFromResponse(response) || 'firma.p12';
+      const blob = new Blob([response.body!], { type: 'application/x-pkcs12' });
+
+      // descarga
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(a.href);
+    })
   }
 }
