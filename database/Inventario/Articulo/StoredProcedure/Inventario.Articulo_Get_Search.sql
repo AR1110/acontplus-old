@@ -54,20 +54,20 @@ BEGIN
 				   ,@pageIndex  INT'
 
 	SET @sql  = 'SELECT  a.idArticulo
-			            ,IIF(a.porcentaje > 0, ''*'', '''') + a.codigo as codigo
+			            ,IIF(a.porcentaje > 0, ''*'', '''') + a.codigo        as codigo
 			            ,a.descripcion
 			            ,CAST(CAST(a.iva as decimal(15,0)) AS varchar)+ ''%'' as iva
-			            ,a.stock
+			            ,ISNULL(a.stock,0)                                    as stock
 			            ,a.subFamilia
 			            ,a.marca     
 			            ,a.medida    
 			            ,CASE WHEN a.fraccionado = 1 THEN ''badge badge-danger'' 
                                                     ELSE '''' 
-                        END as fraccionado
+                         END                                                  as fraccionado
 
-			            ,CASE WHEN a.stock <= 0                            THEN ''badge badge-danger'' 
+			            ,CASE WHEN a.stock <= 0                          THEN ''badge badge-danger'' 
                             WHEN a.stock > 0 AND a.stock < a.stockMinimo THEN ''badge badge-warning'' 
-                                                                            ELSE '''' 
+                                                                         ELSE '''' 
                          END as style
 			            ,(
 				            SELECT t.descripcion  as tarifa

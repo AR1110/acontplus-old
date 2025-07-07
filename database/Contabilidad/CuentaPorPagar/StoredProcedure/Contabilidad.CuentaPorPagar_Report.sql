@@ -85,6 +85,7 @@ BEGIN
 										   WHEN ''FC'' THEN ''F.Fisica''
 										   WHEN ''DH'' THEN ''Documento Ingreso''
 										   WHEN ''03'' THEN ''Liquidación''
+										   WHEN ''05'' THEN ''Nota de Débito''
 							   END as tipoDoc
                               ,razonSocialProveedor
                               ,serieComprobante

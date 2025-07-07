@@ -69,6 +69,7 @@ BEGIN
 											   WHEN ''03'' THEN ''Liquidacion'' 
 											   WHEN ''FC'' THEN ''F.Fisica'' 
 					                           WHEN ''DH'' THEN ''C.N.Habitual''
+					                           WHEN ''05'' THEN ''Nota de débito''
 								END                                         as nombreDoc
 							   ,pp.codDoc
                                ,pp.serieComprobante
@@ -231,9 +232,10 @@ BEGIN
 		END
 
 	IF @tipo = 4
-		BEGIN 	
+		BEGIN
+            
         
-             SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT)
+            SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT)
 
 			--SELECT cu.IdCard                                                           as nroIdentificacion
 			--	  ,cu.businessName                                                     as nombreFiscal
@@ -348,9 +350,9 @@ BEGIN
     IF @tipo = 5 
         BEGIN
             SELECT idTiempoCredito
-	                ,descripcion
-	                ,diasCredito
-	                ,numeroCuota 
+	              ,descripcion
+	              ,diasCredito
+	              ,numeroCuota 
 	        FROM TiempoCredito WITH (NOLOCK) 
 	        WHERE idEntidad = @idEntidad 
               AND gestion = 0
@@ -378,10 +380,11 @@ BEGIN
                                WHEN 'FF' THEN 'FC'
                                WHEN 'IV' THEN 'DH'
                                WHEN 'LC' THEN '03'
+                               WHEN 'ND' THEN '05'
                                ELSE ''
                    END as codDoc 
             FROM Inventario.TipoDocumento WITH (NOLOCK) 
-            WHERE codigo IN ('FF','FE','IV','LC')
+            WHERE codigo IN ('FF','FE','IV','LC','ND')
             
             SELECT Id         as id 
                   ,CategoryId as categoryId
