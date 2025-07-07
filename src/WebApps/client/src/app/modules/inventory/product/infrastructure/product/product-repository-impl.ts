@@ -13,6 +13,9 @@ import {ProductMapper} from "@inventory/product/infrastructure/product/product.m
 import {ProductDataFormMapper} from "@inventory/product/infrastructure/product/product-data-form.mapper";
 import {ProductSaveMapper} from "@inventory/product/infrastructure/product/product-save.mapper";
 import {ProductGetIdMapper} from "@inventory/product/infrastructure/product/product-get-id.mapper";
+import {
+  ListProductWithPricesUseCaseMapper
+} from "@inventory/product/infrastructure/product/mappers/list-product-with-prices.mapper";
 
 
 
@@ -207,5 +210,16 @@ export class ProductRepositoryImpl implements ProductRepository{
     throw new Error("Method not implemented.");
   }
 
+  listProductWithPrices(params: any): Observable<any> {
+    const json = ListProductWithPricesUseCaseMapper.toJson(params)
+
+    return this._http.get<ApiResponse>(`${this._url}`, {
+      params : {
+        json
+      }
+    }).pipe(
+      map(response =>  ListProductWithPricesUseCaseMapper.fromJson(response))
+    )
+  }
 
 }

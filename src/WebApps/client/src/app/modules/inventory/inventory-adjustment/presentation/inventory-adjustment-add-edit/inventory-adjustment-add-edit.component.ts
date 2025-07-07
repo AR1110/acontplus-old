@@ -13,8 +13,11 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {
-  ProductSearchBarComponent
-} from "@inventory/product/presentation/components/product-search-bar/product-search-bar.component";
+  ProductAutocompleteAdvancedComponent
+} from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
+import {
+  ProductSearchOverlayComponent
+} from "@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component";
 
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
@@ -24,7 +27,8 @@ import {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    ProductSearchBarComponent
+    ProductAutocompleteAdvancedComponent,
+    ProductSearchOverlayComponent,
   ],
   templateUrl: './inventory-adjustment-add-edit.component.html',
 })
@@ -78,6 +82,11 @@ export class InventoryAdjustmentAddEditComponent {
     })
   }
 
+
+  itemSelected($event:any){
+
+    console.log($event)
+  }
 
   close(){
     this.dialogRef.close();

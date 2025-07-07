@@ -15,18 +15,24 @@
         [disabled]="config.disabled||false"
         autocomplete="off"
       />
-      @if (query && query.length > 0 && !isLoading) {
+      @if (query && query.length > 0 && !isLoading()) {
         <button    mat-icon-button (click)="clearSearch()" type="button">
           <mat-icon>clear</mat-icon>
         </button>
       }
+      <button    mat-icon-button   type="button">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
 
-    @if (isLoading) {
+    @if (isLoading()) {
       <div class="loading-spinner">
         <mat-spinner diameter="20"></mat-spinner>
       </div>
     }
+
+
+
   </div>
 
   <!-- Overlay -->
@@ -34,8 +40,8 @@
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="overlayPosition"
     [cdkConnectedOverlayOpen]="overlayOpen()"
-    [cdkConnectedOverlayWidth]="'auto'"
-    [cdkConnectedOverlayHeight]="'500px'"
+    [cdkConnectedOverlayWidth]="overlayWidth()"
+    [cdkConnectedOverlayHeight]="overlayMaxHeight()"
     (overlayOutsideClick)="hideOverlay()"
     (backdropClick)="hideOverlay()"
   >
@@ -43,16 +49,16 @@
       <div class="overlay-container">
 
         <!-- History Section -->
-        @if (isHistoryVisible() && historyList.length > 0) {
+        @if (isHistoryVisible() && historyList().length > 0) {
           <div class="section">
             <div class="section-header">
               <span class="section-title">Búsquedas recientes</span>
-              <button class="clear-history" (click)="clearHistory()">
+              <button type="button" mat-icon-button (click)="clearHistory()">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </div>
             <ul class="item-list scrollable-list" #historyListElement>
-              @for (item of historyList; track $index) {
+              @for (item of historyList(); track $index) {
                 <li class="list-item history-item">
                   <div
                     class="item-content"
@@ -65,7 +71,10 @@
                       </ng-container>
                     </div>
                   </div>
-                  <button class="remove-btn" (click)="removeHistoryItem($index, $event)">
+<!--                  <button class="remove-btn" (click)="removeHistoryItem($index, $event)">-->
+<!--                    <mat-icon>close</mat-icon>-->
+<!--                  </button>-->
+                  <button type="button" mat-icon-button class="remove-btn" (click)="removeHistoryItem($index, $event)">
                     <mat-icon>close</mat-icon>
                   </button>
                 </li>
@@ -75,8 +84,8 @@
         }
 
         <!-- Results Section -->
-        @if (!isHistoryVisible() && totalItems() > 0) {
-          <div class="section">
+        @if (!isHistoryVisible()  ) {
+          <div class="section"   >
             <!-- Header with filters and pagination -->
             @if (config.enableFilters || config.enablePagination) {
               <div class="section-header">
@@ -93,7 +102,7 @@
                           [(ngModel)]="filters.searchBy"
                           (change)="onFilterChange()"
                         >
-                          @for (field of config.searchFields; track field.value) {
+                          @for (field of config.searchFields; track $index) {
                             <option [value]="field.value">{{ field.label }}</option>
                           }
                         </select>
@@ -108,7 +117,7 @@
                           [(ngModel)]="filters.stockFilter"
                           (change)="onFilterChange()"
                         >
-                          @for (option of config.stockOptions; track option.value) {
+                          @for (option of config.stockOptions; track $index) {
                             <option [value]="option.value">{{ option.label }}</option>
                           }
                         </select>
@@ -171,12 +180,14 @@
             }
 
             <!-- Items List -->
+            @if (totalItems()) {
+
             <ul class="item-list scrollable-list" #resultsListElement>
-              @for (item of currentPageItems(); track item; let idx = $index) {
+              @for (item of currentPageItems(); track $index ) {
                 <li class="list-item result-item">
                   <div
                     class="item-content"
-                    [class.selected]="idx === selectedIndex()"
+                    [class.selected]="$index === selectedIndex()"
                     (click)="selectItem(item)"
                   >
                     <div class="item-info">
@@ -187,11 +198,12 @@
                 </li>
               }
             </ul>
+            }
           </div>
         }
 
         <!-- No Results -->
-        @if (!isLoading && isNoResults()) {
+        @if (!isLoading() && isNoResults()) {
           <div class="no-results">
             <mat-icon class="no-results-icon">search_off</mat-icon>
             <div class="no-results-content">
@@ -202,7 +214,7 @@
         }
 
         <!-- Footer -->
-        @if (overlayOpen() && (totalItems() > 0 || isHistoryVisible()) && config.enableFooterActions) {
+        @if (overlayOpen() && totalItems() > 0) {
           <div class="acp-footer">
             @if (!isHistoryVisible() && totalItems() > 0 && config.enablePagination) {
               <div class="pagination-footer">
@@ -229,22 +241,24 @@
               </div>
             }
 
-            <div class="footer-actions">
-              <button class="footer-btn create-btn" (click)="onCreateNew()">
-                <mat-icon>add</mat-icon>
-                <span class="btn-text">Crear</span>
-              </button>
-              <button class="footer-btn search-btn" (click)="onAdvancedSearch()">
-                <mat-icon>tune</mat-icon>
-                <span class="btn-text">Avanzada</span>
-              </button>
-              @if (!isHistoryVisible() && totalItems() > 0) {
-                <button class="footer-btn results-btn" (click)="onShowAllResults()">
-                  <mat-icon>list</mat-icon>
-                  <span class="btn-text">Todos</span>
-                </button>
-              }
-            </div>
+            @if(config.enableFooterActions){
+<!--            <div class="footer-actions">-->
+<!--              <button class="footer-btn create-btn" (click)="onCreateNew($event)">-->
+<!--                <mat-icon>add</mat-icon>-->
+<!--                <span class="btn-text">Crear</span>-->
+<!--              </button>-->
+<!--              <button class="footer-btn search-btn" (click)="onAdvancedSearch()">-->
+<!--                <mat-icon>tune</mat-icon>-->
+<!--                <span class="btn-text">Avanzada</span>-->
+<!--              </button>-->
+<!--              @if (!isHistoryVisible() && totalItems() > 0) {-->
+<!--                <button class="footer-btn results-btn" (click)="onShowAllResults()">-->
+<!--                  <mat-icon>list</mat-icon>-->
+<!--                  <span class="btn-text">Todos</span>-->
+<!--                </button>-->
+<!--              }-->
+<!--            </div>-->
+            }
           </div>
         }
       </div>

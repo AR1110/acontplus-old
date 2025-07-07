@@ -8,6 +8,7 @@ import {
   AutocompleteItem,
   DEFAULT_AUTOCOMPLETE_CONFIG, SearchFunction, SearchResult
 } from "@shared/models/autocomplete.interfaces";
+import {imgDefault} from "@core/utils/utils";
 
 
 @Injectable({
@@ -214,7 +215,7 @@ export class AutocompleteService {
 
 
   createGenericSearchFunction(config: {
-    search(params: any): Observable<any>;
+    search (params: any): Observable<any>;
     queryParam?: string;
     searchByParam?: string;
     pageParam?: string;
@@ -222,26 +223,149 @@ export class AutocompleteService {
     responseMapper?: (response: any) => SearchResult;
   }): SearchFunction {
     return (query: string, filters: AutocompleteFilters, page = 1, pageSize = 10) => {
-      console.log(query, filters, page, pageSize);
+
+      const {searchBy, ...rest} = filters;
       const params =  {
-        [config.queryParam || 'textSearch']: query,
-          [config.searchByParam || 'searchBy']: filters.searchBy,
-        [config.pageParam || 'pageIndex']: page,
-        [config.pageSizeParam || 'pageSize']: pageSize
+        [config.queryParam || 'q']: query,
+          [config.searchByParam || 'searchBy']: searchBy,
+        [config.pageParam || 'page']: page,
+        [config.pageSizeParam || 'pageSize']: pageSize,
+        ...rest
       }
+
       return config.search(params).pipe(
         map(response => {
-          console.log(response);
           if (config.responseMapper) {
             return config.responseMapper(response);
           }
 
           // Mapper por defecto
           const items =  response.data || response.items || response;
-          const totalRecords = items.length>0? items[0].totalRecords : 0;
+          const totalRecords = response.totalRecords || response.totalCount || response.total || 0;
           return {
             items,
-            totalCount: totalRecords|| response.totalCount || response.total || 0,
+            // items: [
+            //   {
+            //     id: 1,
+            //     name: 'iPhone 14 Pro 128GB',
+            //     description: 'Smartphone Apple con chip A16 Bionic y cámara Pro',
+            //     code: 'IP14P-128',
+            //     barcode: '1234567890123',
+            //     stock: 15,
+            //     category: 'Smartphones',
+            //     brand: 'Apple',
+            //     unit: 'unidad',
+            //     imageUrl: imgDefault(),
+            //     prices: [
+            //       {
+            //         id: 1,
+            //         type: 'retail',
+            //         label: 'Público',
+            //         value: 999,
+            //         currency: 'USD',
+            //         includesTax: true,
+            //         isDefault: true,
+            //         isActive: true
+            //       },
+            //       {
+            //         id: 2,
+            //         type: 'wholesale',
+            //         label: 'Mayorista',
+            //         value: 850,
+            //         currency: 'USD',
+            //         minQuantity: 5,
+            //         includesTax: false,
+            //         isActive: true
+            //       },
+            //       {
+            //         id: 3,
+            //         type: 'vip',
+            //         label: 'VIP',
+            //         value: 899,
+            //         currency: 'USD',
+            //         includesTax: true,
+            //         isActive: true
+            //       },
+            //       {
+            //         id: 4,
+            //         type: 'promotional',
+            //         label: 'Black Friday',
+            //         value: 749,
+            //         currency: 'USD',
+            //         validFrom: new Date('2024-11-24'),
+            //         validTo: new Date('2024-11-30'),
+            //         includesTax: true,
+            //         isActive: true
+            //       }
+            //     ]
+            //   },
+            //   {
+            //     id: 2,
+            //     name: 'Samsung Galaxy S23 256GB',
+            //     description: 'Flagship Android con cámara de 200MP',
+            //     code: 'SGS23-256',
+            //     barcode: '2345678901234',
+            //     stock: 0,
+            //     category: 'Smartphones',
+            //     brand: 'Samsung',
+            //     unit: 'unidad',
+            //     imageUrl: imgDefault(),
+            //     images: [
+            //       {
+            //         id: 1,
+            //         url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400',
+            //         thumbnailUrl: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=200',
+            //         alt: 'iPhone 14 Pro Space Black frontal',
+            //         type: 'main',
+            //         isPrimary: true,
+            //         order: 1
+            //       },
+            //       {
+            //         id: 2,
+            //         url: 'https://images.unsplash.com/photo-1574755393849-623942496936?w=400',
+            //         thumbnailUrl: 'https://images.unsplash.com/photo-1574755393849-623942496936?w=200',
+            //         alt: 'iPhone 14 Pro Space Black trasero',
+            //         type: 'gallery',
+            //         order: 2
+            //       },
+            //       {
+            //         id: 3,
+            //         url: 'https://images.unsplash.com/photo-1580522154071-c6ca47aff98c?w=400',
+            //         thumbnailUrl: 'https://images.unsplash.com/photo-1580522154071-c6ca47aff98c?w=200',
+            //         alt: 'iPhone 14 Pro Space Black lateral',
+            //         type: 'gallery',
+            //         order: 3
+            //       }
+            //     ],
+            //     badges: [
+            //       { type: 'new', text: 'NUEVO' },
+            //       { type: 'bestseller' }
+            //     ],
+            //     prices: [
+            //       {
+            //         id: 5,
+            //         type: 'retail',
+            //         label: 'Público',
+            //         value: 799,
+            //         currency: 'USD',
+            //         includesTax: true,
+            //         isDefault: true,
+            //         isActive: true
+            //       },
+            //       {
+            //         id: 6,
+            //         type: 'wholesale',
+            //         label: 'Mayorista',
+            //         value: 679,
+            //         currency: 'USD',
+            //         minQuantity: 3,
+            //         includesTax: false,
+            //         isActive: true
+            //       }
+            //     ]
+            //   }
+            // ],
+            totalCount: totalRecords ,
             hasMore: response.hasMore || false
           };
         })

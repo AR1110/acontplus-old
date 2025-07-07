@@ -21,4 +21,5 @@ export abstract class ProductRepository {
   abstract post<T>(obj:T, file?:Blob): Observable<ApiResponse>;
   abstract put<T>(id:number, obj:T): Observable<ApiResponse>;
   abstract getId(id:number): Observable<ApiResponse>;
+  abstract listProductWithPrices(params:any): Observable<any>;
 }

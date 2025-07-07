@@ -32,10 +32,10 @@ import {
   InventoryAdjustmentDetailComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment-detail/inventory-adjustment-detail.component";
 import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
+
 import {
-  ProductSearchBarComponent
-} from "@inventory/product/presentation/components/product-search-bar/product-search-bar.component";
-import {ReusableAutocompleteComponent} from "@shared/components/reusable-autocomplete/reusable-autocomplete.component";
+  ProductAutocompleteAdvancedComponent
+} from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
 
 @Component({
   selector: 'app-inventory-adjustment',
@@ -52,8 +52,7 @@ import {ReusableAutocompleteComponent} from "@shared/components/reusable-autocom
     MatIconButton,
     MatIcon,
     MatMenuModule,
-    ProductSearchBarComponent,
-    ReusableAutocompleteComponent,
+    ProductAutocompleteAdvancedComponent,
   ],
   templateUrl: './inventory-adjustment.component.html',
   styles: `
