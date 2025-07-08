@@ -23,14 +23,17 @@ AS
         est.idEstablecimiento,
 
         -- Serie calculada del comprobante
-        CONCAT('CE-', est.estab, '-', Helper.F_Auto_Sequential(ce.nroDocumento)) AS serieComprobante,
+        CONCAT('CE-', est.estab, '-', Helper.F_Auto_Sequential(ce.nroDocumento)) AS serieComprobanteEgreso,
 
         -- Fechas formateadas
-        FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm') AS fechaRegistro,
-        ce.fechaRegistro AS fechaRegistroTimestamp,
+      --  FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm') AS fechaRegistro,
+        ce.fechaRegistro AS fechaRegistroEgreso,
 
         -- Montos del comprobante
-        CAST(ce.total AS DECIMAL(18,2)) AS totalComprobante,
+        CAST(ce.total AS DECIMAL(18,2)) AS totalEgreso,
+        CAST(pag.abono AS DECIMAL(18,2)) as abonoPago,
+        CAST(hp.saldo - hp.abono AS DECIMAL(18,2)) AS saldoEgreso,
+
         ce.observacion,
 
         -- Información del proveedor
@@ -39,7 +42,7 @@ AS
 
         -- Información del documento por pagar
         cpp.idCuentaPorPagar,
-        cpp.serieComprobante AS serieDocumento,
+        cpp.serieComprobante AS serieDoc,
         cpp.idProveedor,
 
         -- Código de documento normalizado
@@ -50,11 +53,11 @@ AS
         cpp.codDoc,
 
         -- Montos del documento
-        CAST(cpp.importeTotal AS DECIMAL(18,2)) AS totalDocumento,
-        CAST(cpp.abono AS DECIMAL(18,2)) AS abonoDocumento,
+        CAST(cpp.importeTotal AS DECIMAL(18,2)) AS totalDoc,
+        CAST(cpp.abono AS DECIMAL(18,2)) AS abonoDoc,
 --        CAST(hp.abono AS DECIMAL(18,2)) AS abonoDocumento,
-        CAST(hp.saldo - hp.abono AS DECIMAL(18,2)) AS saldoPendiente,
-        CAST(pag.abono AS DECIMAL(18,2)) as abonoPago,
+        --  CAST(hp.saldo - hp.abono AS DECIMAL(18,2)) AS saldoPendiente,
+        CAST(cpp.saldo AS DECIMAL(18,2)) AS saldoDoc,
 
         -- Información de la entidad financiera
         ef.descripcion AS metodoPago,
@@ -67,11 +70,11 @@ AS
 
         -- Información del pago 
         FORMAT(pag.fechaEmision, 'dd/MM/yyyy  HH:mm') AS fechaPago,
-        pag.fechaEmision AS fechaPagoTimestamp,
-        pag.nro,
+        pag.nro as numeroTransaccion,
         pag.aprobacion,
         pag.referencia,
-        pag.lote
+        pag.lote,
+        u.nombreUsuario as usuarioNomEgreso
 
     FROM dbo.ComprobanteEgreso AS ce
         INNER JOIN Sri.Establecimiento AS est ON est.idEstablecimiento = ce.idEstablecimiento
@@ -80,6 +83,7 @@ AS
         INNER JOIN Contabilidad.CuentaPorPagar AS cpp ON cpp.idCuentaPorPagar = hp.idCuentaPorPagar
         INNER JOIN dbo.Pago AS pag ON pag.idPago = hp.idPago
         INNER JOIN dbo.EntidadFinanciera AS ef ON ef.idEntidadFinanciera = pag.idEntidadFinanciera
+        INNER JOIN dbo.Usuario           as u  ON u.idUsuario            = ce.idUsuario
         LEFT JOIN dbo.Banco AS ban ON ban.idBanco = pag.idBanco
 
     WHERE ce.estado = 1;

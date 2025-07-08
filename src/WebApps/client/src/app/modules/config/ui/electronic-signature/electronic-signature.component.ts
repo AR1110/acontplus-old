@@ -163,7 +163,7 @@ export class ElectronicSignatureComponent {
 
 
   downloadSignature(item:ElectronicSignatureList){
-    this.$downloadSignature.execute(item.idFirmaElectronica).subscribe(response=>{ 
+    this.$downloadSignature.execute(item.idFirmaElectronica).subscribe(response=>{
       const filename = this.getFileNameFromResponse(response) || 'firma.p12';
       const blob = new Blob([response.body!], { type: 'application/x-pkcs12' });
 
