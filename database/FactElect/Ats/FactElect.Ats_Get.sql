@@ -375,7 +375,7 @@ BEGIN
     FROM Recepcion.DocumentoRecibido fc WITH (NOLOCK)
 	WHERE fc.identificacionReceptor = @rucReceptor
       AND CAST(fc.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-	  AND fc.codDoc IN ('01','04')
+	  AND fc.codDoc IN ('01','04','05')
       AND fc.xmlCompressed IS NOT NULL
       AND fc.estado = 1
 

@@ -20,8 +20,8 @@ AS
                 --     ELSE cpp.codDoc
                 -- END AS codDoc,
                 cpp.codDoc,
-                cpp.serieComprobante AS comprobanteOriginal,
-                cpp.fechaEmision AS fechaComprobanteOriginal,
+                cpp.serieComprobante AS serieDoc,
+                cpp.fechaEmision as fechaEmisionDoc,
                 cpp.identificacionProveedor,
                 cpp.razonSocialProveedor,
                 CAST(cpp.importeTotal AS DECIMAL(18,2)) AS importeTotal,
@@ -30,7 +30,8 @@ AS
 
                 -- Información del Comprobante de Egreso
                 ce.idComprobanteEgreso,
-                FORMAT(ce.fechaRegistro, 'dd/MM/yyyy hh:mm') AS fechaEmisionEgreso,
+              --  FORMAT(ce.fechaRegistro, 'dd/MM/yyyy hh:mm') AS fechaRegistroEgreso,
+                ce.fechaRegistro as fechaRegistroEgreso,
                 'CE' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) AS serieComprobanteEgreso,
                 ce.total AS totalEgreso,
                 CASE ce.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END AS estadoEgreso,
@@ -38,7 +39,6 @@ AS
 
                 -- Información del Pago
                 p.idPago,
-                p.secuencial AS secuencialPago,
                 CASE p.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END AS esPosfechado,
                 FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaPago,
                 ISNULL(sf.descripcion, ef.descripcion) AS formaPago,
@@ -61,94 +61,61 @@ AS
 
                 -- Campos calculados útiles para el reporte
                 CASE 
-        WHEN cpp.saldo = 0 THEN 'PAGADO'
-        WHEN cpp.saldo > 0 AND cpp.abono > 0 THEN 'PAGO PARCIAL'
-        WHEN cpp.abono = 0 THEN 'PENDIENTE'
-        ELSE 'ESTADO INDEFINIDO'
-END AS estadoPago,
+                    WHEN cpp.saldo = 0 THEN 'PAGADO'
+                    WHEN cpp.saldo > 0 AND cpp.abono > 0 THEN 'PAGO PARCIAL'
+                    WHEN cpp.abono = 0 THEN 'PENDIENTE'
+                    ELSE 'ESTADO INDEFINIDO'
+                END AS estadoPago,
 
-                CASE 
-        WHEN cxp.fechaVencimiento < GETDATE
-() AND
-                        (pd.saldo - pd.abono) > 0 THEN 'VENCIDA'
-        WHEN cxp.fechaVencimiento >= GETDATE
-() AND
-                        (pd.saldo - pd.abono) > 0 THEN 'VIGENTE'
-        ELSE 'PAGADA'
-END AS estadoCuota,
+                CASE
+                    WHEN cxp.fechaVencimiento < GETDATE() AND (pd.saldo - pd.abono) > 0 THEN 'VENCIDA'
+                    WHEN cxp.fechaVencimiento >= GETDATE() AND (pd.saldo - pd.abono) > 0 THEN 'VIGENTE'
+                    ELSE 'PAGADA'
+                END AS estadoCuota,
 
                 -- Cálculo de días de vencimiento
-                CASE 
-        WHEN cxp.fechaVencimiento < GETDATE
-() AND
-                        (pd.saldo - pd.abono) > 0 
-        THEN DATEDIFF
-(DAY, cxp.fechaVencimiento, GETDATE
-())
-        ELSE 0
-END AS diasVencidos
+                CASE
+                    WHEN cxp.fechaVencimiento < GETDATE() AND (pd.saldo - pd.abono) > 0
+                    THEN DATEDIFF(DAY, cxp.fechaVencimiento, GETDATE())
+                    ELSE 0
+                END AS diasVencidos
 
-        FROM v_CuentaPorPagar cpp
-WITH
-(NOLOCK)
-
-                -- Join con Historial de Pagos
-                INNER JOIN Contabilidad.Historial_Pago hp
-WITH
-(NOLOCK)
+        FROM v_CuentaPorPagar cpp WITH(NOLOCK)
+        -- Join con Historial de Pagos
+        INNER JOIN Contabilidad.Historial_Pago hp WITH(NOLOCK)
                 ON hp.idCuentaPorPagar = cpp.idCuentaPorPagar
 
-                -- Join con Comprobantes de Egreso
-                INNER JOIN dbo.ComprobanteEgreso ce
-WITH
-(NOLOCK)
-                ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
-                        AND ce.estado = 1
+        -- Join con Comprobantes de Egreso
+        INNER JOIN dbo.ComprobanteEgreso ce WITH(NOLOCK)
+                ON ce.idComprobanteEgreso = hp.idComprobanteEgreso AND ce.estado = 1
 
-                -- Join con Establecimiento
-                LEFT JOIN Sri.Establecimiento es
-WITH
-(NOLOCK)
+        -- Join con Establecimiento
+        LEFT JOIN Sri.Establecimiento es WITH(NOLOCK)
                 ON es.idEstablecimiento = ce.idEstablecimiento
 
                 -- Join con Pagos
-                LEFT JOIN dbo.Pago p
-WITH
-(NOLOCK)
+        LEFT JOIN dbo.Pago p WITH(NOLOCK)
                 ON p.idPago = hp.idPago
 
-                -- Join con Entidades Financieras
-                LEFT JOIN dbo.EntidadFinanciera ef
-WITH
-(NOLOCK)
+        -- Join con Entidades Financieras
+        LEFT JOIN dbo.EntidadFinanciera ef WITH(NOLOCK)
                 ON ef.idEntidadFinanciera = p.idEntidadFinanciera
 
-                -- Join con Sub Entidades Financieras
-                LEFT JOIN dbo.SubEntidadFinanciera sf
-WITH
-(NOLOCK)
+        -- Join con Sub Entidades Financieras
+        LEFT JOIN dbo.SubEntidadFinanciera sf WITH(NOLOCK)
                 ON sf.idSubEntidadFinanciera = p.idSubEntidadFinanciera
 
-                -- Join con Bancos
-                LEFT JOIN dbo.Banco bc
-WITH
-(NOLOCK)
+        -- Join con Bancos
+        LEFT JOIN dbo.Banco bc WITH(NOLOCK)
                 ON bc.idBanco = p.idBanco
 
-                -- Join con Detalle de Pagos
-                LEFT JOIN dbo.PagoDetalle pd
-WITH
-(NOLOCK)
+        -- Join con Detalle de Pagos
+        LEFT JOIN dbo.PagoDetalle pd WITH(NOLOCK)
                 ON pd.idPago = p.idPago
 
-                -- Join con Cuotas por Pagar
-                LEFT JOIN Contabilidad.CuotaPorPagar cxp
-WITH
-(NOLOCK)
+        -- Join con Cuotas por Pagar
+        LEFT JOIN Contabilidad.CuotaPorPagar cxp WITH(NOLOCK)
                 ON cxp.idCuotaPorPagar = pd.idCuotaPorPagar
-
-   
-
 GO
 
 -- -- =============================================

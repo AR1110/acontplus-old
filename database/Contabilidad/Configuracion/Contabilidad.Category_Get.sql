@@ -14,36 +14,43 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	DECLARE @tipo AS INT 
-	DECLARE @companyId AS INT
+	DECLARE @tipo INT,
+	    @companyId INT,
+        @userId INT;
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
-	SELECT TOP 1 @companyId = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+	SELECT TOP 1 @companyId = idEntidad, @userId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	-- ====================== LISTA DE GESTION PRINCIPAL ===============================================
-	IF @tipo = 1
-		BEGIN
-            SET @tableNames = 'categories'
-			SELECT c.*
-                ,t.Name TipoName
-            FROM Contabilidad.Category c WITH (NOLOCK) 
-                INNER JOIN Contabilidad.Tipo t WITH (NOLOCK)  ON c.TipoId = t.Id
-            WHERE c.Deleted IS NULL
-			RETURN 
-		END 
+    BEGIN TRY
+	    -- ====================== LISTA DE GESTION PRINCIPAL ===============================================
+	    IF @tipo = 1
+		    BEGIN
+                SET @tableNames = 'categories'
+			    SELECT c.*
+                    ,t.Name TipoName
+                FROM Contabilidad.Category c WITH (NOLOCK) 
+                    INNER JOIN Contabilidad.Tipo t WITH (NOLOCK)  ON c.TipoId = t.Id
+                WHERE c.IsDeleted = 0 
+		    END 
 
-	IF @tipo = 2
-		BEGIN
-            SET @tableNames = 'tipos'
-			SELECT * FROM Contabilidad.Tipo WITH (NOLOCK) WHERE [Enabled] = 1 
- 
-			RETURN
-		END 
+	    IF @tipo = 2
+		    BEGIN
+                SET @tableNames = 'tipos'
+			    SELECT * FROM Contabilidad.Tipo WITH (NOLOCK) WHERE IsActive = 1 
+		    END
 
-	--IF @tipo = 3 
-	--	BEGIN
+	    --IF @tipo = 3 
+	    --	BEGIN
 			
-	--	END 
-
+	    --	END
+    END TRY
+    BEGIN CATCH
+        INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage],
+        [idUsuario], [additionalInfo])
+        VALUES('Category/Get', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), 'Contabilidad.Category_Get', ERROR_LINE(), ERROR_MESSAGE(),
+        @userId, N'{
+        '+ @json +'''
+        }');
+    END CATCH
 END

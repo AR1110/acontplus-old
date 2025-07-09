@@ -41,6 +41,16 @@ export class ElectronicSignatureRepoImpl implements ElectronicSignatureRepositor
         map(response=>ListElectronicSignatureMapper.fromJson(response))
       )
   }
+
+  downloadSignature(id:number){
+    const url = `${this._url}/Download/${id}`;
+    console.log(url)
+    return this._http.get(url, {
+      responseType: 'blob', // importante para recibir el archivo binario
+      observe: 'response'   // para obtener encabezados (como filename)
+    });
+  }
+
   private _url =`${PATHS_API.CONFIG}${CONFIG_PATHS.ELECTRONIC_SIGNATURE}`;
   private _http = inject(HttpClient)
 
