@@ -12,7 +12,7 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Opciones: <span class="text-danger">*</span></mat-label>
-          <mat-select [(ngModel)]="dataForm.opcion" (selectionChange)="optionChange()">
+          <mat-select [(ngModel)]="searchAdvancedForm.opcion" (selectionChange)="optionChange()">
             @for (item of catalogs(); track $index) {
             <mat-option [value]="item.code"> {{item.name}}</mat-option>
             }
@@ -20,11 +20,11 @@
         </mat-form-field>
       </div>
       <div class="col">
-        @if (dataForm.opcion===3) {
+        @if (searchAdvancedForm.opcion===3) {
           <mat-form-field class="w-100">
             <mat-label>SubFamilias: <span class="text-danger">*</span></mat-label>
-            <mat-select [(ngModel)]="dataForm.subFamiliaId" (selectionChange)="refresh()">
-              @for (item of $inventoryAdjustmentStore.mainFormData().subFamilias; track $index) {
+            <mat-select [(ngModel)]="searchAdvancedForm.subFamiliaId" (selectionChange)="refresh()">
+              @for (item of mainFormData().subFamilias(); track $index) {
                 <mat-option [value]="item.id"> {{item.name}}</mat-option>
               }
             </mat-select>

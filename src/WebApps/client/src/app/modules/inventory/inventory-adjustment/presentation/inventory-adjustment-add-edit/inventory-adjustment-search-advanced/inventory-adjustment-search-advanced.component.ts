@@ -8,13 +8,13 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
-import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
-import {
-  InventoryAdjustmentListProductsUseCase
-} from "@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-list-products.use-case";
+
 import {isValidField} from "@core/utils/utils";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {
+  InventoryAdjustmentService
+} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
 
 @Component({
   selector: 'app-inventory-adjustment-search-advanced',
@@ -35,8 +35,9 @@ import {ColumnDefinition} from "@shared/models/mat-table-models/column-definitio
 export class InventoryAdjustmentSearchAdvancedComponent {
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentSearchAdvancedComponent>);
   private params = inject(MAT_DIALOG_DATA);
-  $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);
-  $listProducts = inject(InventoryAdjustmentListProductsUseCase)
+  private inventoryAdjustmentSvc = inject(InventoryAdjustmentService)
+
+  mainFormData = signal(this.inventoryAdjustmentSvc.inventoryAdjustmentStore.mainFormData)
 
 
 
@@ -49,7 +50,7 @@ export class InventoryAdjustmentSearchAdvancedComponent {
 
    ])
 
-  dataForm = {
+  searchAdvancedForm = {
      opcion: 0,
     rucProveedor: null,
     productId: 0,
@@ -74,9 +75,9 @@ export class InventoryAdjustmentSearchAdvancedComponent {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   optionChange() {
-   this.dataForm.rucProveedor = null;
-   this.dataForm.productId = 0
-    if (this.dataForm.opcion === 6) {
+   this.searchAdvancedForm.rucProveedor = null;
+   this.searchAdvancedForm.productId = 0
+    if (this.searchAdvancedForm.opcion === 6) {
     // this.getArticles();
     }
   }
@@ -88,14 +89,14 @@ export class InventoryAdjustmentSearchAdvancedComponent {
 
   private listProducts(){
     const dataSearch = {
-      idArticulo: isValidField(this.dataForm.productId),
-      rucProveedor: isValidField(this.dataForm.rucProveedor),
-      opcion: this.dataForm.opcion,
-      idSubFamilia: isValidField(this.dataForm.subFamiliaId),
-      nroDocumento: isValidField(this.dataForm.nroDocumento),
-      idBodega: this.dataForm.opcion === 6 ?this.dataForm.bodegaId : null
+      idArticulo: isValidField(this.searchAdvancedForm.productId),
+      rucProveedor: isValidField(this.searchAdvancedForm.rucProveedor),
+      opcion: this.searchAdvancedForm.opcion,
+      idSubFamilia: isValidField(this.searchAdvancedForm.subFamiliaId),
+      nroDocumento: isValidField(this.searchAdvancedForm.nroDocumento),
+      idBodega: this.searchAdvancedForm.opcion === 6 ?this.searchAdvancedForm.bodegaId : null
     }
-    this.$listProducts.execute(dataSearch).subscribe(res => {
+    this.inventoryAdjustmentSvc.getProductListImported(dataSearch).subscribe(res => {
       console.log(res)
       this.dataSource.set(res.data);
     })
@@ -123,15 +124,15 @@ export class InventoryAdjustmentSearchAdvancedComponent {
   }
 
   ngOnInit(): void {
-      console.log(this.$inventoryAdjustmentStore.mainFormData())
+
   }
 
   applySelected(){
     console.log(this.selectedRows())
     this.dialogRef.close({
       selectedRows: this.selectedRows(),
-      opcion: this.dataForm.opcion,
-      isExcelImport: this.dataForm.isExcelImport,
+      opcion: this.searchAdvancedForm.opcion,
+      isExcelImport: this.searchAdvancedForm.isExcelImport,
     });
   }
 

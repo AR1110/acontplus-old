@@ -19,7 +19,8 @@ export class InventoryAdjustmentDetail {
     private _fractionalCostPrice: Money,
     private _total: Money,
     private readonly _description: string,
-    private _notes?: string
+    private _notes?: string,
+    private status = true
   ) {}
 
   static create(params: {
@@ -30,7 +31,6 @@ export class InventoryAdjustmentDetail {
     unitOfMeasureId: number;
     measures: MedidaProducto[];
     quantity: number;
-    transactionQuantity: number;
     unitConversion: number;
     unitPrice: number;
     costPrice: number;
@@ -46,7 +46,6 @@ export class InventoryAdjustmentDetail {
     // ✨ Value Objects creation with automatic validation
     const productId = ProductId.from(params.productId)
     const quantity = Quantity.from(params.quantity);
-    const transactionQuantity = Quantity.from(params.transactionQuantity);
     const unitConversion = Quantity.from(params.unitConversion);
     const unitPrice = Money.from(params.unitPrice);
     const costPrice = Money.from(params.costPrice);
@@ -60,7 +59,7 @@ export class InventoryAdjustmentDetail {
       params.unitOfMeasureId,
       params.measures,
       quantity,
-      transactionQuantity,
+      Quantity.zero(),
       unitConversion,
       unitPrice,
       costPrice,
@@ -69,7 +68,7 @@ export class InventoryAdjustmentDetail {
       params.description.trim(),
       params.notes?.trim()
     );
-    detail.calculateTotal();
+
     return detail;
   }
 
@@ -77,6 +76,7 @@ export class InventoryAdjustmentDetail {
   get orderIndex(): number { return this._orderIndex; }
   get productId(): ProductId { return this._productId; }
   get code(): string { return this._code; }
+
   get warehouseId(): number { return this._warehouseId; }
   get unitOfMeasureId(): number | null { return this._unitOfMeasureId; }
   get measures(): MedidaProducto[] { return this._measures; }
@@ -91,9 +91,8 @@ export class InventoryAdjustmentDetail {
   get notes(): string | undefined { return this._notes; }
 
   // ✨ Type-safe operations with Value Objects
-  updateQuantity(newQuantity: number, newTransactionQuantity: number): void {
-    this._quantity = Quantity.from(newQuantity);               // ← Automatic validation
-    this._transactionQuantity = Quantity.from(newTransactionQuantity); // ← Automatic validation
+  updateQuantity(newQuantity: number): void {
+    this._quantity = Quantity.from(newQuantity);
     this.calculateTotal();
   }
 
@@ -101,15 +100,15 @@ export class InventoryAdjustmentDetail {
     console.log('udpate meadoe', unitOfMeasureId)
     const dataMedida = this._measures.find(val => val.idMedida === unitOfMeasureId);
     this._unitOfMeasureId = unitOfMeasureId;
-    this._unitPrice = Money.from(dataMedida?.precioUnitario || 0);                   // ← Automatic validation
+    this._unitPrice = Money.from(dataMedida?.precioUnitario || 0);
     this._costPrice = Money.from(dataMedida?.precioCosto || 0);
-    this._fractionalCostPrice = Money.from(dataMedida?.precioCostoFraccionado || 0)// ← Automatic validation
+    this._fractionalCostPrice = Money.from(dataMedida?.precioCostoFraccionado || 0)
     this.calculateTotal();
   }
 
   updatePricing(unitPrice: number, costPrice: number): void {
-    this._unitPrice = Money.from(unitPrice);                   // ← Automatic validation
-    this._costPrice = Money.from(costPrice);                   // ← Automatic validation
+    this._unitPrice = Money.from(unitPrice);
+    this._costPrice = Money.from(costPrice);
     this.calculateTotal();
   }
 
@@ -121,8 +120,8 @@ export class InventoryAdjustmentDetail {
     this._warehouseId = newId;
   }
 
-  private calculateTotal(): void {
-    // ✨ Rich Value Object operations
+   calculateTotal(): void {
+     this._transactionQuantity = this._unitConversion.multiply(this._quantity.value);
     this._total = this._unitPrice.multiply(this._quantity.value);
   }
 
@@ -131,7 +130,6 @@ export class InventoryAdjustmentDetail {
     return this._costPrice.multiply(this._transactionQuantity.value);
   }
 
-  // ✨ Business methods with Value Objects
   isQuantitySufficient(required: Quantity): boolean {
     return this._quantity.canSatisfy(required);
   }
@@ -146,19 +144,21 @@ export class InventoryAdjustmentDetail {
 
   toPlainObject() {
     return {
-      orderIndex: this._orderIndex,
-      productId: this._productId.value,
-      code: this._code,
-      warehouseId: this._warehouseId,
-      unitOfMeasureId: this._unitOfMeasureId,
-      measures: this._measures,
-      quantity: this._quantity.value,
-      transactionQuantity: this._transactionQuantity.value,
-      unitPrice: this._unitPrice.value,
-      costPrice: this._costPrice.value,
-      total: this._total.value,
-      description: this._description,
-      notes: this._notes
+      orderIndex: this.orderIndex,
+      productId: this.productId.value,
+      code: this.code,
+      warehouseId: this.warehouseId,
+      unitOfMeasureId: this.unitOfMeasureId,
+      measures: this.measures,
+      quantity: this.quantity.value,
+      transactionQuantity: this.transactionQuantity.value,
+      unitConversion: this.unitConversion.value,
+      fractionalCostPrice: this.fractionalCostPrice.value,
+      unitPrice: this.unitPrice.value,
+      costPrice: this.costPrice.value,
+      total: this.total.value,
+      description: this.description,
+      notes: this.notes
     };
   }
 }

@@ -1,9 +1,12 @@
-import {InventoryAdjustmentFormDataResponse} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
+
 import {patchState, signalStore, withHooks, withMethods, withState} from "@ngrx/signals";
+import {
+  InventoryAdjustmentFormDataDto
+} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 
 class InventoryAdjustmentState {
-  mainFormData:InventoryAdjustmentFormDataResponse = {
+  mainFormData:InventoryAdjustmentFormDataDto = {
     decimal:  {},
     estabs: [],
     subFamilias: [],
@@ -17,7 +20,7 @@ export const InventoryAdjustmentStore = signalStore(
   withState(new InventoryAdjustmentState()),
   withMethods(store => ({
 
-    setMainFormData(params: InventoryAdjustmentFormDataResponse) {
+    setMainFormData(params: InventoryAdjustmentFormDataDto) {
       console.log(params)
       patchState(store, {
         mainFormData: params,

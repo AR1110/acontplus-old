@@ -1,7 +1,6 @@
-import {
-  InventoryAdjustmentDetailResponse,
-} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
+
 import {fechaString} from "@core/utils/date.util";
+import {InventoryAdjustmentDetailDto} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 export class InventoryAdjustmentDetailMapper {
   static toJson(id:number){
@@ -12,8 +11,8 @@ export class InventoryAdjustmentDetailMapper {
     })
   }
 
-  static fromJson(response:any): InventoryAdjustmentDetailResponse{
-    const result = new InventoryAdjustmentDetailResponse();
+  static fromJson(response:any): InventoryAdjustmentDetailDto{
+    const result = new InventoryAdjustmentDetailDto();
     const {comprobante, detalles} = response;
     const header = comprobante[0];
     result.header = {

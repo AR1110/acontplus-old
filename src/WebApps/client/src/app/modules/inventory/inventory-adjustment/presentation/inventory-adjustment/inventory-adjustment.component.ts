@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -15,10 +15,6 @@ import {FormsModule} from "@angular/forms";
 import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {
-  InventoryAdjustmentFormDataResponse,
-  InventoryAdjustmentList
-} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {DialogService} from "@core/services/dialog.service";
 import {
   InventoryAdjustmentAddEditComponent
@@ -29,17 +25,19 @@ import {MatMenuModule} from "@angular/material/menu";
 import {
   InventoryAdjustmentDetailComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment-detail/inventory-adjustment-detail.component";
-import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
+import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/domain/store/inventory-adjustment.store";
 
 import {
   ProductAutocompleteAdvancedComponent
 } from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
-import {
-  GetAllInventoryAdjustmentsUseCase
-} from "@inventory/inventory-adjustment/application/use-cases/get-all-inventory-adjustments.use-case";
+
 import {
   InventoryAdjustmentService
-} from "@inventory/inventory-adjustment/application/services/inventory-adjustment.service";
+} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
+import {
+  InventoryAdjustmentFormDataDto,
+  InventoryAdjustmentListDto
+} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 @Component({
   selector: 'app-inventory-adjustment',
@@ -70,7 +68,7 @@ export class InventoryAdjustmentComponent   {
   private _tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService);
   private $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore)
-  dataSource = signal<InventoryAdjustmentList[]>([]);
+  dataSource = signal<InventoryAdjustmentListDto[]>([]);
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
@@ -100,7 +98,7 @@ export class InventoryAdjustmentComponent   {
     endDate: formatDateToString(new Date()),
   };
 
-  private mainFormData = signal({} as InventoryAdjustmentFormDataResponse)
+  private mainFormData = signal({} as InventoryAdjustmentFormDataDto)
 
   refresh() {
     this.getList()
@@ -162,7 +160,7 @@ export class InventoryAdjustmentComponent   {
   //   });
   // }
 
-  addEdit(item?: InventoryAdjustmentList){
+  addEdit(item?: InventoryAdjustmentListDto){
     const ref = this._dialogSvc.open(InventoryAdjustmentAddEditComponent, {
       size: 'xxl',
       data: {
@@ -176,7 +174,7 @@ export class InventoryAdjustmentComponent   {
     })
   }
 
-  openDetail(item: InventoryAdjustmentList){
+  openDetail(item: InventoryAdjustmentListDto){
     this._dialogSvc.open(InventoryAdjustmentDetailComponent, {
       size: 'xxl',
       data: {

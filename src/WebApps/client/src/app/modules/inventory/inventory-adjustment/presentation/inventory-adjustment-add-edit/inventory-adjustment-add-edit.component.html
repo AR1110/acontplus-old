@@ -7,7 +7,7 @@
 />
 
 <ng-template #body>
-  <form [formGroup]="adjustmentForm" (ngSubmit)="onSubmit()">
+  <form id="adjustmentForm" [formGroup]="adjustmentForm" (ngSubmit)="onSubmit()">
     <div class="container-fluid vstack gap-2">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
       <div class="col">
@@ -34,7 +34,7 @@
       <div class="col">
         <mat-form-field   class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select formControlName="establishmentId">
+          <mat-select formControlName="establishmentId" (selectionChange)="changeEstablishment()">
             @for (item of estabs(); track $index){
             <mat-option [value]="item.idEstablecimiento">{{ item.nombreEstab }}</mat-option>
             }
@@ -132,9 +132,11 @@
 </ng-template>
 <ng-template #footer>
   <app-theme-button
+     type="submit"
     variant="success"
     [icon]="icon()"
     [text]="btnText()"
     matStyle="basic"
+     form="adjustmentForm"
   />
 </ng-template>

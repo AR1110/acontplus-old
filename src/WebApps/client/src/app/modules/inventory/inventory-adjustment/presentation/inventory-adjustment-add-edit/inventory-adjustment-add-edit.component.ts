@@ -1,16 +1,20 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {  FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
-import {DialogService} from "@core/services/dialog.service";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {provideNativeDateAdapter} from "@angular/material/core";
+import Swal from 'sweetalert2';
+
+//components
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {
   InventoryAdjustmentSearchAdvancedComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced.component";
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
+
 import {
   ProductAutocompleteAdvancedComponent
 } from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
@@ -21,22 +25,13 @@ import {TabulatorComponent} from "@core/components/tabulator/tabulator.component
 import {GroupedEstabBodega, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {InventoryAdjustment} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {InventoryDocumentType, InventoryTransactionType} from "@inventory/domain/enums/inventory.enum";
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {
-  AddDetailToAdjustmentUseCase
-} from "@inventory/inventory-adjustment/application/use-cases/add-detail-to-adjustment.use-case";
+
 import {
   InventoryAdjustmentService
-} from "@inventory/inventory-adjustment/application/services/inventory-adjustment.service";
-import {GetProductPurchaseUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
-import Swal from 'sweetalert2';
+} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
 import {roundNumber} from "@core/utils/round-number.utils";
-import {Quantity} from "@inventory/inventory-adjustment/domain/value-objects/quantity.vo";
-import {ColSupportMaintenanceDetail} from "@mechanical/domain/models/support-maintenance.model";
-import {
-  InventoryAdjustmentDetail
-} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment-detail.entity";
+import {ValidationException} from "@core/domain";
+import {setDateWithCurrentTime} from "@core/utils/date.util";
 
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
@@ -54,25 +49,19 @@ import {
   ],
   templateUrl: './inventory-adjustment-add-edit.component.html',
   providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InventoryAdjustmentAddEditComponent {
-  #dialogSvc = inject(DialogService)
+  private inventoryAdjustmentSvc = inject(InventoryAdjustmentService)
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentAddEditComponent>);
   private params = inject(MAT_DIALOG_DATA);
   private fb = inject(FormBuilder);
 
-  $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);
-  private inventorySvc = inject(InventoryAdjustmentService);
 
 
-
-  //use-cases
-  private addDetailUseCase = inject(AddDetailToAdjustmentUseCase);
-  private $GetProductPurchaseUseCase = inject(GetProductPurchaseUseCase)
-
-  tiposDoc = computed(()=>this.$inventoryAdjustmentStore.mainFormData().tiposDoc)
-  tiposTransaccion = computed(()=>this.$inventoryAdjustmentStore.mainFormData().tiposTransaccion)
-  estabs = computed(()=>this.$inventoryAdjustmentStore.mainFormData().estabs)
+  tiposDoc = computed(()=>this.inventoryAdjustmentSvc.inventoryAdjustmentStore.mainFormData().tiposDoc)
+  tiposTransaccion = computed(()=>this.inventoryAdjustmentSvc.inventoryAdjustmentStore.mainFormData().tiposTransaccion)
+  estabs = computed(()=>this.inventoryAdjustmentSvc.inventoryAdjustmentStore.mainFormData().estabs)
 
   emissionsPoint = signal<GroupedEstabPuntoEmision[]>([]);
   warehouses = signal<GroupedEstabBodega[]>([])
@@ -81,30 +70,27 @@ export class InventoryAdjustmentAddEditComponent {
   btnText = signal('Guardar');
   icon = signal('save');
 
-  dataSourceItems = signal<any[]>([])
+  dataSourceItems = signal<any[]>([]);
+  dataSourceItemsDeleted = signal<any[]>([]);
 
 
   adjustmentForm!: FormGroup;
-  newDetailForm!: FormGroup;
   isEditMode = false;
   adjustmentId?: number;
-  showAddDetailForm = false;
 
-  // LOCAL STATE - No API calls for details management
-  currentAdjustment = InventoryAdjustment.create({
-    emissionPointId: 1, // Default, will be updated from form
-    documentType: InventoryDocumentType.CONSOLIDATION,
-    transactionType: InventoryTransactionType.ADJUSTMENT,
+  cloneEstablishmentId = signal(0);
+
+
+  currentAdjustment =  InventoryAdjustment.create({
+    emissionPointId: 1,
+    documentTypeId: 0,
+    transactionTypeId: 0,
     emissionDate: new Date(),
     observations: ''
-  });
-
-  dataForm = new FormGroup({
-    bodegaId: new FormControl(null, [Validators.required]),
-  });
+  })
 
 
-  decimal = signal(this.$inventoryAdjustmentStore.mainFormData().decimal);
+  decimal = signal(this.inventoryAdjustmentSvc.inventoryAdjustmentStore.mainFormData().decimal);
 
 
   comboEditor = (
@@ -178,7 +164,7 @@ export class InventoryAdjustmentAddEditComponent {
         delBtn.classList.add('btn', 'btn-danger', 'btn-xs', 'btn-sm');
         delBtn.addEventListener('click', () => {
           const rowData = cell.getRow().getData();
-
+          this.askToRemove(rowData);
         });
 
         const buttonHolder = document.createElement('span');
@@ -220,16 +206,8 @@ export class InventoryAdjustmentAddEditComponent {
       editor: 'number',
       editorParams: {
         selectContents: true,
-        verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
+        verticalNavigation: 'table',
       },
-
-      // editorEmptyValueFunc: (value: any, cl: any) => {
-      //   console.log(cl)
-      //   if (/\s/.test(value)) {
-      //     console.log(value)
-
-      //   }
-      // }
     },
     {
       title: 'Medida',
@@ -261,7 +239,7 @@ export class InventoryAdjustmentAddEditComponent {
       editor: 'number',
       editorParams: {
         selectContents: true,
-        verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
+        verticalNavigation: 'table',
       },
       formatterParams: { precision: false },
     },
@@ -293,24 +271,49 @@ export class InventoryAdjustmentAddEditComponent {
     },
   ];
 
+  private askToRemove = async (row:any)=>{
+    const {
+      isConfirmed
+    } = await Swal.fire({
+      html: `<small>¿Estas seguro/a de eliminar este Artículo <b>${row.description}</b></small>?`,
+      icon: 'warning',
+      showConfirmButton: true,
+      confirmButtonText: `Sí, eliminar!`,
+      showCancelButton: true,
+      cancelButtonText: 'No, cancelar!',
+      allowOutsideClick: false
+    })
+
+    if (isConfirmed) {
+      const index = this.currentAdjustment.getDetailIndex(row.productId);
+      this.currentAdjustment.removeDetail(index);
+      if (row.id > 0) {
+        this.dataSourceItemsDeleted.update(r=>[...r, {...row, status:false}])
+      }
+      this.updateDataSourceItems()
+    }
+  }
+  updateDataSourceItems(){
+    this.dataSourceItems.set(this.currentAdjustment.toPlainObject().details)
+  }
+
   ngOnInit(){
-    console.log(this.$inventoryAdjustmentStore.mainFormData())
     this.initializeForms();
     this.checkEditMode()
 
     const dataEstab = this.estabs().find(estabs => estabs.defaultEstab);
-    console.log(dataEstab)
+
     this.emissionsPoint.set(dataEstab?.puntosEmision || []);
     this.warehouses.set(dataEstab?.bodegas??[])
     const emissionPointData = this.emissionsPoint().find(item=>item.defaultPtoEmi);
     const warehouseData = this.warehouses().find(b=>b.defaultBodega);
+    const  establishmentId = dataEstab?.idEstablecimiento ?? 0;
     this.adjustmentForm.patchValue({
       establishmentId: dataEstab?.idEstablecimiento ?? 0,
       emissionPointId: emissionPointData?.idPuntoEmision ?? 0,
       warehouseId: warehouseData?.idBodega ?? 0
     })
-    console.log(this.adjustmentForm.getRawValue())
-
+    this.cloneEstablishmentId.set(establishmentId);
   }
 
   private initializeForms(){
@@ -323,22 +326,10 @@ export class InventoryAdjustmentAddEditComponent {
         value: InventoryTransactionType.ADJUSTMENT,
         disabled: true
       }],
-      emissionDate: [new Date().toISOString().split('T')[0], Validators.required],
+      emissionDate: [new Date(), Validators.required],
       observations: [''],
-      details: this.fb.array([])
     });
 
-    this.newDetailForm = this.fb.group({
-      articleId: ['', Validators.required],
-      warehouseId: ['', Validators.required],
-      unitOfMeasureId: [''],
-      quantity: ['', [Validators.required, Validators.min(0.01)]],
-      transactionQuantity: ['', [Validators.required, Validators.min(0.01)]],
-      unitPrice: ['', [Validators.required, Validators.min(0)]],
-      costPrice: ['', [Validators.required, Validators.min(0)]],
-      description: ['', Validators.required],
-      notes: ['']
-    });
 
     this.adjustmentForm.get("documentType")?.valueChanges.subscribe(change => {
       console.log(change);
@@ -350,7 +341,8 @@ export class InventoryAdjustmentAddEditComponent {
       };
 
       const transactionType = transactionTypeMap[change as InventoryDocumentType];
-
+      console.log(change);
+      console.log(transactionTypeMap);
       if (transactionType) {
         this.adjustmentForm.patchValue({
           transactionType: transactionType
@@ -371,18 +363,50 @@ export class InventoryAdjustmentAddEditComponent {
     }
   }
 
+  changeEstablishment() {
+    Swal.fire({
+      title: '<small>Cambiar Establecimiento?</small>',
+      html: "<small>¿Estás seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+      reverseButtons: false,
+      allowOutsideClick: false,
+      allowEscapeKey: false
+    }).then(result => {
+      if (!result.isConfirmed) {
+        this.adjustmentForm.patchValue({
+          establishmentId: this.cloneEstablishmentId()
+        })
+        return
+      }
+      const establishmentId = this.adjustmentForm.value.establishmentId;
 
-  get detailsFormArray(): FormArray {
-    return this.adjustmentForm.get('details') as FormArray;
+      this.cloneEstablishmentId.set(establishmentId);
+      const dataEstab = this.estabs().find(item => item.idEstablecimiento === establishmentId);
+
+      this.emissionsPoint.set(dataEstab?.puntosEmision || []);
+      this.warehouses.set(dataEstab?.bodegas??[])
+      const emissionPointData = this.emissionsPoint().find(item=>item.defaultPtoEmi);
+      const warehouseData = this.warehouses().find(b=>b.defaultBodega);
+      const  warehouseId = warehouseData?.idBodega ?? 0;
+      this.adjustmentForm.patchValue({
+        establishmentId: dataEstab?.idEstablecimiento ?? 0,
+        emissionPointId: emissionPointData?.idPuntoEmision ?? 0,
+        warehouseId
+      })
+
+      this.currentAdjustment.updateAllWarehouseToDetail(warehouseId);
+      this.updateDataSourceItems()
+
+    })
   }
 
 
   openSearchAdvanced(): void {
-    const dialogRef = this.#dialogSvc.open(InventoryAdjustmentSearchAdvancedComponent, {
+    const dialogRef = this.inventoryAdjustmentSvc.dialogSvc.open(InventoryAdjustmentSearchAdvancedComponent, {
       size: 'xl',
-      data: {
-        // Add any necessary data here
-      }
     });
 
     dialogRef.subscribe(result => {
@@ -391,8 +415,6 @@ export class InventoryAdjustmentAddEditComponent {
       }
 
       const { selectedRows, opcion, isExcelImport } = result;
-      console.log(selectedRows);
-      console.log(this.currentAdjustment);
       this.addSelectedItemsToDataSource(selectedRows, opcion, isExcelImport);
     });
   }
@@ -400,30 +422,26 @@ export class InventoryAdjustmentAddEditComponent {
   private isValidResult(result: any): result is { selectedRows: any[], opcion?: number, isExcelImport?: boolean } {
     return result && Array.isArray(result.selectedRows) && result.selectedRows.length > 0;
   }
-  //
-  private addSelectedItemsToDataSource(selectedRows: any[], opcion?: number, isExcelImport?: boolean): void {
-    const existItem = (productId: number)=>!this.dataSourceItems().some(existingItem => existingItem.productId === productId)
-     selectedRows
-      .filter(item =>existItem(item.idArticulo))
-      .map(item => this.createItemForDataSource(item, opcion, isExcelImport));
 
-    const currentItems = this.currentAdjustment.toPlainObject().details.filter(item =>existItem(item.productId))
-    console.log(currentItems);
-    if (currentItems.length > 0) {
-      this.dataSourceItems.set([...this.dataSourceItems(), ...currentItems]);
+  private addSelectedItemsToDataSource(selectedRows: any[], opcion?: number, isExcelImport?: boolean): void {
+    const existItem = (productId: number)=>{
+      return !this.currentAdjustment.toPlainObject().details.some(existingItem => existingItem.productId === productId)
     }
+     selectedRows.filter(item =>existItem(item.idArticulo))
+       .forEach(item => {
+         this.createItemForDataSource(item, opcion, isExcelImport);
+       })
+    this.updateDataSourceItems();
   }
 
 
-  private createItemForDataSource(item: any, opcion?: number, isExcelImport?: boolean): any {
+  private createItemForDataSource(item: any, opcion?: number, isExcelImport?: boolean) {
     const clonedItem = structuredClone(item);
-    // Set quantity based on conditions
     if (!isExcelImport) {
    //   opcion 6 productos importados
       clonedItem.cantidad = (opcion === 6) ? clonedItem.cantidad : 1;
     }
-     this.inventorySvc.addDetail({
-      adjustment: this.currentAdjustment,
+     this.currentAdjustment.addDetail({
       productId: +item.idArticulo,
       code: item.codigo,
       warehouseId: +this.adjustmentForm.getRawValue().warehouseId,
@@ -444,8 +462,8 @@ export class InventoryAdjustmentAddEditComponent {
 
 
   itemSelected($event:any){
-    this.$GetProductPurchaseUseCase.execute($event.id).subscribe(result => {
-       console.log(result);
+    this.inventoryAdjustmentSvc.getProductById($event.id).subscribe(result => {
+
        const {data, measures} = result;
        if(!data.hasInventory){
          Swal.fire({
@@ -456,7 +474,6 @@ export class InventoryAdjustmentAddEditComponent {
        }
 
        const existingDetailIndex  = this.currentAdjustment.getDetailIndex(data.id);
-       console.log(existingDetailIndex);
       if (existingDetailIndex !== -1) {
         Swal.fire({
           text: '¿Desea sumar la cantidad del producto en el detalle?',
@@ -468,8 +485,7 @@ export class InventoryAdjustmentAddEditComponent {
           cancelButtonText: 'No'
         }).then(result => {
           if (result) {
-            const existingDetail = this.currentAdjustment.updateDetail(existingDetailIndex);
-            this.updateDataSourceItems(existingDetailIndex, existingDetail);
+             this.currentAdjustment.updateDetail(existingDetailIndex);
           }
         })
         return;
@@ -485,8 +501,7 @@ export class InventoryAdjustmentAddEditComponent {
       const unitConversion =  +measureData.conversion;
       const fractionalCostPrice = +measureData.precioCostoFraccionado;
 
-      this.inventorySvc.addDetail({
-        adjustment: this.currentAdjustment,
+       this.currentAdjustment.addDetail({
         productId: +data.id,
         code: data.code,
         warehouseId: +this.adjustmentForm.getRawValue().warehouseId,
@@ -500,26 +515,13 @@ export class InventoryAdjustmentAddEditComponent {
         fractionalCostPrice,
         description: data.description,
       });
-      console.log(this.currentAdjustment.toPlainObject())
-
-      this.dataSourceItems.set([...this.currentAdjustment.toPlainObject().details])
+      this.updateDataSourceItems()
 
     })
   }
-
-  updateDataSourceItems(detailIndex:number, existingDetail: InventoryAdjustmentDetail) {
-    this.dataSourceItems.update(ds=>{
-      const newDs = [...ds]; // Copia el array
-      newDs[detailIndex] = existingDetail.toPlainObject();
-      return newDs;
-
-    })
-  }
-
 
 
   cellEdited(cell: any) {
-    const row = cell.getRow();
     const column = cell.getColumn().getField();
     const oldValue = parseFloat(cell.getOldValue());
     const value = parseFloat(cell.getValue());
@@ -527,6 +529,10 @@ export class InventoryAdjustmentAddEditComponent {
 
     const existingDetailIndex  = this.currentAdjustment.getDetailIndex(data.productId);
 
+    if (value === oldValue) {
+      cell.setValue(oldValue);
+      return;
+    }
     if (isNaN(value) || cell.getValue() === '') {
       cell.setValue(oldValue);
       return;
@@ -537,19 +543,15 @@ export class InventoryAdjustmentAddEditComponent {
     }
 
     if(column==="quantity"){
-    const existingDetail = this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
-    this.updateDataSourceItems(existingDetailIndex, existingDetail);
+      this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
     }
 
     if(column==="unitOfMeasureId"){
-      const existingDetail = this.currentAdjustment.updateMeasure(existingDetailIndex, value);
-      console.log(existingDetail)
-      this.updateDataSourceItems(existingDetailIndex, existingDetail);
+      this.currentAdjustment.updateMeasure(existingDetailIndex, value);
     }
 
     if(column==="unitPrice"){
-      const existingDetail = this.currentAdjustment.updatePricing(existingDetailIndex, value);
-      this.updateDataSourceItems(existingDetailIndex, existingDetail);
+      this.currentAdjustment.updatePricing(existingDetailIndex, value);
     }
 
     if (column === "warehouseId" && value !== oldValue) {
@@ -565,17 +567,94 @@ export class InventoryAdjustmentAddEditComponent {
         if (!result.isConfirmed) {
          warehouseId = oldValue;
         }
-        const existingDetail = this.currentAdjustment.updateWarehouseId(existingDetailIndex, warehouseId);
-        this.updateDataSourceItems(existingDetailIndex, existingDetail);
+        this.currentAdjustment.updateWarehouseId(existingDetailIndex, warehouseId);
+        this.updateDataSourceItems()
       })
-      return
     }
+    this.updateDataSourceItems()
 
   }
 
+  canSave(): boolean {
+    return this.adjustmentForm.valid && (this.currentAdjustment?.hasDetails() || false);
+  }
 
   onSubmit(){
 
+    try {
+      if (!(this.adjustmentForm.valid && this.currentAdjustment && this.currentAdjustment.hasDetails())) {
+        Swal.fire({
+          icon: 'warning',
+          text: 'Ingrese todo los campos requeridos'
+        })
+        return;
+      }
+        const formValue = this.adjustmentForm.getRawValue();
+
+        const dataTipoDoc = this.tiposDoc().find(t => t.codigo === formValue.documentType)
+        const dataTipoTransaccion = this.tiposTransaccion().find(t => t.codigo ===  formValue.transactionType);
+        const dataEstab = this.estabs().find(t => t.idEstablecimiento === formValue.establishmentId);
+
+        const documentTypeId = dataTipoDoc?.idTipoDocumento;
+        const transactionTypeId = dataTipoTransaccion?.idTipoTransaccion;
+        const codEstab = dataEstab?.codEstab;
+
+        if (!documentTypeId) {
+          throw new ValidationException("documentTypeId", documentTypeId, `Invalid documentTypeId: ${documentTypeId}.` )
+        }
+
+        if (!transactionTypeId) {
+          throw new ValidationException("transactionTypeId", transactionTypeId, `Invalid transactionTypeId: ${transactionTypeId}.` )
+        }
+
+        if (!codEstab) {
+          throw new ValidationException("codEstab", codEstab, `Invalid codEstab: ${codEstab}.` )
+        }
+
+        const details = [...this.dataSourceItems(), ...this.dataSourceItemsDeleted()]
+
+        const hasInvalidQuantities = details.some(detail =>
+          detail.quantity <= 0 || detail.transactionQuantity <= 0
+        );
+        if(hasInvalidQuantities){
+          Swal.fire({
+            icon: 'error',
+            text: 'Cantidad o Cantidad Transacción no válido'
+          })
+          return
+        }
+
+        const hasInvalidPrices = details.some(detail =>
+          detail.unitPrice < 0 || detail.costPrice < 0
+        );
+
+        if (hasInvalidPrices) {
+          Swal.fire({
+            icon: 'error',
+            text: 'Precio Unitario no válido'
+          })
+          return
+        }
+
+        const saveCommand = {
+          emissionPointId: formValue.emissionPointId,
+          documentTypeId,
+          transactionTypeId,
+          codEstab,
+          emissionDate: setDateWithCurrentTime(formValue.emissionDate),
+          observations: formValue.observations,
+          total: this.currentAdjustment.total.value,
+          details
+        }
+        console.log(saveCommand)
+
+        // if(!this.isEditMode){
+        //   this.inventoryAdjustmentSvc.createUseCase.execute(saveCommand)
+        // }
+
+    }catch (error) {
+      console.log(error);
+    }
 
   }
   close(){

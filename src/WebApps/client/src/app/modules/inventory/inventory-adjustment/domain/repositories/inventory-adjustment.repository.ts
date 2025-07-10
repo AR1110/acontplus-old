@@ -1,13 +1,18 @@
 import {Observable} from "rxjs";
 import {
-  InventoryAdjustmentDetailResponse,
-  InventoryAdjustmentFormDataResponse, InventoryAdjustmentListProductsResponse,
-  InventoryAdjustmentListResponse
-} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
+  CreateInventoryAdjustmentCommand
+} from "@inventory/inventory-adjustment/domain/use-cases/create-inventory-adjustment.use-case";
+import {ApiResponse} from "@core/models/api-response";
+import {
+  InventoryAdjustmentDetailDto,
+  InventoryAdjustmentFormDataDto,
+  InventoryAdjustmentListDto, InventoryAdjustmentListProductsDto
+} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 export abstract class InventoryAdjustmentRepository {
-  abstract list(params:any):Observable<InventoryAdjustmentListResponse>;
-  abstract formData():Observable<InventoryAdjustmentFormDataResponse>;
-  abstract detail(id:number):Observable<InventoryAdjustmentDetailResponse>;
-  abstract listProducts(params:any):Observable<InventoryAdjustmentListProductsResponse>;
+  abstract list(params:any):Observable<InventoryAdjustmentListDto>;
+  abstract formData():Observable<InventoryAdjustmentFormDataDto>;
+  abstract detail(id:number):Observable<InventoryAdjustmentDetailDto>;
+  abstract listProducts(params:any):Observable<InventoryAdjustmentListProductsDto>;
+  abstract create(params:CreateInventoryAdjustmentCommand):Observable<ApiResponse>
 }
