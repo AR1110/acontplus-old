@@ -27,9 +27,6 @@ import {
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment-detail/inventory-adjustment-detail.component";
 import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/domain/store/inventory-adjustment.store";
 
-import {
-  ProductAutocompleteAdvancedComponent
-} from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
 
 import {
   InventoryAdjustmentService
@@ -54,7 +51,6 @@ import {
     MatIconButton,
     MatIcon,
     MatMenuModule,
-    ProductAutocompleteAdvancedComponent,
   ],
   templateUrl: './inventory-adjustment.component.html',
   styles: `
@@ -67,7 +63,10 @@ export class InventoryAdjustmentComponent   {
 
   private _tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService);
-  private $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore)
+  private $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);
+
+  isMoreFilter = signal(false);
+
   dataSource = signal<InventoryAdjustmentListDto[]>([]);
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
@@ -194,10 +193,6 @@ export class InventoryAdjustmentComponent   {
     });
     this.refresh();
   }
-
-
-
-
 
 
 

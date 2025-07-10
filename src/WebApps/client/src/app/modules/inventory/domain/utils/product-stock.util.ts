@@ -4,14 +4,14 @@ import { isDateValid } from "@core/utils/date.util"
 import { ConsolidacionBodega } from "../models/consolidacion-bodega.model"
 import { MedidaProducto } from "../models/measure.model"
 
-type Row = {
+interface Row  {
   productId: number
   bodegaId: number
   medidaId: number
   medidas: MedidaProducto[]
   quantity: number
 }
-type MergeProductStockProps = {
+interface MergeProductStockProps  {
   rows: Row[]
   row: Row
 }
@@ -19,20 +19,20 @@ type MergeProductStockProps = {
 //Merge Item Detalle Documento Venta
 export const mergeProductStock = function (obj: MergeProductStockProps) {
   // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-  let foundItemByArticuloAndBodega = obj.rows.filter(item => (
+  const foundItemByArticuloAndBodega = obj.rows.filter(item => (
     item.productId === obj.row.productId &&
     item.bodegaId === obj.row.bodegaId
   ))
 
-  let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
-    let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO')
-    let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL')
+  const { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+    const dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO')
+    const dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL')
     if (dataMedidaFraccionado) {
-      let conversionSum = item.quantity * dataMedidaFraccionado.conversion;
+      const conversionSum = item.quantity * dataMedidaFraccionado.conversion;
       total.totalCantidadFraccionada += conversionSum;
     }
     if (dataMedidaPrincipal) {
-      let conversionSum = item.quantity * dataMedidaPrincipal.conversion;
+      const conversionSum = item.quantity * dataMedidaPrincipal.conversion;
       total.totalCantidadPrincipal += conversionSum;
     }
     return total;
@@ -41,7 +41,7 @@ export const mergeProductStock = function (obj: MergeProductStockProps) {
     totalCantidadPrincipal: 0
   });
 
-  let cantidad = foundItemByArticuloAndBodega.reduce((prevQuantity, itemCurrent) => {
+  const cantidad = foundItemByArticuloAndBodega.reduce((prevQuantity, itemCurrent) => {
     prevQuantity += itemCurrent.quantity;
     return prevQuantity;
   }, 0);
@@ -54,7 +54,7 @@ export const mergeProductStock = function (obj: MergeProductStockProps) {
 }
 
 
-type GetCantidadStockProps = {
+interface GetCantidadStockProps {
   bodegaId: number;
   fechaEmision: Date;
   cantidadStock: number;
@@ -75,7 +75,5 @@ export const getCantidadStock = function (obj: GetCantidadStockProps): number {
       return 0;
     }
   }
-
-  const resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-  return resultCantStock;
+  return cantidadStock;
 }

@@ -5,8 +5,9 @@ import {ProductRepository} from "@inventory/product/domain/repositories/product.
 import {
   GetProductPurchaseResult,
   ProductDataForm,
-  ProductGetIdResult
+  ProductGetIdResult, ValidateProductStockParams
 } from "@inventory/product/domain/entities/product.entity";
+import {ApiResponse} from "@core/models/api-response";
 
 
 //Listado general
@@ -58,6 +59,20 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
 
   execute(id: number)  {
     return this.repo.getForPurchase(id)
+  }
+}
+
+
+//Validación Stock
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ValidateProductStock implements BaseUseCase<ApiResponse, ValidateProductStockParams> {
+  private repo = inject(ProductRepository);
+
+  execute(params:ValidateProductStockParams)  {
+    return this.repo.checkNotificationStock(params)
   }
 }
 

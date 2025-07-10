@@ -15,7 +15,9 @@ export class ExcelImportRepositoryImpl implements ExcelImportRepository {
         return this._http.post<ApiResponse>(`${this._url}/${params.code}`, params.data)
     }
       validateImportedData(params:any): Observable<ApiResponse> {
-        return this._http.post<ApiResponse>(`${this._url}/GetValidation/${params.code}`, params.data)
+        return this._http.post<ApiResponse>(`${this._url}/GetValidation/${params.code}`, {
+          jsonParams: JSON.stringify(params.data),
+        })
     }
      getFormData(): Observable<ImportacionResponse> {
        return this._http

@@ -5,12 +5,11 @@ import {
 import {ApiResponse} from "@core/models/api-response";
 import {
   InventoryAdjustmentDetailDto,
-  InventoryAdjustmentFormDataDto,
-  InventoryAdjustmentListDto, InventoryAdjustmentListProductsDto
+  InventoryAdjustmentFormDataDto,  InventoryAdjustmentListProductsDto, InventoryAdjustmentListResultDto
 } from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 export abstract class InventoryAdjustmentRepository {
-  abstract list(params:any):Observable<InventoryAdjustmentListDto>;
+  abstract list(params:any):Observable<InventoryAdjustmentListResultDto>;
   abstract formData():Observable<InventoryAdjustmentFormDataDto>;
   abstract detail(id:number):Observable<InventoryAdjustmentDetailDto>;
   abstract listProducts(params:any):Observable<InventoryAdjustmentListProductsDto>;

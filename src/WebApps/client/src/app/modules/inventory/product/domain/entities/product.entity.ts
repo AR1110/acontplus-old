@@ -1,7 +1,6 @@
 import { TAX_RATE_CODE } from "@core/constants/global.constants";
 
 import { TarifaProductSearch } from "../../../domain/models/tarifa.model";
-import {ProductRepository} from "@inventory/product/domain/repositories/product.repository";
 import {GroupedEstab} from "@core/models/estab.model";
 import {GroupedSubFamilia} from "@inventory/domain/models/sub-category.model";
 import {MedidaProducto} from "@inventory/domain/models/measure.model";
@@ -111,4 +110,11 @@ export class GetProductPurchaseResult {
   data = {} as any;
   measures: MedidaProducto[]=[];
   tags = [] as any[]
+}
+
+export interface ValidateProductStockParams {
+  idArticulo: number
+  cantidad: number
+  idBodega: number
+  idMedida: number
 }

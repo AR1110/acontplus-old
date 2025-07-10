@@ -15,7 +15,7 @@ export interface InventoryAdjustmentListDto {
   "totalRecords": number
 }
 
-export class InventoryAdjustmentListDto {
+export class InventoryAdjustmentListResultDto {
   data: InventoryAdjustmentListDto[]=[];
   totalRecords = 0;
 }
@@ -37,3 +37,4 @@ export class InventoryAdjustmentDetailDto{
 export class InventoryAdjustmentListProductsDto {
   data: any[]=[]
 }
+

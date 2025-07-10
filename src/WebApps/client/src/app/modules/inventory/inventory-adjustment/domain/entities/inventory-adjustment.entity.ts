@@ -65,6 +65,7 @@ export class InventoryAdjustment {
     fractionalCostPrice: number;
     description: string;
     notes?: string;
+    status: boolean
   }) {
     const detail = InventoryAdjustmentDetail.create({
       ...params,

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import {  FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -18,20 +18,18 @@ import {
 import {
   ProductAutocompleteAdvancedComponent
 } from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
-import {
-  ProductSearchOverlayComponent
-} from "@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component";
 import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
 import {GroupedEstabBodega, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {InventoryAdjustment} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity";
 import {InventoryDocumentType, InventoryTransactionType} from "@inventory/domain/enums/inventory.enum";
 
-import {
-  InventoryAdjustmentService
-} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
+import {InventoryAdjustmentService} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {ValidationException} from "@core/domain";
 import {setDateWithCurrentTime} from "@core/utils/date.util";
+import {ValidateProductStock} from "@inventory/product/application/use-cases/product/get-product.use-case";
+import DecimalUtil from "@core/utils/decimal.util";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
@@ -44,14 +42,15 @@ import {setDateWithCurrentTime} from "@core/utils/date.util";
     ReactiveFormsModule,
     MatDatepickerModule,
     ProductAutocompleteAdvancedComponent,
-    ProductSearchOverlayComponent,
     TabulatorComponent,
+    MatTooltip,
   ],
   templateUrl: './inventory-adjustment-add-edit.component.html',
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InventoryAdjustmentAddEditComponent {
+  private $validateProductStock = inject(ValidateProductStock)
   private inventoryAdjustmentSvc = inject(InventoryAdjustmentService)
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentAddEditComponent>);
   private params = inject(MAT_DIALOG_DATA);
@@ -79,6 +78,7 @@ export class InventoryAdjustmentAddEditComponent {
   adjustmentId?: number;
 
   cloneEstablishmentId = signal(0);
+  cloneWarehouseId = signal(0);
 
 
   currentAdjustment =  InventoryAdjustment.create({
@@ -278,9 +278,9 @@ export class InventoryAdjustmentAddEditComponent {
       html: `<small>¿Estas seguro/a de eliminar este Artículo <b>${row.description}</b></small>?`,
       icon: 'warning',
       showConfirmButton: true,
-      confirmButtonText: `Sí, eliminar!`,
+      confirmButtonText: `Sí`,
       showCancelButton: true,
-      cancelButtonText: 'No, cancelar!',
+      cancelButtonText: 'No',
       allowOutsideClick: false
     })
 
@@ -308,12 +308,14 @@ export class InventoryAdjustmentAddEditComponent {
     const emissionPointData = this.emissionsPoint().find(item=>item.defaultPtoEmi);
     const warehouseData = this.warehouses().find(b=>b.defaultBodega);
     const  establishmentId = dataEstab?.idEstablecimiento ?? 0;
+    const warehouseId = warehouseData?.idBodega ?? 0
     this.adjustmentForm.patchValue({
       establishmentId: dataEstab?.idEstablecimiento ?? 0,
       emissionPointId: emissionPointData?.idPuntoEmision ?? 0,
-      warehouseId: warehouseData?.idBodega ?? 0
+      warehouseId
     })
     this.cloneEstablishmentId.set(establishmentId);
+    this.cloneWarehouseId.set(warehouseId)
   }
 
   private initializeForms(){
@@ -348,7 +350,21 @@ export class InventoryAdjustmentAddEditComponent {
           transactionType: transactionType
         });
       }
+      if(this.esBajaInventario()){
+        this.setZeroInDetail()
+      }
     });
+  }
+
+  private esBajaInventario(){
+    return this.adjustmentForm.getRawValue().documentType ===InventoryDocumentType.INVENTORY_WRITEOFF
+  }
+
+  setZeroInDetail(){
+    this.currentAdjustment.toPlainObject().details.forEach((detail, index) => {
+      this.currentAdjustment.updateQuantityDetail(index, 0)
+    })
+    this.updateDataSourceItems()
   }
 
   private checkEditMode(): void {
@@ -403,10 +419,53 @@ export class InventoryAdjustmentAddEditComponent {
     })
   }
 
+  askToChangeBodega = async () => {
+    const {
+      isConfirmed
+    } = await Swal.fire({
+      html: `<small>Esta seguro de cambiar la bodega en todo el Documento?</small>`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: `Sí, cambiar!`,
+      cancelButtonText: 'No, cancelar!',
+      allowOutsideClick: false,
+      reverseButtons: false,
+    })
+
+    if (isConfirmed) {
+      this.cloneWarehouseId.set(this.adjustmentForm.getRawValue().warehouseId)
+      this.setZeroInDetail()
+    } else {
+      this.adjustmentForm.patchValue({
+        warehouseId: this.cloneWarehouseId()
+      })
+    }
+  }
+
+  askToChangeQuantityZero  () {
+    Swal.fire({
+      text: "¿Estás seguro de cambiar la cantidad de los artículos en 0",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si!',
+      cancelButtonText: 'No'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.setZeroInDetail()
+      }
+    })
+  }
+
 
   openSearchAdvanced(): void {
     const dialogRef = this.inventoryAdjustmentSvc.dialogSvc.open(InventoryAdjustmentSearchAdvancedComponent, {
       size: 'xl',
+      data: {
+        warehouseId: this.adjustmentForm.getRawValue().warehouseId
+      }
     });
 
     dialogRef.subscribe(result => {
@@ -454,7 +513,8 @@ export class InventoryAdjustmentAddEditComponent {
       costPrice: +item.precioCosto,
       fractionalCostPrice: +item.precioCostoFraccionado,
       description: item.descripcion,
-      notes: item.notes
+      notes: item.notes,
+      status: true
     })
   }
 
@@ -514,6 +574,7 @@ export class InventoryAdjustmentAddEditComponent {
         costPrice:  roundNumber(costPrice, this.decimal().nroPrecio),
         fractionalCostPrice,
         description: data.description,
+         status: true
       });
       this.updateDataSourceItems()
 
@@ -543,7 +604,43 @@ export class InventoryAdjustmentAddEditComponent {
     }
 
     if(column==="quantity"){
-      this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
+      if(this.esBajaInventario() && value>oldValue){
+        this.$validateProductStock.execute({
+          cantidad: DecimalUtil.multiplyAsNumber(data.quantity, data.unitConversion),
+          idArticulo: data.productId,
+          idBodega: data.warehouseId,
+          idMedida: data.unitOfMeasureId
+        }).subscribe(async response=>{
+          const { code, message, titleSms } = response;
+
+          if (code === '1') {
+            this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
+            this.updateDataSourceItems()
+            return;
+          }
+
+          const { isConfirmed } = await Swal.fire({
+            title: `<small>${titleSms}</small>`,
+            icon: 'warning',
+            html: `<small>${message}</small>`,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          });
+
+          if (isConfirmed) {
+            if (code === '0') {
+              this.currentAdjustment.updateQuantityDetail(existingDetailIndex, oldValue);
+            }
+            if (code === '2') {
+              this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
+            }
+            this.updateDataSourceItems()
+
+          }
+        })
+      }else{
+        this.currentAdjustment.updateQuantityDetail(existingDetailIndex, value);
+      }
     }
 
     if(column==="unitOfMeasureId"){

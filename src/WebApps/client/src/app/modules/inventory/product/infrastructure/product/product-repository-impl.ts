@@ -163,9 +163,9 @@ export class ProductRepositoryImpl implements ProductRepository{
     const params = {
       json: JSON.stringify({ ...obj, tipo: 7 })
     }
-    return this._http.get(`${this._url}`, {
+    return this._http.get<ApiResponse>(`${this._url}`, {
       params
-    }).pipe(map((response: any) => ProductMapper.fromApiCheckStockNotificacion(response)))
+    }).pipe(map((response) => ProductMapper.fromApiCheckStockNotificacion(response)))
 
   }
 

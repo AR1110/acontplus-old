@@ -65,4 +65,5 @@ export class InventoryAdjustmentRepositoryImpl implements InventoryAdjustmentRep
     return this.#http.post<ApiResponse>(this.#url, data);
   }
 
+
 }

@@ -2,15 +2,6 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <app-product-autocomplete-advanced
-
-      [imageSize]="'medium'"
-      [enableImageZoom]="true"
-      [enableQuickView]="true"
-      [showStockBadge]="true"
-      [showImageNavigation]="true"
-      [autoRotateImages]="false"
-    />
     <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
@@ -46,22 +37,47 @@
         />
       </div>
       <div class="col">
-        <div class="hstack gap-2">
+        <div class="hstack gap-1">
           <app-theme-button
+            variant="light"
             icon="add"
-            matStyle="basic"
-            text="Agregar"
+            matStyle="icon"
             (handleClick)="addEdit()"
           />
           <app-theme-button
             variant="light"
             icon="refresh"
             matStyle="icon"
-            text="Agregar"
+            (handleClick)="refresh()"
           />
+          <app-theme-button
+            variant="light"
+            icon="filter_list"
+            matStyle="icon"
+            (handleClick)="isMoreFilter.set(!isMoreFilter())"
+          />
+
         </div>
       </div>
     </div>
+    @if (isMoreFilter()) {
+      <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
+        <div class="col"></div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Número Documento</mat-label>
+            <input matInput [(ngModel)]="dataFilter.serie">
+          </mat-form-field>
+        </div>
+        <div class="col" >
+          <mat-form-field class="w-100">
+            <mat-label>Observación</mat-label>
+            <input matInput [(ngModel)]="dataFilter.text">
+          </mat-form-field>
+        </div>
+        <div class="col"></div>
+      </div>
+    }
   </div>
 
   <app-mat-dynamic-table

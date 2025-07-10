@@ -3,7 +3,7 @@ import {Observable} from "rxjs";
 import {
   GetProductPurchaseResult,
   ProductDataForm,
-  ProductGetIdResult
+  ProductGetIdResult, ValidateProductStockParams
 } from "@inventory/product/domain/entities/product.entity";
 import {ApiResponse} from "@core/models/api-response";
 
@@ -16,12 +16,7 @@ export abstract class ProductRepository {
   abstract search<T extends { textSearch: string, pageIndex?: number, pageSize?: number }>(obj:T): Observable<any>
   abstract getForSale(id: number): Observable<any>
   abstract getForPurchase(id: number): Observable<GetProductPurchaseResult>
-  abstract checkNotificationStock<T extends {
-    idArticulo: number
-    cantidad: number
-    idBodega: number
-    idMedida: number
-  }>(obj:T): Observable<any>;
+  abstract checkNotificationStock(params:ValidateProductStockParams): Observable<any>;
   abstract getDataReport ( ): Observable<any>;
   abstract post<T>(obj:T, file?:Blob): Observable<ApiResponse>;
   abstract put<T>(id:number, obj:T): Observable<ApiResponse>;

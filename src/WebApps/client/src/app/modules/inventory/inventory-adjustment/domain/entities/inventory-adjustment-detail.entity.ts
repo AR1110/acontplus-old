@@ -20,7 +20,7 @@ export class InventoryAdjustmentDetail {
     private _total: Money,
     private readonly _description: string,
     private _notes?: string,
-    private status = true
+    private _status = true
   ) {}
 
   static create(params: {
@@ -37,6 +37,7 @@ export class InventoryAdjustmentDetail {
     fractionalCostPrice: number;
     description: string;
     notes?: string;
+    status: boolean;
   }): InventoryAdjustmentDetail {
 
     if (!params.description?.trim()) {
@@ -66,7 +67,8 @@ export class InventoryAdjustmentDetail {
       fractionalCostPrice,
       Money.zero(),                        // ← Will be calculated
       params.description.trim(),
-      params.notes?.trim()
+      params.notes?.trim(),
+      params.status
     );
 
     return detail;
@@ -89,6 +91,7 @@ export class InventoryAdjustmentDetail {
   get total(): Money { return this._total; }
   get description(): string { return this._description; }
   get notes(): string | undefined { return this._notes; }
+  get status(): boolean { return this._status; }
 
   // ✨ Type-safe operations with Value Objects
   updateQuantity(newQuantity: number): void {
@@ -158,7 +161,8 @@ export class InventoryAdjustmentDetail {
       costPrice: this.costPrice.value,
       total: this.total.value,
       description: this.description,
-      notes: this.notes
+      notes: this.notes,
+      status: this._status
     };
   }
 }

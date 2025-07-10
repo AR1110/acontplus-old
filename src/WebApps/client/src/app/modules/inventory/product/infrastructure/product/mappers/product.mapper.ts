@@ -137,8 +137,8 @@ export class ProductMapper {
   }
 
 
-  static fromApiCheckStockNotificacion(responseApi: any) {
-    const { stockCheckResponse } = JSON.parse(responseApi.payload);
+  static fromApiCheckStockNotificacion(responseApi: ApiResponse) {
+    const { stockCheckResponse } = JSON.parse(responseApi.payload as string);
     return stockCheckResponse[0];
   }
 }
