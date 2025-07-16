@@ -490,7 +490,7 @@
                     if (isConfirmed) {
                         if (code === "0") {
                             // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
-                            rowEntity[colDef] = oldValue;
+                            rowEntity[colDef.field] = oldValue;
                              setTotalColumn(rowEntity);
                         setTotalDetalle();
                             $("#custom-template-md-autocomplete-articulo").focus();
