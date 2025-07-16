@@ -45,20 +45,20 @@ BEGIN
 	       ,YEAR(@fromDate)                                                                   as anio
 	       ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate))) as mes
 	       ,'IVA'                                                                             as codigoOperativo
-	       ,SUM(CAST(fe.subtotalsinImpuestos AS NUMERIC(18,2)))                               as totalVentas
+	       ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)))                     as totalVentas
            ,ROW_NUMBER() OVER(PARTITION BY es.codEstab ORDER BY es.codEstab)                  as estabs
 	INTO #tempTotalVentas
-    FROM dbo.Factura                    fe WITH (NOLOCK) 
-    INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
+    FROM  dbo.DocumentoElectronico      de WITH (NOLOCK) 
+     LEFT JOIN dbo.Factura              fe WITH (NOLOCK) ON fe.idDocumentoElectronico = de.idDocumentoElectronico
 	INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
 	INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
     INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio       = de.idEstadoServicio
 	WHERE es.idEntidad = @idEntidad
 	  AND ss.codigo = 4 
-	  AND fe.notaCredito = 0
+	  AND ISNULL(fe.notaCredito,0) = 0
 	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-	  AND fe.estado = 1
+	  AND ISNULL(fe.estado,1) = 1
 	GROUP BY en.ruc,en.razonSocial,es.codEstab
 
     SELECT TipoIdInformante
