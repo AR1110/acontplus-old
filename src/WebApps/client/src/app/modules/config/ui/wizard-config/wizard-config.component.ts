@@ -145,7 +145,6 @@ export class WizardConfigComponent implements OnInit {
   contribuyentes = signal<Contribuyente[]>([]);
   ambientes = signal<AmbienteSri[]>(ambienteSriOptions);
   isLinear = false;
-  isDisabledAgenteRetencion = false;
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
   establecimientos = signal<GroupedEstab[]>([]);
@@ -448,10 +447,12 @@ export class WizardConfigComponent implements OnInit {
   }
 
   onChangeTipoContribuyente(): void {
-    this.isDisabledAgenteRetencion =
-      this.estabForm.get('contribuyente')?.value === '03';
-    if (this.isDisabledAgenteRetencion) {
-      this.estabForm.get('agenteRetencion')?.setValue(null);
+    const control = this.estabForm.get('agenteRetencion');
+    if (this.estabForm.get('contribuyente')?.value === '03') {
+      control?.disable();
+      control?.setValue(null);
+    } else {
+      control?.enable();
     }
   }
 

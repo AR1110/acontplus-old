@@ -174,7 +174,7 @@
                 >
                   <mat-form-field class="w-100">
                     <mat-label>Agente Retención: </mat-label>
-                    <mat-select [disabled]="isDisabledAgenteRetencion" formControlName="agenteRetencion" id="agenteRetencion">
+                    <mat-select formControlName="agenteRetencion" id="agenteRetencion">
                       <mat-option [value]="null">Ninguna</mat-option>
                       @for (item of agentesRetencion(); track $index) {
                         <mat-option [value]="item.resolucion">
