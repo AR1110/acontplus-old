@@ -163,13 +163,19 @@ export class WizardConfigComponent implements OnInit {
   estabRegistered = false;
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
 
-  private _tokenUseCase = inject(TokenUseCase);
-
+  private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly _toasterService = inject(ToastrNotificationService);
-  private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
+  private readonly $updateUserCustomerUseCase = inject(
+    UpdateUserCustomerUseCase,
+  );
   private readonly _estabService = inject(EstablishmentService);
-  #fb = inject(FormBuilder);
-  estabForm = this.#fb.group({
+  private readonly fb = inject(FormBuilder);
+  private readonly firmaElectronicaService = inject(FirmaElectronicaService);
+  private readonly createDocConfigUseCase = inject(CreateDocConfigUseCase);
+  private readonly $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
+  private readonly companyDemoStepService = inject(CompanyDemoStepService);
+
+  estabForm = this.fb.group({
     canton: '',
     actividad: ['', Validators.required],
     agenteRetencion: '',
@@ -190,15 +196,10 @@ export class WizardConfigComponent implements OnInit {
     dirEstablecimiento: ['', [Validators.required, Validators.maxLength(300)]],
     telefono: [''],
     correo: [''],
-    ptosEmi: this.#fb.array([]),
+    ptosEmi: this.fb.array([]),
     hasInventory: [false],
-    bodegas: this.#fb.array([]),
+    bodegas: this.fb.array([]),
   });
-  #firmaElectronicaService = inject(FirmaElectronicaService);
-  #createDocConfig = inject(CreateDocConfigUseCase);
-  private $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
-
-  #companyDemoStepService = inject(CompanyDemoStepService);
 
   get bodegas(): FormArray {
     return this.estabForm.get('bodegas') as FormArray;
@@ -209,7 +210,7 @@ export class WizardConfigComponent implements OnInit {
   }
 
   newBodega(): FormGroup {
-    return this.#fb.group({
+    return this.fb.group({
       descripcion: [
         '',
         [
@@ -239,7 +240,7 @@ export class WizardConfigComponent implements OnInit {
   }
 
   newPtoEmi(): FormGroup {
-    return this.#fb.group({
+    return this.fb.group({
       ptoEmi: [
         '',
         [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
@@ -269,7 +270,7 @@ export class WizardConfigComponent implements OnInit {
   // }
 
   fetchCompanyDemoSteps(): void {
-    this.#companyDemoStepService.get({}).subscribe((response) => {
+    this.companyDemoStepService.get({}).subscribe((response) => {
       if (response.code === '1') {
         const tempArray = JSON.parse(response.payload as string);
         this.demoSteps = tempArray['companyDemoSteps'] as DemoStep[];
@@ -547,7 +548,7 @@ export class WizardConfigComponent implements OnInit {
       docs: JSON.stringify(docs),
       demoStepId: this.demoSteps.find((step) => step.code === 'VI')?.id,
     };
-    this.#createDocConfig.execute(dataToSave).subscribe((response) => {
+    this.createDocConfigUseCase.execute(dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code === '0' && this.stepper) {
           this.stepper.previous();
@@ -582,7 +583,7 @@ export class WizardConfigComponent implements OnInit {
         demoStepId: this.demoSteps.find((step) => step.code === 'VII')?.id,
       };
 
-      this.#firmaElectronicaService
+      this.firmaElectronicaService
         .post(formData, this.selectedFile)
         .subscribe((response) => {
           if (isApiResponse(response)) {
@@ -611,7 +612,7 @@ export class WizardConfigComponent implements OnInit {
     }).then((response) => {
       if (response.isConfirmed) {
         const id = this.demoSteps.find((step) => step.code === 'VII')?.id;
-        this.#companyDemoStepService.post(Number(id)).subscribe((response) => {
+        this.companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
             this.stepper.next();
