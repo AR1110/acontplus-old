@@ -24,7 +24,6 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 
 @Component({
   selector: 'app-supplier-search',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatAutocompleteModule,

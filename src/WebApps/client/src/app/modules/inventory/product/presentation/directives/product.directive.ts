@@ -6,7 +6,6 @@ import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appProductAddEdit]',
-  standalone: true
 })
 export class ProductAddEditDirective {
     resultModalHandler = output<any>();

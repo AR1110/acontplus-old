@@ -4,7 +4,6 @@ import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appProductSearchPopup]',
-  standalone: true,
 })
 export class ProductSearchPopupDirective {
 

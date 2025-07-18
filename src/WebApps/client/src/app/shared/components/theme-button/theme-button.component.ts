@@ -27,7 +27,6 @@ export type MaterialButtonStyle =
 
 @Component({
   selector: 'app-theme-button',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './theme-button.component.html',
   styleUrl: './theme-button.component.scss',

@@ -10,7 +10,6 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-product-hist-purchase-modal',
-  standalone: true,
   imports: [
     MatDynamicTableComponent,
     CustomTableContainerComponent,

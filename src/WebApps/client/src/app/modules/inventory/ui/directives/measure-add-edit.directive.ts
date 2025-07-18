@@ -11,7 +11,6 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
   selector: '[appMeasureAddEdit]',
-  standalone: true,
 })
 export class MeasureAddEditDirective {
   @Output() onResultModal = new EventEmitter();

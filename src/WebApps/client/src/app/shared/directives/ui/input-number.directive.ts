@@ -3,7 +3,6 @@ import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[appInputNumber]',
-  standalone: true,
 })
 export class InputNumberDirective {
   constructor(private ngModel: NgModel) { }

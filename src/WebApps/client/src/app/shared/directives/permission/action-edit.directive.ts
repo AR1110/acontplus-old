@@ -3,7 +3,6 @@ import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionEdit]',
-  standalone: true
 })
 export class ActionEditDirective {
 

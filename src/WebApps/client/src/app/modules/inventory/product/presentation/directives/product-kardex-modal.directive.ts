@@ -3,7 +3,6 @@ import { OpenModalProductService } from '@inventory/product/application/services
 
 @Directive({
   selector: '[appProductKardexModal]',
-  standalone: true
 })
 export class ProductKardexModalDirective {
   private openModalProductSvc = inject(OpenModalProductService)

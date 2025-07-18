@@ -21,7 +21,6 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
   selector: 'app-tabulator-semantic-ui',
-  standalone: true,
   templateUrl: './tabulator-semantic-ui.component.html',
   styleUrls: ['./tabulator-semantic-ui.component.scss'],
   encapsulation: ViewEncapsulation.None,

@@ -4,7 +4,6 @@ import { NotaEntregaDetalleDialogComponent } from '@sale/ui/components/nota-entr
 
 @Directive({
   selector: '[appNotaEntregaDetalleDialog]',
-  standalone: true
 })
 export class NotaEntregaDetalleDialogDirective {
   private dialogSvc = inject(DialogService)

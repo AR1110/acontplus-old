@@ -4,7 +4,6 @@ import {MatCard, MatCardContent} from "@angular/material/card";
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
   imports: [BreadcrumbComponent, MatCard, MatCardContent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

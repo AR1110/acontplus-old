@@ -6,7 +6,6 @@ import {
 
 @Directive({
   selector: '[appAddEditProduct]',
-  standalone: true
 })
 export class AddEditProductDirective {
   onResult = output<any>();

@@ -4,7 +4,6 @@ import {CODE_ROLE} from "@core/constants/global.constants";
 
 @Directive({
   selector: '[appIsAdmin]',
-  standalone: true
 })
 export class IsAdminDirective {
 

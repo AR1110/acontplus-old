@@ -7,8 +7,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-upload-image',
   imports: [CommonModule, MatIcon],
   templateUrl: './upload-image.component.html',
-  standalone: true,
-  styleUrl: `./upload-image.component.scss`,
+  styleUrls: ['./upload-image.component.scss'],
 })
 export class UploadImageComponent {
   onSelected = output<File | null>();
