@@ -15,25 +15,25 @@
                 <div
                   class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 col-sm-4 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="nroIdentificacion">Nro. Identificación:</label>
                     <input
-                      class="form-control"
+                      matInput
                       formControlName="nroIdentificacion"
                       id="nroIdentificacion"
                       maxlength="13"
                       required
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="firstName">Nombre:</label>
                     <input
-                      class="form-control"
+                      matInput
                       formControlName="firstName"
                       id="firstName"
                       maxlength="50"
@@ -41,15 +41,15 @@
                       required
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="lastName">Apellido:</label>
                     <input
-                      class="form-control"
+                      matInput
                       formControlName="lastName"
                       id="lastName"
                       maxlength="50"
@@ -57,7 +57,7 @@
                       required
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
               </div>
               <div>
@@ -84,21 +84,21 @@
                 <div
                   class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="nombreComercial"
                       >Nombre Comercial:
                       <span class="text-danger">*</span></label
                     >
                     <input
                       appToUpperCase
-                      class="form-control"
+                      matInput
                       formControlName="nombreComercial"
                       id="nombreComercial"
                       maxlength="300"
                       min="2"
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                   <div class="form-group">
@@ -112,9 +112,9 @@
                         id="actividad"
                       >
                         @for (item of actividadesEconomica; track $index) {
-                        <option [ngValue]="item.codigo">
-                          {{ item.descripcion }}
-                        </option>
+                          <option [ngValue]="item.codigo">
+                            {{ item.descripcion }}
+                          </option>
                         }
                       </select>
 
@@ -133,10 +133,10 @@
                 <div
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="estab">Nro. Establecimiento</label>
                     <input
-                      class="form-control"
+                      matInput
                       formControlName="estab"
                       id="estab"
                       maxlength="3"
@@ -144,7 +144,7 @@
                       placeholder="000"
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
@@ -161,9 +161,9 @@
                         id="contribuyente"
                       >
                         @for (item of contribuyentes; track $index) {
-                        <option [ngValue]="item.codigo">
-                          {{ item.descripcion }}
-                        </option>
+                          <option [ngValue]="item.codigo">
+                            {{ item.descripcion }}
+                          </option>
                         }
                       </select>
 
@@ -180,7 +180,7 @@
                 <div
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="agenteRetencion">Agente Retención: </label>
                     <select
                       [disabled]="isDisabledAgenteRetencion"
@@ -190,17 +190,17 @@
                     >
                       <option [value]="null">Ninguna</option>
                       @for (item of agentesRetencion; track $index) {
-                      <option [ngValue]="item.resolucion">
-                        {{ item.resolucion }}
-                      </option>
+                        <option [ngValue]="item.resolucion">
+                          {{ item.resolucion }}
+                        </option>
                       }
                     </select>
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
                 >
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="contribuyenteEspecial"
                       >Contribuyente Especial:
                     </label>
@@ -213,7 +213,7 @@
                       placeholder=""
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
               </div>
 
@@ -234,36 +234,32 @@
                         <mat-radio-button value="SI">SI</mat-radio-button>
                       </mat-radio-group>
                     </section>
-                    <!-- <div class="icheck-primary">
-                      <input type="checkbox" id="someCheckboxId" />
-                      <label for="someCheckboxId"></label>
-                    </div> -->
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-group">
-                    <label
+                    <span
                       >Email:
                       <span>
                         <mat-icon>info</mat-icon>
                       </span>
-                    </label>
+                    </span>
                     <mat-chip-grid #chipGridEmail aria-label="Enter emails">
                       @for (email of emails; track $index) {
-                      <mat-chip-row
-                        (edited)="editEmail(email, $event)"
-                        (removed)="removeEmail(email)"
-                        [aria-description]="'press enter to edit ' + email"
-                        [editable]="true"
-                      >
-                        {{ email }}
-                        <button
-                          [attr.aria-label]="'remove ' + email"
-                          matChipRemove
+                        <mat-chip-row
+                          (edited)="editEmail(email, $event)"
+                          (removed)="removeEmail(email)"
+                          [aria-description]="'press enter to edit ' + email"
+                          [editable]="true"
                         >
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </mat-chip-row>
+                          {{ email }}
+                          <button
+                            [attr.aria-label]="'remove ' + email"
+                            matChipRemove
+                          >
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </mat-chip-row>
                       }
 
                       <input
@@ -271,7 +267,7 @@
                         [matChipInputAddOnBlur]="addOnBlur"
                         [matChipInputFor]="chipGridEmail"
                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        class="form-control"
+                        matInput
                         placeholder="example@example.com,info@example.com"
                       />
                     </mat-chip-grid>
@@ -279,31 +275,33 @@
                 </div>
                 <div class="col">
                   <div class="form-group">
-                    <label
+                    <span
                       >Telefono:
                       <span>
                         <mat-icon>info</mat-icon>
                       </span>
-                    </label>
+                    </span>
                     <mat-chip-grid
                       #chipGridTelephone
                       aria-label="Ingrese los teléfonos"
                     >
                       @for (telephone of telephones; track $index) {
-                      <mat-chip-row
-                        (edited)="editTelephone(telephone, $event)"
-                        (removed)="removeTelephone(telephone)"
-                        [aria-description]="'press enter to edit ' + telephone"
-                        [editable]="true"
-                      >
-                        {{ telephone }}
-                        <button
-                          [attr.aria-label]="'remove ' + telephone"
-                          matChipRemove
+                        <mat-chip-row
+                          (edited)="editTelephone(telephone, $event)"
+                          (removed)="removeTelephone(telephone)"
+                          [aria-description]="
+                            'press enter to edit ' + telephone
+                          "
+                          [editable]="true"
                         >
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </mat-chip-row>
+                          {{ telephone }}
+                          <button
+                            [attr.aria-label]="'remove ' + telephone"
+                            matChipRemove
+                          >
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </mat-chip-row>
                       }
 
                       <input
@@ -311,14 +309,14 @@
                         [matChipInputAddOnBlur]="addOnBlur"
                         [matChipInputFor]="chipGridTelephone"
                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        class="form-control"
+                        matInput
                         placeholder="0900000001,0900000002"
                       />
                     </mat-chip-grid>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="canton"
                       >Cantón: <span class="text-danger">*</span>
                     </label>
@@ -328,18 +326,18 @@
                       id="canton"
                     >
                       @for (item of cantones; track $index) {
-                      <option [ngValue]="item.codigo">
-                        {{ item.descripcion }}
-                      </option>
+                        <option [ngValue]="item.codigo">
+                          {{ item.descripcion }}
+                        </option>
                       }
                     </select>
-                  </div>
+                  </mat-form-field>
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="dirEstablecimiento"
                       >Dirección <span class="text-danger">*</span>
                     </label>
@@ -351,152 +349,148 @@
                       maxlength="300"
                       rows="2"
                     ></textarea>
-                  </div>
+                  </mat-form-field>
                 </div>
               </div>
               <div class="row">
                 <div
                   class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12"
                 >
-                  <label>Puntos de Emisión:</label>
+                  <span>Puntos de Emisión:</span>
                   <div formArrayName="ptosEmi">
                     @for (ptoEmi of ptosEmi.controls; let i = $index; track i) {
-                    <div class="row mt-3" [formGroupName]="i">
-                      <div
-                        class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"
-                      >
-                        <input
-                          class="form-control"
-                          formControlName="ptoEmi"
-                          id="ptoEmi-{{ i }}"
-                          type="text"
-                          min="3"
-                          maxlength="3"
-                          placeholder="000"
-                        />
-                      </div>
-                      <div
-                        class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
-                      >
-                        <select
-                          class="form-select"
-                          formControlName="ambiente"
-                          id="ambiente-{{ i }}"
-                          type="text"
+                      <div class="row mt-3" [formGroupName]="i">
+                        <div
+                          class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"
                         >
-                          <option>Seleccione un ambiente</option>
-                          @for (envSri of ambientes; track $index) {
-                          <option [value]="envSri.code">
-                            {{ envSri.name }}
-                          </option>
-                          }
-                        </select>
-                      </div>
-                      <div
-                        class="col-xxl-24 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
-                      >
-                        <app-theme-button
-                          (handleClick)="removePtoEmi(i)"
-                          variant="danger"
-                          icon="delete"
-                          matStyle="icon"
-                          title="Eliminar punto de emision"
+                          <input
+                            matInput
+                            formControlName="ptoEmi"
+                            id="ptoEmi-{{ i }}"
+                            type="text"
+                            min="3"
+                            maxlength="3"
+                            placeholder="000"
+                          />
+                        </div>
+                        <div
+                          class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
                         >
-                        </app-theme-button>
+                          <select
+                            class="form-select"
+                            formControlName="ambiente"
+                            id="ambiente-{{ i }}"
+                            type="text"
+                          >
+                            <option>Seleccione un ambiente</option>
+                            @for (envSri of ambientes; track $index) {
+                              <option [value]="envSri.code">
+                                {{ envSri.name }}
+                              </option>
+                            }
+                          </select>
+                        </div>
+                        <div
+                          class="col-xxl-24 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
+                        >
+                          <app-theme-button
+                            (handleClick)="removePtoEmi(i)"
+                            variant="danger"
+                            icon="delete"
+                            matStyle="icon"
+                            title="Eliminar punto de emision"
+                          >
+                          </app-theme-button>
+                        </div>
                       </div>
-                    </div>
                     }
                   </div>
                   <div class="row mt-3">
                     <div class="col-4">
-                      <div class="form-group">
-                        <app-theme-button
-                          icon="add"
-                          text="Añadir"
-                          (handleClick)="addPtoEmi()"
-                        >
-                        </app-theme-button>
-                      </div>
+                      <app-theme-button
+                        icon="add"
+                        text="Añadir"
+                        (handleClick)="addPtoEmi()"
+                      >
+                      </app-theme-button>
                     </div>
                   </div>
                 </div>
                 <div
                   class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12"
                 >
-                  <label
+                  <span
                     >Bodegas
                     <small class="text-info"
                       >(Si requiere controlar productos con inventario)</small
                     >
-                    :</label
+                    :</span
                   >
                   <div formArrayName="bodegas">
                     @for (bodega of bodegas.controls; let i = $index; track i) {
-                    <div class="row mt-3" [formGroupName]="i">
-                      <div
-                        class="col-xxl-2 col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12"
-                      >
-                        <input
-                          class="form-control"
-                          formControlName="descripcion"
-                          id="descripcion-{{ i }}"
-                          type="text"
-                          min="3"
-                          maxlength="300"
-                          placeholder="Principal"
-                        />
-                      </div>
-                      <div
-                        class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12"
-                      >
-                        <input
-                          class="form-control"
-                          formControlName="telefono"
-                          id="telefono-{{ i }}"
-                          type="text"
-                          min="6"
-                          maxlength="100"
-                          placeholder="09xxxxxxxx"
-                        />
-                      </div>
-                      <div
-                        class="col-xxl-5 col-xl-5 col-lg-5 col-md-5 col-sm-4 col-12"
-                      >
-                        <input
-                          class="form-control"
-                          formControlName="direccion"
-                          id="direccion-{{ i }}"
-                          type="text"
-                          min="3"
-                          maxlength="300"
-                          placeholder="Dirección"
-                        />
-                      </div>
-                      <div
-                        class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
-                      >
-                        <app-theme-button
-                          variant="danger"
-                          icon="delete"
-                          matStyle="icon"
-                          title="Eliminar bodega"
-                          (handleClick)="removeBodega(i)"
+                      <div class="row mt-3" [formGroupName]="i">
+                        <div
+                          class="col-xxl-2 col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12"
                         >
-                        </app-theme-button>
+                          <input
+                            matInput
+                            formControlName="descripcion"
+                            id="descripcion-{{ i }}"
+                            type="text"
+                            min="3"
+                            maxlength="300"
+                            placeholder="Principal"
+                          />
+                        </div>
+                        <div
+                          class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12"
+                        >
+                          <input
+                            matInput
+                            formControlName="telefono"
+                            id="telefono-{{ i }}"
+                            type="text"
+                            min="6"
+                            maxlength="100"
+                            placeholder="09xxxxxxxx"
+                          />
+                        </div>
+                        <div
+                          class="col-xxl-5 col-xl-5 col-lg-5 col-md-5 col-sm-4 col-12"
+                        >
+                          <input
+                            matInput
+                            formControlName="direccion"
+                            id="direccion-{{ i }}"
+                            type="text"
+                            min="3"
+                            maxlength="300"
+                            placeholder="Dirección"
+                          />
+                        </div>
+                        <div
+                          class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
+                        >
+                          <app-theme-button
+                            variant="danger"
+                            icon="delete"
+                            matStyle="icon"
+                            title="Eliminar bodega"
+                            (handleClick)="removeBodega(i)"
+                          >
+                          </app-theme-button>
+                        </div>
                       </div>
-                    </div>
                     }
                   </div>
                   <div class="row mt-3">
                     <div class="col-4">
-                      <div class="form-group">
-                        <app-theme-button
-                          (handleClick)="addBodega()"
-                          icon="add"
-                          text="Añadir"
-                        >
-                        </app-theme-button>
-                      </div>
+                      <app-theme-button
+                        (handleClick)="addBodega()"
+                        icon="add"
+                        text="Añadir"
+                      >
+                      </app-theme-button>
                     </div>
                   </div>
                 </div>
@@ -568,26 +562,26 @@
                 class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3"
               >
                 <div class="col">
-                  <div class="form-group">
-                    <label>Contraseña:</label>
+                  <mat-form-field class="w-100">
+                    <mat-label>Contraseña:</mat-label>
                     <input
-                      class="form-control"
+                      matInput
                       formControlName="contrasenia"
                       required
                       type="text"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div class="col">
-                  <div class="form-group">
+                  <mat-form-field class="w-100">
                     <label for="fechaCaducidad">Fecha Caducidad: </label>
                     <input
-                      class="form-control"
+                      matInput
                       formControlName="fechaCaducidad"
                       required
                       type="date"
                     />
-                  </div>
+                  </mat-form-field>
                 </div>
                 <div class="col">
                   <div class="form-group">
@@ -596,13 +590,13 @@
                     </label>
                     <input
                       (change)="onFileChange($event)"
-                      class="form-control"
+                      matInput
                       type="file"
                     />
                     @if (fileError) {
-                    <span class="text-danger">
-                      Formato de archivo no aceptado
-                    </span>
+                      <span class="text-danger">
+                        Formato de archivo no aceptado
+                      </span>
                     }
                   </div>
                 </div>

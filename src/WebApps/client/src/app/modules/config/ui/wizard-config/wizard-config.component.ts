@@ -57,6 +57,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
+import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 
 @Component({
   selector: 'app-wizard-config',
@@ -81,6 +82,10 @@ import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cas
     MatCard,
     MatIcon,
     ThemeButtonComponent,
+    MatFormField,
+    MatInput,
+    MatFormField,
+    MatLabel,
   ],
   templateUrl: './wizard-config.component.html',
   styles: [],
