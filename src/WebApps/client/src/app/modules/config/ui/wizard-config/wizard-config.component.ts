@@ -58,6 +58,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-wizard-config',
@@ -86,6 +87,7 @@ import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
     MatInput,
     MatFormField,
     MatLabel,
+    MatSelectModule,
   ],
   templateUrl: './wizard-config.component.html',
   styles: [],

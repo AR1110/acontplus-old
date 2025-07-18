@@ -103,18 +103,16 @@
                       >Actividad: <span class="text-danger">*</span>
                     </label>
                     <div class="input-group">
-                      <select
-                        class="form-select"
-                        formControlName="actividad"
-                        id="actividad"
-                      >
-                        @for (item of actividadesEconomica; track $index) {
-                          <option [ngValue]="item.codigo">
-                            {{ item.descripcion }}
-                          </option>
-                        }
-                      </select>
-
+                      <mat-form-field class="w-100">
+                        <mat-label>Actividad: <span class="text-danger">*</span></mat-label>
+                        <mat-select formControlName="actividad" id="actividad">
+                          @for (item of actividadesEconomica; track $index) {
+                            <mat-option [value]="item.codigo">
+                              {{ item.descripcion }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
                       <app-theme-button
                         variant="secondary"
                         icon="info"
@@ -151,19 +149,16 @@
                       >Tipo Contribuyente: <span class="text-danger">*</span>
                     </label>
                     <div class="input-group">
-                      <select
-                        (change)="onChangeTipoContribuyente()"
-                        class="form-select"
-                        formControlName="contribuyente"
-                        id="contribuyente"
-                      >
-                        @for (item of contribuyentes; track $index) {
-                          <option [ngValue]="item.codigo">
-                            {{ item.descripcion }}
-                          </option>
-                        }
-                      </select>
-
+                      <mat-form-field class="w-100">
+                        <mat-label>Tipo Contribuyente: <span class="text-danger">*</span></mat-label>
+                        <mat-select formControlName="contribuyente" id="contribuyente" (selectionChange)="onChangeTipoContribuyente()">
+                          @for (item of contribuyentes; track $index) {
+                            <mat-option [value]="item.codigo">
+                              {{ item.descripcion }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
                       <app-theme-button
                         variant="secondary"
                         icon="info"
@@ -179,19 +174,14 @@
                 >
                   <mat-form-field class="w-100">
                     <mat-label>Agente Retención: </mat-label>
-                    <select
-                      [disabled]="isDisabledAgenteRetencion"
-                      class="form-select"
-                      formControlName="agenteRetencion"
-                      id="agenteRetencion"
-                    >
-                      <option [value]="null">Ninguna</option>
+                    <mat-select [disabled]="isDisabledAgenteRetencion" formControlName="agenteRetencion" id="agenteRetencion">
+                      <mat-option [value]="null">Ninguna</mat-option>
                       @for (item of agentesRetencion; track $index) {
-                        <option [ngValue]="item.resolucion">
+                        <mat-option [value]="item.resolucion">
                           {{ item.resolucion }}
-                        </option>
+                        </mat-option>
                       }
-                    </select>
+                    </mat-select>
                   </mat-form-field>
                 </div>
                 <div
@@ -202,7 +192,7 @@
                     <input
                       [maxlength]="3"
                       [minlength]="3"
-                      class="form-control border-select"
+                      matInput
                       formControlName="contribuyenteEspecial"
                       id="contribuyenteEspecial"
                       placeholder=""
@@ -313,17 +303,13 @@
                 <div class="col">
                   <mat-form-field class="w-100">
                     <mat-label>Cantón: <span class="text-danger">*</span></mat-label>
-                    <select
-                      class="form-select"
-                      formControlName="canton"
-                      id="canton"
-                    >
+                    <mat-select formControlName="canton" id="canton">
                       @for (item of cantones; track $index) {
-                        <option [ngValue]="item.codigo">
+                        <mat-option [value]="item.codigo">
                           {{ item.descripcion }}
-                        </option>
+                        </mat-option>
                       }
-                    </select>
+                    </mat-select>
                   </mat-form-field>
                 </div>
               </div>
@@ -334,7 +320,7 @@
                     <mat-label>Dirección <span class="text-danger">*</span></mat-label>
                     <textarea
                       appToUpperCase
-                      class="form-control border-select"
+                      matInput
                       formControlName="dirEstablecimiento"
                       id="dirEstablecimiento"
                       maxlength="300"
@@ -367,19 +353,17 @@
                         <div
                           class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
                         >
-                          <select
-                            class="form-select"
-                            formControlName="ambiente"
-                            id="ambiente-{{ i }}"
-                            type="text"
-                          >
-                            <option>Seleccione un ambiente</option>
-                            @for (envSri of ambientes; track $index) {
-                              <option [value]="envSri.code">
-                                {{ envSri.name }}
-                              </option>
-                            }
-                          </select>
+                          <mat-form-field class="w-100">
+                            <mat-label>Ambiente</mat-label>
+                            <mat-select formControlName="ambiente" id="ambiente-{{ i }}">
+                              <mat-option value="">Seleccione un ambiente</mat-option>
+                              @for (envSri of ambientes; track $index) {
+                                <mat-option [value]="envSri.code">
+                                  {{ envSri.name }}
+                                </mat-option>
+                              }
+                            </mat-select>
+                          </mat-form-field>
                         </div>
                         <div
                           class="col-xxl-24 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
@@ -576,9 +560,9 @@
                 </div>
                 <div class="col">
                   <div class="form-group">
-                    <label>
+                    <span>
                       Formato de archivos: <span class="text-info">.p12</span>
-                    </label>
+                    </span>
                     <input
                       (change)="onFileChange($event)"
                       matInput
