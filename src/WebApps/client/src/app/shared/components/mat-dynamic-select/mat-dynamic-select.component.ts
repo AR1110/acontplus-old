@@ -8,6 +8,7 @@ import {
   output,
   ViewChild,
   effect,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
@@ -33,6 +34,7 @@ import { SelectOption } from '@shared/models/select-option';
       width: 100%;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatDynamicSelectComponent
   implements OnInit, AfterViewInit, OnDestroy

@@ -1,4 +1,4 @@
-import {Component, input, output} from '@angular/core';
+import {Component, input, output, ChangeDetectionStrategy} from '@angular/core';
 import {MatCardModule} from "@angular/material/card";
 
 @Component({
@@ -9,7 +9,8 @@ import {MatCardModule} from "@angular/material/card";
   templateUrl: './mat-dynamic-card.component.html',
   styles: `
 
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatDynamicCardComponent {
 

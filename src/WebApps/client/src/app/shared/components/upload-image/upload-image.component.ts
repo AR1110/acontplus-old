@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, output } from '@angular/core';
+import { Component, Input, output, ChangeDetectionStrategy } from '@angular/core';
 import { imgDefault } from '@core/utils/utils';
 import { MatIcon } from '@angular/material/icon';
 
@@ -8,6 +8,7 @@ import { MatIcon } from '@angular/material/icon';
   imports: [CommonModule, MatIcon],
   templateUrl: './upload-image.component.html',
   styleUrls: ['./upload-image.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadImageComponent {
   onSelected = output<File | null>();

@@ -8,7 +8,8 @@ import {
   signal,
   inject,
   output,
-  input
+  input,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {Subject, takeUntil, debounceTime, Observable, of,  distinctUntilChanged } from 'rxjs';
 
@@ -41,7 +42,8 @@ import {catchError, switchMap} from "rxjs/operators";
     MatIconButton
   ],
   templateUrl: './reusable-autocomplete.component.html',
-  styleUrl: './reusable-autocomplete.component.scss'
+  styleUrl: './reusable-autocomplete.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReusableAutocompleteComponent {
   @Input() dataSource: AutocompleteItem[] = []; // Para búsqueda local

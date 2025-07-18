@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { formatDate, setDateWithCurrentTime } from '@core/utils/date.util';
 
@@ -10,7 +10,8 @@ import { formatDate, setDateWithCurrentTime } from '@core/utils/date.util';
         FormsModule
     ],
     templateUrl: './input-date.component.html',
-    styles: ``
+    styles: ``,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InputDateComponent {
   @Input() value = new Date()

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,6 +30,7 @@ export type MaterialButtonStyle =
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './theme-button.component.html',
   styleUrl: './theme-button.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeButtonComponent {
   variant = input<ButtonVariant>('primary');
