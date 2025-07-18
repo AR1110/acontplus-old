@@ -61,7 +61,7 @@
     "@types/jasmine": "^5.1.7",
     "@types/tabulator-tables": "^6.2.6",
     "@types/uuid": "^10.0.0",
-    "angular-eslint": "20.0.0",
+    "angular-eslint": "20.1.1",
     "eslint": "^9.28.0",
     "jasmine-core": "^5.7.1",
     "karma": "^6.4.4",
