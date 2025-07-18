@@ -1,0 +1,41 @@
+export default {
+  testEnvironment: 'jsdom',
+  moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
+  extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    '^@core/(.*)$': '<rootDir>/src/app/core/$1',
+    '^@company-customer/(.*)$': '<rootDir>/src/app/modules/customer/company-customer/$1',
+    '^@modules/(.*)$': '<rootDir>/src/app/modules/$1',
+    '^@accounting/(.*)$': '<rootDir>/src/app/modules/accounting/$1',
+    '^@technical-support/(.*)$': '<rootDir>/src/app/modules/technical-support/$1',
+    '^@inventory/(.*)$': '<rootDir>/src/app/modules/inventory/$1',
+    '^@purchase/(.*)$': '<rootDir>/src/app/modules/purchase/$1',
+    '^@sale/(.*)$': '<rootDir>/src/app/modules/sale/$1',
+    '^@restaurant/(.*)$': '<rootDir>/src/app/modules/restaurant/$1',
+    '^@billing/(.*)$': '<rootDir>/src/app/modules/billing/$1',
+    '^@mechanical/(.*)$': '<rootDir>/src/app/modules/mechanical/$1',
+    '^@customer/(.*)$': '<rootDir>/src/app/modules/customer/$1',
+    '^@shared/(.*)$': '<rootDir>/src/app/shared/$1',
+    '^@sri/(.*)$': '<rootDir>/src/app/modules/sri/$1',
+    '^@barber-shop/(.*)$': '<rootDir>/src/app/modules/barber-shop/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
+    tslib: 'tslib/tslib.es6.js',
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(rxjs|tslib|@angular|@ngrx|@ngx|@fortawesome|lodash-es|uuid|date-fns|.*\\.mjs$))',
+  ],
+  transform: {
+    '^.+\\.(ts|js|html|svg)$': [
+      'jest-preset-angular',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+        stringifyContentPathRegex: '\\.(html|svg)$',
+        useESM: true,
+      },
+    ],
+  },
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+  testMatch: ['**/+(*.)+(spec).+(ts|js)?(x)'],
+  collectCoverage: true,
+  coverageReporters: ['html'],
+};

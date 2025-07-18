@@ -1,27 +1,71 @@
-# Client
+# AcontPlus Angular Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.3.
+AcontPlus is a modern, modular business management platform built with Angular 20+. It provides a comprehensive suite of features for accounting, inventory, sales, technical support, restaurant, barber shop, veterinary, and more. The client application is designed for scalability, maintainability, and a seamless user experience, leveraging the latest Angular features and best practices.
 
-## Development server
+## Features
+- Modular architecture (accounting, inventory, sales, etc.)
+- Standalone Angular components
+- Modern Angular 20+ build system
+- Fast, reliable testing with Jest (ESM support)
+- Path aliasing for clean imports
+- Responsive UI and theming
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## Getting Started
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm (v9+ recommended)
 
-## Build
+### 1. Install dependencies
+```sh
+npm install
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### 2. Run the development server
+```sh
+npm start
+```
+- The app will be available at `http://localhost:4200` by default.
 
-## Running unit tests
+### 3. Build for production
+```sh
+npm run production
+```
+- Output will be in the `dist/` directory.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## Running Tests (Jest + Angular 20+)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+This project uses **Jest** for fast, modern unit testing with full ESM and Angular 20+ support.
 
-## Further help
+### 1. Run all tests
+```sh
+npm test
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### 2. Run tests in watch mode
+```sh
+npm run test:watch
+```
+
+### 3. View coverage report
+After running tests, open `coverage/index.html` in your browser for a detailed coverage report.
+
+#### Notes:
+- All path aliases from `tsconfig.json` are supported in tests.
+- Standalone components must be added to the `imports` array in tests.
+- Mock providers for any required dependencies in your test setup (see `app.component.spec.ts` for an example).
+
+---
+
+## Troubleshooting
+- If you see errors about missing providers, add mocks for those dependencies in your test's `providers` array.
+- For ESM/Angular/Jest issues, ensure you are using the latest versions of Angular, Jest, and `jest-preset-angular`.
+
+---
+
+## License
+This project is proprietary. All rights reserved.
