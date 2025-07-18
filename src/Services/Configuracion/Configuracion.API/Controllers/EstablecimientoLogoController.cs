@@ -1,14 +1,15 @@
 ﻿using Common.Utilities.Format;
 using Common.Utilities.Services;
+using Configuracion.Domain.Repositories;
 
 namespace Configuracion.API.Controllers;
 
 public class EstablecimientoLogoController : BaseApiController
 {
-    private readonly IEstablecimientoLogoService _establecimientoLogoService;
+    private readonly IEstablecimientoLogoRepository _establecimientoLogoService;
 
 
-    public EstablecimientoLogoController(IEstablecimientoLogoService establecimientoLogoService)
+    public EstablecimientoLogoController(IEstablecimientoLogoRepository establecimientoLogoService)
     {
         _establecimientoLogoService = establecimientoLogoService;
     }

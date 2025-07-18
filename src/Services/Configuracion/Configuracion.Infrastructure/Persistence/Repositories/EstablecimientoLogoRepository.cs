@@ -1,12 +1,10 @@
-﻿using Configuracion.Infrastructure.Persistence;
+﻿namespace Configuracion.Infrastructure.Persistence.Repositories;
 
-namespace Configuracion.Application.Services;
-
-public class EstablecimientoLogoService : IEstablecimientoLogoService
+public class EstablecimientoLogoRepository : IEstablecimientoLogoRepository
 {
     private readonly ConfigContext _context;
 
-    public EstablecimientoLogoService(ConfigContext context)
+    public EstablecimientoLogoRepository(ConfigContext context)
     {
         _context = context;
     }

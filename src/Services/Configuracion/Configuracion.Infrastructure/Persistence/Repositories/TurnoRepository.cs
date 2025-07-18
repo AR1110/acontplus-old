@@ -1,16 +1,15 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+﻿using Newtonsoft.Json;
 
-namespace Configuracion.Application.Services;
+namespace Configuracion.Infrastructure.Persistence.Repositories;
 
-public class TurnoService : ITurnoService
+public class TurnoRepository : ITurnoRepository
 {
     private readonly IConfiguration _configuration;
     private readonly string _connectionStrings = string.Empty;
     private readonly LegacyApiResponse _gr = new();
     private readonly IAdoRepository _repository;
 
-    public TurnoService(IAdoRepository respository, IConfiguration configuration)
+    public TurnoRepository(IAdoRepository respository, IConfiguration configuration)
     {
         _repository = respository;
         _configuration = configuration;
@@ -110,20 +109,20 @@ public class TurnoService : ITurnoService
                         switch (_gr.id)
                         {
                             case "1":
-                            {
-                                var item = new TurnoViewModel
                                 {
-                                    turno = new Turno
+                                    var item = new TurnoViewModel
                                     {
-                                        idTurno = reader.GetInt32(4),
-                                        descripcion = reader.GetString(5),
-                                        estado = reader.GetBoolean(6)
-                                    },
-                                    totalRecords = reader.GetInt32(7)
-                                };
-                                listar.Add(item);
-                                break;
-                            }
+                                        turno = new Turno
+                                        {
+                                            idTurno = reader.GetInt32(4),
+                                            descripcion = reader.GetString(5),
+                                            estado = reader.GetBoolean(6)
+                                        },
+                                        totalRecords = reader.GetInt32(7)
+                                    };
+                                    listar.Add(item);
+                                    break;
+                                }
                         }
                     }
                 }

@@ -1,8 +1,6 @@
-﻿using Configuracion.Infrastructure.Persistence;
+﻿namespace Configuracion.Infrastructure.Persistence.Repositories;
 
-namespace Configuracion.Application.Services.Printing;
-
-public class PrinterTypeService(ConfigContext context) : IPrinterTypeService
+public class PrinterTypeRepository(ConfigContext context) : IPrinterTypeRepository
 {
     public async Task<ApiResponse> GetAsync()
     {

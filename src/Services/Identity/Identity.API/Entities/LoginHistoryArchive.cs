@@ -8,7 +8,7 @@ public class LoginHistoryArchive : BaseEntity
     public string UserAgent { get; set; }
     public bool? IsLoggedIn { get; set; }
     public bool? IsLocked { get; set; }
-    [MaxLength(15)] 
+    [MaxLength(15)]
     public string IpAddress { get; set; }
     [MaxLength(4000)]
     public string Token { get; set; }

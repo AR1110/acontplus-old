@@ -3,7 +3,6 @@ using BarberShop.Api.Extensions.Endpoints;
 using Common.Services.Configuration;
 using Common.Services.Middleware;
 using Serilog;
-using Common.Logging;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()

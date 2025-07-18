@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-using Common.Logging;
 using Configuracion.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
@@ -47,7 +46,8 @@ public static class ApplicationServicesExtensions
             "Configuracion.Application.Services",
             "Configuracion.Application.Services.Printing",
             "Configuracion.Application.Services.Sri",
-            "Configuracion.Application.Services.WizardConfig"
+            "Configuracion.Application.Services.WizardConfig",
+            "Configuracion.Infrastructure.Persistence.Repositories"
         ];
 
         // Register scoped services

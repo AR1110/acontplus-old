@@ -1,6 +1,6 @@
-﻿namespace Configuracion.Application.Interfaces.Printing;
+﻿namespace Configuracion.Domain.Repositories;
 
-public interface IPrinterService
+public interface IPrinterRepository
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     Task<Printer> GetByIdAsync(int id);

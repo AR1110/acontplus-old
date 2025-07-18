@@ -1,6 +1,6 @@
-﻿namespace Configuracion.Application.Interfaces;
+﻿namespace Configuracion.Domain.Repositories;
 
-public interface IEstablecimientoLogoService
+public interface IEstablecimientoLogoRepository
 {
     Task<EstablecimientoLogo> GetAsync(int establecimientoId);
     Task<object> AddAsync(EstablecimientoLogo data);

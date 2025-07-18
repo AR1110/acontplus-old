@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Core.Abstractions;
-using Loyalty.Application.Interfaces;
-using Loyalty.Application.Models;
-using Loyalty.Domain.Entities;
-using Loyalty.Domain.Enums;
-
-namespace Loyalty.Application.Services;
+﻿namespace Loyalty.Application.Services;
 
 public class LoyaltyService
 {

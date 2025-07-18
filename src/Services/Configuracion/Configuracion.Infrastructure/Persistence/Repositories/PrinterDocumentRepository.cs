@@ -1,8 +1,6 @@
-﻿using Configuracion.Infrastructure.Persistence;
+﻿namespace Configuracion.Infrastructure.Persistence.Repositories;
 
-namespace Configuracion.Application.Services.Printing;
-
-public class PrinterDocumentService(ConfigContext context) : IPrinterDocumentService
+public class PrinterDocumentRepository(ConfigContext context) : IPrinterDocumentRepository
 {
     public async Task<ApiResponse> AddAsync(PrinterDocument printerDocument)
     {

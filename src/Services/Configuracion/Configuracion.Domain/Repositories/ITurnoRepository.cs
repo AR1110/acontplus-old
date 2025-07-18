@@ -1,6 +1,6 @@
-﻿namespace Configuracion.Application.Interfaces;
+﻿namespace Configuracion.Domain.Repositories;
 
-public interface ITurnoService
+public interface ITurnoRepository
 {
     Task<string> GetAsync(Dictionary<string, object> parameters);
     Task<LegacyApiResponse> CreateTurnoAsync(int userRoleId, Turno turno);

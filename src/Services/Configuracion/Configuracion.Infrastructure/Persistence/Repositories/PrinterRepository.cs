@@ -1,8 +1,6 @@
-﻿using Configuracion.Infrastructure.Persistence;
+﻿namespace Configuracion.Infrastructure.Persistence.Repositories;
 
-namespace Configuracion.Application.Services.Printing;
-
-public class PrinterService(ConfigContext context, IAdoRepository repository) : IPrinterService
+public class PrinterRepository(ConfigContext context, IAdoRepository repository) : IPrinterRepository
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {

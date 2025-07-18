@@ -1,6 +1,5 @@
 ﻿using System.IO.Compression;
 using System.Threading.RateLimiting;
-using Common.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Restaurant.Infrastructure.Persistence;

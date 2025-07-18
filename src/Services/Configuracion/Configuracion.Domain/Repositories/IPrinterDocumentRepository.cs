@@ -1,6 +1,6 @@
-﻿namespace Configuracion.Application.Interfaces.Printing;
+﻿namespace Configuracion.Domain.Repositories;
 
-public interface IPrinterDocumentService
+public interface IPrinterDocumentRepository
 {
     Task<ApiResponse> AddAsync(PrinterDocument printerDocument);
     Task<ApiResponse> UpdateAsync(int id, PrinterDocument printerDocument);

@@ -1,9 +1,4 @@
-﻿using System.Data;
-using Configuracion.Domain.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-
-namespace Configuracion.Infrastructure.Persistence;
+﻿namespace Configuracion.Infrastructure.Persistence;
 
 public class HorarioDao
 {
