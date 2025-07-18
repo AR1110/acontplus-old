@@ -16,7 +16,7 @@
                   class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 col-sm-4 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="nroIdentificacion">Nro. Identificación:</label>
+                    <mat-label>Nro. Identificación:</mat-label>
                     <input
                       matInput
                       formControlName="nroIdentificacion"
@@ -31,7 +31,7 @@
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="firstName">Nombre:</label>
+                    <mat-label>Nombre:</mat-label>
                     <input
                       matInput
                       formControlName="firstName"
@@ -47,7 +47,7 @@
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="lastName">Apellido:</label>
+                    <mat-label>Apellido:</mat-label>
                     <input
                       matInput
                       formControlName="lastName"
@@ -85,10 +85,7 @@
                   class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="nombreComercial"
-                      >Nombre Comercial:
-                      <span class="text-danger">*</span></label
-                    >
+                    <mat-label>Nombre Comercial: <span class="text-danger">*</span></mat-label>
                     <input
                       appToUpperCase
                       matInput
@@ -134,7 +131,7 @@
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="estab">Nro. Establecimiento</label>
+                    <mat-label>Nro. Establecimiento</mat-label>
                     <input
                       matInput
                       formControlName="estab"
@@ -181,7 +178,7 @@
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="agenteRetencion">Agente Retención: </label>
+                    <mat-label>Agente Retención: </mat-label>
                     <select
                       [disabled]="isDisabledAgenteRetencion"
                       class="form-select"
@@ -201,9 +198,7 @@
                   class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
                 >
                   <mat-form-field class="w-100">
-                    <label for="contribuyenteEspecial"
-                      >Contribuyente Especial:
-                    </label>
+                    <mat-label>Contribuyente Especial:</mat-label>
                     <input
                       [maxlength]="3"
                       [minlength]="3"
@@ -317,9 +312,7 @@
                 </div>
                 <div class="col">
                   <mat-form-field class="w-100">
-                    <label for="canton"
-                      >Cantón: <span class="text-danger">*</span>
-                    </label>
+                    <mat-label>Cantón: <span class="text-danger">*</span></mat-label>
                     <select
                       class="form-select"
                       formControlName="canton"
@@ -338,9 +331,7 @@
               <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                   <mat-form-field class="w-100">
-                    <label for="dirEstablecimiento"
-                      >Dirección <span class="text-danger">*</span>
-                    </label>
+                    <mat-label>Dirección <span class="text-danger">*</span></mat-label>
                     <textarea
                       appToUpperCase
                       class="form-control border-select"
@@ -574,7 +565,7 @@
                 </div>
                 <div class="col">
                   <mat-form-field class="w-100">
-                    <label for="fechaCaducidad">Fecha Caducidad: </label>
+                    <mat-label>Fecha Caducidad: </mat-label>
                     <input
                       matInput
                       formControlName="fechaCaducidad"
