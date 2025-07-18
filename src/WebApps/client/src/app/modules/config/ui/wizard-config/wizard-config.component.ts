@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, OnInit } from '@angular/core';
+import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
 import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
@@ -59,6 +59,12 @@ import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/do
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import { MatSelectModule } from '@angular/material/select';
+import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
+import { ActividadEconomica } from '@modules/config/domain/models/wizard-config/actividad-economica.model';
+import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/agente-retencion.model';
+import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
+import { Bodega } from '@modules/config/domain/models/wizard-config/bodega.model';
+import { PuntoEmision } from '@modules/config/domain/models/wizard-config/punto-emision.model';
 
 @Component({
   selector: 'app-wizard-config',
@@ -96,7 +102,7 @@ export class WizardConfigComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
   addOnBlur = true;
   announcer = inject(LiveAnnouncer);
-  cantones: any[] = [];
+  cantones = signal<Canton[]>([]);
   columnNames = [
     { title: 'idPuntoEmision', field: 'idPuntoEmision', visible: false },
     { title: 'Pto. Emi', field: 'ptoEmi' },
@@ -132,20 +138,20 @@ export class WizardConfigComponent implements OnInit {
   fileError = false;
   selectedFile: File | null = null;
   certificateUpdated = false;
-  docsConfig = [];
+  docsConfig = signal<unknown[]>([]);
   docsUpdated = false;
-  actividadesEconomica: any[] = [];
-  agentesRetencion: any[] = [];
-  contribuyentes: any[] = [];
-  ambientes: AmbienteSri[] = ambienteSriOptions;
+  actividadesEconomica = signal<ActividadEconomica[]>([]);
+  agentesRetencion = signal<AgenteRetencion[]>([]);
+  contribuyentes = signal<Contribuyente[]>([]);
+  ambientes = signal<AmbienteSri[]>(ambienteSriOptions);
   isLinear = false;
   isDisabledAgenteRetencion = false;
-  emails: string[] = [];
-  telephones: string[] = [];
-  establecimientos: GroupedEstab[] = [];
+  emails = signal<string[]>([]);
+  telephones = signal<string[]>([]);
+  establecimientos = signal<GroupedEstab[]>([]);
   currentEstab = '';
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  docs: DocConfig[] = [];
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  docs = signal<DocConfig[]>([]);
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
     fechaCaducidad: new FormControl('', [Validators.required]),
@@ -164,7 +170,7 @@ export class WizardConfigComponent implements OnInit {
       Validators.maxLength(50),
     ]),
   });
-  demoSteps: DemoStep[] = [];
+  demoSteps = signal<DemoStep[]>([]);
   user = {} as UserData;
   userUpdated = false;
   estabRegistered = false;
@@ -280,18 +286,17 @@ export class WizardConfigComponent implements OnInit {
     this.companyDemoStepService.get({}).subscribe((response) => {
       if (response.code === '1') {
         const tempArray = JSON.parse(response.payload as string);
-        this.demoSteps = tempArray['companyDemoSteps'] as DemoStep[];
+        this.demoSteps.set(tempArray['companyDemoSteps'] as DemoStep[]);
         this.userUpdated =
-          this.demoSteps.find((step) => step.code === 'IV')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.completed ?? false;
         this.estabRegistered =
-          this.demoSteps.find((step) => step.code === 'V')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'V')?.completed ?? false;
         this.docsUpdated =
-          this.demoSteps.find((step) => step.code === 'VI')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.completed ?? false;
         this.certificateUpdated =
-          this.demoSteps.find((step) => step.code === 'VII')?.completed ??
-          false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.completed ?? false;
 
-        const incompleteStep = this.demoSteps.find((step) => !step.completed);
+        const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
 
         if (incompleteStep) {
           const stepIndex = incompleteStep
@@ -316,28 +321,28 @@ export class WizardConfigComponent implements OnInit {
 
   fetchDocConfig() {
     this.$formDataDocConfig.execute().subscribe((response) => {
-      this.establecimientos = response.establecimientos;
-      this.currentEstab = this.establecimientos[0].nombreComercial;
-      const combinedData = this.establecimientos[0].puntosEmision.map(
+      this.establecimientos.set(response.establecimientos);
+      this.currentEstab = this.establecimientos()[0].nombreComercial;
+      const combinedData = this.establecimientos().map(
         (pto) => ({
           ...pto,
-          _children: response.tiposDoc.map((doc: any) => ({
+          _children: (response.tiposDoc as any[]).map((doc) => ({
             ...doc,
-            parentId: pto.idPuntoEmision,
+            parentId: (pto as any).idPuntoEmision,
             ultimaSecuencia: 0,
           })),
         }),
       );
-      this.docsConfig = combinedData as [];
+      this.docsConfig.set(combinedData as []);
     });
   }
 
   fetchEstabData(): void {
     this._estabService.getDataForm().subscribe((response) => {
-      this.cantones = response.cantones;
-      this.actividadesEconomica = response.actividadesEconomica;
-      this.agentesRetencion = response.agentesRetencion;
-      this.contribuyentes = response.contribuyentes;
+      this.cantones.set(response.cantones);
+      this.actividadesEconomica.set(response.actividadesEconomica);
+      this.agentesRetencion.set(response.agentesRetencion);
+      this.contribuyentes.set(response.contribuyentes);
     });
   }
 
@@ -367,15 +372,15 @@ export class WizardConfigComponent implements OnInit {
       });
     }
     const telephone =
-      this.telephones.length > 0
-        ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH)
+      this.telephones().length > 0
+        ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
         : null;
 
     this.estabForm.get('telefono')?.setValue(telephone);
 
     const correo =
-      this.emails.length > 0
-        ? this.emails.join(SEPARATOR_KEY_CODE.SLASH)
+      this.emails().length > 0
+        ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
         : null;
     this.estabForm.get('correo')?.setValue(correo);
 
@@ -383,7 +388,7 @@ export class WizardConfigComponent implements OnInit {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps.find((step) => step.code === 'V')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id,
     };
     this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
@@ -404,7 +409,7 @@ export class WizardConfigComponent implements OnInit {
       ...structuredClone(this.userForm.value),
       email: this.user.email,
       username: this.user.username,
-      demoStepId: this.demoSteps.find((step) => step.code === 'IV')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
     };
     const userData = {
       data,
@@ -452,9 +457,7 @@ export class WizardConfigComponent implements OnInit {
 
   showInfoTipoContribuyente(): void {
     const contribuyente = this.estabForm.get('contribuyente')?.value;
-    const dataInfo = this.contribuyentes.find(
-      (item) => item.codigo === contribuyente,
-    );
+    const dataInfo = this.contribuyentes().find((item) => item.codigo === contribuyente);
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
         icon: 'info',
@@ -465,13 +468,11 @@ export class WizardConfigComponent implements OnInit {
 
   showInfoActividadEconomica(): void {
     const actividad = this.estabForm.get('actividad')?.value;
-    const groupActEconomica = this.actividadesEconomica.find(
-      (item) => item.codigo === actividad,
-    )?.grupo;
-    if (actividad && groupActEconomica) {
+    const groupActEconomica = this.actividadesEconomica().find((item) => item.codigo === actividad);
+    if (actividad && groupActEconomica?.grupo) {
       Swal.fire({
         icon: 'info',
-        html: `<small>${groupActEconomica}</small>`,
+        html: `<small>${groupActEconomica.grupo}</small>`,
       });
     }
   }
@@ -479,15 +480,15 @@ export class WizardConfigComponent implements OnInit {
   addEmail(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
-      this.emails.push(value);
+      this.emails.update((prev) => [...prev, value]);
       event.chipInput!.clear();
     }
   }
 
   removeEmail(value: string): void {
-    const index = this.emails.indexOf(value);
+    const index = this.emails().indexOf(value);
     if (index >= 0) {
-      this.emails.splice(index, 1);
+      this.emails.update((prev) => prev.filter((_, i) => i !== index));
       this.announcer.announce(`Removed ${value}`);
     }
   }
@@ -497,9 +498,11 @@ export class WizardConfigComponent implements OnInit {
     if (!value) {
       this.removeEmail(email);
     } else {
-      const index = this.emails.indexOf(email);
+      const index = this.emails().indexOf(email);
       if (index >= 0) {
-        this.emails[index] = value;
+        this.emails.update((prev) =>
+          prev.map((e, i) => (i === index ? value : e)),
+        );
       }
     }
   }
@@ -507,15 +510,15 @@ export class WizardConfigComponent implements OnInit {
   addTelephone(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
-      this.telephones.push(value);
+      this.telephones.update((prev) => [...prev, value]);
       event.chipInput!.clear();
     }
   }
 
   removeTelephone(value: string): void {
-    const index = this.telephones.indexOf(value);
+    const index = this.telephones().indexOf(value);
     if (index >= 0) {
-      this.telephones.splice(index, 1);
+      this.telephones.update((prev) => prev.filter((_, i) => i !== index));
       this.announcer.announce(`Removed ${value}`);
     }
   }
@@ -525,19 +528,21 @@ export class WizardConfigComponent implements OnInit {
     if (!value) {
       this.removeTelephone(telephone);
     } else {
-      const index = this.telephones.indexOf(telephone);
+      const index = this.telephones().indexOf(telephone);
       if (index >= 0) {
-        this.telephones[index] = value;
+        this.telephones.update((prev) =>
+          prev.map((t, i) => (i === index ? value : t)),
+        );
       }
     }
   }
 
   saveDocs() {
-    const docs = this.docsConfig.flatMap((pto: any) =>
-      pto._children
+    const docs = this.docsConfig().flatMap((pto: any) =>
+      (pto as any)._children
         .filter((doc: any) => doc.ultimaSecuencia > 0)
         .map((doc: any) => ({
-          idPuntoEmision: pto.idPuntoEmision,
+          idPuntoEmision: (pto as any).idPuntoEmision,
           idTipoDocumento: doc.idTipoDocumento,
           ultimaSecuencia: doc.ultimaSecuencia,
         })),
@@ -553,7 +558,7 @@ export class WizardConfigComponent implements OnInit {
 
     const dataToSave = {
       docs: JSON.stringify(docs),
-      demoStepId: this.demoSteps.find((step) => step.code === 'VI')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id,
     };
     this.createDocConfigUseCase.execute(dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
@@ -587,7 +592,7 @@ export class WizardConfigComponent implements OnInit {
       const formData = {
         contrasenia: this.certificateForm.get('contrasenia')?.value,
         fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value,
-        demoStepId: this.demoSteps.find((step) => step.code === 'VII')?.id,
+        demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id,
       };
 
       this.firmaElectronicaService
@@ -618,7 +623,7 @@ export class WizardConfigComponent implements OnInit {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps.find((step) => step.code === 'VII')?.id;
+        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id;
         this.companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
