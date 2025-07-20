@@ -1,12 +1,4 @@
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withHooks,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
-import { computed, inject } from '@angular/core';
+import { computed, inject, signal, DestroyRef, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
@@ -21,7 +13,6 @@ import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/age
 import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
 
 // Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -162,411 +153,516 @@ const initialState: WizardConfigState = {
   isLinear: false,
 };
 
-export const WizardConfigStore = signalStore(
-  { providedIn: 'root' },
-  withState(initialState),
+@Injectable({
+  providedIn: 'root'
+})
+export class WizardConfigStore {
+  // ============================================================================
+  // SIGNAL STATE
+  // ============================================================================
 
-  withComputed((store) => ({
-    // Step Navigation Computed
-    hasIncompleteSteps: computed(() =>
-      store.demoSteps().some(step => !step.completed)
-    ),
+  // Data Signals
+  readonly cantones = signal<Canton[]>(initialState.cantones);
+  readonly actividadesEconomica = signal<ActividadEconomica[]>(initialState.actividadesEconomica);
+  readonly agentesRetencion = signal<AgenteRetencion[]>(initialState.agentesRetencion);
+  readonly contribuyentes = signal<Contribuyente[]>(initialState.contribuyentes);
+  readonly ambientes = signal<AmbienteSri[]>(initialState.ambientes);
+  readonly establecimientos = signal<GroupedEstab[]>(initialState.establecimientos);
+  readonly puntosEmision = signal<GroupedEstabPuntoEmision[]>(initialState.puntosEmision);
+  readonly docs = signal<DocConfig[]>(initialState.docs);
+  readonly demoSteps = signal<DemoStep[]>(initialState.demoSteps);
+  readonly docsConfig = signal<EstabWithChildren[]>(initialState.docsConfig);
 
-    currentStepIndex: computed(() =>
-      store.demoSteps().findIndex(step => !step.completed)
-    ),
+  // UI State Signals
+  readonly emails = signal<string[]>(initialState.emails);
+  readonly telephones = signal<string[]>(initialState.telephones);
+  readonly currentEstab = signal<string>(initialState.currentEstab);
+  readonly fileError = signal<boolean>(initialState.fileError);
+  readonly selectedFile = signal<File | null>(initialState.selectedFile);
 
-    canProceedToNextStep: computed(() => {
-      const currentStepIndex = store.demoSteps().findIndex(step => !step.completed);
-      const currentStep = currentStepIndex >= 0 ? store.demoSteps()[currentStepIndex] : null;
-      return currentStep?.completed ?? false;
-    }),
+  // Step Completion Flags
+  readonly userUpdated = signal<boolean>(initialState.userUpdated);
+  readonly estabRegistered = signal<boolean>(initialState.estabRegistered);
+  readonly tipoContribuyenteRegistered = signal<boolean>(initialState.tipoContribuyenteRegistered);
+  readonly docsUpdated = signal<boolean>(initialState.docsUpdated);
+  readonly certificateUpdated = signal<boolean>(initialState.certificateUpdated);
 
-    // Loading States Computed
-    isLoading: computed(() =>
-      store.isLoadingSteps() ||
-      store.isLoadingEstabData() ||
-      store.isLoadingDocConfig() ||
-      store.isSavingUser() ||
-      store.isSavingEstab() ||
-      store.isSavingDocs() ||
-      store.isSavingCertificate()
-    ),
+  // Loading States
+  readonly isLoadingSteps = signal<boolean>(initialState.isLoadingSteps);
+  readonly isLoadingEstabData = signal<boolean>(initialState.isLoadingEstabData);
+  readonly isLoadingDocConfig = signal<boolean>(initialState.isLoadingDocConfig);
+  readonly isSavingUser = signal<boolean>(initialState.isSavingUser);
+  readonly isSavingEstab = signal<boolean>(initialState.isSavingEstab);
+  readonly isSavingDocs = signal<boolean>(initialState.isSavingDocs);
+  readonly isSavingCertificate = signal<boolean>(initialState.isSavingCertificate);
 
-    // Step Completion Computed
-    completedStepsCount: computed(() =>
-      store.demoSteps().filter(step => step.completed).length
-    ),
+  // User Data
+  readonly user = signal<UserData | null>(initialState.user);
 
-    totalStepsCount: computed(() => store.demoSteps().length),
+  // Stepper Configuration
+  readonly isLinear = signal<boolean>(initialState.isLinear);
 
-    progressPercentage: computed(() => {
-      const total = store.demoSteps().length;
-      const completed = store.demoSteps().filter(step => step.completed).length;
-      return total > 0 ? (completed / total) * 100 : 0;
-    }),
+  // ============================================================================
+  // COMPUTED SIGNALS
+  // ============================================================================
 
-    // Data Availability Computed
-    hasEstabData: computed(() => store.establecimientos().length > 0),
-    hasDocConfig: computed(() => store.docsConfig().length > 0),
-    hasUserData: computed(() => store.user() !== null),
+  // Step Navigation Computed
+  readonly hasIncompleteSteps = computed(() =>
+    this.demoSteps().some(step => !step.completed)
+  );
 
-    // Current Step Info
-    currentStep: computed(() => {
-      const index = store.demoSteps().findIndex(step => !step.completed);
-      return index >= 0 ? store.demoSteps()[index] : null;
-    }),
+  readonly currentStepIndex = computed(() =>
+    this.demoSteps().findIndex(step => !step.completed)
+  );
 
-    nextStep: computed(() => {
-      const currentIndex = store.demoSteps().findIndex(step => !step.completed);
-      const nextIndex = currentIndex + 1;
-      return nextIndex < store.demoSteps().length ? store.demoSteps()[nextIndex] : null;
-    }),
+  readonly canProceedToNextStep = computed(() => {
+    const currentStepIndex = this.demoSteps().findIndex(step => !step.completed);
+    const currentStep = currentStepIndex >= 0 ? this.demoSteps()[currentStepIndex] : null;
+    return currentStep?.completed ?? false;
+  });
 
-    previousStep: computed(() => {
-      const currentIndex = store.demoSteps().findIndex(step => !step.completed);
-      const prevIndex = currentIndex - 1;
-      return prevIndex >= 0 ? store.demoSteps()[prevIndex] : null;
-    }),
-  })),
+  // Loading States Computed
+  readonly isLoading = computed(() =>
+    this.isLoadingSteps() ||
+    this.isLoadingEstabData() ||
+    this.isLoadingDocConfig() ||
+    this.isSavingUser() ||
+    this.isSavingEstab() ||
+    this.isSavingDocs() ||
+    this.isSavingCertificate()
+  );
 
-  withMethods((store, $companyDemoStepService = inject(CompanyDemoStepService), $estabService = inject(EstablishmentService), $formDataDocConfig = inject(GetDocConfigFormDataUseCase), $createDocConfigUseCase = inject(CreateDocConfigUseCase), $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase), $firmaElectronicaService = inject(FirmaElectronicaService), $tokenUseCase = inject(TokenUseCase), $toasterService = inject(ToastrNotificationService), $fb = inject(FormBuilder)) => ({
-    // Data Loading Methods
-    loadCompanyDemoSteps() {
-      patchState(store, { isLoadingSteps: true });
+  // Step Completion Computed
+  readonly completedStepsCount = computed(() =>
+    this.demoSteps().filter(step => step.completed).length
+  );
 
-      $companyDemoStepService.get({}).pipe(
-        takeUntilDestroyed(),
-        catchError((error: unknown) => {
-          console.error('Error loading demo steps:', error);
-          $toasterService.show({
-            type: 'error',
-            message: 'Error al cargar los pasos del asistente'
-          });
-          patchState(store, { isLoadingSteps: false });
-          return of(null);
-        })
-      ).subscribe((response) => {
-        if (response?.code === '1') {
-          const tempArray = JSON.parse(response.payload as string);
-          const demoSteps = tempArray['companyDemoSteps'] as DemoStep[];
+  readonly totalStepsCount = computed(() => this.demoSteps().length);
 
-          patchState(store, {
-            demoSteps,
-            isLoadingSteps: false,
-          });
+  readonly progressPercentage = computed(() => {
+    const total = this.demoSteps().length;
+    const completed = this.demoSteps().filter(step => step.completed).length;
+    return total > 0 ? (completed / total) * 100 : 0;
+  });
 
-          this.updateStepCompletionStatus();
-          this.handleIncompleteSteps();
-        } else {
-          patchState(store, { isLoadingSteps: false });
-        }
-      });
-    },
+  // Data Availability Computed
+  readonly hasEstabData = computed(() => this.establecimientos().length > 0);
+  readonly hasDocConfig = computed(() => this.docsConfig().length > 0);
+  readonly hasUserData = computed(() => this.user() !== null);
 
-    loadEstabData() {
-      patchState(store, { isLoadingEstabData: true });
+  // Current Step Info
+  readonly currentStep = computed(() => {
+    const index = this.demoSteps().findIndex(step => !step.completed);
+    return index >= 0 ? this.demoSteps()[index] : null;
+  });
 
-      $estabService.getDataForm().pipe(
-        takeUntilDestroyed(),
-        catchError((error: unknown) => {
-          console.error('Error loading establishment data:', error);
-          $toasterService.show({
-            type: 'error',
-            message: 'Error al cargar datos de establecimiento'
-          });
-          patchState(store, { isLoadingEstabData: false });
-          return of({ cantones: [], actividadesEconomica: [], agentesRetencion: [], contribuyentes: [] });
-        })
-      ).subscribe((response: any) => {
-        const cantones = response.cantones || [];
-        patchState(store, {
-          cantones,
-          isLoadingEstabData: false,
+  readonly nextStep = computed(() => {
+    const currentIndex = this.demoSteps().findIndex(step => !step.completed);
+    const nextIndex = currentIndex + 1;
+    return nextIndex < this.demoSteps().length ? this.demoSteps()[nextIndex] : null;
+  });
+
+  readonly previousStep = computed(() => {
+    const currentIndex = this.demoSteps().findIndex(step => !step.completed);
+    const prevIndex = currentIndex - 1;
+    return prevIndex >= 0 ? this.demoSteps()[prevIndex] : null;
+  });
+
+  // ============================================================================
+  // DEPENDENCIES
+  // ============================================================================
+
+  private readonly _companyDemoStepService = inject(CompanyDemoStepService);
+  private readonly _estabService = inject(EstablishmentService);
+  private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
+  private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
+  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
+  private readonly _firmaElectronicaService = inject(FirmaElectronicaService);
+  private readonly _tokenUseCase = inject(TokenUseCase);
+  private readonly _toasterService = inject(ToastrNotificationService);
+  private readonly _fb = inject(FormBuilder);
+  private readonly _destroyRef = inject(DestroyRef);
+
+  // ============================================================================
+  // INITIALIZATION
+  // ============================================================================
+
+  constructor() {
+    this.initializeUserData();
+  }
+
+  // ============================================================================
+  // DATA LOADING METHODS
+  // ============================================================================
+
+  loadCompanyDemoSteps(): void {
+    this.isLoadingSteps.set(true);
+
+    this._companyDemoStepService.get({}).pipe(
+      takeUntilDestroyed(this._destroyRef),
+      catchError((error: unknown) => {
+        console.error('Error loading demo steps:', error);
+        this._toasterService.show({
+          type: 'error',
+          message: 'Error al cargar los pasos del asistente'
         });
-      });
-    },
+        this.isLoadingSteps.set(false);
+        return of(null);
+      })
+    ).subscribe((response) => {
+      if (response?.code === '1') {
+        const tempArray = JSON.parse(response.payload as string);
+        const demoSteps = tempArray['companyDemoSteps'] as DemoStep[];
 
-    loadDocConfig() {
-      patchState(store, { isLoadingDocConfig: true });
+        this.demoSteps.set(demoSteps);
+        this.isLoadingSteps.set(false);
 
-      $formDataDocConfig.execute().pipe(
-        takeUntilDestroyed(),
-        catchError((error: unknown) => {
-          console.error('Error loading doc config:', error);
-          $toasterService.show({
-            type: 'error',
-            message: 'Error al cargar configuración de documentos'
-          });
-          patchState(store, { isLoadingDocConfig: false });
-          return of(null);
-        })
-      ).subscribe((response) => {
-        if (response) {
-          const establecimientos = response.establecimientos;
-          const currentEstab = establecimientos[0]?.nombreComercial || '';
-
-          const combinedData = establecimientos.map((pto) => ({
-            ...pto,
-            _children: (response.tiposDoc as DocConfigItem[]).map((doc) => ({
-              ...doc,
-              parentId: String(pto.puntosEmision[0]?.idPuntoEmision || ''),
-            })),
-          }));
-
-          patchState(store, {
-            establecimientos,
-            currentEstab,
-            docsConfig: combinedData,
-            isLoadingDocConfig: false,
-          });
-        } else {
-          patchState(store, { isLoadingDocConfig: false });
-        }
-      });
-    },
-
-    // User Management Methods
-    initializeUserData() {
-      const decodedToken = $tokenUseCase.getUserData();
-      if (decodedToken) {
-        patchState(store, { user: decodedToken });
+        this.updateStepCompletionStatus();
+        this.handleIncompleteSteps();
+      } else {
+        this.isLoadingSteps.set(false);
       }
-    },
+    });
+  }
 
-    // Step Management Methods
-    updateStepCompletionStatus() {
-      const updatedSteps = store.demoSteps().map(step => ({
-        ...step,
-        completed: this.getStepCompletionStatus(step.code),
-      }));
+  loadEstabData(): void {
+    this.isLoadingEstabData.set(true);
 
-      patchState(store, { demoSteps: updatedSteps });
-    },
+    this._estabService.getDataForm().pipe(
+      takeUntilDestroyed(this._destroyRef),
+      catchError((error: unknown) => {
+        console.error('Error loading establishment data:', error);
+        this._toasterService.show({
+          type: 'error',
+          message: 'Error al cargar datos de establecimiento'
+        });
+        this.isLoadingEstabData.set(false);
+        return of({ cantones: [], actividadesEconomica: [], agentesRetencion: [], contribuyentes: [] });
+      })
+    ).subscribe((response: { cantones?: Canton[]; actividadesEconomica?: ActividadEconomica[]; agentesRetencion?: AgenteRetencion[]; contribuyentes?: Contribuyente[] }) => {
+      const cantones = response.cantones || [];
+      const actividadesEconomica = response.actividadesEconomica || [];
+      const agentesRetencion = response.agentesRetencion || [];
+      const contribuyentes = response.contribuyentes || [];
 
-    getStepCompletionStatus(stepCode: string): boolean {
-      switch (stepCode) {
-        case 'I': return true; // Welcome step is always completed
-        case 'II': return store.userUpdated();
-        case 'III': return store.estabRegistered();
-        case 'IV': return store.tipoContribuyenteRegistered();
-        case 'V': return store.docsUpdated();
-        case 'VI': return store.certificateUpdated();
-        case 'VII': return true; // Completion step is always completed
-        default: return false;
+      this.cantones.set(cantones);
+      this.actividadesEconomica.set(actividadesEconomica);
+      this.agentesRetencion.set(agentesRetencion);
+      this.contribuyentes.set(contribuyentes);
+      this.isLoadingEstabData.set(false);
+    });
+  }
+
+  loadDocConfig(): void {
+    this.isLoadingDocConfig.set(true);
+
+    this._formDataDocConfig.execute().pipe(
+      takeUntilDestroyed(this._destroyRef),
+      catchError((error: unknown) => {
+        console.error('Error loading doc config:', error);
+        this._toasterService.show({
+          type: 'error',
+          message: 'Error al cargar configuración de documentos'
+        });
+        this.isLoadingDocConfig.set(false);
+        return of(null);
+      })
+    ).subscribe((response) => {
+      if (response) {
+        const establecimientos = response.establecimientos;
+        const currentEstab = establecimientos[0]?.nombreComercial || '';
+
+        const combinedData = establecimientos.map((pto) => ({
+          ...pto,
+          _children: (response.tiposDoc as DocConfigItem[]).map((doc) => ({
+            ...doc,
+            parentId: String(pto.puntosEmision[0]?.idPuntoEmision || ''),
+          })),
+        }));
+
+        this.establecimientos.set(establecimientos);
+        this.currentEstab.set(currentEstab);
+        this.docsConfig.set(combinedData);
+        this.isLoadingDocConfig.set(false);
+      } else {
+        this.isLoadingDocConfig.set(false);
       }
-    },
+    });
+  }
 
-    handleIncompleteSteps() {
-      const incompleteSteps = store.demoSteps().filter(step => !step.completed);
+  // ============================================================================
+  // USER MANAGEMENT METHODS
+  // ============================================================================
 
-      if (incompleteSteps.length > 0) {
-        const firstIncompleteStep = incompleteSteps[0];
-        this.loadStepData(firstIncompleteStep.code);
-      }
-    },
+  initializeUserData(): void {
+    const decodedToken = this._tokenUseCase.getUserData();
+    if (decodedToken) {
+      this.user.set(decodedToken);
+    }
+  }
 
-    loadStepData(stepCode: string) {
-      switch (stepCode) {
-        case 'II':
-          // User step data is already loaded
-          break;
-        case 'III':
-          this.loadEstabData();
-          break;
-        case 'IV':
-          // Contribuyente data loading
-          break;
-        case 'V':
-          this.loadDocConfig();
-          break;
-        case 'VI':
-          // Certificate step data
-          break;
-      }
-    },
+  // ============================================================================
+  // STEP MANAGEMENT METHODS
+  // ============================================================================
 
-    // Step Completion Methods
-    markUserStepCompleted() {
-      patchState(store, { userUpdated: true });
-      this.updateStepCompletionStatus();
-    },
+  updateStepCompletionStatus(): void {
+    const updatedSteps = this.demoSteps().map(step => ({
+      ...step,
+      completed: this.getStepCompletionStatus(step.code),
+    }));
 
-    markEstabStepCompleted() {
-      patchState(store, { estabRegistered: true });
-      this.updateStepCompletionStatus();
-    },
+    this.demoSteps.set(updatedSteps);
+  }
 
-    markContribuyenteStepCompleted() {
-      patchState(store, { tipoContribuyenteRegistered: true });
-      this.updateStepCompletionStatus();
-    },
+  getStepCompletionStatus(stepCode: string): boolean {
+    switch (stepCode) {
+      case 'I': return true; // Welcome step is always completed
+      case 'II': return this.userUpdated();
+      case 'III': return this.estabRegistered();
+      case 'IV': return this.tipoContribuyenteRegistered();
+      case 'V': return this.docsUpdated();
+      case 'VI': return this.certificateUpdated();
+      case 'VII': return true; // Completion step is always completed
+      default: return false;
+    }
+  }
 
-    markDocsStepCompleted() {
-      patchState(store, { docsUpdated: true });
-      this.updateStepCompletionStatus();
-    },
+  handleIncompleteSteps(): void {
+    const incompleteSteps = this.demoSteps().filter(step => !step.completed);
 
-    markCertificateStepCompleted() {
-      patchState(store, { certificateUpdated: true });
-      this.updateStepCompletionStatus();
-    },
+    if (incompleteSteps.length > 0) {
+      const firstIncompleteStep = incompleteSteps[0];
+      this.loadStepData(firstIncompleteStep.code);
+    }
+  }
 
-    // UI State Methods
-    addEmail(email: string) {
-      const currentEmails = store.emails();
-      if (!currentEmails.includes(email)) {
-        patchState(store, { emails: [...currentEmails, email] });
-      }
-    },
+  loadStepData(stepCode: string): void {
+    switch (stepCode) {
+      case 'II':
+        // User step data is already loaded
+        break;
+      case 'III':
+        this.loadEstabData();
+        break;
+      case 'IV':
+        // Contribuyente data loading
+        break;
+      case 'V':
+        this.loadDocConfig();
+        break;
+      case 'VI':
+        // Certificate step data
+        break;
+    }
+  }
 
-    removeEmail(email: string) {
-      const currentEmails = store.emails();
-      patchState(store, {
-        emails: currentEmails.filter(e => e !== email)
-      });
-    },
+  // ============================================================================
+  // STEP COMPLETION METHODS
+  // ============================================================================
 
-    addTelephone(telephone: string) {
-      const currentTelephones = store.telephones();
-      if (!currentTelephones.includes(telephone)) {
-        patchState(store, { telephones: [...currentTelephones, telephone] });
-      }
-    },
+  markUserStepCompleted(): void {
+    this.userUpdated.set(true);
+    this.updateStepCompletionStatus();
+  }
 
-    removeTelephone(telephone: string) {
-      const currentTelephones = store.telephones();
-      patchState(store, {
-        telephones: currentTelephones.filter(t => t !== telephone)
-      });
-    },
+  markEstabStepCompleted(): void {
+    this.estabRegistered.set(true);
+    this.updateStepCompletionStatus();
+  }
 
-    setFileError(error: boolean) {
-      patchState(store, { fileError: error });
-    },
+  markContribuyenteStepCompleted(): void {
+    this.tipoContribuyenteRegistered.set(true);
+    this.updateStepCompletionStatus();
+  }
 
-    setSelectedFile(file: File | null) {
-      patchState(store, { selectedFile: file });
-    },
+  markDocsStepCompleted(): void {
+    this.docsUpdated.set(true);
+    this.updateStepCompletionStatus();
+  }
 
-    setCurrentEstab(estab: string) {
-      patchState(store, { currentEstab: estab });
-    },
+  markCertificateStepCompleted(): void {
+    this.certificateUpdated.set(true);
+    this.updateStepCompletionStatus();
+  }
 
-    // Form Factory Methods
-    createUserForm(): FormGroup<UserFormControls> {
-      return $fb.group<UserFormControls>({
-        nroIdentificacion: $fb.control(''),
-        firstName: $fb.control('', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
-        ]),
-        lastName: $fb.control('', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
-        ]),
-      });
-    },
+  // ============================================================================
+  // UI STATE METHODS
+  // ============================================================================
 
-    createEstabForm(): FormGroup<EstabFormControls> {
-      return $fb.group<EstabFormControls>({
-        canton: $fb.control(''),
-        estab: $fb.control('', [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(3)
-        ]),
-        nombreComercial: $fb.control('', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300)
-        ]),
-        dirEstablecimiento: $fb.control('', [
-          Validators.required,
-          Validators.maxLength(300)
-        ]),
-        telefono: $fb.control(''),
-        correo: $fb.control(''),
-        ptosEmi: $fb.array<FormGroup<PtoEmiFormControls>>([]),
-        hasInventory: $fb.control(false),
-        bodegas: $fb.array<FormGroup<BodegaFormControls>>([]),
-      });
-    },
+  addEmail(email: string): void {
+    const currentEmails = this.emails();
+    if (!currentEmails.includes(email)) {
+      this.emails.set([...currentEmails, email]);
+    }
+  }
 
-    createTipoContribuyenteForm(): FormGroup {
-      return $fb.group({
-        actividad: ['', Validators.required],
-        agenteRetencion: '',
-        contribuyente: ['', Validators.required],
-        contribuyenteEspecial: [''],
-        obligadoContabilidad: [
-          '',
-          [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
-        ],
-      });
-    },
+  removeEmail(email: string): void {
+    const currentEmails = this.emails();
+    this.emails.set(currentEmails.filter(e => e !== email));
+  }
 
-    createCertificateForm(): FormGroup {
-      return $fb.group({
-        contrasenia: ['', Validators.required],
-        fechaCaducidad: ['', Validators.required],
-        fileSign: [null, Validators.required],
-      });
-    },
+  addTelephone(telephone: string): void {
+    const currentTelephones = this.telephones();
+    if (!currentTelephones.includes(telephone)) {
+      this.telephones.set([...currentTelephones, telephone]);
+    }
+  }
 
-    // Form Array Factory Methods
-    createBodegaForm(): FormGroup<BodegaFormControls> {
-      return $fb.group<BodegaFormControls>({
-        descripcion: $fb.control('', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300),
-        ]),
-        direccion: $fb.control('', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300),
-        ]),
-        telefono: $fb.control(''),
-      });
-    },
+  removeTelephone(telephone: string): void {
+    const currentTelephones = this.telephones();
+    this.telephones.set(currentTelephones.filter(t => t !== telephone));
+  }
 
-    createPtoEmiForm(): FormGroup<PtoEmiFormControls> {
-      return $fb.group<PtoEmiFormControls>({
-        ptoEmi: $fb.control('', [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(3)
-        ]),
-        ambiente: $fb.control('', Validators.required),
-      });
-    },
+  setFileError(error: boolean): void {
+    this.fileError.set(error);
+  }
 
-    // Reset Methods
-    resetWizard() {
-      patchState(store, {
-        ...initialState,
-        ambientes: ambienteSriOptions, // Keep default ambientes
-      });
-    },
+  setSelectedFile(file: File | null): void {
+    this.selectedFile.set(file);
+  }
 
-    resetStepCompletion() {
-      patchState(store, {
-        userUpdated: false,
-        estabRegistered: false,
-        tipoContribuyenteRegistered: false,
-        docsUpdated: false,
-        certificateUpdated: false,
-      });
-    },
-  })),
+  setCurrentEstab(estab: string): void {
+    this.currentEstab.set(estab);
+  }
 
-  withHooks({
-    onInit(store) {
-      // Initialize user data when store is created
-      store.initializeUserData();
-    },
-  })
-);
+  // ============================================================================
+  // FORM FACTORY METHODS
+  // ============================================================================
+
+  createUserForm(): FormGroup<UserFormControls> {
+    return this._fb.group<UserFormControls>({
+      nroIdentificacion: this._fb.control(''),
+      firstName: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ]),
+      lastName: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ]),
+    });
+  }
+
+  createEstabForm(): FormGroup<EstabFormControls> {
+    return this._fb.group<EstabFormControls>({
+      canton: this._fb.control(''),
+      estab: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(3)
+      ]),
+      nombreComercial: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(300)
+      ]),
+      dirEstablecimiento: this._fb.control('', [
+        Validators.required,
+        Validators.maxLength(300)
+      ]),
+      telefono: this._fb.control(''),
+      correo: this._fb.control(''),
+      ptosEmi: this._fb.array<FormGroup<PtoEmiFormControls>>([]),
+      hasInventory: this._fb.control(false),
+      bodegas: this._fb.array<FormGroup<BodegaFormControls>>([]),
+    });
+  }
+
+  createTipoContribuyenteForm(): FormGroup {
+    return this._fb.group({
+      actividad: ['', Validators.required],
+      agenteRetencion: '',
+      contribuyente: ['', Validators.required],
+      contribuyenteEspecial: [''],
+      obligadoContabilidad: [
+        '',
+        [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
+      ],
+    });
+  }
+
+  createCertificateForm(): FormGroup {
+    return this._fb.group({
+      contrasenia: ['', Validators.required],
+      fechaCaducidad: ['', Validators.required],
+      fileSign: [null, Validators.required],
+    });
+  }
+
+  // ============================================================================
+  // FORM ARRAY FACTORY METHODS
+  // ============================================================================
+
+  createBodegaForm(): FormGroup<BodegaFormControls> {
+    return this._fb.group<BodegaFormControls>({
+      descripcion: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(300),
+      ]),
+      direccion: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(300),
+      ]),
+      telefono: this._fb.control(''),
+    });
+  }
+
+  createPtoEmiForm(): FormGroup<PtoEmiFormControls> {
+    return this._fb.group<PtoEmiFormControls>({
+      ptoEmi: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(3)
+      ]),
+      ambiente: this._fb.control('', Validators.required),
+    });
+  }
+
+  // ============================================================================
+  // RESET METHODS
+  // ============================================================================
+
+  resetWizard(): void {
+    this.cantones.set(initialState.cantones);
+    this.actividadesEconomica.set(initialState.actividadesEconomica);
+    this.agentesRetencion.set(initialState.agentesRetencion);
+    this.contribuyentes.set(initialState.contribuyentes);
+    this.ambientes.set(initialState.ambientes);
+    this.establecimientos.set(initialState.establecimientos);
+    this.puntosEmision.set(initialState.puntosEmision);
+    this.docs.set(initialState.docs);
+    this.demoSteps.set(initialState.demoSteps);
+    this.docsConfig.set(initialState.docsConfig);
+    this.emails.set(initialState.emails);
+    this.telephones.set(initialState.telephones);
+    this.currentEstab.set(initialState.currentEstab);
+    this.fileError.set(initialState.fileError);
+    this.selectedFile.set(initialState.selectedFile);
+    this.userUpdated.set(initialState.userUpdated);
+    this.estabRegistered.set(initialState.estabRegistered);
+    this.tipoContribuyenteRegistered.set(initialState.tipoContribuyenteRegistered);
+    this.docsUpdated.set(initialState.docsUpdated);
+    this.certificateUpdated.set(initialState.certificateUpdated);
+    this.isLoadingSteps.set(initialState.isLoadingSteps);
+    this.isLoadingEstabData.set(initialState.isLoadingEstabData);
+    this.isLoadingDocConfig.set(initialState.isLoadingDocConfig);
+    this.isSavingUser.set(initialState.isSavingUser);
+    this.isSavingEstab.set(initialState.isSavingEstab);
+    this.isSavingDocs.set(initialState.isSavingDocs);
+    this.isSavingCertificate.set(initialState.isSavingCertificate);
+    this.user.set(initialState.user);
+    this.isLinear.set(initialState.isLinear);
+  }
+
+  resetStepCompletion(): void {
+    this.userUpdated.set(false);
+    this.estabRegistered.set(false);
+    this.tipoContribuyenteRegistered.set(false);
+    this.docsUpdated.set(false);
+    this.certificateUpdated.set(false);
+  }
+}
