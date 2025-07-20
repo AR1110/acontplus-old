@@ -1,14 +1,12 @@
-import {Observable} from "rxjs";
-import {
-  DocConfigFormDataResponse,
-  DocConfigInfoAdicional,
-  DocConfigListResponse
-} from "@modules/config/domain/models/doc-config.model";
-import {ApiResponse} from "@core/models/api-response";
+import { DocConfig } from '../models/doc-config.model';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '@core/models/api-response';
+import { DocConfigFormDataResponse, DocConfigInfoAdicional, DocConfigListResponse } from '../models/doc-config.model';
 
 export abstract class DocConfigRepository {
-  abstract list(puntoEmisionId:number):Observable<DocConfigListResponse>
-  abstract getInfoAdicionales(id:number):Observable<DocConfigInfoAdicional[]>
-  abstract create(params:any): Observable<ApiResponse>
-  abstract getFormData(): Observable<DocConfigFormDataResponse>
+  abstract save(docConfig: DocConfig): Observable<ApiResponse>;
+  abstract getFormData(): Observable<DocConfigFormDataResponse>;
+  abstract create(params: any): Observable<ApiResponse>;
+  abstract getInfoAdicionales(id: number): Observable<DocConfigInfoAdicional[]>;
+  abstract list(puntoEmisionId: number): Observable<DocConfigListResponse>;
 }

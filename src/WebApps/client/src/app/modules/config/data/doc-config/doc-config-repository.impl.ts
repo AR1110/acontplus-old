@@ -6,7 +6,8 @@ import {DocConfigRepository} from "@modules/config/domain/repositories/doc-confi
 import {
   DocConfigFormDataResponse,
   DocConfigInfoAdicional,
-  DocConfigListResponse
+  DocConfigListResponse,
+  DocConfig
 } from "@modules/config/domain/models/doc-config.model";
 import {map, Observable} from "rxjs";
 import {DocConfigListMapper} from "@modules/config/data/doc-config/doc-config-list.mapper";
@@ -41,6 +42,12 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
       };
       return this.#http
         .post<ApiResponse>(`${this.#url}`, { data })
+  }
+  save(docConfig: DocConfig): Observable<ApiResponse> {
+    const data = {
+      docs: JSON.stringify(docConfig),
+    };
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
   }
   getInfoAdicionales(id:number): Observable<DocConfigInfoAdicional[]> {
   const json = DocConfigInfoAdicionalesMapper.toJson(id)

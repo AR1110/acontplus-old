@@ -29,6 +29,8 @@ import { CreditTimeRepository } from '@modules/config/domain/repositories/credit
 import { CreditTimeRepositoryImpl } from '@modules/config/data/credit-time/credit-time-repository.impl';
 import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
 import { DocConfigRepositoryImpl } from '@modules/config/data/doc-config/doc-config-repository.impl';
+import { ContribuyenteRepository } from '@modules/config/domain/repositories/contribuyente.repository';
+import { ContribuyenteRepositoryImpl } from '@modules/config/data/wizard-config/contribuyente-repository.impl';
 import { WIZARD_CONFIG_REPOSITORY } from '../domain/repositories/wizard-config.repository';
 import { WizardConfigRepositoryImpl } from './wizard-config/wizard-config.repository.impl';
 
@@ -95,6 +97,10 @@ export const DATA_CONFIG_IOC: Provider[] = [
   {
     provide: DocConfigRepository,
     useClass: DocConfigRepositoryImpl,
+  },
+  {
+    provide: ContribuyenteRepository,
+    useClass: ContribuyenteRepositoryImpl,
   },
   {
     provide: WIZARD_CONFIG_REPOSITORY,

@@ -7,11 +7,17 @@ import { WizardConfiguration } from '@modules/config/domain/models/wizard-config
 import { WizardStep } from '@modules/config/domain/models/wizard-config/wizard-step.model';
 import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
 import { EstablishmentData } from '@modules/config/domain/models/wizard-config/value-objects/establishment-data.vo';
+import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
+import { DocConfig } from '@modules/config/domain/models/doc-config.model';
+import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
 
 // Use Cases
 import { GetWizardConfigurationUseCase } from '../use-cases/wizard-config/get-wizard-configuration.use-case';
 import { SaveUserDataUseCase } from '../use-cases/wizard-config/save-user-data.use-case';
 import { SaveEstablishmentDataUseCase } from '../use-cases/wizard-config/save-establishment-data.use-case';
+import { SaveContribuyenteDataUseCase } from '../use-cases/wizard-config/save-contribuyente-data.use-case';
+import { CreateDocConfigUseCase } from '../use-cases/doc-config/create-doc-config.use-case';
+import { CreateElectronicSignatureUseCase } from '../use-cases/electronic-signature/create-electronic-signature.use-case';
 
 // Services
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -145,6 +151,9 @@ export class WizardConfigStore {
   private readonly _getWizardConfigurationUseCase = inject(GetWizardConfigurationUseCase);
   private readonly _saveUserDataUseCase = inject(SaveUserDataUseCase);
   private readonly _saveEstablishmentDataUseCase = inject(SaveEstablishmentDataUseCase);
+  private readonly _saveContribuyenteDataUseCase = inject(SaveContribuyenteDataUseCase);
+  private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
+  private readonly _createElectronicSignatureUseCase = inject(CreateElectronicSignatureUseCase);
   private readonly _toasterService = inject(ToastrNotificationService);
   private readonly _destroyRef = inject(DestroyRef);
 
@@ -280,6 +289,66 @@ export class WizardConfigStore {
         this.error.set(error.message || 'Error saving establishment data');
         this.isSavingEstablishment.set(false);
         this._toasterService.error({ message: 'Error saving establishment data' });
+      }
+    });
+  }
+
+  saveContribuyenteData(contribuyente: Contribuyente): void {
+    this.isSavingContribuyente.set(true);
+    this.error.set(null);
+    this._saveContribuyenteDataUseCase.execute({ contribuyente }).pipe(
+      takeUntilDestroyed(this._destroyRef)
+    ).subscribe({
+      next: (response) => {
+        // Optionally update state with response
+        this.isSavingContribuyente.set(false);
+        this.completeCurrentStep();
+        this._toasterService.success({ message: 'Contribuyente guardado exitosamente' });
+      },
+      error: (error) => {
+        this.error.set(error.message || 'Error guardando contribuyente');
+        this.isSavingContribuyente.set(false);
+        this._toasterService.error({ message: 'Error guardando contribuyente' });
+      }
+    });
+  }
+
+  saveDocumentsConfig(docConfig: DocConfig): void {
+    this.isSavingDocuments.set(true);
+    this.error.set(null);
+    this._createDocConfigUseCase.execute(docConfig).pipe(
+      takeUntilDestroyed(this._destroyRef)
+    ).subscribe({
+      next: (response) => {
+        // Optionally update state with response
+        this.isSavingDocuments.set(false);
+        this.completeCurrentStep();
+        this._toasterService.success({ message: 'Documentos guardados exitosamente' });
+      },
+      error: (error) => {
+        this.error.set(error.message || 'Error guardando documentos');
+        this.isSavingDocuments.set(false);
+        this._toasterService.error({ message: 'Error guardando documentos' });
+      }
+    });
+  }
+
+  saveElectronicSignature(signatureData: ElectronicSignatureParam): void {
+    this.isSavingCertificate.set(true);
+    this.error.set(null);
+    this._createElectronicSignatureUseCase.execute(signatureData).pipe(
+      takeUntilDestroyed(this._destroyRef)
+    ).subscribe({
+      next: (response) => {
+        // Optionally update state with response
+        this.isSavingCertificate.set(false);
+        this.completeCurrentStep();
+        this._toasterService.success({ message: 'Firma electrónica guardada exitosamente' });
+      },
+      error: (error) => {
+        this.error.set(error.message || 'Error guardando firma electrónica');
+        this.isSavingCertificate.set(false);
+        this._toasterService.error({ message: 'Error guardando firma electrónica' });
       }
     });
   }

@@ -11,6 +11,7 @@ import { Canton } from '@modules/config/domain/models/wizard-config/canton.model
 import { AmbienteSri } from '@shared/models/ambiente-sri';
 import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 export interface BodegaFormControls {
   descripcion: FormControl<string | null>;
@@ -71,6 +72,7 @@ export class EstablishmentStepComponent {
 
   private readonly _fb = inject(FormBuilder);
   private readonly _announcer = inject(LiveAnnouncer);
+  private readonly _toasterService = inject(ToastrNotificationService);
 
   get bodegas(): FormArray {
     return this.estabForm.get('bodegas') as FormArray;
@@ -207,10 +209,34 @@ export class EstablishmentStepComponent {
   }
 
   onSave(): void {
+    // Bodegas validation
+    if (this.bodegas.length > 0 && !this.bodegas.valid) {
+      this.bodegas.markAllAsTouched();
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Revise que los datos de las bodegas sean correctos',
+      });
+      return;
+    }
+    // Puntos de emisión validation
+    if (this.ptosEmi.length === 0) {
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Ingrese al menos un punto de emisión',
+      });
+      return;
+    }
+    if (!this.ptosEmi.valid) {
+      this.ptosEmi.markAllAsTouched();
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Revise que los datos de los puntos de emisión sean correctos',
+      });
+      return;
+    }
     if (this.estabForm.valid) {
       this.loading.set(true);
       this.save.emit();
-      // Reset loading after a delay to show feedback
       setTimeout(() => this.loading.set(false), 1000);
     }
   }
