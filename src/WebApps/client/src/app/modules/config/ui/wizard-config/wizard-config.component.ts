@@ -3,7 +3,7 @@
 // ============================================================================
 
 // Angular Core
-import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
+import { Component, inject, ViewChild, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Angular CDK
 import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
@@ -39,16 +40,19 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { RouterModule } from '@angular/router';
 
 // Third-party Libraries
 import Swal from 'sweetalert2';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 // Core Components & Services
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse, ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
@@ -62,10 +66,15 @@ import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.direct
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 
+// Step Components
+import { UserStepComponent } from './components/user-step/user-step.component';
+import { EstablishmentStepComponent } from './components/establishment-step/establishment-step.component';
+
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
+import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 
 // Module Use Cases
 import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
@@ -86,11 +95,75 @@ import { Contribuyente } from '@modules/config/domain/models/wizard-config/contr
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 
 // ============================================================================
+// INTERFACES
+// ============================================================================
+
+interface TabulatorCell {
+  getRow(): {
+    getTreeParent(): unknown;
+  };
+}
+
+interface TabulatorValidatorResult {
+  valid: boolean;
+  message: string;
+}
+
+interface DocConfigItem {
+  idPuntoEmision: string;
+  idTipoDocumento: string;
+  ultimaSecuencia: number;
+  descripcion?: string;
+  parentId?: string;
+}
+
+interface EstabWithChildren extends GroupedEstab {
+  _children: DocConfigItem[];
+}
+
+interface FileChangeEvent {
+  target: {
+    files: FileList;
+  };
+}
+
+// Form Control Interfaces for Typed Forms
+interface UserFormControls {
+  nroIdentificacion: FormControl<string | null>;
+  firstName: FormControl<string | null>;
+  lastName: FormControl<string | null>;
+}
+
+interface BodegaFormControls {
+  descripcion: FormControl<string | null>;
+  direccion: FormControl<string | null>;
+  telefono: FormControl<string | null>;
+}
+
+interface PtoEmiFormControls {
+  ptoEmi: FormControl<string | null>;
+  ambiente: FormControl<string | null>;
+}
+
+interface EstabFormControls {
+  canton: FormControl<string | null>;
+  estab: FormControl<string | null>;
+  nombreComercial: FormControl<string | null>;
+  dirEstablecimiento: FormControl<string | null>;
+  telefono: FormControl<string | null>;
+  correo: FormControl<string | null>;
+  ptosEmi: FormArray<FormGroup<PtoEmiFormControls>>;
+  hasInventory: FormControl<boolean | null>;
+  bodegas: FormArray<FormGroup<BodegaFormControls>>;
+}
+
+// ============================================================================
 // COMPONENT DECORATOR
 // ============================================================================
 
 @Component({
   selector: 'app-wizard-config',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     // Angular Material
     MatStepper,
@@ -124,6 +197,13 @@ import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to
     TabulatorSemanticUiComponent,
     ToUpperCaseDirective,
     ThemeButtonComponent,
+
+    // Step Components
+    UserStepComponent,
+    EstablishmentStepComponent,
+
+    // Router
+    RouterModule,
   ],
   templateUrl: './wizard-config.component.html',
   styles: [],
@@ -145,6 +225,7 @@ export class WizardConfigComponent implements OnInit {
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
+  private readonly _errorHandler = inject(WizardErrorHandlerService);
 
   // Utility Injections
   private readonly _fb = inject(FormBuilder);
@@ -172,10 +253,10 @@ export class WizardConfigComponent implements OnInit {
         min: 0,
         step: 1,
       },
-      editable: function (cell: any) {
+      editable: function (cell: TabulatorCell): boolean {
         return cell.getRow().getTreeParent() ? true : false;
       },
-      validator: function (cell: any, value: any) {
+      validator: function (cell: TabulatorCell, value: unknown): boolean | TabulatorValidatorResult {
         if (cell.getRow().getTreeParent()) {
           if (value === '' || value === null) {
             return { valid: false, message: 'Este campo es requerido' };
@@ -209,7 +290,39 @@ export class WizardConfigComponent implements OnInit {
   // UI State Signals
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
-  docsConfig = signal<unknown[]>([]);
+  docsConfig = signal<EstabWithChildren[]>([]);
+
+  // ============================================================================
+  // COMPUTED SIGNALS
+  // ============================================================================
+
+  // Computed signals for derived state
+  readonly hasIncompleteSteps = computed(() =>
+    this.demoSteps().some(step => !step.completed)
+  );
+
+  readonly currentStepIndex = computed(() =>
+    this.demoSteps().findIndex(step => !step.completed)
+  );
+
+  readonly canProceedToNextStep = computed(() => {
+    const currentStep = this.demoSteps()[this.currentStepIndex()];
+    return currentStep?.completed ?? false;
+  });
+
+  readonly formValidationErrors = computed(() => {
+    const errors: string[] = [];
+
+    if (!this.userForm.valid) {
+      errors.push('User form has validation errors');
+    }
+
+    if (!this.estabForm.valid) {
+      errors.push('Establishment form has validation errors');
+    }
+
+    return errors;
+  });
 
   // ============================================================================
   // COMPONENT STATE PROPERTIES
@@ -243,25 +356,30 @@ export class WizardConfigComponent implements OnInit {
     fileSign: new FormControl(null, [Validators.required]),
   });
 
-  estabForm = this._fb.group({
-    canton: '',
-    estab: [
-      '',
-      [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
-    ],
-    nombreComercial: [
-      '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(300)],
-    ],
-    dirEstablecimiento: ['', [Validators.required, Validators.maxLength(300)]],
-    telefono: [''],
-    correo: [''],
-    ptosEmi: this._fb.array([]),
-    hasInventory: [false],
-    bodegas: this._fb.array([]),
+  estabForm = this._fb.group<EstabFormControls>({
+    canton: this._fb.control(''),
+    estab: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(3)
+    ]),
+    nombreComercial: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(300)
+    ]),
+    dirEstablecimiento: this._fb.control('', [
+      Validators.required,
+      Validators.maxLength(300)
+    ]),
+    telefono: this._fb.control(''),
+    correo: this._fb.control(''),
+    ptosEmi: this._fb.array<FormGroup<PtoEmiFormControls>>([]),
+    hasInventory: this._fb.control(false),
+    bodegas: this._fb.array<FormGroup<BodegaFormControls>>([]),
   });
 
-  userForm = new FormGroup({
+  userForm = new FormGroup<UserFormControls>({
     nroIdentificacion: new FormControl(''),
     firstName: new FormControl('', [
       Validators.required,
@@ -323,8 +441,16 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   fetchCompanyDemoSteps(): void {
-    this._companyDemoStepService.get({}).subscribe((response) => {
-      if (response.code === '1') {
+    this._companyDemoStepService.get({}).pipe(
+      catchError((error: unknown) => {
+        this._errorHandler.handleApiError(error, {
+          operation: 'fetching demo steps',
+          component: 'WizardConfigComponent'
+        });
+        return of(null);
+      })
+    ).subscribe((response) => {
+      if (response?.code === '1') {
         const tempArray = JSON.parse(response.payload as string);
         this.demoSteps.set(tempArray['companyDemoSteps'] as DemoStep[]);
         this.updateStepCompletionStatus();
@@ -339,13 +465,13 @@ export class WizardConfigComponent implements OnInit {
       this.currentEstab = this.establecimientos()[0].nombreComercial;
       const combinedData = this.establecimientos().map((pto) => ({
         ...pto,
-        _children: (response.tiposDoc as any[]).map((doc) => ({
+        _children: (response.tiposDoc as DocConfigItem[]).map((doc) => ({
           ...doc,
-          parentId: (pto as any).idPuntoEmision,
+          parentId: pto.puntosEmision[0]?.idPuntoEmision || '',
           ultimaSecuencia: 0,
         })),
       }));
-      this.docsConfig.set(combinedData as []);
+      this.docsConfig.set(combinedData as EstabWithChildren[]);
     });
   }
 
@@ -560,11 +686,11 @@ export class WizardConfigComponent implements OnInit {
   }
 
   private validateDocumentos(): boolean {
-    const docs = this.docsConfig().flatMap((pto: any) =>
-      (pto as any)._children
-        .filter((doc: any) => doc.ultimaSecuencia > 0)
-        .map((doc: any) => ({
-          idPuntoEmision: (pto as any).idPuntoEmision,
+    const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
+      pto._children
+        .filter((doc: DocConfigItem) => doc.ultimaSecuencia > 0)
+        .map((doc: DocConfigItem) => ({
+          idPuntoEmision: pto.puntosEmision[0]?.idPuntoEmision || '',
           idTipoDocumento: doc.idTipoDocumento,
           ultimaSecuencia: doc.ultimaSecuencia,
         })),
@@ -646,11 +772,11 @@ export class WizardConfigComponent implements OnInit {
       return;
     }
 
-    const docs = this.docsConfig().flatMap((pto: any) =>
-      (pto as any)._children
-        .filter((doc: any) => doc.ultimaSecuencia > 0)
-        .map((doc: any) => ({
-          idPuntoEmision: (pto as any).idPuntoEmision,
+    const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
+      pto._children
+        .filter((doc: DocConfigItem) => doc.ultimaSecuencia > 0)
+        .map((doc: DocConfigItem) => ({
+          idPuntoEmision: pto.puntosEmision[0]?.idPuntoEmision || '',
           idTipoDocumento: doc.idTipoDocumento,
           ultimaSecuencia: doc.ultimaSecuencia,
         })),
@@ -692,7 +818,7 @@ export class WizardConfigComponent implements OnInit {
   // RESPONSE HANDLING METHODS
   // ============================================================================
 
-  private handleUserSaveResponse(response: any): void {
+  private handleUserSaveResponse(response: ApiResponse): void {
     if (response.code === '0' && this.stepper) {
       this.stepper.previous();
     }
@@ -714,7 +840,7 @@ export class WizardConfigComponent implements OnInit {
     }
   }
 
-  private handleDocsSaveResponse(response: any): void {
+  private handleDocsSaveResponse(response: ApiResponse): void {
     if (response.code === '0' && this.stepper) {
       this.stepper.previous();
     }
@@ -728,7 +854,7 @@ export class WizardConfigComponent implements OnInit {
     });
   }
 
-  private handleCertificateSaveResponse(response: any): void {
+  private handleCertificateSaveResponse(response: ApiResponse): void {
     if (response.code === '0' && this.stepper) {
       this.stepper.previous();
     }
@@ -755,7 +881,7 @@ export class WizardConfigComponent implements OnInit {
     }
   }
 
-  onFileChange(event: any): void {
+  onFileChange(event: FileChangeEvent): void {
     const file = event.target.files[0];
     if (file && file.name.endsWith('.p12')) {
       this.selectedFile = file;
@@ -793,6 +919,30 @@ export class WizardConfigComponent implements OnInit {
         html: `<small>${groupActEconomica.grupo}</small>`,
       });
     }
+  }
+
+  // ============================================================================
+  // TRACKBY FUNCTIONS
+  // ============================================================================
+
+  trackByStep(index: number, step: DemoStep): string {
+    return step.code;
+  }
+
+  trackByEmail(index: number, email: string): string {
+    return email;
+  }
+
+  trackByTelephone(index: number, telephone: string): string {
+    return telephone;
+  }
+
+  trackByBodega(index: number): number {
+    return index;
+  }
+
+  trackByPtoEmi(index: number): number {
+    return index;
   }
 
   // ============================================================================

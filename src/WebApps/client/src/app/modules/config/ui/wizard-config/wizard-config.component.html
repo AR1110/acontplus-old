@@ -1,678 +1,307 @@
-<app-breadcrumb />
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row my-3">
-      <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <mat-stepper #stepper [linear]="isLinear">
-          <mat-step [editable]="true" [stepControl]="userForm">
-            <form
-              (ngSubmit)="saveUser()"
-              [formGroup]="userForm"
-              autocomplete="off"
-            >
-              <ng-template matStepLabel>Datos de Usuario</ng-template>
-              <div class="row">
-                <div
-                  class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 col-sm-4 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label>Nro. Identificación:</mat-label>
-                    <input
-                      matInput
-                      formControlName="nroIdentificacion"
-                      id="nroIdentificacion"
-                      maxlength="13"
-                      required
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-                <div
-                  class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label>Nombre:</mat-label>
-                    <input
-                      matInput
-                      formControlName="firstName"
-                      id="firstName"
-                      maxlength="50"
-                      min="2"
-                      required
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-                <div
-                  class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label>Apellido:</mat-label>
-                    <input
-                      matInput
-                      formControlName="lastName"
-                      id="lastName"
-                      maxlength="50"
-                      min="2"
-                      required
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-              </div>
-              <div>
-                <button
-                  #firstButton
-                  [disabled]="userForm.invalid"
-                  id="firstButton"
-                  mat-raised-button
-                  matStepperNext
-                >
-                  Siguiente
-                </button>
-              </div>
-            </form>
-          </mat-step>
-          <mat-step>
-            <form
-              (ngSubmit)="saveEstab()"
-              [formGroup]="estabForm"
-              autocomplete="off"
-            >
-              <ng-template matStepLabel>Registrar Establecimiento</ng-template>
-              <div class="row">
-                <div
-                  class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label
-                      >Nombre Comercial:
-                      <span class="text-danger">*</span></mat-label
-                    >
-                    <input
-                      appToUpperCase
-                      matInput
-                      formControlName="nombreComercial"
-                      id="nombreComercial"
-                      maxlength="300"
-                      min="2"
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-              </div>
-              <div class="row">
-                <div
-                  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label>Nro. Establecimiento</mat-label>
-                    <input
-                      matInput
-                      formControlName="estab"
-                      id="estab"
-                      maxlength="3"
-                      min="3"
-                      placeholder="000"
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-              </div>
+<div class="wizard-container">
+  <!-- Breadcrumb -->
+  <app-breadcrumb></app-breadcrumb>
 
-              <div
-                class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+  <!-- Main Content -->
+  <div class="wizard-content">
+    <mat-stepper
+      #stepper
+      [linear]="isLinear"
+      aria-label="Configuration Wizard"
+      role="tablist"
+    >
+      <!-- Step I: Welcome -->
+      @for (step of demoSteps(); track trackByStep($index, step); let stepIndex = $index) {
+        <mat-step
+          [aria-label]="step.name"
+          role="tab"
+        >
+        <ng-template matStepLabel>
+          <div class="step-label">
+            <span class="step-number">{{ step.code }}</span>
+            <span class="step-title">{{ step.name }}</span>
+            @if (step.completed) {
+              <mat-icon
+                class="step-completed"
+                aria-label="Step completed"
               >
-                <div class="col">
-                  <div class="form-group">
-                    <span
-                      >Email:
-                      <span>
-                        <mat-icon>info</mat-icon>
-                      </span>
-                    </span>
-                    <mat-chip-grid #chipGridEmail aria-label="Enter emails">
-                      @for (email of emails(); track $index) {
-                        <mat-chip-row
-                          (edited)="editEmail(email, $event)"
-                          (removed)="removeEmail(email)"
-                          [aria-description]="'press enter to edit ' + email"
-                          [editable]="true"
-                        >
-                          {{ email }}
-                          <button
-                            [attr.aria-label]="'remove ' + email"
-                            matChipRemove
-                          >
-                            <mat-icon>close</mat-icon>
-                          </button>
-                        </mat-chip-row>
-                      }
+                check_circle
+              </mat-icon>
+            }
+          </div>
+        </ng-template>
 
-                      <input
-                        (matChipInputTokenEnd)="addEmail($event)"
-                        [matChipInputAddOnBlur]="addOnBlur"
-                        [matChipInputFor]="chipGridEmail"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        matInput
-                        placeholder="example@example.com,info@example.com"
-                      />
-                    </mat-chip-grid>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="form-group">
-                    <span
-                      >Telefono:
-                      <span>
-                        <mat-icon>info</mat-icon>
-                      </span>
-                    </span>
-                    <mat-chip-grid
-                      #chipGridTelephone
-                      aria-label="Ingrese los teléfonos"
-                    >
-                      @for (telephone of telephones(); track $index) {
-                        <mat-chip-row
-                          (edited)="editTelephone(telephone, $event)"
-                          (removed)="removeTelephone(telephone)"
-                          [aria-description]="
-                            'press enter to edit ' + telephone
-                          "
-                          [editable]="true"
-                        >
-                          {{ telephone }}
-                          <button
-                            [attr.aria-label]="'remove ' + telephone"
-                            matChipRemove
-                          >
-                            <mat-icon>close</mat-icon>
-                          </button>
-                        </mat-chip-row>
-                      }
-
-                      <input
-                        (matChipInputTokenEnd)="addTelephone($event)"
-                        [matChipInputAddOnBlur]="addOnBlur"
-                        [matChipInputFor]="chipGridTelephone"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        matInput
-                        placeholder="0900000001,0900000002"
-                      />
-                    </mat-chip-grid>
-                  </div>
-                </div>
-                <div class="col">
-                  <mat-form-field class="w-100">
-                    <mat-label
-                      >Cantón: <span class="text-danger">*</span></mat-label
-                    >
-                    <mat-select formControlName="canton" id="canton">
-                      @for (item of cantones(); track $index) {
-                        <mat-option [value]="item.codigo">
-                          {{ item.descripcion }}
-                        </mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label
-                      >Dirección <span class="text-danger">*</span></mat-label
-                    >
-                    <textarea
-                      appToUpperCase
-                      matInput
-                      formControlName="dirEstablecimiento"
-                      id="dirEstablecimiento"
-                      maxlength="300"
-                      rows="2"
-                    ></textarea>
-                  </mat-form-field>
-                </div>
-              </div>
-              <div class="row">
-                <div
-                  class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12"
-                >
-                  <span>Puntos de Emisión:</span>
-                  <div formArrayName="ptosEmi">
-                    @for (ptoEmi of ptosEmi.controls; let i = $index; track i) {
-                      <div class="row mt-3" [formGroupName]="i">
-                        <div
-                          class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"
-                        >
-                          <input
-                            matInput
-                            formControlName="ptoEmi"
-                            id="ptoEmi-{{ i }}"
-                            type="text"
-                            min="3"
-                            maxlength="3"
-                            placeholder="000"
-                          />
-                        </div>
-                        <div
-                          class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
-                        >
-                          <mat-form-field class="w-100">
-                            <mat-label>Ambiente</mat-label>
-                            <mat-select
-                              formControlName="ambiente"
-                              id="ambiente-{{ i }}"
-                            >
-                              <mat-option value=""
-                                >Seleccione un ambiente</mat-option
-                              >
-                              @for (envSri of ambientes(); track $index) {
-                                <mat-option [value]="envSri.code">
-                                  {{ envSri.name }}
-                                </mat-option>
-                              }
-                            </mat-select>
-                          </mat-form-field>
-                        </div>
-                        <div
-                          class="col-xxl-24 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
-                        >
-                          <app-theme-button
-                            (handleClick)="removePtoEmi(i)"
-                            variant="danger"
-                            icon="delete"
-                            matStyle="icon"
-                            title="Eliminar punto de emision"
-                          >
-                          </app-theme-button>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-4">
-                      <app-theme-button
-                        icon="add"
-                        text="Añadir"
-                        (handleClick)="addPtoEmi()"
+        <!-- Step Content -->
+        <div class="step-content">
+          <!-- Welcome Step -->
+          @if (step.code === 'I') {
+            <div class="welcome-step">
+              <mat-card>
+                <mat-card-content>
+                  <div class="welcome-content">
+                    <h2>Bienvenido al Asistente de Configuración</h2>
+                    <p>
+                      Este asistente le guiará a través del proceso de configuración inicial
+                      de su sistema. Complete cada paso para configurar correctamente su empresa.
+                    </p>
+                    <div class="welcome-actions">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        (click)="stepper.next()"
                       >
-                      </app-theme-button>
+                        Comenzar Configuración
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div
-                  class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12"
-                >
-                  <span
-                    >Bodegas
-                    <small class="text-info"
-                      >(Si requiere controlar productos con inventario)</small
-                    >
-                    :</span
-                  >
-                  <div formArrayName="bodegas">
-                    @for (bodega of bodegas.controls; let i = $index; track i) {
-                      <div class="row mt-3" [formGroupName]="i">
-                        <div
-                          class="col-xxl-2 col-xl-2 col-lg-2 col-md-3 col-sm-4 col-12"
-                        >
-                          <input
-                            matInput
-                            formControlName="descripcion"
-                            id="descripcion-{{ i }}"
-                            type="text"
-                            min="3"
-                            maxlength="300"
-                            placeholder="Principal"
-                          />
-                        </div>
-                        <div
-                          class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12"
-                        >
-                          <input
-                            matInput
-                            formControlName="telefono"
-                            id="telefono-{{ i }}"
-                            type="text"
-                            min="6"
-                            maxlength="100"
-                            placeholder="09xxxxxxxx"
-                          />
-                        </div>
-                        <div
-                          class="col-xxl-5 col-xl-5 col-lg-5 col-md-5 col-sm-4 col-12"
-                        >
-                          <input
-                            matInput
-                            formControlName="direccion"
-                            id="direccion-{{ i }}"
-                            type="text"
-                            min="3"
-                            maxlength="300"
-                            placeholder="Dirección"
-                          />
-                        </div>
-                        <div
-                          class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"
-                        >
-                          <app-theme-button
-                            variant="danger"
-                            icon="delete"
-                            matStyle="icon"
-                            title="Eliminar bodega"
-                            (handleClick)="removeBodega(i)"
-                          >
-                          </app-theme-button>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-4">
-                      <app-theme-button
-                        (handleClick)="addBodega()"
-                        icon="add"
-                        text="Añadir"
-                      >
-                      </app-theme-button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-6">
-                  <button
-                    [disabled]="userUpdated"
-                    mat-raised-button
-                    matStepperPrevious
-                  >
-                    Atras
-                  </button>
-                  <button
-                    [disabled]="estabForm.invalid"
-                    mat-raised-button
-                    matStepperNext
-                  >
-                    Siguiente
-                  </button>
-                </div>
-              </div>
-            </form>
-          </mat-step>
-          <mat-step>
-            <ng-template>Tipo de Contribuyente</ng-template>
-            <form
-              (ngSubmit)="saveTipoContribuyente()"
-              [formGroup]="tipoContribuyenteForm"
-            >
-              <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                  <div class="form-group">
-                    <label for="actividad"
-                      >Actividad: <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                      <mat-form-field class="w-100">
-                        <mat-label
-                          >Actividad:
-                          <span class="text-danger">*</span></mat-label
-                        >
-                        <mat-select formControlName="actividad" id="actividad">
-                          @for (item of actividadesEconomica(); track $index) {
-                            <mat-option [value]="item.codigo">
-                              {{ item.descripcion }}
-                            </mat-option>
-                          }
-                        </mat-select>
-                      </mat-form-field>
-                      <app-theme-button
-                        variant="secondary"
-                        icon="info"
-                        matStyle="icon"
-                        (handleClick)="showInfoActividadEconomica()"
-                      >
-                      </app-theme-button>
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="form-group">
-                    <label for="obligadoContabilidad"
-                      >Lleva Contabilidad:
-                    </label>
-                    <section>
-                      <mat-radio-group
-                        formControlName="obligadoContabilidad"
-                        id="obligadoContabilidad"
-                      >
-                        <mat-radio-button value="NO">NO</mat-radio-button>
-                        <mat-radio-button value="SI">SI</mat-radio-button>
-                      </mat-radio-group>
-                    </section>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div
-                  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
-                >
-                  <div class="form-group">
-                    <label for="contribuyente"
-                      >Tipo Contribuyente: <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                      <mat-form-field class="w-100">
-                        <mat-label
-                          >Tipo Contribuyente:
-                          <span class="text-danger">*</span></mat-label
-                        >
-                        <mat-select
-                          formControlName="contribuyente"
-                          id="contribuyente"
-                          (selectionChange)="onChangeTipoContribuyente()"
-                        >
-                          @for (item of contribuyentes(); track $index) {
-                            <mat-option [value]="item.codigo">
-                              {{ item.descripcion }}
-                            </mat-option>
-                          }
-                        </mat-select>
-                      </mat-form-field>
-                      <app-theme-button
-                        variant="secondary"
-                        icon="info"
-                        matStyle="icon"
-                        (handleClick)="showInfoTipoContribuyente()"
-                      >
-                      </app-theme-button>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label>Agente Retención: </mat-label>
-                    <mat-select
-                      formControlName="agenteRetencion"
-                      id="agenteRetencion"
-                    >
-                      <mat-option [value]="null">Ninguna</mat-option>
-                      @for (item of agentesRetencion(); track $index) {
-                        <mat-option [value]="item.resolucion">
-                          {{ item.resolucion }}
-                        </mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                <div
-                  class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"
-                >
-                  <mat-form-field class="w-100">
-                    <mat-label>Contribuyente Especial:</mat-label>
-                    <input
-                      [maxlength]="3"
-                      [minlength]="3"
-                      matInput
-                      formControlName="contribuyenteEspecial"
-                      id="contribuyenteEspecial"
-                      placeholder=""
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-              </div>
-
-              <div>
-                <button
-                  [disabled]="estabRegistered"
-                  mat-raised-button
-                  matStepperPrevious
-                >
-                  Atras
-                </button>
-                <button mat-raised-button matStepperNext>Siguiente</button>
-              </div>
-            </form>
-          </mat-step>
-          <mat-step>
-            <form
-              (ngSubmit)="saveDocs()"
-              [formGroup]="estabForm"
-              autocomplete="off"
-            >
-              <ng-template matStepLabel>Secuenciales de Documentos</ng-template>
-              <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                  <div class="form-group">
-                    <span>Establecimiento: </span>
-                    <h5>{{ currentEstab }}</h5>
-                  </div>
-                </div>
-              </div>
-
-              <div class="table-responsive">
-                <app-tabulator-semantic-ui
-                  [columnNames]="columnNames"
-                  [options]="{ dataTree: true, dataTreeStartExpanded: true }"
-                  [tableData]="docsConfig()"
-                ></app-tabulator-semantic-ui>
-              </div>
-              <div>
-                <button
-                  [disabled]="tipoContribuyenteRegistered"
-                  mat-raised-button
-                  matStepperPrevious
-                >
-                  Atras
-                </button>
-                <button mat-raised-button matStepperNext>Siguiente</button>
-              </div>
-            </form>
-          </mat-step>
-          <mat-step>
-            <form
-              (ngSubmit)="saveCertificate()"
-              [formGroup]="certificateForm"
-              autocomplete="off"
-            >
-              <ng-template matStepLabel>Firma Electrónica</ng-template>
-              <div
-                class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3"
-              >
-                <div class="col">
-                  <mat-form-field class="w-100">
-                    <mat-label>Contraseña:</mat-label>
-                    <input
-                      matInput
-                      formControlName="contrasenia"
-                      required
-                      type="text"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="col">
-                  <mat-form-field class="w-100">
-                    <mat-label>Fecha Caducidad: </mat-label>
-                    <input
-                      matInput
-                      formControlName="fechaCaducidad"
-                      required
-                      type="date"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="col">
-                  <div class="form-group">
-                    <span>
-                      Formato de archivos: <span class="text-info">.p12</span>
-                    </span>
-                    <input (change)="onFileChange($event)" type="file" />
-                    @if (fileError) {
-                      <span class="text-danger">
-                        Formato de archivo no aceptado
-                      </span>
-                    }
-                  </div>
-                </div>
-              </div>
-              <div class="row"></div>
-              <div class="mt-3">
-                <button
-                  [disabled]="docsUpdated"
-                  mat-raised-button
-                  matStepperPrevious
-                >
-                  Atras
-                </button>
-                <button
-                  [disabled]="certificateUpdated"
-                  mat-raised-button
-                  matStepperNext
-                >
-                  Siguiente
-                </button>
-                <button
-                  (click)="skipAndFinish()"
-                  [disabled]="certificateUpdated"
-                  mat-raised-button
-                  matStepperNext
-                >
-                  Saltar este paso y terminar
-                </button>
-              </div>
-            </form>
-          </mat-step>
-          <mat-step>
-            <ng-template matStepLabel>Fin</ng-template>
-            <div
-              class="row row-cols-1 row-cols-md-2 row-cols-xxl-2 row-cols-xl-2"
-            >
-              <div class="col">
-                <p class="text-start">
-                  Usted ha finalizado correctamente la configuración inicial, si
-                  requiere ayuda adicional revise los siguientes tutoriales
-                  <a
-                    href="https://www.youtube.com/@acontplusweb/playlists"
-                    target="_blank"
-                  >
-                    <fa-icon [icon]="faYoutube"></fa-icon>
-                    Acontplus Ec
-                  </a>
-                  o comuniquese con el equipo de soporte
-                  <a href="https://api.whatsapp.com/send?phone=593986669930"
-                    >+593 98 666 9930</a
-                  >
-                </p>
-              </div>
+                </mat-card-content>
+              </mat-card>
             </div>
-          </mat-step>
-        </mat-stepper>
-      </div>
-    </div>
-  </mat-card-content>
-</mat-card>
+          }
+
+          <!-- User Step -->
+          @if (step.code === 'II') {
+            <app-user-step
+              [userForm]="userForm"
+              (save)="saveUser()"
+            ></app-user-step>
+          }
+
+          <!-- Establishment Step -->
+          @if (step.code === 'III') {
+            <app-establishment-step
+              [estabForm]="estabForm"
+              [cantones]="cantones"
+              [ambientes]="ambientes"
+              (save)="saveEstab()"
+            ></app-establishment-step>
+          }
+
+          <!-- Contribuyente Step -->
+          @if (step.code === 'IV') {
+            <div class="contribuyente-step">
+              <mat-card>
+                <mat-card-content>
+                  <form [formGroup]="tipoContribuyenteForm" (ngSubmit)="saveTipoContribuyente()">
+                    <h3>Configuración de Contribuyente</h3>
+
+                    <div class="form-row">
+                      <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Actividad Económica</mat-label>
+                        <mat-select formControlName="actividad" (selectionChange)="showInfoActividadEconomica()">
+                          @for (actividad of actividadesEconomica(); track actividad.codigo) {
+                            <mat-option [value]="actividad.codigo">
+                              {{ actividad.descripcion }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Tipo de Contribuyente</mat-label>
+                        <mat-select formControlName="contribuyente" (selectionChange)="onChangeTipoContribuyente(); showInfoTipoContribuyente()">
+                          @for (contribuyente of contribuyentes(); track contribuyente.codigo) {
+                            <mat-option [value]="contribuyente.codigo">
+                              {{ contribuyente.descripcion }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="form-row">
+                      <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Agente de Retención</mat-label>
+                        <mat-select formControlName="agenteRetencion">
+                          @for (agente of agentesRetencion(); track agente.resolucion) {
+                            <mat-option [value]="agente.resolucion">
+                              {{ agente.resolucion }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Obligado a Contabilidad</mat-label>
+                        <input
+                          matInput
+                          formControlName="obligadoContabilidad"
+                          placeholder="SI/NO"
+                          maxlength="2"
+                          toUpperCase
+                        />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="form-actions">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="!tipoContribuyenteForm.valid"
+                      >
+                        Guardar Configuración
+                      </button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+
+          <!-- Documents Step -->
+          @if (step.code === 'V') {
+            <div class="documents-step">
+              <mat-card>
+                <mat-card-content>
+                  <h3>Configuración de Documentos</h3>
+                  <p>Configure las secuencias iniciales para sus documentos electrónicos.</p>
+
+                  <app-tabulator-semantic-ui
+                    [columnNames]="columnNames"
+                    [tableData]="docsConfig()"
+                    [options]="{ height: 400 }"
+                  ></app-tabulator-semantic-ui>
+
+                  <div class="form-actions">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="saveDocs()"
+                    >
+                      Guardar Secuencias
+                    </button>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+
+          <!-- Certificate Step -->
+          @if (step.code === 'VI') {
+            <div class="certificate-step">
+              <mat-card>
+                <mat-card-content>
+                  <form [formGroup]="certificateForm" (ngSubmit)="saveCertificate()">
+                    <h3>Firma Electrónica</h3>
+                    <p>
+                      Suba su archivo de firma electrónica (.p12) para poder emitir
+                      documentos electrónicos.
+                    </p>
+
+                    <div class="form-row">
+                      <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Contraseña</mat-label>
+                        <input
+                          matInput
+                          type="password"
+                          formControlName="contrasenia"
+                          placeholder="Ingrese la contraseña del certificado"
+                        />
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Fecha de Caducidad</mat-label>
+                        <input
+                          matInput
+                          type="date"
+                          formControlName="fechaCaducidad"
+                        />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="form-row">
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Archivo de Firma (.p12)</mat-label>
+                        <input
+                          matInput
+                          type="file"
+                          accept=".p12"
+                          (change)="onFileChange($any($event))"
+                          [class.error]="fileError"
+                        />
+                        @if (fileError) {
+                          <mat-error>
+                            Por favor seleccione un archivo .p12 válido
+                          </mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="form-actions">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="!certificateForm.valid || !selectedFile"
+                      >
+                        Subir Firma Electrónica
+                      </button>
+
+                      <button
+                        type="button"
+                        mat-button
+                        color="warn"
+                        (click)="skipAndFinish()"
+                      >
+                        Saltar este Paso
+                      </button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+
+          <!-- Completion Step -->
+          @if (step.code === 'VII') {
+            <div class="completion-step">
+              <mat-card>
+                <mat-card-content>
+                  <div class="completion-content">
+                    <mat-icon class="completion-icon" color="primary">check_circle</mat-icon>
+                    <h2>¡Configuración Completada!</h2>
+                    <p>
+                      Su sistema ha sido configurado exitosamente. Ya puede comenzar a usar
+                      todas las funcionalidades disponibles.
+                    </p>
+                    <div class="completion-actions">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        routerLink="/dashboard"
+                      >
+                        Ir al Dashboard
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+        </div>
+
+        <!-- Step Actions -->
+        <div class="step-actions">
+          <button
+            mat-button
+            matStepperPrevious
+            [disabled]="stepIndex === 0"
+          >
+            Anterior
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            matStepperNext
+            [disabled]="!step.completed && step.code !== 'I'"
+          >
+            {{ stepIndex === demoSteps().length - 1 ? 'Finalizar' : 'Siguiente' }}
+          </button>
+        </div>
+      </mat-step>
+      }
+    </mat-stepper>
+  </div>
+</div>
