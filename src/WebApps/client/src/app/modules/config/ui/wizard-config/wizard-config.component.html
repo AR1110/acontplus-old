@@ -136,21 +136,7 @@
 
               <!-- Establishment Step -->
               @if (step.code === 'III') {
-                <div class="establishment-step">
-                  <mat-card>
-                    <mat-card-content>
-                      <div class="step-header">
-                        <h3>Configuración del Establecimiento</h3>
-                        <p>Configure la información de su establecimiento comercial.</p>
-                      </div>
-                      <!-- TODO: Add EstablishmentStepComponent -->
-                      <div class="placeholder-content">
-                        <mat-icon>business</mat-icon>
-                        <p>Componente de establecimiento en desarrollo</p>
-                      </div>
-                    </mat-card-content>
-                  </mat-card>
-                </div>
+                <app-establishment-step></app-establishment-step>
               }
 
               <!-- Contribuyente Step -->
@@ -162,10 +148,35 @@
                         <h3>Configuración de Contribuyente</h3>
                         <p>Configure el tipo de contribuyente y actividad económica.</p>
                       </div>
-                      <!-- TODO: Add ContribuyenteStepComponent -->
-                      <div class="placeholder-content">
-                        <mat-icon>account_balance</mat-icon>
-                        <p>Componente de contribuyente en desarrollo</p>
+                      <div class="contribuyente-form">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Tipo de Contribuyente</mat-label>
+                          <mat-select>
+                            <mat-option value="01">Persona Natural</mat-option>
+                            <mat-option value="02">Persona Jurídica</mat-option>
+                            <mat-option value="03">Micro Empresa</mat-option>
+                            <mat-option value="04">Pequeña Empresa</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Actividad Económica</mat-label>
+                          <mat-select>
+                            <mat-option value="1">Comercio al por mayor</mat-option>
+                            <mat-option value="2">Comercio al por menor</mat-option>
+                            <mat-option value="3">Servicios</mat-option>
+                            <mat-option value="4">Industria</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="contribuyente-actions">
+                          <button mat-button (click)="moveToPreviousStep()">
+                            <mat-icon>arrow_back</mat-icon>
+                            Anterior
+                          </button>
+                          <button mat-raised-button color="primary" (click)="moveToNextStep()">
+                            Siguiente
+                            <mat-icon>arrow_forward</mat-icon>
+                          </button>
+                        </div>
                       </div>
                     </mat-card-content>
                   </mat-card>
@@ -181,10 +192,33 @@
                         <h3>Configuración de Documentos</h3>
                         <p>Configure las secuencias iniciales para sus documentos electrónicos.</p>
                       </div>
-                      <!-- TODO: Add DocumentsStepComponent -->
-                      <div class="placeholder-content">
-                        <mat-icon>description</mat-icon>
-                        <p>Componente de documentos en desarrollo</p>
+                      <div class="documents-form">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Secuencia de Factura</mat-label>
+                          <mat-select>
+                            <mat-option value="01">01 - Factura</mat-option>
+                            <mat-option value="02">02 - Boleta</mat-option>
+                            <mat-option value="03">03 - Nota de Crédito</mat-option>
+                            <mat-option value="04">04 - Nota de Débito</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Secuencia de Boletas</mat-label>
+                          <mat-select>
+                            <mat-option value="01">01 - Boleta</mat-option>
+                            <mat-option value="02">02 - Boleta de Servicios</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="documents-actions">
+                          <button mat-button (click)="moveToPreviousStep()">
+                            <mat-icon>arrow_back</mat-icon>
+                            Anterior
+                          </button>
+                          <button mat-raised-button color="primary" (click)="moveToNextStep()">
+                            Siguiente
+                            <mat-icon>arrow_forward</mat-icon>
+                          </button>
+                        </div>
                       </div>
                     </mat-card-content>
                   </mat-card>
@@ -200,10 +234,51 @@
                         <h3>Firma Electrónica</h3>
                         <p>Suba su archivo de firma electrónica para poder emitir documentos electrónicos.</p>
                       </div>
-                      <!-- TODO: Add CertificateStepComponent -->
-                      <div class="placeholder-content">
-                        <mat-icon>security</mat-icon>
-                        <p>Componente de certificado en desarrollo</p>
+                      <div class="certificate-form">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Tipo de Certificado</mat-label>
+                          <mat-select>
+                            <mat-option value="01">Certificado de Emisión</mat-option>
+                            <mat-option value="02">Certificado de Autorización</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Archivo de Certificado (PDF)</mat-label>
+                          <input type="file" accept=".pdf" />
+                        </mat-form-field>
+                        <div class="certificate-actions">
+                          <button mat-button (click)="moveToPreviousStep()">
+                            <mat-icon>arrow_back</mat-icon>
+                            Anterior
+                          </button>
+                          <button mat-raised-button color="primary" (click)="moveToNextStep()">
+                            Siguiente
+                            <mat-icon>arrow_forward</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+
+              <!-- Completion Step -->
+              @if (step.code === 'VII') {
+                <div class="completion-step">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="completion-content">
+                        <mat-icon class="completion-icon">check_circle</mat-icon>
+                        <h2>¡Configuración Completada!</h2>
+                        <p>
+                          Su sistema de configuración ha sido completado. Ahora puede empezar a emitir documentos electrónicos.
+                        </p>
+                        <div class="completion-actions">
+                          <button mat-raised-button color="primary" (click)="finishWizard()">
+                            Finalizar
+                            <mat-icon>check</mat-icon>
+                          </button>
+                        </div>
                       </div>
                     </mat-card-content>
                   </mat-card>
