@@ -2,306 +2,267 @@
   <!-- Breadcrumb -->
   <app-breadcrumb></app-breadcrumb>
 
-  <!-- Main Content -->
-  <div class="wizard-content">
-    <mat-stepper
-      #stepper
-      [linear]="wizardStore.isLinear()"
-      aria-label="Configuration Wizard"
-      role="tablist"
-    >
-      <!-- Step I: Welcome -->
-      @for (step of wizardStore.demoSteps(); track trackByStep($index, step); let stepIndex = $index) {
-        <mat-step
-          [aria-label]="step.name"
-          role="tab"
-        >
-        <ng-template matStepLabel>
-          <div class="step-label">
-            <span class="step-number">{{ step.code }}</span>
-            <span class="step-title">{{ step.name }}</span>
-            @if (step.completed) {
-              <mat-icon
-                class="step-completed"
-                aria-label="Step completed"
-              >
-                check_circle
-              </mat-icon>
-            }
+  <!-- Progress Bar -->
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <mat-card>
+        <mat-card-content>
+          <div class="loading-content">
+            <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+            <h3>Cargando Asistente de Configuración</h3>
+            <p>Inicializando el asistente...</p>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
-        </ng-template>
-
-        <!-- Step Content -->
-        <div class="step-content">
-          <!-- Welcome Step -->
-          @if (step.code === 'I') {
-            <div class="welcome-step">
-              <mat-card>
-                <mat-card-content>
-                  <div class="welcome-content">
-                    <h2>Bienvenido al Asistente de Configuración</h2>
-                    <p>
-                      Este asistente le guiará a través del proceso de configuración inicial
-                      de su sistema. Complete cada paso para configurar correctamente su empresa.
-                    </p>
-                    <div class="welcome-actions">
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        (click)="stepper.next()"
-                      >
-                        Comenzar Configuración
-                      </button>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          }
-
-          <!-- User Step -->
-          @if (step.code === 'II') {
-            <app-user-step
-              [userForm]="userForm"
-              (save)="saveUser()"
-            ></app-user-step>
-          }
-
-          <!-- Establishment Step -->
-          @if (step.code === 'III') {
-            <app-establishment-step
-              [estabForm]="estabForm"
-              [cantones]="wizardStore.cantones"
-              [ambientes]="wizardStore.ambientes"
-              (save)="saveEstab()"
-            ></app-establishment-step>
-          }
-
-          <!-- Contribuyente Step -->
-          @if (step.code === 'IV') {
-            <div class="contribuyente-step">
-              <mat-card>
-                <mat-card-content>
-                  <form [formGroup]="tipoContribuyenteForm" (ngSubmit)="saveTipoContribuyente()">
-                    <h3>Configuración de Contribuyente</h3>
-
-                    <div class="form-row">
-                      <mat-form-field appearance="outline" class="half-width">
-                        <mat-label>Actividad Económica</mat-label>
-                        <mat-select formControlName="actividad" (selectionChange)="showInfoActividadEconomica()">
-                          @for (actividad of wizardStore.actividadesEconomica(); track actividad.codigo) {
-                            <mat-option [value]="actividad.codigo">
-                              {{ actividad.descripcion }}
-                            </mat-option>
-                          }
-                        </mat-select>
-                      </mat-form-field>
-
-                      <mat-form-field appearance="outline" class="half-width">
-                        <mat-label>Tipo de Contribuyente</mat-label>
-                        <mat-select formControlName="contribuyente" (selectionChange)="onChangeTipoContribuyente(); showInfoTipoContribuyente()">
-                          @for (contribuyente of wizardStore.contribuyentes(); track contribuyente.codigo) {
-                            <mat-option [value]="contribuyente.codigo">
-                              {{ contribuyente.descripcion }}
-                            </mat-option>
-                          }
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-
-                    <div class="form-row">
-                      <mat-form-field appearance="outline" class="half-width">
-                        <mat-label>Agente de Retención</mat-label>
-                        <mat-select formControlName="agenteRetencion">
-                          @for (agente of wizardStore.agentesRetencion(); track agente.resolucion) {
-                            <mat-option [value]="agente.resolucion">
-                              {{ agente.resolucion }}
-                            </mat-option>
-                          }
-                        </mat-select>
-                      </mat-form-field>
-
-                      <mat-form-field appearance="outline" class="half-width">
-                        <mat-label>Obligado a Contabilidad</mat-label>
-                        <input
-                          matInput
-                          formControlName="obligadoContabilidad"
-                          placeholder="SI/NO"
-                          maxlength="2"
-                          toUpperCase
-                        />
-                      </mat-form-field>
-                    </div>
-
-                    <div class="form-actions">
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        type="submit"
-                        [disabled]="!tipoContribuyenteForm.valid"
-                      >
-                        Guardar Configuración
-                      </button>
-                    </div>
-                  </form>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          }
-
-          <!-- Documents Step -->
-          @if (step.code === 'V') {
-            <div class="documents-step">
-              <mat-card>
-                <mat-card-content>
-                  <h3>Configuración de Documentos</h3>
-                  <p>Configure las secuencias iniciales para sus documentos electrónicos.</p>
-
-                  <app-tabulator-semantic-ui
-                    [columnNames]="columnNames"
-                    [tableData]="wizardStore.docsConfig()"
-                    [options]="{ height: 400 }"
-                  ></app-tabulator-semantic-ui>
-
-                  <div class="form-actions">
-                    <button
-                      mat-raised-button
-                      color="primary"
-                      (click)="saveDocs()"
-                    >
-                      Guardar Secuencias
-                    </button>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          }
-
-          <!-- Certificate Step -->
-          @if (step.code === 'VI') {
-            <div class="certificate-step">
-              <mat-card>
-                <mat-card-content>
-                  <form [formGroup]="certificateForm" (ngSubmit)="saveCertificate()">
-                    <h3>Firma Electrónica</h3>
-                    <p>
-                      Suba su archivo de firma electrónica (.p12) para poder emitir
-                      documentos electrónicos.
-                    </p>
-
-                    <div class="form-row">
-                      <mat-form-field appearance="outline" class="half-width">
-                        <mat-label>Contraseña</mat-label>
-                        <input
-                          matInput
-                          type="password"
-                          formControlName="contrasenia"
-                          placeholder="Ingrese la contraseña del certificado"
-                        />
-                      </mat-form-field>
-
-                      <mat-form-field appearance="outline" class="half-width">
-                        <mat-label>Fecha de Caducidad</mat-label>
-                        <input
-                          matInput
-                          type="date"
-                          formControlName="fechaCaducidad"
-                        />
-                      </mat-form-field>
-                    </div>
-
-                    <div class="form-row">
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Archivo de Firma (.p12)</mat-label>
-                        <input
-                          matInput
-                          type="file"
-                          accept=".p12"
-                          (change)="onFileChange($any($event))"
-                          [class.error]="wizardStore.fileError()"
-                        />
-                        @if (wizardStore.fileError()) {
-                          <mat-error>
-                            Por favor seleccione un archivo .p12 válido
-                          </mat-error>
-                        }
-                      </mat-form-field>
-                    </div>
-
-                    <div class="form-actions">
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        type="submit"
-                        [disabled]="!certificateForm.valid || !wizardStore.selectedFile()"
-                      >
-                        Subir Firma Electrónica
-                      </button>
-
-                      <button
-                        type="button"
-                        mat-button
-                        color="warn"
-                        (click)="skipAndFinish()"
-                      >
-                        Saltar este Paso
-                      </button>
-                    </div>
-                  </form>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          }
-
-          <!-- Completion Step -->
-          @if (step.code === 'VII') {
-            <div class="completion-step">
-              <mat-card>
-                <mat-card-content>
-                  <div class="completion-content">
-                    <mat-icon class="completion-icon" color="primary">check_circle</mat-icon>
-                    <h2>¡Configuración Completada!</h2>
-                    <p>
-                      Su sistema ha sido configurado exitosamente. Ya puede comenzar a usar
-                      todas las funcionalidades disponibles.
-                    </p>
-                    <div class="completion-actions">
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        routerLink="/dashboard"
-                      >
-                        Ir al Dashboard
-                      </button>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else {
+    <!-- Main Content -->
+    <div class="wizard-content">
+      <!-- Progress Header -->
+      <div class="progress-header">
+        <div class="progress-info">
+          <h2>Asistente de Configuración</h2>
+          <p>Paso {{ currentStepIndex() + 1 }} de {{ totalStepsCount() }}</p>
         </div>
-
-        <!-- Step Actions -->
-        <div class="step-actions">
-          <button
-            mat-button
-            matStepperPrevious
-            [disabled]="stepIndex === 0"
-          >
-            Anterior
-          </button>
-
-          <button
-            mat-raised-button
+        <div class="progress-bar-container">
+          <mat-progress-bar
+            [value]="progressPercentage()"
             color="primary"
-            matStepperNext
-            [disabled]="!step.completed && step.code !== 'I'"
-          >
-            {{ stepIndex === wizardStore.demoSteps().length - 1 ? 'Finalizar' : 'Siguiente' }}
+            [attr.aria-label]="'Progreso: ' + progressPercentage() + '%'"
+          ></mat-progress-bar>
+          <span class="progress-text">{{ progressPercentage() }}% completado</span>
+        </div>
+      </div>
+
+      <!-- Error Display -->
+      @if (hasError()) {
+        <div class="error-banner" role="alert">
+          <mat-icon>error</mat-icon>
+          <span>{{ error() }}</span>
+          <button mat-icon-button (click)="clearError()" aria-label="Cerrar error">
+            <mat-icon>close</mat-icon>
           </button>
         </div>
-      </mat-step>
       }
-    </mat-stepper>
-  </div>
+
+      <!-- Stepper -->
+      <mat-stepper
+        #stepper
+        [linear]="isLinear()"
+        [selectedIndex]="currentStepIndex()"
+        (selectionChange)="onStepChange($event.selectedIndex)"
+        aria-label="Configuration Wizard"
+        role="tablist"
+      >
+        @for (step of steps(); track step.id; let stepIndex = $index) {
+          <mat-step
+            [aria-label]="step.name"
+            role="tab"
+            [completed]="step.isCompleted"
+            [editable]="step.isEnabled"
+            [state]="getStepState(step)"
+          >
+            <ng-template matStepLabel>
+              <div class="step-label">
+                <span class="step-number">{{ step.code }}</span>
+                <span class="step-title">{{ step.name }}</span>
+                @if (step.isCompleted) {
+                  <mat-icon class="step-completed" aria-label="Step completed">
+                    check_circle
+                  </mat-icon>
+                }
+                @if (!step.isEnabled) {
+                  <mat-icon class="step-disabled" aria-label="Step disabled">
+                    lock
+                  </mat-icon>
+                }
+              </div>
+            </ng-template>
+
+            <!-- Step Content -->
+            <div class="step-content">
+              <!-- Welcome Step -->
+              @if (step.code === 'I') {
+                <div class="welcome-step">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="welcome-content">
+                        <mat-icon class="welcome-icon">waving_hand</mat-icon>
+                        <h2>¡Bienvenido al Asistente de Configuración!</h2>
+                        <p>
+                          Este asistente le guiará a través del proceso de configuración inicial
+                          de su sistema. Complete cada paso para configurar correctamente su empresa.
+                        </p>
+                        <div class="welcome-features">
+                          <div class="feature">
+                            <mat-icon>person</mat-icon>
+                            <span>Configuración de Usuario</span>
+                          </div>
+                          <div class="feature">
+                            <mat-icon>business</mat-icon>
+                            <span>Configuración de Establecimiento</span>
+                          </div>
+                          <div class="feature">
+                            <mat-icon>description</mat-icon>
+                            <span>Configuración de Documentos</span>
+                          </div>
+                          <div class="feature">
+                            <mat-icon>security</mat-icon>
+                            <span>Firma Electrónica</span>
+                          </div>
+                        </div>
+                        <div class="welcome-actions">
+                          <button
+                            mat-raised-button
+                            color="primary"
+                            (click)="moveToNextStep()"
+                            [disabled]="!canProceedToNextStep()"
+                          >
+                            Comenzar Configuración
+                            <mat-icon>arrow_forward</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+
+              <!-- User Step -->
+              @if (step.code === 'II') {
+                <app-user-step></app-user-step>
+              }
+
+              <!-- Establishment Step -->
+              @if (step.code === 'III') {
+                <div class="establishment-step">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="step-header">
+                        <h3>Configuración del Establecimiento</h3>
+                        <p>Configure la información de su establecimiento comercial.</p>
+                      </div>
+                      <!-- TODO: Add EstablishmentStepComponent -->
+                      <div class="placeholder-content">
+                        <mat-icon>business</mat-icon>
+                        <p>Componente de establecimiento en desarrollo</p>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+
+              <!-- Contribuyente Step -->
+              @if (step.code === 'IV') {
+                <div class="contribuyente-step">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="step-header">
+                        <h3>Configuración de Contribuyente</h3>
+                        <p>Configure el tipo de contribuyente y actividad económica.</p>
+                      </div>
+                      <!-- TODO: Add ContribuyenteStepComponent -->
+                      <div class="placeholder-content">
+                        <mat-icon>account_balance</mat-icon>
+                        <p>Componente de contribuyente en desarrollo</p>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+
+              <!-- Documents Step -->
+              @if (step.code === 'V') {
+                <div class="documents-step">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="step-header">
+                        <h3>Configuración de Documentos</h3>
+                        <p>Configure las secuencias iniciales para sus documentos electrónicos.</p>
+                      </div>
+                      <!-- TODO: Add DocumentsStepComponent -->
+                      <div class="placeholder-content">
+                        <mat-icon>description</mat-icon>
+                        <p>Componente de documentos en desarrollo</p>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+
+              <!-- Certificate Step -->
+              @if (step.code === 'VI') {
+                <div class="certificate-step">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="step-header">
+                        <h3>Firma Electrónica</h3>
+                        <p>Suba su archivo de firma electrónica para poder emitir documentos electrónicos.</p>
+                      </div>
+                      <!-- TODO: Add CertificateStepComponent -->
+                      <div class="placeholder-content">
+                        <mat-icon>security</mat-icon>
+                        <p>Componente de certificado en desarrollo</p>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+            </div>
+
+            <!-- Step Actions -->
+            <div class="step-actions">
+              <div class="step-actions-left">
+                @if (stepIndex > 0) {
+                  <button
+                    mat-button
+                    (click)="moveToPreviousStep()"
+                    [disabled]="!canGoToPreviousStep() || isAnySaving()"
+                  >
+                    <mat-icon>arrow_back</mat-icon>
+                    Anterior
+                  </button>
+                }
+              </div>
+
+              <div class="step-actions-right">
+                @if (allowSkip() && stepIndex < steps().length - 1) {
+                  <button
+                    mat-button
+                    (click)="skipStep()"
+                    [disabled]="isAnySaving()"
+                  >
+                    Omitir
+                  </button>
+                }
+
+                @if (stepIndex < steps().length - 1) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="moveToNextStep()"
+                    [disabled]="!canProceedToNextStep() || isAnySaving()"
+                  >
+                    Siguiente
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>
+                } @else {
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    (click)="finishWizard()"
+                    [disabled]="hasIncompleteRequiredSteps() || isAnySaving()"
+                  >
+                    Finalizar
+                    <mat-icon>check</mat-icon>
+                  </button>
+                }
+              </div>
+            </div>
+          </mat-step>
+        }
+      </mat-stepper>
+    </div>
+  }
 </div>
