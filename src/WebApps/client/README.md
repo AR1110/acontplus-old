@@ -170,3 +170,358 @@ src/app/modules/example/components/example-widget/
 - Document your architecture and conventions in the README or a `docs/` folder
 
 ---
+
+## Angular Component Code Organization Guidelines
+
+This section provides comprehensive guidelines for organizing Angular component code to ensure maintainability, readability, and consistency across the project.
+
+### 1. Import Organization
+
+Group imports in the following order with clear separators:
+
+```typescript
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Angular Core
+import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+// Angular CDK
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+
+// Angular Material
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+
+// Third-party Libraries
+import Swal from 'sweetalert2';
+import { faIcon } from '@fortawesome/free-solid-svg-icons';
+
+// Core Components & Services
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ToastService } from '@core/services/toast.service';
+
+// Shared Components & Directives
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+
+// Module Services & Use Cases
+import { UserService } from '@modules/auth/services/user.service';
+import { CreateUserUseCase } from '@modules/auth/application/use-cases/create-user.use-case';
+
+// Module Models
+import { User } from '@modules/auth/domain/models/user.model';
+
+// Utilities
+import { formatDate } from '@shared/utils/date.utils';
+```
+
+### 2. Component Structure (Top to Bottom)
+
+Organize your component in this specific order:
+
+```typescript
+@Component({...})
+export class MyComponent implements OnInit {
+  
+  // ============================================================================
+  // VIEW CHILD & INJECTIONS
+  // ============================================================================
+  
+  @ViewChild('element') element!: ElementRef;
+  private readonly _service = inject(Service);
+  
+  // ============================================================================
+  // CONSTANTS & CONFIGURATION
+  // ============================================================================
+  
+  readonly CONSTANT = 'value';
+  readonly config = {...};
+  
+  // ============================================================================
+  // SIGNAL PROPERTIES (Angular 17+)
+  // ============================================================================
+  
+  // Data signals
+  users = signal<User[]>([]);
+  products = signal<Product[]>([]);
+  
+  // UI state signals
+  isLoading = signal(false);
+  selectedUser = signal<User | null>(null);
+  
+  // ============================================================================
+  // COMPONENT STATE PROPERTIES
+  // ============================================================================
+  
+  isLoading = false;
+  selectedItem: Item | null = null;
+  
+  // ============================================================================
+  // FORM DEFINITIONS
+  // ============================================================================
+  
+  form = this.fb.group({...});
+  
+  // ============================================================================
+  // FORM GETTERS
+  // ============================================================================
+  
+  get formArray(): FormArray { return this.form.get('array') as FormArray; }
+  
+  // ============================================================================
+  // LIFECYCLE METHODS
+  // ============================================================================
+  
+  ngOnInit(): void {...}
+  
+  // ============================================================================
+  // INITIALIZATION METHODS
+  // ============================================================================
+  
+  private initializeData(): void {...}
+  
+  // ============================================================================
+  // DATA FETCHING METHODS
+  // ============================================================================
+  
+  fetchData(): void {...}
+  
+  // ============================================================================
+  // BUSINESS LOGIC METHODS
+  // ============================================================================
+  
+  processData(): void {...}
+  
+  // ============================================================================
+  // FORM MANAGEMENT METHODS
+  // ============================================================================
+  
+  addItem(): void {...}
+  removeItem(): void {...}
+  
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+  
+  onItemClick(): void {...}
+  
+  // ============================================================================
+  // SAVE/SUBMIT METHODS
+  // ============================================================================
+  
+  save(): void {...}
+  
+  // ============================================================================
+  // RESPONSE HANDLING METHODS
+  // ============================================================================
+  
+  private handleResponse(): void {...}
+  
+  // ============================================================================
+  // UTILITY METHODS
+  // ============================================================================
+  
+  private formatData(): void {...}
+}
+```
+
+### 3. Method Organization Principles
+
+#### Public vs Private Methods
+- Keep public methods at the top of each section
+- Group private methods at the bottom
+- Use clear naming conventions
+
+#### Method Grouping by Responsibility
+```typescript
+// Data Management
+fetchData(): void {...}
+updateData(): void {...}
+deleteData(): void {...}
+
+// Form Management
+addFormControl(): void {...}
+removeFormControl(): void {...}
+validateForm(): void {...}
+
+// UI Management
+showLoading(): void {...}
+hideLoading(): void {...}
+updateUI(): void {...}
+
+// Event Handling
+onClick(): void {...}
+onChange(): void {...}
+onSubmit(): void {...}
+```
+
+### 4. Form Organization
+
+```typescript
+// Group form-related code together
+form = this.fb.group({...});
+
+// Form getters
+get formArray(): FormArray { return this.form.get('array') as FormArray; }
+
+// Form factory methods
+private createFormGroup(): FormGroup { return this.fb.group({...}); }
+
+// Form management methods
+addItem(): void {...}
+removeItem(): void {...}
+validateForm(): void {...}
+```
+
+### 5. Service Injection Best Practices
+
+```typescript
+// Use private readonly for all injections
+private readonly _dataService = inject(DataService);
+private readonly _toastService = inject(ToastService);
+
+// Group related services together
+// Data services
+private readonly _userService = inject(UserService);
+private readonly _productService = inject(ProductService);
+
+// UI services
+private readonly _toastService = inject(ToastService);
+private readonly _loadingService = inject(LoadingService);
+```
+
+### 6. Signal Organization (Angular 17+)
+
+```typescript
+// Data signals
+users = signal<User[]>([]);
+products = signal<Product[]>([]);
+
+// UI state signals
+isLoading = signal(false);
+selectedUser = signal<User | null>(null);
+
+// Form state signals
+formErrors = signal<string[]>([]);
+isFormValid = signal(false);
+```
+
+### 7. Error Handling Organization
+
+```typescript
+// Centralize error handling
+private handleError(error: any): void {
+  this._toastService.error('An error occurred');
+  console.error('Error:', error);
+}
+
+// Use in methods
+fetchData(): void {
+  this.dataService.getData().subscribe({
+    next: (data) => this.handleSuccess(data),
+    error: (error) => this.handleError(error)
+  });
+}
+```
+
+### 8. Response Handling Patterns
+
+```typescript
+// Create dedicated response handlers
+private handleSaveResponse(response: ApiResponse): void {
+  if (response.success) {
+    this._toastService.success(response.message);
+    this.refreshData();
+  } else {
+    this._toastService.error(response.message);
+  }
+}
+```
+
+### 9. File Structure Recommendations
+
+```
+src/app/modules/feature/
+├── components/
+│   ├── my-component/
+│   │   ├── my-component.component.ts
+│   │   ├── my-component.component.html
+│   │   ├── my-component.component.scss
+│   │   └── my-component.component.spec.ts
+├── services/
+├── models/
+└── utils/
+```
+
+### 10. Naming Conventions
+
+```typescript
+// Services: private readonly _serviceName
+private readonly _userService = inject(UserService);
+
+// Methods: camelCase with descriptive names
+fetchUserData(): void {...}
+handleUserSave(): void {...}
+
+// Constants: UPPER_SNAKE_CASE
+readonly MAX_RETRY_ATTEMPTS = 3;
+
+// Signals: descriptive names
+users = signal<User[]>([]);
+isUserLoading = signal(false);
+```
+
+### 11. Comments and Documentation
+
+```typescript
+/**
+ * Fetches user data from the API
+ * @param userId - The ID of the user to fetch
+ * @returns Observable of user data
+ */
+fetchUserData(userId: string): Observable<User> {
+  // Implementation
+}
+```
+
+### 12. Type Safety
+
+```typescript
+// Use strict typing
+users = signal<User[]>([]);
+selectedUser = signal<User | null>(null);
+
+// Avoid any types
+// ❌ Bad
+data: any[] = [];
+
+// ✅ Good
+data: User[] = [];
+```
+
+### 13. Section Separators
+
+Use clear section separators to improve readability:
+
+```typescript
+// ============================================================================
+// SECTION NAME
+// ============================================================================
+```
+
+### 14. Best Practices Summary
+
+- **Consistency**: Once you establish a pattern, stick to it throughout your project
+- **Readability**: Use clear, descriptive names for methods and properties
+- **Maintainability**: Group related functionality together
+- **Type Safety**: Avoid `any` types, use proper TypeScript typing
+- **Documentation**: Comment complex logic and public methods
+- **Separation of Concerns**: Keep business logic, UI logic, and data access separate
+- **Error Handling**: Centralize error handling and provide meaningful error messages
+- **Testing**: Write unit tests for all public methods and complex logic
+
+These organizational principles will make your code more maintainable, readable, and easier to debug. The key is consistency - once you establish a pattern, stick to it throughout your project.
+
+---
