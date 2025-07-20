@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --no-hmr",
+    "start": "ng serve --hmr",
     "development": "ng build -c development --base-href /client/",
     "production": "ng build -c production",
     "staging": "ng build -c staging --base-href /client/",

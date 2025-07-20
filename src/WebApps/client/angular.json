@@ -88,7 +88,9 @@
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
               "src/assets/lib/luxon/luxon.js"
             ],
-            "browser": "src/main.ts"
+            "browser": "src/main.ts",
+            "ssr": false,
+            "prerender": false
           },
           "configurations": {
             "production": {
@@ -149,7 +151,8 @@
           "options": {
             "ssl": true,
             "sslCert": "./ssl/server.crt",
-            "sslKey": "./ssl/server.key"
+            "sslKey": "./ssl/server.key",
+            "hmr": true
           },
           "builder": "@angular/build:dev-server",
           "configurations": {
@@ -183,7 +186,10 @@
   },
   "cli": {
     "analytics": "883d12a0-ec4d-4ac6-a51b-8f728138c4ac",
-    "schematicCollections": ["angular-eslint"]
+    "schematicCollections": ["angular-eslint"],
+    "cache": {
+      "enabled": true
+    }
   },
   "schematics": {
     "@schematics/angular:component": {

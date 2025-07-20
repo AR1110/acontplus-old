@@ -525,3 +525,45 @@ Use clear section separators to improve readability:
 These organizational principles will make your code more maintainable, readable, and easier to debug. The key is consistency - once you establish a pattern, stick to it throughout your project.
 
 ---
+
+## Angular 20+ Performance & Build Speed Recommendations
+
+To ensure the fastest possible development and build experience with Angular 20+, the following optimizations and best practices are applied in this project:
+
+### 1. Persistent Build Cache
+- Angular CLI persistent cache is enabled in `angular.json` for much faster rebuilds.
+
+### 2. Incremental TypeScript Builds
+- `tsconfig.json` uses `"incremental": true` for faster TypeScript rebuilds.
+
+### 3. Modern JavaScript Output
+- Target and module are set to `ES2022` for smaller, faster bundles and less polyfill overhead.
+
+### 4. Hot Module Replacement (HMR)
+- HMR is enabled by default for instant updates during development without full reloads. Just run `npm start`.
+
+### 5. Standalone Components & Signals
+- New components default to `standalone: true` and use Angular signals for state, reducing module overhead and improving performance.
+
+### 6. Angular Compiler Optimizations
+- `enableResourceInlining` is enabled for better tree-shaking and build speed.
+- Strict compiler options are enforced for reliability and maintainability.
+
+### 7. Modern Module Resolution
+- Uses `moduleResolution: "bundler"` for optimal compatibility with Angular 17+ and 20+.
+
+### 8. SSR/Prerender Disabled (if not needed)
+- SSR and prerender are explicitly disabled in the build config for faster builds if not required.
+
+### 9. Dependency Hygiene
+- Regularly audit dependencies and remove unused packages to keep builds fast.
+
+### 10. Hardware & Node.js
+- For very large projects, use SSD storage and increase Node.js memory with `node --max_old_space_size=4096 ...` if needed.
+
+**Result:**
+- Faster initial and incremental builds
+- Instant feedback during development
+- Smaller, more efficient production bundles
+
+For more details, see the relevant sections in this README and the `angular.json` and `tsconfig.json` files.
