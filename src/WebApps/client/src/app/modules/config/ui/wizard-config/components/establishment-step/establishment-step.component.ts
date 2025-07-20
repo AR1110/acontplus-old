@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, computed, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, inject, Signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField, MatInput, MatLabel, MatError } from '@angular/material/input';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -397,8 +397,8 @@ export interface EstabFormControls {
 })
 export class EstablishmentStepComponent {
   @Input() estabForm!: FormGroup<EstabFormControls>;
-  @Input() cantones = signal<Canton[]>([]);
-  @Input() ambientes = signal<AmbienteSri[]>([]);
+  @Input() cantones!: Signal<Canton[]>;
+  @Input() ambientes!: Signal<AmbienteSri[]>;
   @Output() save = new EventEmitter<void>();
 
   loading = signal(false);

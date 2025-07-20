@@ -6,12 +6,12 @@
   <div class="wizard-content">
     <mat-stepper
       #stepper
-      [linear]="isLinear"
+      [linear]="wizardStore.isLinear()"
       aria-label="Configuration Wizard"
       role="tablist"
     >
       <!-- Step I: Welcome -->
-      @for (step of demoSteps(); track trackByStep($index, step); let stepIndex = $index) {
+      @for (step of wizardStore.demoSteps(); track trackByStep($index, step); let stepIndex = $index) {
         <mat-step
           [aria-label]="step.name"
           role="tab"
@@ -71,8 +71,8 @@
           @if (step.code === 'III') {
             <app-establishment-step
               [estabForm]="estabForm"
-              [cantones]="cantones"
-              [ambientes]="ambientes"
+              [cantones]="wizardStore.cantones"
+              [ambientes]="wizardStore.ambientes"
               (save)="saveEstab()"
             ></app-establishment-step>
           }
@@ -89,7 +89,7 @@
                       <mat-form-field appearance="outline" class="half-width">
                         <mat-label>Actividad Económica</mat-label>
                         <mat-select formControlName="actividad" (selectionChange)="showInfoActividadEconomica()">
-                          @for (actividad of actividadesEconomica(); track actividad.codigo) {
+                          @for (actividad of wizardStore.actividadesEconomica(); track actividad.codigo) {
                             <mat-option [value]="actividad.codigo">
                               {{ actividad.descripcion }}
                             </mat-option>
@@ -100,7 +100,7 @@
                       <mat-form-field appearance="outline" class="half-width">
                         <mat-label>Tipo de Contribuyente</mat-label>
                         <mat-select formControlName="contribuyente" (selectionChange)="onChangeTipoContribuyente(); showInfoTipoContribuyente()">
-                          @for (contribuyente of contribuyentes(); track contribuyente.codigo) {
+                          @for (contribuyente of wizardStore.contribuyentes(); track contribuyente.codigo) {
                             <mat-option [value]="contribuyente.codigo">
                               {{ contribuyente.descripcion }}
                             </mat-option>
@@ -113,7 +113,7 @@
                       <mat-form-field appearance="outline" class="half-width">
                         <mat-label>Agente de Retención</mat-label>
                         <mat-select formControlName="agenteRetencion">
-                          @for (agente of agentesRetencion(); track agente.resolucion) {
+                          @for (agente of wizardStore.agentesRetencion(); track agente.resolucion) {
                             <mat-option [value]="agente.resolucion">
                               {{ agente.resolucion }}
                             </mat-option>
@@ -159,7 +159,7 @@
 
                   <app-tabulator-semantic-ui
                     [columnNames]="columnNames"
-                    [tableData]="docsConfig()"
+                    [tableData]="wizardStore.docsConfig()"
                     [options]="{ height: 400 }"
                   ></app-tabulator-semantic-ui>
 
@@ -218,9 +218,9 @@
                           type="file"
                           accept=".p12"
                           (change)="onFileChange($any($event))"
-                          [class.error]="fileError"
+                          [class.error]="wizardStore.fileError()"
                         />
-                        @if (fileError) {
+                        @if (wizardStore.fileError()) {
                           <mat-error>
                             Por favor seleccione un archivo .p12 válido
                           </mat-error>
@@ -233,7 +233,7 @@
                         mat-raised-button
                         color="primary"
                         type="submit"
-                        [disabled]="!certificateForm.valid || !selectedFile"
+                        [disabled]="!certificateForm.valid || !wizardStore.selectedFile()"
                       >
                         Subir Firma Electrónica
                       </button>
@@ -297,7 +297,7 @@
             matStepperNext
             [disabled]="!step.completed && step.code !== 'I'"
           >
-            {{ stepIndex === demoSteps().length - 1 ? 'Finalizar' : 'Siguiente' }}
+            {{ stepIndex === wizardStore.demoSteps().length - 1 ? 'Finalizar' : 'Siguiente' }}
           </button>
         </div>
       </mat-step>
