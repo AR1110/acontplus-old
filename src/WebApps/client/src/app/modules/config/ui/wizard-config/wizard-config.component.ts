@@ -27,15 +27,14 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
-
 import Swal from 'sweetalert2';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import {
@@ -45,7 +44,6 @@ import {
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
-
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
@@ -57,14 +55,12 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
-import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
 import { ActividadEconomica } from '@modules/config/domain/models/wizard-config/actividad-economica.model';
 import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/agente-retencion.model';
 import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
-import { Bodega } from '@modules/config/domain/models/wizard-config/bodega.model';
-import { PuntoEmision } from '@modules/config/domain/models/wizard-config/punto-emision.model';
 
 @Component({
   selector: 'app-wizard-config',
@@ -94,6 +90,7 @@ import { PuntoEmision } from '@modules/config/domain/models/wizard-config/punto-
     MatFormField,
     MatLabel,
     MatSelectModule,
+    FormsModule,
   ],
   templateUrl: './wizard-config.component.html',
   styles: [],
@@ -151,11 +148,48 @@ export class WizardConfigComponent implements OnInit {
   currentEstab = '';
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   docs = signal<DocConfig[]>([]);
+  demoSteps = signal<DemoStep[]>([]);
+  user = {} as UserData;
+  userUpdated = false;
+  estabRegistered = false;
+  tipoContribuyenteRegistered = false;
+  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
+  private readonly _tokenUseCase = inject(TokenUseCase);
+  private readonly _toasterService = inject(ToastrNotificationService);
+  private readonly $updateUserCustomerUseCase = inject(
+    UpdateUserCustomerUseCase,
+  );
+  private readonly _estabService = inject(EstablishmentService);
+  private readonly fb = inject(FormBuilder);
+  private readonly firmaElectronicaService = inject(FirmaElectronicaService);
+  private readonly createDocConfigUseCase = inject(CreateDocConfigUseCase);
+  private readonly $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
+  private readonly companyDemoStepService = inject(CompanyDemoStepService);
+
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
     fechaCaducidad: new FormControl('', [Validators.required]),
     fileSign: new FormControl(null, [Validators.required]),
   });
+
+  estabForm = this.fb.group({
+    canton: '',
+    estab: [
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
+    ],
+    nombreComercial: [
+      '',
+      [Validators.required, Validators.minLength(2), Validators.maxLength(300)],
+    ],
+    dirEstablecimiento: ['', [Validators.required, Validators.maxLength(300)]],
+    telefono: [''],
+    correo: [''],
+    ptosEmi: this.fb.array([]),
+    hasInventory: [false],
+    bodegas: this.fb.array([]),
+  });
+
   userForm = new FormGroup({
     nroIdentificacion: new FormControl(''),
     firstName: new FormControl('', [
@@ -169,48 +203,15 @@ export class WizardConfigComponent implements OnInit {
       Validators.maxLength(50),
     ]),
   });
-  demoSteps = signal<DemoStep[]>([]);
-  user = {} as UserData;
-  userUpdated = false;
-  estabRegistered = false;
-  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
-
-  private readonly _tokenUseCase = inject(TokenUseCase);
-  private readonly _toasterService = inject(ToastrNotificationService);
-  private readonly $updateUserCustomerUseCase = inject(
-    UpdateUserCustomerUseCase,
-  );
-  private readonly _estabService = inject(EstablishmentService);
-  private readonly fb = inject(FormBuilder);
-  private readonly firmaElectronicaService = inject(FirmaElectronicaService);
-  private readonly createDocConfigUseCase = inject(CreateDocConfigUseCase);
-  private readonly $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
-  private readonly companyDemoStepService = inject(CompanyDemoStepService);
-
-  estabForm = this.fb.group({
-    canton: '',
+  tipoContribuyenteForm = this.fb.group({
     actividad: ['', Validators.required],
     agenteRetencion: '',
     contribuyente: ['', Validators.required],
     contribuyenteEspecial: [''],
-    estab: [
-      '',
-      [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
-    ],
     obligadoContabilidad: [
       '',
       [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
     ],
-    nombreComercial: [
-      '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(300)],
-    ],
-    dirEstablecimiento: ['', [Validators.required, Validators.maxLength(300)]],
-    telefono: [''],
-    correo: [''],
-    ptosEmi: this.fb.array([]),
-    hasInventory: [false],
-    bodegas: this.fb.array([]),
   });
 
   get bodegas(): FormArray {
@@ -277,25 +278,30 @@ export class WizardConfigComponent implements OnInit {
     this.fetchCompanyDemoSteps();
   }
 
-  // createFormGroup(controlsConfig: any): FormGroup {
-  //   return this.#fb.group(controlsConfig);
-  // }
-
   fetchCompanyDemoSteps(): void {
     this.companyDemoStepService.get({}).subscribe((response) => {
       if (response.code === '1') {
         const tempArray = JSON.parse(response.payload as string);
         this.demoSteps.set(tempArray['companyDemoSteps'] as DemoStep[]);
         this.userUpdated =
-          this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'II')
+            ?.completed ?? false;
         this.estabRegistered =
-          this.demoSteps().find((step: DemoStep) => step.code === 'V')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'III')
+            ?.completed ?? false;
+        this.tipoContribuyenteRegistered =
+          this.demoSteps().find((step: DemoStep) => step.code === 'IV')
+            ?.completed ?? false;
         this.docsUpdated =
-          this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'V')
+            ?.completed ?? false;
         this.certificateUpdated =
-          this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.completed ?? false;
+          this.demoSteps().find((step: DemoStep) => step.code === 'VI')
+            ?.completed ?? false;
 
-        const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
+        const incompleteStep = this.demoSteps().find(
+          (step: DemoStep) => !step.completed,
+        );
 
         if (incompleteStep) {
           const stepIndex = incompleteStep
@@ -322,16 +328,14 @@ export class WizardConfigComponent implements OnInit {
     this.$formDataDocConfig.execute().subscribe((response) => {
       this.establecimientos.set(response.establecimientos);
       this.currentEstab = this.establecimientos()[0].nombreComercial;
-      const combinedData = this.establecimientos().map(
-        (pto) => ({
-          ...pto,
-          _children: (response.tiposDoc as any[]).map((doc) => ({
-            ...doc,
-            parentId: (pto as any).idPuntoEmision,
-            ultimaSecuencia: 0,
-          })),
-        }),
-      );
+      const combinedData = this.establecimientos().map((pto) => ({
+        ...pto,
+        _children: (response.tiposDoc as any[]).map((doc) => ({
+          ...doc,
+          parentId: (pto as any).idPuntoEmision,
+          ultimaSecuencia: 0,
+        })),
+      }));
       this.docsConfig.set(combinedData as []);
     });
   }
@@ -387,7 +391,8 @@ export class WizardConfigComponent implements OnInit {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')
+        ?.id,
     };
     this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
@@ -408,7 +413,8 @@ export class WizardConfigComponent implements OnInit {
       ...structuredClone(this.userForm.value),
       email: this.user.email,
       username: this.user.username,
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')
+        ?.id,
     };
     const userData = {
       data,
@@ -435,20 +441,13 @@ export class WizardConfigComponent implements OnInit {
         } else {
           this._toasterService.success({ message: response.message });
         }
-        // this._toasterService.toastr({
-        //   type: response.code === '1' ? 'success' : 'warning',
-        //   message: response.message,
-        //   options: {
-        //     positionClass: 'toast-top-center',
-        //   },
-        // });
       }
     });
   }
 
   onChangeTipoContribuyente(): void {
-    const control = this.estabForm.get('agenteRetencion');
-    if (this.estabForm.get('contribuyente')?.value === '03') {
+    const control = this.tipoContribuyenteForm.get('agenteRetencion');
+    if (this.tipoContribuyenteForm.get('contribuyente')?.value === '03') {
       control?.disable();
       control?.setValue(null);
     } else {
@@ -457,8 +456,11 @@ export class WizardConfigComponent implements OnInit {
   }
 
   showInfoTipoContribuyente(): void {
-    const contribuyente = this.estabForm.get('contribuyente')?.value;
-    const dataInfo = this.contribuyentes().find((item) => item.codigo === contribuyente);
+    const contribuyente =
+      this.tipoContribuyenteForm.get('contribuyente')?.value;
+    const dataInfo = this.contribuyentes().find(
+      (item) => item.codigo === contribuyente,
+    );
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
         icon: 'info',
@@ -468,8 +470,10 @@ export class WizardConfigComponent implements OnInit {
   }
 
   showInfoActividadEconomica(): void {
-    const actividad = this.estabForm.get('actividad')?.value;
-    const groupActEconomica = this.actividadesEconomica().find((item) => item.codigo === actividad);
+    const actividad = this.tipoContribuyenteForm.get('actividad')?.value;
+    const groupActEconomica = this.actividadesEconomica().find(
+      (item) => item.codigo === actividad,
+    );
     if (actividad && groupActEconomica?.grupo) {
       Swal.fire({
         icon: 'info',
@@ -559,7 +563,8 @@ export class WizardConfigComponent implements OnInit {
 
     const dataToSave = {
       docs: JSON.stringify(docs),
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VI')
+        ?.id,
     };
     this.createDocConfigUseCase.execute(dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
@@ -593,7 +598,9 @@ export class WizardConfigComponent implements OnInit {
       const formData = {
         contrasenia: this.certificateForm.get('contrasenia')?.value,
         fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value,
-        demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id,
+        demoStepId: this.demoSteps().find(
+          (step: DemoStep) => step.code === 'VII',
+        )?.id,
       };
 
       this.firmaElectronicaService
@@ -624,7 +631,9 @@ export class WizardConfigComponent implements OnInit {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id;
+        const id = this.demoSteps().find(
+          (step: DemoStep) => step.code === 'VII',
+        )?.id;
         this.companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
@@ -638,4 +647,6 @@ export class WizardConfigComponent implements OnInit {
       }
     });
   }
+
+  saveTipoContribuyente() {}
 }
