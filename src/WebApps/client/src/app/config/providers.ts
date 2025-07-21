@@ -17,8 +17,6 @@ import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { barberShopProviders } from '@barber-shop/providers';
 import { DATA_INVENTORY_IOC } from '@inventory/data/inventory.ioc';
 import { DATA_CONFIG_IOC } from '@modules/config/data/data-config.ioc';
-import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
-import 'moment/locale/es';
 import {DATA_RESTAURANT_IOC} from "@restaurant/data/data-restaurant.ioc";
 import {DATA_ACCOUNTING_IOC} from "@accounting/data-accounting.ioc";
 import {DATA_REPORT_IOC} from "@modules/api/reports/data-report.ioc";
@@ -52,7 +50,6 @@ export const uiProviders = [
     provide: MAT_DATE_LOCALE,
     useValue: 'es-MX',
   },
-  provideMomentDateAdapter(),
   DatePipe,
 ];
 
