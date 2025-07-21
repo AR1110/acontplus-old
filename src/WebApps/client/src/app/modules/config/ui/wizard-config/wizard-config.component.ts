@@ -3,7 +3,16 @@
 // ============================================================================
 
 // Angular Core
-import { Component, inject, ViewChild, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  ViewChild,
+  OnInit,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+  ViewEncapsulation,
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -206,10 +215,9 @@ interface EstabFormControls {
     RouterModule,
   ],
   templateUrl: './wizard-config.component.html',
-  styles: [],
+  styleUrl: './wizard-config.component.scss',
 })
 export class WizardConfigComponent implements OnInit {
-
   // ============================================================================
   // VIEW CHILD & INJECTIONS
   // ============================================================================
@@ -224,7 +232,9 @@ export class WizardConfigComponent implements OnInit {
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
-  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
+  private readonly _updateUserCustomerUseCase = inject(
+    UpdateUserCustomerUseCase
+  );
   private readonly _errorHandler = inject(WizardErrorHandlerService);
   private readonly _wizardStore = inject(WizardConfigStore);
 
@@ -257,7 +267,10 @@ export class WizardConfigComponent implements OnInit {
       editable: function (cell: TabulatorCell): boolean {
         return cell.getRow().getTreeParent() ? true : false;
       },
-      validator: function (cell: TabulatorCell, value: unknown): boolean | TabulatorValidatorResult {
+      validator: function (
+        cell: TabulatorCell,
+        value: unknown
+      ): boolean | TabulatorValidatorResult {
         if (cell.getRow().getTreeParent()) {
           if (value === '' || value === null) {
             return { valid: false, message: 'Este campo es requerido' };
@@ -299,11 +312,11 @@ export class WizardConfigComponent implements OnInit {
 
   // Computed signals for derived state
   readonly hasIncompleteSteps = computed(() =>
-    this.demoSteps().some(step => !step.completed)
+    this.demoSteps().some((step) => !step.completed)
   );
 
   readonly currentStepIndex = computed(() =>
-    this.demoSteps().findIndex(step => !step.completed)
+    this.demoSteps().findIndex((step) => !step.completed)
   );
 
   readonly canProceedToNextStep = computed(() => {
@@ -348,16 +361,16 @@ export class WizardConfigComponent implements OnInit {
     estab: this._fb.control('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(3)
+      Validators.maxLength(3),
     ]),
     nombreComercial: this._fb.control('', [
       Validators.required,
       Validators.minLength(2),
-      Validators.maxLength(300)
+      Validators.maxLength(300),
     ]),
     dirEstablecimiento: this._fb.control('', [
       Validators.required,
-      Validators.maxLength(300)
+      Validators.maxLength(300),
     ]),
     telefono: this._fb.control(''),
     correo: this._fb.control(''),
@@ -428,22 +441,25 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   fetchCompanyDemoSteps(): void {
-    this._companyDemoStepService.get({}).pipe(
-      catchError((error: unknown) => {
-        this._errorHandler.handleApiError(error, {
-          operation: 'fetching demo steps',
-          component: 'WizardConfigComponent'
-        });
-        return of(null);
-      })
-    ).subscribe((response) => {
-      if (response?.code === '1') {
-        const tempArray = JSON.parse(response.payload as string);
-        this.demoSteps.set(tempArray['companyDemoSteps'] as DemoStep[]);
-        this.updateStepCompletionStatus();
-        this.handleIncompleteSteps();
-      }
-    });
+    this._companyDemoStepService
+      .get({})
+      .pipe(
+        catchError((error: unknown) => {
+          this._errorHandler.handleApiError(error, {
+            operation: 'fetching demo steps',
+            component: 'WizardConfigComponent',
+          });
+          return of(null);
+        })
+      )
+      .subscribe((response) => {
+        if (response?.code === '1') {
+          const tempArray = JSON.parse(response.payload as string);
+          this.demoSteps.set(tempArray['companyDemoSteps'] as DemoStep[]);
+          this.updateStepCompletionStatus();
+          this.handleIncompleteSteps();
+        }
+      });
   }
 
   fetchDocConfig(): void {
@@ -484,12 +500,15 @@ export class WizardConfigComponent implements OnInit {
   }
 
   private getStepCompletionStatus(stepCode: string): boolean {
-    return this.demoSteps().find((step: DemoStep) => step.code === stepCode)?.completed ?? false;
+    return (
+      this.demoSteps().find((step: DemoStep) => step.code === stepCode)
+        ?.completed ?? false
+    );
   }
 
   private handleIncompleteSteps(): void {
     const incompleteStep = this.demoSteps().find(
-      (step: DemoStep) => !step.completed,
+      (step: DemoStep) => !step.completed
     );
 
     if (incompleteStep) {
@@ -581,7 +600,7 @@ export class WizardConfigComponent implements OnInit {
       const index = this.emails().indexOf(email);
       if (index >= 0) {
         this.emails.update((prev) =>
-          prev.map((e, i) => (i === index ? value : e)),
+          prev.map((e, i) => (i === index ? value : e))
         );
       }
     }
@@ -611,7 +630,7 @@ export class WizardConfigComponent implements OnInit {
       const index = this.telephones().indexOf(telephone);
       if (index >= 0) {
         this.telephones.update((prev) =>
-          prev.map((t, i) => (i === index ? value : t)),
+          prev.map((t, i) => (i === index ? value : t))
         );
       }
     }
@@ -625,21 +644,24 @@ export class WizardConfigComponent implements OnInit {
     // Validation is now handled in the child component before emitting save
     // Only handle the save logic here
 
-    const telephone = this.telephones().length > 0
-      ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
-      : null;
+    const telephone =
+      this.telephones().length > 0
+        ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
+        : null;
     this.estabForm.get('telefono')?.setValue(telephone);
 
-    const correo = this.emails().length > 0
-      ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
-      : null;
+    const correo =
+      this.emails().length > 0
+        ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
+        : null;
     this.estabForm.get('correo')?.setValue(correo);
 
     const dataEstab = {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')
+        ?.id,
     };
 
     this._estabService.post(dataEstab).subscribe((response) => {
@@ -661,7 +683,8 @@ export class WizardConfigComponent implements OnInit {
       ...structuredClone(this.userForm.value),
       email: this.user.email,
       username: this.user.username,
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')
+        ?.id,
     };
 
     const userData = {
@@ -680,15 +703,18 @@ export class WizardConfigComponent implements OnInit {
     const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
       pto._children
         .filter((doc: DocConfigItem) => doc.ultimaSecuencia > 0)
-        .map((doc: DocConfigItem) => ({
-          idConfiguracionDocumento: 0, // default or real value if available
-          idPuntoEmision: pto.puntosEmision[0]?.idPuntoEmision || '',
-          idTipoDocumento: Number(doc.idTipoDocumento),
-          estado: true, // default or real value if available
-          ultimaSecuencia: doc.ultimaSecuencia,
-          descripcion: doc.descripcion || '',
-          infoAdicional: false, // default or real value if available
-        } as DocConfig)),
+        .map(
+          (doc: DocConfigItem) =>
+            ({
+              idConfiguracionDocumento: 0, // default or real value if available
+              idPuntoEmision: pto.puntosEmision[0]?.idPuntoEmision || '',
+              idTipoDocumento: Number(doc.idTipoDocumento),
+              estado: true, // default or real value if available
+              ultimaSecuencia: doc.ultimaSecuencia,
+              descripcion: doc.descripcion || '',
+              infoAdicional: false, // default or real value if available
+            } as DocConfig)
+        )
     );
     docs.forEach((docConfig: DocConfig) => {
       this._wizardStore.saveDocumentsConfig(docConfig);
@@ -701,7 +727,7 @@ export class WizardConfigComponent implements OnInit {
         idFirmaElectronica: 0, // or undefined if new
         contrasenia: this.certificateForm.get('contrasenia')?.value || '',
         fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value || '',
-        file: this.selectedFile
+        file: this.selectedFile,
       };
       this._wizardStore.saveElectronicSignature(formData);
     }
@@ -709,8 +735,11 @@ export class WizardConfigComponent implements OnInit {
 
   saveTipoContribuyente(): void {
     if (this.tipoContribuyenteForm.valid) {
-      const codigo = this.tipoContribuyenteForm.get('contribuyente')?.value || '';
-      const descripcion = this.contribuyentes().find(c => c.codigo === codigo)?.descripcion || '';
+      const codigo =
+        this.tipoContribuyenteForm.get('contribuyente')?.value || '';
+      const descripcion =
+        this.contribuyentes().find((c) => c.codigo === codigo)?.descripcion ||
+        '';
       const contribuyente: Contribuyente = { codigo, descripcion };
       this._wizardStore.saveContribuyenteData(contribuyente);
     }
@@ -798,9 +827,10 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   showInfoTipoContribuyente(): void {
-    const contribuyente = this.tipoContribuyenteForm.get('contribuyente')?.value;
+    const contribuyente =
+      this.tipoContribuyenteForm.get('contribuyente')?.value;
     const dataInfo = this.contribuyentes().find(
-      (item) => item.codigo === contribuyente,
+      (item) => item.codigo === contribuyente
     );
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
@@ -813,7 +843,7 @@ export class WizardConfigComponent implements OnInit {
   showInfoActividadEconomica(): void {
     const actividad = this.tipoContribuyenteForm.get('actividad')?.value;
     const groupActEconomica = this.actividadesEconomica().find(
-      (item) => item.codigo === actividad,
+      (item) => item.codigo === actividad
     );
     if (actividad && groupActEconomica?.grupo) {
       Swal.fire({
@@ -860,7 +890,9 @@ export class WizardConfigComponent implements OnInit {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id;
+        const id = this.demoSteps().find(
+          (step: DemoStep) => step.code === 'VII'
+        )?.id;
         this._companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
