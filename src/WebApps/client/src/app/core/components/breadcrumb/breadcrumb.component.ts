@@ -8,49 +8,17 @@ import { RouterLink } from '@angular/router';
   selector: 'app-breadcrumb',
   imports: [MatIconButton, MatIcon, MatButton, RouterLink],
   templateUrl: './breadcrumb.component.html',
-  styles: `
-    .breadcrumb-container {
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-      gap: 8px;
-    }
-
-    .breadcrumb-header h2 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 500;
-    }
-
-    .breadcrumb-nav {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-
-      .breadcrumb-home {
-        min-width: unset;
-        padding: 0 8px;
-      }
-
-      .current-page {
-        color: rgba(0, 0, 0, 0.6);
-        font-weight: 500;
-      }
-
-      /*mat-icon {*/
-      /*  font-size: 18px;*/
-      /*  width: 18px;*/
-      /*  height: 18px;*/
-      /*  color: rgba(0, 0, 0, 0.54);*/
-      /*}*/
-    }
-  `,
+  styleUrls: ['./breadcrumb.component.scss'],
 })
 export class BreadcrumbComponent {
   separator = input('>');
   asString = input(false);
+  showHome = input(true); // Customization: show/hide home button
+  homeIcon = input('home'); // Customization: home icon
+  chevronIcon = input('chevron_right'); // Customization: separator icon
 
   breadcrumbService = inject(BreadcrumbService);
+  breadcrumbs = this.breadcrumbService.breadcrumbs;
 
   // Computed para string con separador personalizado
   breadcrumbStringWithSeparator = computed(() => {
