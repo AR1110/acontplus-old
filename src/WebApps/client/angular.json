@@ -16,32 +16,25 @@
           "flat": false
         },
         "@schematics/angular:service": {
-          "skipTests": false,
-          "flat": false
+          "skipTests": false
         },
         "@schematics/angular:directive": {
-          "skipTests": false,
-          "flat": false
+          "skipTests": false
         },
         "@schematics/angular:pipe": {
-          "skipTests": false,
-          "flat": false
+          "skipTests": false
         },
         "@schematics/angular:guard": {
-          "skipTests": false,
-          "flat": false
+          "skipTests": false
         },
         "@schematics/angular:resolver": {
           "skipTests": false,
-          "flat": false
         },
         "@schematics/angular:class": {
-          "skipTests": false,
-          "flat": false
+          "skipTests": false
         },
         "@schematics/angular:interceptor": {
-          "skipTests": false,
-          "flat": false
+          "skipTests": false
         }
       },
       "root": "",
