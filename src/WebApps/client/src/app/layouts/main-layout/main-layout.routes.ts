@@ -7,6 +7,7 @@ export const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     children: [
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: 'dashboard',
         loadComponent: () =>
