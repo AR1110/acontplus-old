@@ -20,97 +20,119 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
   selector: 'app-tabulator',
-  imports: [],
   templateUrl: './tabulator.component.html',
   styleUrls: ['./tabulator.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() tableData: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() columnNames: any[] = [];
-  @Input() height: string = '311px';
-  @Input() dataTree: boolean = false;
-  @Input() dataTreeChildField: string = 'childRows';
-  @Input() dataTreeStartExpanded: boolean = false;
+  @Input() height: string | number | false | undefined = '311px';
+  @Input() dataTree = false;
+  @Input() dataTreeChildField = 'childRows';
+  @Input() dataTreeStartExpanded = false;
+  @Input() options: Record<string, unknown> = {};
+  /**
+   * theme: 'default' | 'semantic-ui' | 'bootstrap5' | ...
+   * Controls which Tabulator CSS theme to use.
+   */
+  @Input() theme: 'default' | 'semantic-ui' = 'default';
 
-  @Input() options: Record<string, any> = {}; // Allows more flexibility by accepting a general options object
-
-  @Output() cellEdited = new EventEmitter<any>();
-  @Output() cellClick = new EventEmitter<any>();
+  @Output() cellEdited = new EventEmitter<unknown>();
+  @Output() cellClick = new EventEmitter<unknown>();
 
   uniqueIdTabulator: string = generateUuidv4();
-  refTabulator!: Tabulator;
+  public get refTabulator(): Tabulator {
+    return this._refTabulator;
+  }
+  private _refTabulator!: Tabulator;
   private readonly tabContainer: HTMLDivElement;
 
   constructor() {
-    this.tabContainer = document.createElement('div'); // Initialize the table container
+    this.tabContainer = document.createElement('div');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData'] && !changes['tableData'].isFirstChange()) {
-      console.log('ngOnChanges tabulator ');
-      // Efficiently update the data without redrawing the table
       this.updateTableData();
     }
   }
 
   ngAfterViewInit(): void {
+    this.applyTheme();
     this.initializeTable();
+  }
+
+  ngOnDestroy(): void {
+    if (this._refTabulator) {
+      this._refTabulator.destroy();
+    }
+  }
+
+  private applyTheme(): void {
+    // Remove any previous Tabulator theme CSS
+    const themeLinks = Array.from(document.querySelectorAll('link[data-tabulator-theme]'));
+    themeLinks.forEach(link => link.parentNode?.removeChild(link));
+    // Add the selected theme
+    let themeHref = '';
+    switch (this.theme) {
+      case 'semantic-ui':
+        themeHref = 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
+        break;
+      case 'default':
+      default:
+        themeHref = 'tabulator-tables/dist/css/tabulator.min.css';
+        break;
+    }
+    if (themeHref) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = themeHref;
+      link.setAttribute('data-tabulator-theme', this.theme);
+      document.head.appendChild(link);
+    }
   }
 
   private initializeTable(): void {
     const tableElement = document.getElementById(this.uniqueIdTabulator);
     if (!tableElement) {
-      console.error(
-        `Table element with id ${this.uniqueIdTabulator} not found.`,
-      );
+      console.error(`Table element with id ${this.uniqueIdTabulator} not found.`);
       return;
     }
-
-    this.refTabulator = new Tabulator(this.tabContainer, {
+    this._refTabulator = new Tabulator(this.tabContainer, {
       renderVerticalBuffer: 300,
       columns: this.columnNames,
       data: this.tableData,
       dataTree: this.dataTree,
+      dataTreeChildField: this.dataTreeChildField,
       dataTreeSelectPropagate: true,
       dataTreeStartExpanded: this.dataTreeStartExpanded,
       height: this.height,
       layout: 'fitData',
       reactiveData: true,
-      autoResize: true, // prevent auto resizing of table
+      autoResize: true,
       placeholder: 'Sin registro',
       selectableRows: true,
       ...this.options,
     });
-    // Append the Tabulator DOM element to the parent container
     tableElement.appendChild(this.tabContainer);
-
-    // Register event listeners
     this.registerEvents();
   }
 
   private registerEvents(): void {
-    // Handle cell edited events
-    this.refTabulator.on('cellEdited', (cell) => {
+    this._refTabulator.on('cellEdited', (cell) => {
       this.cellEdited.emit(cell);
     });
-
-    // Handle row click events
-    this.refTabulator.on('rowClick', (e, row) => {
+    this._refTabulator.on('rowClick', (e, row) => {
       this.cellClick.emit(row);
     });
   }
 
   private updateTableData(): void {
-    // Efficiently update table data without redrawing the entire table
-    if (this.refTabulator) {
-      this.refTabulator.replaceData(this.tableData);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.refTabulator) {
-      this.refTabulator.destroy();
+    if (this._refTabulator) {
+      this._refTabulator.replaceData(this.tableData);
     }
   }
 }

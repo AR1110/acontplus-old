@@ -177,11 +177,11 @@
                       electrónicos.
                     </p>
 
-                    <app-tabulator-semantic-ui
+                    <app-tabulator [theme]="'semantic-ui'"
                       [columnNames]="columnNames"
                       [tableData]="docsConfig()"
                       [options]="{ height: 400 }"
-                    ></app-tabulator-semantic-ui>
+                    ></app-tabulator>
 
                     <div class="form-actions">
                       <button

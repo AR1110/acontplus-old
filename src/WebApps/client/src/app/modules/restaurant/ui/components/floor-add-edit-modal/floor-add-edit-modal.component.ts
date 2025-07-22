@@ -8,7 +8,7 @@ import {
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { ApiResponse } from '@core/models/api-response';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -24,7 +24,7 @@ import {MatInputModule} from "@angular/material/input";
   selector: 'app-floor-add-edit-modal',
   imports: [
     ReactiveFormsModule,
-    TabulatorSemanticUiComponent,
+    TabulatorComponent,
     MatSlideToggle,
     ThemeButtonComponent,
     MatCustomDialogComponent,

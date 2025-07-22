@@ -62,7 +62,7 @@ import { of } from 'rxjs';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse, ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import {
   GroupedEstab,
@@ -203,7 +203,7 @@ interface EstabFormControls {
 
     // Core & Shared
     BreadcrumbComponent,
-    TabulatorSemanticUiComponent,
+    TabulatorComponent,
     ToUpperCaseDirective,
     ThemeButtonComponent,
 

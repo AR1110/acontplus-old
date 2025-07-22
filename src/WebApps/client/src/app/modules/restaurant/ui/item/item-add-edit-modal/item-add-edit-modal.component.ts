@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Recipe } from '@restaurant/domain/models/recipe.model';
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
@@ -23,7 +23,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
   selector: 'app-item-add-edit-modal',
   imports: [
     ReactiveFormsModule,
-    TabulatorSemanticUiComponent,
+    TabulatorComponent,
     IngredientSearchComponent,
     ThemeButtonComponent,
     MatCustomDialogComponent,
