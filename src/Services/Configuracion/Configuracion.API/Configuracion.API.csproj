@@ -32,5 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Configuracion.Application\Configuracion.Application.csproj" />
+    <ProjectReference Include="..\Configuracion.Infrastructure\Configuracion.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

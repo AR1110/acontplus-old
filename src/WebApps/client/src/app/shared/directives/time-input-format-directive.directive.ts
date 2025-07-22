@@ -1,8 +1,7 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appTimeInputFormat24]',
-  standalone: true
+  selector: '[appTimeInputFormat]',
 })
 export class TimeInputFormat24Directive {
 

@@ -1,5 +1,6 @@
 ﻿global using Common.Core.Models;
 global using Common.Data;
+global using Common.Logging;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
 global using Common.Services.Middleware;
@@ -19,4 +20,3 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
-global using Common.Logging;

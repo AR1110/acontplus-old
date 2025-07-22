@@ -7,7 +7,7 @@ public class LoyaltyTier : CompanyEntity
     public int LoyaltyProgramId { get; set; }
     public LoyaltyProgram LoyaltyProgram { get; set; }
 
-    [Required] [MaxLength(100)] public required string Name { get; set; }
+    [Required][MaxLength(100)] public required string Name { get; set; }
 
     [MaxLength(500)] public string? Description { get; set; }
 

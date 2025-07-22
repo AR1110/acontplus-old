@@ -12,8 +12,14 @@ import { GeneralConfigComponent } from '@modules/config/ui/general-config/genera
 import {ExcelImportComponent} from "@modules/config/ui/excel-import/excel-import.component";
 import {ElectronicSignatureComponent} from "@modules/config/ui/electronic-signature/electronic-signature.component";
 import {CreditTimeComponent} from "@modules/config/ui/credit-time/credit-time.component";
+import { ConfigHomeComponent } from './ui/config-home.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: ConfigHomeComponent,
+    data: { breadcrumb: 'Configuración' },
+  },
   {
     path: 'general-config',
     title: 'Config. General',

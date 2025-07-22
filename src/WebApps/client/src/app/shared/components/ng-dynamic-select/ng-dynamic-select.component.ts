@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   output,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { SelectOption } from '@shared/models/select-option';
 import { Subject } from 'rxjs';
@@ -21,6 +22,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
       width: 100%;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgDynamicSelectComponent implements OnInit, OnDestroy {
   // Inputs configurables

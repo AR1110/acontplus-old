@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'getTotal',
-  standalone: true,
 })
 export class GetTotalPipe implements PipeTransform {
   transform(colName: string, dataSource: any[]): any {

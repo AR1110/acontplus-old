@@ -3,8 +3,7 @@ import { SubCategoryDialogComponent } from "@inventory/ui/sub-category/component
 import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
-  selector: '[appSubCategoryModal]',
-  standalone: true
+  selector: '[appSubCategory]',
 })
 export class SubCategoryModalDirective {
    onResult = output<any>();

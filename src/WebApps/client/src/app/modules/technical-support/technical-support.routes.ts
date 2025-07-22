@@ -4,8 +4,14 @@ import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { BrandPageComponent } from './pages/brand-page/brand-page.component';
 import { ModeloPageComponent } from './pages/modelo-page/modelo-page.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
+import { TechnicalSupportHomeComponent } from './pages/technical-support-home.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: TechnicalSupportHomeComponent,
+    data: { breadcrumb: 'Soporte Técnico' },
+  },
   {
     path: 'technical-support-page',
     title: 'Soporte Técnico',

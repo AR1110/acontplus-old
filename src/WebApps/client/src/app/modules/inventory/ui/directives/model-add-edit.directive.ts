@@ -5,7 +5,6 @@ import {DialogService} from "@core/services/dialog.service";
 
 @Directive({
   selector: '[appModelAddEdit]',
-  standalone: true
 })
 export class ModelAddEditDirective {
   private _dialogSvc = inject(DialogService)

@@ -69,9 +69,11 @@ BEGIN
 						  ,@idUsuario         INT
 						  ,@codEstab          VARCHAR(50)
 						  ,@nroSecuencialDoc  VARCHAR(13)
+                          ,@pageIndex         INT
+                          ,@pageSize          INT
                           ,@isSearchDate      BIT'
 
-			SET @sql = 'SELECT TOP 50 ci.idComprobanteIngreso
+			SET @sql = 'SELECT   ci.idComprobanteIngreso
 							         ,ci.idComprobanteIngreso												       as idDocumento
 							         ,es.codEstab
 							         ,ci.total
@@ -87,7 +89,8 @@ BEGIN
 							         ,us.nombreUsuario														       as usuario
                                      ,telefonoEstab = es.telefono
                                      ,correoEstab   = es.correo 
-                                     ,nombreEstab   = es.nombreComercial 
+                                     ,nombreEstab   = es.nombreComercial
+                                     ,COUNT(*)                                                         OVER() as totalRecords
 					FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK) 
 					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ci.idEstablecimiento
 					INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = ci.idUsuario
@@ -102,6 +105,8 @@ BEGIN
 				  ,@fechaFin          = fechaFin
 				  ,@nroSecuencialDoc  = LTRIM(TRIM(nroSecuencialDoc))
                   ,@isSearchDate      = isSearchDate
+                  ,@pageIndex         = pageIndex
+                  ,@pageSize          = pageSize
 			FROM OPENJSON(@json)WITH
             (
                 
@@ -113,6 +118,8 @@ BEGIN
                 ,byEstado          INT
                 ,nroSecuencialDoc  VARCHAR(13)
                 ,isSearchDate BIT
+                ,pageIndex INT
+                ,pageSize  INT
 			)
 
             IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
@@ -150,7 +157,8 @@ BEGIN
 					SET @sql = @sql + 'AND ci.idUsuario = @idUsuario '
 				END 		
 
-			SET @sql = @sql + 'ORDER BY ci.nroDocumento DESC '
+			SET @sql = @sql + 'ORDER BY ci.nroDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
+
 		 
 			EXEC sp_executesql  @sql
 					           ,@params
@@ -163,6 +171,8 @@ BEGIN
 					           ,@estado               = @byEstado
 							   ,@nroSecuencialDoc     = @nroSecuencialDoc
                                ,@isSearchDate         = @isSearchDate
+			                   ,@pageIndex     = @pageIndex
+                               ,@pageSize      = @pageSize
 			RETURN 
 		END 
 
@@ -374,8 +384,8 @@ BEGIN
                   ,0                                    as idTipoDocumento 
 	              ,cc.serieComprobante
 	              ,cc.importeTotal		                as saldo
-	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Crédito'
-                                  WHEN '07' THEN 'Comprobante de Retención'
+	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Crï¿½dito'
+                                  WHEN '07' THEN 'Comprobante de Retenciï¿½n'
                                   WHEN 'A'  THEN 'Anticipo'
 	               END				                    as nomDoc 
 	              ,FORMAT(cc.fechaEmision,'MM/dd/yyyy') as fechaEmision

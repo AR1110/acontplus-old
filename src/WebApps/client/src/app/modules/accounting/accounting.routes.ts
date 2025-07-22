@@ -18,8 +18,14 @@ import {CarteraClienteComponent} from "@accounting/cuenta-por-cobrar/presentatio
 import {ComprobanteIngresoComponent} from "@accounting/comprobante-ingreso/presentation/comprobante-ingreso/comprobante-ingreso.component";
 import {ComprobanteEgresoComponent} from "@accounting/comprobante-egreso/presentation/comprobante-egreso/comprobante-egreso.component";
 import {PaymentsReportComponent} from "@accounting/comprobante-egreso/presentation/reports/payments-report/payments-report.component";
+import { AccountingHomeComponent } from './home/accounting-home.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: AccountingHomeComponent,
+    data: { breadcrumb: 'Contabilidad' },
+  },
   {
     path: 'cashbox-page',
     title: 'Caja',

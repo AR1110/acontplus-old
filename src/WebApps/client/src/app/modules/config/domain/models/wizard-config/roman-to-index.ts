@@ -1,8 +1,9 @@
+//Custom steps for numbers
 const romanToIntMap: { [key: string]: number } = {
-  IV: 1,
-  V: 2,
-  VI: 3,
-  VII: 4,
+  II: 1,
+  III: 2,
+  IV: 3,
+  V: 4,
 };
 
 export function romanToInt(roman: string): number {

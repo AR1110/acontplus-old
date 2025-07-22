@@ -8,7 +8,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
 import { Item } from '@restaurant/domain/models/item.model';
 
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
@@ -20,7 +20,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
     ReactiveFormsModule,
     MatSlideToggle,
     ItemSearchComponent,
-    TabulatorSemanticUiComponent,
+    TabulatorComponent,
     ThemeButtonComponent,
     MatCustomDialogComponent,
   ],

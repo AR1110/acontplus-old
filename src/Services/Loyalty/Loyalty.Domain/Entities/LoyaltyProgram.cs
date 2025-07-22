@@ -4,7 +4,7 @@ namespace Loyalty.Domain.Entities;
 
 public class LoyaltyProgram : CompanyEntity
 {
-    [Required] [MaxLength(100)] public required string Name { get; set; }
+    [Required][MaxLength(100)] public required string Name { get; set; }
 
     [MaxLength(500)] public string? Description { get; set; }
 

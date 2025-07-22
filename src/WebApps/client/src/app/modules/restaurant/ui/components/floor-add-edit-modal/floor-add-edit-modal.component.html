@@ -49,7 +49,7 @@
         (handleClick)="addRoom()"
       />
     </div>
-      <app-tabulator-semantic-ui
+      <app-tabulator [theme]="'semantic-ui'"
         [columnNames]="roomColumns"
         [options]="{ reactiveData: true }"
         [tableData]="rooms"

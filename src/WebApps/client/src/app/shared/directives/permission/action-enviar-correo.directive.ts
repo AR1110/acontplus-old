@@ -3,7 +3,6 @@ import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionEnviarCorreo]',
-  standalone: true
 })
 export class ActionEnviarCorreoDirective {
   private el = inject(ElementRef);

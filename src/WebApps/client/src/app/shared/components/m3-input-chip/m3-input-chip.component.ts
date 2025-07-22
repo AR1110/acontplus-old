@@ -1,4 +1,4 @@
-import {Component, inject, input} from '@angular/core';
+import {Component, inject, input, ChangeDetectionStrategy} from '@angular/core';
 import {MatChipEditedEvent, MatChipInputEvent, MatChipsModule} from "@angular/material/chips";
 import {MatIconModule} from "@angular/material/icon";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
@@ -11,7 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
         MatIconModule,
         MatFormFieldModule
     ],
-    templateUrl: './m3-input-chip.component.html'
+    templateUrl: './m3-input-chip.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class M3InputChipComponent {
   chips = input.required<string[]>()

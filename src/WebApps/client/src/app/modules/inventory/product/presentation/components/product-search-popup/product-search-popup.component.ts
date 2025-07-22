@@ -21,7 +21,6 @@ import { ProductUseCase } from '@inventory/product/application/use-cases/product
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-product-search-popup',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

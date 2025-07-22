@@ -1,27 +1,569 @@
-# Client
+# AcontPlus Angular Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.3.
+AcontPlus is a modern, modular business management platform built with Angular 20+. It provides a comprehensive suite of features for accounting, inventory, sales, technical support, restaurant, barber shop, veterinary, and more. The client application is designed for scalability, maintainability, and a seamless user experience, leveraging the latest Angular features and best practices.
 
-## Development server
+## Features
+- Modular architecture (accounting, inventory, sales, etc.)
+- Standalone Angular components
+- Modern Angular 20+ build system
+- Fast, reliable testing with Jest (ESM support)
+- Path aliasing for clean imports
+- Responsive UI and theming
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## Getting Started
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm (v9+ recommended)
 
-## Build
+### 1. Install dependencies
+```sh
+npm install
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### 2. Run the development server
+```sh
+npm start
+```
+- The app will be available at `http://localhost:4200` by default.
 
-## Running unit tests
+### 3. Build for production
+```sh
+npm run production
+```
+- Output will be in the `dist/` directory.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## Running Tests (Jest + Angular 20+)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+This project uses **Jest** for fast, modern unit testing with full ESM and Angular 20+ support.
 
-## Further help
+### 1. Run all tests
+```sh
+npm test
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### 2. Run tests in watch mode
+```sh
+npm run test:watch
+```
+
+### 3. View coverage report
+After running tests, open `coverage/index.html` in your browser for a detailed coverage report.
+
+#### Notes:
+- All path aliases from `tsconfig.json` are supported in tests.
+- Standalone components must be added to the `imports` array in tests.
+- Mock providers for any required dependencies in your test setup (see `app.component.spec.ts` for an example).
+
+---
+
+## Troubleshooting
+- If you see errors about missing providers, add mocks for those dependencies in your test's `providers` array.
+- For ESM/Angular/Jest issues, ensure you are using the latest versions of Angular, Jest, and `jest-preset-angular`.
+
+---
+
+## License
+This project is proprietary. All rights reserved.
+
+---
+
+## Recommended Scaffolding & Project Structure
+
+For large, modern Angular frontends, use the following best practices for maintainability, testability, and scalability:
+
+### 1. Schematics Configuration (angular.json)
+
+```json
+"schematics": {
+  "@schematics/angular:component": {
+    "style": "scss",
+    "inlineStyle": false,
+    "inlineTemplate": false,
+    "changeDetection": "OnPush",
+    "skipTests": false,
+    "standalone": true,
+    "flat": false
+  },
+  "@schematics/angular:service": {
+    "skipTests": false,
+    "flat": false
+  },
+  "@schematics/angular:directive": {
+    "skipTests": false,
+    "flat": false
+  },
+  "@schematics/angular:pipe": {
+    "skipTests": false,
+    "flat": false
+  },
+  "@schematics/angular:guard": {
+    "skipTests": false,
+    "flat": false
+  },
+  "@schematics/angular:resolver": {
+    "skipTests": false,
+    "flat": false
+  },
+  "@schematics/angular:class": {
+    "skipTests": false,
+    "flat": false
+  },
+  "@schematics/angular:interceptor": {
+    "skipTests": false,
+    "flat": false
+  }
+}
+```
+
+- Standalone components by default
+- OnPush change detection
+- Separate files for templates and styles
+- Each artifact in its own folder
+- Test files always generated
+
+### 2. Recommended Project Structure
+
+```
+src/
+  app/
+    core/                # Singleton services, interceptors, guards, base models
+    shared/              # Shared components, pipes, directives, utilities
+    modules/
+      feature1/          # Each feature in its own module
+        components/
+        services/
+        models/
+        feature1.routes.ts
+      feature2/
+        ...
+    layouts/             # App shell, main layout, auth layout, etc.
+    assets/
+    environments/
+  styles/                # Global SCSS, variables, mixins
+```
+
+### 3. Example: Generating a Standalone Component
+
+```sh
+ng generate component modules/example/components/example-widget --standalone --change-detection OnPush
+```
+
+This will create:
+```
+src/app/modules/example/components/example-widget/
+  example-widget.component.ts
+  example-widget.component.html
+  example-widget.component.scss
+  example-widget.component.spec.ts
+```
+
+### 4. Best Practices
+- Use path aliases in `tsconfig.json` for all major folders (`@core`, `@shared`, `@modules`, etc.)
+- Enable strict mode in TypeScript
+- Use Jest for unit testing
+- Use Storybook for UI component development (optional)
+- Document your architecture and conventions in the README or a `docs/` folder
+
+---
+
+## Angular Component Code Organization Guidelines
+
+This section provides comprehensive guidelines for organizing Angular component code to ensure maintainability, readability, and consistency across the project.
+
+### 1. Import Organization
+
+Group imports in the following order with clear separators:
+
+```typescript
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Angular Core
+import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+// Angular CDK
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+
+// Angular Material
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+
+// Third-party Libraries
+import Swal from 'sweetalert2';
+import { faIcon } from '@fortawesome/free-solid-svg-icons';
+
+// Core Components & Services
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ToastService } from '@core/services/toast.service';
+
+// Shared Components & Directives
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+
+// Module Services & Use Cases
+import { UserService } from '@modules/auth/services/user.service';
+import { CreateUserUseCase } from '@modules/auth/application/use-cases/create-user.use-case';
+
+// Module Models
+import { User } from '@modules/auth/domain/models/user.model';
+
+// Utilities
+import { formatDate } from '@shared/utils/date.utils';
+```
+
+### 2. Component Structure (Top to Bottom)
+
+Organize your component in this specific order:
+
+```typescript
+@Component({...})
+export class MyComponent implements OnInit {
+  
+  // ============================================================================
+  // VIEW CHILD & INJECTIONS
+  // ============================================================================
+  
+  @ViewChild('element') element!: ElementRef;
+  private readonly _service = inject(Service);
+  
+  // ============================================================================
+  // CONSTANTS & CONFIGURATION
+  // ============================================================================
+  
+  readonly CONSTANT = 'value';
+  readonly config = {...};
+  
+  // ============================================================================
+  // SIGNAL PROPERTIES (Angular 17+)
+  // ============================================================================
+  
+  // Data signals
+  users = signal<User[]>([]);
+  products = signal<Product[]>([]);
+  
+  // UI state signals
+  isLoading = signal(false);
+  selectedUser = signal<User | null>(null);
+  
+  // ============================================================================
+  // COMPONENT STATE PROPERTIES
+  // ============================================================================
+  
+  isLoading = false;
+  selectedItem: Item | null = null;
+  
+  // ============================================================================
+  // FORM DEFINITIONS
+  // ============================================================================
+  
+  form = this.fb.group({...});
+  
+  // ============================================================================
+  // FORM GETTERS
+  // ============================================================================
+  
+  get formArray(): FormArray { return this.form.get('array') as FormArray; }
+  
+  // ============================================================================
+  // LIFECYCLE METHODS
+  // ============================================================================
+  
+  ngOnInit(): void {...}
+  
+  // ============================================================================
+  // INITIALIZATION METHODS
+  // ============================================================================
+  
+  private initializeData(): void {...}
+  
+  // ============================================================================
+  // DATA FETCHING METHODS
+  // ============================================================================
+  
+  fetchData(): void {...}
+  
+  // ============================================================================
+  // BUSINESS LOGIC METHODS
+  // ============================================================================
+  
+  processData(): void {...}
+  
+  // ============================================================================
+  // FORM MANAGEMENT METHODS
+  // ============================================================================
+  
+  addItem(): void {...}
+  removeItem(): void {...}
+  
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+  
+  onItemClick(): void {...}
+  
+  // ============================================================================
+  // SAVE/SUBMIT METHODS
+  // ============================================================================
+  
+  save(): void {...}
+  
+  // ============================================================================
+  // RESPONSE HANDLING METHODS
+  // ============================================================================
+  
+  private handleResponse(): void {...}
+  
+  // ============================================================================
+  // UTILITY METHODS
+  // ============================================================================
+  
+  private formatData(): void {...}
+}
+```
+
+### 3. Method Organization Principles
+
+#### Public vs Private Methods
+- Keep public methods at the top of each section
+- Group private methods at the bottom
+- Use clear naming conventions
+
+#### Method Grouping by Responsibility
+```typescript
+// Data Management
+fetchData(): void {...}
+updateData(): void {...}
+deleteData(): void {...}
+
+// Form Management
+addFormControl(): void {...}
+removeFormControl(): void {...}
+validateForm(): void {...}
+
+// UI Management
+showLoading(): void {...}
+hideLoading(): void {...}
+updateUI(): void {...}
+
+// Event Handling
+onClick(): void {...}
+onChange(): void {...}
+onSubmit(): void {...}
+```
+
+### 4. Form Organization
+
+```typescript
+// Group form-related code together
+form = this.fb.group({...});
+
+// Form getters
+get formArray(): FormArray { return this.form.get('array') as FormArray; }
+
+// Form factory methods
+private createFormGroup(): FormGroup { return this.fb.group({...}); }
+
+// Form management methods
+addItem(): void {...}
+removeItem(): void {...}
+validateForm(): void {...}
+```
+
+### 5. Service Injection Best Practices
+
+```typescript
+// Use private readonly for all injections
+private readonly _dataService = inject(DataService);
+private readonly _toastService = inject(ToastService);
+
+// Group related services together
+// Data services
+private readonly _userService = inject(UserService);
+private readonly _productService = inject(ProductService);
+
+// UI services
+private readonly _toastService = inject(ToastService);
+private readonly _loadingService = inject(LoadingService);
+```
+
+### 6. Signal Organization (Angular 17+)
+
+```typescript
+// Data signals
+users = signal<User[]>([]);
+products = signal<Product[]>([]);
+
+// UI state signals
+isLoading = signal(false);
+selectedUser = signal<User | null>(null);
+
+// Form state signals
+formErrors = signal<string[]>([]);
+isFormValid = signal(false);
+```
+
+### 7. Error Handling Organization
+
+```typescript
+// Centralize error handling
+private handleError(error: any): void {
+  this._toastService.error('An error occurred');
+  console.error('Error:', error);
+}
+
+// Use in methods
+fetchData(): void {
+  this.dataService.getData().subscribe({
+    next: (data) => this.handleSuccess(data),
+    error: (error) => this.handleError(error)
+  });
+}
+```
+
+### 8. Response Handling Patterns
+
+```typescript
+// Create dedicated response handlers
+private handleSaveResponse(response: ApiResponse): void {
+  if (response.success) {
+    this._toastService.success(response.message);
+    this.refreshData();
+  } else {
+    this._toastService.error(response.message);
+  }
+}
+```
+
+### 9. File Structure Recommendations
+
+```
+src/app/modules/feature/
+├── components/
+│   ├── my-component/
+│   │   ├── my-component.component.ts
+│   │   ├── my-component.component.html
+│   │   ├── my-component.component.scss
+│   │   └── my-component.component.spec.ts
+├── services/
+├── models/
+└── utils/
+```
+
+### 10. Naming Conventions
+
+```typescript
+// Services: private readonly _serviceName
+private readonly _userService = inject(UserService);
+
+// Methods: camelCase with descriptive names
+fetchUserData(): void {...}
+handleUserSave(): void {...}
+
+// Constants: UPPER_SNAKE_CASE
+readonly MAX_RETRY_ATTEMPTS = 3;
+
+// Signals: descriptive names
+users = signal<User[]>([]);
+isUserLoading = signal(false);
+```
+
+### 11. Comments and Documentation
+
+```typescript
+/**
+ * Fetches user data from the API
+ * @param userId - The ID of the user to fetch
+ * @returns Observable of user data
+ */
+fetchUserData(userId: string): Observable<User> {
+  // Implementation
+}
+```
+
+### 12. Type Safety
+
+```typescript
+// Use strict typing
+users = signal<User[]>([]);
+selectedUser = signal<User | null>(null);
+
+// Avoid any types
+// ❌ Bad
+data: any[] = [];
+
+// ✅ Good
+data: User[] = [];
+```
+
+### 13. Section Separators
+
+Use clear section separators to improve readability:
+
+```typescript
+// ============================================================================
+// SECTION NAME
+// ============================================================================
+```
+
+### 14. Best Practices Summary
+
+- **Consistency**: Once you establish a pattern, stick to it throughout your project
+- **Readability**: Use clear, descriptive names for methods and properties
+- **Maintainability**: Group related functionality together
+- **Type Safety**: Avoid `any` types, use proper TypeScript typing
+- **Documentation**: Comment complex logic and public methods
+- **Separation of Concerns**: Keep business logic, UI logic, and data access separate
+- **Error Handling**: Centralize error handling and provide meaningful error messages
+- **Testing**: Write unit tests for all public methods and complex logic
+
+These organizational principles will make your code more maintainable, readable, and easier to debug. The key is consistency - once you establish a pattern, stick to it throughout your project.
+
+---
+
+## Angular 20+ Performance & Build Speed Recommendations
+
+To ensure the fastest possible development and build experience with Angular 20+, the following optimizations and best practices are applied in this project:
+
+### 1. Persistent Build Cache
+- Angular CLI persistent cache is enabled in `angular.json` for much faster rebuilds.
+
+### 2. Incremental TypeScript Builds
+- `tsconfig.json` uses `"incremental": true` for faster TypeScript rebuilds.
+
+### 3. Modern JavaScript Output
+- Target and module are set to `ES2022` for smaller, faster bundles and less polyfill overhead.
+
+### 4. Hot Module Replacement (HMR)
+- HMR is enabled by default for instant updates during development without full reloads. Just run `npm start`.
+
+### 5. Standalone Components & Signals
+- New components default to `standalone: true` and use Angular signals for state, reducing module overhead and improving performance.
+
+### 6. Angular Compiler Optimizations
+- `enableResourceInlining` is enabled for better tree-shaking and build speed.
+- Strict compiler options are enforced for reliability and maintainability.
+
+### 7. Modern Module Resolution
+- Uses `moduleResolution: "bundler"` for optimal compatibility with Angular 17+ and 20+.
+
+### 8. SSR/Prerender Disabled (if not needed)
+- SSR and prerender are explicitly disabled in the build config for faster builds if not required.
+
+### 9. Dependency Hygiene
+- Regularly audit dependencies and remove unused packages to keep builds fast.
+
+### 10. Hardware & Node.js
+- For very large projects, use SSD storage and increase Node.js memory with `node --max_old_space_size=4096 ...` if needed.
+
+**Result:**
+- Faster initial and incremental builds
+- Instant feedback during development
+- Smaller, more efficient production bundles
+
+For more details, see the relevant sections in this README and the `angular.json` and `tsconfig.json` files.

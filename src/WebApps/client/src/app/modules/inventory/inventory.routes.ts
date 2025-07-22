@@ -17,8 +17,14 @@ import {WarehouseComponent} from "@inventory/ui/warehouse/warehouse.component";
 import {
   InventoryAdjustmentComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component";
+import { InventoryHomeComponent } from './ui/inventory-home.component';
 
 export const routes: Route[] = [
+  {
+    path: '',
+    component: InventoryHomeComponent,
+    data: { breadcrumb: 'Inventario' },
+  },
   {
     path: 'category',
     title: 'Categoria',

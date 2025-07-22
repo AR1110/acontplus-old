@@ -13,7 +13,7 @@ public class LoyaltyReward : BaseEntity
     public int? LoyaltyTierBenefitId { get; set; }
     public LoyaltyTierBenefit? LoyaltyTierBenefit { get; set; }
 
-    [Required] [MaxLength(100)] public required string RewardName { get; set; }
+    [Required][MaxLength(100)] public required string RewardName { get; set; }
 
     [MaxLength(500)] public string? Description { get; set; }
 

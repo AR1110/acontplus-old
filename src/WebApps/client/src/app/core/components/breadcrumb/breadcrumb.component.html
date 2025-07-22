@@ -1,17 +1,31 @@
-<div class="row page-titles">
-  <div class="col-md-5 align-self-center">
-    <h4 class="text-themecolor">{{ childData.breadcrumb }}</h4>
+<div class="breadcrumb-container">
+  <div class="breadcrumb-header">
+    @if (breadcrumbs().length > 0) {
+      <h2>
+        {{ breadcrumbs()[breadcrumbs().length - 1].label }}
+      </h2>
+    }
   </div>
-  <div class="col-md-7 align-self-center text-end">
-    <div class="d-flex justify-content-end align-items-center">
-      @if (parentData.breadcrumb) {
-        <ol class="breadcrumb justify-content-end">
-          <li class="breadcrumb-item">
-            <a href="javascript:void(0)">{{ parentData.breadcrumb }}</a>
-          </li>
-          <li class="breadcrumb-item active">{{ childData.breadcrumb }}</li>
-        </ol>
+
+  <nav class="breadcrumb-nav" aria-label="breadcrumb">
+    @if (showHome()) {
+      <button mat-icon-button [routerLink]="['/']" class="breadcrumb-home">
+        <mat-icon>{{ homeIcon() }}</mat-icon>
+      </button>
+      <mat-icon>{{ chevronIcon() }}</mat-icon>
+    }
+
+    @for (item of breadcrumbs(); track item.url; let last = $last) {
+      @if (!item.isActive) {
+        <button mat-button [routerLink]="item.url">
+          {{ item.label }}
+        </button>
+      } @else {
+        <span aria-current="page">{{ item.label }}</span>
       }
-    </div>
-  </div>
+      @if (!last) {
+        <mat-icon>{{ chevronIcon() }}</mat-icon>
+      }
+    }
+  </nav>
 </div>

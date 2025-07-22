@@ -62,11 +62,12 @@
       </div>
       <div class="row">
         <div class="col">
-          <app-tabulator-semantic-ui
+          <app-tabulator
             [columnNames]="productColumns"
             [options]="{ reactiveData: true }"
             [tableData]="productsAdded"
-          ></app-tabulator-semantic-ui>
+            [theme]="'semantic-ui'"
+          ></app-tabulator>
         </div>
       </div>
   </form>

@@ -3,7 +3,6 @@ import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionAnular]',
-  standalone: true,
 })
 export class ActionAnularDirective implements OnInit {
   constructor(

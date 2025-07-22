@@ -42,6 +42,15 @@ export class ElectronicSignatureRepoImpl implements ElectronicSignatureRepositor
       )
   }
 
+  save(signature: ElectronicSignatureParam): Observable<ApiResponse> {
+    const formData = new FormData();
+    if (signature.file) {
+      formData.append('file', signature.file);
+    }
+    const jsonParam = encodeURIComponent(JSON.stringify(signature));
+    return this._http.post<ApiResponse>(`${this._url}/Post?json=${jsonParam}`, formData);
+  }
+
   downloadSignature(id:number){
     const url = `${this._url}/Download/${id}`;
     console.log(url)

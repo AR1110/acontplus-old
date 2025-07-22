@@ -21,9 +21,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Configuracion.Domain\Configuracion.Domain.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Persistence\Repositories\" />
-  </ItemGroup>
 
 </Project>
