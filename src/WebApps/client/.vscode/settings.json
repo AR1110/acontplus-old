@@ -1,50 +1,22 @@
 {
-  // Core Editor
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Vertical Alignment Core
+  "editor.wrappingIndent": "indent",
+  "editor.autoIndent": "full",
+  "editor.autoClosingOvertype": "always",
+  "editor.stickyScroll.enabled": true,
+
+  // Formatting
   "editor.formatOnSave": true,
-  "editor.quickSuggestions": {
-    "other": true,
-    "comments": false,
-    "strings": true
-  },
-  "editor.suggest.snippetsPreventQuickSuggestions": false,
-  "editor.snippetSuggestions": "top",
-  "editor.acceptSuggestionOnCommitCharacter": true,
-  "editor.acceptSuggestionOnEnter": "on",
-  "editor.tabCompletion": "on",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
 
-  // TypeScript/Angular
-  "typescript.preferences.importModuleSpecifier": "project-relative",
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always",
-  "typescript.suggest.autoImports": true,
-  "javascript.suggest.autoImports": true,
-  "typescript.preferences.includePackageJsonAutoImports": "on",
-  "typescript.suggest.paths": false,
+  // TypeScript Vertical Rules
+  "typescript.format.enable": true,
+  "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
 
-  // Angular-specific
-  "angular.enable-strict-mode-prompt": false,
-
-  // Formatting & Code Actions (Corrected types)
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.sortImports": "explicit"
-  },
-
-  // Language-specific
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-
-  // Extensions
-  "prettier.requireConfig": true
+  // HTML Vertical Rules
+  "html.format.wrapLineLength": 120,
+  "html.format.extraLiners": "head, body, /html",
+  "html.format.wrapAttributes": "force-expand-multiline"
 }

@@ -28,21 +28,9 @@ import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 // Angular Material
-import {
-  MatStep,
-  MatStepLabel,
-  MatStepper,
-  MatStepperNext,
-  MatStepperPrevious,
-} from '@angular/material/stepper';
+import { MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { MatButton } from '@angular/material/button';
-import {
-  MatChipEditedEvent,
-  MatChipGrid,
-  MatChipInput,
-  MatChipInputEvent,
-  MatChipRow,
-} from '@angular/material/chips';
+import { MatChipEditedEvent, MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow } from '@angular/material/chips';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
@@ -64,10 +52,7 @@ import { isApiResponse, ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 
 // Shared Components & Directives
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -232,9 +217,7 @@ export class WizardConfigComponent implements OnInit {
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
-  private readonly _updateUserCustomerUseCase = inject(
-    UpdateUserCustomerUseCase
-  );
+  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
   private readonly _wizardStore = inject(WizardConfigStore);
 
@@ -267,10 +250,7 @@ export class WizardConfigComponent implements OnInit {
       editable: function (cell: TabulatorCell): boolean {
         return cell.getRow().getTreeParent() ? true : false;
       },
-      validator: function (
-        cell: TabulatorCell,
-        value: unknown
-      ): boolean | TabulatorValidatorResult {
+      validator: function (cell: TabulatorCell, value: unknown): boolean | TabulatorValidatorResult {
         if (cell.getRow().getTreeParent()) {
           if (value === '' || value === null) {
             return { valid: false, message: 'Este campo es requerido' };
@@ -311,13 +291,9 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   // Computed signals for derived state
-  readonly hasIncompleteSteps = computed(() =>
-    this.demoSteps().some((step) => !step.completed)
-  );
+  readonly hasIncompleteSteps = computed(() => this.demoSteps().some((step) => !step.completed));
 
-  readonly currentStepIndex = computed(() =>
-    this.demoSteps().findIndex((step) => !step.completed)
-  );
+  readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
 
   readonly canProceedToNextStep = computed(() => {
     const currentStep = this.demoSteps()[this.currentStepIndex()];
@@ -358,20 +334,9 @@ export class WizardConfigComponent implements OnInit {
 
   estabForm = this._fb.group<EstabFormControls>({
     canton: this._fb.control(''),
-    estab: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(3),
-      Validators.maxLength(3),
-    ]),
-    nombreComercial: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(300),
-    ]),
-    dirEstablecimiento: this._fb.control('', [
-      Validators.required,
-      Validators.maxLength(300),
-    ]),
+    estab: this._fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]),
+    nombreComercial: this._fb.control('', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]),
+    dirEstablecimiento: this._fb.control('', [Validators.required, Validators.maxLength(300)]),
     telefono: this._fb.control(''),
     correo: this._fb.control(''),
     ptosEmi: this._fb.array<FormGroup<PtoEmiFormControls>>([]),
@@ -381,16 +346,8 @@ export class WizardConfigComponent implements OnInit {
 
   userForm = new FormGroup<UserFormControls>({
     nroIdentificacion: new FormControl(''),
-    firstName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(50),
-    ]),
-    lastName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(50),
-    ]),
+    firstName: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+    lastName: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
   });
 
   tipoContribuyenteForm = this._fb.group({
@@ -398,10 +355,7 @@ export class WizardConfigComponent implements OnInit {
     agenteRetencion: '',
     contribuyente: ['', Validators.required],
     contribuyenteEspecial: [''],
-    obligadoContabilidad: [
-      '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
-    ],
+    obligadoContabilidad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
   });
 
   // ============================================================================
@@ -450,7 +404,7 @@ export class WizardConfigComponent implements OnInit {
             component: 'WizardConfigComponent',
           });
           return of(null);
-        })
+        }),
       )
       .subscribe((response) => {
         if (response?.code === '1') {
@@ -501,16 +455,11 @@ export class WizardConfigComponent implements OnInit {
   }
 
   private getStepCompletionStatus(stepCode: string): boolean {
-    return (
-      this.demoSteps().find((step: DemoStep) => step.code === stepCode)
-        ?.completed ?? false
-    );
+    return this.demoSteps().find((step: DemoStep) => step.code === stepCode)?.completed ?? false;
   }
 
   private handleIncompleteSteps(): void {
-    const incompleteStep = this.demoSteps().find(
-      (step: DemoStep) => !step.completed
-    );
+    const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
 
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
@@ -545,32 +494,15 @@ export class WizardConfigComponent implements OnInit {
 
   newBodega(): FormGroup {
     return this._fb.group({
-      descripcion: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300),
-        ],
-      ],
-      direccion: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300),
-        ],
-      ],
+      descripcion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
+      direccion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
       telefono: [''],
     });
   }
 
   newPtoEmi(): FormGroup {
     return this._fb.group({
-      ptoEmi: [
-        '',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
-      ],
+      ptoEmi: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       ambiente: ['', Validators.required],
     });
   }
@@ -606,9 +538,7 @@ export class WizardConfigComponent implements OnInit {
     } else {
       const index = this.emails().indexOf(email);
       if (index >= 0) {
-        this.emails.update((prev) =>
-          prev.map((e, i) => (i === index ? value : e))
-        );
+        this.emails.update((prev) => prev.map((e, i) => (i === index ? value : e)));
       }
     }
   }
@@ -636,9 +566,7 @@ export class WizardConfigComponent implements OnInit {
     } else {
       const index = this.telephones().indexOf(telephone);
       if (index >= 0) {
-        this.telephones.update((prev) =>
-          prev.map((t, i) => (i === index ? value : t))
-        );
+        this.telephones.update((prev) => prev.map((t, i) => (i === index ? value : t)));
       }
     }
   }
@@ -651,24 +579,17 @@ export class WizardConfigComponent implements OnInit {
     // Validation is now handled in the child component before emitting save
     // Only handle the save logic here
 
-    const telephone =
-      this.telephones().length > 0
-        ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
-        : null;
+    const telephone = this.telephones().length > 0 ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH) : null;
     this.estabForm.get('telefono')?.setValue(telephone);
 
-    const correo =
-      this.emails().length > 0
-        ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
-        : null;
+    const correo = this.emails().length > 0 ? this.emails().join(SEPARATOR_KEY_CODE.SLASH) : null;
     this.estabForm.get('correo')?.setValue(correo);
 
     const dataEstab = {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')
-        ?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id,
     };
 
     this._estabService.post(dataEstab).subscribe((response) => {
@@ -690,8 +611,7 @@ export class WizardConfigComponent implements OnInit {
       ...structuredClone(this.userForm.value),
       email: this.user.email,
       username: this.user.username,
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')
-        ?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
     };
 
     const userData = {
@@ -720,8 +640,8 @@ export class WizardConfigComponent implements OnInit {
               ultimaSecuencia: doc.ultimaSecuencia,
               descripcion: doc.descripcion || '',
               infoAdicional: false, // default or real value if available
-            } as DocConfig)
-        )
+            } as DocConfig),
+        ),
     );
     docs.forEach((docConfig: DocConfig) => {
       this._wizardStore.saveDocumentsConfig(docConfig);
@@ -742,11 +662,8 @@ export class WizardConfigComponent implements OnInit {
 
   saveTipoContribuyente(): void {
     if (this.tipoContribuyenteForm.valid) {
-      const codigo =
-        this.tipoContribuyenteForm.get('contribuyente')?.value || '';
-      const descripcion =
-        this.contribuyentes().find((c) => c.codigo === codigo)?.descripcion ||
-        '';
+      const codigo = this.tipoContribuyenteForm.get('contribuyente')?.value || '';
+      const descripcion = this.contribuyentes().find((c) => c.codigo === codigo)?.descripcion || '';
       const contribuyente: Contribuyente = { codigo, descripcion };
       this._wizardStore.saveContribuyenteData(contribuyente);
     }
@@ -834,11 +751,8 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   showInfoTipoContribuyente(): void {
-    const contribuyente =
-      this.tipoContribuyenteForm.get('contribuyente')?.value;
-    const dataInfo = this.contribuyentes().find(
-      (item) => item.codigo === contribuyente
-    );
+    const contribuyente = this.tipoContribuyenteForm.get('contribuyente')?.value;
+    const dataInfo = this.contribuyentes().find((item) => item.codigo === contribuyente);
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
         icon: 'info',
@@ -849,9 +763,7 @@ export class WizardConfigComponent implements OnInit {
 
   showInfoActividadEconomica(): void {
     const actividad = this.tipoContribuyenteForm.get('actividad')?.value;
-    const groupActEconomica = this.actividadesEconomica().find(
-      (item) => item.codigo === actividad
-    );
+    const groupActEconomica = this.actividadesEconomica().find((item) => item.codigo === actividad);
     if (actividad && groupActEconomica?.grupo) {
       Swal.fire({
         icon: 'info',
@@ -897,9 +809,7 @@ export class WizardConfigComponent implements OnInit {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps().find(
-          (step: DemoStep) => step.code === 'VII'
-        )?.id;
+        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id;
         this._companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();

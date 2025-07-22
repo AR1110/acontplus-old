@@ -7,8 +7,15 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.{ts,html,scss}]
+[*.{ts,html}]
 indent_size = 2
+# Vertical spacing controls
+max_line_length = 120
+# New rules for vertical alignment
+align_assignments = true
+align_parameters = true
+align_chained_calls = true
 
-[*.json]
+[*.scss]
 indent_size = 2
+align_properties = true

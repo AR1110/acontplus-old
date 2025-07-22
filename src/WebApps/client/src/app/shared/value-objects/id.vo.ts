@@ -1,4 +1,3 @@
-
 export class Id<T> {
   private readonly _value: string;
 
@@ -18,7 +17,6 @@ export class Id<T> {
   get value(): string {
     return this._value;
   }
-
 
   equals(other: Id<T>): boolean {
     return other instanceof Id && this._value === other._value;

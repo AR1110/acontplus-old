@@ -1,6 +1,6 @@
 {
   "singleQuote": true,
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "printWidth": 120,
   "useTabs": false,
   "tabWidth": 2,
@@ -9,5 +9,17 @@
   "bracketSpacing": true,
   "bracketSameLine": false,
   "htmlWhitespaceSensitivity": "css",
-  "embeddedLanguageFormatting": "auto"
+  "embeddedLanguageFormatting": "auto",
+  "organizeImports": true,
+  "importOrder": ["^@angular", "^@app", "^[./]"],
+  "importOrderSeparation": true,
+  "alignObjectProperties": true,
+  "alignArguments": true,
+  "alignTernaryLines": true,
+  "verticalAlignment": {
+    "enabled": true,
+    "multilineObjects": true,
+    "functionParameters": true,
+    "importStatements": true
+  }
 }
