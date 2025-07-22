@@ -13,8 +13,9 @@
         "--property:GenerateFullPaths=true",
         "--property:UseSharedCompilation=false", // Better for large solutions
         "--property:BuildInParallel=true",
-        "--logger:\"Console;Summary;Verbosity=minimal\"",
-        "--max-cpu-count"
+        // Corrected logger argument:
+        "/clp:Summary;Verbosity=minimal", // Use /clp for Console Logger Parameters
+        "/maxcpucount"
       ],
       "problemMatcher": "$msCompile",
       "group": { "kind": "build", "isDefault": true },
@@ -82,13 +83,7 @@
       "label": "clean (aggressive)",
       "command": "dotnet",
       "type": "process",
-      "args": [
-        "clean",
-        "${workspaceFolder}/AcontPlus.sln",
-        "--nologo",
-        "--verbosity minimal",
-        "/t:Clean"
-      ],
+      "args": ["clean", "${workspaceFolder}/AcontPlus.sln", "--nologo", "--verbosity minimal", "/t:Clean"],
       "problemMatcher": "$msCompile",
       "presentation": {
         "echo": false,
