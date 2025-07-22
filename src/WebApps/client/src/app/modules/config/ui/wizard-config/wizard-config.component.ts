@@ -474,6 +474,7 @@ export class WizardConfigComponent implements OnInit {
           ultimaSecuencia: 0,
         })),
       }));
+      console.debug(combinedData);
       this.docsConfig.set(combinedData as EstabWithChildren[]);
     });
   }
@@ -513,13 +514,19 @@ export class WizardConfigComponent implements OnInit {
 
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
-      if (stepIndex !== null) {
+      if (stepIndex !== null && stepIndex > 0) {
         this.loadStepData(incompleteStep.code);
-        this.stepper.selectedIndex = stepIndex - 1;
+        const targetIndex = stepIndex - 1;
+        // Ensure the target index is within bounds
+        if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
+          this.stepper.selectedIndex = targetIndex;
+        }
       }
     } else {
       this.isLinear = true;
-      this.stepper.selectedIndex = 4;
+      // Set to the last step index, ensuring it's within bounds
+      const lastStepIndex = this.stepper.steps.length - 1;
+      this.stepper.selectedIndex = Math.max(0, lastStepIndex);
     }
   }
 

@@ -1,3 +1,4 @@
+import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { inject, Injectable } from '@angular/core';
 import { Observable, of, throwError, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -7,18 +8,23 @@ import { WizardConfiguration } from '@modules/config/domain/models/wizard-config
 import { WizardStep } from '@modules/config/domain/models/wizard-config/wizard-step.model';
 import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
 import { EstablishmentData } from '@modules/config/domain/models/wizard-config/value-objects/establishment-data.vo';
+import { PATHS_API } from '@core/constants/global.constants';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WizardConfigRepositoryImpl implements WizardConfigRepository {
   private readonly _http = inject(HttpClient);
-  private readonly _baseUrl = '/wizard-config';
+  private readonly _baseUrl = `${PATHS_API.CONFIG}${CONFIG_PATHS.COMPANY_DEMO_STEP}`;
 
   // In-memory storage for demo purposes
-  private readonly _wizardConfigSubject = new BehaviorSubject<WizardConfiguration | null>(null);
-  private readonly _userDataSubject = new BehaviorSubject<UserData | null>(null);
-  private readonly _establishmentDataSubject = new BehaviorSubject<EstablishmentData | null>(null);
+  private readonly _wizardConfigSubject =
+    new BehaviorSubject<WizardConfiguration | null>(null);
+  private readonly _userDataSubject = new BehaviorSubject<UserData | null>(
+    null
+  );
+  private readonly _establishmentDataSubject =
+    new BehaviorSubject<EstablishmentData | null>(null);
 
   // Wizard Configuration Management
   getWizardConfiguration(): Observable<WizardConfiguration> {
@@ -28,8 +34,8 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     }
 
     // Load from API or create default
-    return this._http.get<any>(`${this._baseUrl}/configuration`).pipe(
-      map(response => this.mapToWizardConfiguration(response)),
+    return this._http.get<any>(`${this._baseUrl}`).pipe(
+      map((response) => this.mapToWizardConfiguration(response)),
       catchError(() => {
         // Return default configuration if API fails
         return this.createDefaultConfiguration();
@@ -37,16 +43,22 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     );
   }
 
-  saveWizardConfiguration(config: WizardConfiguration): Observable<WizardConfiguration> {
+  saveWizardConfiguration(
+    config: WizardConfiguration
+  ): Observable<WizardConfiguration> {
     this._wizardConfigSubject.next(config);
 
-    return this._http.post<any>(`${this._baseUrl}/configuration`, config.toJSON()).pipe(
-      map(response => this.mapToWizardConfiguration(response)),
-      catchError(error => {
-        console.error('Error saving wizard configuration:', error);
-        return throwError(() => new Error('Error saving wizard configuration'));
-      })
-    );
+    return this._http
+      .post<any>(`${this._baseUrl}/configuration`, config.toJSON())
+      .pipe(
+        map((response) => this.mapToWizardConfiguration(response)),
+        catchError((error) => {
+          console.error('Error saving wizard configuration:', error);
+          return throwError(
+            () => new Error('Error saving wizard configuration')
+          );
+        })
+      );
   }
 
   resetWizardConfiguration(): Observable<void> {
@@ -56,28 +68,31 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
 
     return this._http.delete(`${this._baseUrl}/configuration`).pipe(
       map(() => void 0),
-      catchError(error => {
+      catchError((error) => {
         console.error('Error resetting wizard configuration:', error);
-        return throwError(() => new Error('Error resetting wizard configuration'));
+        return throwError(
+          () => new Error('Error resetting wizard configuration')
+        );
       })
     );
   }
 
   // Step Management
   getSteps(): Observable<WizardStep[]> {
-    return this.getWizardConfiguration().pipe(
-      map(config => config.steps)
-    );
+    return this.getWizardConfiguration().pipe(map((config) => config.steps));
   }
 
-  updateStep(stepId: string, updates: Partial<WizardStep>): Observable<WizardStep> {
+  updateStep(
+    stepId: string,
+    updates: Partial<WizardStep>
+  ): Observable<WizardStep> {
     return this.getWizardConfiguration().pipe(
-      map(config => {
+      map((config) => {
         const updatedConfig = config.updateStep(stepId, updates);
         this._wizardConfigSubject.next(updatedConfig);
         return updatedConfig.getStepById(stepId)!;
       }),
-      catchError(error => {
+      catchError((error) => {
         console.error('Error updating step:', error);
         return throwError(() => new Error('Error updating step'));
       })
@@ -86,7 +101,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
 
   completeStep(stepId: string): Observable<WizardStep> {
     return this.getWizardConfiguration().pipe(
-      map(config => {
+      map((config) => {
         const step = config.getStepById(stepId);
         if (!step) {
           throw new Error('Step not found');
@@ -96,7 +111,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         this._wizardConfigSubject.next(updatedConfig);
         return updatedConfig.getStepById(stepId)!;
       }),
-      catchError(error => {
+      catchError((error) => {
         console.error('Error completing step:', error);
         return throwError(() => new Error('Error completing step'));
       })
@@ -105,7 +120,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
 
   resetStep(stepId: string): Observable<WizardStep> {
     return this.getWizardConfiguration().pipe(
-      map(config => {
+      map((config) => {
         const step = config.getStepById(stepId);
         if (!step) {
           throw new Error('Step not found');
@@ -115,7 +130,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         this._wizardConfigSubject.next(updatedConfig);
         return updatedConfig.getStepById(stepId)!;
       }),
-      catchError(error => {
+      catchError((error) => {
         console.error('Error resetting step:', error);
         return throwError(() => new Error('Error resetting step'));
       })
@@ -130,7 +145,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     }
 
     return this._http.get<any>(`${this._baseUrl}/user-data`).pipe(
-      map(response => response ? new UserData(response) : null),
+      map((response) => (response ? new UserData(response) : null)),
       catchError(() => of(null))
     );
   }
@@ -138,13 +153,15 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
   saveUserData(userData: UserData): Observable<UserData> {
     this._userDataSubject.next(userData);
 
-    return this._http.post<any>(`${this._baseUrl}/user-data`, userData.toJSON()).pipe(
-      map(response => new UserData(response)),
-      catchError(error => {
-        console.error('Error saving user data:', error);
-        return throwError(() => new Error('Error saving user data'));
-      })
-    );
+    return this._http
+      .post<any>(`${this._baseUrl}/user-data`, userData.toJSON())
+      .pipe(
+        map((response) => new UserData(response)),
+        catchError((error) => {
+          console.error('Error saving user data:', error);
+          return throwError(() => new Error('Error saving user data'));
+        })
+      );
   }
 
   updateUserData(updates: Partial<UserData>): Observable<UserData> {
@@ -156,13 +173,15 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     const updatedUserData = currentUserData.update(updates);
     this._userDataSubject.next(updatedUserData);
 
-    return this._http.put<any>(`${this._baseUrl}/user-data`, updatedUserData.toJSON()).pipe(
-      map(response => new UserData(response)),
-      catchError(error => {
-        console.error('Error updating user data:', error);
-        return throwError(() => new Error('Error updating user data'));
-      })
-    );
+    return this._http
+      .put<any>(`${this._baseUrl}/user-data`, updatedUserData.toJSON())
+      .pipe(
+        map((response) => new UserData(response)),
+        catchError((error) => {
+          console.error('Error updating user data:', error);
+          return throwError(() => new Error('Error updating user data'));
+        })
+      );
   }
 
   // Establishment Data Management
@@ -173,24 +192,33 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     }
 
     return this._http.get<any>(`${this._baseUrl}/establishment-data`).pipe(
-      map(response => response ? new EstablishmentData(response) : null),
+      map((response) => (response ? new EstablishmentData(response) : null)),
       catchError(() => of(null))
     );
   }
 
-  saveEstablishmentData(establishmentData: EstablishmentData): Observable<EstablishmentData> {
+  saveEstablishmentData(
+    establishmentData: EstablishmentData
+  ): Observable<EstablishmentData> {
     this._establishmentDataSubject.next(establishmentData);
 
-    return this._http.post<any>(`${this._baseUrl}/establishment-data`, establishmentData.toJSON()).pipe(
-      map(response => new EstablishmentData(response)),
-      catchError(error => {
-        console.error('Error saving establishment data:', error);
-        return throwError(() => new Error('Error saving establishment data'));
-      })
-    );
+    return this._http
+      .post<any>(
+        `${this._baseUrl}/establishment-data`,
+        establishmentData.toJSON()
+      )
+      .pipe(
+        map((response) => new EstablishmentData(response)),
+        catchError((error) => {
+          console.error('Error saving establishment data:', error);
+          return throwError(() => new Error('Error saving establishment data'));
+        })
+      );
   }
 
-  updateEstablishmentData(updates: Partial<EstablishmentData>): Observable<EstablishmentData> {
+  updateEstablishmentData(
+    updates: Partial<EstablishmentData>
+  ): Observable<EstablishmentData> {
     const currentEstablishmentData = this._establishmentDataSubject.value;
     if (!currentEstablishmentData) {
       return throwError(() => new Error('No establishment data to update'));
@@ -199,19 +227,28 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     const updatedEstablishmentData = currentEstablishmentData.update(updates);
     this._establishmentDataSubject.next(updatedEstablishmentData);
 
-    return this._http.put<any>(`${this._baseUrl}/establishment-data`, updatedEstablishmentData.toJSON()).pipe(
-      map(response => new EstablishmentData(response)),
-      catchError(error => {
-        console.error('Error updating establishment data:', error);
-        return throwError(() => new Error('Error updating establishment data'));
-      })
-    );
+    return this._http
+      .put<any>(
+        `${this._baseUrl}/establishment-data`,
+        updatedEstablishmentData.toJSON()
+      )
+      .pipe(
+        map((response) => new EstablishmentData(response)),
+        catchError((error) => {
+          console.error('Error updating establishment data:', error);
+          return throwError(
+            () => new Error('Error updating establishment data')
+          );
+        })
+      );
   }
 
   validateEstablishmentCode(code: string): Observable<boolean> {
-    return this._http.get<boolean>(`${this._baseUrl}/validate-establishment/${code}`).pipe(
-      catchError(() => of(true)) // Assume valid if API fails
-    );
+    return this._http
+      .get<boolean>(`${this._baseUrl}/validate-establishment/${code}`)
+      .pipe(
+        catchError(() => of(true)) // Assume valid if API fails
+      );
   }
 
   // Progress Management
@@ -222,11 +259,11 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     currentStepIndex: number;
   }> {
     return this.getWizardConfiguration().pipe(
-      map(config => ({
+      map((config) => ({
         completedSteps: config.completedStepsCount,
         totalSteps: config.totalStepsCount,
         percentage: config.progressPercentage,
-        currentStepIndex: config.currentStepIndex
+        currentStepIndex: config.currentStepIndex,
       }))
     );
   }
@@ -236,7 +273,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     completedSteps: string[];
   }): Observable<void> {
     return this._http.post<void>(`${this._baseUrl}/progress`, progress).pipe(
-      catchError(error => {
+      catchError((error) => {
         console.error('Error saving progress:', error);
         return throwError(() => new Error('Error saving progress'));
       })
@@ -244,23 +281,26 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
   }
 
   // Validation
-  validateStep(stepId: string, data: any): Observable<{
+  validateStep(
+    stepId: string,
+    data: any
+  ): Observable<{
     isValid: boolean;
     errors: string[];
   }> {
-    return this._http.post<{
-      isValid: boolean;
-      errors: string[];
-    }>(`${this._baseUrl}/validate-step/${stepId}`, data).pipe(
-      catchError(() => of({ isValid: true, errors: [] }))
-    );
+    return this._http
+      .post<{
+        isValid: boolean;
+        errors: string[];
+      }>(`${this._baseUrl}/validate-step/${stepId}`, data)
+      .pipe(catchError(() => of({ isValid: true, errors: [] })));
   }
 
   // Data Loading
   loadStepData(stepId: string): Observable<any> {
-    return this._http.get<any>(`${this._baseUrl}/step-data/${stepId}`).pipe(
-      catchError(() => of(null))
-    );
+    return this._http
+      .get<any>(`${this._baseUrl}/step-data/${stepId}`)
+      .pipe(catchError(() => of(null)));
   }
 
   loadReferenceData(): Observable<{
@@ -271,13 +311,15 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
     ambientes: any[];
   }> {
     return this._http.get<any>(`${this._baseUrl}/reference-data`).pipe(
-      catchError(() => of({
-        cantones: [],
-        actividadesEconomica: [],
-        agentesRetencion: [],
-        contribuyentes: [],
-        ambientes: []
-      }))
+      catchError(() =>
+        of({
+          cantones: [],
+          actividadesEconomica: [],
+          agentesRetencion: [],
+          contribuyentes: [],
+          ambientes: [],
+        })
+      )
     );
   }
 
@@ -295,7 +337,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         isEnabled: true,
         validationRules: [],
         dependencies: [],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'user',
@@ -308,7 +350,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         isEnabled: true,
         validationRules: [],
         dependencies: [],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'establishment',
@@ -321,7 +363,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         isEnabled: true,
         validationRules: [],
         dependencies: ['user'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'contribuyente',
@@ -334,7 +376,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         isEnabled: true,
         validationRules: [],
         dependencies: ['establishment'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'documents',
@@ -347,7 +389,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         isEnabled: true,
         validationRules: [],
         dependencies: ['contribuyente'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'certificate',
@@ -360,8 +402,8 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
         isEnabled: true,
         validationRules: [],
         dependencies: ['documents'],
-        metadata: {}
-      })
+        metadata: {},
+      }),
     ];
 
     const defaultConfig = new WizardConfiguration({
@@ -371,7 +413,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
       isLinear: true,
       allowSkip: false,
       autoSave: true,
-      metadata: {}
+      metadata: {},
     });
 
     this._wizardConfigSubject.next(defaultConfig);
@@ -379,7 +421,8 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
   }
 
   private mapToWizardConfiguration(data: any): WizardConfiguration {
-    const steps = data.steps?.map((stepData: any) => new WizardStep(stepData)) || [];
+    const steps =
+      data.steps?.map((stepData: any) => new WizardStep(stepData)) || [];
 
     return new WizardConfiguration({
       id: data.id || 'wizard-config',
@@ -388,7 +431,7 @@ export class WizardConfigRepositoryImpl implements WizardConfigRepository {
       isLinear: data.isLinear ?? true,
       allowSkip: data.allowSkip ?? false,
       autoSave: data.autoSave ?? true,
-      metadata: data.metadata || {}
+      metadata: data.metadata || {},
     });
   }
 }
