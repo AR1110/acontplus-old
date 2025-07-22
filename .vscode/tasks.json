@@ -7,14 +7,13 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/AcontPlus.sln",
+        "${workspaceFolder}/AcontPlus.sln", // <--- THIS IS KEY!
         "--nologo",
-        "--tl:off", // Disable telemetry for faster startup
+        "--tl:off",
         "--property:GenerateFullPaths=true",
-        "--property:UseSharedCompilation=false", // Better for large solutions
+        "--property:UseSharedCompilation=false",
         "--property:BuildInParallel=true",
-        // Corrected logger argument:
-        "/clp:Summary;Verbosity=minimal", // Use /clp for Console Logger Parameters
+        "/clp:Summary;Verbosity=minimal",
         "/maxcpucount"
       ],
       "problemMatcher": "$msCompile",
