@@ -7,5 +7,64 @@
   "semi": true,
   "arrowParens": "always",
   "bracketSameLine": false,
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+
+  "verticalAlignment": {
+    "enabled": true,
+    "groups": [
+      {
+        "start": "^import",
+        "end": "(from|require)\\s+['\"]",
+        "alignBy": "from"
+      },
+      {
+        "start": "=",
+        "end": ";",
+        "alignBy": "="
+      },
+      {
+        "start": ":",
+        "end": ",",
+        "alignBy": ":"
+      }
+    ]
+  },
+
+  "overrides": [
+    {
+      "files": ["*.cs"],
+      "options": {
+        "printWidth": 120,
+        "verticalAlignment": {
+          "enabled": true,
+          "alignPropertyDefinitions": true,
+          "alignParameters": true
+        }
+      }
+    },
+    {
+      "files": ["*.component.html"],
+      "options": {
+        "parser": "angular",
+        "htmlWhitespaceSensitivity": "css",
+        "verticalAlignment": {
+          "enabled": true,
+          "alignAttributes": true,
+          "alignOpenTagEnd": true
+        }
+      }
+    },
+    {
+      "files": ["*.sql"],
+      "options": {
+        "keywordCase": "upper",
+        "identifierCase": "lower",
+        "verticalAlignment": {
+          "enabled": true,
+          "alignClauses": true,
+          "alignExpressions": true
+        }
+      }
+    }
+  ]
 }

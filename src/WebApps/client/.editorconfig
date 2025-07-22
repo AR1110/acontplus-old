@@ -1,4 +1,5 @@
-root = true
+root = false
+extends = ..\..\..\.editorconfig
 
 [*]
 charset = utf-8

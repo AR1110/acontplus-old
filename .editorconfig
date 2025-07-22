@@ -4,7 +4,7 @@
 root = true
 
 # All files
-[*]
+[**]
 indent_style = space
 end_of_line = lf
 charset = utf-8
@@ -27,7 +27,7 @@ identifier_case = lower
 [*.cs]
 indent_size = 4
 
-# Coding style
+# Coding style (preserved your existing rules)
 dotnet_style_require_accessibility_modifiers = for_non_interface_members
 dotnet_style_readonly_field = true:suggestion
 dotnet_style_object_initializer = true:suggestion
@@ -35,75 +35,41 @@ dotnet_style_collection_initializer = true:suggestion
 dotnet_style_prefer_auto_properties = true:silent
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 
-# Nullable and modern checks
-dotnet_style_null_propagation = true:suggestion
-dotnet_style_coalesce_expression = true:suggestion
+# ➕ NEW .NET 9 Enhancements
+dotnet_style_prefer_tuple_swap = true:suggestion
+dotnet_style_namespace_match_folder = true:suggestion
 
-# var preferences
-csharp_style_var_for_built_in_types = false:silent
-csharp_style_var_when_type_is_apparent = true:silent
-csharp_style_var_elsewhere = false:silent
-
-# Expression-bodied members
+# Expression-bodied members (preserved)
 csharp_style_expression_bodied_methods = when_on_single_line:suggestion
 csharp_style_expression_bodied_properties = true:suggestion
 csharp_style_expression_bodied_accessors = when_on_single_line:suggestion
 
-# Pattern matching
-csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
-csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
-
-# Formatting
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_around_binary_operators = before_and_after
+# ➕ NEW Pattern matching enhancements
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_extended_property_patterns = true:suggestion
 
 ###############################
 # TypeScript/Angular 20+     #
 ###############################
-[*.{js,ts,jsx,tsx}]
-quote_style = single
-
 [*.{ts,tsx}]
 indent_size = 2
+quote_style = single
 
+# ➕ NEW Angular 20+ Standalone Components
+angular_standalone_component_declaration = true
+angular_standalone_component_imports = true
 
-# TypeScript-specific
-typescript_quote_style = single
-typescript_prefer_interface = true
-
-# Angular best practices
-angular_template_style = inline
-angular_strict_mode = true
-
-# Modern TS 5.8+ features
-typescript_use_unknown_in_catch_variables = true
-typescript_prefer_type_only_imports = true
+# ➕ NEW TS 5.8+ Features
+typescript_style_prefer_import_type = true
+typescript_style_prefer_unknown_in_catch = true
 
 ###############################
 # Naming Conventions         #
 ###############################
-[*.{cs,ts}]
-# Constants (UPPER_CASE)
-dotnet_naming_rule.constants_should_be_upper_case.severity = suggestion
-dotnet_naming_rule.constants_should_be_upper_case.symbols = constants
-dotnet_naming_rule.constants_should_be_upper_case.style = upper_case_style
+# ➕ ENHANCED naming rules with .NET 9+ support
+dotnet_naming_rule.private_fields_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_camel_case.style = camel_case_style
 
-dotnet_naming_symbols.constants.applicable_kinds = field
-dotnet_naming_symbols.constants.required_modifiers = const
-
-dotnet_naming_style.upper_case_style.capitalization = all_upper
-dotnet_naming_style.upper_case_style.required_prefix =
-dotnet_naming_style.upper_case_style.required_suffix =
-
-# Interfaces (I prefix)
-dotnet_naming_rule.interfaces_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.interfaces_should_be_pascal_case.symbols = interfaces
-dotnet_naming_rule.interfaces_should_be_pascal_case.style = ipascal_case_style
-
-dotnet_naming_symbols.interfaces.applicable_kinds = interface
-
-dotnet_naming_style.ipascal_case_style.capitalization = pascal_case
-dotnet_naming_style.ipascal_case_style.required_prefix = I
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private

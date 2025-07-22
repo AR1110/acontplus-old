@@ -8,6 +8,7 @@
   // Formatting
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.configPath": "../../../.prettierrc",
 
   // TypeScript Vertical Rules
   "typescript.format.enable": true,
