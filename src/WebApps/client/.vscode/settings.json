@@ -1,18 +1,50 @@
 {
-  "typescript.preferences.autoImportFileExcludePatterns": [],
-  "typescript.preferences.importModuleSpecifier": "shortest",
-  "typescript.suggestionActions.enabled": true,
-  "editor.snippetSuggestions": "top",
-  "typescript.suggest.autoImports": true,
-  "javascript.suggest.autoImports": true,
+  // Core Editor
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
   "editor.quickSuggestions": {
     "other": true,
     "comments": false,
     "strings": true
   },
-  "prettier.singleQuote": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.snippetSuggestions": "top",
   "editor.acceptSuggestionOnCommitCharacter": true,
   "editor.acceptSuggestionOnEnter": "on",
+  "editor.tabCompletion": "on",
+
+  // TypeScript/Angular
+  "typescript.preferences.importModuleSpecifier": "project-relative",
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always"
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.autoImports": true,
+  "javascript.suggest.autoImports": true,
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.paths": false,
+
+  // Angular-specific
+  "angular.enable-strict-mode-prompt": false,
+
+  // Formatting & Code Actions (Corrected types)
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.sortImports": "explicit"
+  },
+
+  // Language-specific
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Extensions
+  "prettier.requireConfig": true
 }

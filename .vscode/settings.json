@@ -1,33 +1,48 @@
 {
-  //Angular
-  "typescript.preferences.autoImportFileExcludePatterns": [],
-  "typescript.preferences.importModuleSpecifier": "shortest",
-  "typescript.suggestionActions.enabled": true,
-  "editor.snippetSuggestions": "top",
-  "typescript.suggest.autoImports": true,
-  "javascript.suggest.autoImports": true,
-  "editor.quickSuggestions": {
-    "other": true,
-    "comments": false,
-    "strings": true
+  // Editor Core
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
   },
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "files.eol": "\n",
 
-  "prettier.singleQuote": true,
-  "editor.acceptSuggestionOnCommitCharacter": true,
-  "editor.acceptSuggestionOnEnter": "on",
+  // TypeScript/Angular
+  "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "javascript.updateImportsOnFileMove.enabled": "always",
-  //C#
+  "typescript.suggest.autoImports": true,
+  "javascript.suggest.autoImports": true,
+
+  // C#/.NET
   "omnisharp.enableEditorConfigSupport": true,
   "omnisharp.useModernNet": true,
-  "dotnet.server.useOmnisharp": false,
-  "csharp.format.enable": true,
-  "editor.inlineSuggest.enabled": true,
-  "dotnet.defaultSolution": "AcontPlus.sln",
+  "csharp.suppressDotnetRestoreNotification": true,
 
+  // Formatting Control
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+
+  // Git/Version Control
+  "git.confirmSync": false,
+  "git.autofetch": true,
+
+  // Copilot
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "text": "Be extremaly detailed with the change, detect the kind of change and add alias before. Add lot of emojis",
+      "text": "Be extremely detailed with the change, detect the kind of change and add alias before. Add emojis where appropriate."
     }
-  ]
+  ],
+
+  // Extensions
+  "prettier.requireConfig": true
 }

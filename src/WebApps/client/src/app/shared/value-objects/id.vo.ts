@@ -19,6 +19,7 @@ export class Id<T> {
     return this._value;
   }
 
+
   equals(other: Id<T>): boolean {
     return other instanceof Id && this._value === other._value;
   }

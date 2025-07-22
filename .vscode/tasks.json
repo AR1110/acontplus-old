@@ -1,41 +1,112 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/AcontPlus.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/AcontPlus.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/AcontPlus.sln"
-            ],
-            "problemMatcher": "$msCompile"
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--nologo",
+        "--tl:off", // Disable telemetry for faster startup
+        "--property:GenerateFullPaths=true",
+        "--property:UseSharedCompilation=false", // Better for large solutions
+        "--property:BuildInParallel=true",
+        "--logger:\"Console;Summary;Verbosity=minimal\"",
+        "--max-cpu-count"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "options": {
+        "env": {
+          "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+          "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1"
         }
-    ]
+      }
+    },
+    {
+      "label": "publish (optimized)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--nologo",
+        "--configuration Release",
+        "--property:PublishReadyToRun=true",
+        "--property:PublishTrimmed=true",
+        "--property:EnableCompressionInSingleFile=true",
+        "--self-contained false",
+        "--logger:\"Console;Summary;Verbosity=minimal\""
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new" // Always new panel to avoid output mixing
+      }
+    },
+    {
+      "label": "watch (hot reload)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "--project",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--non-interactive",
+        "--nologo",
+        "--property:HotReloadEnabled=true",
+        "--property:HotReloadProfile=aspnetcore"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER": "true"
+        }
+      }
+    },
+    {
+      "label": "clean (aggressive)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--nologo",
+        "--verbosity minimal",
+        "/t:Clean"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "echo": false,
+        "reveal": "never"
+      }
+    },
+    {
+      "label": "restore (full)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "restore",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--disable-parallel", // More reliable for large solutions
+        "--force-evaluate", // Force reevaluation of packages
+        "--verbosity minimal"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
 }
