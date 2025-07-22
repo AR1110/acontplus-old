@@ -23,6 +23,7 @@ export enum GlobalRoutes {
   InventarioLotPrice = 'inventory/lot-price-page',
   MechanicalLayout = 'mechanical/layout',
   MechanicalVehicle = 'mechanical/vehicle-page',
+  MechanicalConfigInspection = 'mechanical/config-inspection-page',
   RestaurantReports = 'restaurant/item-report',
   RestaurantInfrastructure = 'restaurant/infrastructure-page',
   RestaurantProducts = 'restaurant/products-page',

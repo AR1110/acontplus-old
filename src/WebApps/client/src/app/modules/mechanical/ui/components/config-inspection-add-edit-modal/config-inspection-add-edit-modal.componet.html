@@ -1,0 +1,39 @@
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [title]="titleModal()"
+  [loading]="loading()"
+  (close)="close()"
+/>
+
+<ng-template #containerTemplate>
+  <div class="d-grid gap-2 mt-2">
+    <app-mat-dynamic-card [showHeader]="true" [title]="'Vehículo'">
+      <div class="d-grid gap-2">
+        <div
+          class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
+          
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Descripción <span class="text-danger"> *</span></mat-label>
+              <input
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.licensePlate"
+                appToUpperCase
+              />
+            </mat-form-field>
+          </div>
+          
+        </div>
+      </div>
+    </app-mat-dynamic-card>
+  </div>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button type="button" mat-flat-button (click)="onSubmit()">
+    {{ btnText() }}
+  </button>
+</ng-template>

@@ -15,7 +15,11 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
+        "Path": "src\\Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
         "Action": "Start"
       }
     ]
