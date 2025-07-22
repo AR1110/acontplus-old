@@ -15,11 +15,11 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "Path": "src\\Services\\Contabilidad\\Contabilidad.API\\Contabilidad.API.csproj",
         "Action": "Start"
       },
       {
-        "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
+        "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
         "Action": "Start"
       }
     ]
