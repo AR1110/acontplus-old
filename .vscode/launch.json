@@ -178,6 +178,11 @@
   ],
   "compounds": [
     {
+      "name": "Basic Profile",
+      "configurations": ["GatewayApi", "IdentityApi", "LegacyFrontEnd", "CommonApi", "FrontEnd", "ConfiguracionApi"],
+      "stopAll": true
+    },
+    {
       "name": "AcontPlus Dev",
       "configurations": [
         "LegacyFrontEnd",
