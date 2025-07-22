@@ -102,6 +102,54 @@
           </mat-form-field>
         </div>
 
+        <!-- Password and Confirm Password fields row (Bootstrap responsive) -->
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Ingrese una contraseña"
+                autocomplete="new-password"
+                [attr.aria-describedby]="'password-error'"
+              />
+              <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if (userForm.get('password')?.hasError('required') && userForm.get('password')?.touched) {
+                <mat-error id="password-error">La contraseña es requerida</mat-error>
+              }
+              @if (userForm.get('password')?.hasError('minlength')) {
+                <mat-error>La contraseña debe tener al menos 6 caracteres</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Confirmar Contraseña</mat-label>
+              <input
+                matInput
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                placeholder="Repita la contraseña"
+                autocomplete="new-password"
+                [attr.aria-describedby]="'confirm-password-error'"
+              />
+              <button mat-icon-button matSuffix type="button" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if (userForm.get('confirmPassword')?.hasError('required') && userForm.get('confirmPassword')?.touched) {
+                <mat-error id="confirm-password-error">Debe confirmar la contraseña</mat-error>
+              }
+              @if (userForm.errors?.['passwordsMismatch'] && userForm.get('confirmPassword')?.touched) {
+                <mat-error>Las contraseñas no coinciden</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+
         @if (formErrors().length > 0) {
           <div class="form-errors" role="alert" aria-live="polite">
             <h4>Errores de validación:</h4>

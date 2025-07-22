@@ -271,3 +271,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+::ng-deep .mat-step-header {
+  pointer-events: none;
+}

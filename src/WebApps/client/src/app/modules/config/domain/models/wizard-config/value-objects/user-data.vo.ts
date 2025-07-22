@@ -4,6 +4,7 @@ export interface UserDataValue {
   readonly lastName: string;
   readonly email?: string;
   readonly phone?: string;
+  readonly password?: string; // Optional password field
 }
 
 export class UserData {
@@ -32,6 +33,10 @@ export class UserData {
 
   get phone(): string | undefined {
     return this._value.phone;
+  }
+
+  get password(): string | undefined {
+    return this._value.password;
   }
 
   get fullName(): string {
@@ -108,6 +113,12 @@ export class UserData {
 
     if (value.phone && !this.isValidPhone(value.phone)) {
       throw new Error('Formato de teléfono inválido');
+    }
+    // Password validation (if present)
+    if (value.password !== undefined) {
+      if (!value.password || value.password.length < 6) {
+        throw new Error('Contraseña debe tener al menos 6 caracteres');
+      }
     }
   }
 }

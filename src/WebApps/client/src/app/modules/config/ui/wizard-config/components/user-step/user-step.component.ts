@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { MatFormField, MatInput, MatLabel, MatError } from '@angular/material/input';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
@@ -14,6 +14,8 @@ export interface UserFormControls {
   lastName: FormControl<string | null>;
   email: FormControl<string | null>;
   phone: FormControl<string | null>;
+  password: FormControl<string | null>;
+  confirmPassword: FormControl<string | null>; // Added confirmPassword
 }
 
 @Component({
@@ -36,6 +38,10 @@ export interface UserFormControls {
 export class UserStepComponent {
   private readonly _fb = inject(FormBuilder);
   private readonly _store = inject(WizardConfigStore);
+
+  // Show/hide password toggles
+  showPassword = false;
+  showConfirmPassword = false;
 
   // Signals
   readonly isLoading = this._store.isLoading;
@@ -62,9 +68,16 @@ export class UserStepComponent {
       Validators.email
     ]),
     phone: this._fb.control('', [
-      Validators.pattern(/^[\d\s\-\+\(\)]+$/)
+      Validators.pattern(/^[\d\s\-\+()]+$/)
+    ]),
+    password: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(6)
+    ]),
+    confirmPassword: this._fb.control('', [
+      Validators.required
     ])
-  });
+  }, { validators: [passwordsMatchValidator] });
 
   // Computed signals
   readonly formErrors = computed(() => {
@@ -112,6 +125,23 @@ export class UserStepComponent {
       errors.push('Formato de teléfono inválido');
     }
 
+    if (controls.password.errors) {
+      if (controls.password.errors['required']) {
+        errors.push('Contraseña es requerida');
+      }
+      if (controls.password.errors['minlength']) {
+        errors.push('Contraseña debe tener al menos 6 caracteres');
+      }
+    }
+    if (controls.confirmPassword.errors) {
+      if (controls.confirmPassword.errors['required']) {
+        errors.push('Confirmar contraseña es requerido');
+      }
+    }
+    if (this.userForm.errors?.['passwordsMismatch']) {
+      errors.push('Las contraseñas no coinciden');
+    }
+
     return errors;
   });
 
@@ -126,6 +156,7 @@ export class UserStepComponent {
           lastName: data.lastName,
           email: data.email || '',
           phone: data.phone || ''
+          // Do NOT patch password for security
         });
       }
     });
@@ -140,9 +171,9 @@ export class UserStepComponent {
           firstName: formValue.firstName!,
           lastName: formValue.lastName!,
           email: formValue.email || undefined,
-          phone: formValue.phone || undefined
+          phone: formValue.phone || undefined,
+          password: formValue.password!
         });
-
         this._store.saveUserData(userData);
       } catch (error) {
         console.error('Error creating user data:', error);
@@ -155,4 +186,12 @@ export class UserStepComponent {
       });
     }
   }
+}
+
+// Custom validator for matching passwords
+function passwordsMatchValidator(control: AbstractControl) {
+  const group = control as FormGroup;
+  const password = group.get('password')?.value;
+  const confirmPassword = group.get('confirmPassword')?.value;
+  return password === confirmPassword ? null : { passwordsMismatch: true };
 }
