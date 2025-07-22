@@ -23,6 +23,7 @@
   "git.confirmSync": false,
   "git.autofetch": true,
 
+  "prettier.configPath": ".prettierrc",
   "prettier.requireConfig": true,
 
   // Language-specific
@@ -34,6 +35,5 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  
+  }
 }
