@@ -118,24 +118,6 @@
       "justMyCode": false
     },
     {
-      "name": "ReportsApi",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Reports/Reports.API/bin/Debug/net9.0/Reports.API.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Reports/Reports.API",
-      "stopAtEntry": false,
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "justMyCode": false
-    },
-    {
       "name": "VentasApi",
       "type": "coreclr",
       "request": "launch",
@@ -204,7 +186,6 @@
         "IdentityApi",
         "InventarioApi",
         "FactElectApi",
-        "ReportsApi",
         "FrontEnd"
       ],
       "stopAll": true
@@ -218,7 +199,6 @@
         "InventarioApi",
         "RestaurantApi",
         "FactElectApi",
-        "ReportsApi",
         "VentasApi",
         "LegacyFrontEnd",
         "FrontEnd",
