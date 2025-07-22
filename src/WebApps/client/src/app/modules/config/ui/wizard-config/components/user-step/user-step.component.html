@@ -118,11 +118,13 @@
               <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
                 <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              @if (userForm.get('password')?.hasError('required') && userForm.get('password')?.touched) {
-                <mat-error id="password-error">La contraseña es requerida</mat-error>
-              }
-              @if (userForm.get('password')?.hasError('minlength')) {
-                <mat-error>La contraseña debe tener al menos 6 caracteres</mat-error>
+              @if (userForm.get('password')?.invalid && (userForm.get('password')?.touched || userForm.get('password')?.dirty)) {
+                @if (userForm.get('password')?.hasError('required')) {
+                  <mat-error id="password-error">La contraseña es requerida</mat-error>
+                }
+                @if (userForm.get('password')?.hasError('minlength')) {
+                  <mat-error>La contraseña debe tener al menos 6 caracteres</mat-error>
+                }
               }
             </mat-form-field>
           </div>
@@ -140,17 +142,19 @@
               <button mat-icon-button matSuffix type="button" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
                 <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              @if (userForm.get('confirmPassword')?.hasError('required') && userForm.get('confirmPassword')?.touched) {
-                <mat-error id="confirm-password-error">Debe confirmar la contraseña</mat-error>
-              }
-              @if (userForm.errors?.['passwordsMismatch'] && userForm.get('confirmPassword')?.touched) {
-                <mat-error>Las contraseñas no coinciden</mat-error>
+              @if ((userForm.get('confirmPassword')?.invalid && (userForm.get('confirmPassword')?.touched || userForm.get('confirmPassword')?.dirty)) || (userForm.errors?.['passwordsMismatch'] && (userForm.get('confirmPassword')?.touched || userForm.get('confirmPassword')?.dirty))) {
+                @if (userForm.get('confirmPassword')?.hasError('required')) {
+                  <mat-error id="confirm-password-error">Debe confirmar la contraseña</mat-error>
+                }
+                @if (userForm.errors?.['passwordsMismatch']) {
+                  <mat-error>Las contraseñas no coinciden</mat-error>
+                }
               }
             </mat-form-field>
           </div>
         </div>
 
-        @if (formErrors().length > 0) {
+        @if (formErrors().length > 0 && submitted) {
           <div class="form-errors" role="alert" aria-live="polite">
             <h4>Errores de validación:</h4>
             <ul>

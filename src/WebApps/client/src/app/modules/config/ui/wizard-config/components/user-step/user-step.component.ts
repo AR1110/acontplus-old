@@ -43,6 +43,9 @@ export class UserStepComponent {
   showPassword = false;
   showConfirmPassword = false;
 
+  // Track if the form has been submitted
+  submitted = false;
+
   // Signals
   readonly isLoading = this._store.isLoading;
   readonly isSaving = this._store.isSavingUser;
@@ -163,6 +166,7 @@ export class UserStepComponent {
   }
 
   onSave(): void {
+    this.submitted = true;
     if (this.userForm.valid) {
       try {
         const formValue = this.userForm.value;
