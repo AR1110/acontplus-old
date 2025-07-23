@@ -78,7 +78,7 @@ export class DocConfigInfoAdicionalComponent {
         col.templateOutlet = this.templateValue;
       }
 
-      if (col.type === 'template' && col.key === 'templatePoliticaCredito') {
+      if (col.type === 'template' && col.key === 'politicaCredito') {
         col.templateOutlet = this.templatePoliticaCredito;
       }
 

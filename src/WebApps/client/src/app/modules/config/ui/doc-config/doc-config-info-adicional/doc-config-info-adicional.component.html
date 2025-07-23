@@ -39,8 +39,9 @@
 </ng-template>
 
 <ng-template #templateValue let-item>
-  <mat-form-field class="w-100">
-    <input matInput placeholder="..." [(ngModel)]="item.valor">
+
+  <mat-form-field class="w-100 m-1">
+    <textarea matInput  [(ngModel)]="item.valor"></textarea>
   </mat-form-field>
 </ng-template>
 
