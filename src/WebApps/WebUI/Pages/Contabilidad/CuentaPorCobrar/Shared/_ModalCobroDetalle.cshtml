@@ -55,6 +55,7 @@
                         <th md-column>Valor</th>
                         <th md-column>Posfechado</th>
                         <th md-column>Estado</th>
+                        <th md-column>Usuario</th>
                     </tr>
                 </thead>
                 <tbody md-body>
@@ -85,9 +86,11 @@
                         <td md-cell>
                             <span class="badge badge-success badge-pill">{{item.estado}}</span>
                         </td>
+                        <td md-cell>{{item.nombreUsuario}}</td>
+
                     </tr>
                     <tr ng-show="item.showDetalle" ng-repeat-end="">
-                        <td md-cell colspan="9">
+                        <td md-cell colspan="10">
                             <div class="ml-5 mt-1 mr-5">
                                 <div class="table-responsive">
                                     <table class="table table-hover table-bordered table-sm">
@@ -145,6 +148,7 @@
                         <th md-column>Abono </th>
                         <th md-column>Cambio </th>
                         <th md-column>Estado </th>
+                        <th md-column>Usuario </th>
                     </tr>
                 </thead>
                 <tbody md-body>
@@ -178,6 +182,7 @@
                         <td md-cell>${{item.abono}}</td>
                         <td md-cell>${{item.cambio}}</td>
                         <td md-cell>{{item.estado}}</td>
+                        <td md-cell>{{item.nombreUsuario}}</td>
                     </tr>
                     <tr ng-show="item.showDetalle" ng-repeat-end="">
                         <td md-cell colspan="9">

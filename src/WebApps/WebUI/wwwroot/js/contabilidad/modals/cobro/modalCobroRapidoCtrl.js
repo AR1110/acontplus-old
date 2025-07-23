@@ -300,9 +300,11 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
 
                     const params = comprobanteIngresoSvc.mapperTo(data);  
 
-                    showLoader(); 
-                    comprobanteIngresoSvc.post(params).then(response => {
-                        hideLoader();
+                    const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
+
+                    managedRegister(params).then((response) => {
+                        
+                        if (!response) return; 
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message)
                         }
@@ -310,12 +312,10 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                             fS.sweetAlert('success', response.message, '', 1000)
                             $uibModalInstance.close(response)
                         }
-                    }).catch(error => {
-                        hideLoader();
+                    }).catch(error => { 
                         console.log(error)
                     })
-                } catch (error) {
-                    hideLoader();
+                } catch (error) { 
                     console.log(error)
                 }
 
