@@ -15,14 +15,33 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	SET NOCOUNT ON;		
     
-	DECLARE @idEntidad INT,
-        @rucReceptor VARCHAR(25),
-        @codDoc VARCHAR(25),
-        @fromDate DATETIME2,
-        @toDate DATETIME2,
-        @userId INT;
+	DECLARE @idEntidad INT
+           ,@rucReceptor VARCHAR(25)
+           ,@codDoc VARCHAR(25)
+           ,@fromDate DATETIME2
+           ,@toDate DATETIME2
+           ,@userId INT
 
-        BEGIN TRY
+    
+    DECLARE @VentasATS TABLE (
+         tpIdCliente     VARCHAR(2)
+        ,idCliente       VARCHAR(13)
+        ,parteRelVtas    VARCHAR(2)
+        ,tipoCliente     VARCHAR(10)
+        ,denoCli         VARCHAR(200)
+        ,tipoComprobante VARCHAR(5)
+        ,tipoEmision     VARCHAR(1)
+        ,baseNoGraIva    NUMERIC(18,2)
+        ,baseImponible   NUMERIC(18,2)
+        ,baseImpGrav     NUMERIC(18,2)
+        ,montoIva        NUMERIC(18,2)
+        ,montoIce        NUMERIC(18,2)
+        ,valorRetIva     NUMERIC(18,2)
+        ,valorRetRenta   NUMERIC(18,2)
+        ,formaPago       VARCHAR(2)
+    );
+
+    BEGIN TRY
 
 	SELECT TOP 1 @idEntidad = idEntidad, @userId = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT TOP 1 @rucReceptor = ruc FROM Entidad WHERE idEntidad = @idEntidad
@@ -39,26 +58,30 @@ BEGIN
     SET @tableNames = 'header,purchases,sales,credit_notes,with_holding_taxes,establishment_sales'
 
 	--> ENCABEZADO
-    SELECT 'R'                                                                                as TipoIdInformante
-	       ,en.Ruc                                                                            as IdInformante
+    SELECT 'R'                                                                                                                      as TipoIdInformante
+	       ,en.Ruc                                                                                                                  as IdInformante
 	       ,en.razonSocial
 	       ,YEAR(@fromDate)                                                                   as anio
 	       ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate))) as mes
 	       ,'IVA'                                                                             as codigoOperativo
-	       ,SUM(CAST(fe.subtotalsinImpuestos AS NUMERIC(18,2)))                               as totalVentas
+	       ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)))                     as totalVentas
            ,ROW_NUMBER() OVER(PARTITION BY es.codEstab ORDER BY es.codEstab)                  as estabs
+	       ,YEAR(@fromDate)                                                                                                         as anio
+	       ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate)))                                       as mes
+	       ,'IVA'                                                                                                                   as codigoOperativo
+	       ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0)AS NUMERIC(18,2)) - CAST( ISNULL(ne.subtotalsinImpuestos,0)AS NUMERIC(18,2))) as totalVentas
+           ,ROW_NUMBER() OVER(PARTITION BY es.codEstab ORDER BY es.codEstab)                                                        as estabs
 	INTO #tempTotalVentas
-    FROM dbo.Factura                    fe WITH (NOLOCK) 
-    INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
+    FROM  dbo.DocumentoElectronico      de WITH (NOLOCK) 
+     LEFT JOIN dbo.Factura              fe WITH (NOLOCK) ON fe.idDocumentoElectronico = de.idDocumentoElectronico
 	INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
     INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
 	INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
-    INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio       = de.idEstadoServicio
 	WHERE es.idEntidad = @idEntidad
 	  AND ss.codigo = 4 
-	  AND fe.notaCredito = 0
+	  AND ISNULL(fe.notaCredito,0) = 0
 	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-	  AND fe.estado = 1
+	  AND ISNULL(fe.estado,1) = 1
 	GROUP BY en.ruc,en.razonSocial,es.codEstab
 
     SELECT TipoIdInformante
@@ -299,7 +322,7 @@ BEGIN
 
 		    ), 'NA') as pagExtSujRetNorLeg
 
-	        ,CASE WHEN fc.importeTotal >= 500 THEN '20' ELSE '' END as formaPago
+	        ,CASE WHEN fc.codDoc = '01' AND fc.importeTotal >= 500 THEN '20' ELSE '' END as formaPago
 	        ,REPLACE(fc.serieComprobante, '-', '')                   as nroDocumento 
 	      
             ,ISNULL
@@ -734,7 +757,25 @@ BEGIN
 	  AND fc.isAutomatic = 0
 	  AND fc.estado = 1
 
-    --> Ventas
+    --> Ventas Facturas
+    INSERT INTO @VentasATS (
+          tpIdCliente
+        , idCliente
+        , parteRelVtas
+        , tipoCliente
+        , denoCli
+        , tipoComprobante
+        , tipoEmision
+        , baseNoGraIva
+        , baseImponible
+        , baseImpGrav
+        , montoIva
+        , montoIce
+        , valorRetIva
+        , valorRetRenta
+        , formaPago
+    )
+    --> Ventas facturas
     SELECT td.codigoSri                                                                         as tpIdCliente
 	        ,CASE WHEN td.codigoSri = '07' THEN '9999999999999' ELSE cu.IDCard                  END as idCliente 
 	        ,'NO'                                                                               as parteRelVtas
@@ -823,7 +864,6 @@ BEGIN
                                   AND di.Code = '1'
                         ),0),
 	    formaPago = '01'
-    INTO #ventas
     FROM dbo.Factura                     f WITH (NOLOCK) 
     INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = f.idDocumentoElectronico
     INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
@@ -834,7 +874,127 @@ BEGIN
     INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = c.CustomerId
     INNER JOIN dbo.TipoIdentificacion   td WITH (NOLOCK) ON td.idTipoIdentificacion   = cu.IdTypeId	
     WHERE es.idEntidad = @idEntidad 
-	  AND f.notaCredito = 0
+	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+      AND ss.codigo = 4
+
+    --> Ventas Notas de credito
+    INSERT INTO @VentasATS (
+          tpIdCliente
+        , idCliente
+        , parteRelVtas
+        , tipoCliente
+        , denoCli
+        , tipoComprobante
+        , tipoEmision
+        , baseNoGraIva
+        , baseImponible
+        , baseImpGrav
+        , montoIva
+        , montoIce
+        , valorRetIva
+        , valorRetRenta
+    )
+
+      SELECT td.codigoSri                                                                           as tpIdCliente
+	        ,CASE WHEN td.codigoSri = '07' THEN '9999999999999' ELSE cu.IDCard                  END as idCliente 
+	        ,'NO'                                                                                   as parteRelVtas
+	        ,CASE WHEN td.codigoSri = '06' THEN tc.codigo END                                       as tipoCliente
+	        ,CASE WHEN td.codigoSri = '06' THEN cu.BusinessName END                                 as denoCli
+	        ,'04'                                                                                   as tipoComprobante
+	        ,'F'                                                                                    as TipoEmision
+	        ,ISNULL
+            ((
+                SELECT SUM(CAST(ni.TaxBase AS NUMERIC(18,2))) 
+                FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK)
+                INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva = ni.TaxPercentId
+                WHERE ni.NotaCreditoId = nc.idNotaCredito
+                  AND ni.[Enabled] = 1
+                  AND ti.codigoPorcentaje IN ('7','6')
+
+			), 0) as baseNoGraIva
+
+	        ,ISNULL
+            ((   
+                SELECT SUM(CAST(ni.TaxBase AS NUMERIC(18,2))) 
+                FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK)
+                INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva = ni.TaxPercentId
+                WHERE ni.NotaCreditoId = nc.idNotaCredito
+                  AND ni.[Enabled] = 1
+                  AND ti.codigoPorcentaje = '0' 
+                  
+		    ),0) as baseImponible
+
+	        ,ISNULL
+            (( 
+                SELECT SUM(CAST(ni.TaxBase AS NUMERIC(18,2))) 
+                FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK)
+                INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva = ni.TaxPercentId
+                WHERE ni.NotaCreditoId = nc.idNotaCredito
+                  AND ni.[Enabled] = 1
+                  AND ti.codigoPorcentaje IN ('2','3','4','5','8')
+
+			),0) as baseImpGrav
+
+	    ,ISNULL
+        ((  
+            SELECT CASE 
+                    WHEN SUBSTRING(CAST(sum(ni.TaxValue) AS VARCHAR),5,5) = '5' THEN cast(round(sum(ni.TaxValue), 2,1) as numeric (18,2)) ELSE cast(round(sum(ni.TaxValue), 3,1) as numeric (18,2))
+                    END
+            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK)
+            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
+			INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
+            WHERE ni.NotaCreditoId = nc.idNotaCredito
+              AND ni.[Enabled] = 1
+              AND im.codigo = '2'
+
+        ),0) as montoIva
+
+	    ,ISNULL
+        ((
+            SELECT SUM(CAST(ni.TaxValue AS NUMERIC(18,2)))  
+            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK)
+            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
+			INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
+            WHERE ni.NotaCreditoId = nc.idNotaCredito
+              AND ni.[Enabled] = 1
+              AND im.codigo = '3'
+
+		),0) as montoIce
+
+	    ,valorRetIva =  ISNULL
+                        ((
+                                SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
+                                FROM FactElect.DocRelacionado dr WITH (NOLOCK)
+                                INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido
+                                INNER JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dd.idDocumento
+                                where dr.claveAcceso = de.claveAcceso
+                                  AND dd.codDoc = '07'
+                                  AND di.Code = '2'
+                        ),0)
+                        ,
+
+	    valorRetRenta = ISNULL
+                        ((  
+                                
+                                SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
+                                FROM FactElect.DocRelacionado dr WITH (NOLOCK)
+                                INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido
+                                INNER JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dd.idDocumento
+                                where dr.claveAcceso = de.claveAcceso
+                                  AND dd.codDoc = '07'
+                                  AND di.Code = '1'
+                        ),0)
+	  
+    FROM dbo.NotaCredito                nc WITH (NOLOCK) 
+    INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = nc.idDocumentoElectronico
+    INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+    INNER JOIN dbo.Cliente               c WITH (NOLOCK) ON nc.idCliente               = c.idCliente
+    INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+     LEFT JOIN dbo.TipoClienteProveedor tc WITH (NOLOCK) ON tc.idTipoClienteProveedor = c.idTipoClienteProveedor
+    INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio       = de.idEstadoServicio
+    INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = c.CustomerId
+    INNER JOIN dbo.TipoIdentificacion   td WITH (NOLOCK) ON td.idTipoIdentificacion   = cu.IdTypeId	
+    WHERE es.idEntidad = @idEntidad 
 	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
       AND ss.codigo = 4
     
@@ -845,16 +1005,16 @@ BEGIN
           ,denoCli
 	      ,tipoComprobante
 	      ,TipoEmision
-	      ,numeroComprobantes = COUNT(*)
-	      ,baseNoGraIva = SUM(baseNoGraIva)
-	      ,baseImponible = SUM(baseImponible)
-	      ,baseImpGrav = SUM(baseImpGrav)
-	      ,montoIva = SUM(montoIva)
-	      ,montoIce = SUM(montoIce)
-	      ,valorRetIva = SUM(valorRetIva)
-	      ,valorRetRenta = SUM(valorRetRenta)
+	      ,COUNT(*)           as numeroComprobantes
+	      ,SUM(baseNoGraIva)  as baseNoGraIva
+	      ,SUM(baseImponible) as baseImponible
+	      ,SUM(baseImpGrav)   as baseImpGrav
+	      ,SUM(montoIva)      as montoIva
+	      ,SUM(montoIce)      as montoIce
+	      ,SUM(valorRetIva)   as valorRetIva
+	      ,SUM(valorRetRenta) as valorRetRenta
 	      ,formaPago
-    FROM #ventas 
+    FROM @VentasATS 
     GROUP BY tpIdCliente
             ,idCliente
             ,parteRelVtas
@@ -863,44 +1023,25 @@ BEGIN
             ,TipoEmision 
             ,formaPago
             ,denoCli
-
-    SELECT '04' tipoComprobante
-	      ,s.estab                                                                   as establecimiento
-	      ,pe.ptoEmi                                                                 as puntoEmision
-	      ,(SELECT dbo.AFTSecuencialDocumento(pe.idPuntoEmision,td.idtipoDocumento)) as secuencialInicio
-	      ,(SELECT dbo.AFTSecuencialDocumento(pe.idPuntoEmision,td.idtipoDocumento)) as secuencialFin
-	      ,de.claveAcceso                                                            as autorizacion
-	FROM dbo.DocumentoElectronico de WITH (NOLOCK) 
-	INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON de.idPuntoEmision   = pe.idPuntoEmision
-	INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento  = de.idTipoDocumento
-	INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.idEstablecimiento = pe.idEstablecimiento
-    INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio = de.idEstadoServicio
-	WHERE td.codigoSri = '04' 
-      AND s.idEntidad = @idEntidad
-      AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date) 
-	  AND fechaAutorizacion IS NOT NULL
-      AND ss.codigo = 4
-
-	UNION ALL
-
-	SELECT '18' tipoComprobante
-	      ,s.estab                                           as establecimiento
-	      ,pe.ptoEmi                                         as puntoEmision
+    
+    --> Documento anulados
+	SELECT td.codigoSri                                         as tipoComprobante
+	      ,es.estab                                             as establecimiento
+	      ,pe.ptoEmi                                            as puntoEmision
 	      ,RIGHT('000000000' + Ltrim(Rtrim(de.nroDocumento)),9) as secuencialInicio
 	      ,RIGHT('000000000' + Ltrim(Rtrim(de.nroDocumento)),9) as secuencialFin
-	      ,de.claveAcceso                                    as autorizacion
-	FROM dbo.DocumentoElectronico de WITH (NOLOCK) 
-	INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
-	INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento = de.idTipoDocumento
-	INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.idEstablecimiento = pe.idEstablecimiento	
-	INNER JOIN Factura             f WITH (NOLOCK) ON f.idDocumentoElectronico = de.idDocumentoElectronico
-    INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio = de.idEstadoServicio
-	WHERE s.idEntidad = @idEntidad
+	      ,de.claveAcceso                                       as autorizacion
+	FROM dbo.DocumentoElectronico       de WITH (NOLOCK) 
+	INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON de.idPuntoEmision    = pe.idPuntoEmision
+	INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.idTipoDocumento   = de.idTipoDocumento
+	INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento	
+    INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio  = de.idEstadoServicio
+	WHERE es.idEntidad = @idEntidad
 	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
 	  AND de.fechaAutorizacion IS NOT NULL
-	  AND f.estado = 0
-      AND ss.codigo = 4
+      AND ss.codigo = 6
 
+    --> Renteciones
 	SELECT rdc.numDocSustento nroDocumento
 	      ,rdc.numAutDocSustento as claveAcceso
           ,CAST(ret.codigoRetencion AS varchar(10)) codRetAir
@@ -922,23 +1063,24 @@ BEGIN
 	  AND rc.anuladaSri = 0
 	  AND sr.Codigo = 1
  	  AND ss.codigo = 4
- 
-	SELECT ventasEstab = CAST(SUM(f.subtotalsinImpuestos) AS NUMERIC(18,2))
-	      ,codEstab = s.estab,ivaComp = 0.00
-	FROM Factura                         f WITH (NOLOCK) 
+    
+    --> Ventas por establecimiento
+	SELECT ventasEstab = CAST(SUM(f.subtotalsinImpuestos) AS NUMERIC(18,2)) - ISNULL(CAST(SUM(ne.subtotalsinImpuestos) AS NUMERIC(18,2)),0)
+	      ,codEstab = s.estab
+          ,ivaComp = 0.00
+	FROM Factura                         f WITH (NOLOCK)
+     LEFT JOIN dbo.NotaCredito          ne WITH (NOLOCK) ON ne.idFactura          = f.idFactura
     INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = f.idDocumentoElectronico
 	INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
     INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio       = de.idEstadoServicio
 	INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.idEstablecimiento       = pe.idEstablecimiento	
 	INNER JOIN dbo.Entidad               e WITH (NOLOCK) ON e.idEntidad               = s.idEntidad
 	WHERE s.idEntidad = @idEntidad
-	  AND f.notaCredito = 0
 	  AND f.estado = 1
 	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
       AND es.codigo = 4
 	GROUP BY  s.estab
 
-    DROP TABLE #ventas
     END TRY
     BEGIN CATCH
         INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario], [additionalInfo])

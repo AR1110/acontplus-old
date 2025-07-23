@@ -1,17 +1,22 @@
-# Editor configuration, see https://editorconfig.org
-root = true
+root = false
+extends = ..\..\..\.editorconfig
 
 [*]
 charset = utf-8
+end_of_line = lf
 indent_style = space
-indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
-end_of_line = lf
 
-[*.ts]
-quote_type = single
+[*.{ts,html}]
+indent_size = 2
+# Vertical spacing controls
+max_line_length = 120
+# New rules for vertical alignment
+align_assignments = true
+align_parameters = true
+align_chained_calls = true
 
-[*.md]
-max_line_length = off
-trim_trailing_whitespace = false
+[*.scss]
+indent_size = 2
+align_properties = true

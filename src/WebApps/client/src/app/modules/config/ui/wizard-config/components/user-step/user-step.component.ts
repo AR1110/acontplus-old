@@ -10,12 +10,13 @@ import { WizardConfigStore } from '@modules/config/application/store/wizard-conf
 
 export interface UserFormControls {
   nroIdentificacion: FormControl<string | null>;
+  username: FormControl<string | null>;
   firstName: FormControl<string | null>;
   lastName: FormControl<string | null>;
   email: FormControl<string | null>;
   phone: FormControl<string | null>;
   password: FormControl<string | null>;
-  confirmPassword: FormControl<string | null>; // Added confirmPassword
+  confirmPassword: FormControl<string | null>;
 }
 
 @Component({
@@ -57,6 +58,12 @@ export class UserStepComponent {
       Validators.required,
       Validators.minLength(10)
     ]),
+    username: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(20),
+      Validators.pattern(/^[a-zA-Z0-9_]+$/)
+    ]),
     firstName: this._fb.control('', [
       Validators.required,
       Validators.minLength(2),
@@ -71,7 +78,7 @@ export class UserStepComponent {
       Validators.email
     ]),
     phone: this._fb.control('', [
-      Validators.pattern(/^[\d\s\-\+()]+$/)
+      Validators.pattern(/^[\d\s\-+()]+$/)
     ]),
     password: this._fb.control('', [
       Validators.required,
@@ -93,6 +100,21 @@ export class UserStepComponent {
       }
       if (controls.nroIdentificacion.errors['minlength']) {
         errors.push('Número de identificación debe tener al menos 10 dígitos');
+      }
+    }
+
+    if (controls.username.errors) {
+      if (controls.username.errors['required']) {
+        errors.push('Nombre de usuario es requerido');
+      }
+      if (controls.username.errors['minlength']) {
+        errors.push('Nombre de usuario debe tener al menos 3 caracteres');
+      }
+      if (controls.username.errors['maxlength']) {
+        errors.push('Nombre de usuario no puede exceder 20 caracteres');
+      }
+      if (controls.username.errors['pattern']) {
+        errors.push('Nombre de usuario solo puede contener letras, números y guiones bajos');
       }
     }
 
@@ -155,6 +177,7 @@ export class UserStepComponent {
       if (data) {
         this.userForm.patchValue({
           nroIdentificacion: data.nroIdentificacion,
+          username: data.username,
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email || '',
@@ -172,6 +195,7 @@ export class UserStepComponent {
         const formValue = this.userForm.value;
         const userData = new UserData({
           nroIdentificacion: formValue.nroIdentificacion!,
+          username: formValue.username!,
           firstName: formValue.firstName!,
           lastName: formValue.lastName!,
           email: formValue.email || undefined,

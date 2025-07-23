@@ -1,4 +1,3 @@
-
 export class Id<T> {
   private readonly _value: string;
 

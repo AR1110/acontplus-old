@@ -1,4 +1,5 @@
 export interface UserDataValue {
+  readonly username: string;
   readonly nroIdentificacion: string;
   readonly firstName: string;
   readonly lastName: string;
@@ -13,6 +14,10 @@ export class UserData {
   constructor(value: UserDataValue) {
     this.validateValue(value);
     this._value = value;
+  }
+
+  get username(): string {
+    return this._value.username;
   }
 
   get nroIdentificacion(): string {
@@ -47,8 +52,6 @@ export class UserData {
     return this.fullName || this.nroIdentificacion;
   }
 
-
-
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -62,7 +65,7 @@ export class UserData {
   update(updates: Partial<UserDataValue>): UserData {
     return new UserData({
       ...this._value,
-      ...updates
+      ...updates,
     });
   }
 

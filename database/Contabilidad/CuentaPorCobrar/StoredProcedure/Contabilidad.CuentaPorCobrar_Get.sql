@@ -103,24 +103,24 @@ BEGIN
         SET @sql = 'SELECT cc.idCuentaPorCobrar
                               ,cc.idCliente
                               ,cc.codEstab
-                              ,IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)                        as codDoc
+                              ,IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)                                               as codDoc
                               ,cc.razonSocialComprador
                               ,cc.identificacionComprador
                               ,serieComprobante
-                              ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')                          as fechaEmision
-                              ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'')                      as fechaVencimiento
-                              ,CAST(importeTotal as numeric(18,2))                             as importeTotal
-                              ,CAST(mora as numeric(18,2))                                     as mora
-                              ,CAST(abono as numeric(18,2))                                    as abono
-                              ,CAST(saldo as numeric(18,2))                                    as saldo
+                              ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')                                                 as fechaEmision
+                              ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'')                                             as fechaVencimiento
+                              ,CAST(importeTotal as numeric(18,2))                                                    as importeTotal
+                              ,CAST(mora as numeric(18,2))                                                            as mora
+                              ,CAST(abono as numeric(18,2))                                                           as abono
+                              ,CAST(saldo as numeric(18,2))                                                           as saldo
                               ,cc.diasMora
-                              ,tipoTiempoCredito                                               as tiempoCredito
+                              ,tipoTiempoCredito                                                                      as tiempoCredito
                               ,estado
-                              ,COUNT(*)                                                 OVER() as totalRecords
-                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,importeTotal)) OVER() as totalVenta
-                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,mora))         OVER() as totalMora
-                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
-                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
+                              ,COUNT(*)                                                                        OVER() as totalRecords
+                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,CAST(importeTotal as numeric(18,2)))) OVER() as totalVenta
+                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,CAST(mora as numeric(18,2))))         OVER() as totalMora
+                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,CAST(abono as numeric(18,2))))        OVER() as totalAbono
+                              ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,CAST(saldo as numeric(18,2))))        OVER() as totalSaldo
                               ,codEstado
                               ,tiempoCredito                                                   as tipo
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
