@@ -1,4 +1,5 @@
-﻿global using System.Data;
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.Data;
 global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;

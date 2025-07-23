@@ -182,7 +182,6 @@ export class UserStepComponent {
           lastName: data.lastName,
           email: data.email || '',
           phone: data.phone || ''
-          // Do NOT patch password for security
         });
       }
     });

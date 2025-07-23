@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
-import { WizardConfigRepository, WIZARD_CONFIG_REPOSITORY } from '@modules/config/domain/repositories/wizard-config.repository';
+import { WIZARD_CONFIG_REPOSITORY } from '@modules/config/domain/repositories/wizard-config.repository';
 import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
 
 export interface SaveUserDataRequest {
