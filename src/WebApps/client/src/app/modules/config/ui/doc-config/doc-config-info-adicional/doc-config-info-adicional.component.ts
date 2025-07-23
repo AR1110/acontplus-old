@@ -139,7 +139,8 @@ export class DocConfigInfoAdicionalComponent {
         infoAdicional:
           this.dataSource().length == 0
             ? null
-            : JSON.stringify(this.dataSource()),
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            : JSON.stringify(this.dataSource().map(({ unique, ...rest }) => rest)),
       };
 
       this.$createUseCase.execute(data).subscribe((response) => {
