@@ -18,11 +18,13 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {CreateDocConfigUseCase} from "@modules/config/application/use-cases/doc-config/create-doc-config.use-case";
 import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-doc-config-info-adicional',
   imports: [FormsModule,
     MatFormFieldModule,
+    MatSlideToggleModule,
     MatInput,
     ThemeButtonComponent, MatCustomDialogComponent, MatDynamicTableComponent],
   templateUrl: './doc-config-info-adicional.component.html',
@@ -45,11 +47,13 @@ export class DocConfigInfoAdicionalComponent {
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'nombre', label: 'Nombre', type: 'template' },
     { key: 'valor', label: 'Valor', type: "template" },
+    { key: 'politicaCredito', label: 'Política Crédito', type: "template" },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
 
   @ViewChild('templateName') templateName!: TemplateRef<any>;
   @ViewChild('templateValue') templateValue!: TemplateRef<any>;
+  @ViewChild('templatePoliticaCredito') templatePoliticaCredito!: TemplateRef<any>;
 
   getInfoAdicional() {
     this.dataSource.set([]);
@@ -73,13 +77,19 @@ export class DocConfigInfoAdicionalComponent {
       if (col.type === 'template' && col.key === 'valor') {
         col.templateOutlet = this.templateValue;
       }
+
+      if (col.type === 'template' && col.key === 'templatePoliticaCredito') {
+        col.templateOutlet = this.templatePoliticaCredito;
+      }
+
+
     });
   }
 
   addRow() {
 
     this.dataSource.update((ds)=>{
-      return [...ds, {unique: generateUuidv4(), nombre: '', valor: ''}]
+      return [...ds, {unique: generateUuidv4(), nombre: '', valor: '', politicaCredito: false}]
     });
   }
 
