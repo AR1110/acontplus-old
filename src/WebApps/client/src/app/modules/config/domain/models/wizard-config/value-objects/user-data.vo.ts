@@ -5,7 +5,7 @@ export interface UserDataValue {
   readonly lastName: string;
   readonly email?: string;
   readonly phone?: string;
-  readonly password?: string; // Optional password field
+  readonly password?: string;
 }
 
 export class UserData {

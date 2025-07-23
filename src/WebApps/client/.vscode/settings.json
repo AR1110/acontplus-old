@@ -1,22 +1,18 @@
 {
-  // Vertical Alignment Core
   "editor.wrappingIndent": "indent",
   "editor.autoIndent": "full",
   "editor.autoClosingOvertype": "always",
   "editor.stickyScroll.enabled": true,
 
-  // Formatting
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.configPath": "../../../.prettierrc",
 
-  // TypeScript Vertical Rules
   "typescript.format.enable": true,
   "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
   "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
   "typescript.preferences.importModuleSpecifierEnding": "minimal",
 
-  // HTML Vertical Rules
   "html.format.wrapLineLength": 120,
   "html.format.extraLiners": "head, body, /html",
   "html.format.wrapAttributes": "force-expand-multiline"

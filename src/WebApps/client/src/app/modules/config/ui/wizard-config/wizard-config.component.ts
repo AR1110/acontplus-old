@@ -4,16 +4,6 @@
 
 // Angular Core
 import {
-  Component,
-  inject,
-  ViewChild,
-  OnInit,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
   FormArray,
   FormBuilder,
   FormControl,
@@ -22,71 +12,56 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-
-// Angular CDK
-import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Component, inject, ViewChild, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 
 // Angular Material
 import { MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
-import { MatButton } from '@angular/material/button';
-import { MatChipEditedEvent, MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow } from '@angular/material/chips';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
 // Third-party Libraries
-import Swal from 'sweetalert2';
-import { faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { catchError } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 import { of } from 'rxjs';
 
 // Core Components & Services
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse, ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-
-// Shared Components & Directives
-import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
+import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
+import { isApiResponse } from '@core/models/api-response';
 
 // Step Components
-import { UserStepComponent } from './components/user-step/user-step.component';
 import { EstablishmentStepComponent } from './components/establishment-step/establishment-step.component';
+import { UserStepComponent } from './components/user-step/user-step.component';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
-import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
-import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
-import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 import { WizardConfigStore } from '@modules/config/application/store/wizard-config.store';
+import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
+import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 
 // Module Use Cases
-import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
-import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 // Module Models
-import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
-import { DocConfig } from '@modules/config/domain/models/doc-config.model';
-import { UserData } from '@modules/auth/domain/models/user-data.model';
-import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
 import { ActividadEconomica } from '@modules/config/domain/models/wizard-config/actividad-economica.model';
 import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/agente-retencion.model';
 import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
+import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
+import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
+import { DocConfig } from '@modules/config/domain/models/doc-config.model';
+import { UserData } from '@modules/auth/domain/models/user-data.model';
 
 // Utilities
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
+import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 
 // ============================================================================
 // INTERFACES
@@ -119,13 +94,6 @@ interface FileChangeEvent {
   target: {
     files: FileList;
   };
-}
-
-// Form Control Interfaces for Typed Forms
-interface UserFormControls {
-  nroIdentificacion: FormControl<string | null>;
-  firstName: FormControl<string | null>;
-  lastName: FormControl<string | null>;
 }
 
 interface BodegaFormControls {
@@ -166,11 +134,6 @@ interface EstabFormControls {
     MatButton,
     MatStepperNext,
     MatStepperPrevious,
-    MatRadioButton,
-    MatChipGrid,
-    MatChipRow,
-    MatChipInput,
-    MatRadioGroup,
     MatCardContent,
     MatCard,
     MatIcon,
@@ -178,19 +141,12 @@ interface EstabFormControls {
     MatInput,
     MatLabel,
     MatSelectModule,
-
     // Forms
     ReactiveFormsModule,
     FormsModule,
-
-    // Third-party
-    FaIconComponent,
-
     // Core & Shared
     BreadcrumbComponent,
     TabulatorComponent,
-    ToUpperCaseDirective,
-    ThemeButtonComponent,
 
     // Step Components
     UserStepComponent,
@@ -213,25 +169,13 @@ export class WizardConfigComponent implements OnInit {
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly _toasterService = inject(ToastrNotificationService);
   private readonly _estabService = inject(EstablishmentService);
-  private readonly _firmaElectronicaService = inject(FirmaElectronicaService);
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
-  private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
-  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
   private readonly _wizardStore = inject(WizardConfigStore);
 
   // Utility Injections
   private readonly _fb = inject(FormBuilder);
-  private readonly _announcer = inject(LiveAnnouncer);
-
-  // ============================================================================
-  // CONSTANTS & CONFIGURATION
-  // ============================================================================
-
-  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
-  readonly addOnBlur = true;
-  readonly faYoutube: IconProp = faYoutube;
 
   // Table Configuration
   readonly columnNames = [
@@ -286,23 +230,8 @@ export class WizardConfigComponent implements OnInit {
   telephones = signal<string[]>([]);
   docsConfig = signal<EstabWithChildren[]>([]);
 
-  // ============================================================================
-  // COMPUTED SIGNALS
-  // ============================================================================
-
   // Computed signals for derived state
-  readonly hasIncompleteSteps = computed(() => this.demoSteps().some((step) => !step.completed));
-
   readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
-
-  readonly canProceedToNextStep = computed(() => {
-    const currentStep = this.demoSteps()[this.currentStepIndex()];
-    return currentStep?.completed ?? false;
-  });
-
-  // ============================================================================
-  // COMPONENT STATE PROPERTIES
-  // ============================================================================
 
   // User & Authentication
   user = {} as UserData;
@@ -344,12 +273,6 @@ export class WizardConfigComponent implements OnInit {
     bodegas: this._fb.array<FormGroup<BodegaFormControls>>([]),
   });
 
-  userForm = new FormGroup<UserFormControls>({
-    nroIdentificacion: new FormControl(''),
-    firstName: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-    lastName: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
-  });
-
   tipoContribuyenteForm = this._fb.group({
     actividad: ['', Validators.required],
     agenteRetencion: '',
@@ -364,10 +287,6 @@ export class WizardConfigComponent implements OnInit {
 
   get bodegas(): FormArray {
     return this.estabForm.get('bodegas') as FormArray;
-  }
-
-  get ptosEmi(): FormArray {
-    return this.estabForm.get('ptosEmi') as FormArray;
   }
 
   // ============================================================================
@@ -489,89 +408,6 @@ export class WizardConfigComponent implements OnInit {
   }
 
   // ============================================================================
-  // FORM FACTORY METHODS
-  // ============================================================================
-
-  newBodega(): FormGroup {
-    return this._fb.group({
-      descripcion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
-      direccion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
-      telefono: [''],
-    });
-  }
-
-  newPtoEmi(): FormGroup {
-    return this._fb.group({
-      ptoEmi: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
-      ambiente: ['', Validators.required],
-    });
-  }
-
-  // ============================================================================
-  // FORM ARRAY MANAGEMENT METHODS
-  // ============================================================================
-
-  // ============================================================================
-  // CHIP MANAGEMENT METHODS
-  // ============================================================================
-
-  addEmail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.emails.update((prev) => [...prev, value]);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeEmail(value: string): void {
-    const index = this.emails().indexOf(value);
-    if (index >= 0) {
-      this.emails.update((prev) => prev.filter((_, i) => i !== index));
-      this._announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editEmail(email: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeEmail(email);
-    } else {
-      const index = this.emails().indexOf(email);
-      if (index >= 0) {
-        this.emails.update((prev) => prev.map((e, i) => (i === index ? value : e)));
-      }
-    }
-  }
-
-  addTelephone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.telephones.update((prev) => [...prev, value]);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeTelephone(value: string): void {
-    const index = this.telephones().indexOf(value);
-    if (index >= 0) {
-      this.telephones.update((prev) => prev.filter((_, i) => i !== index));
-      this._announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editTelephone(telephone: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeTelephone(telephone);
-    } else {
-      const index = this.telephones().indexOf(telephone);
-      if (index >= 0) {
-        this.telephones.update((prev) => prev.map((t, i) => (i === index ? value : t)));
-      }
-    }
-  }
-
-  // ============================================================================
   // SAVE METHODS
   // ============================================================================
 
@@ -606,26 +442,6 @@ export class WizardConfigComponent implements OnInit {
     });
   }
 
-  saveUser(): void {
-    const data = {
-      ...structuredClone(this.userForm.value),
-      email: this.user.email,
-      username: this.user.username,
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
-    };
-
-    const userData = {
-      data,
-      id: this.user.userId,
-    };
-
-    this._updateUserCustomerUseCase.execute(userData).subscribe((response) => {
-      if (isApiResponse(response)) {
-        this.handleUserSaveResponse(response);
-      }
-    });
-  }
-
   saveDocs(): void {
     const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
       pto._children
@@ -640,7 +456,7 @@ export class WizardConfigComponent implements OnInit {
               ultimaSecuencia: doc.ultimaSecuencia,
               descripcion: doc.descripcion || '',
               infoAdicional: false, // default or real value if available
-            } as DocConfig),
+            }) as DocConfig,
         ),
     );
     docs.forEach((docConfig: DocConfig) => {
@@ -667,59 +483,6 @@ export class WizardConfigComponent implements OnInit {
       const contribuyente: Contribuyente = { codigo, descripcion };
       this._wizardStore.saveContribuyenteData(contribuyente);
     }
-  }
-
-  // ============================================================================
-  // RESPONSE HANDLING METHODS
-  // ============================================================================
-
-  private handleUserSaveResponse(response: ApiResponse): void {
-    if (response.code === '0' && this.stepper) {
-      this.stepper.previous();
-    }
-    if (response.code === '1') {
-      this.userUpdated = true;
-      this.fetchCompanyDemoSteps();
-      this.fetchEstabData();
-    }
-    if (response.code !== '1') {
-      this._toasterService.warning({
-        message: response.message,
-        title: 'Error al guardar usuario',
-        options: {
-          positionClass: 'toast-top-center',
-        },
-      });
-    } else {
-      this._toasterService.success({ message: response.message });
-    }
-  }
-
-  private handleDocsSaveResponse(response: ApiResponse): void {
-    if (response.code === '0' && this.stepper) {
-      this.stepper.previous();
-    }
-    if (response.code === '1') {
-      this.docsUpdated = true;
-      this.fetchCompanyDemoSteps();
-    }
-    this._toasterService.show({
-      type: response.code === '1' ? 'success' : 'warning',
-      message: response.message,
-    });
-  }
-
-  private handleCertificateSaveResponse(response: ApiResponse): void {
-    if (response.code === '0' && this.stepper) {
-      this.stepper.previous();
-    }
-    if (response.code === '1') {
-      this.fetchCompanyDemoSteps();
-    }
-    this._toasterService.show({
-      type: response.code === '1' ? 'success' : 'warning',
-      message: response.message,
-    });
   }
 
   // ============================================================================
@@ -779,23 +542,6 @@ export class WizardConfigComponent implements OnInit {
   trackByStep(index: number, step: DemoStep): string {
     return step.code;
   }
-
-  trackByEmail(index: number, email: string): string {
-    return email;
-  }
-
-  trackByTelephone(index: number, telephone: string): string {
-    return telephone;
-  }
-
-  trackByBodega(index: number): number {
-    return index;
-  }
-
-  trackByPtoEmi(index: number): number {
-    return index;
-  }
-
   // ============================================================================
   // UTILITY METHODS
   // ============================================================================
