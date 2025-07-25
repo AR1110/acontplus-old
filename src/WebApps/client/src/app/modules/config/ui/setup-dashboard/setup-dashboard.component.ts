@@ -7,9 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 
 // Angular Material imports
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,16 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-setup-dashboard',
-  imports: [
-    SetupTourComponent,
-    MatToolbarModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatChipsModule,
-    BreadcrumbComponent,
-  ],
+  imports: [SetupTourComponent, MatCardModule, MatButtonModule, MatIconModule, MatProgressBarModule, MatChipsModule],
   templateUrl: './setup-dashboard.component.html',
   styleUrl: './setup-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

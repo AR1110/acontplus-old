@@ -1,52 +1,58 @@
 // Setup Dashboard Styles
 .setup-container {
   min-height: 100vh;
-  //background: linear-gradient(135deg, #d61672 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1rem;
 
   .setup-header {
-    //background: linear-gradient(135deg, #d61672 0%, #764ba2 100%) !important;
-    //color: white;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1rem 2rem;
+    .header-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
 
-      .header-info {
-        .setup-title {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin: 0;
-          font-size: 2rem;
-          font-weight: 600;
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
 
-          .title-icon {
-            font-size: 2.5rem;
-            color: #ffd700;
+        .header-info {
+          .setup-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+
+            .title-icon {
+              font-size: 2.5rem;
+              color: #ffd700;
+            }
+          }
+
+          .setup-subtitle {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
           }
         }
 
-        .setup-subtitle {
-          margin: 0.5rem 0 0 0;
-          opacity: 0.9;
-          font-size: 1.1rem;
-        }
-      }
+        .header-actions {
+          button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
 
-      .header-actions {
-        button {
-          color: white;
-          border-color: rgba(255, 255, 255, 0.5);
-
-          &:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: white;
+            &:hover {
+              background: rgba(255, 255, 255, 0.3);
+              border-color: rgba(255, 255, 255, 0.5);
+            }
           }
         }
       }
@@ -54,12 +60,10 @@
   }
 
   .setup-progress {
-    padding: 2rem;
-    background: #f8f9fa;
+    padding: 0 0 2rem 0;
 
     .progress-card {
-      max-width: 1200px;
-      margin: 0 auto;
+      margin-bottom: 2rem;
 
       .progress-content {
         display: flex;
@@ -122,7 +126,7 @@
   }
 
   .setup-content {
-    padding: 2rem;
+    padding: 0;
     max-width: 1200px;
     margin: 0 auto;
 
@@ -274,16 +278,130 @@
         }
       }
     }
+
+    // Info Cards Section
+    .info-cards-section {
+      margin-top: 3rem;
+
+      .info-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+
+        .info-card {
+          transition: all 0.3s ease;
+          border-radius: 12px;
+          overflow: hidden;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
+
+          .info-card-avatar {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.help {
+              background: linear-gradient(135deg, #17a2b8, #138496);
+              color: white;
+            }
+
+            &.tips {
+              background: linear-gradient(135deg, #ffc107, #e0a800);
+              color: white;
+            }
+
+            &.status {
+              background: linear-gradient(135deg, #28a745, #1e7e34);
+              color: white;
+            }
+
+            mat-icon {
+              font-size: 1.5rem;
+            }
+          }
+
+          .info-card-features {
+            margin-top: 1rem;
+
+            .feature-item {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              color: #6c757d;
+
+              mat-icon {
+                font-size: 1.2rem;
+                color: #28a745;
+              }
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+
+          .status-indicators {
+            margin-top: 1rem;
+
+            .status-item {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              color: #6c757d;
+
+              .status-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+
+                &.online {
+                  background: #28a745;
+                  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+                }
+
+                &.good {
+                  background: #17a2b8;
+                  box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.3);
+                }
+
+                &.secure {
+                  background: #6f42c1;
+                  box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.3);
+                }
+              }
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+
+          &.help-card {
+            border-left: 4px solid #17a2b8;
+          }
+
+          &.tips-card {
+            border-left: 4px solid #ffc107;
+          }
+
+          &.status-card {
+            border-left: 4px solid #28a745;
+          }
+        }
+      }
+    }
   }
 
   .setup-actions {
-    padding: 2rem;
-    background: #f8f9fa;
+    padding: 2rem 0;
 
     .actions-card {
-      max-width: 1200px;
-      margin: 0 auto;
-
       .actions-content {
         display: flex;
         justify-content: space-between;

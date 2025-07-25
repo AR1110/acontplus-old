@@ -1,23 +1,28 @@
-<app-breadcrumb></app-breadcrumb>
 <div class="setup-container">
   <!-- Header Section -->
-  <mat-toolbar class="setup-header" color="primary">
-    <div class="header-content">
-      <div class="header-info">
-        <h1 class="setup-title">
-          <mat-icon class="title-icon">rocket_launch</mat-icon>
-          ¡Configuremos tu empresa!
-        </h1>
-        <p class="setup-subtitle">Completa estos pasos para comenzar a usar todas las funcionalidades</p>
-      </div>
-      <div class="header-actions">
-        <button mat-stroked-button color="accent" (click)="startTour()" type="button">
-          <mat-icon>help_outline</mat-icon>
-          Tour Guiado
-        </button>
-      </div>
-    </div>
-  </mat-toolbar>
+  <div class="setup-header">
+    <mat-card class="header-card" appearance="outlined">
+      <mat-card-content>
+        <div class="header-content">
+          <div class="header-info">
+            <h1 class="setup-title">
+              <mat-icon class="title-icon">rocket_launch</mat-icon>
+              ¡Configuremos tu empresa!
+            </h1>
+            <p class="setup-subtitle">Completa estos pasos para comenzar a usar todas las funcionalidades</p>
+          </div>
+          <div class="header-actions">
+            <button mat-raised-button color="primary" (click)="startTour()" type="button">
+              <ng-container>
+                <mat-icon>help_outline</mat-icon>
+                Tour Guiado
+              </ng-container>
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
   <!-- Progress Section -->
   <div class="setup-progress" [attr.data-tour]="'progress'">
@@ -208,6 +213,119 @@
             </mat-card-actions>
           </mat-card>
         }
+      </div>
+    </div>
+
+    <!-- Additional Information Cards -->
+    <div class="info-cards-section">
+      <div class="info-cards-grid">
+        <!-- Help & Support Card -->
+        <mat-card class="info-card help-card" appearance="outlined">
+          <mat-card-header>
+            <div mat-card-avatar class="info-card-avatar help">
+              <mat-icon>help_center</mat-icon>
+            </div>
+            <mat-card-title>¿Necesitas ayuda?</mat-card-title>
+            <mat-card-subtitle>Recursos de soporte disponibles</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Accede a nuestra documentación, tutoriales y soporte técnico para resolver cualquier duda.</p>
+            <div class="info-card-features">
+              <div class="feature-item">
+                <mat-icon>book</mat-icon>
+                <span>Documentación completa</span>
+              </div>
+              <div class="feature-item">
+                <mat-icon>video_library</mat-icon>
+                <span>Tutoriales en video</span>
+              </div>
+              <div class="feature-item">
+                <mat-icon>support_agent</mat-icon>
+                <span>Soporte técnico 24/7</span>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary">
+              <ng-container>
+                <mat-icon>open_in_new</mat-icon>
+                Ver Recursos
+              </ng-container>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <!-- Tips & Best Practices Card -->
+        <mat-card class="info-card tips-card" appearance="outlined">
+          <mat-card-header>
+            <div mat-card-avatar class="info-card-avatar tips">
+              <mat-icon>lightbulb</mat-icon>
+            </div>
+            <mat-card-title>Consejos y Mejores Prácticas</mat-card-title>
+            <mat-card-subtitle>Optimiza tu configuración</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Sigue estos consejos para obtener el máximo rendimiento de tu sistema empresarial.</p>
+            <div class="info-card-features">
+              <div class="feature-item">
+                <mat-icon>security</mat-icon>
+                <span>Configuración de seguridad</span>
+              </div>
+              <div class="feature-item">
+                <mat-icon>speed</mat-icon>
+                <span>Optimización de rendimiento</span>
+              </div>
+              <div class="feature-item">
+                <mat-icon>backup</mat-icon>
+                <span>Respaldos automáticos</span>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="accent">
+              <ng-container>
+                <mat-icon>tips_and_updates</mat-icon>
+                Ver Consejos
+              </ng-container>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <!-- System Status Card -->
+        <mat-card class="info-card status-card" appearance="outlined">
+          <mat-card-header>
+            <div mat-card-avatar class="info-card-avatar status">
+              <mat-icon>monitor_heart</mat-icon>
+            </div>
+            <mat-card-title>Estado del Sistema</mat-card-title>
+            <mat-card-subtitle>Monitoreo en tiempo real</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Mantén un seguimiento del estado y rendimiento de tu sistema empresarial.</p>
+            <div class="status-indicators">
+              <div class="status-item">
+                <div class="status-dot online"></div>
+                <span>Servicios en línea</span>
+              </div>
+              <div class="status-item">
+                <div class="status-dot good"></div>
+                <span>Rendimiento óptimo</span>
+              </div>
+              <div class="status-item">
+                <div class="status-dot secure"></div>
+                <span>Conexión segura</span>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary">
+              <ng-container>
+                <mat-icon>analytics</mat-icon>
+                Ver Detalles
+              </ng-container>
+            </button>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </div>
   </div>
