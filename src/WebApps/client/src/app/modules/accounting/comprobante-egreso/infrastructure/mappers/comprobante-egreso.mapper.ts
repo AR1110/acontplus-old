@@ -14,7 +14,7 @@ import {PagoDetalle} from "@accounting/comprobante-egreso/domain/pago-detalle.mo
 import {getValidId, isValidField} from "@core/utils/utils";
 import {formatDateToString} from "@core/utils/date.util";
 
-type ParamsGuardar = {
+interface ParamsGuardar {
   dataCuentaPorPagar: CuentaPorPagarLista,
   total: number,
   formasPago: FormaPago[],
@@ -55,8 +55,8 @@ export class ComprobanteEgresoMapper {
 
     } = response;
 
-    let entidadesFinanciera = entidadFinanciera.map((item: any) => {
-      let obj: EntidadFinanciera = {
+    const entidadesFinanciera = entidadFinanciera.map((item: any) => {
+      const obj: EntidadFinanciera = {
         idEntidadFinanciera: item.idEntidadFinanciera,
         descripcion: item.descripcion,
         codigo: item.codigo,
@@ -64,9 +64,9 @@ export class ComprobanteEgresoMapper {
       return obj;
     })
 
-    let subEntidadesFinanciera = subEntidadFinanciera.map((item: any) => {
+    const subEntidadesFinanciera = subEntidadFinanciera.map((item: any) => {
 
-      let obj: SubEntidadFinancieraSelectHtmlOnly = {
+      const obj: SubEntidadFinancieraSelectHtmlOnly = {
         idSubEntidadFinanciera: item.idSubEntidadFinanciera,
         idEntidadFinanciera: item.idEntidadFinanciera,
         descripcion: item.descripcion,
@@ -77,8 +77,8 @@ export class ComprobanteEgresoMapper {
       return obj;
     })
 
-    let bancos = banco.map((item: any) => {
-      let obj: BancoSelectOnly = {
+    const bancos = banco.map((item: any) => {
+      const obj: BancoSelectOnly = {
         idBanco: item.idBanco,
         descripcion: item.descripcion,
         codigo: item.codigo,
@@ -86,8 +86,8 @@ export class ComprobanteEgresoMapper {
       return obj;
     })
 
-    let estadosPago = estadoPago.map((item: any) => {
-      let obj: EstadoPago = {
+    const estadosPago = estadoPago.map((item: any) => {
+      const obj: EstadoPago = {
         idEstadoPago: item.idEstadoPago,
         descripcion: item.descripcion,
         codigo: item.codigo
@@ -95,9 +95,9 @@ export class ComprobanteEgresoMapper {
       return obj;
     })
 
-    let provinciaCiudades = groupCitiesByProvinceUtil(ciudad);
+    const provinciaCiudades = groupCitiesByProvinceUtil(ciudad);
 
-    let documentosTemp = documentos.map((item: any) => {
+    const documentosTemp = documentos.map((item: any) => {
       return {
         idCuentaPorPagar: item.idComprobante,
         idTipoDocumento: item.idTipoDocumento,

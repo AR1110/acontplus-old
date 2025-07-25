@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,7 +31,7 @@ import {finalize} from "rxjs/operators";
     templateUrl: './inv-model-page.component.html',
     styles: ``
 })
-export class InvModelPageComponent {
+export class InvModelPageComponent implements OnInit {
   private _modeloUseCase= inject(InventarioModeloUseCase);
   pagination = signal(new MatPagination());
   isLoadingResults = signal(false);
@@ -55,7 +55,7 @@ export class InvModelPageComponent {
   dataSource = new MatTableDataSource<any>([]);
 
   getMeasures() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };

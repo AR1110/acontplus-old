@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { Category } from '@accounting/category/domain/category';
@@ -30,7 +30,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
   templateUrl: './subcategory-modal.component.html',
   styles: ``,
 })
-export class SubcategoryModalComponent {
+export class SubcategoryModalComponent implements OnInit {
   data = inject<Subcategory>(MAT_DIALOG_DATA)
   categories = signal<Category[]>([])
   subcategoryForm = new FormGroup({

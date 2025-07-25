@@ -1,4 +1,4 @@
-import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
+import {Component, ElementRef, inject, signal, ViewChild, OnInit} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -36,7 +36,7 @@ import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-c
   templateUrl: './vehicle-add-edit-modal.component.html',
   styles: ``,
 })
-export class VehicleAddEditModalComponent {
+export class VehicleAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<VehicleAddEditModalComponent>);
   readonly data = inject<{
     id: number;

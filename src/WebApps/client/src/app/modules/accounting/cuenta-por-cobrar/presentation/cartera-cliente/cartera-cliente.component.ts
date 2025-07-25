@@ -1,5 +1,5 @@
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -51,7 +51,7 @@ import {MatInputModule} from "@angular/material/input";
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
 })
-export class CarteraClienteComponent {
+export class CarteraClienteComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
   private readonly _tokenUseCase = inject(TokenUseCase);
@@ -118,9 +118,9 @@ export class CarteraClienteComponent {
       );
       this.provinciasAgrupadas.set(provinciasAgrupadas)
 
-      let dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      let dataPuntoEmision = this.puntosEmision().find(
+      const dataPuntoEmision = this.puntosEmision().find(
         (ptoEmi) => ptoEmi.defaultPtoEmi,
       );
       this.dataSearch.codEstab = dataEstab?.codEstab ?? '';
@@ -139,7 +139,7 @@ export class CarteraClienteComponent {
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos().find(
+    const dataEstab = this.establecimientos().find(
       (estab) => estab.codEstab === this.dataSearch.codEstab,
     );
     this.puntosEmision.set(dataEstab?.puntosEmision ?? []);

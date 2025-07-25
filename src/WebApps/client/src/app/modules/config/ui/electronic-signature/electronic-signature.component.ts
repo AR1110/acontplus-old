@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import { MatButtonModule} from "@angular/material/button";
@@ -39,7 +39,7 @@ import {MatTooltip} from "@angular/material/tooltip";
   templateUrl: './electronic-signature.component.html',
   styles: ``
 })
-export class ElectronicSignatureComponent {
+export class ElectronicSignatureComponent implements OnInit {
 
   private $listUseCase = inject(ListElectronicSignatureUseCase)
   private $updateSignature = inject(UpdateSignatureElectronicSignatureUseCase);

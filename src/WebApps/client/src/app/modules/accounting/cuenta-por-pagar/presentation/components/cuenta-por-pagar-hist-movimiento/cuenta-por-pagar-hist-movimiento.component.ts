@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -47,7 +47,7 @@ import {CuentaPorPagarUseCase} from "@accounting/cuenta-por-pagar/application/cu
   templateUrl: './cuenta-por-pagar-hist-movimiento.component.html',
   styles: ``,
 })
-export class CuentaPorPagarHistMovimientoComponent {
+export class CuentaPorPagarHistMovimientoComponent implements OnInit {
   readonly dialogRef = inject(
     MatDialogRef<CuentaPorPagarHistMovimientoComponent>,
   );

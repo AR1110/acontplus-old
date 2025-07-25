@@ -15,8 +15,8 @@ export class UserService {
   private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER}`;
   private http = inject(HttpClient);
 
-  search<T extends { textSearch: string }>(data: T): Observable<Array<UserSearch>> {
-    let json = JSON.stringify({
+  search<T extends { textSearch: string }>(data: T): Observable<UserSearch[]> {
+    const json = JSON.stringify({
       tipo: 3,
       textSearch: data.textSearch,
     })

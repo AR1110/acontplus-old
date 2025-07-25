@@ -13,7 +13,7 @@ export class ListVehicleMapper {
   static fromJson(response: ApiResponse): ListVehicleResponse {
     let data = [] as any[]
     if(response.code==="1"){
-      let {vehicles=[]} = JSON.parse(response.payload as string)
+      const {vehicles=[]} = JSON.parse(response.payload as string)
 
       data = vehicles.map((item: any, index: number) => {
         return {

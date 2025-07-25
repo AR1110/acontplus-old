@@ -1,62 +1,88 @@
 @if (isActive && currentStep) {
   <div class="tour-overlay">
-    <div class="tour-popup" [class]="'position-' + currentStep.position">
+    <mat-card class="tour-popup" [class]="'position-' + currentStep.position" appearance="raised">
       <!-- Tour Header -->
-      <div class="tour-header">
-        <div class="tour-progress">
-          <span class="tour-step-counter">{{ currentStepIndex + 1 }} de {{ totalSteps }}</span>
-          <div class="tour-progress-bar">
-            <div class="tour-progress-fill" [style.width.%]="progressPercentage"></div>
+      <mat-card-header class="tour-header">
+        <div class="tour-progress-section">
+          <div class="tour-step-info">
+            <mat-chip-set>
+              <mat-chip class="step-counter">
+                <mat-icon matChipAvatar>info</mat-icon>
+                {{ currentStepIndex + 1 }} de {{ totalSteps }}
+              </mat-chip>
+            </mat-chip-set>
           </div>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="progressPercentage"
+            class="tour-progress-bar"
+          ></mat-progress-bar>
         </div>
-        <button class="tour-close-btn" (click)="endTour()" type="button" aria-label="Cerrar tour">
-          <i class="fas fa-times"></i>
+        <button
+          mat-icon-button
+          class="tour-close-btn"
+          (click)="endTour()"
+          type="button"
+          aria-label="Cerrar tour"
+          matTooltip="Cerrar tour"
+        >
+          <mat-icon>close</mat-icon>
         </button>
-      </div>
+      </mat-card-header>
 
       <!-- Tour Content -->
-      <div class="tour-content">
-        <h4 class="tour-title">{{ currentStep.title }}</h4>
-        <p class="tour-description" [innerHTML]="currentStep.content"></p>
-      </div>
+      <mat-card-content class="tour-content">
+        <h2 class="tour-title">{{ currentStep.title }}</h2>
+        <div class="tour-description" [innerHTML]="currentStep.content"></div>
+      </mat-card-content>
 
       <!-- Tour Actions -->
-      <div class="tour-actions">
+      <mat-card-actions class="tour-actions" align="end">
         <div class="tour-actions-left">
           @if (currentStep.showSkip && canGoNext) {
-            <button class="btn btn-link btn-sm tour-skip-btn" (click)="skipTour()" type="button">
-              <i class="fas fa-forward me-1"></i>
-              Saltar Tour
+            <button mat-button color="warn" (click)="skipTour()" type="button">
+              <ng-container>
+                <mat-icon>skip_next</mat-icon>
+                Saltar Tour
+              </ng-container>
             </button>
           }
         </div>
 
         <div class="tour-actions-right">
           @if (canGoPrevious) {
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="previousStep()" type="button">
-              <i class="fas fa-chevron-left me-1"></i>
-              Anterior
+            <button mat-stroked-button (click)="previousStep()" type="button">
+              <ng-container>
+                <mat-icon>chevron_left</mat-icon>
+                Anterior
+              </ng-container>
             </button>
           }
 
           @if (canGoNext) {
-            <button class="btn btn-primary btn-sm" (click)="nextStep()" type="button">
-              Siguiente
-              <i class="fas fa-chevron-right ms-1"></i>
+            <button mat-raised-button color="primary" (click)="nextStep()" type="button">
+              <ng-container>
+                Siguiente
+                <mat-icon iconPositionEnd>chevron_right</mat-icon>
+              </ng-container>
             </button>
           }
 
           @if (!canGoNext) {
-            <button class="btn btn-success btn-sm" (click)="endTour()" type="button">
-              <i class="fas fa-check me-1"></i>
-              Finalizar
+            <button mat-raised-button color="accent" (click)="endTour()" type="button">
+              <ng-container>
+                <mat-icon>check</mat-icon>
+                Finalizar
+              </ng-container>
             </button>
           }
         </div>
-      </div>
+      </mat-card-actions>
 
       <!-- Tour Arrow -->
-      <div class="tour-arrow" [class]="'arrow-' + currentStep.position"></div>
-    </div>
+      <div class="tour-arrow" [class]="'arrow-' + currentStep.position">
+        <mat-icon class="arrow-icon">play_arrow</mat-icon>
+      </div>
+    </mat-card>
   </div>
 }

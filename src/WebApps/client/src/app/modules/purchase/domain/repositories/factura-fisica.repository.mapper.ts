@@ -13,7 +13,7 @@ export class FacturaFisicaRepositoryMapper {
       subcategories
     } = response;
 
-    let dataToGroup = {
+    const dataToGroup = {
       estabs: tempEstabs,
       isGroupPuntoEmision: true
     }
@@ -85,7 +85,7 @@ export class FacturaFisicaRepositoryMapper {
       direccion: direccionComprador,
     } = proveedor[0];
 
-    let result = {
+    const result = {
       infoTributaria: {
         nombreEstab,
         serieComprobante,
@@ -111,7 +111,7 @@ export class FacturaFisicaRepositoryMapper {
         pagos: [],
       },
       detalles: detalles.map((item: any, index: number) => {
-        let total = item.precioTotalSinImpuesto + item.valorImpuesto;
+        const total = item.precioTotalSinImpuesto + item.valorImpuesto;
 
         return {
           n: index + 1,
@@ -154,7 +154,7 @@ export class FacturaFisicaRepositoryMapper {
       subcategories
     } = response;
 
-    let dataToGroup = {
+    const dataToGroup = {
       bodegas: bodegas,
       isGroupBodega: true
     }

@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
     ],
     templateUrl: './sub-category.component.html'
 })
-export class SubCategoryComponent {
+export class SubCategoryComponent implements OnInit {
   pagination = signal(new MatPagination());
   visibleColumns: string[] = [
     'index',
@@ -55,7 +55,7 @@ export class SubCategoryComponent {
   }
 
   getSubcategories() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
@@ -108,7 +108,7 @@ export class SubCategoryComponent {
 
   async askToUpdateStatus(obj: any) {
     try {
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         icon: 'warning',
         html: `<small>Esta seguro/a de eliminar esta subfamilia ahora?</small>`,
         confirmButtonText: 'Si, eliminar',

@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -56,7 +56,7 @@ const imports = [
   imports,
   templateUrl: './sale-report-page.component.html',
 })
-export class SaleReportPageComponent {
+export class SaleReportPageComponent implements OnInit {
   isSelectedNotaEntrega = false;
   dataSearch = {
     checkBoxCustomer: false,
@@ -129,9 +129,9 @@ export class SaleReportPageComponent {
       );
       this.provinciasAgrupadas.set(provinciasAgrupadas)
 
-      let dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      let dataPuntoEmision = this.puntosEmision().find(
+      const dataPuntoEmision = this.puntosEmision().find(
         (ptoEmi) => ptoEmi.defaultPtoEmi,
       );
 
@@ -162,7 +162,7 @@ export class SaleReportPageComponent {
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos().find(
+    const dataEstab = this.establecimientos().find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
@@ -205,20 +205,20 @@ export class SaleReportPageComponent {
   }
 
   private getDataParams() {
-    let dataEstab = this.establecimientos().find(
+    const dataEstab = this.establecimientos().find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
-    let dataEstado = this.estadosDoc().find(
+    const dataEstado = this.estadosDoc().find(
       (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
 
-    let identificacion = this.dataSearch.checkBoxCustomer
+    const identificacion = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.identificacion)
       : null;
-    let idUsuario = this.dataSearch.checkBoxUser
+    const idUsuario = this.dataSearch.checkBoxUser
       ? isValidField(this.dataSearch.userId)
       : null;
-    let idCliente = this.dataSearch.checkBoxCustomer
+    const idCliente = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
 
@@ -265,7 +265,7 @@ export class SaleReportPageComponent {
     try {
       if (!this.isValidDataSearch()) return;
 
-      let reportParams = JSON.stringify({
+      const reportParams = JSON.stringify({
         hasParams: false,
         codigo: SALE_CODE_REPORT.FG,
         format: this.format,

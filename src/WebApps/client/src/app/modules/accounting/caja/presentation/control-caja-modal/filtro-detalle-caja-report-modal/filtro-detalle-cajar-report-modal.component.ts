@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject   } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit   } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -36,7 +36,7 @@ import {MatSlideToggle} from "@angular/material/slide-toggle";
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FiltroDetalleCajaReportModal {
+export class FiltroDetalleCajaReportModal implements OnInit {
   private dialogRef = inject(MatDialogRef<FiltroDetalleCajaReportModal>);
   params = inject<{
     id: 0,
@@ -51,8 +51,8 @@ export class FiltroDetalleCajaReportModal {
     toDate: new Date(),
     ckHora: true,
   };
-  entidadesFinanciera: Array<EntidadFinanciera> = [];
-  tipoDocumentos: Array<TipoDoc> = [];
+  entidadesFinanciera: EntidadFinanciera[] = [];
+  tipoDocumentos: TipoDoc[] = [];
 
   private _controlCajaUseCase = inject(ControlCajaUseCase);
 
@@ -96,7 +96,7 @@ export class FiltroDetalleCajaReportModal {
     const inputElement = event.target as HTMLInputElement;
     const timeStr = inputElement.value;
     const [time, modifier] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
+    const [hours, minutes] = time.split(":").map(Number);
 
     // Actualiza solo la hora y el minuto manteniendo la fecha actual
     if (fromDate) {
@@ -119,7 +119,7 @@ export class FiltroDetalleCajaReportModal {
         return;
       }
 
-      let dataParams = {
+      const dataParams = {
         tipo: 2,
         idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
         codDoc: isValidField(this.dataSearch.codDoc),

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -20,7 +20,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
-export class CategoryModalComponent {
+export class CategoryModalComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private modalRef = inject(MatDialogRef<CategoryModalComponent>);
   private tS = inject(ToastrNotificationService);

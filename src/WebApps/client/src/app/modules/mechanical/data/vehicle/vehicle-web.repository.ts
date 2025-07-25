@@ -28,7 +28,7 @@ export class VehicleWebRepository extends VehicleRepository{
   }
 
   getDataForm() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2
     })
     return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
@@ -39,7 +39,7 @@ export class VehicleWebRepository extends VehicleRepository{
   }
 
   getId(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       id,
       tipo: 3
     })

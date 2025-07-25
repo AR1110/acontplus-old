@@ -4,7 +4,7 @@ import { TiempoCredito } from "@accounting/shared/models/tiempo-credito.interfac
 import { formatDateToString } from "@core/utils/date.util";
 
 // Función para calcular detalles de cuotas basadas en términos de crédito
-type QuotaProps = {
+interface QuotaProps {
   id?: number
   fechaEmision: Date
   tiemposCredito: TiempoCredito[]
@@ -46,7 +46,7 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
   // Mapeo de detalles de cuotas basado en el array
   const resultCuotas = cuotasArray.map((num, index) => {
     // Verificación de si la cuota tiene entrada y es la primera
-    let tieneEntrada = entrada && num === 1;
+    const tieneEntrada = entrada && num === 1;
 
     // Cálculo de los días acumulados hasta la cuota actual
     let sumDia = 0;
@@ -111,7 +111,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
 
   const resultCuotas = cuotas.map((cuota) => {
     if (!cuota.entrada) {
-      let sumDia = cuota.nroCuota * diaCuota;
+      const sumDia = cuota.nroCuota * diaCuota;
       // Cálculo de la fecha de vencimiento para la cuota
       const fechaVencimiento = new Date(fechaEmision.getTime() + sumDia * 24 * 60 * 60 * 1000);
 
@@ -150,13 +150,13 @@ export const isValidGeneratorQuota = (obj: QuotaProps) => {
   let montoTotalCuota = 0;
 
   if (!(obj.id && obj.id > 0)) {
-    let dataCuota = registerGenerateQuota(obj);
+    const dataCuota = registerGenerateQuota(obj);
     cuotas = dataCuota.cuotas;
     montoTotalCuota = dataCuota.montoTotalCuota;
 
   }
   if ((obj.id && obj.id > 0)) {
-    let dataCuota = updateGeneratQCuota(obj)
+    const dataCuota = updateGeneratQCuota(obj)
     cuotas = dataCuota.cuotas;
     montoTotalCuota = dataCuota.montoTotalCuota;
   }

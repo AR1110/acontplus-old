@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 
 import {
   FormControl,
@@ -46,7 +46,7 @@ import {MatSelectModule} from "@angular/material/select";
   templateUrl: './medical-history-modal.component.html',
   styles: ``,
 })
-export class MedicalHistoryModalComponent {
+export class MedicalHistoryModalComponent implements OnInit {
   behaviors = signal<Behavior[]>([]);
   behaviorsStatuses = signal<BehaviorStatus[]>([]);
   behaviorTests = signal<BehaviorTest[]>([]);

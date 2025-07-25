@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
@@ -33,7 +33,7 @@ import {
   templateUrl: './user-customer.component.html',
   styles: ``
 })
-export class UserCustomerComponent {
+export class UserCustomerComponent implements OnInit {
   private $listUserCustomerUseCase = inject(ListUserCustomerUseCase)
   private _tS = inject(ToastrNotificationService)
   private _dialogSvc = inject(DialogService)

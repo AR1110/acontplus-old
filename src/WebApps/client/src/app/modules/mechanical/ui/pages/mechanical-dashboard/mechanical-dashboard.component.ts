@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
@@ -16,7 +16,7 @@ Chart.register(...registerables);
   ],
   templateUrl: './mechanical-dashboard.component.html',
 })
-export class MechanicalDashboardComponent {
+export class MechanicalDashboardComponent implements OnInit {
   $store = inject(MechanicalStore);
   chartSupports: any;
   data = {
@@ -29,8 +29,8 @@ export class MechanicalDashboardComponent {
     this.supportUseCase.getDashboard().subscribe((response) => {
       console.log(response);
       this.data = response.data;
-      let labels = response.barchart.map((i: any) => i.status);
-      let data = response.barchart.map((i: any) => i.quantity);
+      const labels = response.barchart.map((i: any) => i.status);
+      const data = response.barchart.map((i: any) => i.quantity);
 
       this.chartSupports = new Chart('chartSupports', {
         type: 'bar',

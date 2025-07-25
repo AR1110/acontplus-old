@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -54,7 +54,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
   templateUrl: './document-received.component.html',
   styles: ``,
 })
-export class DocumentReceivedComponent {
+export class DocumentReceivedComponent implements OnInit {
   documents: DocumentReceived[] = [];
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -100,11 +100,11 @@ export class DocumentReceivedComponent {
         message: 'Seleccione el Establecimiento',
       });
     }
-    let dataEstab = this.establecimientos.find(
+    const dataEstab = this.establecimientos.find(
       (estab) => estab.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Estab.: ' + dataEstab.nombreComercial,
         text: 'Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?',
         icon: 'warning',
@@ -123,7 +123,7 @@ export class DocumentReceivedComponent {
     this._documentReceivedUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       this.documentTypes = response.documentTypes;
-      let codEstabFound = this.establecimientos.find(
+      const codEstabFound = this.establecimientos.find(
         (x) => x.predeterminado,
       )?.codEstab;
       if (codEstabFound) {

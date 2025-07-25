@@ -4,9 +4,17 @@ import { TourService } from '@modules/config/services/tour.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
+// Angular Material imports
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+
 @Component({
   selector: 'app-setup-tour',
-  imports: [],
+  imports: [MatCardModule, MatButtonModule, MatIconModule, MatProgressBarModule, MatChipsModule, MatTooltipModule],
   templateUrl: './setup-tour.component.html',
   styleUrl: './setup-tour.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

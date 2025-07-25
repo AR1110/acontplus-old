@@ -16,7 +16,7 @@ export class PrinterWebRepository implements PrinterRepository {
   private readonly _urlPrinter = `${PATHS_API.PRINT_SERVER}GetPrinters`;
 
   getPrinters(): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
@@ -24,8 +24,8 @@ export class PrinterWebRepository implements PrinterRepository {
         if (response.code !== '1') {
           return { printers: [] };
         }
-        let { printers } = JSON.parse(response.payload as string);
-        let results = printers.map((item: any) => {
+        const { printers } = JSON.parse(response.payload as string);
+        const results = printers.map((item: any) => {
           item.default = item.isDefault ? 'Si' : 'No';
           item.server = item.serverDevice ? 'Si' : 'No';
           item.labelEnabled = item.enabled ? 'Activa' : 'Inactiva';
@@ -39,7 +39,7 @@ export class PrinterWebRepository implements PrinterRepository {
   }
 
   getDataForm(): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
@@ -67,7 +67,7 @@ export class PrinterWebRepository implements PrinterRepository {
     };
     return this._http.get<ApiResponse>(this._urlPrinter, requestOptions).pipe(
       map((response) => {
-        let mainData = response.payload;
+        const mainData = response.payload;
         return {
           localPrinters: mainData,
         };
@@ -76,7 +76,7 @@ export class PrinterWebRepository implements PrinterRepository {
   }
 
   getById(id: number): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3,
       id,
     });

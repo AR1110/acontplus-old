@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
@@ -47,7 +47,7 @@ type TipoDocSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
     MatInputModule
   ],
 })
-export class ReporteCobrosComponent  {
+export class ReporteCobrosComponent implements OnInit  {
   http = inject(HttpClient);
   // VARIABLES Y CONSTANTES
   establecimientos = signal<GroupedEstab[]>([]);
@@ -118,7 +118,7 @@ export class ReporteCobrosComponent  {
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos().find(
+      const dataEstab = this.establecimientos().find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {

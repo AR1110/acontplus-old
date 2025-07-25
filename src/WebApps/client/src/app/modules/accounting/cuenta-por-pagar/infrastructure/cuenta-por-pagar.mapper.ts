@@ -11,11 +11,11 @@ import {
 
 export class CuentaPorPagarMapper {
   static fromApiDataFilter(response: ApiResponse) {
-    let [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
+    const [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
       response.payload as string,
     );
 
-    let dataToGroup = {
+    const dataToGroup = {
       estabs: tempEstabs,
       isGroupPuntoEmision: true,
     };

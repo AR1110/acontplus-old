@@ -13,7 +13,7 @@ export class UserCustomerPermissionService {
   private http = inject(HttpClient)
 
   getAll<T>(data: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...data,
       tipo: 1
     })

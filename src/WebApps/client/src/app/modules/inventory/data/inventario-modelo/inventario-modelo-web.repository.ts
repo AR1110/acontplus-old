@@ -17,7 +17,7 @@ export class InventarioModeloWebRepository implements InventarioModeloRepository
   private _http = inject(HttpClient);
 
   getAll<T>(obj: T): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -25,7 +25,7 @@ export class InventarioModeloWebRepository implements InventarioModeloRepository
       context: getNoLoader()
     }).pipe(
       map(response => {
-        let result = {
+        const result = {
           data: [] as any[]
         }
         if (response.code === "1") {

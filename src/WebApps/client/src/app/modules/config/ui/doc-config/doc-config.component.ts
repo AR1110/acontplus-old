@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   inject, model,
-  OnInit, signal, TemplateRef, ViewChild,
+  OnInit, signal, TemplateRef, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -48,7 +48,7 @@ import {
   templateUrl: './doc-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocConfigPageComponent implements OnInit {
+export class DocConfigPageComponent implements OnInit, AfterViewInit {
   private $listUseCase = inject(ListDocConfigUseCase)
   private $createUseCase = inject(CreateDocConfigUseCase)
   private $formDataDocConfig = inject(GetDocConfigFormDataUseCase)

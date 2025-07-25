@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -52,7 +52,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CompanyCustomerAddEditDialogComponent {
+export class CompanyCustomerAddEditDialogComponent implements OnInit {
 
   readonly dialogRef = inject(MatDialogRef<CompanyCustomerAddEditDialogComponent>);
       readonly params = inject<{

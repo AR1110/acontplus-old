@@ -1,6 +1,6 @@
 import { TarifaProducto } from "./tarifa.model"
 
-export type Measure = {
+export interface Measure {
     idMedida: number,
     descripcion: string
     estado: boolean,

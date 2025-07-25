@@ -66,11 +66,11 @@ export class OrderDocumentComponent implements OnInit {
   }
 
   get() {
-    let params = { tipo: 5, id: this.data.id };
+    const params = { tipo: 5, id: this.data.id };
 
     this.orderService.get(params).subscribe(  (response: any) => {
         if (response.code === '1') {
-          let { documento, documentoDetalle } = JSON.parse(response.payload);
+          const { documento, documentoDetalle } = JSON.parse(response.payload);
           this.documento = documento;
           this.documentDetails.set(documentoDetalle)
         }

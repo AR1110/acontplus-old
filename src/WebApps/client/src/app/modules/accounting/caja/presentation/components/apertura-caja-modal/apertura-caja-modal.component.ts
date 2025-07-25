@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -28,13 +28,13 @@ import {PaymentTypeCode} from "@accounting/shared/enums/accounting.constants";
     ],
   templateUrl: './apertura-caja-modal.component.html',
 })
-export class AperturaCajaModalComponent {
+export class AperturaCajaModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AperturaCajaModalComponent>)
   readonly params = inject<{ idCaja: number }>(MAT_DIALOG_DATA);
   private _controlCajaUseCase = inject(ControlCajaUseCase);
   private tS = inject(ToastrNotificationService);
 
-  entidadesFinanciera: Array<EntidadFinanciera> = [];
+  entidadesFinanciera: EntidadFinanciera[] = [];
 
   dataForm = new FormGroup({
     idCaja: new FormControl(0),
@@ -47,9 +47,9 @@ export class AperturaCajaModalComponent {
     this.dataForm.get('idCaja')?.setValue(this.params.idCaja);
 
     this._controlCajaUseCase.getDataForm().subscribe((response) => {
-      let { formaPagos } = response as { formaPagos: any };
+      const { formaPagos } = response as { formaPagos: any };
       this.entidadesFinanciera = formaPagos;
-      let dataEF = this.entidadesFinanciera.find(item=>item.codigo===PaymentTypeCode.EFE)
+      const dataEF = this.entidadesFinanciera.find(item=>item.codigo===PaymentTypeCode.EFE)
       if(dataEF){
         this.dataForm.get('idEntidadFinanciera')?.setValue(dataEF.idEntidadFinanciera);
       }
@@ -58,7 +58,7 @@ export class AperturaCajaModalComponent {
 
   save() {
     try {
-      let data = this.dataForm.value;
+      const data = this.dataForm.value;
       if (this.dataForm.invalid) {
         this.tS.show({
           type: 'warning',

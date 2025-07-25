@@ -5,7 +5,7 @@ import {ApiResponse} from "@core/models/api-response";
 import { Observable } from "rxjs";
 import {FractionalProductRepository} from "@inventory/product/domain/repositories/fractional-product.repository";
 
-type Params = {
+interface Params {
   data: any,
   totalRecords: number
 }

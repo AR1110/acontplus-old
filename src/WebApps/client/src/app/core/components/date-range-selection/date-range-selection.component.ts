@@ -7,7 +7,7 @@ import {
   model,
   output,
   Output,
-  ViewChild,
+  ViewChild, AfterViewInit,
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
@@ -32,7 +32,7 @@ declare let DateRangePicker: any;
   imports: [FormsModule, MatInputModule, MatFormFieldModule, MatCheckboxModule],
   templateUrl: './date-range-selection.component.html',
 })
-export class DateRangeSelectionComponent {
+export class DateRangeSelectionComponent implements AfterViewInit {
   showInputMaterial = input(false);
   showMatSuffix = input(false);
   showMatPrefix = input(false);
@@ -96,7 +96,7 @@ export class DateRangeSelectionComponent {
     const valorInput = document.getElementById(`${this.uniqueId}`) as any;
 
     (function (DateRangePicker) {
-      let drp = new DateRangePicker(
+      const drp = new DateRangePicker(
         valorInput,
         {
           startDate: self.from ? self.from : undefined,

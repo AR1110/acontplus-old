@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewEncapsulation} from '@angular/core';
+import {Component, inject, signal, ViewEncapsulation, OnInit} from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
   CODE_ESTADO,
@@ -58,7 +58,7 @@ import {MatButtonModule} from "@angular/material/button";
   templateUrl: './control-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-export class ControlCajaModalComponent {
+export class ControlCajaModalComponent implements OnInit {
 
   private dialogRef = inject(MatDialogRef<ControlCajaModalComponent>)
   readonly params = inject<{
@@ -229,7 +229,7 @@ export class ControlCajaModalComponent {
           backdrop: true,
           preConfirm: async (clave) => {
             try {
-              let obj = {
+              const obj = {
                 typeCheck: 1,
                 clave,
               };
@@ -297,7 +297,7 @@ export class ControlCajaModalComponent {
           allowEscapeKey: false,
           backdrop: true,
           preConfirm: async (clave) => {
-            let obj = {
+            const obj = {
               typeCheck: 1,
               clave,
             };
@@ -332,7 +332,7 @@ export class ControlCajaModalComponent {
   }
 
   generateReport(idControlCaja: number, format: REPORT_FORMAT) {
-    let dataParms = {
+    const dataParms = {
       tipo: 1,
       id: idControlCaja,
     };

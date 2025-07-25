@@ -19,7 +19,7 @@ export class TablaResumenTotalesComponent {
     };
 
     // Calculate totals using the utility function
-    let newTotalizadorUtil = new TotalizadorUtil()
+    const newTotalizadorUtil = new TotalizadorUtil()
     newTotalizadorUtil.calcular(obj);
 
     // Update the signal with the new totals HTML

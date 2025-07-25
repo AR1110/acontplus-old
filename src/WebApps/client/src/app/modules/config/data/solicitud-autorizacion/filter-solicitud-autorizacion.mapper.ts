@@ -15,7 +15,7 @@ export class FilterSolicitudAutorizacionMapper {
   static fromJson(response: ApiResponse): SolicitudAutorizacionFilterResponse {
     const payload= JSON.parse(response.payload as any)
 
-      let estabs = groupEstabUtil({
+      const estabs = groupEstabUtil({
         estabs: payload.estabs,
         isGroupPuntoEmision: true
       })

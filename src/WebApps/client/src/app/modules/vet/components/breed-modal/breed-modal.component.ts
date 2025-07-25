@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -22,7 +22,7 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
   templateUrl: './breed-modal.component.html',
   styles: ``,
 })
-export class BreedModalComponent {
+export class BreedModalComponent implements OnInit {
   data = inject<Breed>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Raza';

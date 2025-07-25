@@ -5,30 +5,30 @@ import { TarifaProducto } from "@inventory/domain/models/tarifa.model";
 
 export class FieldDefinitionDetailSale {
   rowguid: string = generateUuidv4()
-  bodegaId: number = 0;
-  feeId: number = 0;
-  medidaId: number = 0;
-  productId: number = 0;
-  descripcion: string = ""
-  codigo: string = ""
-  taxId: number = 0;
-  taxPercentId: number = 0;
-  quantity: number = 0;
-  cost: number = 0;
-  precioConIva: number = 0;
-  taxValue: number = 0;
-  price: number = 0;
-  percentageDiscount: number =0;
-  discount: number = 0;
-  precioTotalSinImpuesto: number = 0;
-  total: number = 0;
+  bodegaId = 0;
+  feeId = 0;
+  medidaId = 0;
+  productId = 0;
+  descripcion = ""
+  codigo = ""
+  taxId = 0;
+  taxPercentId = 0;
+  quantity = 0;
+  cost = 0;
+  precioConIva = 0;
+  taxValue = 0;
+  price = 0;
+  percentageDiscount =0;
+  discount = 0;
+  precioTotalSinImpuesto = 0;
+  total = 0;
   obs?: string | null = null
   medidas: MedidaProducto[] = []
   tarifas: TarifaProducto[] = []
   consolidacionesBodega!: ConsolidacionBodega[];
-  costoFraccionado: number = 0;
-  llevaInventario: boolean = false
-  conversion: number= 1;
+  costoFraccionado = 0;
+  llevaInventario = false
+  conversion= 1;
   percentage?:number =0
 }
 

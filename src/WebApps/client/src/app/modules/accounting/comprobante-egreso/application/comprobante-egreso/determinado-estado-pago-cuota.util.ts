@@ -2,7 +2,7 @@ import { CodigoEstadoPago } from "@accounting/shared/enums/codigo-estado-pago.en
 import { EstadoPago } from "@accounting/comprobante-egreso/domain/estado-pago.interface"
 
 
- type Props = {
+ interface Props {
   abono: number
   saldo: number
   esPosfechado?: boolean

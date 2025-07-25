@@ -1,4 +1,4 @@
-import {Component,   inject, input,  model, output,  signal} from '@angular/core';
+import {Component,   inject, input,  model, output,  signal, OnInit} from '@angular/core';
 import {
   Observable,
   switchMap,
@@ -19,7 +19,7 @@ import {AsyncPipe} from "@angular/common";
     templateUrl: './item-search.component.html',
     styles: ``
 })
-export class ItemSearchComponent {
+export class ItemSearchComponent implements OnInit {
   clearInput = output()
   selectedEvent = output<any>()
    textSearch = model('');

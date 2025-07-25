@@ -7,7 +7,7 @@ import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 export class ProductGetIdMapper {
 
   static fromJson(responseApi:ApiResponse){
-    let resultResponse = new ApiResponse()
+    const resultResponse = new ApiResponse()
     const {
       products,
       productPvps: productPvpsApi ,
@@ -32,7 +32,7 @@ export class ProductGetIdMapper {
       fechaCaducidadLote = formatDate(mainDataProduct.fechaCaducidadLote);
     }
 
-    let data = {
+    const data = {
       idArticulo: mainDataProduct.idArticulo,
       idSubFamilia: mainDataProduct.idSubFamilia,
       idTipoIce: mainDataProduct.idTipoIce,

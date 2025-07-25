@@ -71,7 +71,7 @@ export const getDataFormaPagoState = (): FormaPago => {
   });
 }
 
-let initialComprobanteEgresoState: ComprobanteEgresoStore = {
+const initialComprobanteEgresoState: ComprobanteEgresoStore = {
   isLoading: false,
   dataCuentaPorPagar: {},
   cuentasPorPagar: [],
@@ -105,13 +105,13 @@ export const ComprobanteEgresoStore = signalStore(
     return {
 
       total: computed(() => {
-        let total = cuentasPorPagar().reduce((acumulado, cuenta) => acumulado + cuenta.total, 0)
+        const total = cuentasPorPagar().reduce((acumulado, cuenta) => acumulado + cuenta.total, 0)
         return roundNumber(total, DECIMALS.DOS)
       }
 
       ),
       abono: computed(() => {
-        let valorAbonoInput = formasPago().reduce((acumulado, cuota) => acumulado + cuota.valorAbonoInput, 0)
+        const valorAbonoInput = formasPago().reduce((acumulado, cuota) => acumulado + cuota.valorAbonoInput, 0)
         return roundNumber(valorAbonoInput, DECIMALS.DOS)
 
       }
@@ -123,8 +123,8 @@ export const ComprobanteEgresoStore = signalStore(
 
       valorDiferencia: computed(() => {
         let diferencia = 0;
-        let saldoInicial = store.cuentasPorPagarCopy().reduce((acc, curr) => acc + curr.saldo, 0);
-        let valorAbonoInput = formasPago().reduce((acumulado, cuota) => acumulado + cuota.valorAbonoInput, 0)
+        const saldoInicial = store.cuentasPorPagarCopy().reduce((acc, curr) => acc + curr.saldo, 0);
+        const valorAbonoInput = formasPago().reduce((acumulado, cuota) => acumulado + cuota.valorAbonoInput, 0)
 
         if (valorAbonoInput >= saldoInicial) {
           diferencia = minus(valorAbonoInput, saldoInicial, DECIMALS.DOS) as number
@@ -185,12 +185,12 @@ export const ComprobanteEgresoStore = signalStore(
       },
 
       updateDataEntidadFinanciera: (data: EntidadFinanciera) => {
-        let subEntidadesFinancieraFiltered = store
+        const subEntidadesFinancieraFiltered = store
           .subEntidadesFinanciera()
           .filter(
             (item) => item.idEntidadFinanciera === data.idEntidadFinanciera,
           );
-        let dataSubEntidadFinanciera =
+        const dataSubEntidadFinanciera =
           subEntidadesFinancieraFiltered.length > 0
             ? subEntidadesFinancieraFiltered[0]
             : null;
@@ -283,8 +283,8 @@ export const ComprobanteEgresoStore = signalStore(
           }
         });
 
-        let secuencial = store.getSecuencialFormasPago();
-        let compEgresoUtil = new ComprobanteEgresoUtil(structuredClone(store.cuentasPorPagar()));
+        const secuencial = store.getSecuencialFormasPago();
+        const compEgresoUtil = new ComprobanteEgresoUtil(structuredClone(store.cuentasPorPagar()));
         console.log(compEgresoUtil)
         compEgresoUtil.setSecuencial(secuencial)
         compEgresoUtil.setValorAbono(valorAbono);
@@ -295,12 +295,12 @@ export const ComprobanteEgresoStore = signalStore(
 
         compEgresoUtil.abonar();
 
-        let pagosDetalle = compEgresoUtil.getPagosDetalle();
-        let cuentasPorPagarHistorial = compEgresoUtil.getCuentasPorPagarHistorial()
+        const pagosDetalle = compEgresoUtil.getPagosDetalle();
+        const cuentasPorPagarHistorial = compEgresoUtil.getCuentasPorPagarHistorial()
 
-        let dataCiudad = store.provinciaCiudades().flatMap(item => item.ciudades).find(item => item.idCiudad === idCiudad)
+        const dataCiudad = store.provinciaCiudades().flatMap(item => item.ciudades).find(item => item.idCiudad === idCiudad)
 
-        let dataBanco = store.bancos().find(item => item.idBanco === idBanco);
+        const dataBanco = store.bancos().find(item => item.idBanco === idBanco);
 
 
 
@@ -308,7 +308,7 @@ export const ComprobanteEgresoStore = signalStore(
           .reduce((acc, curr) => acc + curr.abono, 0)
 
 
-        let dataFormaPago: FormaPago = {
+        const dataFormaPago: FormaPago = {
           ...store.dataFormaPago(),
           nombreCiudad: dataCiudad?.descripcion,
           nombreBanco: dataBanco?.descripcion,
@@ -331,7 +331,7 @@ export const ComprobanteEgresoStore = signalStore(
 
       async eliminarFormaPago(data: FormaPago) {
 
-        let { isConfirmed } = await Swal.fire({
+        const { isConfirmed } = await Swal.fire({
           html: `<small>¿Esta seguro/a de eliminar este Abono ahora?`,
           icon: 'warning',
           showCancelButton: true,
@@ -343,16 +343,16 @@ export const ComprobanteEgresoStore = signalStore(
 
         try {
           if (isConfirmed) {
-            let formasPago = store.formasPago().filter(item => item.uuid !== data.uuid)
+            const formasPago = store.formasPago().filter(item => item.uuid !== data.uuid)
 
-            let cuentasPorPagar = store.cuentasPorPagar().map(item => {
+            const cuentasPorPagar = store.cuentasPorPagar().map(item => {
               return {
                 ...item,
                 cuotas: structuredClone(item.cuotasCopy)
               }
             })
 
-            let compEgresoUtil = new ComprobanteEgresoUtil(cuentasPorPagar);
+            const compEgresoUtil = new ComprobanteEgresoUtil(cuentasPorPagar);
             // compEgresoUtil.setPagosDetalle(store.pagosDetalle())
 
             let secuencial = 0;
@@ -369,8 +369,8 @@ export const ComprobanteEgresoStore = signalStore(
 
 
 
-            let pagosDetalle = compEgresoUtil.getPagosDetalle();
-            let cuentasPorPagarHistorial = compEgresoUtil.getCuentasPorPagarHistorial()
+            const pagosDetalle = compEgresoUtil.getPagosDetalle();
+            const cuentasPorPagarHistorial = compEgresoUtil.getCuentasPorPagarHistorial()
 
 
             patchState(store, {

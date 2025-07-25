@@ -5,7 +5,7 @@ import {formatDateToString} from "@core/utils/date.util";
 export class ListElectronicSignatureMapper {
 
   static fromJson(response:ApiResponse): ElectronicSignatureListResponse{
-    let result = new ElectronicSignatureListResponse();
+    const result = new ElectronicSignatureListResponse();
     if(response.code==="1"){
       const [signatures]= JSON.parse(response.payload as any);
       result.data = signatures.map((item:any, index: number)=>{

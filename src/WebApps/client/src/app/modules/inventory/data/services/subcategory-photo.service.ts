@@ -19,7 +19,7 @@ export class SubcategoryPhotoService {
 
   put<T>(obj: T, id: number, file: Blob) {
 
-    let json = JSON.stringify(obj)
+    const json = JSON.stringify(obj)
 
     const formData = new FormData();
     formData.append('file', file);

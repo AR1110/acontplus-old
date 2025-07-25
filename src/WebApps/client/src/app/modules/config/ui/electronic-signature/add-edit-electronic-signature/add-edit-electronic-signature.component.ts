@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {WarehouseList} from "@inventory/domain/models/warehouse.model";
@@ -37,7 +37,7 @@ import {formatDateToString} from "@core/utils/date.util";
   templateUrl: './add-edit-electronic-signature.component.html',
   providers: [provideNativeDateAdapter()],
 })
-export class AddEditElectronicSignatureComponent {
+export class AddEditElectronicSignatureComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AddEditElectronicSignatureComponent>);
    params = inject<ElectronicSignatureList>(MAT_DIALOG_DATA);
 

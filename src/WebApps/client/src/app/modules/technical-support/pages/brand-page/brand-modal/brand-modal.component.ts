@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -25,7 +25,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })
-export class BrandModalComponent {
+export class BrandModalComponent implements OnInit {
   private brandService = inject(BrandService);
   private categoryService = inject(CategoryService);
   private modalRef = inject(MatDialogRef<BrandModalComponent>);
@@ -75,7 +75,7 @@ export class BrandModalComponent {
     },
     {
       formatter: (cell: any) => {
-        let rowDataMain = cell.getRow().getData();
+        const rowDataMain = cell.getRow().getData();
         // let editBtn = document.createElement('button');
         // editBtn.type = 'button';
         // editBtn.innerHTML = `${icon(faSave).html.join('')}`;
@@ -86,12 +86,12 @@ export class BrandModalComponent {
         // });
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           if (rowData.id > 0) {
             this.onSerieDelete(rowData);
           } else {
@@ -99,7 +99,7 @@ export class BrandModalComponent {
           }
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
         // if (rowDataMain.id > 0) {
         //   buttonHolder.appendChild(editBtn);

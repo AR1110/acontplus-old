@@ -31,14 +31,14 @@ export class ProductRepositoryImpl implements ProductRepository{
 
 
   getAll<T >(obj: T) {
-    let params = {
+    const params = {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
     return this._http.get<ApiResponse>(`${this._url}`, {
       params,
       context: getNoLoader()
     }).pipe(map((response) => {
-      let result = {
+      const result = {
         products: [] as any[],
         totalRecords: 0,
       }
@@ -54,7 +54,7 @@ export class ProductRepositoryImpl implements ProductRepository{
   }
 
   getDataFilter() {
-    let params = JSON.stringify({ tipo: 11 })
+    const params = JSON.stringify({ tipo: 11 })
     return this._http.get<ApiResponse>(`${this._url}?json=${params}`, {
       context: getNoLoader()
     }).pipe(
@@ -76,7 +76,7 @@ export class ProductRepositoryImpl implements ProductRepository{
 
 
   getDataForm() {
-    let params = {
+    const params = {
       json: JSON.stringify({ tipo: 5 })
     }
     return this._http.get<ApiResponse>(`${this._url}`, {
@@ -95,8 +95,8 @@ export class ProductRepositoryImpl implements ProductRepository{
 
   search<T extends { textSearch: string, pageIndex?: number, pageSize?: number }>(
     data: T
-  ): Observable<Array<ProductSearch>> {
-   let json = JSON.stringify(  {
+  ): Observable<ProductSearch[]> {
+   const json = JSON.stringify(  {
       pageIndex: data.pageIndex ?? 1,
       pageSize: data.pageSize ?? 15,
       busqueda: data.textSearch,
@@ -108,7 +108,7 @@ export class ProductRepositoryImpl implements ProductRepository{
       .pipe(
         map((response) => {
           if (response.code==="1") {
-            let results = response.payload && JSON.parse(response.payload as string) || [];
+            const results = response.payload && JSON.parse(response.payload as string) || [];
             return ProductMapper.searchFrom(results);
           }
           return [];
@@ -118,7 +118,7 @@ export class ProductRepositoryImpl implements ProductRepository{
 
 
   getForSale(id: number) {
-    let params = {
+    const params = {
       json: JSON.stringify({ idArticulo: id, tipo: 6 })
     }
     return this._http.get<ApiResponse>(`${this._url}`, {
@@ -148,7 +148,7 @@ export class ProductRepositoryImpl implements ProductRepository{
     idMedida: number
   }>(obj: T) {
 
-    let params = {
+    const params = {
       json: JSON.stringify({ ...obj, tipo: 7 })
     }
     return this._http.get(`${this._url}`, {
@@ -159,14 +159,14 @@ export class ProductRepositoryImpl implements ProductRepository{
 
 
   getDataReport() {
-    let params = {
+    const params = {
       json: JSON.stringify({ tipo: 13 })
     }
     return this._http.get<ApiResponse>(`${this._url}`, {
       params
     }).pipe(
       map(response => {
-        let estabs: GroupedEstab[] = [];
+        const estabs: GroupedEstab[] = [];
         let data = {
           estabs,
           subCategorias: [],
@@ -195,8 +195,8 @@ export class ProductRepositoryImpl implements ProductRepository{
 
 
    post<T>(obj: T, file?: Blob)  {
-    let data = ProductSaveMapper.toJson(obj)
-     let paramsJson = JSON.stringify({data})
+    const data = ProductSaveMapper.toJson(obj)
+     const paramsJson = JSON.stringify({data})
      const formData = new FormData();
     if(file){
      formData.append('file', file);

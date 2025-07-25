@@ -1,7 +1,7 @@
 import { formatDateToString } from "@core/utils/date.util"
 
 
-type Comprobante = {
+interface Comprobante {
   idCliente: number
   idTiempoCredito: number
   idPuntoEmision: number
@@ -16,7 +16,7 @@ type Comprobante = {
   docDestino: string
   observacion: string
 }
-type Detail = {
+interface Detail {
   orderIndex: number,
   idAprob_Document_Detailt: number
   idTarifa: number
@@ -37,7 +37,7 @@ type Detail = {
   idBodega: number
   fechaEmision: string
 }
-type ToProps = {
+interface ToProps {
   comprobante: Comprobante,
   detalles: Detail[],
   detallesDeleted: Detail[],
@@ -47,7 +47,7 @@ type ToProps = {
 }
 class AprobacionDocAdapter {
   to(obj: ToProps) {
-    let { comprobante, detalles, detallesDeleted, selectedDocshistorial, infoAdicionalDocumento, datosAdicionalesArticulo } = obj;
+    const { comprobante, detalles, detallesDeleted, selectedDocshistorial, infoAdicionalDocumento, datosAdicionalesArticulo } = obj;
 
 
     // const itemsMainMapper = this.comprobanteTo(detalles);
@@ -90,8 +90,8 @@ class AprobacionDocAdapter {
   }
 
   protected detailTo(details: any[]) {
-    let results = details.map((item, index) => {
-      let obj = {
+    const results = details.map((item, index) => {
+      const obj = {
         orderIndex: index++,
         idAprob_Document_Detailt: item.idAprob_Document_Detailt || 0,
         idTarifa: item.idTarifa,
