@@ -9,6 +9,7 @@ SELECT tr.idTransaccion
       ,tr.serieComprobante as nroDocumento
       ,tr.fechaEmision     as fechaRegistro
       ,dt.idTransaccionDetalle
+      ,dt.AjusteId                                                                  as particion
       ,dt.estado
       ,dt.idArticulo
 	  ,dt.idBodega
@@ -24,20 +25,6 @@ SELECT tr.idTransaccion
 	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.total END, 0)    as totalEntrada
       ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.total END, 0)                       as totalSalida 
-      ,CASE WHEN td.codigo = 'CI' THEN tr.idDocumento 
-                                  ELSE (
-                                            SELECT max(tt.idDocumento)
-                                            FROM Inventario.Transaccion              tt WITH (NOLOCK)
-                                            INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento = tt.idTipoDocumento
-                                            INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) ON sd.idTransaccion   = tt.idTransaccion
-                                            WHERE td.codigo = 'CI'
-                                              AND tt.fechaEmision <= tr.fechaEmision 
-                                              AND sd.estado = 1
-                                              AND sd.idBodega   = dt.idBodega
-                                              AND sd.idArticulo = dt.idArticulo
-                                             
-                                       ) 
-       END as particion
       ,ar.idSubFamilia
 	  ,tt.codigo                                                                    as codTransaccion
 	  ,tt.descripcion                                                               as transaccion
@@ -52,7 +39,6 @@ SELECT tr.idTransaccion
 	  ,ar.codigoBarra
 	  ,ar.descripcion                                                               as articulo
       ,sf.descripcion                                                               as subFamilia
-	
 	  ,us.nombreUsuario                                                             as usuario
 	  ,cu.BusinessName                                                              as clienteProveedor
       ,cu.IDCard                                                                    as rucClienteProveedor

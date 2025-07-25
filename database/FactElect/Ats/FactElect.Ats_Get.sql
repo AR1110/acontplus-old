@@ -55,50 +55,53 @@ BEGIN
     )
 
 
-    SET @tableNames = 'header,purchases,sales,credit_notes,with_holding_taxes,establishment_sales'
+    SET @tableNames = 'header,purchases,sales,credit_notes,with_holding_taxes,establishment_sales';
 
 	--> ENCABEZADO
-    SELECT 'R'                                                                                                                      as TipoIdInformante
-	       ,en.Ruc                                                                                                                  as IdInformante
-	       ,en.razonSocial
-	       ,YEAR(@fromDate)                                                                   as anio
-	       ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate))) as mes
-	       ,'IVA'                                                                             as codigoOperativo
-	       ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)))                     as totalVentas
-           ,ROW_NUMBER() OVER(PARTITION BY es.codEstab ORDER BY es.codEstab)                  as estabs
-	       ,YEAR(@fromDate)                                                                                                         as anio
-	       ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate)))                                       as mes
-	       ,'IVA'                                                                                                                   as codigoOperativo
-	       ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0)AS NUMERIC(18,2)) - CAST( ISNULL(ne.subtotalsinImpuestos,0)AS NUMERIC(18,2))) as totalVentas
-           ,ROW_NUMBER() OVER(PARTITION BY es.codEstab ORDER BY es.codEstab)                                                        as estabs
-	INTO #tempTotalVentas
-    FROM  dbo.DocumentoElectronico      de WITH (NOLOCK) 
-     LEFT JOIN dbo.Factura              fe WITH (NOLOCK) ON fe.idDocumentoElectronico = de.idDocumentoElectronico
-	INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-    INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-	INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
-	WHERE es.idEntidad = @idEntidad
-	  AND ss.codigo = 4 
-	  AND ISNULL(fe.notaCredito,0) = 0
-	  AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-	  AND ISNULL(fe.estado,1) = 1
-	GROUP BY en.ruc,en.razonSocial,es.codEstab
-
+    WITH VentasBase AS 
+    (
+        SELECT 'R'                                                                                                                      as TipoIdInformante
+              ,en.Ruc                                                                                                                   as IdInformante
+              ,en.razonSocial
+              ,YEAR(@fromDate)                                                                                                          as anio
+              ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate)))                                        as mes
+              ,'IVA'                                                                                                                    as codigoOperativo
+              ,es.codEstab
+              ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)) - CAST(ISNULL(nc.subtotalsinImpuestos,0) AS NUMERIC(18,2))) as totalVentas
+        FROM dbo.DocumentoElectronico       de WITH (NOLOCK) 
+        LEFT JOIN dbo.Factura               fe WITH (NOLOCK) ON fe.idDocumentoElectronico = de.idDocumentoElectronico
+        INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+        INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio       = de.idEstadoServicio
+        LEFT JOIN dbo.NotaCredito           nc WITH (NOLOCK) ON nc.idFactura              = fe.idFactura
+        INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+        INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
+        WHERE es.idEntidad = @idEntidad
+          AND ss.codigo = 4 
+          AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+        GROUP BY en.ruc, en.razonSocial, es.codEstab
+    ),
+    EstablecimientosConteo AS
+    (
+        SELECT TipoIdInformante
+              ,IdInformante
+              ,razonSocial
+              ,anio
+              ,mes
+              ,codigoOperativo
+              ,COUNT(DISTINCT codEstab)  as numEstablecimientos
+              ,SUM(totalVentas)          as totalVentas
+        FROM VentasBase
+        GROUP BY TipoIdInformante, IdInformante, razonSocial, anio, mes, codigoOperativo
+    )
     SELECT TipoIdInformante
-		  ,IdInformante
-		  ,razonSocial
-		  ,anio
-		  ,mes
-		  ,numEstabRuc = (SELECT (RIGHT('000' + Ltrim(Rtrim(SUM(estabs))),3)))
-		  ,codigoOperativo
-		  ,SUM(totalVentas) as totalVentas
-	FROM #tempTotalVentas e
-	GROUP BY TipoIdInformante
-		    ,IdInformante
-		    ,razonSocial
-		    ,anio
-		    ,mes
-		    ,codigoOperativo
+          ,IdInformante
+          ,razonSocial
+          ,anio
+          ,mes
+          ,RIGHT('000' + CAST(numEstablecimientos AS VARCHAR(3)), 3) as numEstabRuc
+          ,codigoOperativo
+          ,totalVentas
+    FROM EstablecimientosConteo
 
     --> Compras 
     SELECT  IIF(fc.codDoc = '01','FE','NC') as tipoDoc

@@ -184,6 +184,8 @@ BEGIN
 
             RETURN 
         END 
+    
+    --> Configuracion de Anular 
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     RETURN 
