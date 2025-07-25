@@ -2,16 +2,16 @@
 .setup-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 1rem;
+  padding: 0.5rem;
 
   .setup-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 
     .header-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #d61672 0%, #b91460 100%);
       color: white;
       border: none;
-      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 8px 32px rgba(214, 22, 114, 0.3);
 
       .header-content {
         display: flex;
@@ -60,10 +60,10 @@
   }
 
   .setup-progress {
-    padding: 0 0 2rem 0;
+    padding: 0 0 1rem 0;
 
     .progress-card {
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
 
       .progress-content {
         display: flex;
@@ -82,7 +82,7 @@
             color: #2c3e50;
 
             mat-icon {
-              color: #28a745;
+              color: #d61672;
             }
           }
 
@@ -90,6 +90,10 @@
             height: 8px;
             border-radius: 4px;
             margin-bottom: 1rem;
+
+            ::ng-deep .mat-mdc-progress-bar-fill::after {
+              background: linear-gradient(90deg, #d61672, #b91460);
+            }
           }
 
           .progress-details {
@@ -131,29 +135,29 @@
     margin: 0 auto;
 
     .steps-section {
-      margin-bottom: 3rem;
+      margin-bottom: 1.5rem;
 
       .section-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
 
         .section-title {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0.5rem;
           color: #2c3e50;
 
           .section-icon {
             font-size: 2rem;
 
             &.error {
-              color: #dc3545;
+              color: #d61672;
             }
 
             &.warn {
-              color: #ffc107;
+              color: #d61672;
             }
           }
         }
@@ -169,7 +173,7 @@
       .steps-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 1.5rem;
+        gap: 1rem;
 
         .step-card {
           transition: all 0.3s ease;
@@ -182,7 +186,7 @@
           }
 
           &.mandatory {
-            border-left: 4px solid #dc3545;
+            border-left: 4px solid #d61672;
 
             &.completed {
               border-left-color: #28a745;
@@ -190,8 +194,8 @@
             }
 
             &.current {
-              border-left-color: #007bff;
-              background: linear-gradient(135deg, #cce7ff 0%, #b3d9ff 100%);
+              border-left-color: #d61672;
+              background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
             }
 
             &.disabled {
@@ -201,7 +205,7 @@
           }
 
           &.optional {
-            border-left: 4px solid #ffc107;
+            border-left: 4px solid #d61672;
 
             &.completed {
               border-left-color: #28a745;
@@ -219,7 +223,7 @@
               }
 
               &.current {
-                color: #007bff;
+                color: #d61672;
                 animation: pulse 2s infinite;
               }
             }
@@ -281,12 +285,12 @@
 
     // Info Cards Section
     .info-cards-section {
-      margin-top: 3rem;
+      margin-top: 1.5rem;
 
       .info-cards-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 1.5rem;
+        gap: 1rem;
 
         .info-card {
           transition: all 0.3s ease;
@@ -305,17 +309,17 @@
             justify-content: center;
 
             &.help {
-              background: linear-gradient(135deg, #17a2b8, #138496);
+              background: linear-gradient(135deg, #d61672, #b91460);
               color: white;
             }
 
             &.tips {
-              background: linear-gradient(135deg, #ffc107, #e0a800);
+              background: linear-gradient(135deg, #d61672, #b91460);
               color: white;
             }
 
             &.status {
-              background: linear-gradient(135deg, #28a745, #1e7e34);
+              background: linear-gradient(135deg, #d61672, #b91460);
               color: white;
             }
 
@@ -383,15 +387,15 @@
           }
 
           &.help-card {
-            border-left: 4px solid #17a2b8;
+            border-left: 4px solid #d61672;
           }
 
           &.tips-card {
-            border-left: 4px solid #ffc107;
+            border-left: 4px solid #d61672;
           }
 
           &.status-card {
-            border-left: 4px solid #28a745;
+            border-left: 4px solid #d61672;
           }
         }
       }
@@ -399,7 +403,7 @@
   }
 
   .setup-actions {
-    padding: 2rem 0;
+    padding: 1rem 0;
 
     .actions-card {
       .actions-content {
@@ -417,7 +421,7 @@
             color: #2c3e50;
 
             mat-icon {
-              color: #28a745;
+              color: #d61672;
             }
           }
 
