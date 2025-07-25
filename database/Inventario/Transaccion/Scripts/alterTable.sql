@@ -10,28 +10,10 @@ GO
 --select 'ND','05',1,'Nota de Débito'
 
 
---> saldo
-
---alter table Inventario.TransaccionDetalle add saldo numeric(18,5) 
-
-WITH CTE_Saldos AS (
-    SELECT idTransaccionDetalle
-          ,SUM(IIF(tt.codigo = 'S', -1, 1) * IIF(td.estado = 1, td.cantidadTransaccion, 0))
-               OVER (PARTITION BY idArticulo, idBodega, ISNULL(td.ajusteId, 0) 
-                     ORDER BY ts.fechaEmision, idTransaccionDetalle ASC) AS nuevoSaldo
-    FROM Inventario.Transaccion              ts WITH (NOLOCK)
-    INNER JOIN inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = ts.idTipoTransaccion
-    INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
-)
-UPDATE td 
-SET td.saldo = sa.nuevoSaldo 
-FROM Inventario.TransaccionDetalle td WITH (NOLOCK)
-INNER JOIN CTE_Saldos              sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
-
+--ALTER TABLE Inventario.TransaccionDetalle ADD AjusteId BIGINT CONSTRAINT fk_ajuste_kardex_transacion FOREIGN KEY REFERENCES Inventario.Transaccion(idTransaccion)
 -- Id Ajuste
 
 
---ALTER TABLE Inventario.TransaccionDetalle ADD AjusteId BIGINT CONSTRAINT fk_ajuste_kardex_transacion FOREIGN KEY REFERENCES Inventario.Transaccion(idTransaccion)
 SELECT 
     sd.idBodega,
     sd.idArticulo,
@@ -65,5 +47,29 @@ OUTER APPLY (
     ORDER BY tc.fechaEmision DESC
 ) t
 
-DROP TABLE #TempCI
+DROP TABLE #TempCI;
+
+
+--> saldo
+
+--alter table Inventario.TransaccionDetalle add saldo numeric(18,5) 
+
+WITH CTE_Saldos AS (
+    SELECT idTransaccionDetalle
+          ,SUM(IIF(tt.codigo = 'S', -1, 1) * IIF(td.estado = 1, td.cantidadTransaccion, 0))
+               OVER (PARTITION BY idArticulo, idBodega, td.ajusteId 
+                     ORDER BY ts.fechaEmision, idTransaccionDetalle ASC) AS nuevoSaldo
+    FROM Inventario.Transaccion              ts WITH (NOLOCK)
+    INNER JOIN inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = ts.idTipoTransaccion
+    INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
+)
+UPDATE td 
+SET td.saldo = sa.nuevoSaldo 
+FROM Inventario.TransaccionDetalle td WITH (NOLOCK)
+INNER JOIN CTE_Saldos              sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
+
+
+alter table Inventario.TransaccionDetalle alter column saldo numeric(18,5) not null
+
+alter table Inventario.TransaccionDetalle add default 1 for saldo 
 

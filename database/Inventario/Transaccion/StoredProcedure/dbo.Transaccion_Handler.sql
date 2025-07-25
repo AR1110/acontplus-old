@@ -145,27 +145,32 @@ BEGIN
                 (
                     SELECT idTransaccionDetalle
                           ,SUM(IIF(tt.codigo = 'S', -1, 1) * IIF(td.estado = 1, td.cantidadTransaccion, 0))
-                           OVER (PARTITION BY idArticulo, idBodega, ISNULL(td.ajusteId, 0) 
+                           OVER (PARTITION BY idArticulo, idBodega, td.ajusteId 
                            ORDER BY ts.fechaEmision, idTransaccionDetalle ASC) as nuevoSaldo
                     FROM Inventario.Transaccion              ts WITH (NOLOCK)
                     INNER JOIN inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = ts.idTipoTransaccion
                     INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
-                    WHERE ts.idTransaccion = @idTransaccion
+                    WHERE td.idArticulo IN
+                    (
+                        SELECT idArticulo FROM Inventario.TransaccionDetalle WHERE idTransaccion = @idTransaccion
+                    )
+                    AND td.idBodega IN 
+                    (
+                        SELECT idBodega FROM Inventario.TransaccionDetalle WHERE idTransaccion = @idTransaccion
+                    )
                 )
-
                 UPDATE td SET td.saldo = sa.nuevoSaldo 
                 FROM Inventario.TransaccionDetalle td WITH (NOLOCK)
                 INNER JOIN CTE_Saldos              sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
 
+                --> Stock
                 UPDATE ar
 			        SET ar.stock = (SELECT SUM(s.cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE s.idArticulo = ar.idArticulo)
 			    FROM dbo.Articulo ar WITH (ROWLOCK)
-			    WHERE ar.idArticulo IN (
-					                        SELECT tr.idArticulo
-					                        FROM Inventario.Transaccion              t  WITH (NOLOCK)
-                                            INNER JOIN Inventario.TransaccionDetalle tr WITH (NOLOCK) ON tr.idTransaccion = t.idTransaccion
-					                        WHERE t.idTransaccion = @idTransaccion
-					                    )
+			    WHERE ar.idArticulo IN
+                (
+				    SELECT idArticulo FROM Inventario.TransaccionDetalle WHERE idTransaccion = @idTransaccion
+				)
 		    END
         END CONVERSATION @RecvReqDlgHandle;
         COMMIT TRAN

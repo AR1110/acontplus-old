@@ -13,13 +13,13 @@ GO
 CREATE OR ALTER FUNCTION f_sanitize_xml
 (
     -- Add the parameters for the function here
-    @xmlIn VARCHAR(MAX)
+    @xmlIn NVARCHAR(MAX)
 )
-RETURNS VARCHAR(MAX)
+RETURNS NVARCHAR(MAX)
 AS
 BEGIN
     -- Declare the return variable here
-    DECLARE @sanitizedXml VARCHAR(MAX)
+    DECLARE @sanitizedXml NVARCHAR(MAX)
 
     -- Add the T-SQL statements to compute the return value here
     SET @sanitizedXml =
