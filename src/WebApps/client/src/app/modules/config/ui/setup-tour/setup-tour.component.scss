@@ -16,7 +16,7 @@
     max-width: 90vw;
     pointer-events: all;
     z-index: 10001;
-    animation: tourPopupFadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: tourPopupSlideIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     border-radius: 16px;
     overflow: hidden;
     box-shadow:
@@ -24,25 +24,23 @@
       0 9px 46px 8px rgba(0, 0, 0, 0.12),
       0 11px 15px -7px rgba(0, 0, 0, 0.2);
 
-    // Positioning classes
-    &.position-top {
-      transform: translateX(-50%) translateY(-100%) translateY(-20px);
-    }
+    // Right side positioning
+    &.tour-popup-right {
+      top: 50%;
+      right: 2rem;
+      transform: translateY(-50%);
 
-    &.position-bottom {
-      transform: translateX(-50%) translateY(20px);
-    }
+      @media (min-width: 1200px) {
+        right: 3rem;
+      }
 
-    &.position-left {
-      transform: translateX(-100%) translateX(-20px) translateY(-50%);
-    }
-
-    &.position-right {
-      transform: translateX(20px) translateY(-50%);
+      @media (max-width: 1024px) {
+        right: 1.5rem;
+      }
     }
 
     .tour-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #d61672 0%, #b91460 100%);
       color: white;
       padding: 1.5rem;
 
@@ -74,7 +72,7 @@
           }
 
           ::ng-deep .mat-mdc-progress-bar-fill::after {
-            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            background: linear-gradient(90deg, #d61672, #b91460);
           }
         }
       }
@@ -166,32 +164,14 @@
 
       .arrow-icon {
         font-size: 2rem;
-        color: #667eea;
+        color: #d61672;
         filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
       }
 
-      &.arrow-top {
-        bottom: -1rem;
-        left: 50%;
-        transform: translateX(-50%) rotate(90deg);
-      }
-
-      &.arrow-bottom {
-        top: -1rem;
-        left: 50%;
-        transform: translateX(-50%) rotate(-90deg);
-      }
-
-      &.arrow-left {
-        right: -1rem;
-        top: 50%;
-        transform: translateY(-50%) rotate(180deg);
-      }
-
-      &.arrow-right {
+      &.tour-arrow-left {
         left: -1rem;
         top: 50%;
-        transform: translateY(-50%);
+        transform: translateY(-50%) rotate(180deg);
       }
     }
   }
@@ -286,7 +266,7 @@
     left: -4px;
     right: -4px;
     bottom: -4px;
-    background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+    background: linear-gradient(45deg, #d61672, #b91460, #d61672);
     background-size: 200% 200%;
     border-radius: 12px;
     pointer-events: none;
@@ -309,14 +289,14 @@
 }
 
 // Enhanced animations
-@keyframes tourPopupFadeIn {
+@keyframes tourPopupSlideIn {
   from {
     opacity: 0;
-    transform: scale(0.8) translateY(20px);
+    transform: translateY(-50%) translateX(100%);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(-50%) translateX(0);
   }
 }
 
@@ -333,10 +313,10 @@
 @keyframes tourPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    box-shadow: 0 0 0 0 rgba(214, 22, 114, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+    box-shadow: 0 0 0 15px rgba(214, 22, 114, 0);
   }
 }
 
@@ -345,7 +325,15 @@
   .tour-overlay .tour-popup {
     width: 320px;
     max-width: 95vw;
-    margin: 1rem;
+
+    &.tour-popup-right {
+      top: 2rem;
+      right: 1rem;
+      left: 1rem;
+      transform: none;
+      width: auto;
+      max-width: none;
+    }
 
     .tour-header {
       padding: 1rem;
@@ -396,7 +384,11 @@
 
 @media (max-width: 480px) {
   .tour-overlay .tour-popup {
-    width: 280px;
+    &.tour-popup-right {
+      top: 1rem;
+      right: 0.5rem;
+      left: 0.5rem;
+    }
 
     .tour-content .tour-title {
       font-size: 1.1rem;

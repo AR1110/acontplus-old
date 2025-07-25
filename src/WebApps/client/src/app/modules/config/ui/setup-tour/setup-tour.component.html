@@ -1,6 +1,6 @@
 @if (isActive && currentStep) {
   <div class="tour-overlay">
-    <mat-card class="tour-popup" [class]="'position-' + currentStep.position" appearance="raised">
+    <mat-card class="tour-popup tour-popup-right" appearance="raised">
       <!-- Tour Header -->
       <mat-card-header class="tour-header">
         <div class="tour-progress-section">
@@ -80,7 +80,7 @@
       </mat-card-actions>
 
       <!-- Tour Arrow -->
-      <div class="tour-arrow" [class]="'arrow-' + currentStep.position">
+      <div class="tour-arrow tour-arrow-left">
         <mat-icon class="arrow-icon">play_arrow</mat-icon>
       </div>
     </mat-card>
