@@ -39,11 +39,16 @@
 </ng-template>
 
 <ng-template #templateValue let-item>
-  <mat-form-field class="w-100">
-    <input matInput placeholder="..." [(ngModel)]="item.valor">
+
+  <mat-form-field class="w-100 m-1">
+    <textarea matInput  [(ngModel)]="item.valor"></textarea>
   </mat-form-field>
 </ng-template>
 
+
+<ng-template #templatePoliticaCredito let-item>
+  <mat-slide-toggle [(ngModel)]="item.politicaCredito"></mat-slide-toggle>
+</ng-template>
 
 <ng-template #footer>
   <app-theme-button

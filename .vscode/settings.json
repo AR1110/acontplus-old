@@ -1,33 +1,39 @@
 {
-  //Angular
-  "typescript.preferences.autoImportFileExcludePatterns": [],
-  "typescript.preferences.importModuleSpecifier": "shortest",
-  "typescript.suggestionActions.enabled": true,
-  "editor.snippetSuggestions": "top",
-  "typescript.suggest.autoImports": true,
-  "javascript.suggest.autoImports": true,
-  "editor.quickSuggestions": {
-    "other": true,
-    "comments": false,
-    "strings": true
+  // Preserved your core settings
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    // ➕ NEW Angular-specific actions
+    "source.organizeImports.angular": "explicit"
   },
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "files.eol": "\n",
 
-  "prettier.singleQuote": true,
-  "editor.acceptSuggestionOnCommitCharacter": true,
-  "editor.acceptSuggestionOnEnter": "on",
+  // ➕ ENHANCED TypeScript/Angular
+  "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "javascript.updateImportsOnFileMove.enabled": "always",
-  //C#
-  "omnisharp.enableEditorConfigSupport": true,
-  "omnisharp.useModernNet": true,
-  "dotnet.server.useOmnisharp": false,
-  "csharp.format.enable": true,
-  "editor.inlineSuggest.enabled": true,
-  "dotnet.defaultSolution": "AcontPlus.sln",
 
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "text": "Be extremaly detailed with the change, detect the kind of change and add alias before. Add lot of emojis",
+  // ➕ ENHANCED C#/.NET
+  "csharp.suppressDotnetRestoreNotification": true,
+
+  // Preserved your Git settings
+  "git.confirmSync": false,
+  "git.autofetch": true,
+
+  "prettier.configPath": ".prettierrc",
+  "prettier.requireConfig": true,
+
+  // Language-specific
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.csharp": "explicit"
     }
-  ]
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

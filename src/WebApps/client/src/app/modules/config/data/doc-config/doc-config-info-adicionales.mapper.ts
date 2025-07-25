@@ -19,7 +19,6 @@ export class DocConfigInfoAdicionalesMapper {
     return infoAdicional.map((item:any, index:number)=>{
       return {
         unique: generateUuidv4(),
-        index: index+1,
         ...item
       }
     })

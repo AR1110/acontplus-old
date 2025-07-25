@@ -28,7 +28,7 @@
           "skipTests": false
         },
         "@schematics/angular:resolver": {
-          "skipTests": false,
+          "skipTests": false
         },
         "@schematics/angular:class": {
           "skipTests": false
