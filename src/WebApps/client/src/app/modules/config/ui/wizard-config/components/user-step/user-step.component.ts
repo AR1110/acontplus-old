@@ -1,12 +1,12 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
+import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
+import { WizardConfigStore } from '@modules/config/application/store/wizard-config.store';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatFormField, MatInput, MatLabel, MatError } from '@angular/material/input';
+import { Component, inject, computed, effect, output } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
-import { WizardConfigStore } from '@modules/config/application/store/wizard-config.store';
 
 export interface UserFormControls {
   nroIdentificacion: FormControl<string | null>;
@@ -33,12 +33,14 @@ export interface UserFormControls {
     MatIcon,
     ToUpperCaseDirective,
   ],
-    templateUrl: './user-step.component.html',
+  templateUrl: './user-step.component.html',
   styleUrls: ['./user-step.component.scss'],
 })
 export class UserStepComponent {
   private readonly _fb = inject(FormBuilder);
   private readonly _store = inject(WizardConfigStore);
+
+  userSaved = output();
 
   // Show/hide password toggles
   showPassword = false;
@@ -53,41 +55,24 @@ export class UserStepComponent {
   readonly userData = this._store.userData;
 
   // Form
-  readonly userForm = this._fb.group<UserFormControls>({
-    nroIdentificacion: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(10)
-    ]),
-    username: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(3),
-      Validators.maxLength(20),
-      Validators.pattern(/^[a-zA-Z0-9_]+$/)
-    ]),
-    firstName: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(50)
-    ]),
-    lastName: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(50)
-    ]),
-    email: this._fb.control('', [
-      Validators.email
-    ]),
-    phone: this._fb.control('', [
-      Validators.pattern(/^[\d\s\-+()]+$/)
-    ]),
-    password: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(6)
-    ]),
-    confirmPassword: this._fb.control('', [
-      Validators.required
-    ])
-  }, { validators: [passwordsMatchValidator] });
+  readonly userForm = this._fb.group<UserFormControls>(
+    {
+      nroIdentificacion: this._fb.control('', [Validators.required, Validators.minLength(10)]),
+      username: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20),
+        Validators.pattern(/^[a-zA-Z0-9_]+$/),
+      ]),
+      firstName: this._fb.control('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+      lastName: this._fb.control('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]),
+      email: this._fb.control('', [Validators.email]),
+      phone: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]+$/)]),
+      password: this._fb.control('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: this._fb.control('', [Validators.required]),
+    },
+    { validators: [passwordsMatchValidator] },
+  );
 
   // Computed signals
   readonly formErrors = computed(() => {
@@ -181,7 +166,7 @@ export class UserStepComponent {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email || '',
-          phone: data.phone || ''
+          phone: data.phone || '',
         });
       }
     });
@@ -199,7 +184,7 @@ export class UserStepComponent {
           lastName: formValue.lastName!,
           email: formValue.email || undefined,
           phone: formValue.phone || undefined,
-          password: formValue.password!
+          password: formValue.password!,
         });
         this._store.saveUserData(userData);
       } catch (error) {
@@ -207,7 +192,7 @@ export class UserStepComponent {
       }
     } else {
       // Mark all fields as touched to show validation errors
-      Object.keys(this.userForm.controls).forEach(key => {
+      Object.keys(this.userForm.controls).forEach((key) => {
         const control = this.userForm.get(key);
         control?.markAsTouched();
       });

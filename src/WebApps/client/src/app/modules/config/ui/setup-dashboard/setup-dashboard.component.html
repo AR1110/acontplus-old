@@ -1,0 +1,265 @@
+<!-- setup-dashboard.component.html -->
+<div class="setup-container">
+  <!-- Header Section -->
+  <div class="setup-header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="setup-title">
+            <i class="fas fa-rocket text-primary me-3"></i>
+            ¡Configuremos tu empresa!
+          </h1>
+          <p class="setup-subtitle">Completa estos pasos para comenzar a usar todas las funcionalidades</p>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-outline-primary btn-sm me-2" (click)="startTour()" type="button">
+            <i class="fas fa-question-circle me-1"></i>
+            Tour Guiado
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Section -->
+  <div class="setup-progress" [attr.data-tour]="'progress'">
+    <div class="container-fluid">
+      <div class="progress-card">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <div class="progress-info">
+              <h5 class="progress-title">Progreso de Configuración</h5>
+              <div class="progress progress-lg mb-2">
+                <div
+                  class="progress-bar bg-gradient-primary"
+                  role="progressbar"
+                  [style.width.%]="setupStatus.completionPercentage"
+                  [attr.aria-valuenow]="setupStatus.completionPercentage"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+              <small class="text-muted">
+                {{ setupStatus.completionPercentage }}% completado ({{ setupStatus.mandatoryStepsCompleted }}/{{
+                  setupStatus.totalMandatorySteps
+                }}
+                pasos obligatorios)
+              </small>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="completion-badge" [class.completed]="setupStatus.isCompleted">
+              <i class="fas fa-trophy"></i>
+              <span>{{ setupStatus.isCompleted ? 'Configuración Completa' : 'En Progreso' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Steps Section -->
+  <div class="setup-content">
+    <div class="container-fluid">
+      <!-- Mandatory Steps -->
+      <div class="steps-section mandatory-steps" [attr.data-tour]="'mandatory'">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-exclamation-circle text-danger me-2"></i>
+            Pasos Obligatorios
+          </h3>
+          <p class="section-description">Estos pasos son necesarios para el funcionamiento básico del sistema</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-6 col-xl-4" *ngFor="let step of mandatorySteps">
+            <div
+              class="step-card mandatory"
+              [class.completed]="step.isCompleted"
+              [class.current]="step.isCurrent"
+              [class.disabled]="
+                !step.isCompleted && !step.isCurrent && currentStepId !== null && step.id > currentStepId
+              "
+            >
+              <div class="step-header">
+                <div class="step-icon">
+                  <i [class]="step.icon"></i>
+                </div>
+                <div class="step-status">
+                  <i [class]="getStepStatusIcon(step)"></i>
+                </div>
+              </div>
+
+              <div class="step-body">
+                <div class="step-meta">
+                  <span class="step-code">{{ step.code }}</span>
+                  <span class="step-time">{{ step.estimatedTime }}</span>
+                </div>
+
+                <h5 class="step-name">{{ step.name }}</h5>
+                <p class="step-description">{{ step.description }}</p>
+
+                <div class="step-status-text">
+                  <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    {{ getStepStatusText(step) }}
+                  </small>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button
+                  class="btn btn-primary btn-sm w-100"
+                  [disabled]="step.isCompleted"
+                  (click)="navigateToStep(step)"
+                  type="button"
+                >
+                  @if (step.isCompleted) {
+                    <span>
+                      <i class="fas fa-check me-2"></i>
+                      Completado
+                    </span>
+                  }
+                  @if (!step.isCompleted && step.isCurrent) {
+                    <span>
+                      <i class="fas fa-play me-2"></i>
+                      Continuar
+                    </span>
+                  }
+
+                  @if (!step.isCompleted && !step.isCurrent) {
+                    <span>
+                      <i class="fas fa-cog me-2"></i>
+                      Configurar
+                    </span>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional Steps -->
+      <div class="steps-section optional-steps" [attr.data-tour]="'optional'">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-star text-warning me-2"></i>
+            Pasos Opcionales
+          </h3>
+          <p class="section-description">
+            Recomendados para una mejor experiencia, pero puedes configurarlos más tarde
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-6 col-xl-4" *ngFor="let step of optionalSteps">
+            <div class="step-card optional" [class.completed]="step.isCompleted">
+              <div class="step-header">
+                <div class="step-icon">
+                  <i [class]="step.icon"></i>
+                </div>
+                <div class="step-status">
+                  <i [class]="getStepStatusIcon(step)"></i>
+                </div>
+                <div class="optional-badge">
+                  <span class="badge bg-warning">Opcional</span>
+                </div>
+              </div>
+
+              <div class="step-body">
+                <div class="step-meta">
+                  <span class="step-code">{{ step.code }}</span>
+                  <span class="step-time">{{ step.estimatedTime }}</span>
+                </div>
+
+                <h5 class="step-name">{{ step.name }}</h5>
+                <p class="step-description">{{ step.description }}</p>
+
+                <div class="step-status-text">
+                  <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    {{ getStepStatusText(step) }}
+                  </small>
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <button
+                  class="btn btn-outline-primary btn-sm w-100"
+                  [disabled]="step.isCompleted"
+                  (click)="navigateToStep(step)"
+                  type="button"
+                >
+                  @if (step.isCompleted) {
+                    <span>
+                      <i class="fas fa-check me-2"></i>
+                      Completado
+                    </span>
+                  }
+
+                  @if (!step.isCompleted) {
+                    <span>
+                      <i class="fas fa-cog me-2"></i>
+                      Configurar
+                    </span>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="setup-actions">
+    <div class="container-fluid">
+      <div class="actions-card">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <div class="actions-info">
+              <h5 class="mb-1">¿Listo para comenzar?</h5>
+              <p class="text-muted mb-0">
+                @if (!setupStatus.isCompleted) {
+                  <span>Complete los pasos obligatorios para acceder al sistema completo</span>
+                }
+                @if (setupStatus.isCompleted) {
+                  <span>¡Excelente! Ha completado todos los pasos obligatorios</span>
+                }
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="action-buttons">
+              <!-- Skip Button (only show if optional steps remain) -->
+              @if (!setupStatus.isCompleted && setupStatus.canSkip) {
+                <button class="btn btn-outline-secondary me-2" (click)="skipOptionalSetup()" type="button">
+                  <i class="fas fa-fast-forward me-2"></i>
+                  Saltar Opcionales
+                </button>
+              }
+
+              <!-- Finish Button -->
+              <button
+                class="btn btn-success"
+                [disabled]="!canProceedToNextStep()"
+                (click)="finishSetup()"
+                type="button"
+              >
+                <i class="fas fa-flag-checkered me-2"></i>
+                {{ setupStatus.isCompleted ? 'Ir al Dashboard' : 'Finalizar Configuración' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tour Component -->
+@if (showTour) {
+  <app-setup-tour (tourCompleted)="showTour = false"></app-setup-tour>
+}
