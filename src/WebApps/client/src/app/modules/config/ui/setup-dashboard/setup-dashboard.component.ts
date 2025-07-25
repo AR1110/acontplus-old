@@ -1,8 +1,8 @@
 import { ConfigurationStep, SetupStatus } from '@modules/config/domain/models/configuration.model';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SetupTourComponent } from '@modules/config/ui/setup-tour/setup-tour.component';
 import { ConfigurationService } from '../../services/configuration.service';
 import { TourService } from '@modules/config/services/tour.service';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 
@@ -13,8 +13,10 @@ import { Observable, Subject } from 'rxjs';
   styleUrl: './setup-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SetupDashboardComponent {
-  private destroy$ = new Subject<void>();
+export class SetupDashboardComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+  private readonly configService = inject(ConfigurationService);
+  private readonly tourService = inject(TourService);
 
   setupStatus: SetupStatus = {
     isCompleted: false,
@@ -28,11 +30,6 @@ export class SetupDashboardComponent {
   optionalSteps: ConfigurationStep[] = [];
   currentStepId: number | null = null;
   showTour = false;
-
-  constructor(
-    private configService: ConfigurationService,
-    private tourService: TourService,
-  ) {}
 
   ngOnInit(): void {
     this.loadConfigurationData();

@@ -72,71 +72,73 @@
         </div>
 
         <div class="row g-4">
-          <div class="col-lg-6 col-xl-4" *ngFor="let step of mandatorySteps">
-            <div
-              class="step-card mandatory"
-              [class.completed]="step.isCompleted"
-              [class.current]="step.isCurrent"
-              [class.disabled]="
-                !step.isCompleted && !step.isCurrent && currentStepId !== null && step.id > currentStepId
-              "
-            >
-              <div class="step-header">
-                <div class="step-icon">
-                  <i [class]="step.icon"></i>
-                </div>
-                <div class="step-status">
-                  <i [class]="getStepStatusIcon(step)"></i>
-                </div>
-              </div>
-
-              <div class="step-body">
-                <div class="step-meta">
-                  <span class="step-code">{{ step.code }}</span>
-                  <span class="step-time">{{ step.estimatedTime }}</span>
+          @for (step of mandatorySteps; track $index) {
+            <div class="col-lg-6 col-xl-4">
+              <div
+                class="step-card mandatory"
+                [class.completed]="step.isCompleted"
+                [class.current]="step.isCurrent"
+                [class.disabled]="
+                  !step.isCompleted && !step.isCurrent && currentStepId !== null && step.id > currentStepId
+                "
+              >
+                <div class="step-header">
+                  <div class="step-icon">
+                    <i [class]="step.icon"></i>
+                  </div>
+                  <div class="step-status">
+                    <i [class]="getStepStatusIcon(step)"></i>
+                  </div>
                 </div>
 
-                <h5 class="step-name">{{ step.name }}</h5>
-                <p class="step-description">{{ step.description }}</p>
+                <div class="step-body">
+                  <div class="step-meta">
+                    <span class="step-code">{{ step.code }}</span>
+                    <span class="step-time">{{ step.estimatedTime }}</span>
+                  </div>
 
-                <div class="step-status-text">
-                  <small class="text-muted">
-                    <i class="fas fa-info-circle me-1"></i>
-                    {{ getStepStatusText(step) }}
-                  </small>
+                  <h5 class="step-name">{{ step.name }}</h5>
+                  <p class="step-description">{{ step.description }}</p>
+
+                  <div class="step-status-text">
+                    <small class="text-muted">
+                      <i class="fas fa-info-circle me-1"></i>
+                      {{ getStepStatusText(step) }}
+                    </small>
+                  </div>
                 </div>
-              </div>
 
-              <div class="step-actions">
-                <button
-                  class="btn btn-primary btn-sm w-100"
-                  [disabled]="step.isCompleted"
-                  (click)="navigateToStep(step)"
-                  type="button"
-                >
-                  @if (step.isCompleted) {
-                    <span>
-                      <i class="fas fa-check me-2"></i>
-                      Completado
-                    </span>
-                  }
-                  @if (!step.isCompleted && step.isCurrent) {
-                    <span>
-                      <i class="fas fa-play me-2"></i>
-                      Continuar
-                    </span>
-                  }
+                <div class="step-actions">
+                  <button
+                    class="btn btn-primary btn-sm w-100"
+                    [disabled]="step.isCompleted"
+                    (click)="navigateToStep(step)"
+                    type="button"
+                  >
+                    @if (step.isCompleted) {
+                      <span>
+                        <i class="fas fa-check me-2"></i>
+                        Completado
+                      </span>
+                    }
+                    @if (!step.isCompleted && step.isCurrent) {
+                      <span>
+                        <i class="fas fa-play me-2"></i>
+                        Continuar
+                      </span>
+                    }
 
-                  @if (!step.isCompleted && !step.isCurrent) {
-                    <span>
-                      <i class="fas fa-cog me-2"></i>
-                      Configurar
-                    </span>
-                  }
-                </button>
+                    @if (!step.isCompleted && !step.isCurrent) {
+                      <span>
+                        <i class="fas fa-cog me-2"></i>
+                        Configurar
+                      </span>
+                    }
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -153,61 +155,63 @@
         </div>
 
         <div class="row g-4">
-          <div class="col-lg-6 col-xl-4" *ngFor="let step of optionalSteps">
-            <div class="step-card optional" [class.completed]="step.isCompleted">
-              <div class="step-header">
-                <div class="step-icon">
-                  <i [class]="step.icon"></i>
-                </div>
-                <div class="step-status">
-                  <i [class]="getStepStatusIcon(step)"></i>
-                </div>
-                <div class="optional-badge">
-                  <span class="badge bg-warning">Opcional</span>
-                </div>
-              </div>
-
-              <div class="step-body">
-                <div class="step-meta">
-                  <span class="step-code">{{ step.code }}</span>
-                  <span class="step-time">{{ step.estimatedTime }}</span>
+          @for (step of optionalSteps; track $index) {
+            <div class="col-lg-6 col-xl-4">
+              <div class="step-card optional" [class.completed]="step.isCompleted">
+                <div class="step-header">
+                  <div class="step-icon">
+                    <i [class]="step.icon"></i>
+                  </div>
+                  <div class="step-status">
+                    <i [class]="getStepStatusIcon(step)"></i>
+                  </div>
+                  <div class="optional-badge">
+                    <span class="badge bg-warning">Opcional</span>
+                  </div>
                 </div>
 
-                <h5 class="step-name">{{ step.name }}</h5>
-                <p class="step-description">{{ step.description }}</p>
+                <div class="step-body">
+                  <div class="step-meta">
+                    <span class="step-code">{{ step.code }}</span>
+                    <span class="step-time">{{ step.estimatedTime }}</span>
+                  </div>
 
-                <div class="step-status-text">
-                  <small class="text-muted">
-                    <i class="fas fa-info-circle me-1"></i>
-                    {{ getStepStatusText(step) }}
-                  </small>
+                  <h5 class="step-name">{{ step.name }}</h5>
+                  <p class="step-description">{{ step.description }}</p>
+
+                  <div class="step-status-text">
+                    <small class="text-muted">
+                      <i class="fas fa-info-circle me-1"></i>
+                      {{ getStepStatusText(step) }}
+                    </small>
+                  </div>
                 </div>
-              </div>
 
-              <div class="step-actions">
-                <button
-                  class="btn btn-outline-primary btn-sm w-100"
-                  [disabled]="step.isCompleted"
-                  (click)="navigateToStep(step)"
-                  type="button"
-                >
-                  @if (step.isCompleted) {
-                    <span>
-                      <i class="fas fa-check me-2"></i>
-                      Completado
-                    </span>
-                  }
+                <div class="step-actions">
+                  <button
+                    class="btn btn-outline-primary btn-sm w-100"
+                    [disabled]="step.isCompleted"
+                    (click)="navigateToStep(step)"
+                    type="button"
+                  >
+                    @if (step.isCompleted) {
+                      <span>
+                        <i class="fas fa-check me-2"></i>
+                        Completado
+                      </span>
+                    }
 
-                  @if (!step.isCompleted) {
-                    <span>
-                      <i class="fas fa-cog me-2"></i>
-                      Configurar
-                    </span>
-                  }
-                </button>
+                    @if (!step.isCompleted) {
+                      <span>
+                        <i class="fas fa-cog me-2"></i>
+                        Configurar
+                      </span>
+                    }
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          }
         </div>
       </div>
     </div>
