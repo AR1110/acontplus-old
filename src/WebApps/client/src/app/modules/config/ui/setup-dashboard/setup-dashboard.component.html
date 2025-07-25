@@ -78,6 +78,7 @@
             [class.completed]="step.isCompleted"
             [class.current]="step.isCurrent"
             [class.disabled]="!step.isCompleted && !step.isCurrent && currentStepId !== null && step.id > currentStepId"
+            [attr.data-tour]="'step-' + step.id"
             appearance="outlined"
           >
             <mat-card-header>
@@ -154,7 +155,12 @@
 
       <div class="steps-grid">
         @for (step of optionalSteps; track $index) {
-          <mat-card class="step-card optional" [class.completed]="step.isCompleted" appearance="outlined">
+          <mat-card
+            class="step-card optional"
+            [class.completed]="step.isCompleted"
+            [attr.data-tour]="'step-' + step.id"
+            appearance="outlined"
+          >
             <mat-card-header>
               <div mat-card-avatar class="step-avatar optional">
                 <mat-icon [class.completed]="step.isCompleted">
@@ -387,8 +393,3 @@
     </mat-card>
   </div>
 </div>
-
-<!-- Tour Component -->
-@if (showTour) {
-  <app-setup-tour (tourCompleted)="showTour = false"></app-setup-tour>
-}

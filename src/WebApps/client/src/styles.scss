@@ -1,9 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
-@use "@angular/material" as mat;
-@use "sass:map";
-@use "ngx-toastr/toastr";
-@use "styles/components/forms" as forms;
-@use "styles/theme/theme-colors" as acontplus-theme;
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use 'ngx-toastr/toastr';
+@use 'styles/components/forms' as forms;
+@use 'styles/theme/theme-colors' as acontplus-theme;
+
+// Import Shepherd Tour Styles
+@use 'app/modules/config/styles/shepherd-tour';
 
 /* Brand-Inspired Color Palette */
 

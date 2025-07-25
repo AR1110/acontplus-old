@@ -4,6 +4,23 @@
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 0.5rem;
 
+  // When tour is active, optimize layout for precise highlights
+  &.tour-active {
+    .setup-content {
+      .steps-section {
+        margin-bottom: 1rem;
+
+        .steps-grid {
+          gap: 0.5rem;
+
+          .step-card {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
   .setup-header {
     margin-bottom: 1rem;
 
@@ -64,6 +81,13 @@
 
     .progress-card {
       margin-bottom: 1rem;
+
+      // Ensure precise highlighting for tour
+      &.tour-highlight {
+        margin: 0 !important;
+        border: 2px solid #d61672 !important;
+        box-shadow: 0 2px 12px rgba(214, 22, 114, 0.3) !important;
+      }
 
       .progress-content {
         display: flex;
@@ -134,8 +158,18 @@
     max-width: 1200px;
     margin: 0 auto;
 
+    // When tour is active, adjust parent containers
     .steps-section {
       margin-bottom: 1.5rem;
+
+      // Remove any spacing that affects tour highlights
+      &.tour-highlight {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
 
       .section-header {
         text-align: center;
@@ -179,6 +213,23 @@
           transition: all 0.3s ease;
           border-radius: 12px;
           overflow: hidden;
+
+          // FORCE exact highlighting for tour - override everything
+          &.tour-highlight {
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 3px solid #d61672 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(214, 22, 114, 0.15) !important;
+            background: white !important;
+            transform: none !important;
+
+            // Remove any pseudo-elements
+            &::before,
+            &::after {
+              display: none !important;
+            }
+          }
 
           &:hover {
             transform: translateY(-4px);
