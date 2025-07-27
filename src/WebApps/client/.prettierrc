@@ -7,59 +7,32 @@
   "bracketSpacing": true,
   "endOfLine": "lf",
   "trailingComma": "all",
-  "printWidth": 120,
+  "printWidth": 100,
   "bracketSameLine": false,
   "htmlWhitespaceSensitivity": "css",
   "embeddedLanguageFormatting": "auto",
-  "verticalAlignment": {
-    "enabled": true,
-    "groups": [
-      {
-        "start": "^import",
-        "end": "(from|require)\\s+['\"]",
-        "alignBy": "from"
-      },
-      {
-        "start": "=",
-        "end": ";",
-        "alignBy": "="
-      },
-      {
-        "start": ":",
-        "end": ",",
-        "alignBy": ":"
-      }
-    ],
-    "multilineObjects": true,
-    "functionParameters": true,
-    "importStatements": true
-  },
-  "plugins": [
-    "prettier-plugin-sort-imports"
+  "plugins": ["prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^@angular/(.*)$",
+    "^@app/(.*)$",
+    "^[./]"
   ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
   "overrides": [
     {
       "files": ["*.component.html"],
       "options": {
         "parser": "angular",
         "htmlWhitespaceSensitivity": "ignore",
-        "verticalAlignment": {
-          "alignAttributes": true,
-          "alignOpenTagEnd": true,
-          "minAttributeCount": 2
-        }
+        "printWidth": 80,
+        "singleAttributePerLine": true
       }
     },
     {
-      "files": ["*.{ts,tsx,js}"],
+      "files": ["*.{ts,tsx}"],
       "options": {
-        "organizeImports": true,
-        "importOrder": ["^@angular", "^@app", "^[./]"],
-        "importOrderSeparation": true,
-        "importOrderParserPlugins": ["typescript", "decorators"],
-        "alignObjectProperties": true,
-        "alignArguments": true,
-        "alignTernaryLines": true
+        "printWidth": 100
       }
     }
   ]

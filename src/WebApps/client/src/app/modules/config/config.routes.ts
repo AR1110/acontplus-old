@@ -3,7 +3,6 @@ import { ElectronicSignatureComponent } from '@modules/config/ui/electronic-sign
 import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
 import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
 import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
-import { SetupDashboardComponent } from '@modules/config/ui/setup-dashboard/setup-dashboard.component';
 import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
 import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
 import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
@@ -13,7 +12,6 @@ import { CreditTimeComponent } from '@modules/config/ui/credit-time/credit-time.
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { CompanyComponent } from '@modules/config/ui/company/company.component';
 import { ConfigHomeComponent } from './ui/config-home.component';
-import { setupGuard } from '@modules/config/guards/setup.guard';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -34,7 +32,6 @@ export const routes: Routes = [
     path: 'doc-config-page',
     title: 'Config. Docs',
     component: DocConfigPageComponent,
-    canActivate: [setupGuard],
     data: {
       breadcrumb: 'Config. Docs',
     },
@@ -59,7 +56,6 @@ export const routes: Routes = [
     path: 'user-profile-page',
     title: 'Configuración de Perfil',
     component: UserProfilePageComponent,
-    canActivate: [setupGuard],
     data: {
       breadcrumb: 'Configuración de Perfil',
     },
@@ -68,7 +64,6 @@ export const routes: Routes = [
     path: 'establishment',
     title: 'Establecimiento',
     component: EstablishmentPageComponent,
-    canActivate: [setupGuard],
     data: {
       breadcrumb: 'Establecimiento',
     },
@@ -92,8 +87,7 @@ export const routes: Routes = [
   {
     path: 'wizard-config',
     title: 'Configuración Inicial',
-    component: SetupDashboardComponent,
-    canActivate: [setupGuard],
+    component: WizardConfigComponent,
     data: {
       breadcrumb: 'Configuración Inicial',
     },
@@ -117,7 +111,6 @@ export const routes: Routes = [
   {
     path: 'electronic-signature',
     component: ElectronicSignatureComponent,
-    canActivate: [setupGuard],
     data: {
       breadcrumb: 'Firma Eletrónica',
     },
