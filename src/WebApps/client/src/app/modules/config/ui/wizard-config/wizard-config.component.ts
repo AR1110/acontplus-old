@@ -4,6 +4,7 @@
 
 // Angular Core
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
@@ -12,10 +13,24 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Component, inject, ViewChild, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  ViewChild,
+  OnInit,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 // Angular Material
-import { MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+import {
+  MatStep,
+  MatStepLabel,
+  MatStepper,
+  MatStepperNext,
+  MatStepperPrevious,
+} from '@angular/material/stepper';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
@@ -36,9 +51,18 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 
-// Step Components
-import { EstablishmentStepComponent } from './components/establishment-step/establishment-step.component';
-import { UserStepComponent } from './components/user-step/user-step.component';
+// Additional imports for consolidated functionality
+import {
+  MatChipGrid,
+  MatChipRow,
+  MatChipInput,
+  MatChipEditedEvent,
+  MatChipInputEvent,
+} from '@angular/material/chips';
+import { UserData as UserDataVO } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -148,9 +172,11 @@ interface EstabFormControls {
     BreadcrumbComponent,
     TabulatorComponent,
 
-    // Step Components
-    UserStepComponent,
-    EstablishmentStepComponent,
+    // Additional UI Components
+    MatChipGrid,
+    MatChipRow,
+    MatChipInput,
+    ToUpperCaseDirective,
 
     // Router
     RouterModule,
@@ -173,6 +199,7 @@ export class WizardConfigComponent implements OnInit {
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
   private readonly _wizardStore = inject(WizardConfigStore);
+  private readonly _announcer = inject(LiveAnnouncer);
 
   // Utility Injections
   private readonly _fb = inject(FormBuilder);
@@ -194,7 +221,10 @@ export class WizardConfigComponent implements OnInit {
       editable: function (cell: TabulatorCell): boolean {
         return cell.getRow().getTreeParent() ? true : false;
       },
-      validator: function (cell: TabulatorCell, value: unknown): boolean | TabulatorValidatorResult {
+      validator: function (
+        cell: TabulatorCell,
+        value: unknown,
+      ): boolean | TabulatorValidatorResult {
         if (cell.getRow().getTreeParent()) {
           if (value === '' || value === null) {
             return { valid: false, message: 'Este campo es requerido' };
@@ -230,6 +260,11 @@ export class WizardConfigComponent implements OnInit {
   telephones = signal<string[]>([]);
   docsConfig = signal<EstabWithChildren[]>([]);
 
+  // User Step State
+  showPassword = false;
+  showConfirmPassword = false;
+  userSubmitted = false;
+
   // Computed signals for derived state
   readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
 
@@ -240,6 +275,7 @@ export class WizardConfigComponent implements OnInit {
   fileError = false;
   selectedFile: File | null = null;
   currentEstab = '';
+  loading = signal(false);
 
   // Step Completion Flags
   userUpdated = false;
@@ -251,9 +287,21 @@ export class WizardConfigComponent implements OnInit {
   // Stepper Configuration
   isLinear = false;
 
+  // Chip input configuration
+  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
+  readonly addOnBlur = true;
+
   // ============================================================================
   // FORM DEFINITIONS
   // ============================================================================
+
+  // Static validator function
+  private static passwordsMatchValidator(control: AbstractControl) {
+    const group = control as FormGroup;
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordsMismatch: true };
+  }
 
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
@@ -263,8 +311,16 @@ export class WizardConfigComponent implements OnInit {
 
   estabForm = this._fb.group<EstabFormControls>({
     canton: this._fb.control(''),
-    estab: this._fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]),
-    nombreComercial: this._fb.control('', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]),
+    estab: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(3),
+    ]),
+    nombreComercial: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(300),
+    ]),
     dirEstablecimiento: this._fb.control('', [Validators.required, Validators.maxLength(300)]),
     telefono: this._fb.control(''),
     correo: this._fb.control(''),
@@ -278,8 +334,38 @@ export class WizardConfigComponent implements OnInit {
     agenteRetencion: '',
     contribuyente: ['', Validators.required],
     contribuyenteEspecial: [''],
-    obligadoContabilidad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
+    obligadoContabilidad: [
+      '',
+      [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
+    ],
   });
+
+  userForm = this._fb.group(
+    {
+      nroIdentificacion: this._fb.control('', [Validators.required, Validators.minLength(10)]),
+      username: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20),
+        Validators.pattern(/^[a-zA-Z0-9_]+$/),
+      ]),
+      firstName: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ]),
+      lastName: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ]),
+      email: this._fb.control('', [Validators.email]),
+      phone: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]+$/)]),
+      password: this._fb.control('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: this._fb.control('', [Validators.required]),
+    },
+    { validators: [WizardConfigComponent.passwordsMatchValidator] },
+  );
 
   // ============================================================================
   // FORM GETTERS
@@ -289,6 +375,10 @@ export class WizardConfigComponent implements OnInit {
     return this.estabForm.get('bodegas') as FormArray;
   }
 
+  get ptosEmi(): FormArray {
+    return this.estabForm.get('ptosEmi') as FormArray;
+  }
+
   // ============================================================================
   // LIFECYCLE METHODS
   // ============================================================================
@@ -296,6 +386,7 @@ export class WizardConfigComponent implements OnInit {
   ngOnInit(): void {
     this.initializeUserData();
     this.fetchCompanyDemoSteps();
+    this.initializeForms();
   }
 
   // ============================================================================
@@ -306,6 +397,13 @@ export class WizardConfigComponent implements OnInit {
     const decodedToken = this._tokenUseCase.getUserData();
     if (decodedToken) {
       this.user = decodedToken;
+    }
+  }
+
+  private initializeForms(): void {
+    // Initialize establishment form with at least one punto de emisión
+    if (this.ptosEmi.length === 0) {
+      this.addPtoEmi();
     }
   }
 
@@ -408,14 +506,185 @@ export class WizardConfigComponent implements OnInit {
   }
 
   // ============================================================================
+  // CONSOLIDATED STEP METHODS
+  // ============================================================================
+
+  // User Step Methods
+
+  saveUser(): void {
+    this.userSubmitted = true;
+    if (this.userForm.valid) {
+      try {
+        const formValue = this.userForm.value;
+        const userData = new UserDataVO({
+          nroIdentificacion: formValue.nroIdentificacion!,
+          username: formValue.username!,
+          firstName: formValue.firstName!,
+          lastName: formValue.lastName!,
+          email: formValue.email || undefined,
+          phone: formValue.phone || undefined,
+          password: formValue.password!,
+        });
+        this._wizardStore.saveUserData(userData);
+      } catch (error) {
+        console.error('Error creating user data:', error);
+      }
+    } else {
+      Object.keys(this.userForm.controls).forEach((key) => {
+        const control = this.userForm.get(key);
+        control?.markAsTouched();
+      });
+    }
+  }
+
+  // Establishment Step Methods
+  addBodega(): void {
+    this.bodegas.push(this.newBodega());
+  }
+
+  removeBodega(index: number): void {
+    this.bodegas.removeAt(index);
+  }
+
+  addPtoEmi(): void {
+    this.ptosEmi.push(this.newPtoEmi());
+  }
+
+  removePtoEmi(index: number): void {
+    this.ptosEmi.removeAt(index);
+  }
+
+  private newBodega(): FormGroup {
+    return this._fb.group({
+      descripcion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
+      direccion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
+      telefono: [''],
+    });
+  }
+
+  private newPtoEmi(): FormGroup {
+    return this._fb.group({
+      ptoEmi: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
+      ambiente: ['', Validators.required],
+    });
+  }
+
+  // Chip Management Methods
+  addEmail(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.emails.update((prev) => [...prev, value]);
+      event.chipInput!.clear();
+    }
+  }
+
+  removeEmail(value: string): void {
+    const index = this.emails().indexOf(value);
+    if (index >= 0) {
+      this.emails.update((prev) => prev.filter((_, i) => i !== index));
+      this._announcer.announce(`Removed ${value}`);
+    }
+  }
+
+  editEmail(email: string, event: MatChipEditedEvent): void {
+    const value = event.value.trim();
+    if (!value) {
+      this.removeEmail(email);
+    } else {
+      const index = this.emails().indexOf(email);
+      if (index >= 0) {
+        this.emails.update((prev) => prev.map((e, i) => (i === index ? value : e)));
+      }
+    }
+  }
+
+  addTelephone(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.telephones.update((prev) => [...prev, value]);
+      event.chipInput!.clear();
+    }
+  }
+
+  removeTelephone(value: string): void {
+    const index = this.telephones().indexOf(value);
+    if (index >= 0) {
+      this.telephones.update((prev) => prev.filter((_, i) => i !== index));
+      this._announcer.announce(`Removed ${value}`);
+    }
+  }
+
+  editTelephone(telephone: string, event: MatChipEditedEvent): void {
+    const value = event.value.trim();
+    if (!value) {
+      this.removeTelephone(telephone);
+    } else {
+      const index = this.telephones().indexOf(telephone);
+      if (index >= 0) {
+        this.telephones.update((prev) => prev.map((t, i) => (i === index ? value : t)));
+      }
+    }
+  }
+
+  // TrackBy Functions
+  trackByEmail(index: number, email: string): string {
+    return email;
+  }
+
+  trackByTelephone(index: number, telephone: string): string {
+    return telephone;
+  }
+
+  trackByBodega(index: number): number {
+    return index;
+  }
+
+  trackByPtoEmi(index: number): number {
+    return index;
+  }
+
+  // ============================================================================
   // SAVE METHODS
   // ============================================================================
 
   saveEstab(): void {
-    // Validation is now handled in the child component before emitting save
-    // Only handle the save logic here
+    // Bodegas validation
+    if (this.bodegas.length > 0 && !this.bodegas.valid) {
+      this.bodegas.markAllAsTouched();
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Revise que los datos de las bodegas sean correctos',
+      });
+      return;
+    }
+    // Puntos de emisión validation
+    if (this.ptosEmi.length === 0) {
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Ingrese al menos un punto de emisión',
+      });
+      return;
+    }
+    if (!this.ptosEmi.valid) {
+      this.ptosEmi.markAllAsTouched();
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Revise que los datos de los puntos de emisión sean correctos',
+      });
+      return;
+    }
+    if (!this.estabForm.valid) {
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Complete todos los campos requeridos',
+      });
+      return;
+    }
 
-    const telephone = this.telephones().length > 0 ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH) : null;
+    this.loading.set(true);
+
+    const telephone =
+      this.telephones().length > 0 ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH) : null;
     this.estabForm.get('telefono')?.setValue(telephone);
 
     const correo = this.emails().length > 0 ? this.emails().join(SEPARATOR_KEY_CODE.SLASH) : null;
@@ -429,6 +698,7 @@ export class WizardConfigComponent implements OnInit {
     };
 
     this._estabService.post(dataEstab).subscribe((response) => {
+      this.loading.set(false);
       if (isApiResponse(response)) {
         this._toasterService.show({
           type: response.code == '1' ? 'success' : 'warning',
