@@ -864,15 +864,10 @@
                           mat-raised-button
                           color="primary"
                           type="submit"
-                          [disabled]="!estabForm.valid || loading()"
+                          [disabled]="!estabForm.valid"
                         >
-                          @if (loading()) {
-                            <mat-icon>hourglass_empty</mat-icon>
-                            Guardando...
-                          } @else {
-                            <mat-icon>save</mat-icon>
-                            Guardar Configuración
-                          }
+                          <mat-icon>save</mat-icon>
+                          Guardar Configuración
                         </button>
                       </div>
                     </form>

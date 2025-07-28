@@ -72,7 +72,7 @@ import { WizardErrorHandlerService } from './services/wizard-error-handler.servi
 import { SaveElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/save-electronic-signature.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 import { CreateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/create-user-customer.use-case';
-import { SaveDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/save-doc-config.use-case';
+import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 // Module Models
@@ -209,7 +209,7 @@ export class WizardConfigComponent implements OnInit {
   // Use Case Injections
   private readonly _createUserCustomerUseCase = inject(CreateUserCustomerUseCase);
   private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
-  private readonly _saveDocConfigUseCase = inject(SaveDocConfigUseCase);
+  private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
 
   private readonly _announcer = inject(LiveAnnouncer);
 
@@ -287,7 +287,6 @@ export class WizardConfigComponent implements OnInit {
   fileError = false;
   selectedFile: File | null = null;
   currentEstab = '';
-  loading = signal(false);
 
   // Step Completion Flags
   userUpdated = false;
@@ -526,8 +525,6 @@ export class WizardConfigComponent implements OnInit {
   saveUser(): void {
     this.userSubmitted = true;
     if (this.userForm.valid) {
-      this.loading.set(true);
-
       const userData = {
         ...this.userForm.value,
         demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'II')?.id,
@@ -545,7 +542,6 @@ export class WizardConfigComponent implements OnInit {
           }),
         )
         .subscribe((response) => {
-          this.loading.set(false);
           if (response && isApiResponse(response)) {
             this._toasterService.show({
               type: response.code === '1' ? 'success' : 'warning',
@@ -712,8 +708,6 @@ export class WizardConfigComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
-
     const telephone =
       this.telephones().length > 0 ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH) : null;
     this.estabForm.get('telefono')?.setValue(telephone);
@@ -737,7 +731,6 @@ export class WizardConfigComponent implements OnInit {
     };
 
     this._estabService.post(dataEstab).subscribe((response) => {
-      this.loading.set(false);
       if (isApiResponse(response)) {
         this._toasterService.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -780,15 +773,13 @@ export class WizardConfigComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
-
     const docConfigData = {
       docs,
       demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
     };
 
-    this._saveDocConfigUseCase
-      .execute(docConfigData as unknown)
+    this._createDocConfigUseCase
+      .execute(docConfigData)
       .pipe(
         catchError((error: unknown) => {
           this._errorHandler.handleApiError(error, {
@@ -799,7 +790,6 @@ export class WizardConfigComponent implements OnInit {
         }),
       )
       .subscribe((response) => {
-        this.loading.set(false);
         if (response && isApiResponse(response)) {
           this._toasterService.show({
             type: response.code === '1' ? 'success' : 'warning',
@@ -818,8 +808,6 @@ export class WizardConfigComponent implements OnInit {
 
   saveCertificate(): void {
     if (this.certificateForm.valid && this.selectedFile) {
-      this.loading.set(true);
-
       const signatureData: ElectronicSignatureParam = {
         idFirmaElectronica: 0,
         contrasenia: this.certificateForm.get('contrasenia')?.value || '',
@@ -839,7 +827,6 @@ export class WizardConfigComponent implements OnInit {
           }),
         )
         .subscribe((response) => {
-          this.loading.set(false);
           if (response && isApiResponse(response)) {
             this._toasterService.show({
               type: response.code === '1' ? 'success' : 'warning',
