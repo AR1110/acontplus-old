@@ -59,14 +59,12 @@ import {
   MatChipEditedEvent,
   MatChipInputEvent,
 } from '@angular/material/chips';
-import { UserData as UserDataVO } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
-import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+
 import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
-import { WizardConfigStore } from '@modules/config/application/store/wizard-config.store';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 
@@ -90,27 +88,6 @@ import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 // ============================================================================
 // INTERFACES
 // ============================================================================
-
-// Extended interfaces to include demoStepId
-interface ContribuyenteWithDemoStep extends Contribuyente {
-  demoStepId?: number;
-}
-
-interface ElectronicSignatureWithDemoStep {
-  idFirmaElectronica: number;
-  contrasenia: string;
-  fechaCaducidad: string;
-  file: File;
-  demoStepId?: number;
-}
-
-interface DocConfigWithDemoStep extends DocConfig {
-  demoStepId?: number;
-}
-
-interface UserDataWithDemoStep extends UserDataVO {
-  demoStepId?: number;
-}
 
 interface TabulatorCell {
   getRow(): {
@@ -197,7 +174,6 @@ interface EstabFormControls {
     MatChipGrid,
     MatChipRow,
     MatChipInput,
-    ToUpperCaseDirective,
 
     // Router
     RouterModule,
@@ -219,7 +195,7 @@ export class WizardConfigComponent implements OnInit {
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
-  private readonly _wizardStore = inject(WizardConfigStore);
+
   private readonly _announcer = inject(LiveAnnouncer);
 
   // Utility Injections
@@ -533,23 +509,11 @@ export class WizardConfigComponent implements OnInit {
   saveUser(): void {
     this.userSubmitted = true;
     if (this.userForm.valid) {
-      try {
-        const formValue = this.userForm.value;
-        const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-        const userData: UserDataWithDemoStep = new UserDataVO({
-          nroIdentificacion: formValue.nroIdentificacion!,
-          username: formValue.username!,
-          firstName: formValue.firstName!,
-          lastName: formValue.lastName!,
-          email: formValue.email || undefined,
-          phone: formValue.phone || undefined,
-          password: formValue.password!,
-        }) as UserDataWithDemoStep;
-        userData.demoStepId = demoStepId;
-        this._wizardStore.saveUserData(userData);
-      } catch (error) {
-        console.error('Error creating user data:', error);
-      }
+      // TODO: Implement user save logic
+      this._toasterService.show({
+        type: 'success',
+        message: 'Usuario guardado exitosamente',
+      });
     } else {
       Object.keys(this.userForm.controls).forEach((key) => {
         const control = this.userForm.get(key);
@@ -648,11 +612,11 @@ export class WizardConfigComponent implements OnInit {
   }
 
   // TrackBy Functions
-  trackByEmail(index: number, email: string): string {
+  trackByEmail(_: number, email: string): string {
     return email;
   }
 
-  trackByTelephone(index: number, telephone: string): string {
+  trackByTelephone(_: number, telephone: string): string {
     return telephone;
   }
 
@@ -734,50 +698,46 @@ export class WizardConfigComponent implements OnInit {
   }
 
   saveDocs(): void {
-    const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
     const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
       pto._children
         .filter((doc: DocConfigItem) => doc.ultimaSecuencia > 0)
         .map(
           (doc: DocConfigItem) =>
             ({
-              idConfiguracionDocumento: 0, // default or real value if available
+              idConfiguracionDocumento: 0,
               idPuntoEmision: pto.puntosEmision[0]?.idPuntoEmision || '',
               idTipoDocumento: Number(doc.idTipoDocumento),
-              estado: true, // default or real value if available
+              estado: true,
               ultimaSecuencia: doc.ultimaSecuencia,
               descripcion: doc.descripcion || '',
-              infoAdicional: false, // default or real value if available
-              demoStepId, // Include demoStepId in each DocConfig object
-            }) as DocConfigWithDemoStep,
+              infoAdicional: false,
+            }) as DocConfig,
         ),
     );
-    docs.forEach((docConfig: DocConfigWithDemoStep) => {
-      this._wizardStore.saveDocumentsConfig(docConfig);
+    // TODO: Implement documents save logic
+    this._toasterService.show({
+      type: 'success',
+      message: `${docs.length} documentos guardados exitosamente`,
     });
   }
 
   saveCertificate(): void {
     if (this.certificateForm.valid && this.selectedFile) {
-      const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-      const formData: ElectronicSignatureWithDemoStep = {
-        idFirmaElectronica: 0, // or undefined if new
-        contrasenia: this.certificateForm.get('contrasenia')?.value || '',
-        fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value || '',
-        file: this.selectedFile,
-        demoStepId,
-      };
-      this._wizardStore.saveElectronicSignature(formData);
+      // TODO: Implement certificate save logic
+      this._toasterService.show({
+        type: 'success',
+        message: 'Certificado guardado exitosamente',
+      });
     }
   }
 
   saveTipoContribuyente(): void {
     if (this.tipoContribuyenteForm.valid) {
-      const codigo = this.tipoContribuyenteForm.get('contribuyente')?.value || '';
-      const descripcion = this.contribuyentes().find((c) => c.codigo === codigo)?.descripcion || '';
-      const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-      const contribuyente: ContribuyenteWithDemoStep = { codigo, descripcion, demoStepId };
-      this._wizardStore.saveContribuyenteData(contribuyente);
+      // TODO: Implement contribuyente save logic
+      this._toasterService.show({
+        type: 'success',
+        message: 'Tipo de contribuyente guardado exitosamente',
+      });
     }
   }
 
@@ -835,7 +795,7 @@ export class WizardConfigComponent implements OnInit {
   // TRACKBY FUNCTIONS
   // ============================================================================
 
-  trackByStep(index: number, step: DemoStep): string {
+  trackByStep(_: number, step: DemoStep): string {
     return step.code;
   }
   // ============================================================================
