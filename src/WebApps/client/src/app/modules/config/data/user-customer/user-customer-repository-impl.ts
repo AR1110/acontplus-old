@@ -1,6 +1,6 @@
 import {
+  UserCustomer,
   UserCustomerDataForm,
-  UserCustomerParamsUpdate,
 } from '@modules/config/domain/models/user-customer/user-customer.model';
 import { GetUserCustomerFormDataMapper } from '@modules/config/data/user-customer/get-user-customer-form-data.mapper';
 import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
@@ -22,8 +22,10 @@ export class UserCustomerRepositoryImpl implements UserCustomerRepository {
       .get(`${this._url}?json=${json}`)
       .pipe(map((response) => GetUserCustomerFormDataMapper.fromJson(response)));
   }
-  update(parameters: UserCustomerParamsUpdate): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(`${this._url}${parameters.id}`, { data: parameters.data });
+  update(data: UserCustomer): Observable<ApiResponse> {
+    return this._http.put<ApiResponse>(`${this._url}${data.idUsuario}`, {
+      data: data,
+    });
   }
   create<T>(parameters: T) {
     return this._http.post<ApiResponse>(`${this._url}`, { data: parameters });

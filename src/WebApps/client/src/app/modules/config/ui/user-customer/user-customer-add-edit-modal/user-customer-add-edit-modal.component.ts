@@ -1,4 +1,3 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,18 +7,19 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { Role } from '@modules/config/domain/models/role.model';
+import { GetUserCustomerFormDataUseCase } from '@modules/config/application/use-cases/user-customer/get-user-customer-form-data.use-case.';
+import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
+import { CreateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/create-user-customer.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { Role } from '@modules/config/domain/models/role.model';
 import { MatSelectModule } from '@angular/material/select';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CreateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/create-user-customer.use-case';
-import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
-import { GetUserCustomerFormDataUseCase } from '@modules/config/application/use-cases/user-customer/get-user-customer-form-data.use-case.';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-user-customer-add-edit-modal',
@@ -131,24 +131,20 @@ export class UserCustomerAddEditModalComponent implements OnInit {
 
     const data = {
       ...this.dataForm.value,
+      idUsuario: this.params.idUsuario,
       roleCode: this.roles().find((i) => i.id === this.dataForm.value.roleId)?.roleCode,
     };
 
     if (this.isUpdate()) {
-      this.$updateUserCustomerUseCase
-        .execute({
-          id: this.params.idUsuario,
-          data,
-        })
-        .subscribe((response) => {
-          this.tS.show({
-            type: response.code === '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-          if (response.code === '1') {
-            this.dialogRef.close(response);
-          }
+      this.$updateUserCustomerUseCase.execute(data).subscribe((response) => {
+        this.tS.show({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
         });
+        if (response.code === '1') {
+          this.dialogRef.close(response);
+        }
+      });
     }
 
     if (this.isAdd()) {

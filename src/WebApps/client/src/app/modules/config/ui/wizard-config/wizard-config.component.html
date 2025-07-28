@@ -96,17 +96,23 @@
                             toUpperCase
                           />
                           @if (
-                            userForm.get('idCard')?.hasError('required') &&
-                            userForm.get('idCard')?.touched
+                            userForm.controls.idCard.invalid &&
+                            userForm.controls.idCard.touched
                           ) {
-                            <mat-error>
-                              Número de identificación es requerido
-                            </mat-error>
-                          }
-                          @if (userForm.get('idCard')?.hasError('minlength')) {
-                            <mat-error>
-                              Debe tener al menos 10 dígitos
-                            </mat-error>
+                            @if (
+                              userForm.controls.idCard.hasError('required')
+                            ) {
+                              <mat-error>
+                                Número de identificación es requerido
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.idCard.hasError('minlength')
+                            ) {
+                              <mat-error>
+                                Debe tener al menos 10 dígitos
+                              </mat-error>
+                            }
                           }
                         </mat-form-field>
                         <mat-form-field
@@ -120,31 +126,37 @@
                             placeholder="Ingrese nombre de usuario"
                           />
                           @if (
-                            userForm.get('username')?.hasError('required') &&
-                            userForm.get('username')?.touched
+                            userForm.controls.username.invalid &&
+                            userForm.controls.username.touched
                           ) {
-                            <mat-error>
-                              Nombre de usuario es requerido
-                            </mat-error>
-                          }
-                          @if (
-                            userForm.get('username')?.hasError('minlength')
-                          ) {
-                            <mat-error>
-                              Debe tener al menos 3 caracteres
-                            </mat-error>
-                          }
-                          @if (
-                            userForm.get('username')?.hasError('maxlength')
-                          ) {
-                            <mat-error>
-                              No puede exceder 20 caracteres
-                            </mat-error>
-                          }
-                          @if (userForm.get('username')?.hasError('pattern')) {
-                            <mat-error>
-                              Solo letras, números y guiones bajos permitidos
-                            </mat-error>
+                            @if (
+                              userForm.controls.username.hasError('required')
+                            ) {
+                              <mat-error>
+                                Nombre de usuario es requerido
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.username.hasError('minlength')
+                            ) {
+                              <mat-error>
+                                Debe tener al menos 3 caracteres
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.username.hasError('maxlength')
+                            ) {
+                              <mat-error>
+                                No puede exceder 20 caracteres
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.username.hasError('pattern')
+                            ) {
+                              <mat-error>
+                                Solo letras, números y guiones bajos permitidos
+                              </mat-error>
+                            }
                           }
                         </mat-form-field>
                       </div>
@@ -163,24 +175,28 @@
                             toUpperCase
                           />
                           @if (
-                            userForm.get('firstName')?.hasError('required') &&
-                            userForm.get('firstName')?.touched
+                            userForm.controls.firstName.invalid &&
+                            userForm.controls.firstName.touched
                           ) {
-                            <mat-error>Los nombres son requeridos</mat-error>
-                          }
-                          @if (
-                            userForm.get('firstName')?.hasError('minlength')
-                          ) {
-                            <mat-error>
-                              Los nombres deben tener al menos 2 caracteres
-                            </mat-error>
-                          }
-                          @if (
-                            userForm.get('firstName')?.hasError('maxlength')
-                          ) {
-                            <mat-error>
-                              Los nombres no pueden exceder 50 caracteres
-                            </mat-error>
+                            @if (
+                              userForm.controls.firstName.hasError('required')
+                            ) {
+                              <mat-error>Los nombres son requeridos</mat-error>
+                            }
+                            @if (
+                              userForm.controls.firstName.hasError('minlength')
+                            ) {
+                              <mat-error>
+                                Los nombres deben tener al menos 2 caracteres
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.firstName.hasError('maxlength')
+                            ) {
+                              <mat-error>
+                                Los nombres no pueden exceder 50 caracteres
+                              </mat-error>
+                            }
                           }
                         </mat-form-field>
                         <mat-form-field
@@ -195,24 +211,30 @@
                             toUpperCase
                           />
                           @if (
-                            userForm.get('lastName')?.hasError('required') &&
-                            userForm.get('lastName')?.touched
+                            userForm.controls.lastName.invalid &&
+                            userForm.controls.lastName.touched
                           ) {
-                            <mat-error>Los apellidos son requeridos</mat-error>
-                          }
-                          @if (
-                            userForm.get('lastName')?.hasError('minlength')
-                          ) {
-                            <mat-error>
-                              Los apellidos deben tener al menos 2 caracteres
-                            </mat-error>
-                          }
-                          @if (
-                            userForm.get('lastName')?.hasError('maxlength')
-                          ) {
-                            <mat-error>
-                              Los apellidos no pueden exceder 50 caracteres
-                            </mat-error>
+                            @if (
+                              userForm.controls.lastName.hasError('required')
+                            ) {
+                              <mat-error>
+                                Los apellidos son requeridos
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.lastName.hasError('minlength')
+                            ) {
+                              <mat-error>
+                                Los apellidos deben tener al menos 2 caracteres
+                              </mat-error>
+                            }
+                            @if (
+                              userForm.controls.lastName.hasError('maxlength')
+                            ) {
+                              <mat-error>
+                                Los apellidos no pueden exceder 50 caracteres
+                              </mat-error>
+                            }
                           }
                         </mat-form-field>
                       </div>
@@ -231,10 +253,12 @@
                             placeholder="ejemplo@correo.com"
                           />
                           @if (
-                            userForm.get('email')?.hasError('email') &&
-                            userForm.get('email')?.touched
+                            userForm.controls.email.invalid &&
+                            userForm.controls.email.touched
                           ) {
-                            <mat-error>Formato de correo inválido</mat-error>
+                            @if (userForm.controls.email.hasError('email')) {
+                              <mat-error>Formato de correo inválido</mat-error>
+                            }
                           }
                         </mat-form-field>
                         <mat-form-field
@@ -248,12 +272,18 @@
                             placeholder="(02) 123-4567"
                           />
                           @if (
-                            userForm
-                              .get('phoneNumber')
-                              ?.hasError('phoneNumber') &&
-                            userForm.get('phoneNumber')?.touched
+                            userForm.controls.phoneNumber.invalid &&
+                            userForm.controls.phoneNumber.touched
                           ) {
-                            <mat-error>Formato de teléfono inválido</mat-error>
+                            @if (
+                              userForm.controls.phoneNumber.hasError(
+                                'phoneNumber'
+                              )
+                            ) {
+                              <mat-error>
+                                Formato de teléfono inválido
+                              </mat-error>
+                            }
                           }
                         </mat-form-field>
                       </div>
@@ -285,17 +315,17 @@
                             </mat-icon>
                           </button>
                           @if (
-                            userForm.get('password')?.invalid &&
-                            (userForm.get('password')?.touched ||
-                              userForm.get('password')?.dirty)
+                            userForm.controls.password.invalid &&
+                            (userForm.controls.password.touched ||
+                              userForm.controls.password.dirty)
                           ) {
                             @if (
-                              userForm.get('password')?.hasError('required')
+                              userForm.controls.password.hasError('required')
                             ) {
                               <mat-error>La contraseña es requerida</mat-error>
                             }
                             @if (
-                              userForm.get('password')?.hasError('minlength')
+                              userForm.controls.password.hasError('minlength')
                             ) {
                               <mat-error>
                                 La contraseña debe tener al menos 6 caracteres
@@ -330,17 +360,17 @@
                             </mat-icon>
                           </button>
                           @if (
-                            (userForm.get('confirmPassword')?.invalid &&
-                              (userForm.get('confirmPassword')?.touched ||
-                                userForm.get('confirmPassword')?.dirty)) ||
+                            (userForm.controls.confirmPassword.invalid &&
+                              (userForm.controls.confirmPassword.touched ||
+                                userForm.controls.confirmPassword.dirty)) ||
                             (userForm.errors?.['passwordsMismatch'] &&
-                              (userForm.get('confirmPassword')?.touched ||
-                                userForm.get('confirmPassword')?.dirty))
+                              (userForm.controls.confirmPassword.touched ||
+                                userForm.controls.confirmPassword.dirty))
                           ) {
                             @if (
-                              userForm
-                                .get('confirmPassword')
-                                ?.hasError('required')
+                              userForm.controls.confirmPassword.hasError(
+                                'required'
+                              )
                             ) {
                               <mat-error>
                                 Debe confirmar la contraseña
@@ -412,15 +442,22 @@
                               maxlength="3"
                               toUpperCase
                             />
-                            @if (estabForm.get('estab')?.hasError('required')) {
-                              <mat-error>
-                                El establecimiento es requerido
-                              </mat-error>
-                            }
                             @if (
-                              estabForm.get('estab')?.hasError('minlength')
+                              estabForm.controls.estab.invalid &&
+                              estabForm.controls.estab.touched
                             ) {
-                              <mat-error>Debe tener 3 caracteres</mat-error>
+                              @if (
+                                estabForm.controls.estab.hasError('required')
+                              ) {
+                                <mat-error>
+                                  El establecimiento es requerido
+                                </mat-error>
+                              }
+                              @if (
+                                estabForm.controls.estab.hasError('minlength')
+                              ) {
+                                <mat-error>Debe tener 3 caracteres</mat-error>
+                              }
                             }
                           </mat-form-field>
                         </div>
@@ -438,13 +475,18 @@
                               toUpperCase
                             />
                             @if (
-                              estabForm
-                                .get('nombreComercial')
-                                ?.hasError('required')
+                              estabForm.controls.nombreComercial.invalid &&
+                              estabForm.controls.nombreComercial.touched
                             ) {
-                              <mat-error>
-                                El nombre comercial es requerido
-                              </mat-error>
+                              @if (
+                                estabForm.controls.nombreComercial.hasError(
+                                  'required'
+                                )
+                              ) {
+                                <mat-error>
+                                  El nombre comercial es requerido
+                                </mat-error>
+                              }
                             }
                           </mat-form-field>
                         </div>
@@ -462,11 +504,16 @@
                               toUpperCase
                             />
                             @if (
-                              estabForm
-                                .get('dirEstablecimiento')
-                                ?.hasError('required')
+                              estabForm.controls.dirEstablecimiento.invalid &&
+                              estabForm.controls.dirEstablecimiento.touched
                             ) {
-                              <mat-error>La dirección es requerida</mat-error>
+                              @if (
+                                estabForm.controls.dirEstablecimiento.hasError(
+                                  'required'
+                                )
+                              ) {
+                                <mat-error>La dirección es requerida</mat-error>
+                              }
                             }
                           </mat-form-field>
                         </div>
@@ -573,11 +620,16 @@
                                     toUpperCase
                                   />
                                   @if (
-                                    ptoEmi.get('ptoEmi')?.hasError('required')
+                                    ptoEmi.get('ptoEmi')?.invalid &&
+                                    ptoEmi.get('ptoEmi')?.touched
                                   ) {
-                                    <mat-error>
-                                      El punto de emisión es requerido
-                                    </mat-error>
+                                    @if (
+                                      ptoEmi.get('ptoEmi')?.hasError('required')
+                                    ) {
+                                      <mat-error>
+                                        El punto de emisión es requerido
+                                      </mat-error>
+                                    }
                                   }
                                 </mat-form-field>
 
@@ -597,11 +649,18 @@
                                     }
                                   </mat-select>
                                   @if (
-                                    ptoEmi.get('ambiente')?.hasError('required')
+                                    ptoEmi.get('ambiente')?.invalid &&
+                                    ptoEmi.get('ambiente')?.touched
                                   ) {
-                                    <mat-error>
-                                      El ambiente es requerido
-                                    </mat-error>
+                                    @if (
+                                      ptoEmi
+                                        .get('ambiente')
+                                        ?.hasError('required')
+                                    ) {
+                                      <mat-error>
+                                        El ambiente es requerido
+                                      </mat-error>
+                                    }
                                   }
                                 </mat-form-field>
 
@@ -644,11 +703,18 @@
                               }
                             </mat-select>
                             @if (
-                              estabForm.get('actividad')?.hasError('required')
+                              estabForm.controls.actividad.invalid &&
+                              estabForm.controls.actividad.touched
                             ) {
-                              <mat-error>
-                                La actividad económica es requerida
-                              </mat-error>
+                              @if (
+                                estabForm.controls.actividad.hasError(
+                                  'required'
+                                )
+                              ) {
+                                <mat-error>
+                                  La actividad económica es requerida
+                                </mat-error>
+                              }
                             }
                           </mat-form-field>
 
@@ -674,13 +740,18 @@
                               }
                             </mat-select>
                             @if (
-                              estabForm
-                                .get('contribuyente')
-                                ?.hasError('required')
+                              estabForm.controls.contribuyente.invalid &&
+                              estabForm.controls.contribuyente.touched
                             ) {
-                              <mat-error>
-                                El tipo de contribuyente es requerido
-                              </mat-error>
+                              @if (
+                                estabForm.controls.contribuyente.hasError(
+                                  'required'
+                                )
+                              ) {
+                                <mat-error>
+                                  El tipo de contribuyente es requerido
+                                </mat-error>
+                              }
                             }
                           </mat-form-field>
                         </div>
@@ -716,23 +787,33 @@
                               toUpperCase
                             />
                             @if (
-                              estabForm
-                                .get('obligadoContabilidad')
-                                ?.hasError('required')
+                              estabForm.controls.obligadoContabilidad.invalid &&
+                              estabForm.controls.obligadoContabilidad.touched
                             ) {
-                              <mat-error>Este campo es requerido</mat-error>
+                              @if (
+                                estabForm.controls.obligadoContabilidad.hasError(
+                                  'required'
+                                )
+                              ) {
+                                <mat-error>Este campo es requerido</mat-error>
+                              }
                             }
                             @if (
-                              estabForm
-                                .get('obligadoContabilidad')
-                                ?.hasError('minlength') ||
-                              estabForm
-                                .get('obligadoContabilidad')
-                                ?.hasError('maxlength')
+                              estabForm.controls.obligadoContabilidad.invalid &&
+                              estabForm.controls.obligadoContabilidad.touched
                             ) {
-                              <mat-error>
-                                Debe tener exactamente 2 caracteres
-                              </mat-error>
+                              @if (
+                                estabForm.controls.obligadoContabilidad.hasError(
+                                  'minlength'
+                                ) ||
+                                estabForm.controls.obligadoContabilidad.hasError(
+                                  'maxlength'
+                                )
+                              ) {
+                                <mat-error>
+                                  Debe tener exactamente 2 caracteres
+                                </mat-error>
+                              }
                             }
                           </mat-form-field>
                         </div>
@@ -754,7 +835,7 @@
                           </mat-form-field>
                         </div>
 
-                        @if (estabForm.get('hasInventory')?.value) {
+                        @if (estabForm.controls.hasInventory.value) {
                           <div class="form-section">
                             <div class="section-header">
                               <h4>Bodegas</h4>
@@ -794,13 +875,18 @@
                                         toUpperCase
                                       />
                                       @if (
-                                        bodega
-                                          .get('descripcion')
-                                          ?.hasError('required')
+                                        bodega.get('descripcion')?.invalid &&
+                                        bodega.get('descripcion')?.touched
                                       ) {
-                                        <mat-error>
-                                          La descripción es requerida
-                                        </mat-error>
+                                        @if (
+                                          bodega
+                                            .get('descripcion')
+                                            ?.hasError('required')
+                                        ) {
+                                          <mat-error>
+                                            La descripción es requerida
+                                          </mat-error>
+                                        }
                                       }
                                     </mat-form-field>
 
@@ -816,13 +902,18 @@
                                         toUpperCase
                                       />
                                       @if (
-                                        bodega
-                                          .get('direccion')
-                                          ?.hasError('required')
+                                        bodega.get('direccion')?.invalid &&
+                                        bodega.get('direccion')?.touched
                                       ) {
-                                        <mat-error>
-                                          La dirección es requerida
-                                        </mat-error>
+                                        @if (
+                                          bodega
+                                            .get('direccion')
+                                            ?.hasError('required')
+                                        ) {
+                                          <mat-error>
+                                            La dirección es requerida
+                                          </mat-error>
+                                        }
                                       }
                                     </mat-form-field>
 
