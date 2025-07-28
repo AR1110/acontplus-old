@@ -69,12 +69,16 @@ import { EstablishmentService } from '@modules/config/services/sri/establishment
 import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 
 // Module Use Cases
+import { SaveElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/save-electronic-signature.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
+import { CreateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/create-user-customer.use-case';
+import { SaveDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/save-doc-config.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 // Module Models
 import { ActividadEconomica } from '@modules/config/domain/models/wizard-config/actividad-economica.model';
 import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/agente-retencion.model';
+import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
 import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
 import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
 import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
@@ -201,6 +205,11 @@ export class WizardConfigComponent implements OnInit {
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
+
+  // Use Case Injections
+  private readonly _createUserCustomerUseCase = inject(CreateUserCustomerUseCase);
+  private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
+  private readonly _saveDocConfigUseCase = inject(SaveDocConfigUseCase);
 
   private readonly _announcer = inject(LiveAnnouncer);
 
@@ -517,11 +526,37 @@ export class WizardConfigComponent implements OnInit {
   saveUser(): void {
     this.userSubmitted = true;
     if (this.userForm.valid) {
-      // TODO: Implement user save logic
-      this._toasterService.show({
-        type: 'success',
-        message: 'Usuario guardado exitosamente',
-      });
+      this.loading.set(true);
+
+      const userData = {
+        ...this.userForm.value,
+        demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'II')?.id,
+      };
+
+      this._createUserCustomerUseCase
+        .execute(userData)
+        .pipe(
+          catchError((error: unknown) => {
+            this._errorHandler.handleApiError(error, {
+              operation: 'saving user',
+              component: 'WizardConfigComponent',
+            });
+            return of(null);
+          }),
+        )
+        .subscribe((response) => {
+          this.loading.set(false);
+          if (response && isApiResponse(response)) {
+            this._toasterService.show({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.code === '1' ? 'Usuario guardado exitosamente' : response.message,
+            });
+            if (response.code === '1') {
+              this.userUpdated = true;
+              this.fetchCompanyDemoSteps();
+            }
+          }
+        });
     } else {
       Object.keys(this.userForm.controls).forEach((key) => {
         const control = this.userForm.get(key);
@@ -736,19 +771,91 @@ export class WizardConfigComponent implements OnInit {
             }) as DocConfig,
         ),
     );
-    // TODO: Implement documents save logic
-    this._toasterService.show({
-      type: 'success',
-      message: `${docs.length} documentos guardados exitosamente`,
-    });
+
+    if (docs.length === 0) {
+      this._toasterService.show({
+        type: 'warning',
+        message: 'No hay documentos configurados para guardar',
+      });
+      return;
+    }
+
+    this.loading.set(true);
+
+    const docConfigData = {
+      docs,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
+    };
+
+    this._saveDocConfigUseCase
+      .execute(docConfigData as unknown)
+      .pipe(
+        catchError((error: unknown) => {
+          this._errorHandler.handleApiError(error, {
+            operation: 'saving documents configuration',
+            component: 'WizardConfigComponent',
+          });
+          return of(null);
+        }),
+      )
+      .subscribe((response) => {
+        this.loading.set(false);
+        if (response && isApiResponse(response)) {
+          this._toasterService.show({
+            type: response.code === '1' ? 'success' : 'warning',
+            message:
+              response.code === '1'
+                ? `${docs.length} documentos guardados exitosamente`
+                : response.message,
+          });
+          if (response.code === '1') {
+            this.docsUpdated = true;
+            this.fetchCompanyDemoSteps();
+          }
+        }
+      });
   }
 
   saveCertificate(): void {
     if (this.certificateForm.valid && this.selectedFile) {
-      // TODO: Implement certificate save logic
+      this.loading.set(true);
+
+      const signatureData: ElectronicSignatureParam = {
+        idFirmaElectronica: 0,
+        contrasenia: this.certificateForm.get('contrasenia')?.value || '',
+        fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value || '',
+        file: this.selectedFile,
+      };
+
+      this._saveElectronicSignatureUseCase
+        .execute(signatureData)
+        .pipe(
+          catchError((error: unknown) => {
+            this._errorHandler.handleApiError(error, {
+              operation: 'saving electronic signature',
+              component: 'WizardConfigComponent',
+            });
+            return of(null);
+          }),
+        )
+        .subscribe((response) => {
+          this.loading.set(false);
+          if (response && isApiResponse(response)) {
+            this._toasterService.show({
+              type: response.code === '1' ? 'success' : 'warning',
+              message:
+                response.code === '1' ? 'Certificado guardado exitosamente' : response.message,
+            });
+            if (response.code === '1') {
+              this.certificateUpdated = true;
+              this.fetchCompanyDemoSteps();
+            }
+          }
+        });
+    } else {
       this._toasterService.show({
-        type: 'success',
-        message: 'Certificado guardado exitosamente',
+        type: 'warning',
+        message: 'Complete todos los campos requeridos y seleccione un archivo de certificado',
       });
     }
   }
