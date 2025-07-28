@@ -1,23 +1,21 @@
 import { computed, inject, signal, DestroyRef, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, map, catchError, of } from 'rxjs';
 
 // Domain Models
-import { WizardConfiguration } from '@modules/config/domain/models/wizard-config/wizard-configuration.model';
-import { WizardStep } from '@modules/config/domain/models/wizard-config/wizard-step.model';
-import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
 import { EstablishmentData } from '@modules/config/domain/models/wizard-config/value-objects/establishment-data.vo';
+import { WizardConfiguration } from '@modules/config/domain/models/wizard-config/wizard-configuration.model';
+import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
+import { UserData } from '@modules/config/domain/models/wizard-config/value-objects/user-data.vo';
 import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
-import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
 
 // Use Cases
+import { CreateElectronicSignatureUseCase } from '../use-cases/electronic-signature/create-electronic-signature.use-case';
 import { GetWizardConfigurationUseCase } from '../use-cases/wizard-config/get-wizard-configuration.use-case';
-import { SaveUserDataUseCase } from '../use-cases/wizard-config/save-user-data.use-case';
 import { SaveEstablishmentDataUseCase } from '../use-cases/wizard-config/save-establishment-data.use-case';
 import { SaveContribuyenteDataUseCase } from '../use-cases/wizard-config/save-contribuyente-data.use-case';
 import { CreateDocConfigUseCase } from '../use-cases/doc-config/create-doc-config.use-case';
-import { CreateElectronicSignatureUseCase } from '../use-cases/electronic-signature/create-electronic-signature.use-case';
+import { SaveUserDataUseCase } from '../use-cases/wizard-config/save-user-data.use-case';
 
 // Services
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -30,11 +28,11 @@ interface WizardConfigState {
   establishmentData: EstablishmentData | null;
 
   // Reference Data
-  cantones: any[];
-  actividadesEconomica: any[];
-  agentesRetencion: any[];
-  contribuyentes: any[];
-  ambientes: any[];
+  cantones: unknown[];
+  actividadesEconomica: unknown[];
+  agentesRetencion: unknown[];
+  contribuyentes: unknown[];
+  ambientes: unknown[];
 
   // UI State
   currentStepIndex: number;
@@ -78,7 +76,7 @@ const initialState: WizardConfigState = {
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WizardConfigStore {
   // ============================================================================
@@ -91,11 +89,11 @@ export class WizardConfigStore {
   readonly establishmentData = signal<EstablishmentData | null>(initialState.establishmentData);
 
   // Reference Data Signals
-  readonly cantones = signal<any[]>(initialState.cantones);
-  readonly actividadesEconomica = signal<any[]>(initialState.actividadesEconomica);
-  readonly agentesRetencion = signal<any[]>(initialState.agentesRetencion);
-  readonly contribuyentes = signal<any[]>(initialState.contribuyentes);
-  readonly ambientes = signal<any[]>(initialState.ambientes);
+  readonly cantones = signal<unknown[]>(initialState.cantones);
+  readonly actividadesEconomica = signal<unknown[]>(initialState.actividadesEconomica);
+  readonly agentesRetencion = signal<unknown[]>(initialState.agentesRetencion);
+  readonly contribuyentes = signal<unknown[]>(initialState.contribuyentes);
+  readonly ambientes = signal<unknown[]>(initialState.ambientes);
 
   // UI State Signals
   readonly currentStepIndex = signal<number>(initialState.currentStepIndex);
@@ -124,9 +122,13 @@ export class WizardConfigStore {
   readonly totalStepsCount = computed(() => this.configuration()?.totalStepsCount || 0);
   readonly progressPercentage = computed(() => this.configuration()?.progressPercentage || 0);
 
-  readonly canProceedToNextStep = computed(() => this.configuration()?.canProceedToNextStep || false);
+  readonly canProceedToNextStep = computed(
+    () => this.configuration()?.canProceedToNextStep || false,
+  );
   readonly canGoToPreviousStep = computed(() => this.configuration()?.canGoToPreviousStep || false);
-  readonly hasIncompleteRequiredSteps = computed(() => this.configuration()?.hasIncompleteRequiredSteps || false);
+  readonly hasIncompleteRequiredSteps = computed(
+    () => this.configuration()?.hasIncompleteRequiredSteps || false,
+  );
 
   readonly isLinear = computed(() => this.configuration()?.isLinear || true);
   readonly allowSkip = computed(() => this.configuration()?.allowSkip || false);
@@ -136,12 +138,13 @@ export class WizardConfigStore {
   readonly hasEstablishmentData = computed(() => this.establishmentData() !== null);
 
   readonly hasError = computed(() => this.error() !== null);
-  readonly isAnySaving = computed(() =>
-    this.isSavingUser() ||
-    this.isSavingEstablishment() ||
-    this.isSavingContribuyente() ||
-    this.isSavingDocuments() ||
-    this.isSavingCertificate()
+  readonly isAnySaving = computed(
+    () =>
+      this.isSavingUser() ||
+      this.isSavingEstablishment() ||
+      this.isSavingContribuyente() ||
+      this.isSavingDocuments() ||
+      this.isSavingCertificate(),
   );
 
   // ============================================================================
@@ -173,24 +176,25 @@ export class WizardConfigStore {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this._getWizardConfigurationUseCase.execute().pipe(
-      takeUntilDestroyed(this._destroyRef)
-    ).subscribe({
-      next: (response) => {
-        this.configuration.set(response.configuration);
-        this.currentStepIndex.set(response.configuration.currentStepIndex);
-        this.isLoading.set(false);
+    this._getWizardConfigurationUseCase
+      .execute()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.configuration.set(response.configuration);
+          this.currentStepIndex.set(response.configuration.currentStepIndex);
+          this.isLoading.set(false);
 
-        if (!response.isLoaded) {
-          this.error.set(response.error || 'Error loading configuration');
-        }
-      },
-      error: (error) => {
-        this.error.set(error.message || 'Error loading configuration');
-        this.isLoading.set(false);
-        this._toasterService.error({ message: 'Error loading wizard configuration' });
-      }
-    });
+          if (!response.isLoaded) {
+            this.error.set(response.error || 'Error loading configuration');
+          }
+        },
+        error: (error) => {
+          this.error.set(error.message || 'Error loading configuration');
+          this.isLoading.set(false);
+          this._toasterService.error({ message: 'Error loading wizard configuration' });
+        },
+      });
   }
 
   moveToNextStep(): void {
@@ -204,7 +208,7 @@ export class WizardConfigStore {
       const updatedConfig = config.moveToNextStep();
       this.configuration.set(updatedConfig);
       this.currentStepIndex.set(updatedConfig.currentStepIndex);
-        } catch (error) {
+    } catch {
       this._toasterService.error({ message: 'Error moving to next step' });
     }
   }
@@ -220,7 +224,7 @@ export class WizardConfigStore {
       const updatedConfig = config.moveToPreviousStep();
       this.configuration.set(updatedConfig);
       this.currentStepIndex.set(updatedConfig.currentStepIndex);
-    } catch (error) {
+    } catch {
       this._toasterService.error({ message: 'Error moving to previous step' });
     }
   }
@@ -233,7 +237,7 @@ export class WizardConfigStore {
       const updatedConfig = config.moveToStep(stepIndex);
       this.configuration.set(updatedConfig);
       this.currentStepIndex.set(updatedConfig.currentStepIndex);
-    } catch (error) {
+    } catch {
       this._toasterService.error({ message: 'Error moving to step' });
     }
   }
@@ -246,119 +250,129 @@ export class WizardConfigStore {
       const updatedConfig = config.completeCurrentStep();
       this.configuration.set(updatedConfig);
       this._toasterService.success({ message: 'Step completed successfully' });
-    } catch (error) {
+    } catch {
       this._toasterService.error({ message: 'Error completing step' });
     }
   }
 
-  saveUserData(userData: UserData): void {
+  saveUserData(userData: UserData, demoStepId?: number): void {
     this.isSavingUser.set(true);
     this.error.set(null);
 
-    this._saveUserDataUseCase.execute({ userData }).pipe(
-      takeUntilDestroyed(this._destroyRef)
-    ).subscribe({
-      next: (response) => {
-        this.userData.set(response.userData);
-        this.isSavingUser.set(false);
-        this.completeCurrentStep();
-        this._toasterService.success({ message: 'User data saved successfully' });
-      },
-      error: (error) => {
-        this.error.set(error.message || 'Error saving user data');
-        this.isSavingUser.set(false);
-        this._toasterService.error({ message: 'Error saving user data' });
-      }
-    });
+    // TODO: Use demoStepId when use case supports it
+    this._saveUserDataUseCase
+      .execute({ userData })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.userData.set(response.userData);
+          this.isSavingUser.set(false);
+          this.completeCurrentStep();
+          this._toasterService.success({ message: 'User data saved successfully' });
+        },
+        error: (error) => {
+          this.error.set(error.message || 'Error saving user data');
+          this.isSavingUser.set(false);
+          this._toasterService.error({ message: 'Error saving user data' });
+        },
+      });
   }
 
-  saveEstablishmentData(establishmentData: EstablishmentData): void {
+  saveEstablishmentData(establishmentData: EstablishmentData, demoStepId?: number): void {
     this.isSavingEstablishment.set(true);
     this.error.set(null);
 
-    this._saveEstablishmentDataUseCase.execute({ establishmentData }).pipe(
-      takeUntilDestroyed(this._destroyRef)
-    ).subscribe({
-      next: (response) => {
-        this.establishmentData.set(response.establishmentData);
-        this.isSavingEstablishment.set(false);
-        this.completeCurrentStep();
-        this._toasterService.success({ message: 'Establishment data saved successfully' });
-      },
-      error: (error) => {
-        this.error.set(error.message || 'Error saving establishment data');
-        this.isSavingEstablishment.set(false);
-        this._toasterService.error({ message: 'Error saving establishment data' });
-      }
-    });
+    // TODO: Use demoStepId when use case supports it
+    this._saveEstablishmentDataUseCase
+      .execute({ establishmentData })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.establishmentData.set(response.establishmentData);
+          this.isSavingEstablishment.set(false);
+          this.completeCurrentStep();
+          this._toasterService.success({ message: 'Establishment data saved successfully' });
+        },
+        error: (error) => {
+          this.error.set(error.message || 'Error saving establishment data');
+          this.isSavingEstablishment.set(false);
+          this._toasterService.error({ message: 'Error saving establishment data' });
+        },
+      });
   }
 
-  saveContribuyenteData(contribuyente: Contribuyente): void {
+  saveContribuyenteData(contribuyente: Contribuyente, demoStepId?: number): void {
     this.isSavingContribuyente.set(true);
     this.error.set(null);
-    this._saveContribuyenteDataUseCase.execute({ contribuyente }).pipe(
-      takeUntilDestroyed(this._destroyRef)
-    ).subscribe({
-      next: (response) => {
-        // Optionally update state with response
-        this.isSavingContribuyente.set(false);
-        this.completeCurrentStep();
-        this._toasterService.success({ message: 'Contribuyente guardado exitosamente' });
-      },
-      error: (error) => {
-        this.error.set(error.message || 'Error guardando contribuyente');
-        this.isSavingContribuyente.set(false);
-        this._toasterService.error({ message: 'Error guardando contribuyente' });
-      }
-    });
+    // TODO: Use demoStepId when use case supports it
+    this._saveContribuyenteDataUseCase
+      .execute({ contribuyente })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          // Optionally update state with response
+          this.isSavingContribuyente.set(false);
+          this.completeCurrentStep();
+          this._toasterService.success({ message: 'Contribuyente guardado exitosamente' });
+        },
+        error: (error: Error) => {
+          this.error.set(error.message || 'Error guardando contribuyente');
+          this.isSavingContribuyente.set(false);
+          this._toasterService.error({ message: 'Error guardando contribuyente' });
+        },
+      });
   }
 
-  saveDocumentsConfig(docConfig: DocConfig): void {
+  saveDocumentsConfig(docConfig: DocConfig, demoStepId?: number): void {
     this.isSavingDocuments.set(true);
     this.error.set(null);
-    this._createDocConfigUseCase.execute(docConfig).pipe(
-      takeUntilDestroyed(this._destroyRef)
-    ).subscribe({
-      next: (response) => {
-        // Optionally update state with response
-        this.isSavingDocuments.set(false);
-        this.completeCurrentStep();
-        this._toasterService.success({ message: 'Documentos guardados exitosamente' });
-      },
-      error: (error) => {
-        this.error.set(error.message || 'Error guardando documentos');
-        this.isSavingDocuments.set(false);
-        this._toasterService.error({ message: 'Error guardando documentos' });
-      }
-    });
+    // TODO: Use demoStepId when use case supports it
+    this._createDocConfigUseCase
+      .execute(docConfig)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          // Optionally update state with response
+          this.isSavingDocuments.set(false);
+          this.completeCurrentStep();
+          this._toasterService.success({ message: 'Documentos guardados exitosamente' });
+        },
+        error: (error: Error) => {
+          this.error.set(error.message || 'Error guardando documentos');
+          this.isSavingDocuments.set(false);
+          this._toasterService.error({ message: 'Error guardando documentos' });
+        },
+      });
   }
 
-  saveElectronicSignature(signatureData: ElectronicSignatureParam): void {
+  saveElectronicSignature(signatureData: ElectronicSignatureParam, demoStepId?: number): void {
     this.isSavingCertificate.set(true);
     this.error.set(null);
-    this._createElectronicSignatureUseCase.execute(signatureData).pipe(
-      takeUntilDestroyed(this._destroyRef)
-    ).subscribe({
-      next: (response) => {
-        // Optionally update state with response
-        this.isSavingCertificate.set(false);
-        this.completeCurrentStep();
-        this._toasterService.success({ message: 'Firma electrónica guardada exitosamente' });
-      },
-      error: (error) => {
-        this.error.set(error.message || 'Error guardando firma electrónica');
-        this.isSavingCertificate.set(false);
-        this._toasterService.error({ message: 'Error guardando firma electrónica' });
-      }
-    });
+    // TODO: Use demoStepId when use case supports it
+    this._createElectronicSignatureUseCase
+      .execute(signatureData)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          // Optionally update state with response
+          this.isSavingCertificate.set(false);
+          this.completeCurrentStep();
+          this._toasterService.success({ message: 'Firma electrónica guardada exitosamente' });
+        },
+        error: (error: Error) => {
+          this.error.set(error.message || 'Error guardando firma electrónica');
+          this.isSavingCertificate.set(false);
+          this._toasterService.error({ message: 'Error guardando firma electrónica' });
+        },
+      });
   }
 
   updateReferenceData(data: {
-    cantones?: any[];
-    actividadesEconomica?: any[];
-    agentesRetencion?: any[];
-    contribuyentes?: any[];
-    ambientes?: any[];
+    cantones?: unknown[];
+    actividadesEconomica?: unknown[];
+    agentesRetencion?: unknown[];
+    contribuyentes?: unknown[];
+    ambientes?: unknown[];
   }): void {
     if (data.cantones) this.cantones.set(data.cantones);
     if (data.actividadesEconomica) this.actividadesEconomica.set(data.actividadesEconomica);

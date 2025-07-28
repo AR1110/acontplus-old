@@ -464,10 +464,10 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   private updateStepCompletionStatus(): void {
-    this.userUpdated = this.getStepCompletionStatus('II');
-    this.estabRegistered = this.getStepCompletionStatus('III');
-    this.tipoContribuyenteRegistered = this.getStepCompletionStatus('IV');
-    this.docsUpdated = this.getStepCompletionStatus('V');
+    this.userUpdated = this.getStepCompletionStatus('VI');
+    this.estabRegistered = this.getStepCompletionStatus('VI');
+    this.tipoContribuyenteRegistered = this.getStepCompletionStatus('VI');
+    this.docsUpdated = this.getStepCompletionStatus('VI');
     this.certificateUpdated = this.getStepCompletionStatus('VI');
   }
 
@@ -497,10 +497,8 @@ export class WizardConfigComponent implements OnInit {
   }
 
   private loadStepData(stepCode: string): void {
-    if (stepCode === 'V') {
-      this.fetchEstabData();
-    }
     if (stepCode === 'VI') {
+      this.fetchEstabData();
       this.fetchDocConfig();
     }
   }
@@ -525,7 +523,8 @@ export class WizardConfigComponent implements OnInit {
           phone: formValue.phone || undefined,
           password: formValue.password!,
         });
-        this._wizardStore.saveUserData(userData);
+        const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
+        this._wizardStore.saveUserData(userData, demoStepId);
       } catch (error) {
         console.error('Error creating user data:', error);
       }
@@ -694,7 +693,7 @@ export class WizardConfigComponent implements OnInit {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id,
     };
 
     this._estabService.post(dataEstab).subscribe((response) => {
@@ -729,8 +728,9 @@ export class WizardConfigComponent implements OnInit {
             }) as DocConfig,
         ),
     );
+    const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
     docs.forEach((docConfig: DocConfig) => {
-      this._wizardStore.saveDocumentsConfig(docConfig);
+      this._wizardStore.saveDocumentsConfig(docConfig, demoStepId);
     });
   }
 
@@ -742,7 +742,8 @@ export class WizardConfigComponent implements OnInit {
         fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value || '',
         file: this.selectedFile,
       };
-      this._wizardStore.saveElectronicSignature(formData);
+      const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
+      this._wizardStore.saveElectronicSignature(formData, demoStepId);
     }
   }
 
@@ -751,7 +752,8 @@ export class WizardConfigComponent implements OnInit {
       const codigo = this.tipoContribuyenteForm.get('contribuyente')?.value || '';
       const descripcion = this.contribuyentes().find((c) => c.codigo === codigo)?.descripcion || '';
       const contribuyente: Contribuyente = { codigo, descripcion };
-      this._wizardStore.saveContribuyenteData(contribuyente);
+      const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
+      this._wizardStore.saveContribuyenteData(contribuyente, demoStepId);
     }
   }
 
@@ -825,7 +827,7 @@ export class WizardConfigComponent implements OnInit {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VII')?.id;
+        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
         this._companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
