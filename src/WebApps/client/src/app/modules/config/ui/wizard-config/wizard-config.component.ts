@@ -139,6 +139,12 @@ interface EstabFormControls {
   ptosEmi: FormArray<FormGroup<PtoEmiFormControls>>;
   hasInventory: FormControl<boolean | null>;
   bodegas: FormArray<FormGroup<BodegaFormControls>>;
+  // Consolidated tipoContribuyente fields
+  actividad: FormControl<string | null>;
+  agenteRetencion: FormControl<string | null>;
+  contribuyente: FormControl<string | null>;
+  contribuyenteEspecial: FormControl<string | null>;
+  obligadoContabilidad: FormControl<string | null>;
 }
 
 // ============================================================================
@@ -277,7 +283,6 @@ export class WizardConfigComponent implements OnInit {
   // Step Completion Flags
   userUpdated = false;
   estabRegistered = false;
-  tipoContribuyenteRegistered = false;
   docsUpdated = false;
   certificateUpdated = false;
 
@@ -324,18 +329,19 @@ export class WizardConfigComponent implements OnInit {
     ptosEmi: this._fb.array<FormGroup<PtoEmiFormControls>>([]),
     hasInventory: this._fb.control(false),
     bodegas: this._fb.array<FormGroup<BodegaFormControls>>([]),
+    // Consolidated tipoContribuyente fields
+    actividad: this._fb.control('', [Validators.required]),
+    agenteRetencion: this._fb.control(''),
+    contribuyente: this._fb.control('', [Validators.required]),
+    contribuyenteEspecial: this._fb.control(''),
+    obligadoContabilidad: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(2),
+    ]),
   });
 
-  tipoContribuyenteForm = this._fb.group({
-    actividad: ['', Validators.required],
-    agenteRetencion: '',
-    contribuyente: ['', Validators.required],
-    contribuyenteEspecial: [''],
-    obligadoContabilidad: [
-      '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
-    ],
-  });
+  // Removed tipoContribuyenteForm - consolidated into estabForm
 
   userForm = this._fb.group(
     {
@@ -461,11 +467,11 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   private updateStepCompletionStatus(): void {
-    this.userUpdated = this.getStepCompletionStatus('VI');
-    this.estabRegistered = this.getStepCompletionStatus('VI');
-    this.tipoContribuyenteRegistered = this.getStepCompletionStatus('VI');
-    this.docsUpdated = this.getStepCompletionStatus('VI');
-    this.certificateUpdated = this.getStepCompletionStatus('VI');
+    this.userUpdated = this.getStepCompletionStatus('II');
+    this.estabRegistered = this.getStepCompletionStatus('III');
+    // tipoContribuyenteRegistered is now part of estabRegistered
+    this.docsUpdated = this.getStepCompletionStatus('IV');
+    this.certificateUpdated = this.getStepCompletionStatus('V');
   }
 
   private getStepCompletionStatus(stepCode: string): boolean {
@@ -494,8 +500,10 @@ export class WizardConfigComponent implements OnInit {
   }
 
   private loadStepData(stepCode: string): void {
-    if (stepCode === 'VI') {
+    if (stepCode === 'III') {
       this.fetchEstabData();
+      this.fetchDocConfig();
+    } else if (stepCode === 'V') {
       this.fetchDocConfig();
     }
   }
@@ -659,9 +667,12 @@ export class WizardConfigComponent implements OnInit {
       return;
     }
     if (!this.estabForm.valid) {
+      // Mark all fields as touched to show validation errors
+      this.estabForm.markAllAsTouched();
       this._toasterService.show({
         type: 'warning',
-        message: 'Complete todos los campos requeridos',
+        message:
+          'Complete todos los campos requeridos del establecimiento y configuración de contribuyente',
       });
       return;
     }
@@ -679,7 +690,15 @@ export class WizardConfigComponent implements OnInit {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id,
+      // Include consolidated tipoContribuyente data
+      tipoContribuyente: {
+        actividad: this.estabForm.get('actividad')?.value,
+        agenteRetencion: this.estabForm.get('agenteRetencion')?.value,
+        contribuyente: this.estabForm.get('contribuyente')?.value,
+        contribuyenteEspecial: this.estabForm.get('contribuyenteEspecial')?.value,
+        obligadoContabilidad: this.estabForm.get('obligadoContabilidad')?.value,
+      },
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'III')?.id,
     };
 
     this._estabService.post(dataEstab).subscribe((response) => {
@@ -687,7 +706,10 @@ export class WizardConfigComponent implements OnInit {
       if (isApiResponse(response)) {
         this._toasterService.show({
           type: response.code == '1' ? 'success' : 'warning',
-          message: response.message,
+          message:
+            response.code == '1'
+              ? 'Establecimiento y configuración de contribuyente guardados exitosamente'
+              : response.message,
         });
         if (response.code == '1') {
           this.estabRegistered = true;
@@ -731,23 +753,15 @@ export class WizardConfigComponent implements OnInit {
     }
   }
 
-  saveTipoContribuyente(): void {
-    if (this.tipoContribuyenteForm.valid) {
-      // TODO: Implement contribuyente save logic
-      this._toasterService.show({
-        type: 'success',
-        message: 'Tipo de contribuyente guardado exitosamente',
-      });
-    }
-  }
+  // Removed saveTipoContribuyente - consolidated into saveEstab
 
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
 
   onChangeTipoContribuyente(): void {
-    const control = this.tipoContribuyenteForm.get('agenteRetencion');
-    if (this.tipoContribuyenteForm.get('contribuyente')?.value === '03') {
+    const control = this.estabForm.get('agenteRetencion');
+    if (this.estabForm.get('contribuyente')?.value === '03') {
       control?.disable();
       control?.setValue(null);
     } else {
@@ -770,7 +784,7 @@ export class WizardConfigComponent implements OnInit {
   // ============================================================================
 
   showInfoTipoContribuyente(): void {
-    const contribuyente = this.tipoContribuyenteForm.get('contribuyente')?.value;
+    const contribuyente = this.estabForm.get('contribuyente')?.value;
     const dataInfo = this.contribuyentes().find((item) => item.codigo === contribuyente);
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
@@ -781,7 +795,7 @@ export class WizardConfigComponent implements OnInit {
   }
 
   showInfoActividadEconomica(): void {
-    const actividad = this.tipoContribuyenteForm.get('actividad')?.value;
+    const actividad = this.estabForm.get('actividad')?.value;
     const groupActEconomica = this.actividadesEconomica().find((item) => item.codigo === actividad);
     if (actividad && groupActEconomica?.grupo) {
       Swal.fire({
@@ -811,7 +825,7 @@ export class WizardConfigComponent implements OnInit {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
+        const id = this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id;
         this._companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();

@@ -624,6 +624,124 @@
                         </div>
                       </div>
 
+                      <!-- Tipo de Contribuyente Configuration -->
+                      <div class="form-section">
+                        <h3>Configuración de Contribuyente</h3>
+
+                        <div class="form-row">
+                          <mat-form-field
+                            appearance="outline"
+                            class="half-width"
+                          >
+                            <mat-label>Actividad Económica</mat-label>
+                            <mat-select
+                              formControlName="actividad"
+                              (selectionChange)="showInfoActividadEconomica()"
+                            >
+                              @for (
+                                actividad of actividadesEconomica();
+                                track actividad.codigo
+                              ) {
+                                <mat-option [value]="actividad.codigo">
+                                  {{ actividad.descripcion }}
+                                </mat-option>
+                              }
+                            </mat-select>
+                            @if (
+                              estabForm.get('actividad')?.hasError('required')
+                            ) {
+                              <mat-error>
+                                La actividad económica es requerida
+                              </mat-error>
+                            }
+                          </mat-form-field>
+
+                          <mat-form-field
+                            appearance="outline"
+                            class="half-width"
+                          >
+                            <mat-label>Tipo de Contribuyente</mat-label>
+                            <mat-select
+                              formControlName="contribuyente"
+                              (selectionChange)="
+                                onChangeTipoContribuyente();
+                                showInfoTipoContribuyente()
+                              "
+                            >
+                              @for (
+                                contribuyente of contribuyentes();
+                                track contribuyente.codigo
+                              ) {
+                                <mat-option [value]="contribuyente.codigo">
+                                  {{ contribuyente.descripcion }}
+                                </mat-option>
+                              }
+                            </mat-select>
+                            @if (
+                              estabForm
+                                .get('contribuyente')
+                                ?.hasError('required')
+                            ) {
+                              <mat-error>
+                                El tipo de contribuyente es requerido
+                              </mat-error>
+                            }
+                          </mat-form-field>
+                        </div>
+
+                        <div class="form-row">
+                          <mat-form-field
+                            appearance="outline"
+                            class="half-width"
+                          >
+                            <mat-label>Agente de Retención</mat-label>
+                            <mat-select formControlName="agenteRetencion">
+                              @for (
+                                agente of agentesRetencion();
+                                track agente.resolucion
+                              ) {
+                                <mat-option [value]="agente.resolucion">
+                                  {{ agente.resolucion }}
+                                </mat-option>
+                              }
+                            </mat-select>
+                          </mat-form-field>
+
+                          <mat-form-field
+                            appearance="outline"
+                            class="half-width"
+                          >
+                            <mat-label>Obligado a Contabilidad</mat-label>
+                            <input
+                              matInput
+                              formControlName="obligadoContabilidad"
+                              placeholder="SI/NO"
+                              maxlength="2"
+                              toUpperCase
+                            />
+                            @if (
+                              estabForm
+                                .get('obligadoContabilidad')
+                                ?.hasError('required')
+                            ) {
+                              <mat-error>Este campo es requerido</mat-error>
+                            }
+                            @if (
+                              estabForm
+                                .get('obligadoContabilidad')
+                                ?.hasError('minlength') ||
+                              estabForm
+                                .get('obligadoContabilidad')
+                                ?.hasError('maxlength')
+                            ) {
+                              <mat-error>
+                                Debe tener exactamente 2 caracteres
+                              </mat-error>
+                            }
+                          </mat-form-field>
+                        </div>
+                      </div>
+
                       <!-- Inventory Configuration -->
                       <div class="form-section">
                         <div class="section-header">
@@ -753,7 +871,7 @@
                             Guardando...
                           } @else {
                             <mat-icon>save</mat-icon>
-                            Guardar Establecimiento
+                            Guardar Configuración
                           }
                         </button>
                       </div>
@@ -763,113 +881,10 @@
               </div>
             }
 
-            <!-- Contribuyente Step -->
-            @if (step.code === 'IV') {
-              <div class="contribuyente-step">
-                <mat-card>
-                  <mat-card-content>
-                    <form
-                      [formGroup]="tipoContribuyenteForm"
-                      (ngSubmit)="saveTipoContribuyente()"
-                    >
-                      <h3>Configuración de Contribuyente</h3>
-
-                      <div class="form-row">
-                        <mat-form-field
-                          appearance="outline"
-                          class="half-width"
-                        >
-                          <mat-label>Actividad Económica</mat-label>
-                          <mat-select
-                            formControlName="actividad"
-                            (selectionChange)="showInfoActividadEconomica()"
-                          >
-                            @for (
-                              actividad of actividadesEconomica();
-                              track actividad.codigo
-                            ) {
-                              <mat-option [value]="actividad.codigo">
-                                {{ actividad.descripcion }}
-                              </mat-option>
-                            }
-                          </mat-select>
-                        </mat-form-field>
-
-                        <mat-form-field
-                          appearance="outline"
-                          class="half-width"
-                        >
-                          <mat-label>Tipo de Contribuyente</mat-label>
-                          <mat-select
-                            formControlName="contribuyente"
-                            (selectionChange)="
-                              onChangeTipoContribuyente();
-                              showInfoTipoContribuyente()
-                            "
-                          >
-                            @for (
-                              contribuyente of contribuyentes();
-                              track contribuyente.codigo
-                            ) {
-                              <mat-option [value]="contribuyente.codigo">
-                                {{ contribuyente.descripcion }}
-                              </mat-option>
-                            }
-                          </mat-select>
-                        </mat-form-field>
-                      </div>
-
-                      <div class="form-row">
-                        <mat-form-field
-                          appearance="outline"
-                          class="half-width"
-                        >
-                          <mat-label>Agente de Retención</mat-label>
-                          <mat-select formControlName="agenteRetencion">
-                            @for (
-                              agente of agentesRetencion();
-                              track agente.resolucion
-                            ) {
-                              <mat-option [value]="agente.resolucion">
-                                {{ agente.resolucion }}
-                              </mat-option>
-                            }
-                          </mat-select>
-                        </mat-form-field>
-
-                        <mat-form-field
-                          appearance="outline"
-                          class="half-width"
-                        >
-                          <mat-label>Obligado a Contabilidad</mat-label>
-                          <input
-                            matInput
-                            formControlName="obligadoContabilidad"
-                            placeholder="SI/NO"
-                            maxlength="2"
-                            toUpperCase
-                          />
-                        </mat-form-field>
-                      </div>
-
-                      <div class="form-actions">
-                        <button
-                          mat-raised-button
-                          color="primary"
-                          type="submit"
-                          [disabled]="!tipoContribuyenteForm.valid"
-                        >
-                          Guardar Configuración
-                        </button>
-                      </div>
-                    </form>
-                  </mat-card-content>
-                </mat-card>
-              </div>
-            }
+            <!-- Removed separate Contribuyente Step - consolidated into Establishment Step -->
 
             <!-- Documents Step -->
-            @if (step.code === 'V') {
+            @if (step.code === 'IV') {
               <div class="documents-step">
                 <mat-card>
                   <mat-card-content>
@@ -901,7 +916,7 @@
             }
 
             <!-- Certificate Step -->
-            @if (step.code === 'VI') {
+            @if (step.code === 'V') {
               <div class="certificate-step">
                 <mat-card>
                   <mat-card-content>
@@ -1011,7 +1026,7 @@
             }
 
             <!-- Completion Step -->
-            @if (step.code === 'VII') {
+            @if (step.code === 'VI') {
               <div class="completion-step">
                 <mat-card>
                   <mat-card-content>
