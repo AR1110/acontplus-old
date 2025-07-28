@@ -60,7 +60,7 @@ export class WizardConfiguration {
   }
 
   get completedSteps(): WizardStep[] {
-    return this.steps.filter(step => step.isCompleted);
+    return this.steps.filter((step) => step.isCompleted);
   }
 
   get completedStepsCount(): number {
@@ -80,7 +80,7 @@ export class WizardConfiguration {
     const currentStep = this.currentStep;
     if (!currentStep) return false;
 
-    const completedStepIds = this.completedSteps.map(step => step.id);
+    const completedStepIds = this.completedSteps.map((step) => step.id);
     return currentStep.canProceed() && currentStep.validateDependencies(completedStepIds);
   }
 
@@ -89,9 +89,7 @@ export class WizardConfiguration {
   }
 
   get hasIncompleteRequiredSteps(): boolean {
-    return this.steps
-      .filter(step => step.isRequired)
-      .some(step => !step.isCompleted);
+    return this.steps.filter((step) => step.isRequired).some((step) => !step.isCompleted);
   }
 
   moveToNextStep(): WizardConfiguration {
@@ -101,7 +99,7 @@ export class WizardConfiguration {
 
     return new WizardConfiguration({
       ...this._data,
-      currentStepIndex: this.currentStepIndex + 1
+      currentStepIndex: this.currentStepIndex + 1,
     });
   }
 
@@ -112,7 +110,7 @@ export class WizardConfiguration {
 
     return new WizardConfiguration({
       ...this._data,
-      currentStepIndex: this.currentStepIndex - 1
+      currentStepIndex: this.currentStepIndex - 1,
     });
   }
 
@@ -123,7 +121,7 @@ export class WizardConfiguration {
 
     return new WizardConfiguration({
       ...this._data,
-      currentStepIndex: stepIndex
+      currentStepIndex: stepIndex,
     });
   }
 
@@ -134,23 +132,23 @@ export class WizardConfiguration {
     }
 
     const updatedSteps = this.steps.map((step, index) =>
-      index === this.currentStepIndex ? step.markAsCompleted() : step
+      index === this.currentStepIndex ? step.markAsCompleted() : step,
     );
 
     return new WizardConfiguration({
       ...this._data,
-      steps: updatedSteps
+      steps: updatedSteps,
     });
   }
 
   updateStep(stepId: string, updates: Partial<WizardStepData>): WizardConfiguration {
-    const updatedSteps = this.steps.map(step =>
-      step.id === stepId ? new WizardStep({ ...step.toJSON(), ...updates }) : step
+    const updatedSteps = this.steps.map((step) =>
+      step.id === stepId ? new WizardStep({ ...step.toJSON(), ...updates }) : step,
     );
 
     return new WizardConfiguration({
       ...this._data,
-      steps: updatedSteps
+      steps: updatedSteps,
     });
   }
 
@@ -163,12 +161,12 @@ export class WizardConfiguration {
   }
 
   reset(): WizardConfiguration {
-    const resetSteps = this.steps.map(step => step.markAsIncomplete());
+    const resetSteps = this.steps.map((step) => step.markAsIncomplete());
 
     return new WizardConfiguration({
       ...this._data,
       steps: resetSteps,
-      currentStepIndex: 0
+      currentStepIndex: 0,
     });
   }
 
@@ -178,22 +176,22 @@ export class WizardConfiguration {
     const step = this.steps[stepIndex];
     if (!step.isEnabled) return false;
 
-    const completedStepIds = this.completedSteps.map(s => s.id);
+    const completedStepIds = this.completedSteps.map((s) => s.id);
     return step.validateDependencies(completedStepIds);
   }
 
   getStepById(stepId: string): WizardStep | null {
-    return this.steps.find(step => step.id === stepId) || null;
+    return this.steps.find((step) => step.id === stepId) || null;
   }
 
   getStepByCode(stepCode: string): WizardStep | null {
-    return this.steps.find(step => step.code === stepCode) || null;
+    return this.steps.find((step) => step.code === stepCode) || null;
   }
 
   toJSON(): WizardConfigurationData {
     return {
       ...this._data,
-      steps: this.steps
+      steps: this.steps,
     };
   }
 
@@ -210,7 +208,7 @@ export class WizardConfiguration {
         isEnabled: true,
         validationRules: [],
         dependencies: [],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'user',
@@ -223,7 +221,7 @@ export class WizardConfiguration {
         isEnabled: true,
         validationRules: [],
         dependencies: ['welcome'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'establishment',
@@ -236,7 +234,7 @@ export class WizardConfiguration {
         isEnabled: false,
         validationRules: [],
         dependencies: ['user'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'contribuyente',
@@ -249,7 +247,7 @@ export class WizardConfiguration {
         isEnabled: false,
         validationRules: [],
         dependencies: ['establishment'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'documents',
@@ -262,7 +260,7 @@ export class WizardConfiguration {
         isEnabled: false,
         validationRules: [],
         dependencies: ['contribuyente'],
-        metadata: {}
+        metadata: {},
       }),
       new WizardStep({
         id: 'certificate',
@@ -275,8 +273,8 @@ export class WizardConfiguration {
         isEnabled: false,
         validationRules: [],
         dependencies: ['documents'],
-        metadata: {}
-      })
+        metadata: {},
+      }),
     ];
 
     return new WizardConfiguration({
@@ -286,7 +284,7 @@ export class WizardConfiguration {
       isLinear: true,
       allowSkip: false,
       autoSave: true,
-      metadata: {}
+      metadata: {},
     });
   }
 }

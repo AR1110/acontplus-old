@@ -91,6 +91,27 @@ import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 // INTERFACES
 // ============================================================================
 
+// Extended interfaces to include demoStepId
+interface ContribuyenteWithDemoStep extends Contribuyente {
+  demoStepId?: number;
+}
+
+interface ElectronicSignatureWithDemoStep {
+  idFirmaElectronica: number;
+  contrasenia: string;
+  fechaCaducidad: string;
+  file: File;
+  demoStepId?: number;
+}
+
+interface DocConfigWithDemoStep extends DocConfig {
+  demoStepId?: number;
+}
+
+interface UserDataWithDemoStep extends UserDataVO {
+  demoStepId?: number;
+}
+
 interface TabulatorCell {
   getRow(): {
     getTreeParent(): unknown;
@@ -514,7 +535,8 @@ export class WizardConfigComponent implements OnInit {
     if (this.userForm.valid) {
       try {
         const formValue = this.userForm.value;
-        const userData = new UserDataVO({
+        const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
+        const userData: UserDataWithDemoStep = new UserDataVO({
           nroIdentificacion: formValue.nroIdentificacion!,
           username: formValue.username!,
           firstName: formValue.firstName!,
@@ -522,9 +544,9 @@ export class WizardConfigComponent implements OnInit {
           email: formValue.email || undefined,
           phone: formValue.phone || undefined,
           password: formValue.password!,
-        });
-        const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-        this._wizardStore.saveUserData(userData, demoStepId);
+        }) as UserDataWithDemoStep;
+        userData.demoStepId = demoStepId;
+        this._wizardStore.saveUserData(userData);
       } catch (error) {
         console.error('Error creating user data:', error);
       }
@@ -712,6 +734,7 @@ export class WizardConfigComponent implements OnInit {
   }
 
   saveDocs(): void {
+    const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
     const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
       pto._children
         .filter((doc: DocConfigItem) => doc.ultimaSecuencia > 0)
@@ -725,25 +748,26 @@ export class WizardConfigComponent implements OnInit {
               ultimaSecuencia: doc.ultimaSecuencia,
               descripcion: doc.descripcion || '',
               infoAdicional: false, // default or real value if available
-            }) as DocConfig,
+              demoStepId, // Include demoStepId in each DocConfig object
+            }) as DocConfigWithDemoStep,
         ),
     );
-    const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-    docs.forEach((docConfig: DocConfig) => {
-      this._wizardStore.saveDocumentsConfig(docConfig, demoStepId);
+    docs.forEach((docConfig: DocConfigWithDemoStep) => {
+      this._wizardStore.saveDocumentsConfig(docConfig);
     });
   }
 
   saveCertificate(): void {
     if (this.certificateForm.valid && this.selectedFile) {
-      const formData = {
+      const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
+      const formData: ElectronicSignatureWithDemoStep = {
         idFirmaElectronica: 0, // or undefined if new
         contrasenia: this.certificateForm.get('contrasenia')?.value || '',
         fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value || '',
         file: this.selectedFile,
+        demoStepId,
       };
-      const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-      this._wizardStore.saveElectronicSignature(formData, demoStepId);
+      this._wizardStore.saveElectronicSignature(formData);
     }
   }
 
@@ -751,9 +775,9 @@ export class WizardConfigComponent implements OnInit {
     if (this.tipoContribuyenteForm.valid) {
       const codigo = this.tipoContribuyenteForm.get('contribuyente')?.value || '';
       const descripcion = this.contribuyentes().find((c) => c.codigo === codigo)?.descripcion || '';
-      const contribuyente: Contribuyente = { codigo, descripcion };
       const demoStepId = this.demoSteps().find((step: DemoStep) => step.code === 'VI')?.id;
-      this._wizardStore.saveContribuyenteData(contribuyente, demoStepId);
+      const contribuyente: ContribuyenteWithDemoStep = { codigo, descripcion, demoStepId };
+      this._wizardStore.saveContribuyenteData(contribuyente);
     }
   }
 

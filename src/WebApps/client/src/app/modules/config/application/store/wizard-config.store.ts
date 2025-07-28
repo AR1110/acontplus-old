@@ -255,13 +255,16 @@ export class WizardConfigStore {
     }
   }
 
-  saveUserData(userData: UserData, demoStepId?: number): void {
+  saveUserData(userData: UserData & { demoStepId?: number }): void {
     this.isSavingUser.set(true);
     this.error.set(null);
 
-    // TODO: Use demoStepId when use case supports it
+    // Extract demoStepId from userData object, TODO: Use it when use case supports it
+    const demoStepId = (userData as unknown).demoStepId;
+    // Create a clean UserData object without demoStepId
+    const userDataOnly = userData instanceof UserData ? userData : userData;
     this._saveUserDataUseCase
-      .execute({ userData })
+      .execute({ userData: userDataOnly })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response) => {
@@ -301,12 +304,13 @@ export class WizardConfigStore {
       });
   }
 
-  saveContribuyenteData(contribuyente: Contribuyente, demoStepId?: number): void {
+  saveContribuyenteData(contribuyente: Contribuyente & { demoStepId?: number }): void {
     this.isSavingContribuyente.set(true);
     this.error.set(null);
-    // TODO: Use demoStepId when use case supports it
+    // Extract demoStepId from contribuyente object, TODO: Use it when use case supports it
+    const { demoStepId, ...contribuyenteData } = contribuyente;
     this._saveContribuyenteDataUseCase
-      .execute({ contribuyente })
+      .execute({ contribuyente: contribuyenteData })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
@@ -323,12 +327,13 @@ export class WizardConfigStore {
       });
   }
 
-  saveDocumentsConfig(docConfig: DocConfig, demoStepId?: number): void {
+  saveDocumentsConfig(docConfig: DocConfig & { demoStepId?: number }): void {
     this.isSavingDocuments.set(true);
     this.error.set(null);
-    // TODO: Use demoStepId when use case supports it
+    // Extract demoStepId from docConfig object, TODO: Use it when use case supports it
+    const { demoStepId, ...docConfigData } = docConfig;
     this._createDocConfigUseCase
-      .execute(docConfig)
+      .execute(docConfigData)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
@@ -345,12 +350,13 @@ export class WizardConfigStore {
       });
   }
 
-  saveElectronicSignature(signatureData: ElectronicSignatureParam, demoStepId?: number): void {
+  saveElectronicSignature(signatureData: ElectronicSignatureParam & { demoStepId?: number }): void {
     this.isSavingCertificate.set(true);
     this.error.set(null);
-    // TODO: Use demoStepId when use case supports it
+    // Extract demoStepId from signatureData object, TODO: Use it when use case supports it
+    const { demoStepId, ...signatureParams } = signatureData;
     this._createElectronicSignatureUseCase
-      .execute(signatureData)
+      .execute(signatureParams)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
