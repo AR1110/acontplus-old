@@ -32,9 +32,9 @@ import {
   MatStepperPrevious,
 } from '@angular/material/stepper';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
@@ -187,6 +187,7 @@ interface EstabFormControls {
 
     // Router
     RouterModule,
+    MatIconButton,
   ],
   templateUrl: './wizard-config.component.html',
   styleUrl: './wizard-config.component.scss',
@@ -353,7 +354,7 @@ export class WizardConfigComponent implements OnInit {
 
   userForm = this._fb.group(
     {
-      nroIdentificacion: this._fb.control('', [Validators.required, Validators.minLength(10)]),
+      idCard: this._fb.control('', [Validators.required, Validators.minLength(10)]),
       username: this._fb.control('', [
         Validators.required,
         Validators.minLength(3),
@@ -371,7 +372,7 @@ export class WizardConfigComponent implements OnInit {
         Validators.maxLength(50),
       ]),
       email: this._fb.control('', [Validators.email]),
-      phone: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]+$/)]),
+      phoneNumber: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]+$/)]),
       password: this._fb.control('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: this._fb.control('', [Validators.required]),
     },
@@ -510,8 +511,7 @@ export class WizardConfigComponent implements OnInit {
   private loadStepData(stepCode: string): void {
     if (stepCode === 'III') {
       this.fetchEstabData();
-      this.fetchDocConfig();
-    } else if (stepCode === 'V') {
+    } else if (stepCode === 'VI') {
       this.fetchDocConfig();
     }
   }

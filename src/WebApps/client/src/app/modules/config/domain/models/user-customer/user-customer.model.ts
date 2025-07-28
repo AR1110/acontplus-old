@@ -1,13 +1,15 @@
-import {Role} from "@modules/config/domain/models/role.model";
+import { Role } from '@modules/config/domain/models/role.model';
 
 export interface UserCustomer {
   idUsuario: number;
   nroIdentificacion: string;
   username: string;
   email: string;
-  nombreCompleto: string;
+  fullName: string;
   firstName: string;
   lastName: string;
+  phoneNumber: string;
+  password: string;
 }
 
 export interface UserCustomerRead extends UserCustomer {
@@ -15,17 +17,17 @@ export interface UserCustomerRead extends UserCustomer {
 }
 
 export interface UserCustomerList {
-  idUsuario: number
-  nroIdentificacion:string
-  username: string
-  email:string
-  firstName: string
-  lastName: string
-  nombreCompleto: string
-  totalRecords: number
-  roleId: number
-  nomEstado: string
-  estado: boolean
+  idUsuario: number;
+  nroIdentificacion: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  nombreCompleto: string;
+  totalRecords: number;
+  roleId: number;
+  nomEstado: string;
+  estado: boolean;
 }
 
 export interface UserCustomerResponse {
@@ -33,11 +35,6 @@ export interface UserCustomerResponse {
   totalRecords: number;
 }
 
-export interface UserCustomerParamsUpdate {
-  data: any,
-  id: number
-}
-
 export interface UserCustomerDataForm {
-  roles: Role[]
+  roles: Role[];
 }

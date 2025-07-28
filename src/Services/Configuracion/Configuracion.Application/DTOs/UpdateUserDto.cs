@@ -1,6 +1,6 @@
-﻿namespace Configuracion.Application.DTOs;
+namespace Configuracion.Application.DTOs;
 
-public class UpdateUserDto
+public record UpdateUserDto
 {
     public int Id { get; set; }
     [StringLength(100)] public string Username { get; set; }
