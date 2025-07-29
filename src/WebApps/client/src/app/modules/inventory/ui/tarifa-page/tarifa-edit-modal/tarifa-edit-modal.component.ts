@@ -1,4 +1,4 @@
-import { Component, inject,  signal } from '@angular/core';
+import { Component, inject,  signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -22,7 +22,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
   templateUrl: './tarifa-edit-modal.component.html',
   styles: ``,
 })
-export class TarifaEditModalComponent {
+export class TarifaEditModalComponent implements OnInit {
    params =inject< {
     idTarifa: 0,
     codigo: null,

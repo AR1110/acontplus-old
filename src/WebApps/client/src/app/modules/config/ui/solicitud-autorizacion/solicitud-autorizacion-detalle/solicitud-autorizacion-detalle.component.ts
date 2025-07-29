@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -20,7 +20,7 @@ import {
   templateUrl: './solicitud-autorizacion-detalle.component.html',
   styles: ``
 })
-export class SolicitudAutorizacionDetalleComponent {
+export class SolicitudAutorizacionDetalleComponent implements OnInit {
 
   private $listDetalleUseCase = inject(ListSolicitudAutorizacionDetalleUseCase)
   private  params = inject<Partial<SolicitudAutorizacionList>>(MAT_DIALOG_DATA)

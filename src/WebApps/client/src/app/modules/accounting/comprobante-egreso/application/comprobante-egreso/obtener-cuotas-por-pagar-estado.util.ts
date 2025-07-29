@@ -8,7 +8,7 @@ import {CuotaPorPagarEstado} from "@accounting/comprobante-egreso/domain/comprob
 
 
 interface PagoDetallePick extends Pick<PagoDetalle, "idCuentaPorPagar" | "idCuotaPorPagar" | "abono" | "saldo"> { }
-type Props = {
+interface Props {
   pagosDetalle: PagoDetalle[]
   estadosPago: EstadoPago[]
 }
@@ -23,8 +23,8 @@ type Props = {
 export const obtenerCuotasPorPagarEstadoUtil = function ({ pagosDetalle, estadosPago }: Props): CuotaPorPagarEstado[] {
 
 
-  let cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
-    let existeDato = acc.find(item => (item.idCuentaPorPagar === curr.idCuentaPorPagar) && (item.idCuotaPorPagar === curr.idCuotaPorPagar));
+  const cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
+    const existeDato = acc.find(item => (item.idCuentaPorPagar === curr.idCuentaPorPagar) && (item.idCuotaPorPagar === curr.idCuotaPorPagar));
     if (!existeDato) {
       acc.push({
         idCuentaPorPagar: curr.idCuentaPorPagar,
@@ -39,19 +39,19 @@ export const obtenerCuotasPorPagarEstadoUtil = function ({ pagosDetalle, estados
     return acc;
   }, [] as PagoDetallePick[]);
 
-  let cuotasPorPagarEstado: CuotaPorPagarEstado[] = [];
+  const cuotasPorPagarEstado: CuotaPorPagarEstado[] = [];
 
-  for (let item of cuotasPorPagarAgrupado) {
-    let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)
+  for (const item of cuotasPorPagarAgrupado) {
+    const totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)
       .map(item => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 
-    let valorSaldoLectura = roundNumber(item.saldo, DECIMALS.DOS);
-    let totalNoPosfechadoTemp = roundNumber(totalNoPosfechado, DECIMALS.DOS);
+    const valorSaldoLectura = roundNumber(item.saldo, DECIMALS.DOS);
+    const totalNoPosfechadoTemp = roundNumber(totalNoPosfechado, DECIMALS.DOS);
 
-    let valorSaldo = minus(valorSaldoLectura, totalNoPosfechadoTemp, DECIMALS.DOS) as number
+    const valorSaldo = minus(valorSaldoLectura, totalNoPosfechadoTemp, DECIMALS.DOS) as number
 
-    let dataEstadoPago = determinadoEstadoPagoCuotaUtil({
+    const dataEstadoPago = determinadoEstadoPagoCuotaUtil({
       saldo: valorSaldo,
       estadosPago,
       abono: item.abono

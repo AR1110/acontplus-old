@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,7 +29,7 @@ import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
         BrandAddEditDirective,
     ]
 })
-export class BrandPageComponent {
+export class BrandPageComponent implements OnInit {
   private _brandUseCase= inject(BrandUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
@@ -42,7 +42,7 @@ export class BrandPageComponent {
   private sharedSvc = inject(SharedService);
 
   getMeasures() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };

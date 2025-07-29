@@ -10,5 +10,5 @@ export interface EntidadFinanciera {
 }
 
 export interface EntidadFinancieraPago extends EntidadFinanciera {
-  subEntidadesFinanciera: Array<SubEntidadFinanciera>
+  subEntidadesFinanciera: SubEntidadFinanciera[]
 }

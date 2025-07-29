@@ -200,7 +200,7 @@
           }
 
           <!-- Texto u otros -->
-          @if (col.type == "string") {
+          @if (col.type === "string") {
             @if (col.key === "nombreEstado") {
               @switch (element.codigoEstado) {
                 @case ("PA") {

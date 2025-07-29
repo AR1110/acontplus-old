@@ -3,6 +3,7 @@
 AcontPlus is a modern, modular business management platform built with Angular 20+. It provides a comprehensive suite of features for accounting, inventory, sales, technical support, restaurant, barber shop, veterinary, and more. The client application is designed for scalability, maintainability, and a seamless user experience, leveraging the latest Angular features and best practices.
 
 ## Features
+
 - Modular architecture (accounting, inventory, sales, etc.)
 - Standalone Angular components
 - Modern Angular 20+ build system
@@ -15,24 +16,30 @@ AcontPlus is a modern, modular business management platform built with Angular 2
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js (v18+ recommended)
 - npm (v9+ recommended)
 
 ### 1. Install dependencies
+
 ```sh
 npm install
 ```
 
 ### 2. Run the development server
+
 ```sh
 npm start
 ```
+
 - The app will be available at `http://localhost:4200` by default.
 
 ### 3. Build for production
+
 ```sh
 npm run production
 ```
+
 - Output will be in the `dist/` directory.
 
 ---
@@ -42,19 +49,23 @@ npm run production
 This project uses **Jest** for fast, modern unit testing with full ESM and Angular 20+ support.
 
 ### 1. Run all tests
+
 ```sh
 npm test
 ```
 
 ### 2. Run tests in watch mode
+
 ```sh
 npm run test:watch
 ```
 
 ### 3. View coverage report
+
 After running tests, open `coverage/index.html` in your browser for a detailed coverage report.
 
 #### Notes:
+
 - All path aliases from `tsconfig.json` are supported in tests.
 - Standalone components must be added to the `imports` array in tests.
 - Mock providers for any required dependencies in your test setup (see `app.component.spec.ts` for an example).
@@ -62,12 +73,14 @@ After running tests, open `coverage/index.html` in your browser for a detailed c
 ---
 
 ## Troubleshooting
+
 - If you see errors about missing providers, add mocks for those dependencies in your test's `providers` array.
 - For ESM/Angular/Jest issues, ensure you are using the latest versions of Angular, Jest, and `jest-preset-angular`.
 
 ---
 
 ## License
+
 This project is proprietary. All rights reserved.
 
 ---
@@ -154,6 +167,7 @@ ng generate component modules/example/components/example-widget --standalone --c
 ```
 
 This will create:
+
 ```
 src/app/modules/example/components/example-widget/
   example-widget.component.ts
@@ -163,6 +177,7 @@ src/app/modules/example/components/example-widget/
 ```
 
 ### 4. Best Practices
+
 - Use path aliases in `tsconfig.json` for all major folders (`@core`, `@shared`, `@modules`, etc.)
 - Enable strict mode in TypeScript
 - Use Jest for unit testing
@@ -196,8 +211,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 
 // Third-party Libraries
-import Swal from 'sweetalert2';
 import { faIcon } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
 
 // Core Components & Services
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -207,8 +222,8 @@ import { ToastService } from '@core/services/toast.service';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 // Module Services & Use Cases
-import { UserService } from '@modules/auth/services/user.service';
 import { CreateUserUseCase } from '@modules/auth/application/use-cases/create-user.use-case';
+import { UserService } from '@modules/auth/services/user.service';
 
 // Module Models
 import { User } from '@modules/auth/domain/models/user.model';
@@ -224,105 +239,105 @@ Organize your component in this specific order:
 ```typescript
 @Component({...})
 export class MyComponent implements OnInit {
-  
+
   // ============================================================================
   // VIEW CHILD & INJECTIONS
   // ============================================================================
-  
+
   @ViewChild('element') element!: ElementRef;
   private readonly _service = inject(Service);
-  
+
   // ============================================================================
   // CONSTANTS & CONFIGURATION
   // ============================================================================
-  
+
   readonly CONSTANT = 'value';
   readonly config = {...};
-  
+
   // ============================================================================
   // SIGNAL PROPERTIES (Angular 17+)
   // ============================================================================
-  
+
   // Data signals
   users = signal<User[]>([]);
   products = signal<Product[]>([]);
-  
+
   // UI state signals
   isLoading = signal(false);
   selectedUser = signal<User | null>(null);
-  
+
   // ============================================================================
   // COMPONENT STATE PROPERTIES
   // ============================================================================
-  
+
   isLoading = false;
   selectedItem: Item | null = null;
-  
+
   // ============================================================================
   // FORM DEFINITIONS
   // ============================================================================
-  
+
   form = this.fb.group({...});
-  
+
   // ============================================================================
   // FORM GETTERS
   // ============================================================================
-  
+
   get formArray(): FormArray { return this.form.get('array') as FormArray; }
-  
+
   // ============================================================================
   // LIFECYCLE METHODS
   // ============================================================================
-  
+
   ngOnInit(): void {...}
-  
+
   // ============================================================================
   // INITIALIZATION METHODS
   // ============================================================================
-  
+
   private initializeData(): void {...}
-  
+
   // ============================================================================
   // DATA FETCHING METHODS
   // ============================================================================
-  
+
   fetchData(): void {...}
-  
+
   // ============================================================================
   // BUSINESS LOGIC METHODS
   // ============================================================================
-  
+
   processData(): void {...}
-  
+
   // ============================================================================
   // FORM MANAGEMENT METHODS
   // ============================================================================
-  
+
   addItem(): void {...}
   removeItem(): void {...}
-  
+
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  
+
   onItemClick(): void {...}
-  
+
   // ============================================================================
   // SAVE/SUBMIT METHODS
   // ============================================================================
-  
+
   save(): void {...}
-  
+
   // ============================================================================
   // RESPONSE HANDLING METHODS
   // ============================================================================
-  
+
   private handleResponse(): void {...}
-  
+
   // ============================================================================
   // UTILITY METHODS
   // ============================================================================
-  
+
   private formatData(): void {...}
 }
 ```
@@ -330,11 +345,13 @@ export class MyComponent implements OnInit {
 ### 3. Method Organization Principles
 
 #### Public vs Private Methods
+
 - Keep public methods at the top of each section
 - Group private methods at the bottom
 - Use clear naming conventions
 
 #### Method Grouping by Responsibility
+
 ```typescript
 // Data Management
 fetchData(): void {...}
@@ -531,39 +548,202 @@ These organizational principles will make your code more maintainable, readable,
 To ensure the fastest possible development and build experience with Angular 20+, the following optimizations and best practices are applied in this project:
 
 ### 1. Persistent Build Cache
+
 - Angular CLI persistent cache is enabled in `angular.json` for much faster rebuilds.
 
 ### 2. Incremental TypeScript Builds
+
 - `tsconfig.json` uses `"incremental": true` for faster TypeScript rebuilds.
 
 ### 3. Modern JavaScript Output
+
 - Target and module are set to `ES2022` for smaller, faster bundles and less polyfill overhead.
 
 ### 4. Hot Module Replacement (HMR)
+
 - HMR is enabled by default for instant updates during development without full reloads. Just run `npm start`.
 
 ### 5. Standalone Components & Signals
+
 - New components default to `standalone: true` and use Angular signals for state, reducing module overhead and improving performance.
 
 ### 6. Angular Compiler Optimizations
+
 - `enableResourceInlining` is enabled for better tree-shaking and build speed.
 - Strict compiler options are enforced for reliability and maintainability.
 
 ### 7. Modern Module Resolution
+
 - Uses `moduleResolution: "bundler"` for optimal compatibility with Angular 17+ and 20+.
 
 ### 8. SSR/Prerender Disabled (if not needed)
+
 - SSR and prerender are explicitly disabled in the build config for faster builds if not required.
 
 ### 9. Dependency Hygiene
+
 - Regularly audit dependencies and remove unused packages to keep builds fast.
 
 ### 10. Hardware & Node.js
+
 - For very large projects, use SSD storage and increase Node.js memory with `node --max_old_space_size=4096 ...` if needed.
 
 **Result:**
+
 - Faster initial and incremental builds
 - Instant feedback during development
 - Smaller, more efficient production bundles
 
 For more details, see the relevant sections in this README and the `angular.json` and `tsconfig.json` files.
+
+---
+
+## Code Quality & Linting
+
+This project uses ESLint with TypeScript and Angular-specific rules to maintain code quality and consistency.
+
+### Running Lint Checks
+
+```sh
+# Check for linting issues
+ng lint
+
+# Automatically fix linting issues where possible
+ng lint --fix
+```
+
+### Common Linting Issues & Solutions
+
+The project enforces strict coding standards. Here are the most common issues and how to fix them:
+
+#### 1. **Unexpected any type** (`@typescript-eslint/no-explicit-any`)
+
+```typescript
+// ❌ Bad
+data: any = {};
+response: any;
+
+// ✅ Good
+data: User = {};
+response: ApiResponse<User>;
+```
+
+#### 2. **Prefer inject() over constructor injection** (`@angular-eslint/prefer-inject`)
+
+```typescript
+// ❌ Bad
+constructor(private userService: UserService) {}
+
+// ✅ Good
+private readonly userService = inject(UserService);
+```
+
+#### 3. **Empty lifecycle methods** (`@angular-eslint/no-empty-lifecycle-method`)
+
+```typescript
+// ❌ Bad
+ngOnInit(): void {}
+
+// ✅ Good - Remove empty methods or add implementation
+ngOnInit(): void {
+  this.loadData();
+}
+```
+
+#### 4. **Unused variables** (`@typescript-eslint/no-unused-vars`)
+
+```typescript
+// ❌ Bad
+function processData(data: User[], index: number) {
+  return data.map((user) => user.name);
+}
+
+// ✅ Good - Use underscore prefix for intentionally unused parameters
+function processData(data: User[], _index: number) {
+  return data.map((user) => user.name);
+}
+```
+
+#### 5. **Empty functions** (`@typescript-eslint/no-empty-function`)
+
+```typescript
+// ❌ Bad
+onComplete(): void {}
+
+// ✅ Good - Add implementation or remove
+onComplete(): void {
+  this.showSuccessMessage();
+}
+```
+
+#### 6. **Output naming conventions** (`@angular-eslint/no-output-on-prefix`)
+
+```typescript
+// ❌ Bad
+@Output() onSelect = new EventEmitter<User>();
+
+// ✅ Good
+@Output() userSelected = new EventEmitter<User>();
+```
+
+#### 7. **Accessibility issues** (`@angular-eslint/template/...`)
+
+```html
+<!-- ❌ Bad -->
+<div (click)="handleClick()">Click me</div>
+<label>Name</label><input type="text" />
+
+<!-- ✅ Good -->
+<button (click)="handleClick()" (keyup.enter)="handleClick()">Click me</button>
+<label for="name">Name</label><input id="name" type="text" />
+```
+
+### Fixing All Issues at Once
+
+To fix many issues automatically:
+
+```sh
+# Fix TypeScript and Angular issues
+ng lint --fix
+
+# For remaining issues, you may need to:
+# 1. Replace 'any' types with proper interfaces
+# 2. Remove unused variables and imports
+# 3. Add proper type definitions
+# 4. Implement empty methods or remove them
+```
+
+### Pre-commit Hooks (Recommended)
+
+Consider adding a pre-commit hook to run linting automatically:
+
+```json
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "ng lint --fix && git add ."
+    }
+  }
+}
+```
+
+### ESLint Configuration
+
+The project uses these key ESLint rules:
+
+- `@typescript-eslint/no-explicit-any` - Prevents use of `any` type
+- `@typescript-eslint/no-unused-vars` - Removes unused variables
+- `@angular-eslint/prefer-inject` - Enforces modern dependency injection
+- `@angular-eslint/no-empty-lifecycle-method` - Prevents empty lifecycle methods
+- Template accessibility rules for better UX
+
+### IDE Integration
+
+For the best development experience:
+
+- **VS Code**: Install the ESLint extension
+- **WebStorm**: ESLint is built-in and enabled by default
+- **Vim/Neovim**: Use coc-eslint or similar plugins
+
+This ensures you see linting errors in real-time while coding, making it easier to maintain code quality.

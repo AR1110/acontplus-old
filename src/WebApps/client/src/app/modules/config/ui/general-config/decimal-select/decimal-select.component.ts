@@ -11,7 +11,7 @@ import {MatSelectModule} from "@angular/material/select";
 })
 export class DecimalSelectComponent {
   label = input('')
-  @Input() value: number = 2; // Valor inicial predeterminado
+  @Input() value = 2; // Valor inicial predeterminado
   readonly decimales = new Array(6).fill(0).map((_, index)=>index + 1).splice(1)
 
   @Output() valueChange = new EventEmitter<number>(); // Evento para emitir el nuevo valor al componente padre

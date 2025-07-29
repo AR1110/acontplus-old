@@ -26,7 +26,7 @@ export class ListMovimientoCajaMapper {
           nomEstado: item.estado,
           nomSubEntidadFinanciera: item.subEntidadFinanciera,
           nomEmpleado:item.empleado,
-          nroIdentificacion: item.nroIdentificacion,
+          idCard: item.nroIdentificacion,
           nomCaja: item.caja,
           totalRecords: item.totalRecords,
           nomUsuario: item.nombreUsuario

@@ -2,12 +2,12 @@ import { BodegaEstablecimiento } from "@core/models/bodega.model";
 import { GroupedEstab } from "@core/models/estab.model";
 import { PuntoEmisionEstablecimiento } from "@core/models/punto-emision.model";
 
-type GroupEstabProps = {
+interface GroupEstabProps {
   estabs?: PuntoEmisionEstablecimiento[];
   bodegas?: BodegaEstablecimiento[];
   isGroupBodega?: boolean;
   isGroupPuntoEmision?: boolean;
-};
+}
 
 export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
   const { estabs, bodegas, isGroupBodega, isGroupPuntoEmision } = obj;

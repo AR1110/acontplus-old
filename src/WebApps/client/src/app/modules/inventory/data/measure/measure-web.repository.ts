@@ -19,7 +19,7 @@ export class MeasureWebRepository implements BrandRepository{
   private _http = inject(HttpClient);
 
   getAll<T>(obj: T): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...obj, tipo: 1
     })
     return this._http.get(`${this._url}?json=${json}`, {

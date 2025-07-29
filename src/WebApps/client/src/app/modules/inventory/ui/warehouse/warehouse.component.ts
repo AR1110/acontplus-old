@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {ActionAddDirective} from "@shared/directives/permission/action-add.directive";
@@ -29,7 +29,7 @@ import {ToastrNotificationService} from "@core/services/toastr-notification.serv
   templateUrl: './warehouse.component.html',
   styles: ``
 })
-export class WarehouseComponent {
+export class WarehouseComponent implements OnInit {
 
   private $listUseCase = inject(ListWarehouseUseCase);
   private $deleteUseCase = inject(DeleteWarehouseUseCase);
@@ -70,7 +70,7 @@ export class WarehouseComponent {
 
 
   private getList(){
-    let dataSearch = {
+    const dataSearch = {
       pageIndex: 1,
       pageSize: 25
     }

@@ -27,7 +27,7 @@ export class UserCustomerPermissionRepositoryImpl implements UserCustomerPermiss
     }
 
     list<T>(parameters: T)  {
-        let json = JSON.stringify(
+        const json = JSON.stringify(
           ListUserCustomerPermissionMapper.toJson(parameters)
         )
       return this._http

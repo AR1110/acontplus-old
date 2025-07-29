@@ -1,4 +1,4 @@
-import {Component, inject, model, output, signal} from '@angular/core';
+import {Component, inject, model, output, signal, OnInit} from '@angular/core';
 import { DeviceSearch } from '@modules/technical-support/models/device.model';
 import { DeviceModalComponent } from '@modules/technical-support/pages/device-page/device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -27,7 +27,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
   templateUrl: './device-search.component.html',
   styles: ``,
 })
-export class DeviceSearchComponent {
+export class DeviceSearchComponent implements OnInit {
    textSearch = model('');
    deviceSelected = output<{ data: any }>();
     clearSearch = output();

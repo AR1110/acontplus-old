@@ -12,11 +12,11 @@ export class GetFilterDataCuentaPorPagarMapper {
     const resultData = new FilterDataCuentaPorPagarResponse()
 
     if(response.code==="1"){
-      let [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
+      const [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
         response.payload as string,
       );
 
-      let dataToGroup = {
+      const dataToGroup = {
         estabs: tempEstabs,
         isGroupPuntoEmision: true,
       };

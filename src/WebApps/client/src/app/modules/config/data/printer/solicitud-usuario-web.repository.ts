@@ -17,7 +17,7 @@ export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository
   private http = inject(HttpClient)
 
   getFilter() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3
     })
 
@@ -25,7 +25,7 @@ export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository
       map((response: any) => {
         if (response !== null && typeof response === 'object') {
 
-          let estabs = groupEstabUtil({
+          const estabs = groupEstabUtil({
             estabs: response.estabs,
             isGroupPuntoEmision: true
           })
@@ -45,7 +45,7 @@ export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...obj,
       tipo: 1
     })

@@ -20,7 +20,7 @@ export class InspectionWebRepository implements InspectionRepository{
   #http = inject(HttpClient);
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...obj,
       tipo: 1
     })
@@ -32,7 +32,7 @@ export class InspectionWebRepository implements InspectionRepository{
   }
 
   getDataForm(supportId: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       supportId,
       tipo: 2
     })
@@ -42,7 +42,7 @@ export class InspectionWebRepository implements InspectionRepository{
   }
 
   getId(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       id,
       tipo: 3
     })

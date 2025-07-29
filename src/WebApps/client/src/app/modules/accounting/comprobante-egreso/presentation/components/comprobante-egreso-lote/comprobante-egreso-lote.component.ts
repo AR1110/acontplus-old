@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -50,7 +50,7 @@ import {ComprobanteEgresoUseCase} from "@accounting/comprobante-egreso/applicati
   templateUrl: './comprobante-egreso-lote.component.html',
   styles: ``,
 })
-export class ComprobanteEgresoLoteComponent {
+export class ComprobanteEgresoLoteComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<ComprobanteEgresoLoteComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
@@ -174,13 +174,13 @@ export class ComprobanteEgresoLoteComponent {
     })
 
 
-    let cuotasPorPagarEstado = obtenerCuotasPorPagarEstadoUtil({
+    const cuotasPorPagarEstado = obtenerCuotasPorPagarEstadoUtil({
       pagosDetalle: pagosDetalle(),
       estadosPago: estadosPago()
     })
 
-    let valorAbonoInput = formasPago().reduce((acc, curr) => acc + curr.valorAbonoInput, 0)
-    let totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0)
+    const valorAbonoInput = formasPago().reduce((acc, curr) => acc + curr.valorAbonoInput, 0)
+    const totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0)
 
     if (formasPago().length === 0) {
       this.tS.show({
@@ -235,7 +235,7 @@ export class ComprobanteEgresoLoteComponent {
     if (!isConfirmed) return
 
 
-    let data = {
+    const data = {
       dataCuentaPorPagar: this.comprobanteEgresoStore.dataCuentaPorPagar(),
       total: valorAbonoInput,
       formasPago: formasPago(),

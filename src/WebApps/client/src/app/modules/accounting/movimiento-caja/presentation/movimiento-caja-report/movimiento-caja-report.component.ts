@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
@@ -37,7 +37,7 @@ import {MatSelectModule} from "@angular/material/select";
   templateUrl: './movimiento-caja-report.component.html',
   styles: ``,
 })
-export class MovimientoCajaReportComponent {
+export class MovimientoCajaReportComponent implements OnInit {
   isShowCompanyCustomer = false;
   isShowEmployee = true;
   sharedSvc = inject(SharedService);
@@ -156,15 +156,15 @@ export class MovimientoCajaReportComponent {
       }
     }
 
-    let companyCustomerId =
+    const companyCustomerId =
       (this.dataSearch.checkboxCompanyCustomerEmployee &&
         this.dataSearch.companyCustomerId) ||
       0;
-    let employeeId =
+    const employeeId =
       (this.dataSearch.checkboxCompanyCustomerEmployee &&
         this.dataSearch.employeeId) ||
       0;
-    let userId = (this.dataSearch.checkboxUser && this.dataSearch.userId) || 0;
+    const userId = (this.dataSearch.checkboxUser && this.dataSearch.userId) || 0;
 
     const dataParams = {
       tipo: 2,
@@ -183,7 +183,7 @@ export class MovimientoCajaReportComponent {
       fechaFin: this.dataSearch.toDate,
     };
 
-    let reportParams = JSON.stringify({
+    const reportParams = JSON.stringify({
       codEstab: this.dataSearch.codEstab,
       codigo: ACCOUNTING_CODE_REPORT.RMC,
       format: this.dataSearch.format,

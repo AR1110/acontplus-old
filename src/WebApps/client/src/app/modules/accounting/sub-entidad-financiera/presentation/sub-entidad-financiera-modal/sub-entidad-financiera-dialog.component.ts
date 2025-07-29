@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -35,7 +35,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatCustomDialogComponent,
   ],
 })
-export class SubEntidadFinancieraDialogComponent {
+export class SubEntidadFinancieraDialogComponent implements OnInit {
   readonly dialogRef = inject(
     MatDialogRef<SubEntidadFinancieraDialogComponent>,
   );

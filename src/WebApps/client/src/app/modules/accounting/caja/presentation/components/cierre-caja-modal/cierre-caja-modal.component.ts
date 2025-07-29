@@ -1,4 +1,4 @@
-import {Component, ViewEncapsulation, inject, signal} from '@angular/core';
+import {Component, ViewEncapsulation, inject, signal, OnInit} from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { roundNumber } from '@core/utils/round-number.utils';
 import Swal from 'sweetalert2';
@@ -12,12 +12,12 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 
-type Modeda = {
+interface Modeda {
   idMoneda: number;
   cantidad: number;
   descripcion: string;
   valor: number;
-};
+}
 
 @Component({
   selector: 'app-cierre-caja-modal',
@@ -28,7 +28,7 @@ type Modeda = {
   templateUrl: './cierre-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-export class CierreCajaModalComponent {
+export class CierreCajaModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<CierreCajaModalComponent>);
   private params = inject<{id: number}>(MAT_DIALOG_DATA)
 
@@ -62,7 +62,7 @@ export class CierreCajaModalComponent {
         return;
       }
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         icon: 'warning',
         text: 'Esta seguro/a de guardar los valores ahora?',
         showDenyButton: true,
@@ -93,7 +93,7 @@ export class CierreCajaModalComponent {
             }
 
             if (response.code === '1') {
-              let dataMail = JSON.parse(response.payload as string) || {};
+              const dataMail = JSON.parse(response.payload as string) || {};
               Swal.fire({
                 icon: 'warning',
                 html: `<small>${response.message}</small>`,

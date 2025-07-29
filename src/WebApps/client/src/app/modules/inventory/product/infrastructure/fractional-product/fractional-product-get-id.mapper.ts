@@ -7,10 +7,10 @@ import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 export class FractionalProductGetIdMapper {
 
   static fromJson(responseApi:any){
-    let resultResponse = new ApiResponse<FractionalProductDataGetId>()
+    const resultResponse = new ApiResponse<FractionalProductDataGetId>()
 
-    let dataApi = responseApi.data[0];
-    let data = {
+    const dataApi = responseApi.data[0];
+    const data = {
       idArticuloFraccionado: dataApi.idArticuloFraccionado,
       idArticulo: dataApi.idArticulo,
       idMedida: dataApi.idMedida,

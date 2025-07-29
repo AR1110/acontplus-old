@@ -1,7 +1,7 @@
 import {isValidField} from "@core/utils/utils";
 import {roundNumber} from "@core/utils/round-number.utils";
 
-type ToApiCreateProps = {
+interface ToApiCreateProps {
   comprobante: any,
   cobros: any[],
   cobroDetalle:any[],
@@ -13,7 +13,7 @@ export class ComprobanteIngresoMapper {
   static fromApiGetAll(response: any){
     const comprobanteIngreso = response.comprobanteIngreso    || []
 
-    let data = comprobanteIngreso.map((item:any)=>{
+    const data = comprobanteIngreso.map((item:any)=>{
 
       return {
         codDoc: 'CI',
@@ -54,7 +54,7 @@ export class ComprobanteIngresoMapper {
       historialCobros,
     } = obj;
 
-    let comprobanteMappeado = {
+    const comprobanteMappeado = {
       idCliente: comprobante.idCliente,
       total: comprobante.total,
       abono: comprobante.abono,
@@ -63,7 +63,7 @@ export class ComprobanteIngresoMapper {
       nombreFiscal: comprobante.nombreFiscal
     }
 
-    let comprosMappeado = cobros.map(cobro => {
+    const comprosMappeado = cobros.map(cobro => {
       return {
         idSubEntidadFinanciera: cobro.idSubEntidadFinanciera,
         idEntidadFinanciera: cobro.idEntidadFinanciera,

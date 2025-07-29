@@ -10,7 +10,7 @@ export class ProductKardexModalDirective {
   params = input({} as any);
 
   @HostListener('click') onClick() {
-    let params = {
+    const params = {
       id: this.params().idArticulo
     }
     this.openModalProductSvc.openKardex(params)

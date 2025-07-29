@@ -163,7 +163,7 @@ BEGIN
 
         INSERT INTO @tblDetails
               (orderIndex,idNotaEntregaDetalle,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,tarifa,codigoPorcentaje,valorImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado,estado,uuid)
-		SELECT orderIndex,idNotaEntregaDetalle,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,tarifa,codigoPorcentaje,valorImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado,estado,uuid 
+		SELECT orderIndex,idNotaEntregaDetalle,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,tarifa,codigoPorcentaje,valorImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion*-1,conversion,precioCostoFraccionado,estado,uuid 
 		FROM OPENJSON (@detalles) WITH 
         (
              orderIndex             INT 

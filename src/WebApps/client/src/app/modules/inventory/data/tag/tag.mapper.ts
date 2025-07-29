@@ -9,7 +9,7 @@ export class TagMapper {
 
   static fromApiGetAll(response:any){
 
-    let tags = response.tags || []
+    const tags = response.tags || []
     return tags.map((item: any) => {
       return {
         idEtiqueta: item.idEtiqueta,

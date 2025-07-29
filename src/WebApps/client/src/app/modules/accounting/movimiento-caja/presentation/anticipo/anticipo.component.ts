@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { AnticipoModalComponent } from '@accounting/movimiento-caja/presentation/anticipo/anticipo-modal/anticipo-modal.component';
 
 import { AnticipoRead } from '@accounting/movimiento-caja/domain/anticipo.model';
@@ -45,7 +45,7 @@ import {DialogService} from "@core/services/dialog.service";
   ],
   templateUrl: './anticipo.component.html',
 })
-export class AnticipoComponent {
+export class AnticipoComponent implements OnInit {
   establecimientos = signal<EstablecimientoSelectHtmlOnly[]>([]);
   dataSearch = {
     codEstab: '',

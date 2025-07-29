@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -40,7 +40,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
   templateUrl: './doc-manual-upload.component.html',
   styles: ``,
 })
-export class DocManualUploadComponent {
+export class DocManualUploadComponent implements OnInit {
   dialogIcon = signal('list-box"');
   dialogTitle = signal('Importación Manual de Documentos');
 

@@ -17,7 +17,7 @@ export class TagWebRepository implements TagRepository{
   private _http = inject(HttpClient);
 
   getAll<T>(obj: T): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -25,11 +25,11 @@ export class TagWebRepository implements TagRepository{
       context: getNoLoader()
     }).pipe(
       map(response => {
-        let result = {
+        const result = {
           tags: [] as any[]
         }
         if (response.code === "1") {
-          let mainData = JSON.parse(response.payload as string);
+          const mainData = JSON.parse(response.payload as string);
           result.tags = TagMapper.fromApiGetAll(mainData)
         }
         return result

@@ -1,4 +1,4 @@
-import {Component, inject, model, signal, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, model, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -56,7 +56,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
   templateUrl: './comprobante-egreso.component.html',
   styles: ``,
 })
-export class ComprobanteEgresoComponent {
+export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   private $listUseCase = inject(ListComprobanteEgresoUseCase);
   private $dataFilterUseCase = inject(DataFilterComprobanteEgresoUseCase);
 

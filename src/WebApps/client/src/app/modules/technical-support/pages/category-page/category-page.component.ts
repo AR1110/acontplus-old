@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
@@ -21,7 +21,7 @@ import {DialogService} from "@core/services/dialog.service";
   templateUrl: './category-page.component.html',
   styles: ``,
 })
-export class CategoryPageComponent {
+export class CategoryPageComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private modalService = inject(DialogService);
   categories = signal<Category[] >([])

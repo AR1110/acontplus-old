@@ -23,7 +23,7 @@ export class InputDateComponent {
     const inputElement = event.target as HTMLInputElement;
     const timeString = inputElement.value;
 
-    let dateObject = setDateWithCurrentTime(formatDate(timeString));
+    const dateObject = setDateWithCurrentTime(formatDate(timeString));
 
 
 

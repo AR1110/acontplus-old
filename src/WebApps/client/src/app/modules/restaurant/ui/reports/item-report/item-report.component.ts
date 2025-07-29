@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab } from '@core/models/estab.model';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
@@ -41,7 +41,7 @@ import {MatInput} from "@angular/material/input";
     MatInput,
   ],
 })
-export class ItemReportComponent {
+export class ItemReportComponent implements OnInit {
   checkedSubCategorias = new FormControl('');
   establecimientos =signal<GroupedEstab[]>([]);
   subCategorias = signal<GroupedSubFamilia[]>([]);

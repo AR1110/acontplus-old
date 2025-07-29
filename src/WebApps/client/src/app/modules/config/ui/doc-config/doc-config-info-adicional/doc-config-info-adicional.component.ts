@@ -1,4 +1,4 @@
-import {Component, inject, Input, signal, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, Input, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -30,7 +30,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
   templateUrl: './doc-config-info-adicional.component.html',
   styles: ``,
 })
-export class DocConfigInfoAdicionalComponent {
+export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
   private dialogRef = inject(MatDialogRef<DocConfigInfoAdicionalComponent>);
   @Input() params = inject<DocConfigList & {idPuntoEmision:number}>(MAT_DIALOG_DATA)
 

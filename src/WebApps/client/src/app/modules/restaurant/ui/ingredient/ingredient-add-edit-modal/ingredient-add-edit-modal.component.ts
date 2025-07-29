@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 
@@ -33,7 +33,7 @@ import {MatSelectModule} from "@angular/material/select";
   templateUrl: './ingredient-add-edit-modal.component.html',
   styles: ``,
 })
-export class IngredientAddEditModalComponent {
+export class IngredientAddEditModalComponent implements OnInit {
   data = inject<Ingredient>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   ingredientForm = new FormGroup({

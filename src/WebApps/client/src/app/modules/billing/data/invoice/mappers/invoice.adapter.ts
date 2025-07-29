@@ -6,7 +6,7 @@ import { fechaString, formatDate, formatDateToString } from "@core/utils/date.ut
 import { DECIMALS } from "@core/constants/global.constants";
 import { roundNumber } from "@core/utils/round-number.utils";
 import {generateUuidv4} from "@core/utils/generate-uuidv4";
-type MainAdapt = {
+interface MainAdapt {
   comprobante: any
   details: InvoiceDetail[],
   cuotas: any[],
@@ -49,7 +49,7 @@ export class InvoiceAdapter {
     const header = tempHeader[0] || {};
     const cliente = tempCliente[0] || {};
 
-    let result = {
+    const result = {
       headerData: {
         estabNombre: header.nombreComercial,
         serieComprobante: header.serieComprobante,
@@ -73,8 +73,8 @@ export class InvoiceAdapter {
         correo: cliente.correo
       },
       detalles: tempDetalles.map((item:any) => {
-        let precioConIva =   item.precioUnitario + item.valorImpuesto;
-         let total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
+        const precioConIva =   item.precioUnitario + item.valorImpuesto;
+         const total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
         return {
         idNotaEntregaDetalle: item.idNotaEntregaDetalle,
         codigo: item.codigo,
@@ -104,11 +104,11 @@ export class InvoiceAdapter {
   }
 
   static mainAdapt(input: MainAdapt) {
-    let comprobante = this.comprobanteAdapt(input.comprobante)
+    const comprobante = this.comprobanteAdapt(input.comprobante)
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    let infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
+    const infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
       return{
         nombre : item.name,
         valor : item.value
@@ -158,9 +158,9 @@ export class InvoiceAdapter {
   }
 
   static detailAdapt(input: InvoiceDetail[]): InvoiceDetailApi[] {
-    let results = input.map((item, index) => {
-      let cantidadTransaccion = item.quantity * (item.conversion || 1)
-      let obj = {
+    const results = input.map((item, index) => {
+      const cantidadTransaccion = item.quantity * (item.conversion || 1)
+      const obj = {
         uuid: generateUuidv4(),
         orderIndex: index + 1,
         idArticulo: item.productId,

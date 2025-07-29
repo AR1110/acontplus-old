@@ -1,5 +1,5 @@
 
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -39,7 +39,7 @@ import {MatIcon} from "@angular/material/icon";
   templateUrl: './estab-add-edit-modal.component.html',
   styles: ``,
 })
-export class EstabAddEditModalComponent {
+export class EstabAddEditModalComponent implements OnInit {
    params = inject<{
     id: 0,
   }>(MAT_DIALOG_DATA);

@@ -41,7 +41,7 @@ export interface PaymentType {
   idEntidadFinanciera: number,
   descripcion: string,
   codigo: PaymentCode
-  subEntidadesFinanciera: Array<PaymentSubType>
+  subEntidadesFinanciera: PaymentSubType[]
 }
 
 

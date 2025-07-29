@@ -44,7 +44,7 @@ export const uiProviders = [
   importProvidersFrom(MatNativeDateModule),
   {
     provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-    useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
+    useValue: { appearance: 'outline' },
   },
   {
     provide: MAT_DATE_LOCALE,

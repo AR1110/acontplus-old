@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { FormsModule } from '@angular/forms';
 import { isValidEmail, isValidField } from '@core/utils/utils';
@@ -26,7 +26,7 @@ import Swal from "sweetalert2";
   templateUrl: './company-add-edit-modal.component.html',
   styles: ``,
 })
-export class CompanyAddEditModalComponent {
+export class CompanyAddEditModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<CompanyAddEditModalComponent>);
   private params = inject(MAT_DIALOG_DATA)
 
@@ -81,7 +81,7 @@ export class CompanyAddEditModalComponent {
       return;
     }
 
-    let params = {
+    const params = {
       idEntidad: this.params.idEntidad,
       razonSocial: this.data.razonSocial,
       ruc: this.data.ruc,

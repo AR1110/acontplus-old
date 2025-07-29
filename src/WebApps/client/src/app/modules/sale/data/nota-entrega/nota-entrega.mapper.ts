@@ -9,7 +9,7 @@ import {NotaEntregaDetail} from "@sale/domain/models/nota-entrega.model";
 import {NotaEntregaComprobanteEntity, NotaEntregaDetailEntity} from "@sale/data/nota-entrega/nota-entrega.entity";
 import {generateUuidv4} from "@core/utils/generate-uuidv4";
 
-type ToApiSaveParams = {
+interface ToApiSaveParams {
   comprobante: any
   details: NotaEntregaDetail[],
   cuotas: any[],
@@ -19,16 +19,16 @@ type ToApiSaveParams = {
 export class NotaEntregaMapper {
 
   static fromApiDataFilter(response: ApiResponse){
-    let resultData = {
+    const resultData = {
       estabs: [] as GroupedEstab[],
       estadosDoc: [] as any[]
     }
 
     if (response.code === "1") {
-      let [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
+      const [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
 
 
-      let dataToGroup = {
+      const dataToGroup = {
         estabs: tempEstabs,
         isGroupPuntoEmision: true
       }
@@ -40,7 +40,7 @@ export class NotaEntregaMapper {
   }
 
   static fromApiGetAll(response: ApiResponse){
-    let result = {
+    const result = {
       data: [] as any[],
       totalRecords: 0
     }
@@ -78,14 +78,14 @@ export class NotaEntregaMapper {
 
 
   static fromApiDetalleCompleto(response: ApiResponse){
-    let result = {} as any;
+    const result = {} as any;
     if (response.code === "1") {
-      let mainData = JSON.parse(response.payload as string)
+      const mainData = JSON.parse(response.payload as string)
       const [tempHeader, tempCliente, tempDetalles, datosAdicionalesDoc, tiposIva] = mainData;
       const header = tempHeader[0] || {};
       const cliente = tempCliente[0] || {};
 
-      let result = {
+      const result = {
         headerData: {
           estabNombre: header.nombreComercial,
           serieComprobante: header.serieComprobante,
@@ -109,8 +109,8 @@ export class NotaEntregaMapper {
           correo: cliente.correo
         },
         detalles: tempDetalles.map((item:any) => {
-          let precioConIva =   item.precioUnitario + item.valorImpuesto;
-          let total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
+          const precioConIva =   item.precioUnitario + item.valorImpuesto;
+          const total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
           return {
             idNotaEntregaDetalle: item.idNotaEntregaDetalle,
             codigo: item.codigo,
@@ -145,11 +145,11 @@ export class NotaEntregaMapper {
 
 
   static  toApiSave(input: ToApiSaveParams) {
-    let comprobante = this.toApiComprobante(input.comprobante)
+    const comprobante = this.toApiComprobante(input.comprobante)
 
     const details = this.toApiDetail(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    let infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
+    const infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
       return{
         nombre : item.name,
         valor : item.value
@@ -199,9 +199,9 @@ export class NotaEntregaMapper {
   }
 
   static toApiDetail(input: NotaEntregaDetail[]): NotaEntregaDetailEntity[] {
-    let results = input.map((item, index) => {
-      let cantidadTransaccion = item.quantity * (item.conversion || 1)
-      let obj = {
+    const results = input.map((item, index) => {
+      const cantidadTransaccion = item.quantity * (item.conversion || 1)
+      const obj = {
         uuid: generateUuidv4(),
         orderIndex: index + 1,
         idArticulo: item.productId,

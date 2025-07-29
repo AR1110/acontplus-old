@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubcategoryModalComponent } from '@accounting/sub-category/presentation/subcategory-modal/subcategory-modal.component';
@@ -25,7 +25,7 @@ import {DialogService} from "@core/services/dialog.service";
   templateUrl: './subcategory.component.html',
   styles: ``,
 })
-export class SubcategoryComponent {
+export class SubcategoryComponent implements OnInit {
   data: Subcategory = {} as Subcategory;
   subcategories = signal<Subcategory[]>([])
   private readonly modalService = inject(DialogService);

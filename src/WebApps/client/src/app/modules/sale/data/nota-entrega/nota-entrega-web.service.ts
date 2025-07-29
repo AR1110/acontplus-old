@@ -20,7 +20,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository{
 
 
   getDataFilter() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3
     })
     return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
@@ -29,7 +29,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository{
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -42,7 +42,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository{
 
 
   getDetalleCompleto(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 5,
       id
     })
