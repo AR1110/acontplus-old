@@ -408,6 +408,17 @@ export class WizardConfigComponent implements OnInit {
     const decodedToken = this._tokenUseCase.getUserData();
     if (decodedToken) {
       this.user = decodedToken;
+
+      // Patch email and username values to user form
+      // For demo users, trim username before @ symbol since username equals email
+      const trimmedUsername = decodedToken.username.includes('@')
+        ? decodedToken.username.split('@')[0]
+        : decodedToken.username;
+
+      this.userForm.patchValue({
+        email: decodedToken.email,
+        username: trimmedUsername,
+      });
     }
   }
 
