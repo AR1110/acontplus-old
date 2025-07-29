@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {ListCreditTimeUseCase} from "@modules/config/application/use-cases/credit-time/list-credit-time.use-case";
 import {CreditTimeList} from "@modules/config/domain/models/tiempo-credito.model";
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
@@ -33,7 +33,7 @@ import {DeleteCreditTimeUseCase} from "@modules/config/application/use-cases/cre
   templateUrl: './credit-time.component.html',
   styles: ``
 })
-export class CreditTimeComponent {
+export class CreditTimeComponent implements OnInit {
   private $listUseCase = inject(ListCreditTimeUseCase);
   private $deleteUseCase = inject(DeleteCreditTimeUseCase);
   private _dialogSvc = inject(DialogService)

@@ -1,5 +1,5 @@
 import { MatIconModule } from '@angular/material/icon';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 
 import { FormaCobroModalComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/forma-cobro-modal.component';
 import { MatTableModule } from '@angular/material/table';
@@ -56,7 +56,7 @@ import {DialogService} from "@core/services/dialog.service";
     ]),
   ],
 })
-export class ComprobanteIngresoLoteModalComponent {
+export class ComprobanteIngresoLoteModalComponent implements OnInit {
   params = inject<{
     data:  any
     selectedDocumentos:  any[],
@@ -113,7 +113,7 @@ export class ComprobanteIngresoLoteModalComponent {
       saldo = 0,
       totalMora = 0,
       totalSaldoDoc = 0;
-    for (let item of this.selectedDocumentos) {
+    for (const item of this.selectedDocumentos) {
       importeTotal += item.importeTotal;
       saldo += item.saldo;
       abono += item.abono;
@@ -155,7 +155,7 @@ export class ComprobanteIngresoLoteModalComponent {
             this.tipoDocumentos = structuredClone(selectedDocumentos);
             this.selectedDocumentos = selectedDocumentos;
 
-            let dataSelectedDoc = selectedDocumentos[0];
+            const dataSelectedDoc = selectedDocumentos[0];
             this.comprobante = {
               idCliente: dataSelectedDoc.idCliente,
               razonSocialComprador: dataSelectedDoc.razonSocialComprador,
@@ -182,7 +182,7 @@ export class ComprobanteIngresoLoteModalComponent {
       return;
     }
 
-    let modalRef = this.modalSvc.open(FormaCobroModalComponent, {
+    const modalRef = this.modalSvc.open(FormaCobroModalComponent, {
       size: 'lg',
       data: {
         dataFormaCobro: this.dataFormaCobro,
@@ -198,7 +198,7 @@ export class ComprobanteIngresoLoteModalComponent {
         typeof dataPaymentTypeForm === 'object'
       ) {
         try {
-          let { posFechado, valorAbono } = dataPaymentTypeForm;
+          const { posFechado, valorAbono } = dataPaymentTypeForm;
 
           const tempPaymentDetails = structuredClone(this.paymentDetails);
 
@@ -264,16 +264,16 @@ export class ComprobanteIngresoLoteModalComponent {
   }
 
   showCobroDetalle(data: any) {
-    let tempDetails = this.paymentDetails.filter(
+    const tempDetails = this.paymentDetails.filter(
       (item) =>
         item.idCuotaPorCobrar === data.idCuotaPorCobrar &&
         item.idCuentaPorCobrar === data.idCuentaPorCobrar,
     );
-    let infoCobrosDetalle = [];
+    const infoCobrosDetalle = [];
 
-    for (let pd of tempDetails) {
+    for (const pd of tempDetails) {
       if (pd.abono > 0) {
-        let datoCobro = this.multiplesPaymentType.find(
+        const datoCobro = this.multiplesPaymentType.find(
           (item) => item.secuencial === pd.secuencial,
         );
         infoCobrosDetalle.push({
@@ -357,8 +357,8 @@ export class ComprobanteIngresoLoteModalComponent {
         cancelButtonText: 'No, cancelar',
       }).then((result) => {
         if (result.isConfirmed) {
-          let paymentDetails: Array<PaymentDetail> = [];
-          let historialCuentas: Array<PaymentHistory> = [];
+          let paymentDetails: PaymentDetail[] = [];
+          let historialCuentas: PaymentHistory[] = [];
 
           const tempMultiplesPaymentType = this.multiplesPaymentType.filter(
             (mp) => mp.secuencial !== secuencial,
@@ -459,7 +459,7 @@ export class ComprobanteIngresoLoteModalComponent {
         cancelButtonText: 'No, cancelar!',
       }).then((result) => {
         if (result.isConfirmed) {
-          let comprobante = {
+          const comprobante = {
             idCliente: this.comprobante.idCliente,
             total: this.multiplesPaymentType.reduce(
               (acc, curr) => acc + curr.valorAbono,
@@ -474,8 +474,8 @@ export class ComprobanteIngresoLoteModalComponent {
             nombreFiscal: this.comprobante.razonSocialComprador,
           };
 
-          let cobros = this.multiplesPaymentType.map((item) => {
-            let obj = {
+          const cobros = this.multiplesPaymentType.map((item) => {
+            const obj = {
               idSubEntidadFinanciera: item.idSubEntidadFinanciera,
               idEntidadFinanciera: item.idEntidadFinanciera,
               idBanco: item.idBanco,
@@ -493,7 +493,7 @@ export class ComprobanteIngresoLoteModalComponent {
             return obj;
           });
 
-          let data = {
+          const data = {
             comprobante,
             cobros,
             cobroDetalle: this.paymentDetails.filter((item) => item.abono > 0),

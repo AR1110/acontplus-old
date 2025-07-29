@@ -1,10 +1,10 @@
-import { Directive, ElementRef, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, Renderer2, OnInit } from '@angular/core';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionEdit]',
 })
-export class ActionEditDirective {
+export class ActionEditDirective implements OnInit {
 
   constructor(private el: ElementRef, private renderer: Renderer2, private pS: UserRoleStateService) { }
 

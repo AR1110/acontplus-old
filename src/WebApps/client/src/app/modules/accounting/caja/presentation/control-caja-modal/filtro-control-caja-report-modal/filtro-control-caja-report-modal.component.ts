@@ -62,7 +62,7 @@ export class FiltroControlCajaReportModal {
           allowEscapeKey: false,
           backdrop: true,
           preConfirm: async (clave) => {
-            let obj = {
+            const obj = {
               typeCheck: 1,
               clave,
             };
@@ -97,7 +97,7 @@ export class FiltroControlCajaReportModal {
   }
 
   generateReport() {
-    let dataParms = {
+    const dataParms = {
       tipo: 1,
       id: this.params.id,
       sortByDefault: this.dataSearch.sortByDefault,

@@ -20,7 +20,7 @@ function instanceDecimal<T>(num:number, max = 0)  {
  * @returns
  */
 function plus<T>(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).plus(num2)
+    const instanceDecimal = new Decimal(num1).plus(num2)
     if (max > 0) {
         return instanceDecimal.toDecimalPlaces(max).toNumber()
     }
@@ -37,7 +37,7 @@ function plus<T>(num1:number, num2:number, max = 0) {
  */
 
 function minus<T>(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).minus(num2)
+    const instanceDecimal = new Decimal(num1).minus(num2)
     if (max > 0) {
         return instanceDecimal.toDecimalPlaces(max).toNumber() as T
     }
@@ -47,7 +47,7 @@ function minus<T>(num1:number, num2:number, max = 0) {
 }
 
 function mul<T>(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).mul(num2)
+    const instanceDecimal = new Decimal(num1).mul(num2)
     if (max > 0) {
         return instanceDecimal.toDecimalPlaces(max).toNumber()
     }
@@ -58,7 +58,7 @@ function mul<T>(num1:number, num2:number, max = 0) {
 
 
 function div(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).div(num2)
+    const instanceDecimal = new Decimal(num1).div(num2)
     if (max > 0) {
         return instanceDecimal.toDecimalPlaces(max).toNumber()
     }

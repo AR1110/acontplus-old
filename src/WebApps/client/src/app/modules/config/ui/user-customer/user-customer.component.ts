@@ -1,24 +1,20 @@
-import {Component, inject, signal} from '@angular/core';
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ListUserCustomerUseCase} from "@modules/config/application/use-cases/user-customer/list-user-customer.use-case";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatPagination} from "@shared/models/pagination.model";
-import { MatIconModule} from "@angular/material/icon";
-import {MatButtonModule } from "@angular/material/button";
-import {PageEvent} from "@angular/material/paginator";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {UserCustomerList} from "@modules/config/domain/models/user-customer/user-customer.model";
-import {finalize} from "rxjs/operators";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {DialogService} from "@core/services/dialog.service";
-import {
-  UserCustomerAddEditModalComponent
-} from "@modules/config/ui/user-customer/user-customer-add-edit-modal/user-customer-add-edit-modal.component";
-import {
-  SettingUserCustomerComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/setting-user-customer.component";
+import { UserCustomerAddEditModalComponent } from '@modules/config/ui/user-customer/user-customer-add-edit-modal/user-customer-add-edit-modal.component';
+import { SettingUserCustomerComponent } from '@modules/config/ui/user-customer/setting-user-customer/setting-user-customer.component';
+import { ListUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/list-user-customer.use-case';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { UserCustomerList } from '@modules/config/domain/models/user-customer/user-customer.model';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { MatPagination } from '@shared/models/pagination.model';
+import { DialogService } from '@core/services/dialog.service';
+import { MatButtonModule } from '@angular/material/button';
+import { PageEvent } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-customer',
@@ -31,19 +27,18 @@ import {
     ThemeButtonComponent,
   ],
   templateUrl: './user-customer.component.html',
-  styles: ``
+  styles: ``,
 })
-export class UserCustomerComponent {
-  private $listUserCustomerUseCase = inject(ListUserCustomerUseCase)
-  private _tS = inject(ToastrNotificationService)
-  private _dialogSvc = inject(DialogService)
+export class UserCustomerComponent implements OnInit {
+  private $listUserCustomerUseCase = inject(ListUserCustomerUseCase);
+  private _tS = inject(ToastrNotificationService);
+  private _dialogSvc = inject(DialogService);
 
-  $loading = signal(false)
+  $loading = signal(false);
 
-  dataSource = signal<UserCustomerList[]>([])
+  dataSource = signal<UserCustomerList[]>([]);
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'nroIdentificacion', label: 'Nro. Identificacion', type: 'string' },
@@ -52,62 +47,61 @@ export class UserCustomerComponent {
     { key: 'email', label: 'Correo', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
-  refresh(){
-    this.getList()
+  refresh() {
+    this.getList();
   }
 
-  private getList(){
+  private getList() {
     const params = {
-      pageIndex: this.pagination().pageIndex+1,
-      pageSize: this.pagination().pageSize
-    }
-    if(this.$loading()) {
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
+    };
+    if (this.$loading()) {
       this._tS.show({
         type: 'warning',
-        message: 'Hay proceso pendiente'
-      })
-      return
+        message: 'Hay proceso pendiente',
+      });
+      return;
     }
-    this.$loading.set(true)
-    this.$listUserCustomerUseCase.execute(params)
-      .pipe(
-        finalize(()=>this.$loading.set(false))
-      )
+    this.$loading.set(true);
+    this.$listUserCustomerUseCase
+      .execute(params)
+      .pipe(finalize(() => this.$loading.set(false)))
 
-      .subscribe(response => {
-        this.dataSource.set(response.data)
-        this.pagination.update(item=>({
+      .subscribe((response) => {
+        this.dataSource.set(response.data);
+        this.pagination.update((item) => ({
           ...item,
-          totalRecords: response.totalRecords
-        }))
-    })
+          totalRecords: response.totalRecords,
+        }));
+      });
   }
 
   ngOnInit() {
-    this.getList()
+    this.getList();
   }
 
-  openAddEdit(item?: UserCustomerList){
-    const  ref = this._dialogSvc.open(UserCustomerAddEditModalComponent, {
+  openAddEdit(item?: UserCustomerList) {
+    const ref = this._dialogSvc.open(UserCustomerAddEditModalComponent, {
       size: 'md',
-      data: item ? structuredClone(item) : {}
-    })
-    ref.subscribe(result=>{
-      if(result && typeof  result==='object'){
-        this.refresh()
+      data: item ? structuredClone(item) : {},
+    });
+    ref.subscribe((result) => {
+      if (result && typeof result === 'object') {
+        this.refresh();
       }
-    })
+    });
   }
 
-  openSetting(item: UserCustomerList){
+  openSetting(item: UserCustomerList) {
     this._dialogSvc.open(SettingUserCustomerComponent, {
       size: 'xxl',
-      data: structuredClone(item)
-    })
+      data: structuredClone(item),
+    });
   }
 
   handlePageEvent(e: PageEvent) {
@@ -121,5 +115,4 @@ export class UserCustomerComponent {
     });
     this.refresh();
   }
-
 }

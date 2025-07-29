@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal, OnInit} from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
@@ -53,7 +53,7 @@ type VehiclePartTypeNode = VehiclePartType & {
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InspectionModalComponent {
+export class InspectionModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<InspectionModalComponent>)
   params = inject<{
     supportId: 0,
@@ -144,7 +144,7 @@ export class InspectionModalComponent {
     }
   }
 
-  private buildVehiclePartTypeNodes(vehicleParts: any[], checkStatus: boolean = false): any[] {
+  private buildVehiclePartTypeNodes(vehicleParts: any[], checkStatus = false): any[] {
     return this.vehiclePartTypes.map((item) => {
       const nodes = vehicleParts.filter(
         (vp) => vp.vehiclePartTypeId === item.id
@@ -182,7 +182,7 @@ export class InspectionModalComponent {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: this.data.fechaEmision,
       fechaEmisionDocCreado: this.data.fechaEmisionDocCreado,
       setHoursZero: true,
@@ -208,7 +208,7 @@ export class InspectionModalComponent {
       return;
     }
 
-    let isSelectedStatus = this.vehiclePartTypeNodes().some((vtn) =>
+    const isSelectedStatus = this.vehiclePartTypeNodes().some((vtn) =>
       vtn.nodes.some((n) => n.status == 1 || n.status == 2 || n.status == 3),
     );
     if (!isSelectedStatus) {
@@ -236,45 +236,45 @@ export class InspectionModalComponent {
       if (!this.isValidForm()) return;
 
       //motor
-      let engine = this.vehiclePartTypeNodes()
+      const engine = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.MT)
         ?.nodes.map(this.mapVehiclePart);
 
       //cabina
-      let cabin = this.vehiclePartTypeNodes()
+      const cabin = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.CB)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Transmisión
-      let transmission = this.vehiclePartTypeNodes()
+      const transmission = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.ST)
         ?.nodes.map(this.mapVehiclePart);
 
       // Rodamiento
-      let bearing = this.vehiclePartTypeNodes()
+      const bearing = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.RD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Frenos
-      let brake = this.vehiclePartTypeNodes()
+      const brake = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SF)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Dirección
-      let steering = this.vehiclePartTypeNodes()
+      const steering = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Suspensión
-      let suspension = this.vehiclePartTypeNodes()
+      const suspension = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SS)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de luces
-      let lighting = this.vehiclePartTypeNodes()
+      const lighting = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SL)
         ?.nodes.map(this.mapVehiclePart);
-      let data = {
+      const data = {
         engine: JSON.stringify(engine),
         cabin: JSON.stringify(cabin),
         transmission: JSON.stringify(transmission),

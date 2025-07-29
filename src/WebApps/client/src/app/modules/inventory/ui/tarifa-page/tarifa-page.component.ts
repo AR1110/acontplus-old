@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +26,7 @@ import {DialogService} from "@core/services/dialog.service";
     templateUrl: './tarifa-page.component.html',
     styles: ``
 })
-export class TarifaPageComponent {
+export class TarifaPageComponent implements OnInit {
   tarifaSvc = inject(TarifaService);
   visibleColumns: string[] = [
     'index',

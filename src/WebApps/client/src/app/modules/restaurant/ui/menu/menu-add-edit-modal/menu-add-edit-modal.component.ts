@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
@@ -27,7 +27,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
   templateUrl: './menu-add-edit-modal.component.html',
   styles: ``,
 })
-export class MenuAddEditModalComponent {
+export class MenuAddEditModalComponent implements OnInit {
   menuForm = new FormGroup({
     id: new FormControl(0),
     title: new FormControl(''),
@@ -285,8 +285,8 @@ export class MenuAddEditModalComponent {
 
   verifyUpdateCell(productsAdded: any[]) {
     if (productsAdded.length > 0) {
-      for (let product of productsAdded) {
-        let fee = JSON.parse(product.fees).find(
+      for (const product of productsAdded) {
+        const fee = JSON.parse(product.fees).find(
           (x: any) => x.idTarifa == product.feeId,
         );
         product.priceIVA = fee.precioConIva;

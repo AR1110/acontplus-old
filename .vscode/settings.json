@@ -4,12 +4,28 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
-    // ➕ NEW Angular-specific actions
     "source.organizeImports.angular": "explicit"
   },
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "files.eol": "\n",
+
+// Vertical Alignment Core
+  "editor.wrappingIndent": "indent",
+  "editor.autoIndent": "full",
+  "editor.autoClosingOvertype": "always",
+  "editor.stickyScroll.enabled": true,
+
+  // TypeScript Vertical Rules
+  "typescript.format.enable": true,
+  "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+
+  // HTML Vertical Rules
+  "html.format.wrapLineLength": 120,
+  "html.format.extraLiners": "head, body, /html",
+  "html.format.wrapAttributes": "force-expand-multiline",
 
   // ➕ ENHANCED TypeScript/Angular
   "typescript.preferences.importModuleSpecifier": "shortest",
@@ -33,7 +49,25 @@
       "source.fixAll.csharp": "explicit"
     }
   },
-  "[typescript]": {
+   "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

@@ -13,7 +13,7 @@ export class SearchCompanyCustomerMapper {
 
     let customers:CompanyCustomerSearch[] = [];
     if (response && response.code === "1") {
-      let results = JSON.parse(response.payload as string) || [];
+      const results = JSON.parse(response.payload as string) || [];
       customers =  results.map((item:any)=>({
           idCliente: item.idCliente,
           idTipoIdentificacion: item.idTipoIdentificacion,

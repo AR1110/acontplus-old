@@ -3,7 +3,7 @@ import { formatDateToString } from "@core/utils/date.util";
 import { SupportMaintenanceDetail } from "@mechanical/domain/models/support-maintenance.model";
 import { isValidField } from "@core/utils/utils";
 
-type ToProps = {
+interface ToProps {
   data: any
   details: SupportMaintenanceDetail[],
   detailsDeleted: SupportMaintenanceDetail[],
@@ -14,11 +14,11 @@ export class SupportMaintenanceAdapter {
     const { data, details, detailsDeleted } = obj;
 
 
-    let resultData = this.dataTo(data);
-    let resultDetalles = this.detailTo(details);
-    let resultDetallesDeleted = this.detailTo(detailsDeleted);
+    const resultData = this.dataTo(data);
+    const resultDetalles = this.detailTo(details);
+    const resultDetallesDeleted = this.detailTo(detailsDeleted);
 
-    let resultDetallesMerge = [...resultDetalles, ...resultDetallesDeleted]
+    const resultDetallesMerge = [...resultDetalles, ...resultDetallesDeleted]
 
     return {
       //order: resultOrder,
@@ -35,7 +35,7 @@ export class SupportMaintenanceAdapter {
 
 
   private static dataTo(data: any) {
-    let obj = {
+    const obj = {
       id: data.id,
       bodegaId: data.bodegaId,
       fechaEmision: formatDateToString(data.fechaEmision),
@@ -54,7 +54,7 @@ export class SupportMaintenanceAdapter {
   }
 
   private static detailTo(detalles: SupportMaintenanceDetail[]) {
-    let results = detalles.map((item, index) => {
+    const results = detalles.map((item, index) => {
       return {
         id: item.id,
         rowguid: item.rowguid,

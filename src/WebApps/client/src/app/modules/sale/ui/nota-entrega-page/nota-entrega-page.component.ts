@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -49,7 +49,7 @@ import { finalize, switchMap, throwError } from 'rxjs';
     templateUrl: './nota-entrega-page.component.html',
     styles: ``
 })
-export class NotaEntregaPageComponent {
+export class NotaEntregaPageComponent implements OnInit {
 
   private notaEntregaSvc = inject(NotaEntregaService)
   private tS = inject(ToastrNotificationService)
@@ -96,7 +96,7 @@ export class NotaEntregaPageComponent {
   })
 
   private getDataParams() {
-    let params = {
+    const params = {
 
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
@@ -158,7 +158,7 @@ export class NotaEntregaPageComponent {
         this.estadosDoc = initialData.estadosDoc;
 
         if (this.estabs.length > 0) {
-          let dataEstab = this.estabs.find(estab => (estab.defaultEstab));
+          const dataEstab = this.estabs.find(estab => (estab.defaultEstab));
           this.puntosEmision = dataEstab?.puntosEmision || [];
 
           this.dataSearch.update(e => {
@@ -204,7 +204,7 @@ export class NotaEntregaPageComponent {
   }
 
   onEstabChange(){
-    let dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
+    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {

@@ -16,7 +16,7 @@ export class EstablishmentService {
   constructor() {}
 
   getDataForm() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2,
     });
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
@@ -28,7 +28,7 @@ export class EstablishmentService {
           contribuyentes,
           ambientes,
         } = response;
-        let result = {
+        const result = {
           cantones,
           actividadesEconomica,
           agentesRetencion,
@@ -58,18 +58,18 @@ export class EstablishmentService {
   }
 
   getId(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       id,
       tipo: 3,
     });
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
-        let { correo, telefono, ...mainData } = response.data[0];
+        const { correo, telefono, ...mainData } = response.data[0];
 
         const correos = correo ? correo.split(/[\|;]/) : [];
         const telefonos = telefono ? telefono.split(/[\|;]/) : [];
 
-        let data = {
+        const data = {
           idEstablecimiento: mainData.idEstablecimiento,
           codEstab: mainData.codEstab,
           canton: mainData.canton,

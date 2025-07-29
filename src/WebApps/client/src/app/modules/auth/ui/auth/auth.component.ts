@@ -105,7 +105,7 @@ export class AuthComponent {
         return
       }
 
-      let dataPayload = JSON.parse(response.payload as string)
+      const dataPayload = JSON.parse(response.payload as string)
       console.log(dataPayload)
       const establecimientos = dataPayload.flatMap((userRole: any) => userRole.establecimientos)
 

@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, inject, signal, ViewChild, ViewEncapsulation, OnInit} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -58,7 +58,7 @@ import {DialogService} from "@core/services/dialog.service";
   encapsulation: ViewEncapsulation.None,
   providers: [DatePipe],
 })
-export class OrderModalComponent {
+export class OrderModalComponent implements OnInit {
   @ViewChild('inputNameSpec') inputNameSpec: any;
   private datePipe = inject(DatePipe);
   private modalRef = inject(MatDialogRef<OrderModalComponent>);

@@ -18,23 +18,23 @@ export class NotaEntregaService {
   #http = inject(HttpClient);
 
   getDataFilter() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3
     })
     return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
       context: getNoLoader()
     }).pipe(map(response => {
 
-      let resultData = {
+      const resultData = {
         estabs: [] as GroupedEstab[],
         estadosDoc: [] as any[]
       }
 
       if (response.code === "1") {
-        let [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
+        const [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
 
 
-        let dataToGroup = {
+        const dataToGroup = {
           estabs: tempEstabs,
           isGroupPuntoEmision: true
         }
@@ -48,7 +48,7 @@ export class NotaEntregaService {
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -56,7 +56,7 @@ export class NotaEntregaService {
       context: getNoLoader()
     }).pipe(
       map(response => {
-        let result = {
+        const result = {
           data: [] as any[],
           totalRecords: 0
         }
@@ -75,7 +75,7 @@ export class NotaEntregaService {
 
 
   getDetalleCompleto(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 5,
       id
     })
@@ -85,7 +85,7 @@ export class NotaEntregaService {
       map(response => {
         let result = {} as any;
         if (response.code === "1") {
-          let mainData = JSON.parse(response.payload as string)
+          const mainData = JSON.parse(response.payload as string)
           result = NotaEntregaAdapter.fromApiDetalleCompleto(mainData)
         }
 

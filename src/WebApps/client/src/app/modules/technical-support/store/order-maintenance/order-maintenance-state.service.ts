@@ -11,7 +11,7 @@ import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 export interface OrderMaintenanceState {
   orderDetails: any[]
   orderMaintenances: OrderMaintenance[]
-  bodegas: Array<GroupedEstabBodega>
+  bodegas: GroupedEstabBodega[]
   feeds: Tarifa[],
   taxes: Impuesto[],
   taxPercents: TarifaImpuesto[]

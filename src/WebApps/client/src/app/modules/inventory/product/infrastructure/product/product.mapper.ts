@@ -10,7 +10,7 @@ export class ProductMapper {
 
   static fromApiDataFilter(response:ApiResponse){
 
-    let { brands, measures,models, subcategories , taxes } = JSON.parse(response.payload as string);
+    const { brands, measures,models, subcategories , taxes } = JSON.parse(response.payload as string);
     const subCategorias = groupSubCategoryUtil(subcategories)
 
     return {
@@ -33,7 +33,7 @@ export class ProductMapper {
             precio: tarifa.precio
           }
         })
-        let obj = {
+        const obj = {
           position: index +1,
           idArticulo: product.idArticulo,
           codigo: product.codigo,
@@ -64,9 +64,9 @@ export class ProductMapper {
 
   static fromApiGetAll(response:ApiResponse){
 
-    let { products } = JSON.parse(response.payload as string);
+    const { products } = JSON.parse(response.payload as string);
 
-    let data = products || [];
+    const data = products || [];
 
     return data.map((item: any, index: number) => {
       return {
@@ -98,11 +98,11 @@ export class ProductMapper {
 
     const {brands, documentTypes,fees,subcategories,warehouses, taxes=[]} = JSON.parse(response.payload as string);
 
-    let estabs = groupEstabUtil({
+    const estabs = groupEstabUtil({
       bodegas: warehouses,
       isGroupBodega: true
     })
-    let subCategorias = groupSubCategoryUtil(subcategories);
+    const subCategorias = groupSubCategoryUtil(subcategories);
 
     return {
       estabs : estabs,
@@ -138,7 +138,7 @@ export class ProductMapper {
 
 
   static fromApiCheckStockNotificacion(responseApi: any) {
-    let { stockCheckResponse } = JSON.parse(responseApi.payload);
+    const { stockCheckResponse } = JSON.parse(responseApi.payload);
     return stockCheckResponse[0];
   }
 }

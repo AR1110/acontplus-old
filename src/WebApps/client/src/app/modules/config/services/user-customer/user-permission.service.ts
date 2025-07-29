@@ -22,7 +22,7 @@ export class UserPermissionService {
 
   checkHasPermission<T>(params: T) {
 
-    let paramsStr = JSON.stringify(params)
+    const paramsStr = JSON.stringify(params)
     return this.http.get<ApiResponse>(`${this.url}CheckHasPermission/${paramsStr}`)
   }
 

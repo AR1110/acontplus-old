@@ -35,7 +35,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj,
     });
@@ -45,12 +45,12 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
       })
       .pipe(
         map((response) => {
-          let result = {
+          const result = {
             data: [] as CuentaPorPagarLista[],
             totalRecords: 0,
           };
           if (response.code === '1') {
-            let [mainData] = JSON.parse(response.payload as string);
+            const [mainData] = JSON.parse(response.payload as string);
             result.data =
               CuentaPorPagarMapper.fromApiGetAll(mainData);
             result.totalRecords =
@@ -62,7 +62,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   }
 
   getCuotasData() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 5,
     });
     return this.http
@@ -71,11 +71,11 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
       })
       .pipe(
         map((response) => {
-          let result = {
+          const result = {
             tiemposCredito: [] as TiempoCreditoSelectHtmlOnly[],
           };
           if (response.code === '1') {
-            let [tempTiemposCredito] = JSON.parse(response.payload as string);
+            const [tempTiemposCredito] = JSON.parse(response.payload as string);
 
             result.tiemposCredito = tempTiemposCredito || [];
           }
@@ -85,7 +85,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   }
 
   getCuotasConfigByIdCuentaPorPagar(idCuentaPorPagar: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2,
       idCuentaPorPagar,
     });
@@ -95,11 +95,11 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
       })
       .pipe(
         map((response) => {
-          let result = {
+          const result = {
             data: [] as CuentaPorPagarCuotaConfig[],
           };
           if (response.code === '1') {
-            let [mainData] = JSON.parse(response.payload as string);
+            const [mainData] = JSON.parse(response.payload as string);
             result.data =
               CuentaPorPagarMapper.fromApiCuotaConfig(mainData);
           }
@@ -109,7 +109,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   }
 
   getHistorialMovimientoByIdCuentaPorPagar(idCuentaPorPagar: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 4,
       idCuentaPorPagar,
     });
@@ -126,7 +126,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
             pagosDetalle: [] as any[],
           };
           if (response.code === '1') {
-            let mainData = JSON.parse(response.payload as string);
+            const mainData = JSON.parse(response.payload as string);
             console.log(mainData);
             result =
               CuentaPorPagarMapper.fromApiHistMovimiento(mainData);
@@ -137,8 +137,8 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
   }
 
   generarCuotas<T>(obj: T) {
-    let params = CuentaPorPagarMapper.toApiGenerarCuota(obj);
-    let json = JSON.stringify(params);
+    const params = CuentaPorPagarMapper.toApiGenerarCuota(obj);
+    const json = JSON.stringify(params);
     return this.http.post<ApiResponse>(`${this.url}${json}`, null, {
       context: getNoLoader(),
     });

@@ -1,4 +1,4 @@
-import {Component, inject, input, model, output} from '@angular/core';
+import {Component, inject, input, model, output, OnInit} from '@angular/core';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -41,7 +41,7 @@ import {
   templateUrl: './product-ubication.component.html',
   styles: ``,
 })
-export class ProductUbicationComponent {
+export class ProductUbicationComponent implements OnInit {
   private _tS = inject(ToastrNotificationService)
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
   private $productUbicationPosUseCase = inject(ProductUbicationPostUseCase)
@@ -102,10 +102,10 @@ export class ProductUbicationComponent {
   }
 
   edit(item:any){
-    let dataBodega = this.bodegas().find(bodega => bodega.idBodega === item.idBodega);
+    const dataBodega = this.bodegas().find(bodega => bodega.idBodega === item.idBodega);
 
     if (dataBodega) {
-      let dataEstab = this.estabs().find(estab => estab.idEstablecimiento === dataBodega.idEstablecimiento);
+      const dataEstab = this.estabs().find(estab => estab.idEstablecimiento === dataBodega.idEstablecimiento);
 
       this.productUbicationId = item.idArticuloUbicacion;
       this.data.set({
@@ -149,7 +149,7 @@ export class ProductUbicationComponent {
       return
     }
 
-    let data = {
+    const data = {
       ...this.data(),
       idArticulo: this.productId()
     }

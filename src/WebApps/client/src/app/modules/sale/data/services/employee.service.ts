@@ -17,7 +17,7 @@ export class EmployeeService {
   private http = inject(HttpClient)
 
   search<T extends { textSearch: string }>(obj: T) {
-    let params = JSON.stringify({ ...obj, tipo: 1 })
+    const params = JSON.stringify({ ...obj, tipo: 1 })
 
     return this.http.get(`${this.url}Search?json=${params}`, {
       context: getNoLoader()

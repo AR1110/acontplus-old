@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, input, Input, output, SimpleChanges } from '@angular/core';
+import { Component, inject, input, Input, output, SimpleChanges, OnChanges } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -34,7 +34,7 @@ const _filter = (opt: any[], value: string): string[] => {
     templateUrl: './sub-category-group.component.html',
     styles: ``
 })
-export class SubCategoryGroupComponent {
+export class SubCategoryGroupComponent implements OnChanges {
   @Input({ required: true }) subCategoryGroups: SubCategoryGroup[] = [];
   isInputMat = input(false)
   onSelected = output<number>();

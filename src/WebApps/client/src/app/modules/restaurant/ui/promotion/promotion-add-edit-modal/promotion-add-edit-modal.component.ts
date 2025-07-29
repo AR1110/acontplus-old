@@ -5,7 +5,7 @@ import {
   inject,
   model,
   signal,
-  ViewChild,
+  ViewChild, OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -49,7 +49,7 @@ import {MatTabsModule} from "@angular/material/tabs";
   styleUrl: './promotion-add-edit-modal.component.scss',
   styles: ``,
 })
-export class PromotionAddEditModalComponent {
+export class PromotionAddEditModalComponent implements OnInit {
   params = inject(MAT_DIALOG_DATA);
   private modalRef = inject(MatDialogRef<PromotionAddEditModalComponent>);
   private restaurantStore = inject(RestaurantStoreService);
@@ -160,7 +160,7 @@ export class PromotionAddEditModalComponent {
       return;
     }
 
-    let newPromotionMenu = {
+    const newPromotionMenu = {
       id: 0,
       promotionId: 0,
       menuId: $event.id,
@@ -255,14 +255,14 @@ export class PromotionAddEditModalComponent {
         return;
       }
 
-      let newPromotionMenu = this.promotionMenus().map((e) => ({
+      const newPromotionMenu = this.promotionMenus().map((e) => ({
         id: e.id,
         promotionId: e.promotionId,
         menuId: e.menuId,
       }));
 
-      let promotionDays = JSON.stringify(this.daysOfWeek());
-      let newObject = {
+      const promotionDays = JSON.stringify(this.daysOfWeek());
+      const newObject = {
         id: this.data.id,
         estabId: this.estabId(),
         description: this.data.description,

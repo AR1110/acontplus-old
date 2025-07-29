@@ -35,7 +35,7 @@ export class TransferenciaBodegaMapper {
   }
 
   static fromApiFilter(response: any) {
-    let result = {
+    const result = {
       estabs: [] as GroupedEstab[],
     };
     if (response && typeof response === 'object') {

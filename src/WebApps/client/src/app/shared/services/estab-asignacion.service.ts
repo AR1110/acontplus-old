@@ -17,7 +17,7 @@ export class EstabAsignacionService {
     });
     return this.http.get(`${this.url}?json=${params}`).pipe(
       map((response) => {
-        let estabs: Array<EstablecimientoSelectHtmlOnly> = [];
+        let estabs: EstablecimientoSelectHtmlOnly[] = [];
         if (Array.isArray(response)) {
           estabs = response.map((item) => {
             return {

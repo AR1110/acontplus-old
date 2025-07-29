@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,7 +31,7 @@ import {MeasureUseCase} from "@inventory/domain/usecases/measure.use-case";
     templateUrl: './measure-page.component.html',
     styles: ``
 })
-export class MeasurePageComponent {
+export class MeasurePageComponent implements OnInit {
   private _measureUseCase= inject(MeasureUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
@@ -44,7 +44,7 @@ export class MeasurePageComponent {
   private sharedSvc = inject(SharedService);
 
   getMeasures() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };

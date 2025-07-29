@@ -1,5 +1,5 @@
 
-import { Component, inject,   signal } from '@angular/core';
+import { Component, inject,   signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,7 +30,7 @@ import {ProductPhotoPutStatusUseCase} from "@inventory/product/application/use-c
     templateUrl: './product-photo.component.html',
     styleUrl: './product-photo.component.scss'
 })
-export class ProductPhotoComponent {
+export class ProductPhotoComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<ProductPhotoComponent>);
   readonly params = inject(MAT_DIALOG_DATA);
   private tS = inject(ToastrNotificationService)
@@ -108,9 +108,9 @@ export class ProductPhotoComponent {
     }
 
 
-    let src = URL.createObjectURL(this.selectedFile)
+    const src = URL.createObjectURL(this.selectedFile)
 
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: 'Esta seguro de subir esta foto?',
       imageHeight: 300,
       imageUrl: src,
@@ -124,7 +124,7 @@ export class ProductPhotoComponent {
     if (isConfirmed) {
 
       if (this.productPhoto.id > 0) {
-        let data = {
+        const data = {
           id: this.productPhoto.id,
           s3ObjectKey: this.productPhoto.s3ObjectKey,
           s3ObjectUrl: this.productPhoto.s3ObjectUrl
@@ -180,7 +180,7 @@ export class ProductPhotoComponent {
     if (item.isDefault) {
       return
     }
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: 'Esta seguro/a de colocar como predeterminada esta imagen?',
       imageHeight: 300,
       imageUrl: item.s3ObjectUrl,
@@ -214,7 +214,7 @@ export class ProductPhotoComponent {
   }
 
   async removePhoto(item: any) {
-    let { isConfirmed } = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       title: 'Esta seguro/a de eliminar la imagen?',
       showCancelButton: true,

@@ -27,7 +27,7 @@ export interface DeviceTypeSpec {
   deviceId?: number;
   uuid: string;
   name: string;
-  specs: Array<DeviceSpec01>;
+  specs: DeviceSpec01[];
 }
 
 export interface DeviceSpec01 {

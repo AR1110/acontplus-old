@@ -1,6 +1,6 @@
 ﻿namespace Configuracion.Application.Interfaces;
 
-public interface IUserCustomerService
+public interface IUserService
 {
     Task<object> GetAsync(Dictionary<string, object> parameters);
     Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);

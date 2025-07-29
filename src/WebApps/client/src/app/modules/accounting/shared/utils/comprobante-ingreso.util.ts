@@ -13,8 +13,8 @@ class ComprobanteIngresoUtil {
   private receivedAmount = 0;
   private voucher = {} as CuentaPorCobrar;
   private esAbonoPosfechado = false;
-  paymentDetails: Array<PaymentDetail> = [];
-  historialCuentas: Array<PaymentHistory> = [];
+  paymentDetails: PaymentDetail[] = [];
+  historialCuentas: PaymentHistory[] = [];
   private sequencia = 0;
 
   constructor(sequencia: number) {
@@ -28,7 +28,7 @@ class ComprobanteIngresoUtil {
     this.esAbonoPosfechado = esAbonoPosfechado;
   }
 
-  setPaymentDetail(paymentDetails: Array<PaymentDetail>) {
+  setPaymentDetail(paymentDetails: PaymentDetail[]) {
     this.paymentDetails = paymentDetails;
   }
 
@@ -40,7 +40,7 @@ class ComprobanteIngresoUtil {
     return estado
   }
 
-  applyReceivedAmountToQuota(cuentasPorCobrar: Array<CuentaPorCobrar>): Array<CuentaPorCobrar> {
+  applyReceivedAmountToQuota(cuentasPorCobrar: CuentaPorCobrar[]): CuentaPorCobrar[] {
     const tempVoucherQuotas = JSON.parse(JSON.stringify(cuentasPorCobrar));
 
     for (const group of tempVoucherQuotas) {
@@ -273,7 +273,7 @@ class ComprobanteIngresoUtil {
 
 }
 
-export const getTotalesCuota = (voucherQuotas: Array<CuentaPorCobrar>) => {
+export const getTotalesCuota = (voucherQuotas: CuentaPorCobrar[]) => {
   const { importeTotal, totalAbonoAnterior, totalSaldo, totalSaldoDoc } = voucherQuotas.reduce((total, voucher) => {
     total.importeTotal += voucher.importeTotal;
     total.totalSaldo += voucher.saldo;
@@ -301,10 +301,10 @@ export const getTotalesCuota = (voucherQuotas: Array<CuentaPorCobrar>) => {
 
 }
 
-export const getPaymentSubTotales = (cuotasPorCobrar: Array<CuentaPorCobrar>, multiplesPaymentType: Array<MultiplesPaymentType>, comprobante: CuentaPorCobrarComprobante) => {
+export const getPaymentSubTotales = (cuotasPorCobrar: CuentaPorCobrar[], multiplesPaymentType: MultiplesPaymentType[], comprobante: CuentaPorCobrarComprobante) => {
 
 
-  let { totalValorAbono, totalValorAbonoEfectivo } = multiplesPaymentType.reduce((prev, curr) => {
+  const { totalValorAbono, totalValorAbonoEfectivo } = multiplesPaymentType.reduce((prev, curr) => {
     prev.totalValorAbono += curr.valorAbono;
     if (curr.paymentTypeCode === "EFE") {
       prev.totalValorAbonoEfectivo += curr.valorAbono;

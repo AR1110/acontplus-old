@@ -21,7 +21,7 @@ export class SubCategoryWebRepository extends SubCategoryRepository{
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -51,18 +51,18 @@ export class SubCategoryWebRepository extends SubCategoryRepository{
   }
 
   getDataForm(){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2
     })
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
       .pipe(
         map((response) => {
-           let result = {
+           const result = {
              categories: []
            }
            if(response.code==="1"){
-             let mainData = JSON.parse(response.payload as string);
+             const mainData = JSON.parse(response.payload as string);
              result.categories = mainData.categories;
            }
           return result;

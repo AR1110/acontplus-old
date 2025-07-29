@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal, OnInit,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -52,7 +52,7 @@ import { CompanyCustomerEntity } from '@company-customer/domain/entities/company
   templateUrl: './general-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GeneralConfigComponent {
+export class GeneralConfigComponent implements OnInit {
   private $listUseCase = inject(ListGeneralConfigUseCase);
   private $updateUseCase = inject(UpdateGeneralConfigUseCase);
   CODE_TABS = {

@@ -1,4 +1,4 @@
-import { Component, inject,   signal } from '@angular/core';
+import { Component, inject,   signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -28,7 +28,7 @@ import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE} from "@core/constants/global.cons
     templateUrl: './tags-add-edit-modal.component.html',
     styles: ``
 })
-export class TagsAddEditModalComponent {
+export class TagsAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<TagsAddEditModalComponent>);
 
   readonly data = inject<{

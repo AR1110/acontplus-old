@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -56,7 +56,7 @@ import {
   templateUrl: './guia-remision.component.html',
   styles: ``,
 })
-export class GuiaRemisionComponent   {
+export class GuiaRemisionComponent implements OnInit   {
   private $getGuiaRemisionFilterDataUseCase = inject(
     GetGuiaRemisionFilterDataUseCase
   );
@@ -163,7 +163,7 @@ export class GuiaRemisionComponent   {
       }
     }
 
-    let params = this.getParams()
+    const params = this.getParams()
     if(!params) return;
     this.$listGuiasRemisionUseCase.execute(params).subscribe(response=>{
       console.log(response);
@@ -214,7 +214,7 @@ export class GuiaRemisionComponent   {
 
 
   public openAddEditModal(){
-    let ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
+    const ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
       size: 'xl',
       data: {
 

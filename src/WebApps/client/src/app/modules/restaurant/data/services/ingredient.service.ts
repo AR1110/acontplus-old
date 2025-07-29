@@ -43,7 +43,7 @@ export class IngredientService {
 
   search<T extends { textSearch: string }>(
     data: T,
-  ): Observable<Array<Ingredient>> {
+  ): Observable<Ingredient[]> {
     const query = {
       textSearch: data.textSearch,
       tipo: 2,

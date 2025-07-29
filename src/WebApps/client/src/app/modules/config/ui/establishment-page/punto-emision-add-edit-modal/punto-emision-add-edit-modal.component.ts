@@ -1,5 +1,5 @@
 
-import { Component, inject  } from '@angular/core';
+import { Component, inject, OnInit  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
@@ -24,7 +24,7 @@ import {MatRadioModule} from "@angular/material/radio";
   templateUrl: './punto-emision-add-edit-modal.component.html',
   styleUrl: './punto-emision-add-edit-modal.component.scss',
 })
-export class PuntoEmisionAddEditModalComponent {
+export class PuntoEmisionAddEditModalComponent implements OnInit {
     params = inject<{
     codEstab: null,
     establishmentName: '',

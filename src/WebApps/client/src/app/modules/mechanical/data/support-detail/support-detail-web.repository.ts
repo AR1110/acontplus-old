@@ -26,7 +26,7 @@ export class SupportDetailWebRepository extends SupportDetailRepository {
 
 
   getId(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1, id
     })
     return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(

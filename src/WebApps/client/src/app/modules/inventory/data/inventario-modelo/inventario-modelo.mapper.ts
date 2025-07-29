@@ -3,7 +3,7 @@ export class InventarioModeloMapper {
 
   static fromApiGetAll(response:any){
 
-    let modelos = response.modelos || []
+    const modelos = response.modelos || []
     return modelos.map((item: any, index: number) => {
       return {
         index: index + 1,

@@ -1,5 +1,5 @@
 
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -47,7 +47,7 @@ type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })
-export class ReceptionReportsComponent {
+export class ReceptionReportsComponent implements OnInit {
   establecimientos = signal<EstabSelect[]>([])
   documentTypes = signal<TipoDocSelect[]>([])
   subcategories = signal<Subcategory[]>([]);
@@ -178,7 +178,7 @@ export class ReceptionReportsComponent {
       });
       return;
     }
-    let { tipo, codigo } = this.getDataReport();
+    const { tipo, codigo } = this.getDataReport();
     const dataParms = {
       tipo,
       format,

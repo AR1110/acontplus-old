@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -24,7 +24,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
   templateUrl: './production-area-add-edit-modal.component.html',
   styles: ``,
 })
-export class ProductionAreaAddEditModalComponent {
+export class ProductionAreaAddEditModalComponent implements OnInit {
   establecimientoId = 0;
   data = inject<ProductionArea>(MAT_DIALOG_DATA);
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
