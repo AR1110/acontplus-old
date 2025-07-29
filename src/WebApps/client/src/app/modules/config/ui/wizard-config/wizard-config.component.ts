@@ -32,7 +32,7 @@ import {
   MatStepperPrevious,
 } from '@angular/material/stepper';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
-import {MatButton, MatIconButton} from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
@@ -316,7 +316,6 @@ export class WizardConfigComponent implements OnInit {
 
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
-    fechaCaducidad: new FormControl('', [Validators.required]),
     fileSign: new FormControl(null, [Validators.required]),
   });
 
@@ -811,7 +810,6 @@ export class WizardConfigComponent implements OnInit {
       const signatureData: ElectronicSignatureParam = {
         idFirmaElectronica: 0,
         contrasenia: this.certificateForm.get('contrasenia')?.value || '',
-        fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value || '',
         file: this.selectedFile,
       };
 
