@@ -1,4 +1,6 @@
-﻿namespace Configuracion.API.Controllers;
+using System.Security.Cryptography.X509Certificates;
+
+namespace Configuracion.API.Controllers;
 
 public class FirmaElectronicaController(
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController
@@ -29,6 +31,10 @@ public class FirmaElectronicaController(
         };
         var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
 
+        var cert = new X509Certificate2(signFile.Content, data.contrasenia,
+                  X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+        var expirationDate = DateTime.Parse(cert.GetExpirationDateString());
+
         var parameters = new Dictionary<string, object>
         {
             { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
@@ -36,7 +42,7 @@ public class FirmaElectronicaController(
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },
             { "contentType", signFile.ContentType },
-            { "fechaCaducidad", data.fechaCaducidad },
+            { "fechaCaducidad", expirationDate },
             { "demoStepId", data.demoStepId },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -53,7 +59,6 @@ public class FirmaElectronicaController(
             { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
             { "id", data.idFirmaElectronica },
             { "contrasenia", data.contrasenia },
-            { "fechaCaducidad", data.fechaCaducidad },
             { "estado", data.estado }
         };
         return Ok(await firmaElectronicaService.UpdateAsync(parameters));
