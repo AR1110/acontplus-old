@@ -1,8 +1,8 @@
 import { Role } from '@modules/config/domain/models/role.model';
 
 export interface UserCustomer {
-  idUsuario: number;
-  nroIdentificacion: string;
+  id: number;
+  idCard: string;
   username: string;
   email: string;
   fullName: string;

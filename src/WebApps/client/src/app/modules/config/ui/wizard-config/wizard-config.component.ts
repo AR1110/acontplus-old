@@ -537,8 +537,8 @@ export class WizardConfigComponent implements OnInit {
     if (this.userForm.valid) {
       const formValue = this.userForm.value;
       const userData = {
-        idUsuario: this.user.userId || 0,
-        nroIdentificacion: formValue.idCard || '',
+        id: this.user.userId || 0,
+        idCard: formValue.idCard || '',
         username: formValue.username || '',
         email: formValue.email || '',
         fullName: `${formValue.firstName || ''} ${formValue.lastName || ''}`.trim(),

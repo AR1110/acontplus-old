@@ -23,12 +23,10 @@ export class UserCustomerRepositoryImpl implements UserCustomerRepository {
       .pipe(map((response) => GetUserCustomerFormDataMapper.fromJson(response)));
   }
   update(data: UserCustomer): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(`${this._url}${data.idUsuario}`, {
-      data: data,
-    });
+    return this._http.put<ApiResponse>(`${this._url}${data.id}`, data);
   }
   create<T>(parameters: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, { data: parameters });
+    return this._http.post<ApiResponse>(`${this._url}`, parameters);
   }
 
   list<T>(parameters: T) {
