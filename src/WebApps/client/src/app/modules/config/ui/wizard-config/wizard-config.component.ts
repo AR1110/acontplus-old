@@ -71,7 +71,7 @@ import { WizardErrorHandlerService } from './services/wizard-error-handler.servi
 // Module Use Cases
 import { SaveElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/save-electronic-signature.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
-import { CreateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/create-user-customer.use-case';
+import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
 import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
@@ -208,7 +208,7 @@ export class WizardConfigComponent implements OnInit {
   private readonly _errorHandler = inject(WizardErrorHandlerService);
 
   // Use Case Injections
-  private readonly _createUserCustomerUseCase = inject(CreateUserCustomerUseCase);
+  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
 
@@ -524,17 +524,26 @@ export class WizardConfigComponent implements OnInit {
   saveUser(): void {
     this.userSubmitted = true;
     if (this.userForm.valid) {
+      const formValue = this.userForm.value;
       const userData = {
-        ...this.userForm.value,
+        idUsuario: this.user.userId || 0,
+        nroIdentificacion: formValue.idCard || '',
+        username: formValue.username || '',
+        email: formValue.email || '',
+        fullName: `${formValue.firstName || ''} ${formValue.lastName || ''}`.trim(),
+        firstName: formValue.firstName || '',
+        lastName: formValue.lastName || '',
+        phoneNumber: formValue.phoneNumber || '',
+        password: formValue.password || '',
         demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'II')?.id,
       };
 
-      this._createUserCustomerUseCase
+      this._updateUserCustomerUseCase
         .execute(userData)
         .pipe(
           catchError((error: unknown) => {
             this._errorHandler.handleApiError(error, {
-              operation: 'saving user',
+              operation: 'updating user',
               component: 'WizardConfigComponent',
             });
             return of(null);
@@ -544,7 +553,8 @@ export class WizardConfigComponent implements OnInit {
           if (response && isApiResponse(response)) {
             this._toasterService.show({
               type: response.code === '1' ? 'success' : 'warning',
-              message: response.code === '1' ? 'Usuario guardado exitosamente' : response.message,
+              message:
+                response.code === '1' ? 'Usuario actualizado exitosamente' : response.message,
             });
             if (response.code === '1') {
               this.userUpdated = true;
