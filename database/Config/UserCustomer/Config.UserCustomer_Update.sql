@@ -22,6 +22,8 @@ BEGIN
     SET XACT_ABORT ON;
 	SET LANGUAGE SPANISH;
 
+    DECLARE @UpdatedBy VARCHAR(100);
+
 	DECLARE  @email NVARCHAR(200),
         @isActive BIT,
         @firstName VARCHAR(50),
@@ -59,9 +61,11 @@ BEGIN
                 ', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
 				)
 
+        SET @UpdatedBy = (SELECT nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId);
+
 		BEGIN TRAN 
 			
-            EXEC AcontplusAdmin.Config.UserCustomer_Update 0, @id, @userParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+            EXEC AcontplusAdmin.Config.UserCustomer_Update @id, @json, @UpdatedBy,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 			IF (@errorCode <> 0)
                 BEGIN
                     SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomer_Update failed: ' + ISNULL(@errorMessage, '')
