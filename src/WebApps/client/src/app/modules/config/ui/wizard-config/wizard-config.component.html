@@ -539,62 +539,18 @@
                         </mat-form-field>
                       </div>
                       <div class="col">
-                        <mat-form-field
-                          appearance="outline"
-                          class="w-100"
-                        >
-                          <mat-label>Teléfonos</mat-label>
-                          <mat-chip-grid #telephoneGrid>
-                            @for (
-                              telephone of telephones();
-                              track trackByTelephone($index, telephone)
-                            ) {
-                              <mat-chip-row
-                                (removed)="removeTelephone(telephone)"
-                                (edited)="editTelephone(telephone, $event)"
-                              >
-                                {{ telephone }}
-                                <button matChipRemove>
-                                  <mat-icon>cancel</mat-icon>
-                                </button>
-                              </mat-chip-row>
-                            }
-                            <input
-                              placeholder="Nuevo teléfono..."
-                              [matChipInputFor]="telephoneGrid"
-                              (matChipInputTokenEnd)="addTelephone($event)"
-                            />
-                          </mat-chip-grid>
-                        </mat-form-field>
+                        <app-m3-input-chip
+                          [chips]="telephones()"
+                          labelText="Teléfonos"
+                          placelholder="Nuevo teléfono..."
+                        />
                       </div>
                       <div class="col">
-                        <mat-form-field
-                          appearance="outline"
-                          class="w-100"
-                        >
-                          <mat-label>Correos Electrónicos</mat-label>
-                          <mat-chip-grid #emailGrid>
-                            @for (
-                              email of emails();
-                              track trackByEmail($index, email)
-                            ) {
-                              <mat-chip-row
-                                (removed)="removeEmail(email)"
-                                (edited)="editEmail(email, $event)"
-                              >
-                                {{ email }}
-                                <button matChipRemove>
-                                  <mat-icon>cancel</mat-icon>
-                                </button>
-                              </mat-chip-row>
-                            }
-                            <input
-                              placeholder="Nuevo correo..."
-                              [matChipInputFor]="emailGrid"
-                              (matChipInputTokenEnd)="addEmail($event)"
-                            />
-                          </mat-chip-grid>
-                        </mat-form-field>
+                        <app-m3-input-chip
+                          [chips]="emails()"
+                          labelText="Correos Electrónicos"
+                          placelholder="Nuevo correo..."
+                        />
                       </div>
                     </div>
 

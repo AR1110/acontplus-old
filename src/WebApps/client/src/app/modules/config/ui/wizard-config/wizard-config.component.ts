@@ -48,17 +48,8 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 
-// Additional imports for consolidated functionality
-import {
-  MatChipGrid,
-  MatChipRow,
-  MatChipInput,
-  MatChipEditedEvent,
-  MatChipInputEvent,
-} from '@angular/material/chips';
-
-import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+// Shared Components & Models
+import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -174,10 +165,8 @@ interface EstabFormControls {
     TabulatorComponent,
 
     // Additional UI Components
-    MatChipGrid,
-    MatChipRow,
-    MatChipInput,
     NgDynamicSelectComponent,
+    M3InputChipComponent,
 
     // Router
     RouterModule,
@@ -197,7 +186,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
-  private readonly _announcer = inject(LiveAnnouncer);
+
   private readonly _fb = inject(FormBuilder);
 
   readonly columnNames = [
@@ -272,8 +261,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
   isLinear = false;
 
-  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
-  readonly addOnBlur = true;
   private static passwordsMatchValidator(control: AbstractControl) {
     const group = control as FormGroup;
     const password = group.get('password')?.value;
@@ -577,68 +564,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
       ptoEmi: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       ambiente: ['', Validators.required],
     });
-  }
-  addEmail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.emails.update((prev) => [...prev, value]);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeEmail(value: string): void {
-    const index = this.emails().indexOf(value);
-    if (index >= 0) {
-      this.emails.update((prev) => prev.filter((_, i) => i !== index));
-      this._announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editEmail(email: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeEmail(email);
-    } else {
-      const index = this.emails().indexOf(email);
-      if (index >= 0) {
-        this.emails.update((prev) => prev.map((e, i) => (i === index ? value : e)));
-      }
-    }
-  }
-
-  addTelephone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.telephones.update((prev) => [...prev, value]);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeTelephone(value: string): void {
-    const index = this.telephones().indexOf(value);
-    if (index >= 0) {
-      this.telephones.update((prev) => prev.filter((_, i) => i !== index));
-      this._announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editTelephone(telephone: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeTelephone(telephone);
-    } else {
-      const index = this.telephones().indexOf(telephone);
-      if (index >= 0) {
-        this.telephones.update((prev) => prev.map((t, i) => (i === index ? value : t)));
-      }
-    }
-  }
-  trackByEmail(_: number, email: string): string {
-    return email;
-  }
-
-  trackByTelephone(_: number, telephone: string): string {
-    return telephone;
   }
 
   trackByBodega(index: number): number {
