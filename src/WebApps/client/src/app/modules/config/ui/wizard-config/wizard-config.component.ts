@@ -438,7 +438,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
-      console.debug(stepIndex);
       if (stepIndex !== null && stepIndex > 0) {
         this.loadStepData(incompleteStep.code);
         const targetIndex = stepIndex - 1;
@@ -779,6 +778,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   }
 
   onActividadEconomicaChange(actividadCodigo: string | number | null): void {
+    console.log('actividadCodigo', actividadCodigo);
     if (actividadCodigo) {
       this.estabForm.get('actividad')?.setValue(actividadCodigo.toString());
     }
