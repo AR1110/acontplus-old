@@ -27041,14 +27041,14 @@ ul#themecolors li a.working:before {
 /*******************
 Custom-select
 ******************/
-.custom-select {
+/* .custom-select {
   background: url(../../../assets/images/custom-select.png) right 0.75rem center no-repeat;
   -webkit-appearance: none;
   -moz-appearance: none;
   -o-appearance: none;
   appearance: none;
   background-size: none;
-}
+} */
 
 /*******************
 textarea

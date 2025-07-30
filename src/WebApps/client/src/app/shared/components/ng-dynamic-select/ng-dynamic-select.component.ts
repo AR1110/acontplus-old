@@ -6,6 +6,7 @@ import {
   OnInit,
   output,
   ChangeDetectionStrategy,
+  ViewEncapsulation,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SelectOption } from '@shared/models/select-option';
@@ -23,75 +24,75 @@ import { Subject } from 'rxjs';
       width: 100%;
     }
 
-    .select-wrapper {
-      width: 100%;
-    }
-
-    .custom-select ::ng-deep .ng-select {
-      border: 2px solid #6b7280;
-      border-radius: 6px;
-      min-height: 42px;
+    /* Main select styling */
+    .custom-select {
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      min-height: 38px;
       font-size: 14px;
       background: white;
       transition: all 0.2s ease;
     }
 
-    .custom-select ::ng-deep .ng-select:hover {
-      border-color: #374151;
+    .custom-select:hover {
+      border-color: #9ca3af;
     }
 
-    .custom-select ::ng-deep .ng-select.ng-select-focused {
+    .custom-select.ng-select-focused {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
       outline: none;
     }
 
-    .custom-select ::ng-deep .ng-select.ng-select-disabled {
+    .custom-select.ng-select-disabled {
       background-color: #f9fafb;
       border-color: #e5e7eb;
       opacity: 0.6;
     }
 
-    .custom-select ::ng-deep .ng-select-container {
-      padding: 8px 12px;
-      min-height: 40px;
+    /* Container styling */
+    .custom-select .ng-select-container {
+      padding: 6px 12px;
+      min-height: 36px;
     }
 
-    .custom-select ::ng-deep .ng-placeholder {
+    .custom-select .ng-placeholder {
       color: #9ca3af;
       font-size: 14px;
     }
 
-    .custom-select ::ng-deep .ng-value-container {
+    .custom-select .ng-value-container {
       padding: 0;
       font-size: 14px;
       color: #374151;
     }
 
-    .custom-select ::ng-deep .ng-arrow-wrapper {
+    /* Arrow and clear button styling */
+    .custom-select .ng-arrow-wrapper {
       width: 20px;
       padding-right: 4px;
     }
 
-    .custom-select ::ng-deep .ng-arrow-wrapper .ng-arrow {
+    .custom-select .ng-arrow-wrapper .ng-arrow {
       border-color: #6b7280 transparent transparent;
       border-width: 5px 5px 0;
     }
 
-    .custom-select ::ng-deep .ng-clear-wrapper {
+    .custom-select .ng-clear-wrapper {
       padding-right: 4px;
     }
 
-    .custom-select ::ng-deep .ng-clear-wrapper .ng-clear {
+    .custom-select .ng-clear-wrapper .ng-clear {
       font-size: 16px;
       color: #9ca3af;
     }
 
-    .custom-select ::ng-deep .ng-clear-wrapper .ng-clear:hover {
+    .custom-select .ng-clear-wrapper .ng-clear:hover {
       color: #6b7280;
     }
 
-    .custom-select ::ng-deep .ng-dropdown-panel {
+    /* Dropdown panel styling */
+    .custom-select .ng-dropdown-panel {
       border: 1px solid #d1d5db;
       border-radius: 6px;
       box-shadow:
@@ -99,49 +100,77 @@ import { Subject } from 'rxjs';
         0 4px 6px -2px rgba(0, 0, 0, 0.05);
       background: white;
       margin-top: 4px;
+      z-index: 1050;
     }
 
-    .custom-select ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items {
+    .custom-select .ng-dropdown-panel .ng-dropdown-panel-items {
       max-height: 240px;
     }
 
-    .custom-select ::ng-deep .ng-option {
-      padding: 10px 12px;
+    /* Option styling - this is the key part that was broken */
+    .custom-select .ng-option {
+      padding: 10px 12px !important;
+      font-size: 14px !important;
+      color: #374151 !important;
+      cursor: pointer !important;
+      transition: background-color 0.15s ease !important;
+      background: white !important;
+      border: none !important;
+      line-height: 1.4 !important;
+    }
+
+    .custom-select .ng-option:hover {
+      background-color: #f3f4f6 !important;
+    }
+
+    .custom-select .ng-option.ng-option-selected {
+      background-color: #eff6ff !important;
+      color: #1d4ed8 !important;
+      font-weight: 500 !important;
+    }
+
+    .custom-select .ng-option.ng-option-highlighted {
+      background-color: #f3f4f6 !important;
+    }
+
+    .custom-select .ng-option.ng-option-disabled {
+      color: #9ca3af !important;
+      cursor: not-allowed !important;
+    }
+
+    /* Input styling */
+    .custom-select .ng-input input {
       font-size: 14px;
       color: #374151;
-      cursor: pointer;
-      transition: background-color 0.15s ease;
     }
 
-    .custom-select ::ng-deep .ng-option:hover {
-      background-color: #f3f4f6;
-    }
-
-    .custom-select ::ng-deep .ng-option.ng-option-selected {
-      background-color: #eff6ff;
-      color: #1d4ed8;
-      font-weight: 500;
-    }
-
-    .custom-select ::ng-deep .ng-option.ng-option-highlighted {
-      background-color: #f3f4f6;
-    }
-
-    .custom-select ::ng-deep .ng-option.ng-option-disabled {
+    .custom-select .ng-input input::placeholder {
       color: #9ca3af;
-      cursor: not-allowed;
     }
 
-    .custom-select ::ng-deep .ng-input input {
-      font-size: 14px;
-      color: #374151;
+    /* Additional styling for .custom class compatibility */
+    .ng-select.custom {
+      border: 1px solid #d1d5db !important;
+      min-height: 38px !important;
+      border-radius: 4px !important;
     }
 
-    .custom-select ::ng-deep .ng-input input::placeholder {
-      color: #9ca3af;
+    .ng-select.custom .ng-select-container {
+      min-height: 36px !important;
+      border-radius: 4px !important;
+    }
+
+    .ng-select.custom:hover {
+      border-color: #9ca3af !important;
+    }
+
+    .ng-select.custom.ng-select-focused {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class NgDynamicSelectComponent implements OnInit, OnDestroy {
   // Basic inputs
