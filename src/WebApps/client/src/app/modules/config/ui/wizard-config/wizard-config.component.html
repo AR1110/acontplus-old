@@ -917,12 +917,47 @@
                       electrónicos.
                     </p>
 
-                    <app-tabulator
-                      [theme]="'semantic-ui'"
-                      [columnNames]="columnNames"
-                      [tableData]="docsConfig()"
-                      [options]="{ height: 400 }"
-                    ></app-tabulator>
+                    <div class="document-config-container">
+                      <!-- Loading State -->
+                      @if (isLoadingDocs()) {
+                        <div class="text-center p-4">
+                          <mat-spinner diameter="40"></mat-spinner>
+                          <p class="mt-2">Cargando configuración de documentos...</p>
+                        </div>
+                      }
+                      
+                      <!-- Error State -->
+                      @if (loadError() && !isLoadingDocs()) {
+                        <div class="error-message p-4 text-center">
+                          <mat-icon class="error-icon">error_outline</mat-icon>
+                          <p class="mt-2">{{ loadError() }}</p>
+                          <button mat-button color="primary" (click)="fetchDocConfig()" class="mt-2">
+                            <mat-icon>refresh</mat-icon>
+                            Reintentar
+                          </button>
+                        </div>
+                      }
+                      
+                      <!-- Success State -->
+                      @if (!isLoadingDocs() && !loadError() && docsConfig().length > 0) {
+                        <app-tabulator
+                          [theme]="'semantic-ui'"
+                          [columnNames]="columnNames"
+                          [tableData]="docsConfig()"
+                          [options]="{ height: 400 }"
+                          [dataTree]="true"
+                          [dataTreeChildField]="'_children'"
+                        ></app-tabulator>
+                      }
+                      
+                      <!-- Empty State -->
+                      @if (!isLoadingDocs() && !loadError() && docsConfig().length === 0) {
+                        <div class="empty-state text-center p-4">
+                          <mat-icon class="empty-icon">info</mat-icon>
+                          <p class="mt-2">No se encontraron documentos configurados</p>
+                        </div>
+                      }
+                    </div>
 
                     <div class="form-actions">
                       <button

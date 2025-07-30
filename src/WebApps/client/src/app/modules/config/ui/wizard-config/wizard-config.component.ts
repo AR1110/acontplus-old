@@ -27,13 +27,17 @@ import {
   MatStepper,
   MatStepperNext,
   MatStepperPrevious,
+  MatStepperModule,
 } from '@angular/material/stepper';
-import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton, MatIconButton, MatButtonModule } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 // Third-party Libraries
 import { catchError } from 'rxjs/operators';
@@ -142,38 +146,34 @@ interface EstabFormControls {
 
 @Component({
   selector: 'app-wizard-config',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './wizard-config.component.html',
+  styleUrls: ['./wizard-config.component.scss'],
+  standalone: true,
   imports: [
-    // Angular Material
-    MatStepper,
-    MatStep,
-    MatStepLabel,
-    MatButton,
-    MatStepperNext,
-    MatStepperPrevious,
-    MatCardContent,
-    MatCard,
-    MatIcon,
-    MatFormField,
+    // Angular modules
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+
+    // Material modules
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     MatInput,
     MatLabel,
+    MatProgressSpinnerModule,
     MatSelectModule,
-    // Forms
-    ReactiveFormsModule,
-    FormsModule,
-    // Core & Shared
+    MatStepperModule,
+    MatTooltipModule,
+
+    // Components
     BreadcrumbComponent,
     TabulatorComponent,
-    // Additional UI Components
-    NgDynamicSelectComponent,
     MatInputChipComponent,
-    // Router
-    RouterModule,
-    MatIconButton,
     ThemeButtonComponent,
+    NgDynamicSelectComponent,
   ],
-  templateUrl: './wizard-config.component.html',
-  styleUrl: './wizard-config.component.scss',
 })
 export class WizardConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper!: MatStepper;
@@ -241,6 +241,8 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
   docsConfig = signal<EstabWithChildren[]>([]);
+  isLoadingDocs = signal<boolean>(false);
+  loadError = signal<string | null>(null);
 
   showPassword = false;
   showConfirmPassword = false;
@@ -397,19 +399,45 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   }
 
   fetchDocConfig(): void {
-    this._formDataDocConfig.execute().subscribe((response) => {
-      this.establecimientos.set(response.establecimientos);
-      this.currentEstab = this.establecimientos()[0].nombreComercial;
-      const combinedData = this.establecimientos().map((pto) => ({
-        ...pto,
-        _children: (response.tiposDoc as DocConfigItem[]).map((doc) => ({
-          ...doc,
-          parentId: pto.puntosEmision[0]?.idPuntoEmision || '',
-          ultimaSecuencia: 0,
-        })),
-      }));
-      console.debug(combinedData);
-      this.docsConfig.set(combinedData as EstabWithChildren[]);
+    this.isLoadingDocs.set(true);
+    this.loadError.set(null);
+
+    this._formDataDocConfig.execute().subscribe({
+      next: (response) => {
+        try {
+          this.establecimientos.set(response.establecimientos);
+
+          if (!response.establecimientos?.length) {
+            throw new Error('No se encontraron establecimientos');
+          }
+
+          this.currentEstab = this.establecimientos()[0]?.nombreComercial || '';
+
+          const combinedData = this.establecimientos().map((pto) => ({
+            ...pto,
+            _children: (response.tiposDoc || []).map((doc) => ({
+              ...doc,
+              parentId: pto.puntosEmision?.[0]?.idPuntoEmision || '',
+              ultimaSecuencia: 0,
+            })),
+          }));
+
+          this.docsConfig.set(combinedData as EstabWithChildren[]);
+          console.debug('Document configuration loaded successfully', combinedData);
+        } catch (error) {
+          console.error('Error processing document configuration:', error);
+          this.loadError.set('Error al procesar la configuración de documentos');
+          this.docsConfig.set([]);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching document configuration:', error);
+        this.loadError.set('Error al cargar la configuración de documentos');
+        this.docsConfig.set([]);
+      },
+      complete: () => {
+        this.isLoadingDocs.set(false);
+      },
     });
   }
 
@@ -483,7 +511,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   private loadStepData(stepCode: string): void {
     if (stepCode === 'III') {
       this.fetchEstabData();
-    } else if (stepCode === 'VI') {
+    } else if (stepCode === 'IV') {
       this.fetchDocConfig();
     }
   }
