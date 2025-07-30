@@ -1,9 +1,9 @@
 //Custom steps for numbers
 const romanToIntMap: Record<string, number> = {
-  II: 1,
-  III: 2,
-  IV: 3,
-  V: 4,
+  II: 2,
+  III: 3,
+  IV: 4,
+  V: 5,
 };
 
 export function romanToInt(roman: string): number {

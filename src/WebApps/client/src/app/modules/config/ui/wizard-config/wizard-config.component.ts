@@ -418,8 +418,8 @@ export class WizardConfigComponent implements OnInit {
 
   private updateStepCompletionStatus(): void {
     this.userUpdated = this.getStepCompletionStatus('II');
+    console.debug('Update step completion status', this.userUpdated);
     this.estabRegistered = this.getStepCompletionStatus('III');
-    // tipoContribuyenteRegistered is now part of estabRegistered
     this.docsUpdated = this.getStepCompletionStatus('IV');
     this.certificateUpdated = this.getStepCompletionStatus('V');
   }
@@ -430,12 +430,13 @@ export class WizardConfigComponent implements OnInit {
 
   private handleIncompleteSteps(): void {
     const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
-
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
+      console.debug(stepIndex)
       if (stepIndex !== null && stepIndex > 0) {
         this.loadStepData(incompleteStep.code);
         const targetIndex = stepIndex - 1;
+        console.debug(targetIndex, this.stepper.steps.length);
         if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
           this.stepper.selectedIndex = targetIndex;
         }
