@@ -49,7 +49,7 @@ import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 
 // Shared Components & Models
-import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -166,7 +166,7 @@ interface EstabFormControls {
 
     // Additional UI Components
     NgDynamicSelectComponent,
-    M3InputChipComponent,
+    MatInputChipComponent,
 
     // Router
     RouterModule,

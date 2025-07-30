@@ -1,23 +1,19 @@
-import {Component, inject, input, ChangeDetectionStrategy} from '@angular/core';
-import {MatChipEditedEvent, MatChipInputEvent, MatChipsModule} from "@angular/material/chips";
-import {MatIconModule} from "@angular/material/icon";
-import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {LiveAnnouncer} from "@angular/cdk/a11y";
+import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 @Component({
-    selector: 'app-m3-input-chip',
-    imports: [
-        MatChipsModule,
-        MatIconModule,
-        MatFormFieldModule
-    ],
-    templateUrl: './m3-input-chip.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-mat-input-chip',
+  imports: [MatChipsModule, MatIconModule, MatFormFieldModule],
+  templateUrl: './mat-input-chip.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class M3InputChipComponent {
-  chips = input.required<string[]>()
-  labelText = input.required<string>()
-  placelholder = input<string>('')
+export class MatInputChipComponent {
+  chips = input.required<string[]>();
+  labelText = input.required<string>();
+  placelholder = input<string>('');
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
