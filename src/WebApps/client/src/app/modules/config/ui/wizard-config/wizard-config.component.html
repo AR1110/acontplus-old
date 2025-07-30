@@ -553,34 +553,13 @@
                         />
                       </div>
                     </div>
-
+                    <hr />
                     <!-- Tipo de Contribuyente Configuration -->
-                    <h3>Configuración de Contribuyente</h3>
+                    <h3 class="mt-3">Configuración de Contribuyente</h3>
 
                     <div
                       class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-3"
                     >
-                      <div class="col">
-                        <app-ng-dynamic-select
-                          [options]="actividadesEconomicaOptions()"
-                          label="Actividad Económica"
-                          placeholder="Seleccione una actividad económica"
-                          [selectedValue]="estabForm.get('actividad')?.value"
-                          (selectionChange)="onActividadEconomicaChange($event)"
-                        />
-                        @if (
-                          estabForm.controls.actividad.invalid &&
-                          estabForm.controls.actividad.touched
-                        ) {
-                          @if (
-                            estabForm.controls.actividad.hasError('required')
-                          ) {
-                            <div class="text-danger small mt-1">
-                              La actividad económica es requerida
-                            </div>
-                          }
-                        }
-                      </div>
                       <div class="col">
                         <mat-form-field
                           appearance="outline"
@@ -683,102 +662,122 @@
                       </div>
                     </div>
 
-                    <!-- Points of Emission -->
-                    <div class="form-section">
-                      <div class="section-header">
-                        <h3>Puntos de Emisión</h3>
-                        <button
-                          type="button"
-                          mat-icon-button
-                          color="primary"
-                          (click)="addPtoEmi()"
-                          [disabled]="ptosEmi.length >= 5"
-                        >
-                          <mat-icon>add</mat-icon>
-                        </button>
-                      </div>
-
-                      <div formArrayName="ptosEmi">
-                        @for (
-                          ptoEmi of ptosEmi.controls;
-                          track trackByPtoEmi($index);
-                          let i = $index
+                    <div class="row">
+                      <div class="col">
+                        <app-ng-dynamic-select
+                          [options]="actividadesEconomicaOptions()"
+                          label="Actividad Económica"
+                          placeholder="Seleccione una actividad económica"
+                          [selectedValue]="estabForm.get('actividad')?.value"
+                          (selectionChange)="onActividadEconomicaChange($event)"
+                        />
+                        @if (
+                          estabForm.controls.actividad.invalid &&
+                          estabForm.controls.actividad.touched
                         ) {
-                          <div
-                            [formGroupName]="i"
-                            class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
-                          >
-                            <div class="col">
-                              <mat-form-field
-                                appearance="outline"
-                                class="w-100"
-                              >
-                                <mat-label>Punto de Emisión</mat-label>
-                                <input
-                                  matInput
-                                  formControlName="ptoEmi"
-                                  placeholder="001"
-                                  maxlength="3"
-                                  toUpperCase
-                                />
-                                @if (
-                                  ptoEmi.get('ptoEmi')?.invalid &&
-                                  ptoEmi.get('ptoEmi')?.touched
-                                ) {
-                                  @if (
-                                    ptoEmi.get('ptoEmi')?.hasError('required')
-                                  ) {
-                                    <mat-error>
-                                      El punto de emisión es requerido
-                                    </mat-error>
-                                  }
-                                }
-                              </mat-form-field>
+                          @if (
+                            estabForm.controls.actividad.hasError('required')
+                          ) {
+                            <div class="text-danger small mt-1">
+                              La actividad económica es requerida
                             </div>
-                            <div class="col">
-                              <mat-form-field
-                                appearance="outline"
-                                class="w-100"
-                              >
-                                <mat-label>Ambiente</mat-label>
-                                <mat-select formControlName="ambiente">
-                                  @for (
-                                    ambiente of ambientes();
-                                    track ambiente.code
-                                  ) {
-                                    <mat-option [value]="ambiente.code">
-                                      {{ ambiente.name }}
-                                    </mat-option>
-                                  }
-                                </mat-select>
-                                @if (
-                                  ptoEmi.get('ambiente')?.invalid &&
-                                  ptoEmi.get('ambiente')?.touched
-                                ) {
-                                  @if (
-                                    ptoEmi.get('ambiente')?.hasError('required')
-                                  ) {
-                                    <mat-error>
-                                      El ambiente es requerido
-                                    </mat-error>
-                                  }
-                                }
-                              </mat-form-field>
-                            </div>
-                            <div class="col">
-                              <button
-                                type="button"
-                                mat-icon-button
-                                color="warn"
-                                (click)="removePtoEmi(i)"
-                                [disabled]="ptosEmi.length <= 1"
-                              >
-                                <mat-icon>delete</mat-icon>
-                              </button>
-                            </div>
-                          </div>
+                          }
                         }
                       </div>
+                    </div>
+
+                    <!-- Points of Emission -->
+                    <app-theme-button
+                      icon="add"
+                      text="Agregar punto de emisión"
+                      (handleClick)="addPtoEmi()"
+                      [disabled]="ptosEmi.length >= 5"
+                      title="Agregar punto de emisión"
+                    ></app-theme-button>
+
+                    <div
+                      formArrayName="ptosEmi"
+                      class="mt-3"
+                    >
+                      @for (
+                        ptoEmi of ptosEmi.controls;
+                        track trackByPtoEmi($index);
+                        let i = $index
+                      ) {
+                        <div
+                          [formGroupName]="i"
+                          class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
+                        >
+                          <div class="col">
+                            <mat-form-field
+                              appearance="outline"
+                              class="w-100"
+                            >
+                              <mat-label>Punto de Emisión</mat-label>
+                              <input
+                                matInput
+                                formControlName="ptoEmi"
+                                placeholder="001"
+                                maxlength="3"
+                                toUpperCase
+                              />
+                              @if (
+                                ptoEmi.get('ptoEmi')?.invalid &&
+                                ptoEmi.get('ptoEmi')?.touched
+                              ) {
+                                @if (
+                                  ptoEmi.get('ptoEmi')?.hasError('required')
+                                ) {
+                                  <mat-error>
+                                    El punto de emisión es requerido
+                                  </mat-error>
+                                }
+                              }
+                            </mat-form-field>
+                          </div>
+                          <div class="col">
+                            <mat-form-field
+                              appearance="outline"
+                              class="w-100"
+                            >
+                              <mat-label>Ambiente</mat-label>
+                              <mat-select formControlName="ambiente">
+                                @for (
+                                  ambiente of ambientes();
+                                  track ambiente.code
+                                ) {
+                                  <mat-option [value]="ambiente.code">
+                                    {{ ambiente.name }}
+                                  </mat-option>
+                                }
+                              </mat-select>
+                              @if (
+                                ptoEmi.get('ambiente')?.invalid &&
+                                ptoEmi.get('ambiente')?.touched
+                              ) {
+                                @if (
+                                  ptoEmi.get('ambiente')?.hasError('required')
+                                ) {
+                                  <mat-error>
+                                    El ambiente es requerido
+                                  </mat-error>
+                                }
+                              }
+                            </mat-form-field>
+                          </div>
+                          <div class="col">
+                            <button
+                              type="button"
+                              mat-icon-button
+                              color="warn"
+                              (click)="removePtoEmi(i)"
+                              [disabled]="ptosEmi.length <= 1"
+                            >
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      }
                     </div>
 
                     <!-- Inventory Configuration -->
@@ -798,111 +797,107 @@
                     </div>
 
                     @if (estabForm.controls.hasInventory.value) {
-                      <div class="form-section">
-                        <div class="section-header">
-                          <h4>Bodegas</h4>
-                          <button
-                            type="button"
-                            mat-icon-button
-                            color="primary"
-                            (click)="addBodega()"
+                      <app-theme-button
+                        icon="add"
+                        text="Agregar bodega"
+                        title="Agregar bodega para control de los productos e inventario"
+                        (handleClick)="addBodega()"
+                      ></app-theme-button>
+                      <div
+                        formArrayName="bodegas"
+                        class="mt-3"
+                      >
+                        @for (
+                          bodega of bodegas.controls;
+                          track trackByBodega($index);
+                          let i = $index
+                        ) {
+                          <div
+                            [formGroupName]="i"
+                            class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4"
                           >
-                            <mat-icon>add</mat-icon>
-                          </button>
-                        </div>
-
-                        <div formArrayName="bodegas">
-                          @for (
-                            bodega of bodegas.controls;
-                            track trackByBodega($index);
-                            let i = $index
-                          ) {
-                            <div
-                              [formGroupName]="i"
-                              class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4"
-                            >
-                              <div class="col">
-                                <mat-form-field
-                                  appearance="outline"
-                                  class="w-100"
-                                >
-                                  <mat-label>Descripción</mat-label>
-                                  <input
-                                    matInput
-                                    formControlName="descripcion"
-                                    placeholder="Ingrese descripción"
-                                    toUpperCase
-                                  />
+                            <div class="col">
+                              <mat-form-field
+                                appearance="outline"
+                                class="w-100"
+                              >
+                                <mat-label>Nombre</mat-label>
+                                <input
+                                  matInput
+                                  formControlName="descripcion"
+                                  placeholder="MATRIZ"
+                                  title="Ingrese el nombre de la Bodega"
+                                  toUpperCase
+                                />
+                                @if (
+                                  bodega.get('descripcion')?.invalid &&
+                                  bodega.get('descripcion')?.touched
+                                ) {
                                   @if (
-                                    bodega.get('descripcion')?.invalid &&
-                                    bodega.get('descripcion')?.touched
+                                    bodega
+                                      .get('descripcion')
+                                      ?.hasError('required')
                                   ) {
-                                    @if (
-                                      bodega
-                                        .get('descripcion')
-                                        ?.hasError('required')
-                                    ) {
-                                      <mat-error>
-                                        La descripción es requerida
-                                      </mat-error>
-                                    }
+                                    <mat-error>
+                                      El nombre es requerido
+                                    </mat-error>
                                   }
-                                </mat-form-field>
-                              </div>
-                              <div class="col">
-                                <mat-form-field
-                                  appearance="outline"
-                                  class="w-100"
-                                >
-                                  <mat-label>Dirección</mat-label>
-                                  <input
-                                    matInput
-                                    formControlName="direccion"
-                                    placeholder="Ingrese dirección"
-                                    toUpperCase
-                                  />
-                                  @if (
-                                    bodega.get('direccion')?.invalid &&
-                                    bodega.get('direccion')?.touched
-                                  ) {
-                                    @if (
-                                      bodega
-                                        .get('direccion')
-                                        ?.hasError('required')
-                                    ) {
-                                      <mat-error>
-                                        La dirección es requerida
-                                      </mat-error>
-                                    }
-                                  }
-                                </mat-form-field>
-                              </div>
-                              <div class="col">
-                                <mat-form-field
-                                  appearance="outline"
-                                  class="w-100"
-                                >
-                                  <mat-label>Teléfono</mat-label>
-                                  <input
-                                    matInput
-                                    formControlName="telefono"
-                                    placeholder="Ingrese teléfono"
-                                  />
-                                </mat-form-field>
-                              </div>
-                              <div class="col">
-                                <button
-                                  type="button"
-                                  mat-icon-button
-                                  color="warn"
-                                  (click)="removeBodega(i)"
-                                >
-                                  <mat-icon>delete</mat-icon>
-                                </button>
-                              </div>
+                                }
+                              </mat-form-field>
                             </div>
-                          }
-                        </div>
+                            <div class="col">
+                              <mat-form-field
+                                appearance="outline"
+                                class="w-100"
+                              >
+                                <mat-label>Dirección</mat-label>
+                                <input
+                                  matInput
+                                  formControlName="direccion"
+                                  placeholder="Ingrese dirección"
+                                  toUpperCase
+                                />
+                                @if (
+                                  bodega.get('direccion')?.invalid &&
+                                  bodega.get('direccion')?.touched
+                                ) {
+                                  @if (
+                                    bodega
+                                      .get('direccion')
+                                      ?.hasError('required')
+                                  ) {
+                                    <mat-error>
+                                      La dirección es requerida
+                                    </mat-error>
+                                  }
+                                }
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <mat-form-field
+                                appearance="outline"
+                                class="w-100"
+                              >
+                                <mat-label>Teléfono</mat-label>
+                                <input
+                                  matInput
+                                  formControlName="telefono"
+                                  placeholder="Ingrese teléfono"
+                                />
+                              </mat-form-field>
+                            </div>
+                            <div class="col">
+                              <button
+                                type="button"
+                                mat-icon-button
+                                color="warn"
+                                (click)="removeBodega(i)"
+                              >
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+                        }
                       </div>
                     }
 

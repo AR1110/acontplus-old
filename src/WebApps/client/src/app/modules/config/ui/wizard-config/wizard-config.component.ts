@@ -80,6 +80,7 @@ import { SelectOption } from '@shared/models/select-option';
 // Utilities
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
+import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
 
 interface TabulatorCell {
   getRow(): {
@@ -163,15 +164,14 @@ interface EstabFormControls {
     // Core & Shared
     BreadcrumbComponent,
     TabulatorComponent,
-
     // Additional UI Components
     NgDynamicSelectComponent,
     MatInputChipComponent,
-
     // Router
     RouterModule,
     MatIconButton,
-  ],
+    ThemeButtonComponent
+],
   templateUrl: './wizard-config.component.html',
   styleUrl: './wizard-config.component.scss',
 })
