@@ -1,3 +1,93 @@
+/* Document Configuration States */
+.document-config-container {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  
+  .text-center {
+    text-align: center;
+    margin: auto;
+    
+    mat-spinner {
+      margin: 0 auto;
+    }
+    
+    p {
+      color: rgba(0, 0, 0, 0.6);
+      margin-top: 1rem;
+    }
+  }
+  
+  .error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #842029;
+    
+    .error-icon {
+      color: #dc3545;
+      font-size: 2.5rem;
+      height: 2.5rem;
+      width: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    button {
+      margin-top: 1rem;
+      
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+  
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.6);
+    
+    .empty-icon {
+      font-size: 3rem;
+      height: 3rem;
+      width: 3rem;
+      margin-bottom: 1rem;
+      color: #6c757d;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      margin: 0.5rem 0 0;
+    }
+  }
+}
+
+/* Ensure Tabulator takes full width */
+app-tabulator {
+  width: 100%;
+  display: block;
+  
+  ::ng-deep {
+    .tabulator {
+      width: 100% !important;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .document-config-container {
+    min-height: 200px;
+    
+    .empty-state, 
+    .error-message {
+      padding: 1rem;
+    }
+  }
+}
+
+/* Existing styles */
 .loading-icon {
   font-size: 4rem;
   width: 4rem;

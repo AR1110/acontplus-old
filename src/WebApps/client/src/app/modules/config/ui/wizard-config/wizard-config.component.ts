@@ -27,13 +27,17 @@ import {
   MatStepper,
   MatStepperNext,
   MatStepperPrevious,
+  MatStepperModule,
 } from '@angular/material/stepper';
-import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatButton, MatIconButton, MatButtonModule } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 // Third-party Libraries
 import { catchError } from 'rxjs/operators';
@@ -48,17 +52,8 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 
-// Additional imports for consolidated functionality
-import {
-  MatChipGrid,
-  MatChipRow,
-  MatChipInput,
-  MatChipEditedEvent,
-  MatChipInputEvent,
-} from '@angular/material/chips';
-
-import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+// Shared Components & Models
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -82,7 +77,12 @@ import { Canton } from '@modules/config/domain/models/wizard-config/canton.model
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
 
+// Shared Components & Models
+import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
+import { SelectOption } from '@shared/models/select-option';
+
 // Utilities
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 
@@ -146,40 +146,34 @@ interface EstabFormControls {
 
 @Component({
   selector: 'app-wizard-config',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './wizard-config.component.html',
+  styleUrls: ['./wizard-config.component.scss'],
+  standalone: true,
   imports: [
-    // Angular Material
-    MatStepper,
-    MatStep,
-    MatStepLabel,
-    MatButton,
-    MatStepperNext,
-    MatStepperPrevious,
-    MatCardContent,
-    MatCard,
-    MatIcon,
-    MatFormField,
+    // Angular modules
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+
+    // Material modules
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     MatInput,
     MatLabel,
+    MatProgressSpinnerModule,
     MatSelectModule,
-    // Forms
-    ReactiveFormsModule,
-    FormsModule,
-    // Core & Shared
+    MatStepperModule,
+    MatTooltipModule,
+
+    // Components
     BreadcrumbComponent,
     TabulatorComponent,
-
-    // Additional UI Components
-    MatChipGrid,
-    MatChipRow,
-    MatChipInput,
-
-    // Router
-    RouterModule,
-    MatIconButton,
+    MatInputChipComponent,
+    ThemeButtonComponent,
+    NgDynamicSelectComponent,
   ],
-  templateUrl: './wizard-config.component.html',
-  styleUrl: './wizard-config.component.scss',
 })
 export class WizardConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper!: MatStepper;
@@ -192,8 +186,14 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
-  private readonly _announcer = inject(LiveAnnouncer);
+
   private readonly _fb = inject(FormBuilder);
+
+  // Options for obligado contabilidad select
+  readonly obligadoContabilidadOptions = [
+    { value: 'SI', label: 'SI' },
+    { value: 'NO', label: 'NO' },
+  ];
 
   readonly columnNames = [
     { title: 'idPuntoEmision', field: 'idPuntoEmision', visible: false },
@@ -241,12 +241,21 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
   docsConfig = signal<EstabWithChildren[]>([]);
+  isLoadingDocs = signal<boolean>(false);
+  loadError = signal<string | null>(null);
 
   showPassword = false;
   showConfirmPassword = false;
   userSubmitted = false;
 
   readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
+
+  readonly actividadesEconomicaOptions = computed<SelectOption[]>(() =>
+    this.actividadesEconomica().map((actividad) => ({
+      value: actividad.codigo,
+      viewValue: actividad.descripcion,
+    })),
+  );
 
   user = {} as UserData;
 
@@ -260,8 +269,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
   isLinear = false;
 
-  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
-  readonly addOnBlur = true;
   private static passwordsMatchValidator(control: AbstractControl) {
     const group = control as FormGroup;
     const password = group.get('password')?.value;
@@ -297,11 +304,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     agenteRetencion: this._fb.control(''),
     contribuyente: this._fb.control('', [Validators.required]),
     contribuyenteEspecial: this._fb.control(''),
-    obligadoContabilidad: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(2),
-    ]),
+    obligadoContabilidad: this._fb.control('', [Validators.required]),
   });
 
   userForm = this._fb.group(
@@ -396,19 +399,45 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   }
 
   fetchDocConfig(): void {
-    this._formDataDocConfig.execute().subscribe((response) => {
-      this.establecimientos.set(response.establecimientos);
-      this.currentEstab = this.establecimientos()[0].nombreComercial;
-      const combinedData = this.establecimientos().map((pto) => ({
-        ...pto,
-        _children: (response.tiposDoc as DocConfigItem[]).map((doc) => ({
-          ...doc,
-          parentId: pto.puntosEmision[0]?.idPuntoEmision || '',
-          ultimaSecuencia: 0,
-        })),
-      }));
-      console.debug(combinedData);
-      this.docsConfig.set(combinedData as EstabWithChildren[]);
+    this.isLoadingDocs.set(true);
+    this.loadError.set(null);
+
+    this._formDataDocConfig.execute().subscribe({
+      next: (response) => {
+        try {
+          this.establecimientos.set(response.establecimientos);
+
+          if (!response.establecimientos?.length) {
+            throw new Error('No se encontraron establecimientos');
+          }
+
+          this.currentEstab = this.establecimientos()[0]?.nombreComercial || '';
+
+          const combinedData = this.establecimientos().map((pto) => ({
+            ...pto,
+            _children: (response.tiposDoc || []).map((doc) => ({
+              ...doc,
+              parentId: pto.puntosEmision?.[0]?.idPuntoEmision || '',
+              ultimaSecuencia: 0,
+            })),
+          }));
+
+          this.docsConfig.set(combinedData as EstabWithChildren[]);
+          console.debug('Document configuration loaded successfully', combinedData);
+        } catch (error) {
+          console.error('Error processing document configuration:', error);
+          this.loadError.set('Error al procesar la configuración de documentos');
+          this.docsConfig.set([]);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching document configuration:', error);
+        this.loadError.set('Error al cargar la configuración de documentos');
+        this.docsConfig.set([]);
+      },
+      complete: () => {
+        this.isLoadingDocs.set(false);
+      },
     });
   }
 
@@ -437,7 +466,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
-      console.debug(stepIndex);
       if (stepIndex !== null && stepIndex > 0) {
         this.loadStepData(incompleteStep.code);
         const targetIndex = stepIndex - 1;
@@ -483,7 +511,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   private loadStepData(stepCode: string): void {
     if (stepCode === 'III') {
       this.fetchEstabData();
-    } else if (stepCode === 'VI') {
+    } else if (stepCode === 'IV') {
       this.fetchDocConfig();
     }
   }
@@ -565,68 +593,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
       ptoEmi: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
       ambiente: ['', Validators.required],
     });
-  }
-  addEmail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.emails.update((prev) => [...prev, value]);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeEmail(value: string): void {
-    const index = this.emails().indexOf(value);
-    if (index >= 0) {
-      this.emails.update((prev) => prev.filter((_, i) => i !== index));
-      this._announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editEmail(email: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeEmail(email);
-    } else {
-      const index = this.emails().indexOf(email);
-      if (index >= 0) {
-        this.emails.update((prev) => prev.map((e, i) => (i === index ? value : e)));
-      }
-    }
-  }
-
-  addTelephone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.telephones.update((prev) => [...prev, value]);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeTelephone(value: string): void {
-    const index = this.telephones().indexOf(value);
-    if (index >= 0) {
-      this.telephones.update((prev) => prev.filter((_, i) => i !== index));
-      this._announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editTelephone(telephone: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeTelephone(telephone);
-    } else {
-      const index = this.telephones().indexOf(telephone);
-      if (index >= 0) {
-        this.telephones.update((prev) => prev.map((t, i) => (i === index ? value : t)));
-      }
-    }
-  }
-  trackByEmail(_: number, email: string): string {
-    return email;
-  }
-
-  trackByTelephone(_: number, telephone: string): string {
-    return telephone;
   }
 
   trackByBodega(index: number): number {
@@ -836,6 +802,12 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
         icon: 'info',
         html: `<small>${dataInfo.contribuyenteRimpe}</small>`,
       });
+    }
+  }
+
+  onActividadEconomicaChange(actividadCodigo: string | number | null): void {
+    if (actividadCodigo) {
+      this.estabForm.get('actividad')?.setValue(actividadCodigo.toString());
     }
   }
 

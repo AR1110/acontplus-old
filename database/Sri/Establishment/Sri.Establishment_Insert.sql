@@ -270,8 +270,8 @@ BEGIN
                             IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
                                                             WHERE Uuid = @uuid AND DemoStepId = @demoStepId)
                                 BEGIN
-                                    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, FromMobile)
-                                    VALUES(@demoStepId, @companyId, @uuid, @fromMobile);
+                                    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
+                                    VALUES(@demoStepId, @companyId, @uuid, @fromMobile, @username);
                                 END
 
                             IF EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.PuntoEmision WITH(NOLOCK) WHERE idEstablecimiento = @id)

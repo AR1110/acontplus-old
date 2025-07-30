@@ -30,15 +30,9 @@
       "@modules/*": ["src/app/modules/*"],
       "@accounting/*": ["src/app/modules/accounting/*"],
       "@technical-support/*": ["src/app/modules/technical-support/*"],
-      "@inventory/*": [
-        "src/app/modules/inventory/*",
-        "src/app/modules/inventory/shared/*"
-      ],
+      "@inventory/*": ["src/app/modules/inventory/*", "src/app/modules/inventory/shared/*"],
       "@purchase/*": ["src/app/modules/purchase/*"],
-      "@sale/*": [
-        "src/app/modules/sale/*",
-        "src/app/modules/inventory/shared/*"
-      ],
+      "@sale/*": ["src/app/modules/sale/*", "src/app/modules/inventory/shared/*"],
       "@restaurant/*": ["src/app/modules/restaurant/*"],
       "@billing/*": ["src/app/modules/billing/*"],
       "@mechanical/*": ["src/app/modules/mechanical/*"],
@@ -53,7 +47,6 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
-    "compilationMode": "partial",
     "enableResourceInlining": true
   }
 }

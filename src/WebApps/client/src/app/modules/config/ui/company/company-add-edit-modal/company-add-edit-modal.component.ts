@@ -7,7 +7,7 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {M3InputChipComponent} from "@shared/components/m3-input-chip/m3-input-chip.component";
+import {MatInputChipComponent} from "@shared/components/mat-input-chip/mat-input-chip.component";
 import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
 import {UpdateCompanyUseCase} from "@modules/config/application/use-cases/company/update-company.use-case";
 import Swal from "sweetalert2";
@@ -21,7 +21,7 @@ import Swal from "sweetalert2";
     ToUpperCaseDirective,
     ThemeButtonComponent,
     MatCustomDialogComponent,
-    M3InputChipComponent
+    MatInputChipComponent
   ],
   templateUrl: './company-add-edit-modal.component.html',
   styles: ``,

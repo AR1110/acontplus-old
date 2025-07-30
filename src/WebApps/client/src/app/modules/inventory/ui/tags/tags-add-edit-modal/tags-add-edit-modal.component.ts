@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
-import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {TagUseCase} from "@inventory/domain/usecases/tag.use-case";
@@ -22,7 +22,7 @@ import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE} from "@core/constants/global.cons
       MatButtonModule,
       MatRadioModule,
         ToUpperCaseDirective,
-        M3InputChipComponent,
+        MatInputChipComponent,
       MatCustomDialogComponent
     ],
     templateUrl: './tags-add-edit-modal.component.html',
