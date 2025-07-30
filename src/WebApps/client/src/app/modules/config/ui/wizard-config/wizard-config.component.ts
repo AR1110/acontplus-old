@@ -78,9 +78,9 @@ import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/n
 import { SelectOption } from '@shared/models/select-option';
 
 // Utilities
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
-import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
 
 interface TabulatorCell {
   getRow(): {
@@ -170,8 +170,8 @@ interface EstabFormControls {
     // Router
     RouterModule,
     MatIconButton,
-    ThemeButtonComponent
-],
+    ThemeButtonComponent,
+  ],
   templateUrl: './wizard-config.component.html',
   styleUrl: './wizard-config.component.scss',
 })
@@ -188,6 +188,12 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
 
   private readonly _fb = inject(FormBuilder);
+
+  // Options for obligado contabilidad select
+  readonly obligadoContabilidadOptions = [
+    { value: 'SI', label: 'SI' },
+    { value: 'NO', label: 'NO' },
+  ];
 
   readonly columnNames = [
     { title: 'idPuntoEmision', field: 'idPuntoEmision', visible: false },
@@ -296,11 +302,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     agenteRetencion: this._fb.control(''),
     contribuyente: this._fb.control('', [Validators.required]),
     contribuyenteEspecial: this._fb.control(''),
-    obligadoContabilidad: this._fb.control('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(2),
-    ]),
+    obligadoContabilidad: this._fb.control('', [Validators.required]),
   });
 
   userForm = this._fb.group(
