@@ -778,7 +778,6 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   }
 
   onActividadEconomicaChange(actividadCodigo: string | number | null): void {
-    console.log('actividadCodigo', actividadCodigo);
     if (actividadCodigo) {
       this.estabForm.get('actividad')?.setValue(actividadCodigo.toString());
     }

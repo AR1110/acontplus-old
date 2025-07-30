@@ -85,18 +85,22 @@ export class NgDynamicSelectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Handle initial value if provided
     if (this.selectedValue() !== undefined && this.selectedValue() !== null) {
-      const selectedOption = this.options().find(opt => opt.value === this.selectedValue());
+      const selectedOption = this.options().find((opt) => opt.value === this.selectedValue());
       if (selectedOption) {
         this.selectControl.setValue(selectedOption.value, { emitEvent: false });
       }
     }
   }
 
-  onSelectionChange(value: string | number | null) {
-    // Only emit if the value actually changed to prevent duplicate events
-    if (this.selectControl.value !== value) {
-      this.selectionChange.emit(value);
-    }
+  onSelectionChange(selectedItem: any) {
+    // Extract just the value from the selected item
+    const value = selectedItem?.value ?? selectedItem;
+
+    // Emit only the value
+    this.selectionChange.emit(value);
+
+    // Update the form control to keep it in sync
+    this.selectControl.setValue(value, { emitEvent: false });
   }
 
   ngOnDestroy() {
