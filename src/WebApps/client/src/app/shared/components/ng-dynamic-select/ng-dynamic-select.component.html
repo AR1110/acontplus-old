@@ -2,11 +2,11 @@
   [items]="filteredOptions"
   bindLabel="viewValue"
   bindValue="value"
-  [searchable]="true"
-  [clearable]="false"
+  [searchable]="searchable()"
+  [clearable]="clearable()"
+  [disabled]="disabled()"
   [formControl]="selectControl"
-  placeholder="{{ label() }}"
+  [placeholder]="placeholder() || label()"
   (change)="onSelectionChange($event)"
-  [ngClass]="className"
->
-</ng-select>
+  [ngClass]="className()"
+></ng-select>

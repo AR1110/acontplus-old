@@ -1,23 +1,23 @@
+import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-retencion.use-case';
+import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
+import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
+import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { Component, inject, input, signal } from '@angular/core';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
-import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
-import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
-import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
-import { MatDynamicSelectComponent } from '@shared/components/mat-dynamic-select/mat-dynamic-select.component';
 import { SelectOption } from '@shared/models/select-option';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-retencion.use-case';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-retencion',
   imports: [
     ReactiveFormsModule,
-    MatDynamicSelectComponent,
+    NgDynamicSelectComponent,
     MatFormField,
     MatSelectModule,
     MatInput,
@@ -30,7 +30,7 @@ export class DocSustentoRetencionComponent {
   indexDoc = input.required<number>();
   indexRetencion = input.required<number>();
   docSustentoArray = input.required<FormArray>();
-  retencionGroup = input.required<any>();
+  retencionGroup = input.required<unknown>();
   impuestosRetencion = input.required<ImpuestoRetencion[]>();
   codigosRetencion = input.required<ConceptoRetencionAir[]>();
   porcentajesRetIva = input.required<PorcentajeRetencionIva[]>();
@@ -39,26 +39,28 @@ export class DocSustentoRetencionComponent {
 
   codImpuestoRetencionSelected = signal<string>('');
 
-  private readonly _docSustentoRetencionUseCase = inject(
-    DocSustentoRetencionUseCase,
-  );
+  private readonly _docSustentoRetencionUseCase = inject(DocSustentoRetencionUseCase);
   private readonly _tS = inject(ToastrNotificationService);
 
-  selectCodigoRetencion(codigo: string) {
+  selectCodigoRetencion(codigo: string | number | null) {
+    if (!codigo) return;
+
     setTimeout(() => {
       this.retencionGroup().get('codigoRetencion').setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
-        const porcentaje = this.codigosRetencion().filter(
-          (x) => x.codigo === codigo,
-        )[0].porcentaje;
-        this.retencionGroup().get('porcentajeRetener').setValue(porcentaje);
+        const porcentaje = this.codigosRetencion().filter((x) => x.codigo === codigo)[0]
+          ?.porcentaje;
+        if (porcentaje !== undefined) {
+          this.retencionGroup().get('porcentajeRetener').setValue(porcentaje);
+        }
       }
       if (this.codImpuestoRetencionSelected() === '2') {
-        const porcentaje = this.porcentajesRetIva().filter(
-          (x) => x.codigo === codigo,
-        )[0].porcentaje;
-        this.retencionGroup().get('porcentajeRetener').setValue(porcentaje);
+        const porcentaje = this.porcentajesRetIva().filter((x) => x.codigo === codigo)[0]
+          ?.porcentaje;
+        if (porcentaje !== undefined) {
+          this.retencionGroup().get('porcentajeRetener').setValue(porcentaje);
+        }
       }
 
       this.calcularRetencion();
@@ -84,9 +86,7 @@ export class DocSustentoRetencionComponent {
     setTimeout(() => {
       switch (codigo) {
         case '1':
-          baseImponibleControl.setValue(
-            docGroup.get('totalSinImpuestos')?.value,
-          );
+          baseImponibleControl.setValue(docGroup.get('totalSinImpuestos')?.value);
           break;
         case '2':
           baseImponibleControl.setValue(taxValue);
@@ -99,9 +99,7 @@ export class DocSustentoRetencionComponent {
 
   selectImpuestoRetencion(idImpuestoRetencion: number) {
     // Logic to set porcentajes based on codigo
-    const codigo = this.impuestosRetencion().filter(
-      (x) => x.id === idImpuestoRetencion,
-    )[0].codigo;
+    const codigo = this.impuestosRetencion().filter((x) => x.id === idImpuestoRetencion)[0].codigo;
 
     this.codImpuestoRetencionSelected.set(codigo);
 
@@ -138,10 +136,7 @@ export class DocSustentoRetencionComponent {
           this.options().map((x, index) => {
             return {
               ...x,
-              value:
-                this.porcentajesRetIva()[
-                  index % this.porcentajesRetIva().length
-                ],
+              value: this.porcentajesRetIva()[index % this.porcentajesRetIva().length],
             };
           });
           break;
@@ -154,19 +149,14 @@ export class DocSustentoRetencionComponent {
   calcularRetencion() {
     setTimeout(() => {
       const baseImponible = this.retencionGroup().get('baseImponible')?.value;
-      const porcentajeRetener =
-        this.retencionGroup().get('porcentajeRetener')?.value;
+      const porcentajeRetener = this.retencionGroup().get('porcentajeRetener')?.value;
       const valorRetenido = baseImponible * (porcentajeRetener / 100);
-      this.retencionGroup()
-        .get('valorRetenido')
-        ?.setValue(valorRetenido.toFixed(2));
+      this.retencionGroup().get('valorRetenido')?.setValue(valorRetenido.toFixed(2));
     });
   }
 
   async removeRetencion() {
-    const retenciones = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('retenciones') as FormArray;
+    const retenciones = this.docSustentoArray().at(this.indexDoc()).get('retenciones') as FormArray;
 
     const retencionSelected = retenciones.controls[this.indexRetencion()].value;
 
@@ -200,22 +190,15 @@ export class DocSustentoRetencionComponent {
   }
 
   async removeByIndex() {
-    const retenciones = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('retenciones') as FormArray;
+    const retenciones = this.docSustentoArray().at(this.indexDoc()).get('retenciones') as FormArray;
 
-    if (
-      this.indexRetencion() >= 0 &&
-      this.indexRetencion() < retenciones.length
-    ) {
+    if (this.indexRetencion() >= 0 && this.indexRetencion() < retenciones.length) {
       retenciones.removeAt(this.indexRetencion());
     }
   }
 
   onSave() {
-    const retenciones = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('retenciones') as FormArray;
+    const retenciones = this.docSustentoArray().at(this.indexDoc()).get('retenciones') as FormArray;
 
     const retencionSelected = retenciones.controls[this.indexRetencion()].value;
 
@@ -229,14 +212,12 @@ export class DocSustentoRetencionComponent {
           });
         });
     } else {
-      this._docSustentoRetencionUseCase
-        .create(retencionSelected)
-        .subscribe((response) => {
-          this._tS.show({
-            type: response.code === '1' ? 'success' : 'warning',
-            message: response.message,
-          });
+      this._docSustentoRetencionUseCase.create(retencionSelected).subscribe((response) => {
+        this._tS.show({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
         });
+      });
     }
   }
 }
