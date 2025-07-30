@@ -6,6 +6,7 @@ AS
 BEGIN 
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
+    SET DATEFIRST 1;
 
     --> Global
     DECLARE @tipo INT ,@idEntidad INT
@@ -185,7 +186,97 @@ BEGIN
             RETURN 
         END 
     
-    --> Configuracion de Anular 
+    --> Normativas del sri
+    IF @tipo = 3
+        BEGIN
+            DECLARE @fechaEmision   DATETIME2
+                   ,@identificacion VARCHAR(20)
+                   ,@importeTotal   NUMERIC(18,2)
+                   ,@fechaAnulacion DATETIME2
+                   ,@idFormaPago    INT
+                   ,@formaPago      VARCHAR(10)
+
+            --> Data Json
+            SELECT @codDoc         = codDoc
+                  ,@identificacion = identificacion
+                  ,@fechaEmision   = fechaEmision
+                  ,@idFormaPago    = idFormaPago
+                  ,@importeTotal   = importeTotal
+            FROM OPENJSON(@json) WITH
+            (
+                codDoc         VARCHAR(15)
+               ,identificacion VARCHAR(100)
+               ,fechaEmision   DATETIME2
+               ,idFormaPago    INT
+               ,importeTotal   NUMERIC(18,2)
+            )
+
+            --> Variables
+            SELECT TOP 1 @formaPago = codigo FROM FormaPagoSri WHERE idFormaPagoSri = @idFormaPago
+
+            SET @fechaAnulacion =
+            (
+                SELECT DATEADD
+                   (
+                        DAY,
+                        CASE 
+                            WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 6 THEN 2 -- Sábado → lunes
+                            WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 7 THEN 1 -- Domingo → lunes
+                            ELSE 0
+                        END,
+                        DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)
+                   )
+            )
+
+            --> Normativa que prohibe la anulacion de ventas emitidas a consumidor final
+            IF EXISTS
+            (
+                SELECT 1 FROM Customer.Customer   cu WITH (NOLOCK)
+                INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
+                WHERE cu.IdCard = @identificacion
+                  AND ti.codigoSri = '07' 
+            )
+                BEGIN
+                    SELECT '0' as code, 'No se permite anular ventas a consumidor final.' as 'message'
+                    RETURN 
+                END 
+
+            --> Normativa para solo permitir anular documento solo dentro de la fecha que corresponde en este caso los 10 del siguiente mes de la fecha de emision
+            IF GETDATE() > @fechaAnulacion
+                BEGIN 
+                    SELECT '0' as code, 'No puede anular este documento. El SRI solo permite anular hasta el día 10 del mes siguiente a la fecha de emisión.' as 'message'
+                    RETURN 
+                END
+
+            --> Normativa vigente solo puede emitir facturas menores o iguales a 50 para consumidor final
+            IF @importeTotal > 50
+                BEGIN
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM Customer.Customer   cu WITH (NOLOCK)
+                        INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
+                        WHERE cu.IdCard = @identificacion
+                          AND ti.codigoSri = '08' 
+                    )
+                        BEGIN
+                            SELECT '0' as code,'No está permitido emitir facturas mayores a 50 dolares a consumidor final Según normativa del SRI' as 'message'
+                            RETURN 
+                        END 
+                END
+
+            --> Normativa de ventas que superen las 500 dolares no podra pagar en efectivo
+            IF @importeTotal > 500
+                BEGIN
+                    IF @formaPago in ('01','15','21')
+                        BEGIN
+                            SELECT '0' as code,'No se permite esta forma de pago para montos mayores a $500 .Use transferencia, tarjeta o medios electrónicos autorizados (SRI NAC-DGERCGC24-00000005).' as 'message'
+                            RETURN 
+                        END 
+                END 
+
+            RETURN 
+        END 
+
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     RETURN 
