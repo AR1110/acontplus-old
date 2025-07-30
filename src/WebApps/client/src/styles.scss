@@ -4,10 +4,8 @@
 @use 'ngx-toastr/toastr';
 @use 'styles/components/forms' as forms;
 @use 'styles/theme/theme-colors' as acontplus-theme;
-
-// Import Shepherd Tour Styles
 @use 'app/modules/config/styles/shepherd-tour';
-
+@use '@ng-select/ng-select/themes/material.theme';
 /* Brand-Inspired Color Palette */
 
 :root {
