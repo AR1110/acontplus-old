@@ -80,3 +80,7 @@
     margin: 2px;
   }
 }
+
+::ng-deep .mat-step-header {
+  pointer-events: none;
+}
