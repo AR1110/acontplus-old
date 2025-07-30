@@ -82,6 +82,10 @@ import { Canton } from '@modules/config/domain/models/wizard-config/canton.model
 import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
 
+// Shared Components & Models
+import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
+import { SelectOption } from '@shared/models/select-option';
+
 // Utilities
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
@@ -173,6 +177,7 @@ interface EstabFormControls {
     MatChipGrid,
     MatChipRow,
     MatChipInput,
+    NgDynamicSelectComponent,
 
     // Router
     RouterModule,
@@ -247,6 +252,13 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   userSubmitted = false;
 
   readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
+
+  readonly actividadesEconomicaOptions = computed<SelectOption[]>(() =>
+    this.actividadesEconomica().map((actividad) => ({
+      value: actividad.codigo,
+      viewValue: actividad.descripcion,
+    })),
+  );
 
   user = {} as UserData;
 
@@ -836,6 +848,12 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
         icon: 'info',
         html: `<small>${dataInfo.contribuyenteRimpe}</small>`,
       });
+    }
+  }
+
+  onActividadEconomicaChange(actividadCodigo: string | number | null): void {
+    if (actividadCodigo) {
+      this.estabForm.get('actividad')?.setValue(actividadCodigo.toString());
     }
   }
 

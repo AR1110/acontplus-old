@@ -1,12 +1,12 @@
 import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-retencion.use-case';
 import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
 import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { Component, inject, input, signal } from '@angular/core';
-import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { SelectOption } from '@shared/models/select-option';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,7 +30,7 @@ export class DocSustentoRetencionComponent {
   indexDoc = input.required<number>();
   indexRetencion = input.required<number>();
   docSustentoArray = input.required<FormArray>();
-  retencionGroup = input.required<unknown>();
+  retencionGroup = input.required<AbstractControl>();
   impuestosRetencion = input.required<ImpuestoRetencion[]>();
   codigosRetencion = input.required<ConceptoRetencionAir[]>();
   porcentajesRetIva = input.required<PorcentajeRetencionIva[]>();
@@ -42,24 +42,28 @@ export class DocSustentoRetencionComponent {
   private readonly _docSustentoRetencionUseCase = inject(DocSustentoRetencionUseCase);
   private readonly _tS = inject(ToastrNotificationService);
 
+  get formGroup(): FormGroup {
+    return this.retencionGroup() as FormGroup;
+  }
+
   selectCodigoRetencion(codigo: string | number | null) {
     if (!codigo) return;
 
     setTimeout(() => {
-      this.retencionGroup().get('codigoRetencion').setValue(codigo);
+      this.formGroup.get('codigoRetencion')?.setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
         const porcentaje = this.codigosRetencion().filter((x) => x.codigo === codigo)[0]
           ?.porcentaje;
         if (porcentaje !== undefined) {
-          this.retencionGroup().get('porcentajeRetener').setValue(porcentaje);
+          this.formGroup.get('porcentajeRetener')?.setValue(porcentaje);
         }
       }
       if (this.codImpuestoRetencionSelected() === '2') {
         const porcentaje = this.porcentajesRetIva().filter((x) => x.codigo === codigo)[0]
           ?.porcentaje;
         if (porcentaje !== undefined) {
-          this.retencionGroup().get('porcentajeRetener').setValue(porcentaje);
+          this.formGroup.get('porcentajeRetener')?.setValue(porcentaje);
         }
       }
 
@@ -67,7 +71,7 @@ export class DocSustentoRetencionComponent {
     });
   }
   setBaseImponible(codigo: string) {
-    const baseImponibleControl = this.retencionGroup().get('baseImponible');
+    const baseImponibleControl = this.formGroup.get('baseImponible');
 
     const docGroup = this.docSustentoArray().at(this.indexDoc());
 
@@ -86,10 +90,10 @@ export class DocSustentoRetencionComponent {
     setTimeout(() => {
       switch (codigo) {
         case '1':
-          baseImponibleControl.setValue(docGroup.get('totalSinImpuestos')?.value);
+          baseImponibleControl?.setValue(docGroup.get('totalSinImpuestos')?.value);
           break;
         case '2':
-          baseImponibleControl.setValue(taxValue);
+          baseImponibleControl?.setValue(taxValue);
           break;
         default:
           break;
@@ -148,10 +152,10 @@ export class DocSustentoRetencionComponent {
 
   calcularRetencion() {
     setTimeout(() => {
-      const baseImponible = this.retencionGroup().get('baseImponible')?.value;
-      const porcentajeRetener = this.retencionGroup().get('porcentajeRetener')?.value;
+      const baseImponible = this.formGroup.get('baseImponible')?.value;
+      const porcentajeRetener = this.formGroup.get('porcentajeRetener')?.value;
       const valorRetenido = baseImponible * (porcentajeRetener / 100);
-      this.retencionGroup().get('valorRetenido')?.setValue(valorRetenido.toFixed(2));
+      this.formGroup.get('valorRetenido')?.setValue(valorRetenido.toFixed(2));
     });
   }
 

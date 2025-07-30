@@ -605,37 +605,25 @@
                       class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-3"
                     >
                       <div class="col">
-                        <mat-form-field
-                          appearance="outline"
-                          class="w-100"
-                        >
-                          <mat-label>Actividad Económica</mat-label>
-                          <mat-select
-                            formControlName="actividad"
-                            (selectionChange)="showInfoActividadEconomica()"
-                          >
-                            @for (
-                              actividad of actividadesEconomica();
-                              track actividad.codigo
-                            ) {
-                              <mat-option [value]="actividad.codigo">
-                                {{ actividad.descripcion }}
-                              </mat-option>
-                            }
-                          </mat-select>
+                        <app-ng-dynamic-select
+                          [options]="actividadesEconomicaOptions()"
+                          label="Actividad Económica"
+                          placeholder="Seleccione una actividad económica"
+                          [selectedValue]="estabForm.get('actividad')?.value"
+                          (selectionChange)="onActividadEconomicaChange($event)"
+                        />
+                        @if (
+                          estabForm.controls.actividad.invalid &&
+                          estabForm.controls.actividad.touched
+                        ) {
                           @if (
-                            estabForm.controls.actividad.invalid &&
-                            estabForm.controls.actividad.touched
+                            estabForm.controls.actividad.hasError('required')
                           ) {
-                            @if (
-                              estabForm.controls.actividad.hasError('required')
-                            ) {
-                              <mat-error>
-                                La actividad económica es requerida
-                              </mat-error>
-                            }
+                            <div class="text-danger small mt-1">
+                              La actividad económica es requerida
+                            </div>
                           }
-                        </mat-form-field>
+                        }
                       </div>
                       <div class="col">
                         <mat-form-field
