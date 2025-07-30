@@ -18,6 +18,7 @@
     facturaCtrl.$inject = ["$scope", "$filter", "$injector", "nombreModal"];
 
     function facturaCtrl($scope, $filter, $injector, _nombreModalConst) {
+        const docElectSvc = $injector.get('docElectService');
         facturaSvc = $injector.get("facturaService");
         commonSvc = $injector.get("commonService");
         tS = $injector.get("toastService");
@@ -26,9 +27,6 @@
         let nombreModalContabilidad = $injector.get("nombreModalContabilidad");
         nombreModalVenta = $injector.get("nombreModalVenta");
 
-        let userCustomerPermissionSvc = $injector.get(
-            "userCustomerPermissionService"
-        );
         const nombreModalCommon = $injector.get('nombreModalCommon');
         const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
 
@@ -362,16 +360,16 @@
 
         function getParamsPermission(item, codigoAccion) {
             return {
-                idDocumento: item.idDocumento, 
+                idDocumento: item.idDocumento,
                 codigoModulo: item.codDoc,
-                codigoAccion,    
+                codigoAccion,
                 infoExtraJson: {
                     serieComprobante: item.serieComprobante,
                     codEstab: item.codEstab,
                     idPuntoEmision: item.idPuntoEmision,
                     nombreModulo: 'Factura Electrónica'
                 }
-            }; 
+            };
         }
 
         async function openModalRegistrarSolicitudAuth(data){
@@ -390,8 +388,8 @@
                     vendedores,
                     esMultipleVendedor: config.multipleVendedor,
                     data,
-                } , 
-            }) 
+                } ,
+            })
 
         }
 
@@ -402,12 +400,13 @@
                     return;
                 }
 
+
                 let paramsPermission = getParamsPermission(item, "E");
 
-                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission); 
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);
 
                 if (responseCheck && responseCheck.code === "2") {
-                    openModalRegistrarSolicitudAuth(paramsPermission) 
+                    openModalRegistrarSolicitudAuth(paramsPermission)
                     return;
                 }
 
@@ -508,11 +507,21 @@
                     return;
                 }
 
-                let paramsPermission = getParamsPermission(item, "A"); 
-                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);  
+                console.log(item)
+
+                const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                    accion: 'anular',
+                    identificacion: item.identificacionComprador,
+                    fechaEmision: item.fechaEmision
+
+                })
+
+
+                let paramsPermission = getParamsPermission(item, "A");
+                const responseCheck = await $solicitudAutorizacionSvc.verifyUserPermission(paramsPermission);
 
                 if (responseCheck && responseCheck.code === "2") {
-                    openModalRegistrarSolicitudAuth(paramsPermission) 
+                    openModalRegistrarSolicitudAuth(paramsPermission)
                     return;
                 }
 
@@ -537,7 +546,7 @@
                         codDoc: 'FV'
                     }
                 })
-                modalRef.result.then(result => { 
+                modalRef.result.then(result => {
                     if (result && typeof result === 'object' && result.esAnulado) {
 
                         if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
@@ -560,10 +569,10 @@
                 //     confirmButtonText: "Si, anular!",
                 // });
 
-                // if (isConfirmed) { 
+                // if (isConfirmed) {
                 //     facturaSvc
                 //         .delete(item.idDocumento)
-                //         .then((response) => { 
+                //         .then((response) => {
                 //             if (response.code === "0") {
                 //                 fS.sweetAlert("warning", response.message, response.titleSms);
                 //             }
@@ -585,9 +594,9 @@
                 //                 $scope.getFacturas();
                 //             }
                 //         })
-                //         .catch((error) => { 
+                //         .catch((error) => {
                 //             console.log(error);
-                //         }) 
+                //         })
                 // }
             } catch (error) {
                 console.log(error);
@@ -785,7 +794,8 @@
         let clienteSvc = $injector.get("clienteService");
         let gridOptionsSvc = $injector.get("gridOptionsService");
         let storageSvc = $injector.get("storageService");
-        let articuloSvc = $injector.get("articuloService");
+        const docElectSvc = $injector.get('docElectService');
+
         let TAX_RATE_CODE = $injector.get("TAX_RATE_CODE");
         let userCustomerPermissionSvc = $injector.get(
             "userCustomerPermissionService"
@@ -1086,8 +1096,8 @@
             return $scope.gridOptions.data.findIndex(item => item.uniqueRowDetalle === row.uniqueRowDetalle)
         }
         /**
-         * 
-         * @param {*} nuevaFilaAgregada 
+         *
+         * @param {*} nuevaFilaAgregada
          */
         function addItem(nuevaFilaAgregada) {
             $scope.gridOptions.data.push(nuevaFilaAgregada)
@@ -1120,7 +1130,7 @@
             updateRefProductoVenta();
 
             // Muestra una notificación de éxito
-           
+
         }
 
 
@@ -1560,14 +1570,14 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a action-info-adicional-articulo-venta 
-            entity="row.entity" 
-            style="cursor:pointer;" 
-            ng-if='row.entity.datosAdicionales'  
-            result-modal-adicional="grid.appScope.resultModalAdicional(result)" 
+        <a action-info-adicional-articulo-venta
+            entity="row.entity"
+            style="cursor:pointer;"
+            ng-if='row.entity.datosAdicionales'
+            result-modal-adicional="grid.appScope.resultModalAdicional(result)"
             info-adicional-doc="grid.appScope.infoAdicionalDocumento"
-            class="btn btn-warning btn-xs text-white" 
-            title = "Agregar dato Adicional"> 
+            class="btn btn-warning btn-xs text-white"
+            title = "Agregar dato Adicional">
             <i class="fas fa-tags"></i>
         </a>`;
 
@@ -2028,7 +2038,7 @@
             facturaSvc
                 .getDataForm()
                 .then((response) => {
-                    $scope.tiemposCredito = response.tiemposCredito; 
+                    $scope.tiemposCredito = response.tiemposCredito;
                 })
         };
 
@@ -2269,8 +2279,8 @@
 
 
                 if (result.isConfirmed) {
-                    $scope.dataClone.idTarifa = $scope.data.idTarifa; 
-    
+                    $scope.dataClone.idTarifa = $scope.data.idTarifa;
+
                     if ($scope.gridOptions.data.length > 0 &&
                         gridOptionsSvc.setTarifaInDetail(
                             $scope.gridOptions,
@@ -2280,13 +2290,13 @@
                         )
                     ) {
                         recalculateTotalsSimple();
-                    } 
+                    }
                     $scope.$apply();
                 } else {
                     $scope.data.idTarifa = $scope.dataClone.idTarifa;
                     $scope.$apply();
                 }
-                
+
                 updateRefProductoVenta()
             })
 
@@ -2840,7 +2850,7 @@
                     return;
                 }
             }
-            
+
             return true;
         }
 
@@ -2955,16 +2965,13 @@
 
                 if (cuotas && cuotas.length === 0) return;
 
-                if (
-                    $scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL &&
-                    $scope.data.total > 50
-                ) {
-                    fS.sweetAlert(
-                        "warning",
-                        "La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>"
-                    );
-                    return;
-                }
+                 const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                    accion: 'guardar',
+                    identificacion:  $scope.cliente.numeroIdentificacion,
+                   importeTotal: $scope.data.total,
+                   idFormaPago: $scope.dataFormaPago.idFormaPagoSri
+
+                })
 
                 if (isRegister()) {
                     serieComprobante = await facturaSvc.generateSerieComprobante({
