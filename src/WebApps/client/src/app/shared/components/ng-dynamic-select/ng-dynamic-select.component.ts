@@ -28,7 +28,7 @@ import { Subject } from 'rxjs';
     }
 
     .custom-select ::ng-deep .ng-select {
-      border: 1px solid #d1d5db;
+      border: 2px solid #6b7280;
       border-radius: 6px;
       min-height: 42px;
       font-size: 14px;
@@ -37,7 +37,7 @@ import { Subject } from 'rxjs';
     }
 
     .custom-select ::ng-deep .ng-select:hover {
-      border-color: #9ca3af;
+      border-color: #374151;
     }
 
     .custom-select ::ng-deep .ng-select.ng-select-focused {
@@ -144,7 +144,7 @@ import { Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgDynamicSelectComponent implements OnInit, OnDestroy {
-  // Inputs configurables
+  // Basic inputs
   label = input<string>('Seleccione una opción');
   options = input.required<SelectOption[]>();
   selectedValue = input<string | number | null>();
@@ -154,11 +154,33 @@ export class NgDynamicSelectComponent implements OnInit, OnDestroy {
   clearable = input<boolean>(true);
   searchable = input<boolean>(true);
 
-  // Output para emitir el valor
+  // Advanced ng-select inputs
+  virtualScroll = input<boolean>(false);
+  dropdownPosition = input<'bottom' | 'top' | 'auto'>('auto');
+  closeOnSelect = input<boolean>(true);
+  hideSelected = input<boolean>(false);
+  multiple = input<boolean>(false);
+  selectOnTab = input<boolean>(false);
+  openOnEnter = input<boolean>(true);
+  selectableGroup = input<boolean>(false);
+  selectableGroupAsModel = input<boolean>(true);
+  clearOnBackspace = input<boolean>(true);
+  readonly = input<boolean>(false);
+  searchWhileComposing = input<boolean>(true);
+  minTermLength = input<number>(0);
+  editableSearchTerm = input<boolean>(false);
+  typeToSearchText = input<string>('Type to search');
+  addTagText = input<string>('Add item');
+  loadingText = input<string>('Loading...');
+  clearAllText = input<string>('Clear all');
+  notFoundText = input<string>('No items found');
+
+  // Output
   selectionChange = output<string | number | null>();
 
   public selectControl = new FormControl<string | number | null>(null);
   public filteredOptions: SelectOption[] = [];
+  public loading = false;
 
   private _onDestroy = new Subject<void>();
 
