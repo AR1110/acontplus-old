@@ -22,6 +22,124 @@ import { Subject } from 'rxjs';
       display: block;
       width: 100%;
     }
+
+    .select-wrapper {
+      width: 100%;
+    }
+
+    .custom-select ::ng-deep .ng-select {
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      min-height: 42px;
+      font-size: 14px;
+      background: white;
+      transition: all 0.2s ease;
+    }
+
+    .custom-select ::ng-deep .ng-select:hover {
+      border-color: #9ca3af;
+    }
+
+    .custom-select ::ng-deep .ng-select.ng-select-focused {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      outline: none;
+    }
+
+    .custom-select ::ng-deep .ng-select.ng-select-disabled {
+      background-color: #f9fafb;
+      border-color: #e5e7eb;
+      opacity: 0.6;
+    }
+
+    .custom-select ::ng-deep .ng-select-container {
+      padding: 8px 12px;
+      min-height: 40px;
+    }
+
+    .custom-select ::ng-deep .ng-placeholder {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .custom-select ::ng-deep .ng-value-container {
+      padding: 0;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .custom-select ::ng-deep .ng-arrow-wrapper {
+      width: 20px;
+      padding-right: 4px;
+    }
+
+    .custom-select ::ng-deep .ng-arrow-wrapper .ng-arrow {
+      border-color: #6b7280 transparent transparent;
+      border-width: 5px 5px 0;
+    }
+
+    .custom-select ::ng-deep .ng-clear-wrapper {
+      padding-right: 4px;
+    }
+
+    .custom-select ::ng-deep .ng-clear-wrapper .ng-clear {
+      font-size: 16px;
+      color: #9ca3af;
+    }
+
+    .custom-select ::ng-deep .ng-clear-wrapper .ng-clear:hover {
+      color: #6b7280;
+    }
+
+    .custom-select ::ng-deep .ng-dropdown-panel {
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      background: white;
+      margin-top: 4px;
+    }
+
+    .custom-select ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items {
+      max-height: 240px;
+    }
+
+    .custom-select ::ng-deep .ng-option {
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #374151;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .custom-select ::ng-deep .ng-option:hover {
+      background-color: #f3f4f6;
+    }
+
+    .custom-select ::ng-deep .ng-option.ng-option-selected {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 500;
+    }
+
+    .custom-select ::ng-deep .ng-option.ng-option-highlighted {
+      background-color: #f3f4f6;
+    }
+
+    .custom-select ::ng-deep .ng-option.ng-option-disabled {
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .custom-select ::ng-deep .ng-input input {
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .custom-select ::ng-deep .ng-input input::placeholder {
+      color: #9ca3af;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

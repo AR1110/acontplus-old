@@ -1,12 +1,15 @@
-<ng-select
-  [items]="filteredOptions"
-  bindLabel="viewValue"
-  bindValue="value"
-  [searchable]="searchable()"
-  [clearable]="clearable()"
-  [disabled]="disabled()"
-  [formControl]="selectControl"
-  [placeholder]="placeholder() || label()"
-  (change)="onSelectionChange($event)"
-  [ngClass]="className()"
-></ng-select>
+<div class="select-wrapper">
+  <ng-select
+    [items]="filteredOptions"
+    bindLabel="viewValue"
+    bindValue="value"
+    [searchable]="searchable()"
+    [clearable]="clearable()"
+    [disabled]="disabled()"
+    [formControl]="selectControl"
+    [placeholder]="placeholder() || label()"
+    (change)="onSelectionChange($event)"
+    [ngClass]="className()"
+    class="custom-select"
+  ></ng-select>
+</div>
