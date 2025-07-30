@@ -66,7 +66,7 @@
                     windowClass: 'uibModalFullScreen'
                 }).result.then(result => {
                     if (typeof result === 'object') {
-                        $scope.getConsolidaciones()
+                        refresh()
                     }
                 })
 
@@ -79,7 +79,7 @@
             getList()
         }
 
-       
+
         function getList(){
             try {
 
@@ -115,8 +115,8 @@
                     tipoDocId: fS.getValidId($scope.dataSearch.tipoDocId),
                     textSearch: fS.isValidField($scope.dataSearch.textSearch)
                 }
-                
-                $scope.consolidaciones = []; 
+
+                $scope.consolidaciones = [];
                 consolidacionInvSvc.getAll(params).then(response => {
                     $scope.consolidaciones = response;
                     $scope.dataSearch.totalRecords = $scope.consolidaciones.length > 0 ? $scope.consolidaciones[0].totalRecords : 0;
@@ -133,16 +133,16 @@
                 console.log(error)
             }
         }
- 
+
 
 
         initLoad();
-        function initLoad() { 
+        function initLoad() {
             try {
                 showLoader();
                 consolidacionInvSvc.getDataForm().then(response => {
                     mainDataForm = response;
-                    let { estabs } = response; 
+                    let { estabs } = response;
                     $scope.tiposDoc = response.tipoDocumento;
                     establecimientos = estabs;
 
@@ -194,7 +194,7 @@
                 windowClass: 'uibModalFullScreen'
             }).result.then(result => {
                 if (typeof result === 'object') {
-                    $scope.getConsolidaciones()
+                    refresh()
                 }
             })
         }
@@ -255,7 +255,7 @@
                         }).result.then(result => {
 
                             if (result !== null && typeof result === 'object') {
-                                $scope.getConsolidaciones()
+                               refresh()
                             }
                         })
 
@@ -289,7 +289,7 @@
                         }).result.then(result => {
 
                             if (result !== null && typeof result === 'object') {
-                                $scope.getConsolidaciones()
+                               refresh()
                             }
                         })
 
@@ -339,7 +339,7 @@
             }
         }
 
-        //Reporte 
+        //Reporte
         $scope.getReport = function (item) {
             let dataParms = {
                 idConsolidacionInventario: item.idConsolidacionInventario,
@@ -364,7 +364,7 @@
 
 
     /***
-     * Modal NUEVO-EDITAR 
+     * Modal NUEVO-EDITAR
      */
 
     app.controller('modalConsolidacionAddEditCtrl', modalConsolidacionAddEditCtrl);
@@ -438,11 +438,11 @@
                 if (ev.which == 13 || ev.keyCode == '13') {
                     setFocusSearchArticulo();
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();   
+                    // ev.stopPropagation();
                 }
             })
             gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
-                //Validar campos                 
+                //Validar campos
                 if (["", null, undefined].includes(rowEntity[colDef.field])) {
                     rowEntity[colDef.field] = oldValue;
                     return
@@ -767,7 +767,7 @@
             }
         }
 
-        //Importacion avanzada 
+        //Importacion avanzada
         $scope.openModalAdvanced = function () {
             try {
                 modalSvc.openModalCustom({
@@ -991,8 +991,8 @@
             entity.idBodega = $scope.data.idBodega;
             entity.llevaInventario = articulo.llevaInventario;
 
-            entity.medidas = medidas; //Lista Medida 
-            entity.idMedida = dataMedida.idMedida; //Medida por defecto  
+            entity.medidas = medidas; //Lista Medida
+            entity.idMedida = dataMedida.idMedida; //Medida por defecto
             entity.conversion = dataMedida.conversion;
             entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
             entity.precioUnitario = dataMedida.precioUnitario;
@@ -1224,8 +1224,8 @@
     }
 
     /**
-     * IMPORTACION AVANZADA 
-     * 
+     * IMPORTACION AVANZADA
+     *
      */
 
     //app.controller("advancedSearchCtrl", advancedSearchCtrl)
@@ -1309,7 +1309,7 @@
         }
 
 
-        //importacion archivo  
+        //importacion archivo
         function subirArchivo() {
             let formatFile = [{
                 "name": "jayanth",
@@ -1371,9 +1371,9 @@
                     <table class="table table-hover table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th><small>N°</small></th>                              
-                                <th><small>Código</small></th>                              
-                                <th><small>Cantidad</small></th> 
+                                <th><small>N°</small></th>
+                                <th><small>Código</small></th>
+                                <th><small>Cantidad</small></th>
                             </tr>
                         </thead>
                         <tbody>`;
@@ -1383,7 +1383,7 @@
                 html += ` <tr>
                         <td>${index++}</td>
                         <td>${item.codigo}</td>
-                        <td>${item.cantidad}</td> 
+                        <td>${item.cantidad}</td>
                     </tr>
                 `
             }
