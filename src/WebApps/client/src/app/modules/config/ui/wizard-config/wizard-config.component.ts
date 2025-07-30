@@ -1,7 +1,3 @@
-// ============================================================================
-// IMPORTS
-// ============================================================================
-
 // Angular Core
 import {
   AbstractControl,
@@ -18,6 +14,7 @@ import {
   inject,
   ViewChild,
   OnInit,
+  AfterViewInit,
   signal,
   computed,
   ChangeDetectionStrategy,
@@ -89,10 +86,6 @@ import { UserData } from '@modules/auth/domain/models/user-data.model';
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 
-// ============================================================================
-// INTERFACES
-// ============================================================================
-
 interface TabulatorCell {
   getRow(): {
     getTreeParent(): unknown;
@@ -151,10 +144,6 @@ interface EstabFormControls {
   obligadoContabilidad: FormControl<string | null>;
 }
 
-// ============================================================================
-// COMPONENT DECORATOR
-// ============================================================================
-
 @Component({
   selector: 'app-wizard-config',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -192,32 +181,20 @@ interface EstabFormControls {
   templateUrl: './wizard-config.component.html',
   styleUrl: './wizard-config.component.scss',
 })
-export class WizardConfigComponent implements OnInit {
-  // ============================================================================
-  // VIEW CHILD & INJECTIONS
-  // ============================================================================
-
+export class WizardConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper!: MatStepper;
-
-  // Service Injections
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly _toasterService = inject(ToastrNotificationService);
   private readonly _estabService = inject(EstablishmentService);
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
-
-  // Use Case Injections
   private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
   private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
-
   private readonly _announcer = inject(LiveAnnouncer);
-
-  // Utility Injections
   private readonly _fb = inject(FormBuilder);
 
-  // Table Configuration
   readonly columnNames = [
     { title: 'idPuntoEmision', field: 'idPuntoEmision', visible: false },
     { title: 'Pto. Emi', field: 'ptoEmi' },
@@ -252,12 +229,6 @@ export class WizardConfigComponent implements OnInit {
       },
     },
   ];
-
-  // ============================================================================
-  // SIGNAL PROPERTIES
-  // ============================================================================
-
-  // Data Signals
   cantones = signal<Canton[]>([]);
   actividadesEconomica = signal<ActividadEconomica[]>([]);
   agentesRetencion = signal<AgenteRetencion[]>([]);
@@ -267,46 +238,30 @@ export class WizardConfigComponent implements OnInit {
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   docs = signal<DocConfig[]>([]);
   demoSteps = signal<DemoStep[]>([]);
-
-  // UI State Signals
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
   docsConfig = signal<EstabWithChildren[]>([]);
 
-  // User Step State
   showPassword = false;
   showConfirmPassword = false;
   userSubmitted = false;
 
-  // Computed signals for derived state
   readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
 
-  // User & Authentication
   user = {} as UserData;
 
-  // Form State
   fileError = false;
   selectedFile: File | null = null;
   currentEstab = '';
-
-  // Step Completion Flags
   userUpdated = false;
   estabRegistered = false;
   docsUpdated = false;
   certificateUpdated = false;
 
-  // Stepper Configuration
   isLinear = false;
 
-  // Chip input configuration
   readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
   readonly addOnBlur = true;
-
-  // ============================================================================
-  // FORM DEFINITIONS
-  // ============================================================================
-
-  // Static validator function
   private static passwordsMatchValidator(control: AbstractControl) {
     const group = control as FormGroup;
     const password = group.get('password')?.value;
@@ -349,8 +304,6 @@ export class WizardConfigComponent implements OnInit {
     ]),
   });
 
-  // Removed tipoContribuyenteForm - consolidated into estabForm
-
   userForm = this._fb.group(
     {
       idCard: this._fb.control('', [Validators.required, Validators.minLength(10)]),
@@ -378,10 +331,6 @@ export class WizardConfigComponent implements OnInit {
     { validators: [WizardConfigComponent.passwordsMatchValidator] },
   );
 
-  // ============================================================================
-  // FORM GETTERS
-  // ============================================================================
-
   get bodegas(): FormArray {
     return this.estabForm.get('bodegas') as FormArray;
   }
@@ -390,19 +339,15 @@ export class WizardConfigComponent implements OnInit {
     return this.estabForm.get('ptosEmi') as FormArray;
   }
 
-  // ============================================================================
-  // LIFECYCLE METHODS
-  // ============================================================================
-
   ngOnInit(): void {
     this.initializeUserData();
-    this.fetchCompanyDemoSteps();
     this.initializeForms();
   }
 
-  // ============================================================================
-  // INITIALIZATION METHODS
-  // ============================================================================
+  ngAfterViewInit(): void {
+    // Fetch demo steps after view is initialized to ensure stepper is available
+    this.fetchCompanyDemoSteps();
+  }
 
   private initializeUserData(): void {
     const decodedToken = this._tokenUseCase.getUserData();
@@ -410,7 +355,7 @@ export class WizardConfigComponent implements OnInit {
       this.user = decodedToken;
 
       // Patch email and username values to user form
-      // For demo users, trim username before @ symbol since username equals email
+
       const trimmedUsername = decodedToken.username.includes('@')
         ? decodedToken.username.split('@')[0]
         : decodedToken.username;
@@ -423,15 +368,10 @@ export class WizardConfigComponent implements OnInit {
   }
 
   private initializeForms(): void {
-    // Initialize establishment form with at least one punto de emisión
     if (this.ptosEmi.length === 0) {
       this.addPtoEmi();
     }
   }
-
-  // ============================================================================
-  // DATA FETCHING METHODS
-  // ============================================================================
 
   fetchCompanyDemoSteps(): void {
     this._companyDemoStepService
@@ -481,14 +421,10 @@ export class WizardConfigComponent implements OnInit {
     });
   }
 
-  // ============================================================================
-  // STEP MANAGEMENT METHODS
-  // ============================================================================
-
   private updateStepCompletionStatus(): void {
     this.userUpdated = this.getStepCompletionStatus('II');
+    console.debug('Update step completion status', this.userUpdated);
     this.estabRegistered = this.getStepCompletionStatus('III');
-    // tipoContribuyenteRegistered is now part of estabRegistered
     this.docsUpdated = this.getStepCompletionStatus('IV');
     this.certificateUpdated = this.getStepCompletionStatus('V');
   }
@@ -499,22 +435,48 @@ export class WizardConfigComponent implements OnInit {
 
   private handleIncompleteSteps(): void {
     const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
-
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
+      console.debug(stepIndex);
       if (stepIndex !== null && stepIndex > 0) {
         this.loadStepData(incompleteStep.code);
         const targetIndex = stepIndex - 1;
-        // Ensure the target index is within bounds
-        if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
-          this.stepper.selectedIndex = targetIndex;
+
+        // Check if stepper is available before accessing its properties
+        if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+          console.debug(targetIndex, this.stepper.steps.length);
+          if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
+            this.stepper.selectedIndex = targetIndex;
+          }
+        } else {
+          // If stepper is not ready, defer the navigation
+          setTimeout(() => {
+            if (
+              this.stepper &&
+              this.stepper.steps &&
+              targetIndex >= 0 &&
+              targetIndex < this.stepper.steps.length
+            ) {
+              this.stepper.selectedIndex = targetIndex;
+            }
+          }, 0);
         }
       }
     } else {
       this.isLinear = true;
-      // Set to the last step index, ensuring it's within bounds
-      const lastStepIndex = this.stepper.steps.length - 1;
-      this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+      // Check if stepper is available before accessing its properties
+      if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+        const lastStepIndex = this.stepper.steps.length - 1;
+        this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+      } else {
+        // If stepper is not ready, defer the navigation
+        setTimeout(() => {
+          if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+            const lastStepIndex = this.stepper.steps.length - 1;
+            this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+          }
+        }, 0);
+      }
     }
   }
 
@@ -525,12 +487,6 @@ export class WizardConfigComponent implements OnInit {
       this.fetchDocConfig();
     }
   }
-
-  // ============================================================================
-  // CONSOLIDATED STEP METHODS
-  // ============================================================================
-
-  // User Step Methods
 
   saveUser(): void {
     this.userSubmitted = true;
@@ -580,8 +536,6 @@ export class WizardConfigComponent implements OnInit {
       });
     }
   }
-
-  // Establishment Step Methods
   addBodega(): void {
     this.bodegas.push(this.newBodega());
   }
@@ -612,8 +566,6 @@ export class WizardConfigComponent implements OnInit {
       ambiente: ['', Validators.required],
     });
   }
-
-  // Chip Management Methods
   addEmail(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
@@ -669,8 +621,6 @@ export class WizardConfigComponent implements OnInit {
       }
     }
   }
-
-  // TrackBy Functions
   trackByEmail(_: number, email: string): string {
     return email;
   }
@@ -687,12 +637,7 @@ export class WizardConfigComponent implements OnInit {
     return index;
   }
 
-  // ============================================================================
-  // SAVE METHODS
-  // ============================================================================
-
   saveEstab(): void {
-    // Bodegas validation
     if (this.bodegas.length > 0 && !this.bodegas.valid) {
       this.bodegas.markAllAsTouched();
       this._toasterService.show({
@@ -701,7 +646,6 @@ export class WizardConfigComponent implements OnInit {
       });
       return;
     }
-    // Puntos de emisión validation
     if (this.ptosEmi.length === 0) {
       this._toasterService.show({
         type: 'warning',
@@ -718,7 +662,6 @@ export class WizardConfigComponent implements OnInit {
       return;
     }
     if (!this.estabForm.valid) {
-      // Mark all fields as touched to show validation errors
       this.estabForm.markAllAsTouched();
       this._toasterService.show({
         type: 'warning',
@@ -739,7 +682,6 @@ export class WizardConfigComponent implements OnInit {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      // Include consolidated tipoContribuyente data
       tipoContribuyente: {
         actividad: this.estabForm.get('actividad')?.value,
         agenteRetencion: this.estabForm.get('agenteRetencion')?.value,
@@ -866,12 +808,6 @@ export class WizardConfigComponent implements OnInit {
     }
   }
 
-  // Removed saveTipoContribuyente - consolidated into saveEstab
-
-  // ============================================================================
-  // EVENT HANDLERS
-  // ============================================================================
-
   onChangeTipoContribuyente(): void {
     const control = this.estabForm.get('agenteRetencion');
     if (this.estabForm.get('contribuyente')?.value === '03') {
@@ -891,10 +827,6 @@ export class WizardConfigComponent implements OnInit {
       this.fileError = true;
     }
   }
-
-  // ============================================================================
-  // INFO DISPLAY METHODS
-  // ============================================================================
 
   showInfoTipoContribuyente(): void {
     const contribuyente = this.estabForm.get('contribuyente')?.value;
@@ -918,16 +850,9 @@ export class WizardConfigComponent implements OnInit {
     }
   }
 
-  // ============================================================================
-  // TRACKBY FUNCTIONS
-  // ============================================================================
-
   trackByStep(_: number, step: DemoStep): string {
     return step.code;
   }
-  // ============================================================================
-  // UTILITY METHODS
-  // ============================================================================
 
   skipAndFinish(): void {
     this.stepper.previous();

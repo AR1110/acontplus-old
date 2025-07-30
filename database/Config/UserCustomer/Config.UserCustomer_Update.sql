@@ -24,48 +24,13 @@ BEGIN
 
     DECLARE @UpdatedBy VARCHAR(100);
 
-	DECLARE  @email NVARCHAR(200),
-        @isActive BIT,
-        @firstName VARCHAR(50),
-        @lastName VARCHAR(50),
-        @username VARCHAR(100),
-        @idCard VARCHAR(13),
-        @demoStepId INT;
-
 	BEGIN TRY
-        SELECT 
-		 @email = js.email
-		,@firstName = js.firstName
-		,@lastName = js.lastName
-		,@isActive = js.isActive
-        ,@username = js.username
-        ,@idCard = idCard
-        ,@demoStepId = demoStepId
-	    FROM OPENJSON(@json) 
-	    WITH (email VARCHAR(100)
-	         ,firstName VARCHAR(150)
-		     ,lastName VARCHAR(150)
-		     ,isActive BIT
-             ,username VARCHAR(50)
-             ,idCard VARCHAR(25)
-             ,demoStepId INT) as  js
-
-            DECLARE @userParams NVARCHAR(MAX)
-            
-            SET @userParams = (SELECT '{"email": "' + @email + '"' +  
-                ', "username": "' + @username + '"' +
-                ', "demoStepId": "' + CAST(ISNULL(@demoStepId, 0) AS varchar(10)) + '"' +
-                ', "idCard": "' + @idCard + '"' +
-                ', "firstName": "' + @firstName + '"' +
-                ', "lastName": "' + @lastName + '"' +
-                ', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
-				)
 
         SET @UpdatedBy = (SELECT nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId);
 
 		BEGIN TRAN 
 			
-            EXEC AcontplusAdmin.Config.UserCustomer_Update @id, @json, @UpdatedBy,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+            EXEC AcontplusAdmin.Config.UserCustomer_Update @id, @json, @UpdatedBy, @fromMobile,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 			IF (@errorCode <> 0)
                 BEGIN
                     SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomer_Update failed: ' + ISNULL(@errorMessage, '')
