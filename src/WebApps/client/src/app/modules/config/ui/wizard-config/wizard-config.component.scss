@@ -67,20 +67,6 @@
   border: 0;
 }
 
-.establishment-step {
-  .checkbox-field {
-    width: 200px;
-  }
-
-  mat-chip-grid {
-    width: 100%;
-  }
-
-  mat-chip-row {
-    margin: 2px;
-  }
-}
-
 ::ng-deep .mat-step-header {
   pointer-events: none;
 }

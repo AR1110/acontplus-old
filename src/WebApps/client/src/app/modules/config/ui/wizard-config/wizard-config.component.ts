@@ -14,6 +14,7 @@ import {
   inject,
   ViewChild,
   OnInit,
+  AfterViewInit,
   signal,
   computed,
   ChangeDetectionStrategy,
@@ -180,7 +181,7 @@ interface EstabFormControls {
   templateUrl: './wizard-config.component.html',
   styleUrl: './wizard-config.component.scss',
 })
-export class WizardConfigComponent implements OnInit {
+export class WizardConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper!: MatStepper;
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly _toasterService = inject(ToastrNotificationService);
@@ -340,8 +341,12 @@ export class WizardConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeUserData();
-    this.fetchCompanyDemoSteps();
     this.initializeForms();
+  }
+
+  ngAfterViewInit(): void {
+    // Fetch demo steps after view is initialized to ensure stepper is available
+    this.fetchCompanyDemoSteps();
   }
 
   private initializeUserData(): void {
@@ -432,19 +437,46 @@ export class WizardConfigComponent implements OnInit {
     const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
     if (incompleteStep) {
       const stepIndex = romanToInt(incompleteStep.code);
-      console.debug(stepIndex)
+      console.debug(stepIndex);
       if (stepIndex !== null && stepIndex > 0) {
         this.loadStepData(incompleteStep.code);
         const targetIndex = stepIndex - 1;
-        console.debug(targetIndex, this.stepper.steps.length);
-        if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
-          this.stepper.selectedIndex = targetIndex;
+
+        // Check if stepper is available before accessing its properties
+        if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+          console.debug(targetIndex, this.stepper.steps.length);
+          if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
+            this.stepper.selectedIndex = targetIndex;
+          }
+        } else {
+          // If stepper is not ready, defer the navigation
+          setTimeout(() => {
+            if (
+              this.stepper &&
+              this.stepper.steps &&
+              targetIndex >= 0 &&
+              targetIndex < this.stepper.steps.length
+            ) {
+              this.stepper.selectedIndex = targetIndex;
+            }
+          }, 0);
         }
       }
     } else {
       this.isLinear = true;
-      const lastStepIndex = this.stepper.steps.length - 1;
-      this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+      // Check if stepper is available before accessing its properties
+      if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+        const lastStepIndex = this.stepper.steps.length - 1;
+        this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+      } else {
+        // If stepper is not ready, defer the navigation
+        setTimeout(() => {
+          if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+            const lastStepIndex = this.stepper.steps.length - 1;
+            this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+          }
+        }, 0);
+      }
     }
   }
 
