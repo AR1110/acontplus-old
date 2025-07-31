@@ -1336,6 +1336,7 @@
                             serieComprobante: item.nroDocumento,
                             codEstado: item.codDoc,
                             codDoc: "04",
+                             identificacionComprador: item.identificacionComprador,
                         }));
                         return notasCredito;
                     }

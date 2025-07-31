@@ -14,6 +14,8 @@ convertToDocModalCtrl.$inject = [
 function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params) {
 
     let { codDoc, id } = params;
+    const docElectSvc = $injector.get('docElectService');
+
     let proformaSvc = $injector.get('proformaService');
     let notaEntregaSvc = $injector.get('notaEntregaService');
     let facturaSvc = $injector.get('facturaService');
@@ -93,10 +95,10 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
     function onLoadProforma() {
         try {
-            
-            
+
+
             getDataFormProforma().then(response => {
-                const [dataForm, data] = response; 
+                const [dataForm, data] = response;
                 const { tiemposCredito, formasPagoSri, config, vendedores } = dataForm;
                 const { cliente, comprobante, items, infoAdicionalDocumento } = data;
 
@@ -141,17 +143,17 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     $scope.comprobante.idUsuario = dataUsuario.idUsuario;
                 }
 
-            }) 
+            })
         } catch (error) {
-            console.log(error) 
+            console.log(error)
         }
     }
 
 
     function onLoadNotaEntrega() {
         try {
-            
-            
+
+
             getDataFormNotaEntrega().then(response => {
                 const [dataForm, data] = response;
 
@@ -201,9 +203,9 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 }
 
 
-            }) 
+            })
         } catch (error) {
-            console.log(error) 
+            console.log(error)
         }
     }
 
@@ -352,11 +354,11 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
 
 
-            
-            
+
+
             let serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                 idPuntoEmision: $scope.comprobante.idPuntoEmision,
-            }) 
+            })
             if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
 
@@ -385,7 +387,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
             let query = proformaSvc.queryMapperConvertToDoc({
                 id,
                 codDocDestino: DOC_TYPE.NE, //documento destino
-                codDoc: DOC_TYPE.NE,//documento origen 
+                codDoc: DOC_TYPE.NE,//documento origen
                 comprobante: $scope.comprobante,
                 detalles: $scope.detalles,
                 infoAdicionalDocumento: $scope.infoAdicionalDocumento,
@@ -393,8 +395,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 dataFormaPago: $scope.dataFormaPago
             })
 
-            
-            
+
+
             proformaSvc.convertToDoc(query).then(response => {
                 if (response.code === '0') {
                     fS.sweetAlert('warning', response.message, response.titleSms);
@@ -408,10 +410,10 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     }
                     $uibModalInstance.close(mainData)
                 }
-            }) 
+            })
 
 
-        } catch (error) { 
+        } catch (error) {
             console.log(error)
         }
     }
@@ -421,7 +423,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
         let dataFormaPago = $scope.formasPagoSri.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
         let el = document.getElementById('infoReferenciaFormaPago')
         if (el) {
-        //    el.innerHTML = dataFormaPago.infoReferencia;
+            //    el.innerHTML = dataFormaPago.infoReferencia;
         }
     }
 
@@ -437,7 +439,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
             Swal.fire({
                 title: '<small>Seleccionar forma de pago: </small>',
-                html: ` 
+                html: `
                     <div class="table-responsive">
                         <table class="table table-sm">
                             <thead>
@@ -454,20 +456,20 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                                             ${$scope.formasPagoSri.map((item) => `<option value="${item.idFormaPagoSri}">
                                                 ${item.descripcion}
                                             </option>`)}
-                                            
+
                                         </select>
-                                        <span class="d-flex justify-content-center text-info" id="infoReferenciaFormaPago"></span> 
+                                        <span class="d-flex justify-content-center text-info" id="infoReferenciaFormaPago"></span>
                                     </td>
                                     <td width="100px">
                                         ${$scope.dataFormaPago.plazo} ${$scope.dataFormaPago.plazo > 1 ? 'Días' : 'Día'}
                                     </td>
                                     <td width="100px">
                                         $${$scope.dataFormaPago.total}
-                                    </td> 
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>  
+                    </div>
                 `,
                 didOpen: () => {
                     let el = document.getElementById('formaDePago');
@@ -501,11 +503,19 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
             }).then(async result => {
                 if (result.isConfirmed) {
 
-                    
-                    
+
+                    const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                        accion: 'guardar',
+                        identificacion: $scope.companyCustomer.identificacionComprador,
+                        importeTotal: $scope.comprobante.total,
+                        idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
+                        codDoc: '01'
+
+                    })
+
                     let serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.comprobante.idPuntoEmision,
-                    }) 
+                    })
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
 
@@ -535,7 +545,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     let query = proformaSvc.queryMapperConvertToDoc({
                         id,
                         codDocDestino: DOC_TYPE.FE, //documento destino
-                        codDoc: DOC_TYPE.FV_SRI,//documento origen 
+                        codDoc: DOC_TYPE.FV_SRI,//documento origen
                         comprobante: $scope.comprobante,
                         detalles: $scope.detalles,
                         infoAdicionalDocumento: $scope.infoAdicionalDocumento,
@@ -543,8 +553,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                         dataFormaPago: $scope.dataFormaPago
                     })
 
-                    
-                    
+
+
                     proformaSvc.convertToDoc(query).then(response => {
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message, response.titleSms);
@@ -553,7 +563,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             $uibModalInstance.close(response)
                         }
-                    }) 
+                    })
 
 
 
@@ -565,7 +575,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
 
 
-        } catch (error) { 
+        } catch (error) {
             console.log(error)
         }
     }
@@ -580,11 +590,20 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
             if (cuotas && cuotas.length === 0) return
 
-            
-            
+
+            const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                accion: 'guardar',
+                identificacion: $scope.companyCustomer.identificacionComprador,
+                importeTotal: $scope.comprobante.total,
+                idFormaPago: $scope.dataFormaPago.idFormaPagoSri
+
+            })
+
+
+
             let serieComprobante = await facturaSvc.generateSerieComprobante({
                 idPuntoEmision: $scope.comprobante.idPuntoEmision,
-            }) 
+            })
             if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
 
@@ -621,8 +640,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 dataFormaPago: $scope.dataFormaPago
             })
 
-            
-            
+
+
             notaEntregaSvc.convertToDoc(query).then(response => {
                 if (response.code === '0') {
                     fS.sweetAlert('warning', response.message, response.titleSms);
@@ -631,10 +650,10 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                     fS.sweetAlert('success', response.message, response.titleSms, 1000);
                     $uibModalInstance.close(response)
                 }
-            }) 
+            })
 
 
-        } catch (error) { 
+        } catch (error) {
             console.log(error)
         }
     }
@@ -670,24 +689,24 @@ function historialConversionDocCtrl($scope, $uibModalInstance, $injector, params
 
     if (DOC_TYPE.PR === codDoc) {
         try {
-            
-            
+
+
             proformaSvc.getHistorialConversionDoc(id)
                 .then(response => {
                     $scope.historialConversion = response;
-                }) 
-        } catch (error) { 
+                })
+        } catch (error) {
         }
     }
 
     if (DOC_TYPE.NE === codDoc) {
         try {
-            
-            
+
+
             notaEntregaSvc.getHistorialConversionDoc(id)
                 .then(response => {
                     $scope.historialConversion = response;
-                }) 
+                })
         } catch (error) {
             console.log(error)
         }
