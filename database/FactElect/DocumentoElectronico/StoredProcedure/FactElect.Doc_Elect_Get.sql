@@ -30,7 +30,8 @@ BEGIN
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
 	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
-	
+
+    --> Get 
     IF @tipo = 1
         BEGIN 
             SET @params = '@idEntidad              INT
@@ -195,6 +196,7 @@ BEGIN
                    ,@fechaAnulacion DATETIME2
                    ,@idFormaPago    INT
                    ,@formaPago      VARCHAR(10)
+                   ,@message        VARCHAR(500)
 
             --> Data Json
             SELECT @codDoc         = codDoc
@@ -237,15 +239,13 @@ BEGIN
                   AND ti.codigoSri = '07' 
             )
                 BEGIN
-                    SELECT '0' as code, 'No se permite anular ventas a consumidor final.' as 'message'
-                    RETURN 
+                    SELECT @message = 'No se permite anular ventas a consumidor final.'
                 END 
 
             --> Normativa para solo permitir anular documento solo dentro de la fecha que corresponde en este caso los 10 del siguiente mes de la fecha de emision
             IF GETDATE() > @fechaAnulacion
                 BEGIN 
-                    SELECT '0' as code, 'No puede anular este documento. El SRI solo permite anular hasta el día 10 del mes siguiente a la fecha de emisión.' as 'message'
-                    RETURN 
+                    SELECT @message = 'No puede anular este documento. El SRI solo permite anular hasta el día 10 del mes siguiente a la fecha de emisión.' 
                 END
 
             --> Normativa vigente solo puede emitir facturas menores o iguales a 50 para consumidor final
@@ -256,24 +256,23 @@ BEGIN
                         SELECT 1 FROM Customer.Customer   cu WITH (NOLOCK)
                         INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
                         WHERE cu.IdCard = @identificacion
-                          AND ti.codigoSri = '08' 
+                          AND ti.codigoSri = '07' 
                     )
                         BEGIN
-                            SELECT '0' as code,'No está permitido emitir facturas mayores a 50 dolares a consumidor final Según normativa del SRI' as 'message'
-                            RETURN 
+                            SELECT @message = 'No está permitido emitir facturas mayores a 50 dolares a consumidor final Según normativa del SRI' 
                         END 
                 END
 
             --> Normativa de ventas que superen las 500 dolares no podra pagar en efectivo
             IF @importeTotal > 500
                 BEGIN
-                    IF @formaPago in ('01','15','21')
+                    IF @formaPago IN ('01','15','21')
                         BEGIN
-                            SELECT '0' as code,'No se permite esta forma de pago para montos mayores a $500 .Use transferencia, tarjeta o medios electrónicos autorizados (SRI NAC-DGERCGC24-00000005).' as 'message'
-                            RETURN 
+                            SELECT @message = 'No se permite esta forma de pago para montos mayores a $500 .Use transferencia, tarjeta o medios electrónicos autorizados (SRI NAC-DGERCGC24-00000005).'
                         END 
                 END 
 
+            SELECT '0' as code, @message as 'message' WHERE @message IS NOT NULL
             RETURN 
         END 
 

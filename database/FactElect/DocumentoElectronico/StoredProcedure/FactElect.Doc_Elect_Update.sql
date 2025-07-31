@@ -25,7 +25,7 @@ BEGIN
         --> Validate 
         IF NOT EXISTS (SELECT 1 FROM dbo.FirmaElectronica WITH (NOLOCK) WHERE idEntidad = @idEntidad AND fechaCaducidad > GETDATE())
             BEGIN
-                SELECT '0' AS code, 'No existe firma v·lida o la firma ha expirado' AS message;
+                SELECT '0' AS code, 'No existe firma v√°lida o la firma ha expirado' AS message;
                 RETURN;
             END
 
@@ -65,7 +65,7 @@ BEGIN
                 UPDATE DocumentoElectronico  SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id;
 
                 SET @codeResponse = '1';
-                SET @message = 'El XML se est· actualizando';
+                SET @message = 'El XML se est√° actualizando';
             END
 
         COMMIT TRANSACTION;
