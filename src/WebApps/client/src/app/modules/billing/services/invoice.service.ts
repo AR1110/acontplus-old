@@ -17,7 +17,7 @@ export class InvoiceService {
   #http = inject(HttpClient);
 
   getDataFilter() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 4,
     });
     return this.#http
@@ -26,17 +26,17 @@ export class InvoiceService {
       })
       .pipe(
         map((response) => {
-          let resultData = {
+          const resultData = {
             estabs: [] as GroupedEstab[],
             estadosDoc: [] as any[],
           };
 
           if (response.code === '1') {
-            let [tempEstabs, estadosDoc] = JSON.parse(
+            const [tempEstabs, estadosDoc] = JSON.parse(
               response.payload as string,
             );
 
-            let dataToGroup = {
+            const dataToGroup = {
               estabs: tempEstabs,
               isGroupPuntoEmision: true,
             };
@@ -50,7 +50,7 @@ export class InvoiceService {
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj,
     });
@@ -60,7 +60,7 @@ export class InvoiceService {
       })
       .pipe(
         map((response) => {
-          let result = {
+          const result = {
             data: [] as any[],
             totalRecords: 0,
           };
@@ -79,7 +79,7 @@ export class InvoiceService {
   }
 
   getDetalleCompleto(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 5,
       id,
     });
@@ -91,7 +91,7 @@ export class InvoiceService {
         map((response) => {
           let result = {} as any;
           if (response.code === '1') {
-            let mainData = JSON.parse(response.payload as string);
+            const mainData = JSON.parse(response.payload as string);
             result = InvoiceAdapter.fromApiDetalleCompleto(mainData);
           }
 

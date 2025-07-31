@@ -1,4 +1,4 @@
-import {Component, inject, Input, signal} from "@angular/core";
+import {Component, inject, Input, signal, OnInit} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
 import { ToastrNotificationService } from "@core/services/toastr-notification.service";
@@ -27,7 +27,7 @@ import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
       MatCustomDialogComponent
     ]
 })
-export class BrandAddEditModalComponent {
+export class BrandAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<BrandAddEditModalComponent>);
   readonly data = inject<{
     idMarca: number;

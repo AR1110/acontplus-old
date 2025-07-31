@@ -1,4 +1,4 @@
-import {Component, EventEmitter, input, Input, output, Output, signal} from '@angular/core';
+import {Component, EventEmitter, input, Input, output, Output, signal, OnInit, OnDestroy} from '@angular/core';
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
 export interface ProductImage {
@@ -35,7 +35,7 @@ export interface ProductBadge {
   templateUrl: './product-autocomplete-image.component.html',
   styleUrl: './product-autocomplete-image.component.scss'
 })
-export class ProductAutocompleteImageComponent {
+export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
   @Input() product!: any;
   size = input<'small'|'medium'|'large'>('medium');
   enableZoom =input(true);
@@ -205,7 +205,7 @@ export class ProductAutocompleteImageComponent {
   getBadgeText(badge: ProductBadge): string {
     if (badge.text) return badge.text;
 
-    const defaultTexts: {[key: string]: string} = {
+    const defaultTexts: Record<string, string> = {
       'new': 'NUEVO',
       'sale': 'OFERTA',
       'bestseller': 'TOP',

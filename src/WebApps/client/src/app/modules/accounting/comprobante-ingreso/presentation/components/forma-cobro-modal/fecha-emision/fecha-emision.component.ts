@@ -21,7 +21,7 @@ export class FechaEmisionComponent {
       const inputElement = event.target as HTMLInputElement;
       const timeString = inputElement.value;
 
-    let dateObject = formatDate(timeString);
+    const dateObject = formatDate(timeString);
 
 
 

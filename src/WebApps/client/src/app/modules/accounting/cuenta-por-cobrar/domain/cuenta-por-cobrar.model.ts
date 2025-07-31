@@ -70,8 +70,8 @@ export interface CuentaPorCobrar {
     saldo: number
     saldoDoc: number
     descripcion: string
-    cuotas: Array<Cuota>
-    cuotasOriginal: Array<Cuota>
+    cuotas: Cuota[]
+    cuotasOriginal: Cuota[]
 }
 
 export interface CuentaPorCobrarComprobante {

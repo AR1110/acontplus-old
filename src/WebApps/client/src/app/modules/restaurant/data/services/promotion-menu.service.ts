@@ -14,20 +14,20 @@ export class PromotionMenuService {
   constructor() { }
 
   getByPromotionId<T>(id:number, obj: T){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
 
     return this.http.get<ApiResponse>(`${this.url}GetById/${id}?json=${json}`).pipe(
       map(response=>{
-        let result = {
+        const result = {
           promotionMenus: []
         }
         if(response.code==="1"){
-          let mainData = JSON.parse(response.payload as string)
+          const mainData = JSON.parse(response.payload as string)
           console.log(mainData)
-          let promotionMenus = mainData.promotionMenus || [];
+          const promotionMenus = mainData.promotionMenus || [];
           result.promotionMenus = promotionMenus
         }
         return  result;

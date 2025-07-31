@@ -26,5 +26,5 @@ export interface MovimientoCajaList extends MovimientoCaja {
 
 export class ListMovimientoCajaResponse {
   data: MovimientoCajaList[]=[];
-  totalRecords: number=0;
+  totalRecords=0;
 }

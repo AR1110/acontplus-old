@@ -4,7 +4,7 @@ import {
   computed,
   inject,
   signal,
-  ViewChild,
+  ViewChild, OnInit,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { THEME_OPTIONS } from '@core/theme/theme-options';
@@ -42,7 +42,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
   private breakpointObserver = inject(BreakpointObserver);

@@ -1,4 +1,7 @@
-﻿namespace Configuracion.API.Controllers;
+using System.Security.Cryptography.X509Certificates;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace Configuracion.API.Controllers;
 
 public class FirmaElectronicaController(
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController
@@ -29,6 +32,10 @@ public class FirmaElectronicaController(
         };
         var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
 
+        var cert = new X509Certificate2(signFile.Content, data.contrasenia,
+                  X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+        var expirationDate = DateTime.Parse(cert.GetExpirationDateString());
+
         var parameters = new Dictionary<string, object>
         {
             { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
@@ -36,7 +43,7 @@ public class FirmaElectronicaController(
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },
             { "contentType", signFile.ContentType },
-            { "fechaCaducidad", data.fechaCaducidad },
+            { "fechaCaducidad", expirationDate },
             { "demoStepId", data.demoStepId },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
@@ -53,14 +60,13 @@ public class FirmaElectronicaController(
             { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
             { "id", data.idFirmaElectronica },
             { "contrasenia", data.contrasenia },
-            { "fechaCaducidad", data.fechaCaducidad },
             { "estado", data.estado }
         };
         return Ok(await firmaElectronicaService.UpdateAsync(parameters));
     }
 
     [HttpPost("UpdateSignature/{id}")]
-    public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
+    public async Task<IActionResult> UpdateSignature(int id, [FromForm] IFormFile file, [FromForm] string contrasenia)
     {
         if (file.ContentType != "application/x-pkcs12")
             return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
@@ -72,13 +78,20 @@ public class FirmaElectronicaController(
             Content = FileData.GetFileByte(file)
         };
 
+        var cert = new X509Certificate2(signFile.Content, contrasenia,
+          X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+        var expirationDate = DateTime.Parse(cert.GetExpirationDateString());
+
         var parameters = new Dictionary<string, object>
         {
             { UserRoleId, User.GetClaimValue<int>(UserRoleId) },
             { "id", id },
             { "fileName", signFile.FileName },
             { "firma", signFile.Content },
-            { "contentType", signFile.ContentType }
+            { "contentType", signFile.ContentType },
+            { "contrasenia", contrasenia },
+            { "fechaCaducidad", expirationDate },
+
         };
         return Ok(await firmaElectronicaService.UpdateFileAsync(parameters));
     }

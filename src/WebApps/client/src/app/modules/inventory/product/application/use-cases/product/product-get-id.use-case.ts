@@ -4,7 +4,7 @@ import {ProductRepository} from "@inventory/product/domain/repositories/product.
 import {ApiResponse} from "@core/models/api-response";
 import { Observable } from "rxjs";
 
-type Params = {
+interface Params {
   data: any,
   productPvps: any[],
   productBarcodes:any[],

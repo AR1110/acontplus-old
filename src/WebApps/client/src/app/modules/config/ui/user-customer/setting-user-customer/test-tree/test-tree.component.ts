@@ -34,7 +34,7 @@ interface TreeNode {
   templateUrl: './test-tree.component.html',
   styleUrl: './test-tree.component.scss'
 })
-export class TestTreeComponent {
+export class TestTreeComponent implements OnInit {
   displayedColumns: string[] = ['select', 'name'];
   dataSource = new MatTableDataSource<TreeNode>([]);
   private $listUseCase = inject(ListUserCustomerPermissionUseCase)
@@ -84,7 +84,7 @@ export class TestTreeComponent {
   }
 
   // Inicializa los estados y asigna nivel inicial
-  initializeTreeData(nodes: TreeNode[], level: number = 0) {
+  initializeTreeData(nodes: TreeNode[], level = 0) {
     nodes.forEach(node => {
       node.isSelected = false;
       node.isExpanded = false;

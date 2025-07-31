@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,7 +27,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
   templateUrl: './factura-fisica-add-edit-modal.component.html',
   styles: ``,
 })
-export class FacturaFisicaAddEditModalComponent {
+export class FacturaFisicaAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<FacturaFisicaAddEditModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private facturaFisicaSvc = inject(FacturaFisicaService);
@@ -70,7 +70,7 @@ export class FacturaFisicaAddEditModalComponent {
         this.sustentosTributario.set(response.sustentosTributario);
         this.estabs.set(response.estabs);
 
-        let dataEstab = this.estabs().find((item) => item.defaultEstab);
+        const dataEstab = this.estabs().find((item) => item.defaultEstab);
 
         this.bodegas.set(dataEstab?.bodegas || []);
 

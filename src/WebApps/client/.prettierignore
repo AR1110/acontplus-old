@@ -1,0 +1,7 @@
+# Ignore common Angular build outputs and dependencies
+/dist
+/node_modules
+/.angular
+
+# Ignore specific files or folders if needed
+/src/environments/

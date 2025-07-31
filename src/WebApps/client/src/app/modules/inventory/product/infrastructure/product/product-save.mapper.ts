@@ -55,7 +55,7 @@ export class ProductSaveMapper {
 
     const jsonPvp: ProductDataPvpEntity = dataPvp.map((item:any, index: number)=>{
 
-      let result: ProductDataPvpEntity = {
+      const result: ProductDataPvpEntity = {
         index: index + 1,
         idArticuloPvP: item.idArticuloPvP,
         idTarifa: item.idTarifa,
@@ -83,7 +83,7 @@ export class ProductSaveMapper {
   static fromJson(response:ApiResponse){
 
     const data = JSON.parse(response.payload as string);
-    let resultResponse = new ApiResponse()
+    const resultResponse = new ApiResponse()
 
     resultResponse.code=response.code;
     resultResponse.message=response.message;

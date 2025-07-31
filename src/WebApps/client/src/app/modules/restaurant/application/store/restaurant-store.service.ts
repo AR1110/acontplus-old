@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { GenericStoreSignalService } from '@shared/services/generic-store-signal.service';
 
-type  RestaurantStoreState = { 
+interface  RestaurantStoreState { 
     dataEstab: GroupedEstab
     userName: string,
     establecimientos: GroupedEstab[]

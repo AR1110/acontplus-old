@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CategoryModalComponent } from '@accounting/category/presentation/category-modal/category-modal.component';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
@@ -23,7 +23,7 @@ import {DialogService} from "@core/services/dialog.service";
     templateUrl: './category.component.html',
     styles: ``
 })
-export class CategoryComponent {
+export class CategoryComponent implements OnInit {
   categories = signal<Category[]>([])
   data: Category = {} as Category;
   private _categoryUseCase = inject(CategoryUseCase)

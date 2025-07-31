@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewChild} from '@angular/core';
+import {Component, inject, signal, ViewChild, OnInit} from '@angular/core';
 import {MatTree,  MatTreeModule} from '@angular/material/tree';
 import {  MatCheckboxModule} from '@angular/material/checkbox';
 import {MatIcon} from "@angular/material/icon";
@@ -33,7 +33,7 @@ interface TreeNode {
   templateUrl: './user-customer-access.component.html',
   styleUrls: ['./user-customer-access.component.scss']
 })
-export class UserCustomerAccessComponent {
+export class UserCustomerAccessComponent implements OnInit {
   @ViewChild('tree') tree!: MatTree<TreeNode>;
 
   dataSource = signal<TreeNode[]>([]);

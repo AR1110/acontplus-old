@@ -50,7 +50,7 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
         } = response;
 
         const resultEntidadesFinanciera = entidadFinanciera.map((ef: any) => {
-          let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(
+          const filteredSubEntidadFinanciera = subEntidadFinanciera.filter(
             (sef: any) => sef.idEntidadFinanciera === ef.idEntidadFinanciera,
           );
           return {
@@ -67,8 +67,8 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
         if (idCuentaPorCobrar > 0 && response.cuentaPorCobrar) {
           cuentaPorCobrar = response.cuentaPorCobrar;
           cuentaPorCobrar = cuentaPorCobrar.map((cxc: any) => {
-            let cuotas = JSON.parse(cxc.cuotas);
-            let resultsCuotas = cuotas.map((cuota: any) => {
+            const cuotas = JSON.parse(cxc.cuotas);
+            const resultsCuotas = cuotas.map((cuota: any) => {
               return {
                 idCuotaPorCobrar: cuota.idCuotaPorCobrar,
                 idCuentaPorCobrar: cuota.idCuentaPorCobrar,
@@ -107,7 +107,7 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
           });
         }
 
-        let obj = {
+        const obj = {
           entidadesFinanciera: resultEntidadesFinanciera,
           bancos: banco,
           documentos,

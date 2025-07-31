@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -31,7 +31,7 @@ import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components
   templateUrl: './massive-tax-dialog.component.html',
   styles: ``,
 })
-export class MassiveTaxDialogComponent {
+export class MassiveTaxDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<MassiveTaxDialogComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
   private _massiveTaxUseCase = inject(MassiveTaxUseCase);
@@ -46,8 +46,8 @@ export class MassiveTaxDialogComponent {
   };
   private cloneDataForm = structuredClone(this.dataForm);
 
-  taxRatesFrom: Array<TarifaImpuesto> = [];
-  taxRatesTo: Array<TarifaImpuesto> = [];
+  taxRatesFrom: TarifaImpuesto[] = [];
+  taxRatesTo: TarifaImpuesto[] = [];
 
   private taxFromDesc = '';
   private taxToDesc = '';
@@ -161,9 +161,9 @@ export class MassiveTaxDialogComponent {
         return;
       }
 
-      let obs = `${this.joinTaxDesc} ${this.dataForm.obs}`;
+      const obs = `${this.joinTaxDesc} ${this.dataForm.obs}`;
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Actualizar el Impuesto',
         html: `¿Esta seguro de actualizar el impuesto de los ${this.dataForm.quantityProducts} articulos  masivamente? </br>
               <span>
@@ -180,7 +180,7 @@ export class MassiveTaxDialogComponent {
 
       if (!isConfirmed) return;
 
-      let params = {
+      const params = {
         taxIdFrom: this.dataForm.taxIdFrom,
         taxIdTo: this.dataForm.taxIdTo,
         quantity: this.dataForm.quantityProducts,

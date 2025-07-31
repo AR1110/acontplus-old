@@ -1,5 +1,5 @@
 
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -18,7 +18,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {  MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
-import {M3InputChipComponent} from "@shared/components/m3-input-chip/m3-input-chip.component";
+import {MatInputChipComponent} from "@shared/components/mat-input-chip/mat-input-chip.component";
 import {MatIcon} from "@angular/material/icon";
 
 @Component({
@@ -34,12 +34,12 @@ import {MatIcon} from "@angular/material/icon";
     MatSelectModule,
     MatIconButton,
     MatIcon,
-    M3InputChipComponent
+    MatInputChipComponent
   ],
   templateUrl: './estab-add-edit-modal.component.html',
   styles: ``,
 })
-export class EstabAddEditModalComponent {
+export class EstabAddEditModalComponent implements OnInit {
    params = inject<{
     id: 0,
   }>(MAT_DIALOG_DATA);

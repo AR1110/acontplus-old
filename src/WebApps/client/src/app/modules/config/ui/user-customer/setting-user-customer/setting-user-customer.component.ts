@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -37,7 +37,7 @@ import {
   templateUrl: './setting-user-customer.component.html',
   styles: ``,
 })
-export class SettingUserCustomerComponent {
+export class SettingUserCustomerComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<SettingUserCustomerComponent>);
   readonly params = inject<{
     idUsuario: number;

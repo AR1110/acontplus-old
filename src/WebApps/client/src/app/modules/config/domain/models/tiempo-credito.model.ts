@@ -27,5 +27,5 @@ export interface CreditTimeList {
 
 export class ListCreditTimeResponse {
   data: CreditTimeList[]=[]
-  totalRecords: number=0;
+  totalRecords=0;
 }

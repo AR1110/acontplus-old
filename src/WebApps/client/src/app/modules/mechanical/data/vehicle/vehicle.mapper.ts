@@ -7,7 +7,7 @@ export class VehicleMapper {
 
     let data = [] as any[]
     if(response.code==="1"){
-      let {vehicles} = JSON.parse(response.payload as string)
+      const {vehicles} = JSON.parse(response.payload as string)
 
       data = vehicles.map((item: any, index: number) => {
         return {
@@ -21,12 +21,12 @@ export class VehicleMapper {
 
   static fromApiDataForm(response:ApiResponse){
 
-    let data = {
+    const data = {
       countries: [],
       vehicleTypes: []
     }
     if (response.code==="1") {
-      let {countrys, vehicleTypes} = JSON.parse(response.payload as string);
+      const {countrys, vehicleTypes} = JSON.parse(response.payload as string);
       data.countries = countrys;
       data.vehicleTypes = vehicleTypes;
     }
@@ -34,7 +34,7 @@ export class VehicleMapper {
   }
 
   static fromApiGetId(response:ApiResponse){
-    let data = {
+    const data = {
       customer: {
         businessName: null,
         id: 0

@@ -60,7 +60,7 @@ export const pricingCalculateUtil = {
    */
   calculateTaxValue(price: number, percentage: number) {
     try {
-      let multiplo = mul(price, percentage, DECIMALS.GENERAL) as number;
+      const multiplo = mul(price, percentage, DECIMALS.GENERAL) as number;
       const tax = div(multiplo, 100, DECIMALS.GENERAL) as number;
       return tax;
     } catch (error) {
@@ -93,7 +93,7 @@ export const pricingCalculateUtil = {
    */
   calculatePriceSale: function (priceWithVat: number, percentage: number): number {
     try {
-      let cociente = div(percentage, 100, DECIMALS.GENERAL) as number;
+      const cociente = div(percentage, 100, DECIMALS.GENERAL) as number;
       const resultPercentage = cociente + 1;
       return div(priceWithVat, resultPercentage, DECIMALS.GENERAL) as number;
     } catch (error) {
@@ -197,19 +197,19 @@ export const pricingCalculateUtil = {
   },
 
   getValueUtility: (priceSale: number, unitPrice: number): number => {
-    let utilidad = minus(priceSale, unitPrice, DECIMALS.GENERAL) as number
+    const utilidad = minus(priceSale, unitPrice, DECIMALS.GENERAL) as number
     return utilidad;
   },
 
   // Función para calcular el total antes de aplicar descuentos
   calcularTotalAntesDescuento: function (precioUnitario: number, cantidad: number) {
-    let valorTotal = mul(precioUnitario, cantidad, DECIMALS.GENERAL);
+    const valorTotal = mul(precioUnitario, cantidad, DECIMALS.GENERAL);
     return valorTotal as number;
   },
 
   calcularSubtotalSinImpuesto: function (precioUnitario: number, cantidad: number, descuento: number) {
-    let totalAntesDescuento = this.calcularTotalAntesDescuento(precioUnitario, cantidad);
-    let subtotalSinImpuesto = minus(totalAntesDescuento, descuento, DECIMALS.GENERAL);
+    const totalAntesDescuento = this.calcularTotalAntesDescuento(precioUnitario, cantidad);
+    const subtotalSinImpuesto = minus(totalAntesDescuento, descuento, DECIMALS.GENERAL);
     return subtotalSinImpuesto as number;
   },
 
@@ -217,7 +217,7 @@ export const pricingCalculateUtil = {
   calcularTotalConImpuesto: function (subtotalSinImpuesto: number, valorImpuesto: number) {
 
     // Sumar el subtotal sin impuestos y el valor del impuesto
-    let totalConImpuesto = plus(subtotalSinImpuesto, valorImpuesto, DECIMALS.GENERAL);
+    const totalConImpuesto = plus(subtotalSinImpuesto, valorImpuesto, DECIMALS.GENERAL);
     return totalConImpuesto as number;
 
   }

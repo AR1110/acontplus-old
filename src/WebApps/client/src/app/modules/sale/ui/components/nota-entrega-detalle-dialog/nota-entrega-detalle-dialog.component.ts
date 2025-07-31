@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -16,7 +16,7 @@ import { finalize } from 'rxjs';
   templateUrl: './nota-entrega-detalle-dialog.component.html',
   styles: ``,
 })
-export class NotaEntregaDetalleDialogComponent {
+export class NotaEntregaDetalleDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<NotaEntregaDetalleDialogComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private notaEntregaSvc = inject(NotaEntregaService);

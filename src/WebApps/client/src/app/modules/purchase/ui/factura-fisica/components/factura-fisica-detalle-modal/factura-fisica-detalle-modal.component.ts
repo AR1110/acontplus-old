@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -18,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './factura-fisica-detalle-modal.component.html',
   styles: ``,
 })
-export class FacturaFisicaDetalleModalComponent {
+export class FacturaFisicaDetalleModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<FacturaFisicaDetalleModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private facturaFisicaSvc = inject(FacturaFisicaService);

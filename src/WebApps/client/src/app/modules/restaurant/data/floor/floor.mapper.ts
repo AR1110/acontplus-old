@@ -4,7 +4,7 @@ export class FloorMapper {
   static fromApiGetByEstab(response:ApiResponse) {
     let data = [] as any[]
     if(response.code==="1"){
-      let mainData = response.payload as any[] || [];
+      const mainData = response.payload as any[] || [];
 
       data = mainData.map((item:any, index: number)=>{
         return {

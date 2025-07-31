@@ -34,7 +34,7 @@ export class OrderService {
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...obj,
       tipo: 2,
     });
@@ -44,7 +44,7 @@ export class OrderService {
         let users = [];
         if (isApiResponse(response)) {
           if (response.code === '1') {
-            let mainData = JSON.parse(response.payload as string);
+            const mainData = JSON.parse(response.payload as string);
             if (mainData.orders) {
               orders = mainData.orders.map((item: any, index: number) => {
                 return {
@@ -63,15 +63,15 @@ export class OrderService {
   }
 
   getId(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       id,
       tipo: 4,
     });
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response) => {
-        let data = {
+        const data = {
           order: {} as any,
-          establecimientos: [] as Array<GroupedEstab>,
+          establecimientos: [] as GroupedEstab[],
           orderMaintenances: [] as any,
           orderDetails: [] as any,
           feeds: [] as any,
@@ -81,7 +81,7 @@ export class OrderService {
         };
         if (isApiResponse(response)) {
           if (response.code === '1') {
-            let {
+            const {
               order,
               orderDetails,
               orderMaintenances,
@@ -93,7 +93,7 @@ export class OrderService {
               decimalsConfig,
             } = JSON.parse(response.payload as string);
 
-            let tempOrder = order[0];
+            const tempOrder = order[0];
             data.order = {
               ...tempOrder,
               fechaEmision: formatDate(tempOrder.fechaEmision),
@@ -120,18 +120,18 @@ export class OrderService {
 
                   const medidas = mergeMeasureUtil(principal, fraccionado);
 
-                  let dataMedida =
+                  const dataMedida =
                     medidas.find((m) => m.idMedida === restItem.medidaId) ||
                     ({} as MedidaProducto);
 
-                  let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+                  const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     restItem.price,
                     restItem.taxPercentage
                   );
-                  let precioTotalSinImpuesto =
+                  const precioTotalSinImpuesto =
                     restItem.price * restItem.quantity - restItem.discount;
-                  let subTotalSinDescuento = restItem.price * restItem.quantity;
-                  let percentageDiscount =
+                  const subTotalSinDescuento = restItem.price * restItem.quantity;
+                  const percentageDiscount =
                     subTotalSinDescuento > 0
                       ? pricingCalculateUtil.getValueDiscountPercentage(
                           subTotalSinDescuento,
@@ -139,7 +139,7 @@ export class OrderService {
                         )
                       : 0;
 
-                  let obj: OrderMaintenance = {
+                  const obj: OrderMaintenance = {
                     id: restItem.id,
                     rowguid: generateUuidv4(),
                     bodegaId: restItem.bodegaId,

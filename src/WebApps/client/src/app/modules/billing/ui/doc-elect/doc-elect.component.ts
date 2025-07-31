@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -46,7 +46,7 @@ import { finalize, forkJoin, switchMap } from 'rxjs';
   templateUrl: './doc-elect.component.html',
   styles: ``,
 })
-export class DocElectComponent {
+export class DocElectComponent implements OnInit {
   private docElectSvc = inject(DocumentoElectronicoWebRepository);
   private tS = inject(ToastrNotificationService);
 
@@ -101,7 +101,7 @@ export class DocElectComponent {
   }
 
   private getDataParams() {
-    let obj = {
+    const obj = {
       codDoc: isValidField(this.dataSearch().codDoc),
       codEstado: isValidField(this.dataSearch().codEstado),
       checkBoxDate: this.dataSearch().checkBoxDate,
@@ -158,7 +158,7 @@ export class DocElectComponent {
           this.estadosDoc = initialData.estadoDocumentos;
 
           if (this.estabs.length > 0) {
-            let dataEstab = this.estabs.find((estab) => estab.defaultEstab);
+            const dataEstab = this.estabs.find((estab) => estab.defaultEstab);
             this.puntosEmision = dataEstab?.puntosEmision || [];
             this.dataSearch.update((e) => {
               return {
@@ -196,7 +196,7 @@ export class DocElectComponent {
   }
 
   onEstabChange() {
-    let dataEstab = this.estabs.find(
+    const dataEstab = this.estabs.find(
       (estab) => estab.codEstab === this.dataSearch().codEstab,
     );
     this.puntosEmision = dataEstab?.puntosEmision || [];

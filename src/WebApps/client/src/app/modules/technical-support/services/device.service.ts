@@ -37,15 +37,15 @@ export class DeviceService {
 
   search<T extends { textSearch: string }>(
     data: T
-  ): Observable<Array<DeviceSearch>> {
-    let query = {
+  ): Observable<DeviceSearch[]> {
+    const query = {
       tipo: 3,
       textSearch: data.textSearch,
     };
     return this.http.get(`${this.url}?json=${JSON.stringify(query)}`).pipe(
       map((response) => {
         if (isApiResponse(response)) {
-          let { devices } =
+          const { devices } =
             (response.payload && JSON.parse(response.payload as string)) || [];
           return devices || [];
         }

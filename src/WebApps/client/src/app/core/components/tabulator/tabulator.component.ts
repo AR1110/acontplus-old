@@ -61,8 +61,12 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.applyTheme();
-    this.initializeTable();
+    // Initialize table after view is checked
+    setTimeout(() => {
+      this.initializeTable();
+      this.applyTheme();
+      this.registerEvents();
+    });
   }
 
   ngOnDestroy(): void {
@@ -95,30 +99,72 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     }
   }
 
-  private initializeTable(): void {
-    const tableElement = document.getElementById(this.uniqueIdTabulator);
-    if (!tableElement) {
-      console.error(`Table element with id ${this.uniqueIdTabulator} not found.`);
+  private initializeTable(attempt: number = 0): void {
+    // Safety check - don't try more than 5 times
+    if (attempt > 5) {
+      console.error('Failed to initialize Tabulator after multiple attempts');
       return;
     }
-    this._refTabulator = new Tabulator(this.tabContainer, {
-      renderVerticalBuffer: 300,
-      columns: this.columnNames,
-      data: this.tableData,
-      dataTree: this.dataTree,
-      dataTreeChildField: this.dataTreeChildField,
-      dataTreeSelectPropagate: true,
-      dataTreeStartExpanded: this.dataTreeStartExpanded,
-      height: this.height,
-      layout: 'fitData',
-      reactiveData: true,
-      autoResize: true,
-      placeholder: 'Sin registro',
-      selectableRows: true,
-      ...this.options,
-    });
-    tableElement.appendChild(this.tabContainer);
-    this.registerEvents();
+
+    const tableElement = document.getElementById(this.uniqueIdTabulator);
+    if (!tableElement) {
+      console.warn(`Table element with id ${this.uniqueIdTabulator} not found, retrying... (attempt ${attempt + 1}/5)`);
+      setTimeout(() => this.initializeTable(attempt + 1), 200);
+      return;
+    }
+    
+    try {
+      // Clear any existing Tabulator instance
+      if (this._refTabulator) {
+        this._refTabulator.destroy();
+      }
+      
+      // Clear the container
+      while (this.tabContainer.firstChild) {
+        this.tabContainer.removeChild(this.tabContainer.firstChild);
+      }
+      
+      // Append the tab container to the target element
+      tableElement.appendChild(this.tabContainer);
+      
+      this._refTabulator = new Tabulator(this.tabContainer, {
+        renderVerticalBuffer: 300,
+        columns: this.columnNames,
+        data: this.tableData,
+        dataTree: this.dataTree,
+        dataTreeChildField: this.dataTreeChildField,
+        renderVertical: 'virtual',
+        dataTreeSelectPropagate: true,
+        dataTreeStartExpanded: this.dataTreeStartExpanded,
+        height: this.height,
+        layout: 'fitData',
+        reactiveData: true,
+        autoResize: true,
+        placeholder: 'Sin registro',
+        selectableRows: true,
+        ...this.options,
+      });
+      
+      this.registerEvents();
+      console.log('Tabulator initialized successfully');
+    } catch (error) {
+      console.error('Error initializing Tabulator:', error);
+      // Try to recover by destroying any partial initialization
+      if (this._refTabulator) {
+        try {
+          this._refTabulator.destroy();
+        } catch (e) {
+          console.error('Error cleaning up failed Tabulator instance:', e);
+        }
+        this._refTabulator = null as any;
+      }
+      
+      // Retry after a delay
+      if (attempt < 5) {
+        console.log(`Retrying Tabulator initialization (attempt ${attempt + 1}/5)...`);
+        setTimeout(() => this.initializeTable(attempt + 1), 300);
+      }
+    }
   }
 
   private registerEvents(): void {

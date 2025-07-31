@@ -4,7 +4,7 @@ import {ApiResponse} from "@core/models/api-response";
 import { Observable } from "rxjs";
 import {ProductUbicationRepository} from "@inventory/product/domain/repositories/product-ubication.repository";
 
-type Params<T> = {
+interface Params<T> {
   id: number, data: T
 }
 @Injectable({

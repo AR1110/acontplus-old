@@ -1,4 +1,4 @@
-import { Component, inject, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, signal, TemplateRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
@@ -38,7 +38,7 @@ import {ListVehicleUseCase} from "@mechanical/application/use-cases/vehicle/list
   templateUrl: './vehicle-page.component.html',
   styles: ``
 })
-export class VehiclePageComponent {
+export class VehiclePageComponent implements OnInit, AfterViewInit {
   private vehicleUseCase = inject(VehicleUseCase)
   private $listUseCase = inject(ListVehicleUseCase)
   tS = inject(ToastrNotificationService);
@@ -74,7 +74,7 @@ export class VehiclePageComponent {
 
   private getVehicles() {
     try {
-      let params = {
+      const params = {
         pageIndex: this.pagination().pageIndex,
         pageSize: this.pagination().pageSize,
       }

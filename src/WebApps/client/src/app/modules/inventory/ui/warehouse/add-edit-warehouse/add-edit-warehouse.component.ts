@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
@@ -30,7 +30,7 @@ import {ApiResponse} from "@core/models/api-response";
   templateUrl: './add-edit-warehouse.component.html',
   styles: ``
 })
-export class AddEditWarehouseComponent {
+export class AddEditWarehouseComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AddEditWarehouseComponent>);
   private params = inject<WarehouseList>(MAT_DIALOG_DATA);
   private sharedSvc = inject(SharedService);

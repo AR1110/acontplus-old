@@ -15,7 +15,7 @@ export class CategoryService {
   private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.CATEGORY}`
 
   getAll<T>(data: T) {
-    let params = JSON.stringify({ ...data, tipo: 1 })
+    const params = JSON.stringify({ ...data, tipo: 1 })
     return this.http.get(`${this.url}Get?json=${params}`)
       .pipe(
         map(response => {

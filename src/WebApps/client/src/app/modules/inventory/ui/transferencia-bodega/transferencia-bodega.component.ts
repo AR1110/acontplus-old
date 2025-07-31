@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,7 +39,7 @@ import { finalize } from 'rxjs';
   templateUrl: './transferencia-bodega.component.html',
   styles: ``,
 })
-export class TransferenciaBodegaComponent {
+export class TransferenciaBodegaComponent implements OnInit {
   private _useCase = inject(TransferenciaBodegaUseCase);
 
   dataSource = signal<any[]>([]);
@@ -118,7 +118,7 @@ export class TransferenciaBodegaComponent {
         this.dataSearch.codEstab = dataEstab.codEstab;
         this.puntosEmision = dataEstab.puntosEmision;
 
-        let dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
+        const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
 
         if (dataPtoEmi) {
           this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
@@ -135,7 +135,7 @@ export class TransferenciaBodegaComponent {
     );
     if (dataEstab) {
       this.puntosEmision = dataEstab?.puntosEmision;
-      let dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
       if (dataPtoEmi) {
         this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
         this.getAll();

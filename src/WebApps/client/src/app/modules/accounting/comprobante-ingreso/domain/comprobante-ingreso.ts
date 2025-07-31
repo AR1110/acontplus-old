@@ -31,10 +31,10 @@ export interface PaymentData {
 
 
 export interface PaymentDataForm {
-  paymentTypes: Array<PaymentType>
-  cuentasPorCobrar: Array<CuentaPorCobrar>
-  bancos: Array<any>
-  ciudades: Array<any>
+  paymentTypes: PaymentType[]
+  cuentasPorCobrar: CuentaPorCobrar[]
+  bancos: any[]
+  ciudades: any[]
   comprobante: CuentaPorCobrarComprobante
 }
 

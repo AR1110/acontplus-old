@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal, OnInit,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
@@ -150,7 +150,7 @@ interface MenuNode {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserManualPageComponent {
+export class UserManualPageComponent implements OnInit {
   data = {
     menuId: 0,
     textSearch: '',

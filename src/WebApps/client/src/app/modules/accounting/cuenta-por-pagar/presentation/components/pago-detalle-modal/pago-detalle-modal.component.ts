@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -11,7 +11,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
   templateUrl: './pago-detalle-modal.component.html',
   styles: ``,
 })
-export class PagoDetalleModalComponent {
+export class PagoDetalleModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<PagoDetalleModalComponent>);
   readonly data = inject<any[]>(MAT_DIALOG_DATA);
 

@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +31,7 @@ import {MatSelectModule} from "@angular/material/select";
   templateUrl: './resumen-contable.component.html',
   styles: ``,
 })
-export class ResumenContableComponent {
+export class ResumenContableComponent implements OnInit {
   private _resumenContableCaseUse = inject(ResumenContableUseCase);
   private sharedSvc = inject(SharedService);
   subcategories = signal<SubCategorySelectHtmlOnly[]>([]);
@@ -51,7 +51,7 @@ export class ResumenContableComponent {
     this._resumenContableCaseUse.getDataFilter().subscribe((response) => {
       this.subcategories.set(response.subCategories);
       this.transactionTypes.set(response.transactionTypes);
-      let dataTipoTransaccion = this.transactionTypes().find(
+      const dataTipoTransaccion = this.transactionTypes().find(
         (tt) => tt.codigo === TIPO_TRANSACCION.V,
       );
       this.dataSearch.idTipoTransaccion =
@@ -87,7 +87,7 @@ export class ResumenContableComponent {
   }
 
   private getReport() {
-    let dataParams = {
+    const dataParams = {
       tipo: 1,
       ckFecha: true,
       tipoTransaccionId: getValidId(this.dataSearch.idTipoTransaccion),
@@ -96,7 +96,7 @@ export class ResumenContableComponent {
       toDate: this.dataSearch.toDate,
     };
 
-    let reportParams = JSON.stringify({
+    const reportParams = JSON.stringify({
       hasParams: false,
       codigo: ACCOUNTING_CODE_REPORT.RAAM,
       format: this.format,
