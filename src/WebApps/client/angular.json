@@ -153,8 +153,7 @@
               "buildTarget": "client:build:production"
             },
             "staging": {
-              "buildTarget": "client:build:staging",
-              "proxyConfig": "proxy.conf.json"
+              "buildTarget": "client:build:staging"
             },
             "development": {
               "buildTarget": "client:build:development"
