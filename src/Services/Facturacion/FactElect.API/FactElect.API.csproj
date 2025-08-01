@@ -13,7 +13,6 @@
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.FactElect" />
     <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Acontplus.Common.Services" />

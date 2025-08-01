@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+using Common.Logging;
 using Microsoft.AspNetCore.Http.Features;
 using Serilog;
 
@@ -43,21 +43,6 @@ try
 
     builder.Services.AddAdvancedLoggingOptions(builder.Configuration);
 
-    builder.Services.AddHttpClient("ApiProxy", client =>
-        {
-            // Aumentar el timeout para solicitudes grandes
-            client.Timeout = TimeSpan.FromMinutes(30);
-            client.DefaultRequestHeaders.ConnectionClose = false;
-        })
-        .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-        {
-            PooledConnectionLifetime = TimeSpan.FromMinutes(5),
-            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
-            MaxConnectionsPerServer = 100,
-            EnableMultipleHttp2Connections = true
-        });
-    ;
-
     builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
     builder.Services.Configure<FormOptions>(options =>
@@ -91,42 +76,11 @@ try
 
     app.UseRouting();
 
-    //app.Use(async (context, next) =>
-    //{
-    //    // Para solicitudes PUT
-    //    if (context.Request.Method == HttpMethods.Put)
-    //    {
-    //        var queryLength = context.Request.QueryString.Value?.Length ?? 0;
-
-    //        // Log para query strings grandes
-    //        if (queryLength > 2000)
-    //        {
-    //            Log.Warning("Solicitud PUT con query string largo: {Length} caracteres", queryLength);
-
-    //            // Habilitar buffering para asegurar que se pueda leer el cuerpo varias veces
-    //            context.Request.EnableBuffering();
-    //        }
-    //    }
-
-    //    await next();
-    //});
-
     app.UseAuthentication();
 
     app.UseAuthorization();
 
     app.MapRazorPages();
-
-    //app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/client"), builder =>
-    //{
-    //    builder.UseStaticFiles();
-    //    builder.Run(async context =>
-    //    {
-    //        context.Response.ContentType = "text/html";
-    //        await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "client", "index.html"));
-    //    });
-    //});
-
 
     await app.RunAsync();
 }
