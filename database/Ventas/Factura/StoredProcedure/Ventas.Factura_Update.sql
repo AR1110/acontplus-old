@@ -346,7 +346,13 @@ BEGIN
                 RETURN 
             END 
 
-         IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
+        IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND isAutomatic = 1)
+            BEGIN
+                SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
+                RETURN 
+            END
+
+        IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
             BEGIN
                 SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
                 RETURN 
