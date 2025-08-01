@@ -378,7 +378,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
   fetchCompanyDemoSteps(): void {
     this._companyDemoStepService
-      .get({})
+      .get()
       .pipe(
         catchError((error: unknown) => {
           this._errorHandler.handleApiError(error, {
