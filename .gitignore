@@ -98,3 +98,4 @@ shared/sharedsettings.Development.json
 /.idea/.idea.AcontPlus/.idea
 *.zip
 /AcontPlus.slnLaunch
+/src/WebApps/WebUI/WebUI.sln
