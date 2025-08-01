@@ -213,63 +213,62 @@ BEGIN
                ,importeTotal   NUMERIC(18,2)
             )
 
-            --> Variables
-            SELECT TOP 1 @formaPago = codigo FROM FormaPagoSri WHERE idFormaPagoSri = @idFormaPago
 
-            SET @fechaAnulacion =
-            (
-                SELECT DATEADD
-                   (
-                        DAY,
-                        CASE 
-                            WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 6 THEN 2 -- Sábado → lunes
-                            WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 7 THEN 1 -- Domingo → lunes
-                            ELSE 0
-                        END,
-                        DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)
-                   )
-            )
-
-            --> Normativa que prohibe la anulacion de ventas emitidas a consumidor final
+            --> Normativas del sri para el tipo de cliente Consumidor Final
             IF EXISTS
             (
                 SELECT 1 FROM Customer.Customer   cu WITH (NOLOCK)
                 INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
                 WHERE cu.IdCard = @identificacion
-                  AND ti.codigoSri = '07' 
+                    AND ti.codigoSri = '07' 
             )
                 BEGIN
-                    SELECT @message = 'No se permite anular ventas a consumidor final.'
-                END 
-
-            --> Normativa para solo permitir anular documento solo dentro de la fecha que corresponde en este caso los 10 del siguiente mes de la fecha de emision
-            IF GETDATE() > @fechaAnulacion
-                BEGIN 
-                    SELECT @message = 'No puede anular este documento. El SRI solo permite anular hasta el día 10 del mes siguiente a la fecha de emisión.' 
-                END
-
-            --> Normativa vigente solo puede emitir facturas menores o iguales a 50 para consumidor final
-            IF @importeTotal > 50
-                BEGIN
-                    IF EXISTS
-                    (
-                        SELECT 1 FROM Customer.Customer   cu WITH (NOLOCK)
-                        INNER JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
-                        WHERE cu.IdCard = @identificacion
-                          AND ti.codigoSri = '07' 
-                    )
+                    --> Normativa vigente solo puede emitir facturas menores o iguales a 50 para consumidor final
+                    IF @importeTotal > 50
                         BEGIN
                             SELECT @message = 'No está permitido emitir facturas mayores a 50 dolares a consumidor final Según normativa del SRI' 
-                        END 
+                        END
+                    ELSE
+                        BEGIN
+                            SELECT @message = 'No se permite anular ventas a consumidor final.' WHERE @importeTotal IS NULL
+                        END
                 END
 
-            --> Normativa de ventas que superen las 500 dolares no podra pagar en efectivo
-            IF @importeTotal > 500
-                BEGIN
-                    IF @formaPago IN ('01','15','21')
+            --> Normativa que restringue a tipos ciertos de pagos si se eleva el valor destinado por el sri
+            ELSE
+                BEGIN 
+                    IF @importeTotal > 500
                         BEGIN
-                            SELECT @message = 'No se permite esta forma de pago para montos mayores a $500 .Use transferencia, tarjeta o medios electrónicos autorizados (SRI NAC-DGERCGC24-00000005).'
-                        END 
+                            SELECT TOP 1 @formaPago = codigo FROM FormaPagoSri WHERE idFormaPagoSri = @idFormaPago
+
+                            IF @formaPago IN ('01','15','21')
+                                BEGIN
+                                    SELECT @message = 'No se permite esta forma de pago para montos mayores a $500.'
+                                END 
+                        END
+                END 
+
+            --> Validacion para procedo de anular documento
+            IF @fechaEmision IS NOT NULL
+                BEGIN
+                    SET @fechaAnulacion =
+                    (
+                        SELECT DATEADD
+                           (
+                                DAY,
+                                CASE 
+                                    WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 6 THEN 2 -- Sábado → lunes
+                                    WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 7 THEN 1 -- Domingo → lunes
+                                    ELSE 0
+                                END,
+                                DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)
+                           )
+                    )
+                    --> Normativa para solo permitir anular documento solo dentro de la fecha que corresponde en este caso los 10 del siguiente mes de la fecha de emision
+                    IF GETDATE() > @fechaAnulacion
+                        BEGIN 
+                            SELECT @message = 'No puede anular este documento. El SRI solo permite anular hasta el día 10 del mes siguiente a la fecha de emisión.'
+                        END
                 END 
 
             SELECT '0' as code, @message as 'message' WHERE @message IS NOT NULL

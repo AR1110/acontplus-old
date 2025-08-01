@@ -229,6 +229,12 @@ BEGIN
 				RETURN
 			END 
 
+        IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND isAutomatic = 1)
+            BEGIN
+                SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
+                RETURN 
+            END
+
         IF EXISTS (SELECT 1 FROM Ventas.v_NotaCredito WITH (NOLOCK) WHERE idNotaCredito = @id AND codServicio IN (4,3,6))
             BEGIN
                 SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'

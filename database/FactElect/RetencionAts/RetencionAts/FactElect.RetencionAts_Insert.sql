@@ -54,12 +54,13 @@ BEGIN
         @codDoc VARCHAR(2) = '07'; 
 
 	DECLARE @tblInfoCompRet AS TABLE( 
-        idPuntoEmision INT NOT NULL
+         idPuntoEmision INT NOT NULL
         ,versionComp VARCHAR(10) NOT NULL DEFAULT '2.0.0'
         ,parteRel VARCHAR(2) NOT NULL
         ,idProveedor INT NOT NULL
 		,tipoSujetoRetenido VARCHAR(2) NULL
         ,fechaEmision DATETIME2 NOT NULL
+        ,isAutomatic BIT DEFAULT 0
 	);
 
 	DECLARE @tblDocs AS TABLE(
@@ -80,6 +81,7 @@ BEGIN
 		,totalImpuestoReembolso NUMERIC(18,5)
 		,totalSinImpuestos NUMERIC(18,5) NOT NULL
 		,importeTotal NUMERIC(18,5) NOT NULL
+        
 	);
 
 	DECLARE @tblTaxes AS TABLE(
@@ -343,8 +345,8 @@ BEGIN
 		BEGIN TRAN
 			--> DocumentoElectronico
 			INSERT INTO dbo.DocumentoElectronico
-                   (idTipoDocumento,versionComp,fechaEmision,nroDocumento,idPuntoEmision,claveAcceso,idUsuario,CustomerId,idEstadoServicio,serieComprobante)
-			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,idPuntoEmision,@claveAcceso,@idUsuario,@customerId,@idEstadoServicio,@serieComprobante
+                   (idTipoDocumento,versionComp,fechaEmision,nroDocumento,idPuntoEmision,claveAcceso,idUsuario,CustomerId,idEstadoServicio,serieComprobante,isAutomatic)
+			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,idPuntoEmision,@claveAcceso,@idUsuario,@customerId,@idEstadoServicio,@serieComprobante,isAutomatic
             FROM @tblInfoCompRet
 
             SET @idDocumentoElectronico = SCOPE_IDENTITY()
@@ -399,8 +401,8 @@ BEGIN
 
             --> CONTABILIDAD 
 			INSERT INTO Contabilidad.CuentaPorPagar
-			      (codDoc,fechaEmision, idEstablecimiento, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento)
-		    SELECT @codDoc,fechaEmision,@idEstablecimiento, @idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts
+			      (codDoc,fechaEmision, idEstablecimiento, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento,idEntidad)
+		    SELECT @codDoc,fechaEmision,@idEstablecimiento, @idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts,@idEntidad
             FROM @tblInfoCompRet
 
 			UPDATE tax SET tax.idRetAtsDocSustento = ds.idRetAtsDocSustento
