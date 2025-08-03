@@ -26,11 +26,10 @@ public static class ApplicationServicesExtensions
 
         services.AddMemoryCache();
 
-        // Program.cs
-        services.AddSriAuthentication(options =>
-        {
-            configuration.GetSection("SriAuthentication").Bind(options);
-        });
+        services.AddHttpClient();
+        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
+        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

@@ -1,9 +1,16 @@
 using FactElect.Application.DTOs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
-
-namespace FactElect.Application.Services.Sri;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
 
 public class SriAuthenticationService : ISriAuthenticationService
 {
@@ -27,46 +34,66 @@ public class SriAuthenticationService : ISriAuthenticationService
     {
         _httpClient.BaseAddress = new Uri(_options.BaseUrl);
         _httpClient.Timeout = TimeSpan.FromSeconds(_options.TimeoutSeconds);
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", _options.UserAgent);
-        _httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        _httpClient.DefaultRequestHeaders.Add("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
-        _httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-        _httpClient.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+        _httpClient.DefaultRequestHeaders.Clear();
+
+        // Configure headers to mimic a browser
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml", 0.9));
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/avif"));
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/webp"));
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.8));
+        _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("es-ES"));
+        _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("es", 0.9));
+        _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en", 0.8));
+        _httpClient.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
+        _httpClient.DefaultRequestHeaders.Add("Pragma", "no-cache");
     }
 
     public async Task<SriAuthenticationResult> AuthenticateAsync(string username, string password, string? additionalCi = null)
     {
         try
         {
-            _logger.LogInformation("Starting SRI authentication for user: {Username}", username.Substring(0, 4) + "***");
+            // Step 1: Initiate authorization request
+            var authResult = await InitiateAuthorization();
+            if (!authResult.IsSuccess)
+                return authResult;
 
-            // Step 1: Get login page and extract session parameters
-            var loginPageResult = await GetLoginPageAsync();
-            if (!loginPageResult.IsSuccess)
-                return loginPageResult;
+            // Step 2: Submit login form
+            var loginResult = await SubmitLoginForm(
+                username,
+                password,
+                additionalCi,
+                authResult.SessionCode!,
+                authResult.ExecutionCode!,
+                authResult.Cookies);
 
-            // Step 2: Perform authentication
-            var authResult = await PerformAuthenticationAsync(
-                username, password, additionalCi,
-                loginPageResult.SessionCode!, loginPageResult.ExecutionCode!,
-                loginPageResult.Cookies);
+            if (!loginResult.IsSuccess)
+                return loginResult;
 
-            if (authResult.IsSuccess)
+            // Step 3: Handle the response (either token in fragment or authorization code)
+            if (!string.IsNullOrEmpty(loginResult.AccessToken))
             {
-                _logger.LogInformation("Authentication successful for user: {Username}", username.Substring(0, 4) + "***");
-            }
-            else
-            {
-                _logger.LogWarning("Authentication failed for user: {Username}. Error: {Error}",
-                    username.Substring(0, 4) + "***", authResult.ErrorMessage);
+                // We already got tokens in fragment
+                return loginResult;
             }
 
-            return authResult;
+            if (!string.IsNullOrEmpty(loginResult.AuthorizationCode))
+            {
+                // Exchange authorization code for tokens
+                return await ExchangeCodeForTokens(loginResult.AuthorizationCode, loginResult.Cookies);
+            }
+
+            return new SriAuthenticationResult
+            {
+                IsSuccess = false,
+                ErrorMessage = "Authentication completed but no tokens were received"
+            };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during SRI authentication");
+            _logger.LogError(ex, "Authentication failed for user: {Username}", MaskUsername(username));
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
@@ -75,35 +102,33 @@ public class SriAuthenticationService : ISriAuthenticationService
         }
     }
 
-    private async Task<SriAuthenticationResult> GetLoginPageAsync()
+    private async Task<SriAuthenticationResult> InitiateAuthorization()
     {
         try
         {
-            var loginUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth" +
-                          $"?client_id={_options.ClientId}" +
-                          "&redirect_uri=" + Uri.EscapeDataString($"{_options.BaseUrl}/sri-en-linea/") +
-                          "&state=" + Guid.NewGuid().ToString("N") +
-                          "&response_mode=fragment" +
-                          "&response_type=code" +
-                          "&scope=openid" +
-                          "&nonce=" + Guid.NewGuid().ToString("N");
+            var authUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth" +
+                         $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
+                         $"&redirect_uri={Uri.EscapeDataString(_options.RedirectUri)}" +
+                         $"&response_type=code" +
+                         $"&scope=openid" +
+                         $"&state={Guid.NewGuid():N}" +
+                         $"&nonce={Guid.NewGuid():N}";
 
-            var response = await _httpClient.GetAsync(loginUrl);
+            var request = new HttpRequestMessage(HttpMethod.Get, authUrl);
+            var response = await _httpClient.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
+            var cookies = ExtractCookies(response);
 
-            // Extract cookies
-            var cookies = ExtractCookies(response.Headers);
-
-            // Extract session_code and execution from the form action URL or hidden inputs
-            var sessionCode = ExtractParameterFromContent(content, "session_code");
-            var executionCode = ExtractParameterFromContent(content, "execution");
+            var sessionCode = ExtractSessionCode(content);
+            var executionCode = ExtractExecutionCode(content);
 
             if (string.IsNullOrEmpty(sessionCode) || string.IsNullOrEmpty(executionCode))
             {
+                _logger.LogError("Failed to extract session parameters from auth page");
                 return new SriAuthenticationResult
                 {
                     IsSuccess = false,
-                    ErrorMessage = "Failed to extract session parameters from login page"
+                    ErrorMessage = "Failed to extract required parameters from authorization page"
                 };
             }
 
@@ -117,205 +142,214 @@ public class SriAuthenticationService : ISriAuthenticationService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Failed to initiate authorization");
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
-                ErrorMessage = $"Failed to get login page: {ex.Message}"
+                ErrorMessage = $"Failed to initiate authorization: {ex.Message}"
             };
         }
     }
 
-    private async Task<SriAuthenticationResult> PerformAuthenticationAsync(
-        string username, string password, string? additionalCi,
-        string sessionCode, string executionCode, Dictionary<string, string> cookies)
+    private async Task<SriAuthenticationResult> SubmitLoginForm(
+        string username,
+        string password,
+        string? additionalCi,
+        string sessionCode,
+        string executionCode,
+        Dictionary<string, string> cookies)
     {
         try
         {
-            var authUrl = $"/auth/realms/{_options.Realm}/login-actions/authenticate" +
-                         $"?session_code={sessionCode}" +
-                         $"&execution={executionCode}" +
-                         $"&client_id={_options.ClientId}" +
-                         $"&tab_id=" + GenerateTabId();
+            var loginUrl = $"/auth/realms/{_options.Realm}/login-actions/authenticate" +
+                         $"?session_code={Uri.EscapeDataString(sessionCode)}" +
+                         $"&execution={Uri.EscapeDataString(executionCode)}" +
+                         $"&client_id={Uri.EscapeDataString(_options.ClientId)}";
 
-            // Prepare form data
-            var formData = new List<KeyValuePair<string, string>>
+            var formData = new Dictionary<string, string>
             {
-                new("username", username),
-                new("usuario", username),
-                new("password", password),
-                new("login", "Ingresar")
+                ["username"] = username,
+                ["usuario"] = username,
+                ["password"] = password,
+                ["session_code"] = sessionCode,
+                ["execution"] = executionCode,
+                ["client_id"] = _options.ClientId,
+                ["login"] = "Ingresar"
             };
 
             if (!string.IsNullOrEmpty(additionalCi))
             {
-                formData.Add(new("ciAdicional", additionalCi));
+                formData["ciAdicional"] = additionalCi;
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Post, authUrl)
+            var request = new HttpRequestMessage(HttpMethod.Post, loginUrl)
             {
                 Content = new FormUrlEncodedContent(formData)
             };
 
-            // Add cookies to request
             AddCookiesToRequest(request, cookies);
+            request.Headers.Referrer = new Uri($"{_options.BaseUrl}{loginUrl}");
 
-            var response = await _httpClient.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            // Check for successful authentication
-            if (response.Headers.Location != null)
+            // Don't follow redirects automatically
+            var handler = new HttpClientHandler { AllowAutoRedirect = false };
+            using var tempClient = new HttpClient(handler);
+            tempClient.DefaultRequestHeaders.Clear();
+            foreach (var header in _httpClient.DefaultRequestHeaders)
             {
-                var location = response.Headers.Location.ToString();
+                tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
 
-                // Extract access token from redirect URL fragment or query
-                var accessToken = ExtractTokenFromLocation(location, "access_token");
-                var refreshToken = ExtractTokenFromLocation(location, "refresh_token");
+            var response = await tempClient.SendAsync(request);
+            var responseCookies = ExtractCookies(response);
 
-                if (!string.IsNullOrEmpty(accessToken))
+            // Merge cookies
+            foreach (var cookie in responseCookies)
+            {
+                cookies[cookie.Key] = cookie.Value;
+            }
+
+            // Check for redirect with tokens in fragment
+            if (response.StatusCode == HttpStatusCode.Redirect ||
+                response.StatusCode == HttpStatusCode.Found)
+            {
+                var location = response.Headers.Location?.ToString();
+                if (!string.IsNullOrEmpty(location))
                 {
-                    return new SriAuthenticationResult
+                    // Check for tokens in fragment
+                    if (location.Contains("#"))
                     {
-                        IsSuccess = true,
-                        AccessToken = accessToken,
-                        RefreshToken = refreshToken,
-                        SessionCode = sessionCode,
-                        ExecutionCode = executionCode,
-                        Cookies = ExtractCookies(response.Headers),
-                        ExpiresAt = DateTime.UtcNow.AddHours(8) // Typical JWT expiration
-                    };
+                        var fragment = location.Split('#')[1];
+                        var tokenResult = ParseTokenResponse(fragment);
+                        tokenResult.Cookies = cookies;
+                        return tokenResult;
+                    }
+
+                    // Check for authorization code
+                    if (location.Contains("code="))
+                    {
+                        var query = HttpUtility.ParseQueryString(new Uri(location).Query);
+                        var code = query["code"];
+                        if (!string.IsNullOrEmpty(code))
+                        {
+                            return new SriAuthenticationResult
+                            {
+                                IsSuccess = true,
+                                AuthorizationCode = code,
+                                Cookies = cookies
+                            };
+                        }
+                    }
                 }
             }
 
-            // Check for authentication errors in response content
-            if (responseContent.Contains("error") || responseContent.Contains("invalid"))
+            // Fallback - check response content
+            var content = await response.Content.ReadAsStringAsync();
+            if (content.Contains("sri-en-linea"))
             {
                 return new SriAuthenticationResult
                 {
-                    IsSuccess = false,
-                    ErrorMessage = "Invalid credentials or authentication failed"
+                    IsSuccess = true,
+                    Cookies = cookies
                 };
             }
 
-            // If we get here, authentication might have succeeded but we need to handle the session
-            var newCookies = ExtractCookies(response.Headers);
-
             return new SriAuthenticationResult
             {
-                IsSuccess = true,
-                SessionCode = sessionCode,
-                ExecutionCode = executionCode,
-                Cookies = newCookies.Count > 0 ? newCookies : cookies,
-                ExpiresAt = DateTime.UtcNow.AddHours(8)
+                IsSuccess = false,
+                ErrorMessage = "Login form submission failed",
+                Cookies = cookies
             };
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Login form submission failed");
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
-                ErrorMessage = $"Authentication request failed: {ex.Message}"
+                ErrorMessage = $"Login form submission failed: {ex.Message}"
             };
         }
     }
 
-    public async Task<SriAuthenticationResult> RefreshTokenAsync(string refreshToken)
+    private async Task<SriAuthenticationResult> ExchangeCodeForTokens(string code, Dictionary<string, string> cookies)
     {
         try
         {
             var tokenUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/token";
 
-            var formData = new List<KeyValuePair<string, string>>
+            var formData = new Dictionary<string, string>
             {
-                new("grant_type", "refresh_token"),
-                new("refresh_token", refreshToken),
-                new("client_id", _options.ClientId)
+                ["grant_type"] = "authorization_code",
+                ["code"] = code,
+                ["redirect_uri"] = _options.RedirectUri,
+                ["client_id"] = _options.ClientId
             };
 
             var request = new HttpRequestMessage(HttpMethod.Post, tokenUrl)
             {
                 Content = new FormUrlEncodedContent(formData)
             };
+            AddCookiesToRequest(request, cookies);
 
             var response = await _httpClient.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync();
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var tokenData = JsonSerializer.Deserialize<JsonElement>(responseContent);
-
+                _logger.LogError("Token exchange failed: {StatusCode} - {Content}",
+                    response.StatusCode, content);
                 return new SriAuthenticationResult
                 {
-                    IsSuccess = true,
-                    AccessToken = tokenData.GetProperty("access_token").GetString(),
-                    RefreshToken = tokenData.TryGetProperty("refresh_token", out var rt) ? rt.GetString() : refreshToken,
-                    ExpiresAt = DateTime.UtcNow.AddSeconds(tokenData.GetProperty("expires_in").GetInt32())
+                    IsSuccess = false,
+                    ErrorMessage = $"Token exchange failed: {response.StatusCode}"
                 };
             }
 
+            using var doc = JsonDocument.Parse(content);
             return new SriAuthenticationResult
             {
-                IsSuccess = false,
-                ErrorMessage = "Failed to refresh token"
+                IsSuccess = true,
+                AccessToken = doc.RootElement.GetProperty("access_token").GetString(),
+                RefreshToken = doc.RootElement.GetProperty("refresh_token").GetString(),
+                ExpiresIn = doc.RootElement.GetProperty("expires_in").GetInt32(),
+                Cookies = cookies
             };
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Token exchange failed");
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
-                ErrorMessage = $"Token refresh failed: {ex.Message}"
+                ErrorMessage = $"Token exchange failed: {ex.Message}"
             };
         }
     }
 
-    public async Task<bool> ValidateTokenAsync(string accessToken)
+    private SriAuthenticationResult ParseTokenResponse(string fragment)
     {
-        try
+        var parameters = HttpUtility.ParseQueryString(fragment);
+        return new SriAuthenticationResult
         {
-            var introspectUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/token/introspect";
-
-            var formData = new List<KeyValuePair<string, string>>
-            {
-                new("token", accessToken),
-                new("client_id", _options.ClientId)
-            };
-
-            var request = new HttpRequestMessage(HttpMethod.Post, introspectUrl)
-            {
-                Content = new FormUrlEncodedContent(formData)
-            };
-
-            var response = await _httpClient.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var introspectionData = JsonSerializer.Deserialize<JsonElement>(responseContent);
-                return introspectionData.GetProperty("active").GetBoolean();
-            }
-
-            return false;
-        }
-        catch
-        {
-            return false;
-        }
+            IsSuccess = true,
+            AccessToken = parameters["access_token"],
+            RefreshToken = parameters["refresh_token"],
+            ExpiresIn = int.TryParse(parameters["expires_in"], out var expires) ? expires : 0
+        };
     }
 
-    #region Helper Methods
-
-    private Dictionary<string, string> ExtractCookies(System.Net.Http.Headers.HttpResponseHeaders headers)
+    private Dictionary<string, string> ExtractCookies(HttpResponseMessage response)
     {
         var cookies = new Dictionary<string, string>();
 
-        if (headers.TryGetValues("Set-Cookie", out var cookieValues))
+        if (response.Headers.TryGetValues("Set-Cookie", out var cookieValues))
         {
             foreach (var cookie in cookieValues)
             {
-                var parts = cookie.Split(';')[0].Split('=', 2);
+                var parts = cookie.Split(';')[0].Split('=');
                 if (parts.Length == 2)
                 {
-                    cookies[parts[0].Trim()] = parts[1].Trim();
+                    cookies[parts[0]] = parts[1];
                 }
             }
         }
@@ -327,35 +361,39 @@ public class SriAuthenticationService : ISriAuthenticationService
     {
         if (cookies.Any())
         {
-            var cookieHeader = string.Join("; ", cookies.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            var cookieHeader = string.Join("; ", cookies.Select(c => $"{c.Key}={c.Value}"));
             request.Headers.Add("Cookie", cookieHeader);
         }
     }
 
-    private string ExtractParameterFromContent(string content, string parameterName)
+    private string ExtractSessionCode(string content)
     {
-        // Extract from form action URL
-        var actionMatch = System.Text.RegularExpressions.Regex.Match(
-            content, $@"{parameterName}=([^&""'>\s]+)");
+        // Try to extract from form action
+        var match = Regex.Match(content, @"action=""[^""]*[?&]session_code=([^&""'>\s]+)", RegexOptions.IgnoreCase);
+        if (match.Success) return match.Groups[1].Value;
 
-        return actionMatch.Success ? actionMatch.Groups[1].Value : string.Empty;
+        // Try to extract from hidden input
+        match = Regex.Match(content, @"<input[^>]*name=""session_code""[^>]*value=""([^""]+)""", RegexOptions.IgnoreCase);
+        if (match.Success) return match.Groups[1].Value;
+
+        return string.Empty;
     }
 
-    private string ExtractTokenFromLocation(string location, string tokenName)
+    private string ExtractExecutionCode(string content)
     {
-        var match = System.Text.RegularExpressions.Regex.Match(
-            location, $@"{tokenName}=([^&]+)");
+        // Try to extract from form action
+        var match = Regex.Match(content, @"action=""[^""]*[?&]execution=([^&""'>\s]+)", RegexOptions.IgnoreCase);
+        if (match.Success) return match.Groups[1].Value;
 
-        return match.Success ? Uri.UnescapeDataString(match.Groups[1].Value) : string.Empty;
+        // Try to extract from hidden input
+        match = Regex.Match(content, @"<input[^>]*name=""execution""[^>]*value=""([^""]+)""", RegexOptions.IgnoreCase);
+        if (match.Success) return match.Groups[1].Value;
+
+        return string.Empty;
     }
 
-    private string GenerateTabId()
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-        var random = new Random();
-        return new string(Enumerable.Repeat(chars, 11)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-
-    #endregion
+    private string MaskUsername(string username) =>
+        string.IsNullOrEmpty(username) || username.Length <= 4
+            ? "***"
+            : username.Substring(0, 4) + new string('*', username.Length - 4);
 }
