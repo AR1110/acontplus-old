@@ -55,10 +55,18 @@ public class SriAuthenticationService : ISriAuthenticationService
     {
         try
         {
+            _logger.LogInformation("Starting authentication for user: {Username}", MaskUsername(username));
+
             // Step 1: Initiate authorization request
             var authResult = await InitiateAuthorization();
             if (!authResult.IsSuccess)
+            {
+                _logger.LogError("Authorization initiation failed: {Error}", authResult.ErrorMessage);
                 return authResult;
+            }
+
+            _logger.LogDebug("Authorization initiated successfully. SessionCode: {SessionCode}, ExecutionCode: {ExecutionCode}, TabId: {TabId}",
+                MaskValue(authResult.SessionCode), MaskValue(authResult.ExecutionCode), authResult.TabId);
 
             // Step 2: Submit login form
             var loginResult = await SubmitLoginForm(
@@ -71,22 +79,39 @@ public class SriAuthenticationService : ISriAuthenticationService
                 authResult.Cookies);
 
             if (!loginResult.IsSuccess)
+            {
+                _logger.LogError("Login form submission failed: {Error}", loginResult.ErrorMessage);
                 return loginResult;
+            }
+
+            _logger.LogInformation("Login form submitted successfully");
 
             // Step 3: Handle the response (either token in fragment or authorization code)
             if (!string.IsNullOrEmpty(loginResult.AccessToken))
             {
-                // We already got tokens in fragment
+                _logger.LogInformation("Access token received directly from login");
                 return loginResult;
             }
 
             if (!string.IsNullOrEmpty(loginResult.AuthorizationCode))
             {
-                // Exchange authorization code for tokens
+                _logger.LogDebug("Authorization code received, exchanging for tokens");
                 return await ExchangeCodeForTokens(loginResult.AuthorizationCode, loginResult.Cookies);
             }
 
-            return new SriAuthenticationResult
+            // Step 4: If login was successful but no tokens, try to complete the OAuth flow
+            if (loginResult.IsSuccess && !string.IsNullOrEmpty(loginResult.ErrorMessage) &&
+                loginResult.ErrorMessage.Contains("session established"))
+            {
+                _logger.LogDebug("Attempting to complete OAuth flow manually");
+                var oauthResult = await TryCompleteOAuthFlow(loginResult.Cookies);
+                if (oauthResult.IsSuccess)
+                {
+                    return oauthResult;
+                }
+            }
+
+            return loginResult.IsSuccess ? loginResult : new SriAuthenticationResult
             {
                 IsSuccess = false,
                 ErrorMessage = "Authentication completed but no tokens were received"
@@ -102,6 +127,11 @@ public class SriAuthenticationService : ISriAuthenticationService
             };
         }
     }
+
+    private string MaskValue(string? value) =>
+        string.IsNullOrEmpty(value) || value.Length <= 8
+            ? "***"
+            : value.Substring(0, 8) + "***";
 
     private async Task<SriAuthenticationResult> InitiateAuthorization()
     {
@@ -271,13 +301,17 @@ public class SriAuthenticationService : ISriAuthenticationService
             // Check response content for success indicators
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogDebug("Login response status: {StatusCode}", response.StatusCode);
+            _logger.LogDebug("Login response headers: {Headers}",
+                string.Join(", ", response.Headers.Select(h => $"{h.Key}: {string.Join(", ", h.Value)}")));
             _logger.LogDebug("Login response content preview: {Content}",
-                content.Substring(0, Math.Min(500, content.Length)));
+                content.Substring(0, Math.Min(1000, content.Length)));
 
-            // Check for error messages in response
-            if (content.Contains("error") || content.Contains("invalid") ||
-                content.Contains("Usuario o clave incorrectos") ||
-                content.Contains("authentication failed"))
+            // Check for specific error messages that indicate authentication failure
+            if (content.Contains("Usuario o clave incorrectos") ||
+                content.Contains("Invalid username or password") ||
+                content.Contains("Authentication failed") ||
+                content.Contains("credenciales incorrectas") ||
+                content.Contains("login-error"))
             {
                 return new SriAuthenticationResult
                 {
@@ -287,8 +321,34 @@ public class SriAuthenticationService : ISriAuthenticationService
                 };
             }
 
-            // Check for success indicators
-            if (content.Contains("sri-en-linea") || response.StatusCode == HttpStatusCode.OK)
+            // Check if we're still on the login page (indicates failure)
+            if (content.Contains("kc-form-login") && content.Contains("password"))
+            {
+                // We're still on the login form, check for specific error indicators
+                if (content.Contains("alert") || content.Contains("error-message") ||
+                    content.Contains("login-error"))
+                {
+                    return new SriAuthenticationResult
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Authentication failed - still on login page",
+                        Cookies = cookies
+                    };
+                }
+            }
+
+            // Check for successful authentication indicators
+            // 1. Redirect to success page
+            // 2. Content contains dashboard or profile elements
+            // 3. No login form present
+            var hasLoginForm = content.Contains("kc-form-login") || content.Contains("name=\"password\"");
+            var hasSuccessIndicators = content.Contains("perfil") ||
+                                     content.Contains("dashboard") ||
+                                     content.Contains("contribuyente") ||
+                                     content.Contains("sri-en-linea") ||
+                                     content.Contains("logout");
+
+            if (!hasLoginForm && hasSuccessIndicators)
             {
                 return new SriAuthenticationResult
                 {
@@ -297,10 +357,23 @@ public class SriAuthenticationService : ISriAuthenticationService
                 };
             }
 
+            // If we have cookies but unclear content, try to continue the flow
+            if (cookies.ContainsKey("AUTH_SESSION_ID") &&
+                (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted))
+            {
+                // We might have a successful authentication but need to follow additional redirects
+                return new SriAuthenticationResult
+                {
+                    IsSuccess = true,
+                    Cookies = cookies,
+                    ErrorMessage = "Authentication may be successful - session established"
+                };
+            }
+
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
-                ErrorMessage = $"Unexpected response from login form: {response.StatusCode}",
+                ErrorMessage = $"Unclear authentication result. Status: {response.StatusCode}, HasLoginForm: {hasLoginForm}, HasSuccess: {hasSuccessIndicators}",
                 Cookies = cookies
             };
         }
@@ -311,6 +384,90 @@ public class SriAuthenticationService : ISriAuthenticationService
             {
                 IsSuccess = false,
                 ErrorMessage = $"Login form submission failed: {ex.Message}"
+            };
+        }
+    }
+
+    private async Task<SriAuthenticationResult> TryCompleteOAuthFlow(Dictionary<string, string> cookies)
+    {
+        try
+        {
+            // Try to access the OAuth authorization endpoint to complete the flow
+            var authUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth" +
+                         $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
+                         $"&redirect_uri={Uri.EscapeDataString(_options.RedirectUri)}" +
+                         $"&response_type=code" +
+                         $"&scope=openid" +
+                         $"&state={Guid.NewGuid():N}" +
+                         $"&nonce={Guid.NewGuid():N}";
+
+            var request = new HttpRequestMessage(HttpMethod.Get, authUrl);
+            AddCookiesToRequest(request, cookies);
+
+            // Don't follow redirects automatically
+            var handler = new HttpClientHandler { AllowAutoRedirect = false };
+            using var tempClient = new HttpClient(handler);
+            tempClient.BaseAddress = _httpClient.BaseAddress;
+            tempClient.Timeout = _httpClient.Timeout;
+
+            foreach (var header in _httpClient.DefaultRequestHeaders)
+            {
+                if (!tempClient.DefaultRequestHeaders.Contains(header.Key))
+                {
+                    tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+                }
+            }
+
+            var response = await tempClient.SendAsync(request);
+
+            if (response.StatusCode == HttpStatusCode.Redirect || response.StatusCode == HttpStatusCode.Found)
+            {
+                var location = response.Headers.Location?.ToString();
+                if (!string.IsNullOrEmpty(location))
+                {
+                    _logger.LogDebug("OAuth completion redirect: {Location}", location);
+
+                    // Check for authorization code in redirect
+                    if (location.Contains("code="))
+                    {
+                        var uri = new Uri(location, UriKind.RelativeOrAbsolute);
+                        if (!uri.IsAbsoluteUri)
+                        {
+                            uri = new Uri(_httpClient.BaseAddress, location);
+                        }
+
+                        var query = HttpUtility.ParseQueryString(uri.Query);
+                        var code = query["code"];
+                        if (!string.IsNullOrEmpty(code))
+                        {
+                            return await ExchangeCodeForTokens(code, cookies);
+                        }
+                    }
+
+                    // Check for tokens in fragment
+                    if (location.Contains("#"))
+                    {
+                        var fragment = location.Split('#')[1];
+                        var tokenResult = ParseTokenResponse(fragment);
+                        tokenResult.Cookies = cookies;
+                        return tokenResult;
+                    }
+                }
+            }
+
+            return new SriAuthenticationResult
+            {
+                IsSuccess = false,
+                ErrorMessage = "Could not complete OAuth flow"
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to complete OAuth flow");
+            return new SriAuthenticationResult
+            {
+                IsSuccess = false,
+                ErrorMessage = $"OAuth flow completion failed: {ex.Message}"
             };
         }
     }
