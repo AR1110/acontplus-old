@@ -1,0 +1,10 @@
+using FactElect.Application.DTOs;
+
+namespace FactElect.Application.Interfaces.Sri;
+
+public interface ISriAuthenticationService
+{
+    Task<SriAuthenticationResult> AuthenticateAsync(string username, string password, string? additionalCi = null);
+    Task<SriAuthenticationResult> RefreshTokenAsync(string refreshToken);
+    Task<bool> ValidateTokenAsync(string accessToken);
+}

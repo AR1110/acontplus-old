@@ -4,6 +4,7 @@ using Common.FactElect.Services.Authentication;
 using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
+using FactElect.Application;
 using FactElect.Application.Services;
 using FactElect.Application.Services.Sri;
 using FactElect.Infrastructure.Persistence;
@@ -25,6 +26,11 @@ public static class ApplicationServicesExtensions
 
         services.AddMemoryCache();
 
+        // Program.cs
+        services.AddSriAuthentication(options =>
+        {
+            configuration.GetSection("SriAuthentication").Bind(options);
+        });
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;
