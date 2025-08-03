@@ -169,22 +169,36 @@ public class SriAuthenticationService : ISriAuthenticationService
     {
         try
         {
+            // Fix the redirect URI to match the browser behavior (double slash)
+            var correctedRedirectUri = _options.RedirectUri.Replace("/sri-en-linea/contribuyente", "/sri-en-linea/contribuyente");
+
             var authUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth" +
                          $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
-                         $"&redirect_uri={Uri.EscapeDataString(_options.RedirectUri)}" +
+                         $"&redirect_uri={Uri.EscapeDataString(correctedRedirectUri)}" +
+                         $"&state={Guid.NewGuid()}" +
+                         $"&nonce={Guid.NewGuid()}" +
+                         $"&response_mode=fragment" +
                          $"&response_type=code" +
-                         $"&scope=openid" +
-                         $"&state={Guid.NewGuid():N}" +
-                         $"&nonce={Guid.NewGuid():N}";
+                         $"&scope=openid";
+
+            _logger.LogDebug("Initiating authorization with URL: {AuthUrl}", authUrl);
 
             var request = new HttpRequestMessage(HttpMethod.Get, authUrl);
             var response = await _httpClient.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
             var cookies = ExtractCookies(response);
 
+            _logger.LogDebug("Authorization response status: {StatusCode}", response.StatusCode);
+            _logger.LogDebug("Authorization response cookies: {Cookies}", string.Join(", ", cookies.Keys));
+
             var sessionCode = ExtractSessionCode(content);
             var executionCode = ExtractExecutionCode(content);
             var tabId = ExtractTabId(content);
+
+            _logger.LogDebug("Extracted parameters - SessionCode: {SessionCode}, ExecutionCode: {ExecutionCode}, TabId: {TabId}",
+                !string.IsNullOrEmpty(sessionCode) ? "Found" : "Missing",
+                !string.IsNullOrEmpty(executionCode) ? "Found" : "Missing",
+                !string.IsNullOrEmpty(tabId) ? tabId : "Missing");
 
             if (string.IsNullOrEmpty(sessionCode) || string.IsNullOrEmpty(executionCode))
             {
@@ -293,30 +307,40 @@ public class SriAuthenticationService : ISriAuthenticationService
                 response.StatusCode == HttpStatusCode.Found)
             {
                 var location = response.Headers.Location?.ToString();
+                _logger.LogDebug("Login redirect detected. Location: {Location}", location ?? "NULL");
+
                 if (!string.IsNullOrEmpty(location))
                 {
-                    _logger.LogDebug("Redirect location: {Location}", location);
+                    // Make the location absolute if it's relative
+                    var redirectUri = new Uri(location, UriKind.RelativeOrAbsolute);
+                    if (!redirectUri.IsAbsoluteUri)
+                    {
+                        redirectUri = new Uri(_httpClient.BaseAddress, location);
+                    }
+
+                    _logger.LogDebug("Absolute redirect URI: {RedirectUri}", redirectUri.ToString());
 
                     // Check for tokens in fragment
                     if (location.Contains("#"))
                     {
-                        var fragment = location.Split('#')[1];
-                        var tokenResult = ParseTokenResponse(fragment);
-                        tokenResult.Cookies = cookies;
-                        return tokenResult;
+                        var fragmentPart = location.Split('#');
+                        if (fragmentPart.Length > 1)
+                        {
+                            var fragment = fragmentPart[1];
+                            _logger.LogDebug("Found fragment in redirect: {Fragment}", fragment);
+                            var tokenResult = ParseTokenResponse(fragment);
+                            tokenResult.Cookies = cookies;
+                            return tokenResult;
+                        }
                     }
 
-                    // Check for authorization code
+                    // Check for authorization code in query parameters
                     if (location.Contains("code="))
                     {
-                        var uri = new Uri(location, UriKind.RelativeOrAbsolute);
-                        if (!uri.IsAbsoluteUri)
-                        {
-                            uri = new Uri(_httpClient.BaseAddress, location);
-                        }
-
-                        var query = HttpUtility.ParseQueryString(uri.Query);
+                        var query = HttpUtility.ParseQueryString(redirectUri.Query);
                         var code = query["code"];
+                        _logger.LogDebug("Found authorization code in redirect: {CodeFound}", !string.IsNullOrEmpty(code));
+
                         if (!string.IsNullOrEmpty(code))
                         {
                             return new SriAuthenticationResult
@@ -326,6 +350,14 @@ public class SriAuthenticationService : ISriAuthenticationService
                                 Cookies = cookies
                             };
                         }
+                    }
+
+                    // Follow the redirect to see if we get tokens
+                    _logger.LogDebug("Following redirect to: {RedirectUri}", redirectUri);
+                    var followResult = await FollowRedirect(redirectUri.ToString(), cookies);
+                    if (followResult.IsSuccess)
+                    {
+                        return followResult;
                     }
                 }
             }
@@ -416,6 +448,132 @@ public class SriAuthenticationService : ISriAuthenticationService
             {
                 IsSuccess = false,
                 ErrorMessage = $"Login form submission failed: {ex.Message}"
+            };
+        }
+    }
+
+    private async Task<SriAuthenticationResult> FollowRedirect(string redirectUrl, Dictionary<string, string> cookies)
+    {
+        try
+        {
+            _logger.LogDebug("Following redirect: {RedirectUrl}", redirectUrl);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, redirectUrl);
+            AddCookiesToRequest(request, cookies);
+
+            // Don't follow redirects automatically
+            var handler = new HttpClientHandler { AllowAutoRedirect = false };
+            using var tempClient = new HttpClient(handler);
+
+            // Copy configuration from main client
+            tempClient.BaseAddress = _httpClient.BaseAddress;
+            tempClient.Timeout = _httpClient.Timeout;
+
+            foreach (var header in _httpClient.DefaultRequestHeaders)
+            {
+                if (!tempClient.DefaultRequestHeaders.Contains(header.Key))
+                {
+                    tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+                }
+            }
+
+            var response = await tempClient.SendAsync(request);
+            var newCookies = ExtractCookies(response);
+
+            // Merge cookies
+            foreach (var cookie in newCookies)
+            {
+                cookies[cookie.Key] = cookie.Value;
+            }
+
+            _logger.LogDebug("Redirect response status: {StatusCode}", response.StatusCode);
+
+            // Check for another redirect with tokens
+            if (response.StatusCode == HttpStatusCode.Redirect || response.StatusCode == HttpStatusCode.Found)
+            {
+                var location = response.Headers.Location?.ToString();
+                if (!string.IsNullOrEmpty(location))
+                {
+                    _logger.LogDebug("Another redirect detected: {Location}", location);
+
+                    // Check for fragment with tokens
+                    if (location.Contains("#"))
+                    {
+                        var fragment = location.Split('#')[1];
+                        _logger.LogDebug("Found fragment in redirect chain: {Fragment}", fragment);
+                        var tokenResult = ParseTokenResponse(fragment);
+                        tokenResult.Cookies = cookies;
+                        return tokenResult;
+                    }
+
+                    // Check for authorization code
+                    if (location.Contains("code="))
+                    {
+                        var uri = new Uri(location, UriKind.RelativeOrAbsolute);
+                        if (!uri.IsAbsoluteUri)
+                        {
+                            uri = new Uri(_httpClient.BaseAddress, location);
+                        }
+
+                        var query = HttpUtility.ParseQueryString(uri.Query);
+                        var code = query["code"];
+                        if (!string.IsNullOrEmpty(code))
+                        {
+                            _logger.LogDebug("Found authorization code in redirect chain: {CodeFound}", !string.IsNullOrEmpty(code));
+                            return new SriAuthenticationResult
+                            {
+                                IsSuccess = true,
+                                AuthorizationCode = code,
+                                Cookies = cookies
+                            };
+                        }
+                    }
+                }
+            }
+
+            // Check response content
+            var content = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug("Redirect response content preview: {Content}",
+                content.Substring(0, Math.Min(500, content.Length)));
+
+            // Check for success indicators in the redirected page
+            var successIndicators = new[]
+            {
+                "perfil",
+                "dashboard",
+                "contribuyente",
+                "logout",
+                "sri-en-linea",
+                "welcome",
+                "bienvenido"
+            };
+
+            var hasSuccessIndicators = successIndicators.Any(indicator =>
+                content.Contains(indicator, StringComparison.OrdinalIgnoreCase));
+
+            if (hasSuccessIndicators && !content.Contains("kc-form-login"))
+            {
+                return new SriAuthenticationResult
+                {
+                    IsSuccess = true,
+                    Cookies = cookies
+                };
+            }
+
+            return new SriAuthenticationResult
+            {
+                IsSuccess = false,
+                ErrorMessage = "Redirect followed but no tokens or success indicators found",
+                Cookies = cookies
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error following redirect");
+            return new SriAuthenticationResult
+            {
+                IsSuccess = false,
+                ErrorMessage = $"Error following redirect: {ex.Message}"
             };
         }
     }
