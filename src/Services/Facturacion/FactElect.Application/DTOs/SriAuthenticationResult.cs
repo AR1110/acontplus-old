@@ -10,5 +10,6 @@ public class SriAuthenticationResult
     public int ExpiresIn { get; set; }
     public string? SessionCode { get; set; }
     public string? ExecutionCode { get; set; }
-    public Dictionary<string, string> Cookies { get; set; } = new Dictionary<string, string>();
+    public string? TabId { get; set; }
+    public Dictionary<string, string> Cookies { get; set; } = new();
 }

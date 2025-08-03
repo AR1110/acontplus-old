@@ -67,6 +67,7 @@ public class SriAuthenticationService : ISriAuthenticationService
                 additionalCi,
                 authResult.SessionCode!,
                 authResult.ExecutionCode!,
+                authResult.TabId!,
                 authResult.Cookies);
 
             if (!loginResult.IsSuccess)
@@ -121,10 +122,12 @@ public class SriAuthenticationService : ISriAuthenticationService
 
             var sessionCode = ExtractSessionCode(content);
             var executionCode = ExtractExecutionCode(content);
+            var tabId = ExtractTabId(content);
 
             if (string.IsNullOrEmpty(sessionCode) || string.IsNullOrEmpty(executionCode))
             {
                 _logger.LogError("Failed to extract session parameters from auth page");
+                _logger.LogDebug("Auth page content: {Content}", content.Substring(0, Math.Min(1000, content.Length)));
                 return new SriAuthenticationResult
                 {
                     IsSuccess = false,
@@ -137,6 +140,7 @@ public class SriAuthenticationService : ISriAuthenticationService
                 IsSuccess = true,
                 SessionCode = sessionCode,
                 ExecutionCode = executionCode,
+                TabId = tabId,
                 Cookies = cookies
             };
         }
@@ -157,6 +161,7 @@ public class SriAuthenticationService : ISriAuthenticationService
         string? additionalCi,
         string sessionCode,
         string executionCode,
+        string? tabId,
         Dictionary<string, string> cookies)
     {
         try
@@ -166,14 +171,17 @@ public class SriAuthenticationService : ISriAuthenticationService
                          $"&execution={Uri.EscapeDataString(executionCode)}" +
                          $"&client_id={Uri.EscapeDataString(_options.ClientId)}";
 
+            // Add tab_id if available
+            if (!string.IsNullOrEmpty(tabId))
+            {
+                loginUrl += $"&tab_id={Uri.EscapeDataString(tabId)}";
+            }
+
             var formData = new Dictionary<string, string>
             {
                 ["username"] = username,
                 ["usuario"] = username,
                 ["password"] = password,
-                ["session_code"] = sessionCode,
-                ["execution"] = executionCode,
-                ["client_id"] = _options.ClientId,
                 ["login"] = "Ingresar"
             };
 
@@ -188,15 +196,25 @@ public class SriAuthenticationService : ISriAuthenticationService
             };
 
             AddCookiesToRequest(request, cookies);
-            request.Headers.Referrer = new Uri($"{_options.BaseUrl}{loginUrl}");
 
-            // Don't follow redirects automatically
+            // Set proper referrer
+            var referrerUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth";
+            request.Headers.Referrer = new Uri(_httpClient.BaseAddress, referrerUrl);
+
+            // Create handler that doesn't follow redirects
             var handler = new HttpClientHandler { AllowAutoRedirect = false };
             using var tempClient = new HttpClient(handler);
-            tempClient.DefaultRequestHeaders.Clear();
+
+            // Copy base address and headers from main client
+            tempClient.BaseAddress = _httpClient.BaseAddress;
+            tempClient.Timeout = _httpClient.Timeout;
+
             foreach (var header in _httpClient.DefaultRequestHeaders)
             {
-                tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+                if (!tempClient.DefaultRequestHeaders.Contains(header.Key))
+                {
+                    tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+                }
             }
 
             var response = await tempClient.SendAsync(request);
@@ -215,6 +233,8 @@ public class SriAuthenticationService : ISriAuthenticationService
                 var location = response.Headers.Location?.ToString();
                 if (!string.IsNullOrEmpty(location))
                 {
+                    _logger.LogDebug("Redirect location: {Location}", location);
+
                     // Check for tokens in fragment
                     if (location.Contains("#"))
                     {
@@ -227,7 +247,13 @@ public class SriAuthenticationService : ISriAuthenticationService
                     // Check for authorization code
                     if (location.Contains("code="))
                     {
-                        var query = HttpUtility.ParseQueryString(new Uri(location).Query);
+                        var uri = new Uri(location, UriKind.RelativeOrAbsolute);
+                        if (!uri.IsAbsoluteUri)
+                        {
+                            uri = new Uri(_httpClient.BaseAddress, location);
+                        }
+
+                        var query = HttpUtility.ParseQueryString(uri.Query);
                         var code = query["code"];
                         if (!string.IsNullOrEmpty(code))
                         {
@@ -242,9 +268,27 @@ public class SriAuthenticationService : ISriAuthenticationService
                 }
             }
 
-            // Fallback - check response content
+            // Check response content for success indicators
             var content = await response.Content.ReadAsStringAsync();
-            if (content.Contains("sri-en-linea"))
+            _logger.LogDebug("Login response status: {StatusCode}", response.StatusCode);
+            _logger.LogDebug("Login response content preview: {Content}",
+                content.Substring(0, Math.Min(500, content.Length)));
+
+            // Check for error messages in response
+            if (content.Contains("error") || content.Contains("invalid") ||
+                content.Contains("Usuario o clave incorrectos") ||
+                content.Contains("authentication failed"))
+            {
+                return new SriAuthenticationResult
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Invalid credentials or authentication failed",
+                    Cookies = cookies
+                };
+            }
+
+            // Check for success indicators
+            if (content.Contains("sri-en-linea") || response.StatusCode == HttpStatusCode.OK)
             {
                 return new SriAuthenticationResult
                 {
@@ -256,7 +300,7 @@ public class SriAuthenticationService : ISriAuthenticationService
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
-                ErrorMessage = "Login form submission failed",
+                ErrorMessage = $"Unexpected response from login form: {response.StatusCode}",
                 Cookies = cookies
             };
         }
@@ -306,12 +350,14 @@ public class SriAuthenticationService : ISriAuthenticationService
             }
 
             using var doc = JsonDocument.Parse(content);
+            var root = doc.RootElement;
+
             return new SriAuthenticationResult
             {
                 IsSuccess = true,
-                AccessToken = doc.RootElement.GetProperty("access_token").GetString(),
-                RefreshToken = doc.RootElement.GetProperty("refresh_token").GetString(),
-                ExpiresIn = doc.RootElement.GetProperty("expires_in").GetInt32(),
+                AccessToken = root.TryGetProperty("access_token", out var accessToken) ? accessToken.GetString() : null,
+                RefreshToken = root.TryGetProperty("refresh_token", out var refreshToken) ? refreshToken.GetString() : null,
+                ExpiresIn = root.TryGetProperty("expires_in", out var expiresIn) ? expiresIn.GetInt32() : 0,
                 Cookies = cookies
             };
         }
@@ -383,7 +429,7 @@ public class SriAuthenticationService : ISriAuthenticationService
     {
         try
         {
-            // Method 1: Extract from form action URL (this is where it is in your HTML)
+            // Extract from form action URL
             var actionMatch = Regex.Match(content,
                 @"action=""[^""]*[?&]execution=([a-f0-9-]{36})",
                 RegexOptions.IgnoreCase);
@@ -393,7 +439,7 @@ public class SriAuthenticationService : ISriAuthenticationService
                 return actionMatch.Groups[1].Value;
             }
 
-            // Method 2: Alternative pattern that might work
+            // Alternative pattern
             actionMatch = Regex.Match(content,
                 @"execution=([a-f0-9-]{36})",
                 RegexOptions.IgnoreCase);
@@ -403,7 +449,7 @@ public class SriAuthenticationService : ISriAuthenticationService
                 return actionMatch.Groups[1].Value;
             }
 
-            // Method 3: Check for hidden input field (fallback)
+            // Check for hidden input field
             var hiddenMatch = Regex.Match(content,
                 @"<input[^>]*name=""execution""[^>]*value=""([a-f0-9-]{36})""",
                 RegexOptions.IgnoreCase);
@@ -413,6 +459,34 @@ public class SriAuthenticationService : ISriAuthenticationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error extracting execution code");
+            return string.Empty;
+        }
+    }
+
+    private string ExtractTabId(string content)
+    {
+        try
+        {
+            // Extract tab_id from form action URL
+            var match = Regex.Match(content,
+                @"action=""[^""]*[?&]tab_id=([^&""'>\s]+)",
+                RegexOptions.IgnoreCase);
+
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+
+            // Try alternative pattern
+            match = Regex.Match(content,
+                @"tab_id=([^&""'>\s]+)",
+                RegexOptions.IgnoreCase);
+
+            return match.Success ? match.Groups[1].Value : string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error extracting tab_id");
             return string.Empty;
         }
     }
