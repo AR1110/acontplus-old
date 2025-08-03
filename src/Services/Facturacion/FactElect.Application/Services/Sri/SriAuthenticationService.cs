@@ -381,15 +381,40 @@ public class SriAuthenticationService : ISriAuthenticationService
 
     private string ExtractExecutionCode(string content)
     {
-        // Try to extract from form action
-        var match = Regex.Match(content, @"action=""[^""]*[?&]execution=([^&""'>\s]+)", RegexOptions.IgnoreCase);
-        if (match.Success) return match.Groups[1].Value;
+        try
+        {
+            // Method 1: Extract from form action URL (this is where it is in your HTML)
+            var actionMatch = Regex.Match(content,
+                @"action=""[^""]*[?&]execution=([a-f0-9-]{36})",
+                RegexOptions.IgnoreCase);
 
-        // Try to extract from hidden input
-        match = Regex.Match(content, @"<input[^>]*name=""execution""[^>]*value=""([^""]+)""", RegexOptions.IgnoreCase);
-        if (match.Success) return match.Groups[1].Value;
+            if (actionMatch.Success)
+            {
+                return actionMatch.Groups[1].Value;
+            }
 
-        return string.Empty;
+            // Method 2: Alternative pattern that might work
+            actionMatch = Regex.Match(content,
+                @"execution=([a-f0-9-]{36})",
+                RegexOptions.IgnoreCase);
+
+            if (actionMatch.Success)
+            {
+                return actionMatch.Groups[1].Value;
+            }
+
+            // Method 3: Check for hidden input field (fallback)
+            var hiddenMatch = Regex.Match(content,
+                @"<input[^>]*name=""execution""[^>]*value=""([a-f0-9-]{36})""",
+                RegexOptions.IgnoreCase);
+
+            return hiddenMatch.Success ? hiddenMatch.Groups[1].Value : string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error extracting execution code");
+            return string.Empty;
+        }
     }
 
     private string MaskUsername(string username) =>
