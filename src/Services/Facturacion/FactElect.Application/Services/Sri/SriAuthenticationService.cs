@@ -55,6 +55,22 @@ public class SriAuthenticationService : ISriAuthenticationService
     {
         try
         {
+            // Validate input parameters
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                return new SriAuthenticationResult
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Username and password are required"
+                };
+            }
+
+            // Validate username format (should be numeric for RUC/CI)
+            if (!ValidateIdentification(username))
+            {
+                _logger.LogWarning("Invalid identification format: {Username}", MaskUsername(username));
+            }
+
             _logger.LogInformation("Starting authentication for user: {Username}", MaskUsername(username));
 
             // Step 1: Initiate authorization request
@@ -126,6 +142,22 @@ public class SriAuthenticationService : ISriAuthenticationService
                 ErrorMessage = $"Authentication error: {ex.Message}"
             };
         }
+    }
+
+    private bool ValidateIdentification(string identification)
+    {
+        // Remove any whitespace
+        identification = identification.Trim();
+
+        // Should be numeric and have valid length
+        if (!identification.All(char.IsDigit))
+        {
+            return false;
+        }
+
+        // CI: 10 digits, RUC: 13 digits, Passport: varies but typically alphanumeric
+        var length = identification.Length;
+        return length == 10 || length == 13 || (length >= 6 && length <= 20);
     }
 
     private string MaskValue(string? value) =>
