@@ -273,6 +273,12 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     const group = control as FormGroup;
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
+    
+    // Only validate if password is provided
+    if (!password && !confirmPassword) {
+      return null;
+    }
+    
     return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
@@ -327,9 +333,9 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
         Validators.maxLength(50),
       ]),
       email: this._fb.control('', [Validators.email]),
-      phoneNumber: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]+$/)]),
-      password: this._fb.control('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: this._fb.control('', [Validators.required]),
+      phoneNumber: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]*$/)]), // Made pattern accept empty string
+      password: this._fb.control('', [Validators.minLength(6)]), // Removed required validator
+      confirmPassword: this._fb.control(''), // Removed required validator
     },
     { validators: [WizardConfigComponent.passwordsMatchValidator] },
   );
