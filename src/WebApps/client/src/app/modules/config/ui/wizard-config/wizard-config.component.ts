@@ -273,12 +273,12 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     const group = control as FormGroup;
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
-    
+
     // Only validate if password is provided
     if (!password && !confirmPassword) {
       return null;
     }
-    
+
     return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
@@ -419,12 +419,15 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
           this.currentEstab = this.establecimientos()[0]?.nombreComercial || '';
 
+          console.debug('Document configuration loaded successfully', this.establecimientos());
+
           const combinedData = this.establecimientos().map((pto) => ({
             ...pto,
+            ptoEmi: pto.puntosEmision?.[0]?.ptoEmi || '',
             _children: (response.tiposDoc || []).map((doc) => ({
               ...doc,
               parentId: pto.puntosEmision?.[0]?.idPuntoEmision || '',
-              ultimaSecuencia: 0,
+              ultimaSecuencia: doc.codigoSri ? 0 : 1,
             })),
           }));
 

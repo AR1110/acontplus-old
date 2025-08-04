@@ -101,7 +101,7 @@ BEGIN
         --> Validaciones
 		IF NOT EXISTS (SELECT 1 FROM @tbEstablecimiento)
             BEGIN
-				SELECT '0'code,'Error en el informacion del establecimiento' as 'message'
+				SELECT '0'code,'Error al obtener la informacion del establecimiento' as 'message'
 				RETURN 
 			END 
 
@@ -109,8 +109,7 @@ BEGIN
 			BEGIN
 				SELECT '0'code,'El numero de establecimiento ya se encuentra registrado' as 'message'
 				RETURN 
-			END 
-
+			END
         
         SET @uuid = (SELECT TOP 1 uuid FROM v_usuario WHERE idUsuarioRol = @userRoleId);
 
@@ -120,7 +119,7 @@ BEGIN
 
 			INSERT INTO Sri.Establecimiento
 				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile, autoSriAuth)
-			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile, 1
+			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,NULLIF(TRIM(e.AgenteRetencion), ''),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile, 1
             FROM @tbEstablecimiento e
                 INNER JOIN Sri.ActividadEconomica ae On e.actividad = ae.codigo
 
