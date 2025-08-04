@@ -231,14 +231,16 @@ public class SriAuthenticationService : ISriAuthenticationService
         }
     }
 
+
+
     private async Task<SriAuthenticationResult> SubmitLoginForm(
-        string username,
-        string password,
-        string? additionalCi,
-        string sessionCode,
-        string executionCode,
-        string? tabId,
-        Dictionary<string, string> cookies)
+    string username,
+    string password,
+    string? additionalCi,
+    string sessionCode,
+    string executionCode,
+    string? tabId,
+    Dictionary<string, string> cookies)
     {
         try
         {
@@ -247,11 +249,8 @@ public class SriAuthenticationService : ISriAuthenticationService
                          $"&execution={Uri.EscapeDataString(executionCode)}" +
                          $"&client_id={Uri.EscapeDataString(_options.ClientId)}";
 
-            // Add tab_id if available
             if (!string.IsNullOrEmpty(tabId))
-            {
                 loginUrl += $"&tab_id={Uri.EscapeDataString(tabId)}";
-            }
 
             var formData = new Dictionary<string, string>
             {
@@ -260,120 +259,103 @@ public class SriAuthenticationService : ISriAuthenticationService
                 ["password"] = password,
                 ["login"] = "Ingresar"
             };
-
             if (!string.IsNullOrEmpty(additionalCi))
-            {
                 formData["ciAdicional"] = additionalCi;
+
+            _logger.LogDebug("Submitting login form: {FormData}", JsonSerializer.Serialize(formData));
+
+            var handler = new HttpClientHandler { AllowAutoRedirect = false };
+            using var tempClient = new HttpClient(handler)
+            {
+                BaseAddress = _httpClient.BaseAddress,
+                Timeout = _httpClient.Timeout
+            };
+
+            foreach (var header in _httpClient.DefaultRequestHeaders)
+            {
+                if (!tempClient.DefaultRequestHeaders.Contains(header.Key))
+                    tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, loginUrl)
             {
                 Content = new FormUrlEncodedContent(formData)
             };
-
             AddCookiesToRequest(request, cookies);
-
-            // Set proper referrer
-            var referrerUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth";
-            request.Headers.Referrer = new Uri(_httpClient.BaseAddress, referrerUrl);
-
-            // Create handler that doesn't follow redirects
-            var handler = new HttpClientHandler { AllowAutoRedirect = false };
-            using var tempClient = new HttpClient(handler);
-
-            // Copy base address and headers from main client
-            tempClient.BaseAddress = _httpClient.BaseAddress;
-            tempClient.Timeout = _httpClient.Timeout;
-
-            foreach (var header in _httpClient.DefaultRequestHeaders)
-            {
-                if (!tempClient.DefaultRequestHeaders.Contains(header.Key))
-                {
-                    tempClient.DefaultRequestHeaders.Add(header.Key, header.Value);
-                }
-            }
+            request.Headers.Referrer = new Uri(_httpClient.BaseAddress, $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth");
 
             var response = await tempClient.SendAsync(request);
-            var responseCookies = ExtractCookies(response);
+            var content = await response.Content.ReadAsStringAsync();
+            MergeCookies(cookies, ExtractCookies(response));
 
-            // Merge cookies
-            foreach (var cookie in responseCookies)
-            {
-                cookies[cookie.Key] = cookie.Value;
-            }
+            _logger.LogDebug("Login response content length: {Length}", content.Length);
 
-            // Check for redirect with tokens in fragment
-            if (response.StatusCode == HttpStatusCode.Redirect ||
-                response.StatusCode == HttpStatusCode.Found)
+            // 1️⃣ Token directly in redirect fragment
+            if (response.StatusCode == HttpStatusCode.Redirect || response.StatusCode == HttpStatusCode.Found)
             {
                 var location = response.Headers.Location?.ToString();
-                _logger.LogDebug("Login redirect detected. Location: {Location}", location ?? "NULL");
+                _logger.LogDebug("Redirect after login: {Location}", location ?? "NULL");
 
                 if (!string.IsNullOrEmpty(location))
                 {
-                    // Make the location absolute if it's relative
-                    var redirectUri = new Uri(location, UriKind.RelativeOrAbsolute);
-                    if (!redirectUri.IsAbsoluteUri)
-                    {
-                        redirectUri = new Uri(_httpClient.BaseAddress, location);
-                    }
+                    var tokenResult = TryParseTokenFromLocation(location, cookies);
+                    if (tokenResult != null) return tokenResult;
 
-                    _logger.LogDebug("Absolute redirect URI: {RedirectUri}", redirectUri.ToString());
+                    if (!location.StartsWith("http"))
+                        location = new Uri(_httpClient.BaseAddress, location).ToString();
 
-                    // Check for tokens in fragment
-                    if (location.Contains("#"))
-                    {
-                        var fragmentPart = location.Split('#');
-                        if (fragmentPart.Length > 1)
-                        {
-                            var fragment = fragmentPart[1];
-                            _logger.LogDebug("Found fragment in redirect: {Fragment}", fragment);
-                            var tokenResult = ParseTokenResponse(fragment);
-                            tokenResult.Cookies = cookies;
-                            return tokenResult;
-                        }
-                    }
-
-                    // Check for authorization code in query parameters
-                    if (location.Contains("code="))
-                    {
-                        var query = HttpUtility.ParseQueryString(redirectUri.Query);
-                        var code = query["code"];
-                        _logger.LogDebug("Found authorization code in redirect: {CodeFound}", !string.IsNullOrEmpty(code));
-
-                        if (!string.IsNullOrEmpty(code))
-                        {
-                            return new SriAuthenticationResult
-                            {
-                                IsSuccess = true,
-                                AuthorizationCode = code,
-                                Cookies = cookies
-                            };
-                        }
-                    }
-
-                    // Follow the redirect to see if we get tokens
-                    _logger.LogDebug("Following redirect to: {RedirectUri}", redirectUri);
-                    var followResult = await FollowRedirect(redirectUri.ToString(), cookies);
-                    if (followResult.IsSuccess)
-                    {
-                        return followResult;
-                    }
+                    var followResult = await FollowRedirect(location, cookies);
+                    if (followResult.IsSuccess) return followResult;
                 }
             }
 
-            // Check response content for success indicators
-            var content = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug("Login response status: {StatusCode}", response.StatusCode);
-            _logger.LogDebug("Login response headers: {Headers}",
-                string.Join(", ", response.Headers.Select(h => $"{h.Key}: {string.Join(", ", h.Value)}")));
-            _logger.LogDebug("Login response content preview: {Content}",
-                content.Substring(0, Math.Min(1000, content.Length)));
+            // 2️⃣ Handle "CI adicional" step
+            if (content.Contains("name=\"ciAdicional\""))
+            {
+                _logger.LogInformation("Additional CI requested. Submitting CI...");
 
-            // Check for specific error messages that indicate authentication failure
+                if (string.IsNullOrEmpty(additionalCi))
+                {
+                    return new SriAuthenticationResult
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Additional CI required but not provided",
+                        Cookies = cookies
+                    };
+                }
+
+                var ciForm = new Dictionary<string, string>
+                {
+                    ["ciAdicional"] = additionalCi,
+                    ["login"] = "Ingresar"
+                };
+
+                var ciRequest = new HttpRequestMessage(HttpMethod.Post, loginUrl)
+                {
+                    Content = new FormUrlEncodedContent(ciForm)
+                };
+                AddCookiesToRequest(ciRequest, cookies);
+
+                var ciResponse = await tempClient.SendAsync(ciRequest);
+                var ciContent = await ciResponse.Content.ReadAsStringAsync();
+                MergeCookies(cookies, ExtractCookies(ciResponse));
+
+                if (ciResponse.StatusCode == HttpStatusCode.Redirect)
+                {
+                    var location = ciResponse.Headers.Location?.ToString();
+                    var tokenResult = TryParseTokenFromLocation(location, cookies);
+                    if (tokenResult != null) return tokenResult;
+                    if (!string.IsNullOrEmpty(location))
+                        return await FollowRedirect(location, cookies);
+                }
+
+                if (IsAuthenticated(ciContent))
+                    return new SriAuthenticationResult { IsSuccess = true, Cookies = cookies };
+            }
+
+            // 3️⃣ Common login errors
             if (content.Contains("Usuario o clave incorrectos") ||
                 content.Contains("Invalid username or password") ||
-                content.Contains("Authentication failed") ||
                 content.Contains("credenciales incorrectas") ||
                 content.Contains("login-error"))
             {
@@ -385,34 +367,8 @@ public class SriAuthenticationService : ISriAuthenticationService
                 };
             }
 
-            // Check if we're still on the login page (indicates failure)
-            if (content.Contains("kc-form-login") && content.Contains("password"))
-            {
-                // We're still on the login form, check for specific error indicators
-                if (content.Contains("alert") || content.Contains("error-message") ||
-                    content.Contains("login-error"))
-                {
-                    return new SriAuthenticationResult
-                    {
-                        IsSuccess = false,
-                        ErrorMessage = "Authentication failed - still on login page",
-                        Cookies = cookies
-                    };
-                }
-            }
-
-            // Check for successful authentication indicators
-            // 1. Redirect to success page
-            // 2. Content contains dashboard or profile elements
-            // 3. No login form present
-            var hasLoginForm = content.Contains("kc-form-login") || content.Contains("name=\"password\"");
-            var hasSuccessIndicators = content.Contains("perfil") ||
-                                     content.Contains("dashboard") ||
-                                     content.Contains("contribuyente") ||
-                                     content.Contains("sri-en-linea") ||
-                                     content.Contains("logout");
-
-            if (!hasLoginForm && hasSuccessIndicators)
+            // 4️⃣ Detect success by content indicators
+            if (IsAuthenticated(content))
             {
                 return new SriAuthenticationResult
                 {
@@ -421,23 +377,25 @@ public class SriAuthenticationService : ISriAuthenticationService
                 };
             }
 
-            // If we have cookies but unclear content, try to continue the flow
-            if (cookies.ContainsKey("AUTH_SESSION_ID") &&
-                (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted))
+            // 5️⃣ Session established but unclear result → check protected page
+            if (cookies.ContainsKey("AUTH_SESSION_ID"))
             {
-                // We might have a successful authentication but need to follow additional redirects
-                return new SriAuthenticationResult
-                {
-                    IsSuccess = true,
-                    Cookies = cookies,
-                    ErrorMessage = "Authentication may be successful - session established"
-                };
+                _logger.LogDebug("Session cookie found, validating with protected page...");
+
+                var profileReq = new HttpRequestMessage(HttpMethod.Get, "/sri-en-linea/contribuyente/perfil");
+                AddCookiesToRequest(profileReq, cookies);
+                var profileResp = await tempClient.SendAsync(profileReq);
+                var profileContent = await profileResp.Content.ReadAsStringAsync();
+
+                if (IsAuthenticated(profileContent))
+                    return new SriAuthenticationResult { IsSuccess = true, Cookies = cookies };
             }
 
+            // 6️⃣ Fallback failure
             return new SriAuthenticationResult
             {
                 IsSuccess = false,
-                ErrorMessage = $"Unclear authentication result. Status: {response.StatusCode}, HasLoginForm: {hasLoginForm}, HasSuccess: {hasSuccessIndicators}",
+                ErrorMessage = "Unclear authentication result",
                 Cookies = cookies
             };
         }
@@ -451,6 +409,8 @@ public class SriAuthenticationService : ISriAuthenticationService
             };
         }
     }
+
+
 
     private async Task<SriAuthenticationResult> FollowRedirect(string redirectUrl, Dictionary<string, string> cookies)
     {
@@ -842,4 +802,49 @@ public class SriAuthenticationService : ISriAuthenticationService
         string.IsNullOrEmpty(username) || username.Length <= 4
             ? "***"
             : username.Substring(0, 4) + new string('*', username.Length - 4);
+
+    private bool IsAuthenticated(string html)
+    {
+        return html.Contains("perfil") ||
+               html.Contains("dashboard") ||
+               html.Contains("contribuyente") ||
+               html.Contains("sri-en-linea") ||
+               html.Contains("logout");
+    }
+
+    private void MergeCookies(Dictionary<string, string> target, Dictionary<string, string> source)
+    {
+        foreach (var cookie in source)
+            target[cookie.Key] = cookie.Value;
+    }
+
+    private SriAuthenticationResult? TryParseTokenFromLocation(string? location, Dictionary<string, string> cookies)
+    {
+        if (string.IsNullOrEmpty(location)) return null;
+
+        if (location.Contains("#"))
+        {
+            var fragment = location.Split('#')[1];
+            var tokenResult = ParseTokenResponse(fragment);
+            tokenResult.Cookies = cookies;
+            return tokenResult;
+        }
+
+        if (location.Contains("code="))
+        {
+            var query = HttpUtility.ParseQueryString(new Uri(location).Query);
+            var code = query["code"];
+            if (!string.IsNullOrEmpty(code))
+            {
+                return new SriAuthenticationResult
+                {
+                    IsSuccess = true,
+                    AuthorizationCode = code,
+                    Cookies = cookies
+                };
+            }
+        }
+        return null;
+    }
+
 }
