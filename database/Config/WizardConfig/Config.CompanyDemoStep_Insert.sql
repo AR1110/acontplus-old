@@ -19,14 +19,15 @@ BEGIN
 
     DECLARE @uuid UNIQUEIDENTIFIER,
         @companyId INT,
-        @userId INT;
+        @userId INT,
+        @Username VARCHAR(100);
        
 
     DECLARE @code CHAR,
         @message VARCHAR(300);
 	
 	BEGIN TRY
-        SELECT TOP 1 @uuid = uuid, @userId = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId;
+        SELECT TOP 1 @uuid = uuid, @userId = idUsuario, @Username = nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId;
 
         SET @companyId = (SELECT Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
 
@@ -35,8 +36,8 @@ BEGIN
 						   WHERE Uuid = @uuid
 						   AND DemoStepId = @demoStepId)
 			    BEGIN
-				    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, FromMobile)
-				    VALUES (@demoStepId, @companyId, @uuid, @fromMobile);
+				    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
+				    VALUES (@demoStepId, @companyId, @uuid, @fromMobile, @Username);
 			    END 
 
 		COMMIT TRAN

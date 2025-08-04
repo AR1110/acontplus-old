@@ -119,8 +119,8 @@ BEGIN
 		BEGIN TRAN
 
 			INSERT INTO Sri.Establecimiento
-				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
-			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
+				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile, autoSriAuth)
+			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile, 1
             FROM @tbEstablecimiento e
                 INNER JOIN Sri.ActividadEconomica ae On e.actividad = ae.codigo
 
