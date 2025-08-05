@@ -76,26 +76,19 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   private applyTheme(): void {
-    // Remove any previous Tabulator theme CSS
-    const themeLinks = Array.from(document.querySelectorAll('link[data-tabulator-theme]'));
-    themeLinks.forEach(link => link.parentNode?.removeChild(link));
-    // Add the selected theme
-    let themeHref = '';
-    switch (this.theme) {
-      case 'semantic-ui':
-        themeHref = 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
-        break;
-      case 'default':
-      default:
-        themeHref = 'tabulator-tables/dist/css/tabulator.min.css';
-        break;
-    }
-    if (themeHref) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = themeHref;
-      link.setAttribute('data-tabulator-theme', this.theme);
-      document.head.appendChild(link);
+    // No need to load CSS dynamically as it's now imported in styles.scss
+    // Just set the theme class on the table container
+    const container = document.getElementById(this.uniqueIdTabulator);
+    if (container) {
+      // Remove any existing theme classes
+      container.classList.remove('tabulator-default', 'tabulator-sematicui');
+      
+      // Add the appropriate theme class
+      if (this.theme === 'semantic-ui') {
+        container.classList.add('tabulator-sematicui');
+      } else {
+        container.classList.add('tabulator-default');
+      }
     }
   }
 

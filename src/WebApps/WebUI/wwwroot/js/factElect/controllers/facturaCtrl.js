@@ -507,13 +507,12 @@
                     return;
                 }
 
-                console.log(item)
 
                 const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
                     accion: 'anular',
                     identificacion: item.identificacionComprador,
-                    fechaEmision: item.fechaEmision
-
+                    fechaEmision: item.fechaEmision,
+                    codDoc: item.codDoc
                 })
 
 
@@ -2969,8 +2968,8 @@
                     accion: 'guardar',
                     identificacion:  $scope.cliente.numeroIdentificacion,
                    importeTotal: $scope.data.total,
-                   idFormaPago: $scope.dataFormaPago.idFormaPagoSri
-
+                   idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
+                   codDoc: '01'
                 })
 
                 if (isRegister()) {

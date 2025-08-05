@@ -133,10 +133,10 @@ table.md-table tr td.md-cell {
         min-width: 65px;
     }
 
-    .suggestion-articulo {   
-        width: 200px;                 
-        min-width: 200px;    
-        max-width: 200px;             
+    .suggestion-articulo {
+        width: 200px;
+        min-width: 200px;
+        max-width: 200px;
     }; */
 
 
@@ -924,3 +924,274 @@ sticky header table
     border: none;
     /* Sin bordes */
 }
+
+
+/**Buscador personalizado*/
+   .search-app-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        @media (min-width: 640px) {
+            .search-app-title {
+                font-size: 1.875rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+        .search-app-search-container {
+            position: relative;
+        }
+        .search-app-search-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        .search-app-search-input {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 9999px;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease-in-out;
+            background-color: #fff;
+        }
+        @media (min-width: 640px) {
+            .search-app-search-input {
+                font-size: 1.125rem;
+            }
+        }
+        .search-app-search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+        }
+        .search-app-dropdown-results {
+            position: absolute;
+            max-height: 400px;
+            overflow: auto;
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.2) #f3f4f6;
+        }
+        @media (min-width: 640px) {
+            .search-app-dropdown-results {
+
+            }
+        }
+        .search-app-dropdown-results::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .search-app-dropdown-results::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+        .search-app-dropdown-results::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .search-app-dropdown-results::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        .search-app-result-table {
+            display: none;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.775rem;
+        }
+        @media (min-width: 640px) {
+            .search-app-result-table {
+                display: table;
+            }
+        }
+        .search-app-result-table th, .search-app-result-table td {
+            padding: 0.5rem;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+        .search-app-result-table .search-app-description-cell {
+            white-space: normal;
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+        .search-app-result-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f9fafb;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: #4b5563;
+        }
+        .search-app-result-table tbody tr.search-app-selected-row {
+            background-color: #e5f1ff;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+        }
+        .search-app-result-table tbody tr:hover {
+            background-color: #f3f4f6;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        /* Estilo para las celdas clickables */
+        .search-app-clickable-cell {
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .search-app-clickable-cell:hover {
+            background-color: #eef2ff;
+        }
+
+        /* Estilo para el badge de stock */
+        .search-app-stock-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        .search-app-stock-badge.search-app-warning-stock {
+            /* Colores de advertencia (naranja claro) */
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+        .search-app-stock-badge.search-app-success-stock {
+            /* Colores de éxito (verde claro) */
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .search-app-result-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        @media (min-width: 640px) {
+            .search-app-result-cards {
+                display: none;
+            }
+        }
+        .search-app-result-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .search-app-result-card:hover {
+            background-color: #f9fafb;
+            transform: translateY(-2px);
+        }
+        .search-app-result-card.search-app-selected-row {
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+        }
+        .search-app-card-image-container {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+        }
+        .search-app-card-details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .search-app-card-details p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+        .search-app-card-details strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        .search-app-result-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .search-app-button-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .search-app-modify-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+        .search-app-modify-button:hover {
+            background-color: #2563eb;
+        }
+        .search-app-info-text {
+            color: #6b7280;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .search-app-loading-text {
+            color: #6b7280;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        .search-app-modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-app-modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        .search-app-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .search-app-modal-close:hover {
+            color: #333;
+        }
+        .search-app-modal-item-details {
+            text-align: left;
+            margin-top: 1rem;
+        }
+        .search-app-modal-item-details h4 {
+            margin-bottom: 0.5rem;
+        }

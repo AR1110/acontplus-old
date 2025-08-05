@@ -10,22 +10,28 @@ GO
 -- Create date: 2021-10-11
 -- Description:	SP PARA OBTENER LA CONFIGURACION DE DOUMENTOS
 -- =============================================
-CREATE OR ALTER PROCEDURE Config.DocConfig_Get @userRoleId INT, @json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
+CREATE OR ALTER PROCEDURE Config.DocConfig_Get @UserRoleId INT,
+@Json VARCHAR(MAX),
+@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN 
 	SET NOCOUNT ON;
 
     --> Variables global 
-	DECLARE @tipo INT 
+	DECLARE @Tipo INT,
+        @CompanyUuid UNIQUEIDENTIFIER;
+        
 
     --> Gestion General
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
+	SELECT @Tipo = tipo FROM OPENJSON(@Json) WITH(tipo INT);
 
-    IF @tipo = 1
+    SET @CompanyUuid = (SELECT uuid FROM v_usuario WHERE idUsuarioRol = @UserRoleId)
+
+    IF @Tipo = 1
         BEGIN 
         
             DECLARE @idPuntoEmision INT 
-            SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH(idPuntoEmision INT)
+            SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@Json) WITH(idPuntoEmision INT)
             SET @tableNames = 'docs'
             SELECT idConfiguracionDocumento = ISNULL(cd.idConfiguracionDocumento,0)
                   ,idTipoDocumento = ISNULL(td.idTipoDocumento, 0)
@@ -43,7 +49,12 @@ BEGIN
                   ,descripcion
                   ,CAST(0 as bit) as estado
                   ,infoAdicional
-            FROM TipoDocumento 
+            FROM TipoDocumento td
+            INNER JOIN AcontplusAdmin.Config.Aplicacion a ON td.aplicacionId = a.Id
+            INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON a.Id = ld.AplicacionId
+            INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId
+            INNER JOIN AcontplusAdmin.Sales.Suscripcion s ON sd.SuscripcionId = s.Id
+            INNER JOIN AcontplusAdmin.Config.Company c ON s.CompanyId = c.Id AND c.Uuid = @CompanyUuid
             WHERE secuencial = 1
               AND idTipoDocumento NOT IN (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
         
@@ -52,7 +63,7 @@ BEGIN
         END
 
     --> DataForm
-	IF @tipo = 2
+	IF @Tipo = 2
 		BEGIN
             
             SET @tableNames = 'estabs,tiposDoc'
@@ -65,22 +76,28 @@ BEGIN
                   ,defaultEstab
                   ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) 
-			WHERE idUsuarioRol = @userRoleId 
+			WHERE idUsuarioRol = @UserRoleId 
             ORDER BY defaultEstab DESC
 
-	        SELECT * FROM Acontplus.dbo.TipoDocumento WITH(NOLOCK) WHERE estado = 1 AND secuencial = 1	
-
+	        SELECT * FROM Acontplus.dbo.TipoDocumento td WITH(NOLOCK)
+            INNER JOIN AcontplusAdmin.Config.Aplicacion a ON td.aplicacionId = a.Id
+            INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON a.Id = ld.AplicacionId
+            INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId
+            INNER JOIN AcontplusAdmin.Sales.Suscripcion s ON sd.SuscripcionId = s.Id
+            INNER JOIN AcontplusAdmin.Config.Company c ON s.CompanyId = c.Id AND c.Uuid = @CompanyUuid
+            WHERE estado = 1
+                AND secuencial = 1	
             RETURN 
 		END 
 	
     --> Get InfoAdicional
-    IF @tipo = 3
+    IF @Tipo = 3
         BEGIN   
             SET @tableNames = 'infoAdicional'
 
             DECLARE @id INT
 
-            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+            SELECT @id = id FROM OPENJSON(@Json) WITH (id INT)
 
             SELECT infoAdicional FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idConfiguracionDocumento = @id
 

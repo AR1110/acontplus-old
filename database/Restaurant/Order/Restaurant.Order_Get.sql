@@ -13,10 +13,10 @@ GO
 CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT ,@json NVARCHAR(MAX) ,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
-	SET NOCOUNT ON; 
+	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
-    --> Sql 
+    --> Sql
     DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX)
 
     DECLARE @tipo               INT
@@ -27,16 +27,16 @@ BEGIN
            ,@startDate          DATETIME2
            ,@endDate            DATETIME2
            ,@tableId            INT
-           ,@idEntidad          INT 
+           ,@idEntidad          INT
            ,@userId             INT
            ,@finished           BIT
            ,@rucEmpresa         VARCHAR(13)
-           ,@estabId            INT 
+           ,@estabId            INT
            ,@deleted            BIT
            ,@isEnabled          BIT
            ,@typeSearchCustomer CHAR(5)
-           ,@puntoEmisionId     INT 
-           ,@isSearchDate       BIT 
+           ,@puntoEmisionId     INT
+           ,@isSearchDate       BIT
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -61,15 +61,15 @@ BEGIN
                   ,@typeSearchCustomer = typeSearchCustomer
                   ,@puntoEmisionId     = puntoEmisionId
                   ,@isSearchDate       = isSearchDate
-            FROM OPENJSON(@json) WITH 
-            ( 
-                 customerCompanyId  INT 
-                ,startDate          DATETIME2  
-                ,endDate            DATETIME2    
-                ,pageIndex          INT        
-                ,pageSize           INT         
-                ,tableId            INT       
-                ,userId             INT 
+            FROM OPENJSON(@json) WITH
+            (
+                 customerCompanyId  INT
+                ,startDate          DATETIME2
+                ,endDate            DATETIME2
+                ,pageIndex          INT
+                ,pageSize           INT
+                ,tableId            INT
+                ,userId             INT
                 ,finished           BIT
                 ,estabId            INT
                 ,deleted            BIT
@@ -86,9 +86,9 @@ BEGIN
                           ,@customerCompanyId INT
                           ,@tableId           INT
                           ,@userId            INT
-                          ,@finished          BIT 
+                          ,@finished          BIT
                           ,@estabId           INT
-                          ,@deleted           BIT 
+                          ,@deleted           BIT
                           ,@isEnabled         BIT
                           ,@puntoEmisionId    INT
                           ,@CompanyId         INT'
@@ -121,28 +121,28 @@ BEGIN
             IF @puntoEmisionId > 0
                 BEGIN
                     SET @sql = @sql + 'AND ro.PuntoEmisionId = @puntoEmisionId '
-                END 
+                END
 
             IF @isSearchDate = 1
                 BEGIN
                     SET @sql = @sql + 'AND CAST(ro.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
-                END 
-                 
+                END
+
             IF @tableId > 0
-                BEGIN 
+                BEGIN
                     SET @sql = @sql + 'AND ro.TableId = @tableId '
-                END 
+                END
 
             IF @userId > 0
-                BEGIN 
+                BEGIN
                     SET @sql = @sql + 'AND ro.userId = @userId '
-                END 
+                END
 
-            SET @sql = @sql + 'AND ro.Enabled = @isEnabled ' 
+            SET @sql = @sql + 'AND ro.Enabled = @isEnabled '
 
             IF @isEnabled = 1
                 BEGIN
-                    SET @sql = @sql + 'AND ro.Finished = @finished ' 
+                    SET @sql = @sql + 'AND ro.Finished = @finished '
                 END
 
 
@@ -152,19 +152,19 @@ BEGIN
                 END
 
             IF (@typeSearchCustomer = 'DOC' AND @customerCompanyId > 0)
-                BEGIN 
+                BEGIN
                     SET @sql = @sql + 'AND EXISTS (
-                                                    SELECT 1 
+                                                    SELECT 1
                                                     FROM Restaurant.OrderDocument od WITH(NOLOCK)
-                                                    INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId 
+                                                    INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
                                                     WHERE od.orderId = ro.Id AND v_cpc.idCliente = @customerCompanyId
                                                 ) '
-                END 
+                END
 
 
 
             SET @sql = @sql + 'ORDER BY ro.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
-                        
+
             EXEC sp_executesql @sql
                                 ,@params
                                 ,@pageIndex
@@ -181,9 +181,9 @@ BEGIN
                                 ,@puntoEmisionId = @puntoEmisionId
                                 ,@CompanyId      = @idEntidad
 
-            RETURN 
+            RETURN
         END
-    
+
     --> Editar Orden
     IF (@tipo = 2)
         BEGIN
@@ -218,7 +218,7 @@ BEGIN
                 discount            NUMERIC(18,5),
                 total               NUMERIC(18,5) NOT NULL,
                 obs                 VARCHAR(500) NULL,
-                bodegaId            INT NOT NULL,                
+                bodegaId            INT NOT NULL,
                 paid                bit NULL,
                 itemTypeCode        VARCHAR(5) NOT NULL,
                 RemainingQuantity   NUMERIC(18,5) NULL,
@@ -228,39 +228,40 @@ BEGIN
                 medida VARCHAR(100) NOT NULL
             )
 
-            
+
             SELECT ISNULL(cu.BusinessName,'CONSUMIDOR FINAL')   as customerName
-                  ,tableName = rm.[description] + ' - ' + ISNULL(ta.[Description], '') 
+                  ,tableName = rm.[description] + ' - ' + ISNULL(ta.[Description], '')
                   ,numberTable = numberTable
                   ,tipoIdentificacionSri= ti.codigoSri
+                 ,customerIdentifiacion = cu.idCard
                   ,ro.*
              FROM Restaurant.[Order]           ro WITH (NOLOCK)
              LEFT JOIN Cliente                cl WITH (NOLOCK) ON cl.idCliente            = ro.CustomerCompanyId
               LEFT JOIN Restaurant.[Table]     ta WITH (NOLOCK) ON ta.Id                   = ro.TableId
              LEFT JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id                   = cl.CustomerId
-        --     LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion 
-             LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId 
-             
+        --     LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+             LEFT JOIN dbo.TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId
+
               LEFT JOIN Restaurant.Room        rm WITH (NOLOCK) ON rm.Id                   = ta.RoomId
-             WHERE ro.Id = @id 
-            
-            --ARTICULO- ITEMS 
+             WHERE ro.Id = @id
+
+            --ARTICULO- ITEMS
             INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, taxPercent, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                                         llevaInventario, taxRateCode, priceWithVat, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid,
                                         itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal, medida
                                         )
-            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, sti.porcentaje, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, 
+            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, sti.porcentaje, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo,
                     va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price * (sti.porcentaje/100)) + o_i.Price as numeric(18,5)),
                     o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
-                    
+
                     ISNULL(
-                            (SELECT idMedida      = m.idMedida 
+                            (SELECT idMedida      = m.idMedida
 			                        ,descripcion  = m.descripcion
 			                        ,tarifas      = (SELECT afs.idTarifa
                                                             ,afs.precioVenta
                                                             ,afs.precioConIva
                                                             ,tarifa = UPPER(ta.descripcion)
-                                                            ,ta.ventaPorMayor, 
+                                                            ,ta.ventaPorMayor,
                                                             ta.predeterminada
 								                     FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
 								                     INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
@@ -269,14 +270,14 @@ BEGIN
                                                      )
 			                        ,orden = IIF(af.gestionVenta = 1,1,3)
                                     ,af.conversion
-			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
 			                INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
 			                WHERE af.idArticulo = va.idArticulo AND af.estado = 1 FOR JSON PATH),'[]'
                             ) as medidasFraccionado
                             ,
                             (SELECT  m.idMedida
 			                        ,m.descripcion
-			                        ,tarifas = (SELECT ap.idTarifa, ap.precioVenta, ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, 
+			                        ,tarifas = (SELECT ap.idTarifa, ap.precioVenta, ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor,
                                                         ta.predeterminada
 								                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
@@ -297,7 +298,7 @@ BEGIN
             INNER JOIN Sri.TarifaImpuesto sti ON o_i.taxPercentId = sti.idTarifaImpuesto
             WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
 
-            --MENÚ- ITEMS 
+            --MENï¿½- ITEMS
             INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, taxPercent, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                llevaInventario, taxRateCode, priceWithVat, summary, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid, itemTypeCode, remainingQuantity,
                medidasFraccionado, medidasPrincipal, medida
@@ -306,9 +307,9 @@ BEGIN
                 va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat =CAST((o_i.Price * (sti.porcentaje/100)) + o_i.Price as numeric(18,5)),
                 m.Summary, o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                   ISNULL(
-                            (SELECT idMedida      = m.idMedida 
+                            (SELECT idMedida      = m.idMedida
 			                        ,descripcion  = m.descripcion
-			                        ,tarifas      = (SELECT afs.idTarifa, afs.precioVenta, afs.precioConIva, 
+			                        ,tarifas      = (SELECT afs.idTarifa, afs.precioVenta, afs.precioConIva,
                                                             tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada
 								                     FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
 								                     INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
@@ -317,14 +318,14 @@ BEGIN
                                                      )
 			                        ,orden = IIF(af.gestionVenta = 1,1,3)
                                     ,af.conversion
-			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
 			                INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
 			                WHERE af.idArticulo = va.idArticulo AND af.estado = 1 FOR JSON PATH),'[]'
                             ) as medidasFraccionado
                             ,
                             (SELECT  m.idMedida
 			                        ,m.descripcion
-			                        ,tarifas = (SELECT ap.idTarifa, ap.precioVenta, ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, 
+			                        ,tarifas = (SELECT ap.idTarifa, ap.precioVenta, ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor,
                                                         ta.predeterminada
 								                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
@@ -339,7 +340,7 @@ BEGIN
                              va.medida
             FROM Restaurant.[OrderItem] o_i with(nolock)
             INNER JOIN Restaurant.ItemType i_t          ON i_t.Id = o_i.ItemTypeId
-            INNER JOIN Restaurant.Menu m            ON o_i.menuId = m.Id 
+            INNER JOIN Restaurant.Menu m            ON o_i.menuId = m.Id
             INNER JOIN Inventario.v_Articulo va  ON va.idArticulo = m.ProductId
             INNER JOIN Sri.TarifaImpuesto sti ON o_i.taxPercentId = sti.idTarifaImpuesto
             WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
@@ -347,13 +348,13 @@ BEGIN
 
             SELECT * FROM @tblOrderItems
 
-            RETURN 
+            RETURN
         END
 
     --> Order Document [Nota Entrega, Factura Venta]
     IF @tipo = 3
         BEGIN
-            
+
             SET @tableNames = 'orderDocuments'
 
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
@@ -381,132 +382,132 @@ BEGIN
             RETURN
         END
 
-    --> Order Filters 
+    --> Order Filters
     IF (@tipo = 4)
         BEGIN
-            
+
             SET @tableNames = 'tables,usuarios'
 
             SELECT Id
                   ,[NumberTable]
                   ,[Description]
                   ,[Floor]
-                  ,roomDescription 
+                  ,roomDescription
                   ,vt.FloorId
                   ,vt.RoomId
-            FROM Restaurant.v_Table vt 
+            FROM Restaurant.v_Table vt
             WHERE vt.idEntidad = @idEntidad
 
-            SELECT u.idUsuario 
-				  ,u.nombreUsuario 
-				  ,u.nombreCompleto				 
-			 FROM v_usuario u WITH(NOLOCK) 
-			 WHERE u.idEntidad = @idEntidad 
+            SELECT u.idUsuario
+				  ,u.nombreUsuario
+				  ,u.nombreCompleto
+			 FROM v_usuario u WITH(NOLOCK)
+			 WHERE u.idEntidad = @idEntidad
                AND u.estadoUsuario = 1
 
-            RETURN 
+            RETURN
         END
 
-    --> Estadisticas 
+    --> Estadisticas
     IF @tipo = 5
-        BEGIN 
+        BEGIN
               SET @tableNames = 'order,docs,productsTop,documentCounts'
 
 			DECLARE @tbTotalSummary AS TABLE(
 				descripcion VARCHAR(100) NOT NULL
 				,cantidad INT NOT NULL
 			)
-            
+
             DECLARE @anio INT
 
             SELECT @anio = anio ,@estabId = estabId FROM OPENJSON(@json) WITH (anio INT ,estabId INT)
 
-            SELECT  'Orden'              as docNom 
+            SELECT  'Orden'              as docNom
                     ,SUM(ro.Total)       as totalVendido
                     ,YEAR(ro.CreatedAt)  as anio
                     ,MONTH(ro.CreatedAt) as mes
             FROM Restaurant.[Order]     ro WITH (NOLOCK)
             INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = ro.PuntoEmisionId
-            WHERE pe.idEstablecimiento = @estabId 
-              AND YEAR(ro.CreatedAt)   = @anio 
+            WHERE pe.idEstablecimiento = @estabId
+              AND YEAR(ro.CreatedAt)   = @anio
             GROUP BY YEAR(ro.CreatedAt), MONTH(ro.CreatedAt)
             ORDER BY anio, mes
 
 
-          SELECT 
-                CASE 
-                    WHEN v_cpc.codDoc = '01' THEN 'Factura' 
-                    WHEN v_cpc.codDoc = 'NE' THEN 'Nota Entrega' 
-                    ELSE 'Otro' 
+          SELECT
+                CASE
+                    WHEN v_cpc.codDoc = '01' THEN 'Factura'
+                    WHEN v_cpc.codDoc = 'NE' THEN 'Nota Entrega'
+                    ELSE 'Otro'
                 END AS docNom,
                 SUM(v_cpc.importeTotal) AS totalVendido,
                 YEAR(od.CreatedAt) AS anio,
                 MONTH(od.CreatedAt) AS mes
-            FROM 
+            FROM
                 Restaurant.OrderDocument od WITH(NOLOCK)
-            INNER JOIN 
-                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+            INNER JOIN
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK)
                 ON v_cpc.idDocumento = od.DocumentoId
-            WHERE  
+            WHERE
                 v_cpc.idEstablecimiento = @estabId AND
                 YEAR(od.CreatedAt) = @anio AND
                 v_cpc.codDoc IN ('01', 'NE')
-            GROUP BY 
-                v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt) 
-            ORDER BY  
-                v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt) 
+            GROUP BY
+                v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt)
+            ORDER BY
+                v_cpc.codDoc, YEAR(od.CreatedAt), MONTH(od.CreatedAt)
 
-            SELECT 
-                top 5 ri.Id, 
-                ar.descripcion , 
-                COUNT(roi.ItemId) as vecesVendido 
+            SELECT
+                top 5 ri.Id,
+                ar.descripcion ,
+                COUNT(roi.ItemId) as vecesVendido
             FROM Articulo ar
-            INNER JOIN Restaurant.Item ri ON ri.ProductId = ar.idArticulo 
+            INNER JOIN Restaurant.Item ri ON ri.ProductId = ar.idArticulo
             INNER JOIN Restaurant.OrderItem roi ON roi.ItemId = ri.Id
             INNER JOIN Restaurant.[Order] ro ON ro.Id = roi.OrderId
             WHERE ro.EstablecimientoId = @estabId AND   YEAR(ro.CreatedAt) = @anio
             group by ri.Id, ar.descripcion, roi.ItemId
-            order by count(ri.Id) desc; 
+            order by count(ri.Id) desc;
 
 
-            
+
 			INSERT INTO @tbTotalSummary (descripcion, cantidad)
-			SELECT 
-				'Ordenes' AS descripcion, 
-				COUNT(*) AS cantidad  -- Contar el número de órdenes
-			FROM 
+			SELECT
+				'Ordenes' AS descripcion,
+				COUNT(*) AS cantidad  -- Contar el nï¿½mero de ï¿½rdenes
+			FROM
 				Restaurant.[Order] ro
-			WHERE 
-				ro.establecimientoId = @estabId 
+			WHERE
+				ro.establecimientoId = @estabId
 				AND YEAR(ro.CreatedAt) = @anio;
 
 			INSERT INTO @tbTotalSummary (descripcion, cantidad)
-			SELECT 
-               'Facturas' AS descripcion, 
-                COUNT(*) AS cantidad   
-            FROM 
+			SELECT
+               'Facturas' AS descripcion,
+                COUNT(*) AS cantidad
+            FROM
                 Restaurant.OrderDocument od WITH(NOLOCK)
-            INNER JOIN 
-                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+            INNER JOIN
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK)
                 ON v_cpc.idDocumento = od.DocumentoId
-            WHERE  
+            WHERE
                 v_cpc.idEstablecimiento = @estabId AND
                 YEAR(od.CreatedAt) = @anio AND
-                v_cpc.codDoc =  '01' 
+                v_cpc.codDoc =  '01'
 
 			INSERT INTO @tbTotalSummary (descripcion, cantidad)
-			SELECT 
-               'Notas de Entrega' AS descripcion, 
-                COUNT(*) AS cantidad   
-            FROM 
+			SELECT
+               'Notas de Entrega' AS descripcion,
+                COUNT(*) AS cantidad
+            FROM
                 Restaurant.OrderDocument od WITH(NOLOCK)
-            INNER JOIN 
-                v_CuentaPorCobrar v_cpc WITH(NOLOCK) 
+            INNER JOIN
+                v_CuentaPorCobrar v_cpc WITH(NOLOCK)
                 ON v_cpc.idDocumento = od.DocumentoId
-            WHERE  
+            WHERE
                 v_cpc.idEstablecimiento = @estabId AND
                 YEAR(od.CreatedAt) = @anio AND
-                v_cpc.codDoc =  'NE' 
+                v_cpc.codDoc =  'NE'
 
 			SELECT * FROM @tbTotalSummary
         END

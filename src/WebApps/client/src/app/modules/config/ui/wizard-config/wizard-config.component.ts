@@ -273,6 +273,12 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     const group = control as FormGroup;
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
+
+    // Only validate if password is provided
+    if (!password && !confirmPassword) {
+      return null;
+    }
+
     return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
@@ -327,9 +333,9 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
         Validators.maxLength(50),
       ]),
       email: this._fb.control('', [Validators.email]),
-      phoneNumber: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]+$/)]),
-      password: this._fb.control('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: this._fb.control('', [Validators.required]),
+      phoneNumber: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]*$/)]), // Made pattern accept empty string
+      password: this._fb.control('', [Validators.minLength(6)]), // Removed required validator
+      confirmPassword: this._fb.control(''), // Removed required validator
     },
     { validators: [WizardConfigComponent.passwordsMatchValidator] },
   );
@@ -378,7 +384,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
   fetchCompanyDemoSteps(): void {
     this._companyDemoStepService
-      .get({})
+      .get()
       .pipe(
         catchError((error: unknown) => {
           this._errorHandler.handleApiError(error, {
@@ -413,12 +419,15 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
           this.currentEstab = this.establecimientos()[0]?.nombreComercial || '';
 
+          console.debug('Document configuration loaded successfully', this.establecimientos());
+
           const combinedData = this.establecimientos().map((pto) => ({
             ...pto,
+            ptoEmi: pto.puntosEmision?.[0]?.ptoEmi || '',
             _children: (response.tiposDoc || []).map((doc) => ({
               ...doc,
               parentId: pto.puntosEmision?.[0]?.idPuntoEmision || '',
-              ultimaSecuencia: 0,
+              ultimaSecuencia: doc.codigoSri ? 0 : 1,
             })),
           }));
 

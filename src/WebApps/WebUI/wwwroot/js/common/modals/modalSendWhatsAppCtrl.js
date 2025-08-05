@@ -78,7 +78,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     let telefonoEstab;
     let nombreEstab;
     let customerName;
-    let serieDocumento; 
+    let serieDocumento;
 
     getDataForm();
     function getDataForm() {
@@ -133,7 +133,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
 
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
-            (response) => { 
+            (response) => {
                 let { stateInstance } = response.data
                 if (stateInstance === "authorized") {
                     $scope.session.is_logged_in = true
@@ -293,13 +293,13 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         if(telefonoEstab){
             contactoNombre = `Contactos: ${telefonoEstab}`
         }
-      
+
 
         const mainMessage = `Estimado(a) *${data.razonSocialComprador || data.nombreComercial}*\n Adjunto su ${tipoDocNombre} Nro. ${data.serieComprobante} emitida por *${nombreEstab}*\n ${contactoNombre}`;
 
         const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n';
 
-        // const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n' + 
+        // const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n' +
         //                     'Optimiza tu facturación con **Acontplus**. Visita nuestro sitio web para conocer más:\n' +
         //                     '👉 https://acontplus.com.ec';
 
@@ -525,10 +525,10 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                 return
             }
 
-            if (!$scope.whatsapp.message) {
-                tS.toastr('warning', 'El mensaje no puede estar vacio!')
-                return
-            }
+            // if (!$scope.whatsapp.message) {
+            //     tS.toastr('warning', 'El mensaje no puede estar vacio!')
+            //     return
+            // }
             sendSms(null, true)
         } catch (error) {
             console.log(error)

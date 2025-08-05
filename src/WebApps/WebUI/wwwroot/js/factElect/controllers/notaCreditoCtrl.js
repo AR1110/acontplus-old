@@ -6,7 +6,7 @@
     //Variables Constantes
     const URL_TEMPLATE = '~/Pages/NotaCredito/'
 
-    //Variable servicios 
+    //Variable servicios
     let notaCreditoSvc = {};
     let commonSvc = {};
     let modalSvc = {};
@@ -27,6 +27,8 @@
     ]
 
     function notaCreditoClienteCtrl($scope, $injector, decodeToken) {
+                const docElectSvc = $injector.get('docElectService');
+
 
         notaCreditoSvc = $injector.get('notaCreditoService');
         commonSvc = $injector.get('commonService');
@@ -41,7 +43,7 @@
         tipoDoc = {
             codigo: DOC_TYPE.NC
         }
-        // const nombreModalFactElect = $injector.get("nombreModalFactElect"); 
+        // const nombreModalFactElect = $injector.get("nombreModalFactElect");
 
         $scope.dataSearch = {
             pageIndex: 1,
@@ -116,7 +118,7 @@
             // $scope.calculoColumnTotal();
         }
 
-        //=====================Eend Filters======================= 
+        //=====================Eend Filters=======================
         $scope.getNotaCreditos = function () {
             try {
                 if ($scope.dataSearch.nroSecuencial) {
@@ -254,6 +256,16 @@
 
         $scope.askToDelete = async (item) => {
             try {
+
+                const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                    accion: 'anular',
+                    identificacion: item.identificacionComprador,
+                    fechaEmision: item.fechaEmision,
+                    codDoc: item.codDoc
+
+                })
+
+
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -352,7 +364,7 @@
 
 
 
-        //let formattedDateTime = moment(new Date()).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");        
+        //let formattedDateTime = moment(new Date()).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
         $scope.data = {
             fechaEmision: new Date()
         };
@@ -371,7 +383,7 @@
         $scope.data.total = 0;
 
 
-        //Factura 
+        //Factura
         $scope.facturas = [];
         $scope.factura = {};
         $scope.textSearchFactura = ''
@@ -386,7 +398,7 @@
         }
 
         const detallesDeleted = [];
-        //GridOptions Invoice 
+        //GridOptions Invoice
         $scope.gridOptions = {
             enableColumnMenus: false,
             enableColumnReordering: true,
@@ -406,7 +418,7 @@
                 if (ev.which == 13 || ev.keyCode == '13') {
                     setFocusArticulo();
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();   
+                    // ev.stopPropagation();
                 }
             })
 
@@ -472,7 +484,7 @@
                     $scope.cliente = cliente;
 
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                    //Cargamos los Datos 
+                    //Cargamos los Datos
                     $scope.data = Object.assign({}, infoComprobante);
                     $scope.gridOptions.data = calculateTotalItems(detalleDocumento);
 
@@ -828,7 +840,7 @@
                         });
                     }
 
-                    //Recalculamos los totales 
+                    //Recalculamos los totales
                     $scope.setCalculoTotales("cantidad", rowEntity, 0);
                     $scope.$apply();
                 }
@@ -847,9 +859,9 @@
         }
 
         /**
-         * 
-         * @param {*} colField nombre de la columnas 
-         * @param {*} rowEntity datos del item 
+         *
+         * @param {*} colField nombre de la columnas
+         * @param {*} rowEntity datos del item
          * @param {*} oldValue valor anterior de la columna
          */
         function setCalculoTotales(colField, rowEntity, oldValue) {
@@ -870,7 +882,7 @@
         }
 
         /**
-         * Calculamos todos los totales y subtotales del comprobantes 
+         * Calculamos todos los totales y subtotales del comprobantes
          */
         function recalculateTotalsSimple() {
             drawImpuestoTotales();
@@ -928,7 +940,7 @@
                 let dataPtoEmi = $scope.puntosEmision.find(item => (item.defaultPtoEmi))
                 $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                //Bodegas  
+                //Bodegas
                 let dataBodega = $scope.bodegas.find(item => (item.defaultBodega));
                 $scope.data.idBodega = dataBodega.idBodega;
 
@@ -1047,9 +1059,9 @@
 
 
         /**
-         * 
-         * @param {string} textSearch 
-         * @returns 
+         *
+         * @param {string} textSearch
+         * @returns
          */
         function clienteSearchDynamic(textSearch) {
             try {
@@ -1275,7 +1287,7 @@
 
                 let index = 0, entity = {}, tarifaImpuesto = {};
 
-                //verificar si hay un articulo que lleva inventario mas de uno 
+                //verificar si hay un articulo que lleva inventario mas de uno
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
                     item.llevaInventario && item.idArticulo === articulo.idArticulo
                 ))
@@ -1318,8 +1330,8 @@
                 entity.llevaInventario = articulo.llevaInventario;
                 entity.datosAdicionales = articulo.datosAdicionales;
                 entity.productoFraccionable = articulo.productoFraccionable;
-                entity.medidas = medidas; //Lista Medida 
-                entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.medidas = medidas; //Lista Medida
+                entity.idMedida = dataMedida.idMedida; //Medida por defecto
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
                 entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
@@ -1394,7 +1406,7 @@
                 gridOptionsSvc.setPorcentajeDescuentoAll(
                     $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
                 )
-                //redondeo del numero porcentaje 
+                //redondeo del numero porcentaje
                 $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
                 recalculateTotalsSimple();
             } else {
@@ -1402,7 +1414,7 @@
             }
         }
 
-        //Calcular Porcentaje  Descuento 
+        //Calcular Porcentaje  Descuento
         $scope.calcularDescuento = function () {
             try {
                 if (!$scope.permisoComprobanteVenta.descuento) {

@@ -4,6 +4,7 @@ using Common.FactElect.Services.Authentication;
 using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
+using FactElect.Application;
 using FactElect.Application.Services;
 using FactElect.Application.Services.Sri;
 using FactElect.Infrastructure.Persistence;
@@ -24,6 +25,10 @@ public static class ApplicationServicesExtensions
         services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
         services.AddMemoryCache();
+
+        services.AddHttpClient();
+        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
+        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
 
         services.AddResponseCompression(options =>
         {

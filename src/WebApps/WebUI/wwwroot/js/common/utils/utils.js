@@ -11,11 +11,11 @@
     }
 
     /**
-     * 
-     * @param {*} num1 
-     * @param {*} num2 
-     * @param {*} max 
-     * @returns 
+     *
+     * @param {*} num1
+     * @param {*} num2
+     * @param {*} max
+     * @returns
      */
     function decPlus(num1, num2, max = 0) {
         let dec = instanceDecimal(num1).plus(num2)
@@ -28,11 +28,11 @@
     }
 
     /**
-     * 
-     * @param {*} num1 
-     * @param {*} num2 
-     * @param {*} max 
-     * @returns 
+     *
+     * @param {*} num1
+     * @param {*} num2
+     * @param {*} max
+     * @returns
      */
 
     function decMinus(num1, num2, max = 0) {
@@ -101,10 +101,10 @@
 
 
             /**
-             * Funtion old 
-             * @param {*} precioTotalConImpuesto 
-             * @param {*} porcentajeImpuesto 
-             * @returns 
+             * Funtion old
+             * @param {*} precioTotalConImpuesto
+             * @param {*} porcentajeImpuesto
+             * @returns
              */
             service.calcularPrecioVenta = function (precioTotalConImpuesto, porcentajeImpuesto) {
                 try {
@@ -120,10 +120,10 @@
 
 
             /**
-             * Function new 
-             * @param {*} precioTotalConImpuesto 
-             * @param {*} porcentajeImpuesto 
-             * @returns 
+             * Function new
+             * @param {*} precioTotalConImpuesto
+             * @param {*} porcentajeImpuesto
+             * @returns
              */
             service.calcularPrecioBase = function (precioTotalConImpuesto, porcentajeImpuesto) {
                 try {
@@ -177,7 +177,7 @@
             }
 
 
-            //EN VENTA 
+            //EN VENTA
             service.getPrecioIvaConDescuento = function (precioConIva, porcentajeDescuento) {
                 try {
                     // Convertir el porcentaje de descuento a decimal
@@ -214,10 +214,10 @@
 
 
             /**
-             *Función para calcular el valor total del descuento 
-             * @param {*} cantidad 
-             * @param {*} valorDescuento 
-             * @returns 
+             *Función para calcular el valor total del descuento
+             * @param {*} cantidad
+             * @param {*} valorDescuento
+             * @returns
              */
             service.calcularValorTotalDescuento = function (cantidad, valorDescuento) {
                 // Calcular el valor total del descuento
@@ -264,10 +264,10 @@
 
             /**
              * Calcular el subtotal sin impuestos
-             * @param {*} precioUnitario 
-             * @param {*} cantidad 
-             * @param {*} descuento 
-             * @returns 
+             * @param {*} precioUnitario
+             * @param {*} cantidad
+             * @param {*} descuento
+             * @returns
              */
             service.calcularSubtotalSinImpuesto = function (precioUnitario, cantidad, descuento) {
                 let totalAntesDescuento = service.calcularTotalAntesDescuento(precioUnitario, cantidad);
@@ -378,7 +378,7 @@
         //     let factor = Math.pow(10, max);
         //     let tempNumber = number * factor;
         //     let roundedTempNumber = Math.round(tempNumber);
-        //     return roundedTempNumber / factor; 
+        //     return roundedTempNumber / factor;
 
         // }
         formSvc.roundNumber = function (number, max = 2) {
@@ -403,9 +403,9 @@
 
 
         /**
-         * 
+         *
          * @param {Date} fecha
-         * @param {format} format "YYYY-MM-DD HH:mm:ss" 
+         * @param {format} format "YYYY-MM-DD HH:mm:ss"
          * @returns date
          */
         //Eliminar mas adelante
@@ -416,9 +416,9 @@
 
 
         /**
-         * 
-         * @param {*} dateString 
-         * @returns 
+         *
+         * @param {*} dateString
+         * @returns
          */
         formSvc.formatDateMoment = function (dateString) {
             if (!this.isDateValid(dateString)) {
@@ -547,8 +547,8 @@
 
 
         /**
-         * 
-         * @param {Date} fecha 
+         *
+         * @param {Date} fecha
          * @returns fecha
          */
         formSvc.formatDate = function (fecha) {
@@ -560,12 +560,12 @@
         }
 
 
-        //Get fecha Inicio/Fin en la Busqueda Avanzada del Tipo Documentos 
+        //Get fecha Inicio/Fin en la Busqueda Avanzada del Tipo Documentos
         formSvc.getFechaInicioFinFilter = function (mes) {
             const fecha = new Date();
             let fechaInicio, fechaFin, anio = fecha.getFullYear();
 
-            //Si es opcion Todo el Año         
+            //Si es opcion Todo el Año
             if (mes == 0) {
                 fechaInicio = new Date(anio, 0, 1);
                 fechaFin = new Date(anio, 11, 31);
@@ -692,8 +692,8 @@
 
 
         /**
-         * 
-         * @param {*} obj 
+         *
+         * @param {*} obj
          */
         formSvc.groupingEstab = function (obj) {
             const tempEstabsAndPtosEmision = obj.estabs;
@@ -795,9 +795,9 @@
         }
 
         /**
-         * 
+         *
          * @param {*} items  (items de factura, nota entrega)
-         * @returns 
+         * @returns
          */
         formSvc.impuestoTarifaMapperTo = function (items) {
             let impuestosTarifa = items.map(item => {
@@ -824,10 +824,10 @@
         }
 
         /**
-         * 
-         * @param {*} fecha1 
-         * @param {*} fecha2 
-         * @returns 
+         *
+         * @param {*} fecha1
+         * @param {*} fecha2
+         * @returns
          */
         formSvc.sonFechasIguales = function (fecha1, fecha2) {
             // Verificar si alguna fecha es null
@@ -908,10 +908,10 @@
 
 
         /**
-         * 
-         * @param {*} medidasFraccionado 
-         * @param {*} medidasPrincipal 
-         * @returns 
+         *
+         * @param {*} medidasFraccionado
+         * @param {*} medidasPrincipal
+         * @returns
          */
 
         formSvc.processAndSortMeasures = function (medidasPrincipal, medidasFraccionado) {
@@ -1126,7 +1126,7 @@
         }
 
 
-        //Merge Item Detalle Documento Venta 
+        //Merge Item Detalle Documento Venta
         formSvc.mergeItemStock = function (items, rowEntity) {
             // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
             let foundItemByArticuloAndBodega = items.filter(item => (
@@ -1160,7 +1160,7 @@
                 cantidad: 0,
             });
 
-            // Devuelve el objeto resultante de la fusión. 
+            // Devuelve el objeto resultante de la fusión.
             return {
                 idBodega: dataItemMerge.idBodega,
                 cantidad: dataItemMerge.cantidad,
@@ -1234,11 +1234,11 @@
         }
 
         /**
-         * 
-         * @param {*} num1 
-         * @param {*} num2 
-         * @param {*} max 
-         * @returns 
+         *
+         * @param {*} num1
+         * @param {*} num2
+         * @param {*} max
+         * @returns
          */
         formSvc.plus = function (num1, num2, max = 0) {
             let instanceDecimal = new Decimal(num1).plus(num2)
@@ -1251,11 +1251,11 @@
         }
 
         /**
-         * 
-         * @param {*} num1 
-         * @param {*} num2 
-         * @param {*} max 
-         * @returns 
+         *
+         * @param {*} num1
+         * @param {*} num2
+         * @param {*} max
+         * @returns
          */
 
         formSvc.minus = function (num1, num2, max = 0) {
@@ -1337,6 +1337,17 @@
         };
 
 
+        formSvc.debounce = function(fn, delay) {
+            let timeoutId;
+            return (...args) => {
+                // Si se llama otra vez antes de que termine el delay, se limpia el timeout anterior
+                clearTimeout(timeoutId);
+                // Se programa la ejecución de `fn` luego de `delay` ms con los argumentos pasados
+                timeoutId = setTimeout(() => fn(...args), delay);
+            };
+        }
+
+
 
 
         return formSvc;
@@ -1345,6 +1356,6 @@
 
 
 
-    
+
 
 })(window.angular)
