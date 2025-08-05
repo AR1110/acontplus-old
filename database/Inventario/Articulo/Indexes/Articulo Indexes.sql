@@ -71,14 +71,14 @@ GO
 --INCLUDE(idSubfamilia,codigo,fechaCaducidad,stock);
 
 
---IF EXISTS (SELECT name
---    FROM sys.indexes
---    WHERE name = N'IX_Articulo')   
---    DROP INDEX IX_Articulo ON dbo.Articulo;  
---GO
---    CREATE NONCLUSTERED INDEX IX_Articulo ON dbo.Articulo(idArticulo, idSubfamilia, idTipoIce, idTipoArticulo, idModelo, idEntidad, idMarca, idTipoIva, idFamilia, idEtiqueta)
---    INCLUDE(codigo, codigoAuxiliar, codigoBarra, llevaInventario, estado)
---GO
+IF EXISTS (SELECT name
+    FROM sys.indexes
+    WHERE name = N'IX_Articulo')   
+    DROP INDEX IX_Articulo ON dbo.Articulo;  
+GO
+    CREATE NONCLUSTERED INDEX IX_Articulo ON dbo.Articulo(idArticulo, idSubfamilia, idTipoIce, idTipoArticulo, idModelo, idEntidad, idMarca, idTipoIva, idFamilia, idEtiqueta)
+    INCLUDE(codigo, codigoAuxiliar, codigoBarra, llevaInventario, estado, stock)
+GO
 
 
 --UPDATE STATISTICS dbo.Articulo WITH FULLSCAN;

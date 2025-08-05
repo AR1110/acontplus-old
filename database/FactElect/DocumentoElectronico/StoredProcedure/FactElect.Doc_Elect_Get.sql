@@ -228,10 +228,11 @@ BEGIN
                         BEGIN
                             SELECT @message = 'No está permitido emitir facturas mayores a 50 dolares a consumidor final Según normativa del SRI' 
                         END
-                    ELSE
-                        BEGIN
-                            SELECT @message = 'No se permite anular ventas a consumidor final.' WHERE @importeTotal IS NULL
-                        END
+
+                    --ELSE IF @importeTotal IS NULL
+                    --    BEGIN
+                    --        SELECT @message = 'No se permite anular ventas a consumidor final.'
+                    --    END
                 END
 
             --> Normativa que restringue a tipos ciertos de pagos si se eleva el valor destinado por el sri

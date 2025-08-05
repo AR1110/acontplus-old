@@ -34,39 +34,35 @@ BEGIN
                 SELECT '0' AS code, 'El comprobante ya se encuentra autorizado' AS message;
                 RETURN;
             END
-        
-        IF @codDoc != '07'
-            BEGIN 
-                IF DATEDIFF(DAY, @fechaEmision, GETDATE()) > 4
-                    BEGIN
-                        SELECT '0' AS code, 'El documento ' + @serieComprobante + ' se encuentra fuera de la fecha permitida por el SRI' AS message;
-                        RETURN;
-                    END 
-            END 
 
+        IF DATEDIFF(DAY, @fechaEmision, GETDATE()) > IIF(@codDoc = '07',5,4)
+            BEGIN
+                SELECT '0' AS code, 'El documento ' + @serieComprobante + ' se encuentra fuera de la fecha permitida por el SRI' AS message;
+                RETURN;
+            END
         BEGIN TRANSACTION;
 
-        --> Actualizar si el documento esta en estado firmado
-        IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2)
-            BEGIN
-                UPDATE DocumentoElectronico SET isAutomatic = 1 WHERE idDocumentoElectronico = @id;
+            --> Actualizar si el documento esta en estado firmado
+            IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2)
+                BEGIN
+                    UPDATE DocumentoElectronico SET isAutomatic = 1 WHERE idDocumentoElectronico = @id;
 
-                SET @codeResponse = '1';
-                SET @message = 'Enviado a autorizar en el SRI';
-            END
+                    SET @codeResponse = '1';
+                    SET @message = 'Enviado a autorizar en el SRI';
+                END
 
-        --> En caso de Error volvera al estado en proceso
-        IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado IN (0,5))
-            BEGIN
-                DECLARE @idEstadoServicio INT
+            --> En caso de Error volvera al estado en proceso
+            IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado IN (0,5))
+                BEGIN
+                    DECLARE @idEstadoServicio INT
 
-                SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1;
+                    SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1;
 
-                UPDATE DocumentoElectronico  SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id;
+                    UPDATE DocumentoElectronico  SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id;
 
-                SET @codeResponse = '1';
-                SET @message = 'El XML se está actualizando';
-            END
+                    SET @codeResponse = '1';
+                    SET @message = 'El XML se está actualizando';
+                END
 
         COMMIT TRANSACTION;
         SELECT @codeResponse AS code, @message AS message;

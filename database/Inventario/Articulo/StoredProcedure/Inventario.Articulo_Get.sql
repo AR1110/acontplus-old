@@ -26,7 +26,7 @@ BEGIN
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
 	--> Filters
-	DECLARE @byStock INT ,@idArticulo INT ,@bySearch NVARCHAR(300) 
+	DECLARE @byStock INT ,@idArticulo INT ,@bySearch NVARCHAR(300) ,@idBodega INT 
 
     BEGIN TRY 
         --> Recuperando Datos
@@ -49,6 +49,11 @@ BEGIN
                        ,@idMarca                INT
                        ,@idMedida               INT 
                        ,@idSubFamilia           INT
+
+                SELECT TOP 1 @idBodega =  ba.idBodega 
+                FROM Config.Bodeg_Asig       ba WITH (NOLOCK)
+                INNER JOIN Config.Estab_Asig ea WITH (NOLOCK) ON ea.codEstab_Asig = ba.codEstab_Asig
+                WHERE ea.idUsuarioRol = @userRoleId AND ea.predeterminado  = 1
 			
 			    SELECT @bySearch            = REPLACE(bySearch,SPACE(1),'%')
 				      ,@idSubFamilia        = bySubFamilia
@@ -83,6 +88,7 @@ BEGIN
 			    SET @params  = '@idEntidad    INT
 						       ,@bySearch     VARCHAR(250)
 						       ,@idSubFamilia INT
+                               ,@idBodega     INT
 						       ,@idMedida     INT
 						       ,@idMarca      INT
 						       ,@idModelo     INT
@@ -91,82 +97,111 @@ BEGIN
 						       ,@pageIndex    INT
 						       ,@pageSize     INT '
 
-			    SET @sql  = 'SELECT a.idArticulo
-							       ,a.idMedida
-							       ,a.code_unique
-							       ,codigo        = ISNULL(a.codigo,''Ninguno'')
-							       ,descripcion   = ISNULL(a.descripcion, ''Ninguno'')
-							       ,precioCosto   
-							       ,estado       
-							       ,ISNULL(stock,0) as stock         
-							       ,observaciones 
-							       ,subFamilia    
-							       ,medida        
-							       ,marca        
-							       ,modelo       
-							       ,tipoIva           = CAST(CAST(a.porcentaje as decimal(15,0)) AS VARCHAR)+''%''
-							       ,tipoArticulo      = ISNULL(a.tipoArticulo,''Ninguna'')
-							       ,style             = a.colorRow 
-							       ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
-							       ,a.stockMinimo
-							       ,totalRecords = COUNT(*) OVER()
-							       ,a.s3ObjectKey
-							       ,a.s3ObjectUrl
-						       FROM Inventario.v_Articulo a WITH (NOLOCK)
-						       WHERE a.idEntidad = @idEntidad  '
-						    
-			    SET @dynamicFilterCondition = CHOOSE(
-				    ISNULL(@filterMode, 1),
-				    ' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' OR a.codigo LIKE ''%'' + @bySearch + ''%'' OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
-				    ' AND a.codigo       = @bySearch  ',
-				    ' AND a.codigoBarra  = @bySearch  ',
-				    ' AND a.descripcion  LIKE ''%'' + @bySearch + ''%'' ',
-				    ' AND a.codigoAuxiliar  = @bySearch  '
-			    );
+			    SET @sql = 'SELECT a.idArticulo
+                                  ,a.idMedida
+                                  ,a.code_unique
+                                  ,codigo = ISNULL(a.codigo, ''Ninguno'')
+                                  ,descripcion = ISNULL(a.descripcion, ''Ninguno'')
+                                  ,precioCosto
+                                  ,a.estado
+                                  ,ISNULL(st.cantidad, 0) as stockBodega
+                                  ,ISNULL(a.stock, 0) as stock
+                                  ,observaciones
+                                  ,subFamilia
+                                  ,medida
+                                  ,marca
+                                  ,modelo
+                                  ,tipoIva = CAST(CAST(a.porcentaje as decimal(15,0)) AS VARCHAR) + ''%''
+                                  ,tipoArticulo = ISNULL(a.tipoArticulo, ''Ninguna'')
+                                  ,style = a.colorRow
+                                  ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
+                                  ,a.stockMinimo
+                                  ,totalRecords = COUNT(*) OVER()
+                                  ,a.s3ObjectKey
+                                  ,a.s3ObjectUrl
+                            FROM Inventario.v_Articulo a WITH (NOLOCK)
+                            OUTER APPLY
+                            (
+                                SELECT TOP 1 s.cantidad
+                                FROM Inventario.Stock s WITH (NOLOCK)
+                                WHERE s.idArticulo = a.idArticulo
+                                  AND s.idBodega = @idBodega 
+                             ) st
+                             WHERE a.idEntidad = @idEntidad '
 			 
-			    IF @idSubFamilia > 0 
-				    SET @sql += ' AND a.idSubFamilia = @idSubFamilia ';
+			    IF @idSubFamilia > 0
+                    BEGIN
+				        SET @sql += ' AND a.idSubFamilia = @idSubFamilia ';
+                    END
 
-			    IF @idMedida > 0 
-				    SET @sql += ' AND a.idMedida = @idMedida ';
+			    IF @idMedida > 0
+                    BEGIN
+                        SET @sql += ' AND a.idMedida = @idMedida '
+                    END
 
-			    IF @idMarca > 0 
-				    SET @sql += ' AND a.idMarca = @idMarca ';
+			    IF @idMarca > 0
+                    BEGIN 
+				        SET @sql += ' AND a.idMarca = @idMarca '
+                    END
 
-			    IF @idModelo > 0 
-				    SET @sql += ' AND a.idModelo = @idModelo ';
+			    IF @idModelo > 0
+                    BEGIN 
+				        SET @sql += ' AND a.idModelo = @idModelo '
+                    END
 
-			    IF @idTipoIva > 0 
-				    SET @sql += ' AND a.idTipoIva = @idTipoIva ';
+			    IF @idTipoIva > 0
+                    BEGIN 
+				        SET @sql += ' AND a.idTipoIva = @idTipoIva '
+                    END
 
-			    IF @estado IN (1, 0) 
-				    SET @sql += ' AND a.estado = @estado ';
+			    IF @estado IN (1, 0)
+                    BEGIN 
+				        SET @sql += ' AND a.estado = @estado '
+                    END
 
-			    IF @checkBoxFraccionado = 1 
-				    SET @sql += ' AND a.fraccionado = 1 ';
+			    IF @checkBoxFraccionado = 1
+                    BEGIN 
+				        SET @sql += ' AND a.fraccionado = 1 '
+                    END
 
-			    IF @checkBoxInventario = 1 
-				    SET @sql += ' AND a.llevaInventario = 1 ';
+			    IF @checkBoxInventario = 1
+                    BEGIN 
+				        SET @sql += ' AND a.llevaInventario = 1 '
+                    END
 
-			    -- Condiciones adicionales basadas en el stock
 			    IF @byStock = 1
-				    SET @sql += ' AND a.stock > 0 AND a.llevaInventario = 1 ';
+                    BEGIN 
+				        SET @sql += ' AND a.stock > 0 AND a.llevaInventario = 1 '
+                    END
 
 			    ELSE IF @byStock = 2
-				    SET @sql += ' AND a.stock <= 0 AND a.llevaInventario = 1 ';
+                    BEGIN 
+				        SET @sql += ' AND a.stock <= 0 AND a.llevaInventario = 1 '
+                    END
 
-			    -- Filtro adicional de b�squeda din�mica
-			    IF @bySearch IS NOT NULL 
-				    SET @sql += ' ' + @dynamicFilterCondition;
+			    IF @bySearch IS NOT NULL
+                    BEGIN
+                        SET @dynamicFilterCondition = CHOOSE(
+				            ISNULL(@filterMode, 1),
+				            ' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' OR a.codigo LIKE ''%'' + @bySearch + ''%'' OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
+				            ' AND a.codigo       = @bySearch  ',
+				            ' AND a.codigoBarra  = @bySearch  ',
+				            ' AND a.descripcion  LIKE ''%'' + @bySearch + ''%'' ',
+				            ' AND a.codigoAuxiliar  = @bySearch  '
+			            )
+
+				        SET @sql += ' ' + @dynamicFilterCondition
+                    END
      
-			    SET @sql = @sql+ 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
-      
+			    SET @sql = @sql + 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
+
        
 			    EXEC sp_executesql  @sql
 						           ,@params 
 						           ,@idEntidad    = @idEntidad
 						           ,@bySearch     = @bySearch
 						           ,@idSubFamilia = @idSubFamilia
+                                   ,@idBodega     = @idBodega
 							       ,@idMedida     = @idMedida
 							       ,@idMarca      = @idMarca
 							       ,@idModelo     = @idModelo
@@ -459,7 +494,6 @@ BEGIN
 	            DECLARE @stock       NUMERIC(18,5) 
                        ,@stockMinimo NUMERIC(18,5) 
                        ,@cantidad    NUMERIC(18,5) 
-                       ,@idBodega    INT 
                        ,@descripcion VARCHAR(300)
                        ,@bodega      VARCHAR(300)
                        ,@notifNPS    BIT
@@ -675,6 +709,6 @@ BEGIN
         SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		VALUES(NEWID(),'/Articulo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() + ' json : ' + ISNULL(@json,''),GETDATE(),@idUsuario)
+		VALUES(NEWID(),'/Articulo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),'Inventario.Articulo_Get',ERROR_LINE(),ERROR_MESSAGE() + ' json : ' + ISNULL(@json,''),GETDATE(),@idUsuario)
 	END CATCH 
 END

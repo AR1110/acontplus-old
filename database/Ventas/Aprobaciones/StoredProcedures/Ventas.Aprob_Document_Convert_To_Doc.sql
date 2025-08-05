@@ -418,7 +418,7 @@ BEGIN
             --> informacion Adiciomal
 			INSERT INTO dbo.InfoAdicionalDoc
                   ( idComprobante,idTipoDocumento,nombre,valor) 
-            SELECT @idNotaEntrega,@idTipoDocumento,nombre,valor FROM @tblInfoAdicional
+            SELECT @idDocumento,@idTipoDocumento,nombre,valor FROM @tblInfoAdicional
 
             --> Actualizacion de Secuencial
 			UPDATE dbo.ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
