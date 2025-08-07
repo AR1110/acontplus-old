@@ -11,7 +11,6 @@
     let fS = {};
     let modalSvc = {};
     let TIPO_DOC_NE = {};
-    const NUM_CONSUMIDOR_FINAL = "9999999999999";
     let nombreModalVenta = {}
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
@@ -771,6 +770,9 @@
         let facturaSvc = $injector.get('facturaService');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         let productUtil = $injector.get('productUtil');
+        const policyService = $injector.get('PolicyService');
+
+
         let infoAdicionalConfig = [];
         let isSetInfoAdicionalConfig = true;
 
@@ -2617,6 +2619,8 @@
                 let cuotas = validateCuota();
 
                 if (cuotas && cuotas.length === 0) return
+
+                await policyService.sendMaxDocuments();
 
 
                 Swal.fire({

@@ -70,7 +70,7 @@
         };
     }]);
 
-    //Directiva para numeros enteros y decimales 
+    //Directiva para numeros enteros y decimales
     app.directive('validNumber', [function () {
         return {
             require: '?ngModel',
@@ -164,7 +164,7 @@
         };
     }]);
 
-    //Directiva que permite entrada de solo Letras en input 
+    //Directiva que permite entrada de solo Letras en input
     app.directive('validLetra', [function () {
         return {
             require: 'ngModel',
@@ -441,16 +441,16 @@
                 });
 
                 // Evento para hover opcional (puedes descomentar si quieres activarlo)
-                 var hoverTimer;
-                 element.on('mouseenter', function() {
-                     hoverTimer = $timeout(function() {
-                         showStockDetails();
-                     }, 500); // Retraso para evitar activación accidental
-                 });
-                 
-                 element.on('mouseleave', function() {
-                     $timeout.cancel(hoverTimer);
-                 });
+                var hoverTimer;
+                element.on('mouseenter', function () {
+                    hoverTimer = $timeout(function () {
+                        showStockDetails();
+                    }, 500); // Retraso para evitar activación accidental
+                });
+
+                element.on('mouseleave', function () {
+                    $timeout.cancel(hoverTimer);
+                });
 
                 // Limpiar eventos al destruir el scope
                 scope.$on('$destroy', function () {
@@ -785,7 +785,7 @@
                     //Verificamos si el campo ingresado es cedula o ruc (longitud caracteres)
                     if (!verificarNumero(textSearch)) return [];
 
-                    //Numero de RUC 
+                    //Numero de RUC
                     if (textSearch.length === 13) {
                         try {
                             showLoader();
@@ -827,7 +827,7 @@
                         }
                     }
 
-                    //Numero de Cedula 
+                    //Numero de Cedula
                     if (textSearch.length === 10) {
                         try {
                             showLoader();
@@ -1192,10 +1192,10 @@
     })
 
     /**
-     * 
-     * ==========================SEND DOCS. BY EMAIL ========================= 
+     *
+     * ==========================SEND DOCS. BY EMAIL =========================
      * @warning OldVersion
-     * 
+     *
      */
     app.directive('btnSendToEmail', function (modalService, nombreModalCommon) {
         return {
@@ -1280,7 +1280,7 @@
 
     /**
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
-     * 
+     *
      */
 
     app.directive('actionSendToWhatsApp', ['modalService', 'nombreModalCommon', 'mainService', 'toastService', function (modalSvc, nombreModalCommon, mS, tS) {
@@ -1301,7 +1301,7 @@
 
                     showLoader();
                     let response = await mS.getData('get', url).finally(() => hideLoader());
-                    
+
                     if (response.code === "0") {
                         tS.toastr({
                             type: 'warning',
@@ -1322,7 +1322,7 @@
                     }
 
                     let { fileCtrl, template, controller } = nombreModalCommon.SEND_WHATSAPP;
-                    let ctrl = (await import(fileCtrl))[controller]; 
+                    let ctrl = (await import(fileCtrl))[controller];
                     const modalRef = modalSvc.open({
                         controller: ctrl,
                         template,
@@ -1699,7 +1699,7 @@
                                                             <th>Stock</th>
                                                             <th ng-repeat="item in tarifas">
                                                             {{item.tarifa}}
-                                                            </th> 
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody class="small">
@@ -1708,12 +1708,12 @@
                                                             <td>{{item.medida}}</td>
                                                             <td>{{item.stock}}</td>
                                                             <td ng-repeat="tt in item.tarifas">
-                                                                {{tt.precioVenta}} 
+                                                                {{tt.precioVenta}}
                                                             </td>
                                                         <tr>
                                                     </tbody>
                                                 </table>
-                                            </div>   
+                                            </div>
                                              `;
 
                         const query = {
@@ -1867,13 +1867,13 @@
     })
 
 
-    //Convertir documento proforma 
+    //Convertir documento proforma
     /**
      * 1. Transformar datos de proforma pendiente a nota entrega o factura
      * 2. Transformar datos de nota entrega a factura
      */
 
-    app.directive('btnConvertToDoc', function (modalService, nombreModalVenta) {
+    app.directive('btnConvertToDoc', function (modalService, nombreModalVenta, PolicyService) {
         return {
             restrict: 'A',
             scope: {
@@ -1887,6 +1887,13 @@
                     let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
                     let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["M"];
                     let template = nombreModalVenta.CONVERT_TO_DOC.templates['M'];
+
+                    //si es nota entrega la validacion ingresa xq es transformacion a factura
+                    if (scope.codDoc === "NE") {
+                        await PolicyService.sendMaxDocuments();
+                    }
+
+
                     let controller = (await import(fileCtrl))[ctrl];
 
                     let modalRef = modalService.openModalCustom({
@@ -1912,7 +1919,7 @@
         }
     })
 
-    //HISTORIAL CONVERSIÓN DOCUMENTO  
+    //HISTORIAL CONVERSIÓN DOCUMENTO
     app.directive('btnHistorialConversionDoc', function (modalService, nombreModalVenta) {
         return {
             restrict: 'A',
@@ -1947,7 +1954,7 @@
     })
 
 
-    //HISTORIAL COBRO DOCUMENTO 
+    //HISTORIAL COBRO DOCUMENTO
     app.directive('btnHistorialCobro', function (modalService, nombreModalContabilidad) {
         return {
             restrict: 'A',
@@ -1988,7 +1995,7 @@
     })
 
 
-    //Reporte Comprobante Ingreso 
+    //Reporte Comprobante Ingreso
     app.directive('btnComprobanteIngresoReport', ['commonService', function (commonSvc) {
         return {
             restrict: 'A',
@@ -2032,7 +2039,7 @@
 
     /***
      * @description Modal component cuenta por pagar
-     * 
+     *
      */
     app.directive('btnCuentaPorPagar', ['modalService', function (modalSvc) {
         return {
@@ -2064,7 +2071,7 @@
 
     /***
      * @description Modal component cuenta por pagar
-     * 
+     *
      */
     app.directive('btnCuentaPorCobrar', ['modalService', function (modalSvc) {
         return {
@@ -2100,8 +2107,8 @@
 
 
     /***
-    * @description anular comprobante ingreso 
-    * 
+    * @description anular comprobante ingreso
+    *
     */
     app.directive('btnAnularComprobanteIngreso', ['comprobanteIngresoService', 'toastService', 'formulario', function (compIngresoSvc, tS, fS) {
         return {
@@ -2276,7 +2283,7 @@
 
 
     /**
-     *========================================================== 
+     *==========================================================
      * DIRECTIVAS COMUNES
      * =========================================================
      */
@@ -2295,9 +2302,9 @@
         return {
             restrict: 'A',
             scope: {
-                entity: '=', //Datos del detalle 
+                entity: '=', //Datos del detalle
                 resultModalAdicional: '&',
-                infoAdicionalDoc: "=" //Información Adicional del Documento 
+                infoAdicionalDoc: "=" //Información Adicional del Documento
             },
             link
         }
@@ -2353,8 +2360,8 @@
 
     //-------------------------------COMPROBANTE EGRESO START---------------------------------------
     /***
- * @description anular comprobante EGRESO 
- * 
+ * @description anular comprobante EGRESO
+ *
  */
     app.directive('btnAnularComprobanteEgreso', ['comprobanteEgresoService', 'toastService', 'formulario', function (comprobanteEgresoSvc, tS, fS) {
         return {
@@ -2452,10 +2459,10 @@
                 });
 
                 /**
-                    * 
-                    * @param {*} codigoEstadoPago 
-                    * @param {*} estadosPago 
-                    * @returns 
+                    *
+                    * @param {*} codigoEstadoPago
+                    * @param {*} estadosPago
+                    * @returns
                     */
                 function getDataIdEstadoPago(codigoEstadoPago, estadosPago) {
                     const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
@@ -2463,11 +2470,11 @@
                 }
 
                 /**
-                 * 
-                 * @param {*} cuentasPorPagar 
-                 * @param {*} cuotasPorPagar 
-                 * @param {*} estadosPago 
-                 * @returns 
+                 *
+                 * @param {*} cuentasPorPagar
+                 * @param {*} cuotasPorPagar
+                 * @param {*} estadosPago
+                 * @returns
                  */
                 function getDataParams(cuentasPorPagar, cuotasPorPagar, estadosPago) {
                     // Agrupa cuentas por pagar
@@ -2511,7 +2518,7 @@
                         //let valorResiduo = fS.minus(item.abonoDoc,item.abono).toNumber()
                         let valorResiduo = fS.instanceDecimal(item.abonoDoc).minus(item.abono).toNumber();
 
-                        //quitar cuando se haya validado bien tema de decimales en compras 
+                        //quitar cuando se haya validado bien tema de decimales en compras
                         let abonoDocRounded = fS.roundNumber(item.abonoDoc, 2);
                         let abonoRounded = fS.roundNumber(item.abono, 2)
                         let valorResiduoValidar = fS.minus(abonoDocRounded, abonoRounded, 2);
@@ -2550,8 +2557,8 @@
 
 
 
-    //Reporte Comprobante Egreso 
-    app.directive('btnComprobanteEgresoReport', ['commonService','decodeToken', function (commonSvc, decodeToken) {
+    //Reporte Comprobante Egreso
+    app.directive('btnComprobanteEgresoReport', ['commonService', 'decodeToken', function (commonSvc, decodeToken) {
         return {
             restrict: 'A',
             scope: {
