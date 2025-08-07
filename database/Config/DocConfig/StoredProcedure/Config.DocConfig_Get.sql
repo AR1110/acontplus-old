@@ -86,7 +86,7 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s ON sd.SuscripcionId = s.Id
             INNER JOIN AcontplusAdmin.Config.Company c ON s.CompanyId = c.Id AND c.Uuid = @CompanyUuid
             WHERE estado = 1
-                AND secuencial = 1	
+              AND secuencial = 1	
             RETURN 
 		END 
 	

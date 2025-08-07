@@ -88,7 +88,6 @@ BEGIN
 			    SET @params  = '@idEntidad    INT
 						       ,@bySearch     VARCHAR(250)
 						       ,@idSubFamilia INT
-                               ,@idBodega     INT
 						       ,@idMedida     INT
 						       ,@idMarca      INT
 						       ,@idModelo     INT
@@ -104,7 +103,6 @@ BEGIN
                                   ,descripcion = ISNULL(a.descripcion, ''Ninguno'')
                                   ,precioCosto
                                   ,a.estado
-                                  ,ISNULL(st.cantidad, 0) as stockBodega
                                   ,ISNULL(a.stock, 0) as stock
                                   ,observaciones
                                   ,subFamilia
@@ -120,13 +118,6 @@ BEGIN
                                   ,a.s3ObjectKey
                                   ,a.s3ObjectUrl
                             FROM Inventario.v_Articulo a WITH (NOLOCK)
-                            OUTER APPLY
-                            (
-                                SELECT TOP 1 s.cantidad
-                                FROM Inventario.Stock s WITH (NOLOCK)
-                                WHERE s.idArticulo = a.idArticulo
-                                  AND s.idBodega = @idBodega 
-                             ) st
                              WHERE a.idEntidad = @idEntidad '
 			 
 			    IF @idSubFamilia > 0
@@ -201,7 +192,6 @@ BEGIN
 						           ,@idEntidad    = @idEntidad
 						           ,@bySearch     = @bySearch
 						           ,@idSubFamilia = @idSubFamilia
-                                   ,@idBodega     = @idBodega
 							       ,@idMedida     = @idMedida
 							       ,@idMarca      = @idMarca
 							       ,@idModelo     = @idModelo
@@ -260,16 +250,29 @@ BEGIN
 							       ,style             = a.colorRow 
 							       ,precioSinSubsidio = ISNULL(precioSinSubsidio, 0)
 							       ,a.stockMinimo
-							       ,tarifa            = (SELECT precioConIva = ISNULL(ap.precioConIva, 0.00000)
-													           ,tarifa       = Helper.IsNullOrEmpty(ta.descripcion)
-											            FROM dbo.ArticuloPvP ap WITH (NOLOCK)
-											            LEFT JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa =  ap.idTarifa
-											            WHERE ap.idArticulo = a.idArticulo FOR JSON PATH)
+							       ,tarifa            = (
+
+                                                             SELECT precioConIva = ISNULL(ap.precioConIva, 0.00000)
+													               ,tarifa       = Helper.IsNullOrEmpty(ta.descripcion)
+											                 FROM dbo.ArticuloPvP ap WITH (NOLOCK)
+											                 LEFT JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa =  ap.idTarifa
+											                 WHERE ap.idArticulo = a.idArticulo FOR JSON PATH
+
+                                                        )
+                                   ,stocks =(
+                                                SELECT bo.descripcion as bodega
+                                                      ,st.cantidad    as stock
+                                                FROM Inventario.Stock st WITH (NOLOCK)
+                                                INNER JOIN dbo.Bodega bo WITH (NOLOCK) ON bo.idBodega = st.idBodega
+                                                WHERE bo.estado = 1
+                                                  AND st.idArticulo = a.idArticulo FOR JSON PATH
+                                            )
 							       ,totalRecords = COUNT(*) OVER()
                                    ,a.s3ObjectKey
 							       ,a.s3ObjectUrl
 						    FROM Inventario.v_Articulo a
-						    WHERE a.idEntidad = @idEntidad AND a.estado = 1  '
+						    WHERE a.idEntidad = @idEntidad
+                              AND a.estado = 1  '
 
 			
 			
