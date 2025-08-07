@@ -595,6 +595,15 @@
             );
         };
 
+        formSvc.isValidJSON = function (texto) {
+            try {
+                JSON.parse(texto);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
         formSvc.parseDate = function (dateString) {
             const [day, month, year] = dateString.split('/');
             return new Date(year, month - 1, day);
@@ -1337,7 +1346,7 @@
         };
 
 
-        formSvc.debounce = function(fn, delay) {
+        formSvc.debounce = function (fn, delay) {
             let timeoutId;
             return (...args) => {
                 // Si se llama otra vez antes de que termine el delay, se limpia el timeout anterior
