@@ -14,6 +14,10 @@ import {AddEditWarehouseComponent} from "@inventory/ui/warehouse/add-edit-wareho
 import Swal from "sweetalert2";
 import {DeleteWarehouseUseCase} from "@inventory/domain/usecases/warehouse/delete-warehouse.use-case";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
+import {
+  SendMaxWarehousesUseCase
+} from "@modules/config/application/use-cases/general-config/list-general-config.use-case";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-warehouse',
@@ -33,6 +37,7 @@ export class WarehouseComponent implements OnInit {
 
   private $listUseCase = inject(ListWarehouseUseCase);
   private $deleteUseCase = inject(DeleteWarehouseUseCase);
+  private $sendMaxWarehousesUseCase = inject(SendMaxWarehousesUseCase)
 
   private _dialogSvc = inject(DialogService);
   private _tS = inject(ToastrNotificationService)
@@ -53,7 +58,8 @@ export class WarehouseComponent implements OnInit {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
 
 
-  openModalAddUpdate(params?: WarehouseList){
+  async openModalAddUpdate(params?: WarehouseList){
+    await firstValueFrom(this.$sendMaxWarehousesUseCase.execute());
     const ref = this._dialogSvc.open(AddEditWarehouseComponent, {
       data: structuredClone(params) || {}
     })
