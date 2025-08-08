@@ -7,7 +7,7 @@ public class LoyaltyTierBenefit : BaseEntity
     public int LoyaltyTierId { get; set; }
     public LoyaltyTier LoyaltyTier { get; set; }
 
-    [Required] [MaxLength(100)] public required string Name { get; set; }
+    [Required][MaxLength(100)] public required string Name { get; set; }
 
     [MaxLength(500)] public required string Description { get; set; }
 

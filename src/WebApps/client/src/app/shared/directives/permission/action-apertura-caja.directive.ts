@@ -1,11 +1,10 @@
-import { Directive, ElementRef, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, Renderer2, OnInit } from '@angular/core';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionAperturaCaja]',
-  standalone: true
 })
-export class ActionAperturaCajaDirective {
+export class ActionAperturaCajaDirective implements OnInit {
 
   constructor(private el: ElementRef, private renderer: Renderer2, private pS: UserRoleStateService) { }
 

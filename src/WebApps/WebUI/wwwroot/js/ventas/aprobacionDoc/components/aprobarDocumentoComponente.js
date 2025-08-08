@@ -11,7 +11,9 @@
 
         controller: ['$scope', '$rootScope', '$injector', '$timeout', function ($scope, $rootScope, $injector, $timeout) {
 
+
             const $ctrl = this;
+
             const DOC_TYPE = $injector.get('DOC_TYPE');
             const aprobacionDocSvc = $injector.get('aprobacionDocService');
             const fS = $injector.get('formulario')
@@ -63,7 +65,7 @@
                 total: 0
             }
 
-            //GridOptions Invoice 
+            //GridOptions Invoice
             $scope.gridOptions = {
                 enableColumnMenus: false,
                 enableColumnReordering: true,
@@ -171,13 +173,13 @@
                         // $scope.tarifasImpuestos = dataEstab.tarifasImpuestos;
                         // $scope.dataTarifaImpuesto = $scope.tarifasImpuestos[0];
 
-                        //Puntos de Emision 
+                        //Puntos de Emision
                         $scope.ptosEmision = dataEstab.puntosEmision;
 
                         let dataPtoEmi = $scope.ptosEmision.find(item => (item.defaultPtoEmi))
                         $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                        //Bodegas 
+                        //Bodegas
                         $scope.bodegas = dataEstab.bodegas;
 
                         let dataBodega = $scope.bodegas.find(item => (item.defaultBodega));
@@ -282,7 +284,7 @@
                             });
                         }
 
-                        //Recalculamos los totales 
+                        //Recalculamos los totales
                         $scope.setCalculoTotales("cantidad", rowEntity, 0);
                         setCountDetalle()
                         updateRefProductoVenta()
@@ -499,8 +501,8 @@
                 return $scope.gridOptions.data.findIndex(item => item.uniqueRowDetalle === row.uniqueRowDetalle)
             }
             /**
-             * 
-             * @param {*} nuevaFilaAgregada 
+             *
+             * @param {*} nuevaFilaAgregada
              */
             function addItem(nuevaFilaAgregada) {
                 $scope.gridOptions.data.push(nuevaFilaAgregada)
@@ -699,7 +701,7 @@
                     console.log(mainDataForm)
 
                     /**
-                     * Establecimiento - Impuesto Tarifa 
+                     * Establecimiento - Impuesto Tarifa
                      */
                     $scope.establecimientos = estabs;
                     console.log(estabs)
@@ -711,20 +713,20 @@
                     $scope.dataClone.codEstab = $scope.data.codEstab;
 
 
-                    //===========Puntos Emisiones============================================== 
+                    //===========Puntos Emisiones==============================================
                     $scope.ptosEmision = dataEstab.puntosEmision;
                     let dataPtoEmi = $scope.ptosEmision.find(item => (item.defaultPtoEmi))
                     $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                    //============Bodegas======================================================= 
+                    //============Bodegas=======================================================
                     $scope.bodegas = dataEstab.bodegas;
                     let dataBodega = $scope.bodegas.find(item => (item.defaultBodega))
                     $scope.data.idBodega = dataBodega.idBodega;
 
-                    //Decimal 
+                    //Decimal
                     $scope.decimal = decimal;
 
-                    //Tipo Ivas 
+                    //Tipo Ivas
                     $scope.tarifasImpuesto = tarifasImpuesto;
 
                     //Tarifas(PVP1, PVP2)
@@ -733,7 +735,7 @@
                     $scope.dataClone.idTarifa = $scope.data.idTarifa;
 
                     $scope.tiempoCreditos = tiemposCredito;
-                    //Permisos para detalle y documento    
+                    //Permisos para detalle y documento
                     $scope.permisoComprobanteVenta = permisoVenta.comprobante;
                     $scope.permisoDetalleVenta = permisoVenta.detalle;
 
@@ -746,12 +748,12 @@
                         $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                         $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
 
-                        //Formas Pago 
+                        //Formas Pago
                         $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                         $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                     }
 
-                    //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
+                    //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
                     if ($scope.formasPago.length > 0) {
                         setDataFormaPagoSri();
                     }
@@ -788,11 +790,11 @@
                         <button type="button" ng-click="grid.appScope.askToDeleteRow(row.entity)" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
                             <i class="fa fa-trash"></i>
                         </button>
-    
+
                         <button type="button"  update-article class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.openModalArticulo(row.entity)" title = "Editar Articulo" >
                             <i class="fa fa-edit"></i>
-                        </button > 
-    
+                        </button >
+
                         <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" datos-adicionales="grid.appScope.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
                 },
                 {
@@ -1106,7 +1108,7 @@
                     $scope.data.irbpnr = irbpnr
                     $scope.data.propina = propina;
 
-                    //Formas pago 
+                    //Formas pago
                     $scope.dataFormaPago.total = importeTotal;
                 } catch (error) {
                     console.log(error);
@@ -1116,8 +1118,8 @@
 
 
             /**
-             *  
-             * @param {*} htmlTemplate 
+             *
+             * @param {*} htmlTemplate
              */
 
             function drawElementHTMLTotals(htmlTemplate) {
@@ -1309,21 +1311,21 @@
                         codDocDestino = DOC_TYPE.FE;
                         codDoc = DOC_TYPE.FV_SRI;
 
-                        showLoader();
+
+
+
+
+
                         serieComprobante = await facturaSvc.generateSerieComprobante({
                             idPuntoEmision: $scope.data.idPuntoEmision,
                         });
-                        hideLoader();
                     }
                     if ($scope.data.docDestino === DOC_TYPE.NE) {
                         codDocDestino = DOC_TYPE.NE;
                         codDoc = DOC_TYPE.NE;
-
-                        showLoader();
                         serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                             idPuntoEmision: $scope.data.idPuntoEmision,
                         })
-                        hideLoader();
                     }
 
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
@@ -1340,7 +1342,7 @@
                     })
 
                     if (isConfirmed) {
-                        
+
 
                         let query = aprobacionDocSvc.convertToDocAprobacionDocMapper({
                             id: $scope.data.idAprob_Document,
@@ -1354,7 +1356,7 @@
                             historyDatosAdicionales: $scope.historyDatosAdicionales,
                         })
 
-                       
+
                         aprobacionDocSvc.convertToDoc(query).then(response => {
                             if (response.code === '0') {
                                 fS.sweetAlert('warning', response.message, response.titleSms);
@@ -1366,13 +1368,13 @@
                             }
                         }).catch(error => {
                             console.log(error)
-                        }) 
+                        })
 
 
 
                     }
 
-                } catch (error) { 
+                } catch (error) {
                     console.log(error)
                 }
             }

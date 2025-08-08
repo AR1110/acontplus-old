@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CODE_ROLE } from "@core/constants/global.constants";
 import { GenericStoreBehaviorSubjectService } from '@shared/services/generic-store-behaviorSubject.service';
 
-type ActionState = {
+interface ActionState {
   crear: boolean
   editar: boolean
   eliminar: boolean
@@ -14,12 +14,12 @@ type ActionState = {
   enviarCorreo: boolean
 }
 export class PermissionCashAccounting  {
-  verOtrasCajas: boolean = false;
-  reporteMovimiento: boolean = false;
-  cerrarCaja: boolean = false;
-  enterKey: boolean = false;
-  reporteTransaccionPendiente: boolean = false;
-  reporteDetalleControlCaja: boolean = false;
+  verOtrasCajas = false;
+  reporteMovimiento = false;
+  cerrarCaja = false;
+  enterKey = false;
+  reporteTransaccionPendiente = false;
+  reporteDetalleControlCaja = false;
 }
 
 export class ProductPermission {

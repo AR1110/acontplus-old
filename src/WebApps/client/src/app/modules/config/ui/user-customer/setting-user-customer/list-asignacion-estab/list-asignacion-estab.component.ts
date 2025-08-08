@@ -1,4 +1,4 @@
-import {Component, inject, signal, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import {
   ListAsignacionEstabUseCase
 } from "@modules/config/application/use-cases/asignacion-estab/list-asignacion-estab.use-case";
@@ -37,7 +37,7 @@ import {
   templateUrl: './list-asignacion-estab.component.html',
   styles: ``
 })
-export class ListAsignacionEstabComponent {
+export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
   private $listAsignacionEstabUseCase = inject(ListAsignacionEstabUseCase)
   private $updateAsignacionEstabUseCase = inject(UpdateAsignacionEstabUseCase)
   private $createAsignacionEstabUseCase = inject(CreateAsignacionEstabUseCase)
@@ -111,7 +111,7 @@ this.getList()
       buttonsStyling: false
     })
 
-    let {
+    const {
       isConfirmed
     } = await swalWithBootstrapButtons.fire({
       html: `<small>Está seguro de ${data.idEstab_Asig > 0 ? 'quitar' : 'asignar'} este Establecimiento: <b>${data.nombreComercial}</b></small>`,
@@ -126,7 +126,7 @@ this.getList()
 
 
     if (isConfirmed) {
-      let params = {
+      const params = {
         id: data.idEstab_Asig,
         idUsuarioRol: this.$userCustomerStore.userRoleId(),
         codEstab: data.codEstab

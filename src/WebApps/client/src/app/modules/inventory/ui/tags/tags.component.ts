@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,7 +29,7 @@ import {TagUseCase} from "@inventory/domain/usecases/tag.use-case";
     templateUrl: './tags.component.html',
     styles: ``
 })
-export class TagsComponent {
+export class TagsComponent implements OnInit {
   private _tagUseCase= inject(TagUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = [
@@ -47,7 +47,7 @@ export class TagsComponent {
   private tS = inject(ToastrNotificationService);
 
   getTags() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };

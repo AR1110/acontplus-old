@@ -15,7 +15,7 @@ export class CompraHabitualService {
   #http = inject(HttpClient);
 
   delete<T>(obj: T) {
-    let json = JSON.stringify(obj)
+    const json = JSON.stringify(obj)
     return this.#http.delete<ApiResponse>(`${this.#url}Delete?json=${json}`)
   }
 

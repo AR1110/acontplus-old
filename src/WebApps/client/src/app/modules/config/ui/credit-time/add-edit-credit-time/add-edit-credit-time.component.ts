@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {CreateCreditTimeUseCase} from "@modules/config/application/use-cases/credit-time/create-credit-time.use-case";
@@ -31,7 +31,7 @@ import {ApiResponse} from "@core/models/api-response";
   templateUrl: './add-edit-credit-time.component.html',
   styles: ``
 })
-export class AddEditCreditTimeComponent {
+export class AddEditCreditTimeComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AddEditCreditTimeComponent>);
   params = inject<CreditTimeList>(MAT_DIALOG_DATA);
 
@@ -81,7 +81,7 @@ export class AddEditCreditTimeComponent {
   }
 
   save(){
-    let regex = /^(null|undefined|\s*)$/;
+    const regex = /^(null|undefined|\s*)$/;
     const sendData = {
       estado: this.data.estado,
     } as typeof this.data;

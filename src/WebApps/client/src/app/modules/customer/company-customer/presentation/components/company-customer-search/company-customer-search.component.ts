@@ -48,7 +48,6 @@ import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/
 
 @Component({
   selector: 'app-company-customer-search',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatAutocompleteModule,

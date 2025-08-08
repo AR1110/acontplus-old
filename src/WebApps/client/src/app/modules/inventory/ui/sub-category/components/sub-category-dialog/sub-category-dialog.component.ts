@@ -8,7 +8,7 @@ import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-ph
 import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { NgxFileDropEntry } from 'ngx-file-drop';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';

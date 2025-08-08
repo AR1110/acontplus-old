@@ -1,8 +1,9 @@
 ﻿using Configuracion.API.Endpoints.Interfaces;
+using Configuracion.Domain.Repositories;
 
 namespace Configuracion.API.Endpoints.Implementations;
 
-public class PrinterDocumentEndpoints(IPrinterDocumentService printerDocumentService, IUserContext userContext)
+public class PrinterDocumentEndpoints(IPrinterDocumentRepository printerDocumentService, IUserContext userContext)
     : IPrinterDocumentEndpoints
 {
     public async Task<IResult> CreatePrinterDocument(PrinterDocument printerDocument)

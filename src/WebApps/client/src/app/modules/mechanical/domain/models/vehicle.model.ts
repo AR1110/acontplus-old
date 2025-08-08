@@ -19,5 +19,5 @@ export interface ListVehicleParams {
 }
  export class ListVehicleResponse {
   data: VehicleList[]=[]
-   totalRecords: number=0;
+   totalRecords=0;
  }

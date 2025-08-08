@@ -64,7 +64,7 @@ export class OrderDeliveryModalComponent implements OnInit {
   }
 
   save() {
-    let dataModified = {
+    const dataModified = {
       isOtherReceiver: this.isOtherReceiver,
       receiverGovernmentId: this.orderDeliveryForm.value.receiverGovernmentId,
       receiver: this.orderDeliveryForm.value.receiver,

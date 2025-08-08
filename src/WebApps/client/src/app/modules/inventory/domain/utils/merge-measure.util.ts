@@ -18,6 +18,7 @@ export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionado
     ...medida,
     precioCosto: medida.precioCosto || 0,
     precioCostoFraccionado: medida.precioCostoFraccionado || 0,
+    precioUnitario: medida.precioUnitario || 0,
     tipo
   });
 
@@ -55,9 +56,9 @@ export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionado
 
 
   // Crear un nuevo array de medidas con un formato específico
-  let medidas = orderMedidaArray.map(item => {
-    let tarifasParse = (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || [];
-    let tarifas = tarifasParse.map((t: any) => ({
+  const medidas = orderMedidaArray.map(item => {
+    const tarifasParse = (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || [];
+    const tarifas = tarifasParse.map((t: any) => ({
       idTarifa: t.idTarifa,
       precioVenta: t.precioVenta,
       precioConIva: t.precioConIva,
@@ -70,6 +71,7 @@ export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionado
       descripcion: item.descripcion || item.medida,
       defaultMedida: item.defaultMedida,
       tipo: item.tipo,
+      precioUnitario: item.precioUnitario ,
       precioCosto: item.precioCosto,
       precioCostoFraccionado: item.precioCostoFraccionado,
       tarifas,

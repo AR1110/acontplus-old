@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Acontplus.Common.Data" />
+    <PackageReference Include="Acontplus.Common.FactElect" />
   </ItemGroup>
 
   <ItemGroup>

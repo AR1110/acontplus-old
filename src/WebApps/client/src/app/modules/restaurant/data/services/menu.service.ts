@@ -40,18 +40,18 @@ export class MenuService {
 
 
   search<T extends {textSearch: string}>(obj: T){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...obj
     })
     return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
       context: getNoLoader()
     }).pipe(
       map(response=>{
-        let result = {
+        const result = {
           menus: [] as any[]
         }
         if(response.code==="1"){
-          let mainData = JSON.parse(response.payload as string);
+          const mainData = JSON.parse(response.payload as string);
           result.menus = mainData["menus"] || [];
         }
         return result;

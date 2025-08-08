@@ -50,7 +50,8 @@ export const enum DOC_TYPE_SRI {
   F = '01',
   NC = '04',
   R = '07',
-  ND = '05'
+  ND = '05',
+  GR = '06'
 }
 
 export enum REPORT_FORMAT {

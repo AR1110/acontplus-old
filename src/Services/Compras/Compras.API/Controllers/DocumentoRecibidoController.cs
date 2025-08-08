@@ -80,13 +80,13 @@ public class DocumentoRecibidoController(
             else
             {
                 var diff = (from row1 in dt.AsEnumerable()
-                    join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                    {
-                        Column1 = row2["claveAcceso"]
-                    } into gj
-                    from subRow2 in gj.DefaultIfEmpty()
-                    where subRow2 == null
-                    select row1).ToList();
+                            join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                            {
+                                Column1 = row2["claveAcceso"]
+                            } into gj
+                            from subRow2 in gj.DefaultIfEmpty()
+                            where subRow2 == null
+                            select row1).ToList();
                 var filteredDataTable = diff.CopyToDataTable();
                 response.Code = "1";
                 response.Payload = DataConverters.DataTableToJson(filteredDataTable);

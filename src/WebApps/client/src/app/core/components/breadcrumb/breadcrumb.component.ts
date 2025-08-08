@@ -1,19 +1,27 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, inject, input } from '@angular/core';
+import { BreadcrumbService } from '@core/services/breadcrumb.service';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-breadcrumb',
-  imports: [],
+  imports: [MatIconButton, MatIcon, MatButton, RouterLink],
   templateUrl: './breadcrumb.component.html',
-  styles: ``,
+  styleUrls: ['./breadcrumb.component.scss'],
 })
-export class BreadcrumbComponent implements OnInit {
-  parentData:  any;
-  childData: any;
-  private readonly _activatedRoute = inject(ActivatedRoute);
+export class BreadcrumbComponent {
+  separator = input('>');
+  asString = input(false);
+  showHome = input(true); // Customization: show/hide home button
+  homeIcon = input('home'); // Customization: home icon
+  chevronIcon = input('chevron_right'); // Customization: separator icon
 
-  ngOnInit() {
-    this.parentData = this._activatedRoute.parent?.snapshot.data;
-    this.childData = this._activatedRoute.snapshot.data;
-  }
+  breadcrumbService = inject(BreadcrumbService);
+  breadcrumbs = this.breadcrumbService.breadcrumbs;
+
+  // Computed para string con separador personalizado
+  breadcrumbStringWithSeparator = computed(() => {
+    return this.breadcrumbService.getBreadcrumbString(` ${this.separator} `);
+  });
 }

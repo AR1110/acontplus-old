@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 using Scrutor;

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { finalize } from 'rxjs';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -28,7 +28,7 @@ import { isValidField } from '@core/utils/utils';
   templateUrl: './comprobante-ingreso.component.html',
   styles: ``,
 })
-export class ComprobanteIngresoComponent {
+export class ComprobanteIngresoComponent implements OnInit {
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
 
   loading = signal(false);
@@ -47,8 +47,8 @@ export class ComprobanteIngresoComponent {
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-  establecimientos: Array<EstablecimientoSelectHtmlOnly> = [];
-  comprobantesIngreso: Array<ComprobanteIngreso> = [];
+  establecimientos: EstablecimientoSelectHtmlOnly[] = [];
+  comprobantesIngreso: ComprobanteIngreso[] = [];
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
@@ -82,8 +82,8 @@ export class ComprobanteIngresoComponent {
   getComprobantesIngreso() {
     if (this.loading()) return;
 
-    let checkBoxEstado = typeof this.dataSearch.byEstado === 'number';
-    let checkBoxPersona = typeof this.dataSearch.byTipoPersona === 'number';
+    const checkBoxEstado = typeof this.dataSearch.byEstado === 'number';
+    const checkBoxPersona = typeof this.dataSearch.byTipoPersona === 'number';
     const params = {
       pageIndex: this.dataSearch.pageIndex,
       pageSize: this.dataSearch.pageSize,
@@ -109,9 +109,9 @@ export class ComprobanteIngresoComponent {
   ngOnInit() {
     this.sharedSvc.getEstabAsign().subscribe((establecimientos) => {
       this.establecimientos =
-        establecimientos as Array<EstablecimientoSelectHtmlOnly>;
+        establecimientos as EstablecimientoSelectHtmlOnly[];
       if (this.establecimientos.length > 0) {
-        let dataEstab = this.establecimientos.find(
+        const dataEstab = this.establecimientos.find(
           (estab) => estab.predeterminado,
         );
         this.dataSearch.codEstab = dataEstab?.codEstab || '';
@@ -161,7 +161,7 @@ export class ComprobanteIngresoComponent {
   }
 
   onCustomerSelected<T extends { data: any }>($event: T) {
-    let { data } = $event;
+    const { data } = $event;
     this.dataSearch.identificacionComprador = data.identificacionComprador;
     this.companyCustomerSearchName = data.razonSocialComprador;
   }

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -18,9 +18,9 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: './supplier-docs.component.html',
   styles: ``,
 })
-export class SupplierDocsComponent {
-  documents: unknown[] = [];
-  documentsSelected: unknown[] = [];
+export class SupplierDocsComponent implements OnInit {
+  documents = signal<unknown[]>([]);
+  documentsSelected = signal<unknown[]>([]);
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'fechaEmisionDocSustento', label: 'Fecha Emisión', type: 'string' },
@@ -38,7 +38,7 @@ export class SupplierDocsComponent {
 
   ngOnInit() {
     this._retencionAtsUseCase.getDocs(this.data).subscribe((response) => {
-      this.documents = response.documents;
+      this.documents.set(response.documents);
     });
   }
 
@@ -46,11 +46,33 @@ export class SupplierDocsComponent {
     this.dialogRef.close();
   }
 
-  onRowSelected($event: unknown[]) {
-    this.documentsSelected = $event;
+  onRowSelected(selectedRows: any[]): void {
+    // For single row selection
+    if (selectedRows.length === 1) {
+      const row = selectedRows[0];
+      const current = this.documentsSelected();
+      const index = current.findIndex((doc) => this.isSameRow(doc, row));
+
+      if (index > -1) {
+        // Remove if already selected
+        this.documentsSelected.set(current.filter((_, i) => i !== index));
+      } else {
+        // Add if not selected
+        this.documentsSelected.set([...current, row]);
+      }
+    }
+    // For master toggle (all rows)
+    else {
+      this.documentsSelected.set(selectedRows);
+    }
+  }
+
+  private isSameRow(a: any, b: any): boolean {
+    // Implement your row comparison logic
+    return a.idDocumento === b.idDocumento; // or whatever unique identifier you have
   }
 
   selectDocuments() {
-    this.dialogRef.close({ documents: this.documentsSelected });
+    this.dialogRef.close({ documents: this.documentsSelected() });
   }
 }

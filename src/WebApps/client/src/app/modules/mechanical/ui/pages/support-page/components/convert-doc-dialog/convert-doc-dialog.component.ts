@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewChild} from '@angular/core';
+import {Component, inject, signal, ViewChild, AfterViewInit, OnInit} from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,7 +37,7 @@ import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
   templateUrl: './convert-doc-dialog.component.html',
   styles: ``,
 })
-export class ConvertDocDialogComponent {
+export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
   readonly dialogRef = inject(MatDialogRef<ConvertDocDialogComponent>);
   readonly params: {
     comprobante: any;

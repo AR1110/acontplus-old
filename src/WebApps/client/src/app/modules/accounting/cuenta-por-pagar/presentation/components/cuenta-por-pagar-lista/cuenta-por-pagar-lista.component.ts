@@ -1,7 +1,7 @@
 import { CuentaPorPagarHistMovimientoComponent } from '@accounting/cuenta-por-pagar/presentation/components/cuenta-por-pagar-hist-movimiento/cuenta-por-pagar-hist-movimiento.component';
 // Angular Common Modules
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 // Angular Material Modules
@@ -75,7 +75,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
   ],
   templateUrl: './cuenta-por-pagar-lista.component.html',
 })
-export class CuentaPorPagarListaComponent {
+export class CuentaPorPagarListaComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
@@ -236,7 +236,7 @@ export class CuentaPorPagarListaComponent {
           this.tiposDoc = initialData.tiposDoc;
 
           if (this.estabs.length > 0) {
-            let dataEstab = this.estabs.find((estab) => estab.defaultEstab);
+            const dataEstab = this.estabs.find((estab) => estab.defaultEstab);
 
             this.dataSearch.update((e) => {
               return {
@@ -341,9 +341,9 @@ export class CuentaPorPagarListaComponent {
     );
 
     forkJoin(observables).subscribe((cuotasResponse) => {
-      let selectedMergeCuotas = selected.map((item) => {
+      const selectedMergeCuotas = selected.map((item) => {
         // Aplanamos las cuotas de la respuesta y las filtramos por idCuentaPorPagar
-        let filteredCuotas = cuotasResponse
+        const filteredCuotas = cuotasResponse
           .flatMap((payment) => payment.cuotas)
           .filter((cuota) => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
 
@@ -400,7 +400,7 @@ export class CuentaPorPagarListaComponent {
   }
 
   openCuotaModal(item: CuentaPorPagarLista) {
-    let modalRef = this.dialogSvc.open(CuentaPorPagarCuotaModalComponent, {
+    const modalRef = this.dialogSvc.open(CuentaPorPagarCuotaModalComponent, {
       size: MODAL_SIZE.XL,
       data: {
         idCuentaPorPagar: item?.idCuentaPorPagar,
@@ -417,7 +417,7 @@ export class CuentaPorPagarListaComponent {
   }
 
   openHistorialMovimientoModal(item: CuentaPorPagarLista) {
-    let modalRef = this.dialogSvc.open(CuentaPorPagarHistMovimientoComponent, {
+    const modalRef = this.dialogSvc.open(CuentaPorPagarHistMovimientoComponent, {
       size: MODAL_SIZE.XL,
       data: {
         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -430,7 +430,7 @@ export class CuentaPorPagarListaComponent {
   }
 
   getReport(row: CuentaPorPagarLista) {
-    let params = ParameterReportUtil.getParams(row.codDoc, {
+    const params = ParameterReportUtil.getParams(row.codDoc, {
       id: row.idDocumento,
       codEstab: row.codEstab,
     });

@@ -1,4 +1,4 @@
-import { Component, signal, effect, input } from '@angular/core';
+import { Component, signal, effect, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatDynamicCardComponent } from '../mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
@@ -6,6 +6,7 @@ import { MatDynamicCardComponent } from '../mat-dynamic-card/mat-dynamic-card.co
   imports: [MatDynamicCardComponent],
   templateUrl: './draw-tax-total.component.html',
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DrawTaxTotalComponent {
   subTotalSinImpuesto = input(0);

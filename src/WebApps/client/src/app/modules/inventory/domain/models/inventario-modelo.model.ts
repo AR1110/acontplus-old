@@ -1,4 +1,4 @@
-export type Model = {
+export interface Model {
     idModelo: number
     codigo: string
     descripcion: string

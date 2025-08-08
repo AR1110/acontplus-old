@@ -15,23 +15,23 @@ export class PromotionService {
 
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
 
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
       map(response => {
-        let result = {
+        const result = {
           days: [] as any[],
           promotions: [] as any[]
         }
         if (response.code === "1") {
-          let { days, promotions: promotionsTemp } = JSON.parse(response.payload as string);
+          const { days, promotions: promotionsTemp } = JSON.parse(response.payload as string);
           result.days = days || [];
-          let promotions = promotionsTemp || [];
+          const promotions = promotionsTemp || [];
           result.promotions = promotions.map((item: any) => {
-            let { s3ObjectUrl, ...rest } = item;
+            const { s3ObjectUrl, ...rest } = item;
             return {
               ...rest,
               img: s3ObjectUrl || imgDefault()
@@ -46,14 +46,14 @@ export class PromotionService {
 
 
   post<T>(obj: T, file: any) {
-    let json = JSON.stringify(obj)
+    const json = JSON.stringify(obj)
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<ApiResponse>(`${this.url}?json=${json}`, formData)
   }
 
   put<T>(id: number, obj: T, file: any) {
-    let json = JSON.stringify(obj)
+    const json = JSON.stringify(obj)
 
     const formData = new FormData();
     formData.append('file', file);

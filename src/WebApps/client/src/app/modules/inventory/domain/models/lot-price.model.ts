@@ -26,5 +26,5 @@ export interface LotPrice {
   precioCosto: number
   estado: boolean
   iva: string
-  _children: Array<LotPriceTarifa>
+  _children: LotPriceTarifa[]
 }

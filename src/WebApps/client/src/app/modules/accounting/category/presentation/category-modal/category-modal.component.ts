@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   FormControl,
@@ -19,7 +19,7 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
-export class CategoryModalComponent {
+export class CategoryModalComponent implements OnInit {
   categoryForm = new FormGroup({
     id: new FormControl(0),
     tipoId: new FormControl(0, Validators.required),

@@ -18,7 +18,7 @@ export class MassiveTaxService {
     const json = JSON.stringify({ tipo: 3 })
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
-        let taxRates: Array<TarifaImpuesto> = []
+        let taxRates: TarifaImpuesto[] = []
         if (response !== null && typeof response === 'object') {
           taxRates = response.taxes.map((item: any) => ({
             idTarifaImpuesto: item.idTipoIva,

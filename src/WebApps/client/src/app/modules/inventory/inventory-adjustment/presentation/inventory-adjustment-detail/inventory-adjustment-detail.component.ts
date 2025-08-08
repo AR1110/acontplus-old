@@ -1,10 +1,10 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {
   InventoryAdjustmentDetailUseCase
-} from "@inventory/inventory-adjustment/application/inventory-adjustment-detail.use-case";
+} from "@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-detail.use-case";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
 import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
@@ -21,7 +21,7 @@ import {DOC_TYPE, REPORT_FORMAT} from "@core/constants/global.constants";
   templateUrl: './inventory-adjustment-detail.component.html',
   styles: ``
 })
-export class InventoryAdjustmentDetailComponent {
+export class InventoryAdjustmentDetailComponent implements OnInit {
   #detailUseCase = inject(InventoryAdjustmentDetailUseCase)
   #generateReport = inject(GenerateReportUseCase);
 

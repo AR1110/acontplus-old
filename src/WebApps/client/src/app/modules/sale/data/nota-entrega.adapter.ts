@@ -9,7 +9,7 @@ export class NotaEntregaAdapter {
     const header = tempHeader[0] || {};
     const cliente = tempCliente[0] || {};
 
-    let result = {
+    const result = {
       headerData: {
         estabNombre: header.nombreComercial,
         serieComprobante: header.serieComprobante,
@@ -33,8 +33,8 @@ export class NotaEntregaAdapter {
         correo: cliente.correo
       },
       detalles: tempDetalles.map((item:any) => {
-        let precioConIva =   item.precioUnitario + item.valorImpuesto;
-         let total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
+        const precioConIva =   item.precioUnitario + item.valorImpuesto;
+         const total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
         return {
         idNotaEntregaDetalle: item.idNotaEntregaDetalle,
         codigo: item.codigo,

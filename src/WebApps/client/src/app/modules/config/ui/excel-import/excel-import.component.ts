@@ -1,4 +1,4 @@
-import {Component, inject, model, signal} from '@angular/core';
+import {Component, inject, model, signal, OnInit} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatSelectModule} from "@angular/material/select";
@@ -109,7 +109,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
 
   `
 })
-export class ExcelImportComponent {
+export class ExcelImportComponent implements OnInit {
   private $getFormData = inject(GetFormDataExcelImportUseCase);
   private $validateImportedData = inject(ValidateImportedDataUseCase)
   private $saveUseCase = inject(SaveExcelImportUseCase)
@@ -177,7 +177,7 @@ export class ExcelImportComponent {
   }
 
   async onFileSelected(ev: any) {
-    const target: DataTransfer = <DataTransfer>(ev.target);
+    const target: DataTransfer = ev.target as DataTransfer;
     if (target.files.length !== 1) throw new Error('Cannot use multiple files');
 
     try {

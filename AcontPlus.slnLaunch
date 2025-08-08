@@ -11,15 +11,31 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\Services\\Facturacion\\FactElect.API\\FactElect.API.csproj",
-        "Action": "Start"
-      },
-      {
         "Path": "src\\Services\\Contabilidad\\Contabilidad.API\\Contabilidad.API.csproj",
         "Action": "Start"
       },
       {
+        "Path": "src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Facturacion\\FactElect.API\\FactElect.API.csproj",
+        "Action": "Start"
+      },
+      {
         "Path": "src\\WebApps\\WebUI\\WebUI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Common\\Common.API\\Common.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Configuracion\\Configuracion.API\\Configuracion.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Services\\Loyalty\\Loyalty.Api\\Loyalty.Api.csproj",
         "Action": "Start"
       }
     ]

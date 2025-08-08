@@ -1,6 +1,5 @@
 ﻿using System.IO.Compression;
 using Common.Infrastructure.Repository.Implementations;
-using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 

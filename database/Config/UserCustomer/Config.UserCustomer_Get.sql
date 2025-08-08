@@ -59,7 +59,7 @@ BEGIN
 			
 			SET @tableNames = 'roles' 
             SELECT Id, [Name], Code FROM AcontPlusAdmin.Seguridad.[Role] WHERE Code NOT IN ('RT', 'SU', 'ADM')
-            AND [Enabled] = 1
+            AND IsActive = 1
 
 			RETURN 
 		END 

@@ -1,0 +1,39 @@
+{
+  "tabWidth": 2,
+  "useTabs": false,
+  "singleQuote": true,
+  "semi": true,
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "trailingComma": "all",
+  "printWidth": 100,
+  "bracketSameLine": false,
+  "htmlWhitespaceSensitivity": "css",
+  "embeddedLanguageFormatting": "auto",
+  "plugins": ["prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^@angular/(.*)$",
+    "^@app/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "overrides": [
+    {
+      "files": ["*.component.html"],
+      "options": {
+        "parser": "angular",
+        "htmlWhitespaceSensitivity": "ignore",
+        "printWidth": 80,
+        "singleAttributePerLine": true
+      }
+    },
+    {
+      "files": ["*.{ts,tsx}"],
+      "options": {
+        "printWidth": 100
+      }
+    }
+  ]
+}

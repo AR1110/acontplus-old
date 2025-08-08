@@ -21,7 +21,12 @@ export class InventoryAdjustmentFormDataMapper {
         isGroupBodega: true
       }
     );
-    result.subFamilias = subFamilia;
+    result.subFamilias = subFamilia.map((item:any)=>{
+      return {
+        id: item.idSubFamilia,
+        name: item.descripcion,
+      }
+    });
     result.decimal = decimales[0];
     result.tiposDoc = tipoDocumento;
     result.tiposTransaccion = tiposTransaccion;

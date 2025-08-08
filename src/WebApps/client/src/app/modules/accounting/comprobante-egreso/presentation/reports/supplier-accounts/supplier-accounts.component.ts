@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   REPORT_CODE,
   DOC_TYPE,
@@ -50,7 +50,7 @@ type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string }
   templateUrl: './supplier-accounts.component.html',
   styles: ``,
 })
-export class SupplierAccountsComponent {
+export class SupplierAccountsComponent implements OnInit {
   http = inject(HttpClient);
   establecimientos = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
@@ -140,7 +140,7 @@ export class SupplierAccountsComponent {
       return;
     }
 
-    let dataEstab = this.establecimientos().find(
+    const dataEstab = this.establecimientos().find(
       (estab) => estab.codEstab === this.searchFilters.codEstab,
     );
     if (dataEstab) {

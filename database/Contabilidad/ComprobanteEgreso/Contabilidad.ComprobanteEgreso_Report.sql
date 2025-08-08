@@ -214,21 +214,28 @@ BEGIN
                             SELECT  
                                 idProveedor
                                 ,codDoc
-                                ,serieComprobante
+                                ,idComprobanteEgreso
+                                ,idCuentaPorPagar
+                                ,serieComprobanteEgreso
                                 ,razonSocialProveedor
-                                ,fechaRegistro
-                                ,serieDocumento
+                                ,fechaRegistroEgreso = FORMAT(fechaRegistroEgreso, ''dd/MM/yyyy HH:mm'')
+                                ,serieDoc
                                 ,fechaPago
                                 ,metodoPago
                                 ,nombreBanco
-                                ,nro
+                                ,numeroTransaccion
                                 ,aprobacion
                                 ,referencia
                                 ,lote
                                 ,observacion
-                                ,totalComprobante
-                                ,totalDocumento
-                            FROM Contabilidad.V_ComprobanteEgreso 
+                                ,totalEgreso
+                                ,abonoPago
+                                ,totalDoc
+                                ,saldoDoc
+                                ,saldoEgreso
+                                ,abonoDoc
+                                ,usuarioNomEgreso
+                            FROM Contabilidad.V_ComprobanteEgreso
                             WHERE idEntidad = @idEntidad 
                 '
 
@@ -260,7 +267,7 @@ BEGIN
 
         IF @useDateFilter = 1
              BEGIN
-            SET @sql = @sql + ' AND CAST(fechaRegistro AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+            SET @sql = @sql + ' AND CAST(fechaRegistroEgreso AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
         END
 
         ---> Header
@@ -340,8 +347,8 @@ BEGIN
                         SELECT 
                             codDoc,
                             idCuentaPorPagar,
-                            comprobanteOriginal,
-                            fechaComprobanteOriginal,
+                            serieDoc,
+                            fechaEmisionDoc=FORMAT(fechaEmisionDoc, ''dd/MM/yyyy hh:mm''),
                             identificacionProveedor,
                             razonSocialProveedor,
                             importeTotal,
@@ -350,10 +357,14 @@ BEGIN
                             estadoPago,
                             idComprobanteEgreso,
                             serieComprobanteEgreso,
-                            fechaEmisionEgreso,
+                            fechaRegistroEgreso = FORMAT(fechaRegistroEgreso, ''dd/MM/yyyy hh:mm''),
                             idPago,
                             formaPago,
                             banco,
+                            numeroTransaccion,
+                            lote,
+                            aprobacion,
+                            referencia,
                             valorPago,
                             abonoPago,
                             nroCuota,
@@ -396,7 +407,7 @@ BEGIN
 
         IF @useDateFilter = 1
              BEGIN
-            SET @sql = @sql + ' AND CAST(fechaRegistro AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+            SET @sql = @sql + ' AND CAST(fechaRegistroEgreso AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
         END
 
         ---> Header
@@ -409,7 +420,7 @@ BEGIN
                     , userName = nombreUsuario 
                     , dateRange =  FORMAT(@startDate, 'dd/MM/yyyy')  + '-' +  FORMAT(@endDate, 'dd/MM/yyyy')
                     , estabName = @estabName
-                    , titleReport='REPORTE: DETALLE DE FORMAS DE PAGO - COMPROBANTES DE EGRESO'
+                    , titleReport='DETALLE DE FORMAS DE PAGO'
         FROM v_usuario WITH(NOLOCK)
         WHERE idUsuarioRol = @userRoleId
 

@@ -61,11 +61,11 @@ export class ExcelImportService {
     return row;
   }
 
-  removeAccents(text: string = ''): string {
+  removeAccents(text = ''): string {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
 
-  generateIdUnique(text: string = ''): string {
+  generateIdUnique(text = ''): string {
     return text.charAt(0) + Math.random().toString(36).substring(2, 10).toUpperCase();
   }
 }

@@ -22,17 +22,17 @@ export class ResumenContableWebRepository extends ResumenContableRepository{
   }
 
   getDataFilter(){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2
     })
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
       map(response=>{
-        let results = {
+        const results = {
           transactionTypes: [] as any[],
           subCategories: [] as SubCategorySelectHtmlOnly[]
         }
         if(response.code==="1"){
-          let {transactionType, subcategory} = JSON.parse(response.payload as string);
+          const {transactionType, subcategory} = JSON.parse(response.payload as string);
 
           results.subCategories = subcategory;
           results.transactionTypes=transactionType;

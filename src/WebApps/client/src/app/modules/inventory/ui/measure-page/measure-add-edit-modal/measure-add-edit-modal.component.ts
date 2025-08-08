@@ -1,4 +1,4 @@
-import {Component, inject, Input, signal} from '@angular/core';
+import {Component, inject, Input, signal, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
@@ -27,7 +27,7 @@ import {finalize} from "rxjs/operators";
     templateUrl: './measure-add-edit-modal.component.html',
     styles: ``
 })
-export class MeasureAddEditModalComponent {
+export class MeasureAddEditModalComponent implements OnInit {
 
   readonly dialogRef = inject(MatDialogRef<MeasureAddEditModalComponent>);
   readonly data = inject<{

@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -31,7 +31,7 @@ import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directiv
   templateUrl: './anticipo-modal.component.html',
   styles: ``,
 })
-export class AnticipoModalComponent {
+export class AnticipoModalComponent implements OnInit {
   private activeModal = inject(MatDialogRef<AnticipoModalComponent>);
   private tS = inject(ToastrNotificationService);
   private _anticipoUseCase = inject(AnticipoUseCase);

@@ -7,7 +7,7 @@ import { EstadoPago } from "@accounting/comprobante-egreso/domain/estado-pago.in
 import { roundNumber } from "@core/utils/round-number.utils";
 
 
-type Props = {
+interface Props {
   pagosDetalle: PagoDetalle[]
   cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
   estadosPago: EstadoPago[]
@@ -22,8 +22,8 @@ type Props = {
 */
 export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial, pagosDetalle, estadosPago }: Props): CuentaPorPagarEstado[] {
   // Agrupando las cuentas por pagar y sumando los abonos para cada cuenta
-  let cuentasPorPagarAgrupado = cuentasPorPagarHistorial.reduce((acc, curr) => {
-    let existeDato = acc.find(item => item.idCuentaPorPagar === curr.idCuentaPorPagar);
+  const cuentasPorPagarAgrupado = cuentasPorPagarHistorial.reduce((acc, curr) => {
+    const existeDato = acc.find(item => item.idCuentaPorPagar === curr.idCuentaPorPagar);
     if (!existeDato) {
       acc.push({
         idCuentaPorPagar: curr.idCuentaPorPagar,
@@ -41,17 +41,17 @@ export const obtenerCuentasPorPagarEstado = function ({ cuentasPorPagarHistorial
   }, [] as CuentaPorPagarHistorial[]);
 
 
-  let cuentasPorPagarEstado: CuentaPorPagarEstado[] = [];
+  const cuentasPorPagarEstado: CuentaPorPagarEstado[] = [];
 
-  for (let item of cuentasPorPagarAgrupado) {
+  for (const item of cuentasPorPagarAgrupado) {
     let valorSaldo = item.saldo;
 
     // Calcular el total de pagos posfechados y no posfechados
-    let totalPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.esPosfechado)
+    const totalPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.esPosfechado)
       .map(item => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 
-    let totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.esPosfechado)
+    const totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.esPosfechado)
       .map(item => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 

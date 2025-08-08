@@ -11,12 +11,13 @@ CREATE OR ALTER VIEW Config.v_Sistema_Ventas WITH SCHEMABINDING AS (
 		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.detailDuplicate') as bit)                            as detailDuplicate
 		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.idFormaPagoSri') as int)                             as idFormaPagoSri
 		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.cc')                                                      as cc
+		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.subject')                                                 as subject
 		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.configInteres') as bit)                              as configDeuda
 		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.infoInteres.tipoConfig')                                  as tipoConfig
 		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.infoInteres.interes') as numeric(18,5))              as interes
 		  ,ISNULL(CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.infoInteres.diasGracia') as INT),0) as diasGracia
 		  ,cs.idEntidad
           ,cs.idSistema
-	FROM Config.Sistema cs WITH (NOLOCK)
+	FROM Config.Sistema     cs WITH (NOLOCK)
 	WHERE cs.codConfig = 'CV'
 )

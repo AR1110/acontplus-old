@@ -26,7 +26,7 @@ BEGIN
     DECLARE @idEntidadFinanciera INT ,@horaInicio DATETIME2 , @horaFin DATETIME2 ,@ckHora BIT ,@codDoc VARCHAR(10)
 
 	DECLARE @idControlCaja INT 
-	DECLARE @color VARCHAR(200) = '#000000'
+	DECLARE @color VARCHAR(200) = '#28a745'
 	DECLARE @efectivoSistema DECIMAL(15,5)
 	DECLARE @totalSistema DECIMAL(15,5)
 	DECLARE @totalArqueo DECIMAL(15,5)
@@ -92,7 +92,7 @@ BEGIN
 			 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
             INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 			WHERE ci.idControlCaja = @idControlCaja  
-              AND ci.estado = 1
+              ANDÂ ci.estadoÂ =Â 1
 	        
             INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera,observacion)
             SELECT 'CI' + '-' + es.estab + '-' + RIGHT('000000000' + CAST(ci.nroDocumento AS VARCHAR(9)), 9) as nroComprobante
@@ -192,6 +192,10 @@ BEGIN
 		        ,totalSistema       = CAST(ISNULL(@totalSistema,0) AS numeric(15,2))
 		        ,totalArqueo        = CAST(ISNULL(@totalArqueo,0)  AS numeric(15,2))
 		        ,diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2))
+                ,estadoArqueo       = CASE WHEN @direfencia < 0 THEN 'Faltante'
+                                           WHEN @direfencia > 0 THEN 'Sobrante'
+                                                                ELSE 'Cuadre Correcto'
+                                      END 
 		        ,color              = @color
 	         FROM dbo.ControlCaja          cc WITH (NOLOCK)
 	         INNER JOIN dbo.Caja           ca WITH (NOLOCK) ON ca.idCaja    = cc.idCaja
@@ -315,7 +319,7 @@ BEGIN
 			                 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
                             INNER JOIN Customer.Customer            cu WITH (NOLOCK) ON cu.Id                     = cl.CustomerId
 			                WHERE ci.idControlCaja = @idControlCaja  
-                              AND ci.estado = 1
+                              ANDÂ ci.estadoÂ =Â 1
 
                             UNION ALL 
 

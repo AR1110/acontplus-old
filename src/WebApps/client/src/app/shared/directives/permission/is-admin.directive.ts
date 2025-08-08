@@ -1,12 +1,11 @@
-import {Directive, ElementRef, Renderer2} from '@angular/core';
+import {Directive, ElementRef, Renderer2, OnInit} from '@angular/core';
 import {UserRoleStateService} from "@shared/store/user-role-state.service";
 import {CODE_ROLE} from "@core/constants/global.constants";
 
 @Directive({
   selector: '[appIsAdmin]',
-  standalone: true
 })
-export class IsAdminDirective {
+export class IsAdminDirective implements OnInit {
 
   constructor(private el: ElementRef, private renderer: Renderer2, private pS: UserRoleStateService) { }
 

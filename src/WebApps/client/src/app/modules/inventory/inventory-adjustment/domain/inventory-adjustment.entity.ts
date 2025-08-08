@@ -34,3 +34,7 @@ export class InventoryAdjustmentDetailResponse {
   header:any = {};
   items: any[]=[]
 }
+
+export class InventoryAdjustmentListProductsResponse {
+   data: any[]=[]
+}

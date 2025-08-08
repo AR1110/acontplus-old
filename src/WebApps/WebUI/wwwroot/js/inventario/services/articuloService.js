@@ -41,10 +41,10 @@
         }
 
         /**
-         * 
-         * @param {*} params 
-         * 
-         * @returns 
+         *
+         * @param {*} params
+         *
+         * @returns
          */
         service.get = (params) => {
             return mS.getData('get', url + '?json=' + JSON.stringify(params)).then(response => {
@@ -124,7 +124,7 @@
 
 
 
-                    //Listado de articulos 
+                    //Listado de articulos
                     return {
                         totalRecords,
                         articulos: articulos.map(item => {
@@ -156,8 +156,8 @@
 
         /**
          * Nueva depuracion de datos para el formulario
-         * @param {*} query 
-         * @returns 
+         * @param {*} query
+         * @returns
          */
         service.getDataForForm = function () {
             return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 5 })).then(response => {
@@ -197,7 +197,7 @@
         }
 
 
-        //Lista de articulos fraccionados para buscador rapido 
+        //Lista de articulos fraccionados para buscador rapido
         service.getArticlesFractionalInfo = function (query) {
             if (!('idArticulo' in query)) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
@@ -226,7 +226,7 @@
             })
         }
 
-        //se usa en modulo consultar precio y modal consultar Listado de Articulos 
+        //se usa en modulo consultar precio y modal consultar Listado de Articulos
         service.getAllWithPrices = function (dataSearch) {
             const query = {
                 tipo: 3,
@@ -253,6 +253,8 @@
                         totalRecords,
                         articulos: articulos.map(item => {
                             let tarifas = JSON.parse(item.tarifa)
+                            let stocks = fS.isValidJSON(item.stocks) ? JSON.parse(item.stocks): [];
+                            console.log(stocks)
                             return {
                                 idArticulo: item.idArticulo,
                                 idMedida: item.idMedida,
@@ -277,7 +279,8 @@
                                 tarifas,
                                 color: item.color,
                                 s3ObjectKey: item.s3ObjectKey,
-                                s3ObjectUrl: item.s3ObjectUrl
+                                s3ObjectUrl: item.s3ObjectUrl,
+                                stocks
                             }
                         })
 
@@ -288,7 +291,7 @@
         }
 
 
-        //Articulos para listar en el modulo de articulo fraccionado 
+        //Articulos para listar en el modulo de articulo fraccionado
         service.searchForFraccionado = function (query) {
             query.tipo = 1;
             query.pageIndex = 1;
@@ -301,7 +304,7 @@
                 if (response.code === "1") {
                     let { products } = JSON.parse(response.payload);
                     let articulos = products || []
-                    //Listado de articulos 
+                    //Listado de articulos
                     return articulos.map(item => {
                         return {
                             idArticulo: item.idArticulo,
@@ -326,7 +329,7 @@
             })
         }
 
-        //Se usa en modulo de consolidacion 
+        //Se usa en modulo de consolidacion
         service.getForImportation = function (query) {
             return mS.getData('get', url + '?json=' + JSON.stringify(query)).then(response => {
                 if (response.code === "0") {
@@ -411,7 +414,7 @@
 
 
         /**
-         * Para Compras 
+         * Para Compras
          * ✅
          */
         service.getForPurchase = function (query) {
@@ -428,7 +431,7 @@
                     } = JSON.parse(response.payload)
                     let dataArticulo = product[0];
                     let articulo = {
-                        codImpuesto: dataArticulo.codigo, //Codigo Impuesto 
+                        codImpuesto: dataArticulo.codigo, //Codigo Impuesto
                         codigoArticulo: dataArticulo.codigoArticulo,
                         codigoPorcentaje: dataArticulo.codigoPorcentaje,
                         datosAdicionales: dataArticulo.datosAdicionales,
@@ -594,7 +597,7 @@
         }
 
 
-        //Reports 
+        //Reports
         service.getDataFormReport = function () {
             return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 13 })).then(
                 response => {
@@ -790,7 +793,7 @@
                         sliderContent += `
                                 <div class="carousel-item ${index === 0 ? 'active' : ''}">
                                     <img class="d-block w-100" src="${photo.s3ObjectUrl}" alt="First slide">
-                                </div>   
+                                </div>
                                 `;
                         index++;
                     }

@@ -5,7 +5,6 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
   selector: '[appVehicleAddEdit]',
-  standalone: true
 })
 export class VehicleAddEditDirective {
 

@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubcategoryModalComponent } from '@accounting/sub-category/presentation/subcategory-modal/subcategory-modal.component';
@@ -25,9 +25,9 @@ import {DialogService} from "@core/services/dialog.service";
   templateUrl: './subcategory.component.html',
   styles: ``,
 })
-export class SubcategoryComponent {
+export class SubcategoryComponent implements OnInit {
   data: Subcategory = {} as Subcategory;
-  subcategories: Subcategory[] = [];
+  subcategories = signal<Subcategory[]>([])
   private readonly modalService = inject(DialogService);
 
   private _subCategoryUseCase = inject(SubCategoryUseCase)
@@ -55,8 +55,12 @@ export class SubcategoryComponent {
   }
 
   private  getAll(){
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
-      this.subcategories = response
+    const params = {
+      pageIndex: this.pagination().pageIndex+1,
+      pageSize: this.pagination().pageSize
+    }
+    this._subCategoryUseCase.getAll(params).subscribe((response) => {
+      this.subcategories.set(response)
     })
   }
 

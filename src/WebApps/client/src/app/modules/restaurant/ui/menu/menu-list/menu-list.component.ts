@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Menu } from '@restaurant/domain/models/menu.model';
 import { MenuService } from '@restaurant/data/services/menu.service';
 import { Pagination } from '@shared/models/pagination.model';
@@ -17,7 +17,7 @@ import {DialogService} from "@core/services/dialog.service";
   templateUrl: './menu-list.component.html',
   styleUrl: './menu-list.component.scss'
 })
-export class MenuListComponent {
+export class MenuListComponent implements OnInit {
   menus = signal<any[]>([]);
   pagination = signal(new Pagination());
   private readonly _menuService = inject(MenuService);

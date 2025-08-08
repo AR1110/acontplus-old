@@ -19,7 +19,7 @@ export class ComprobanteEgresoUtil {
   private pagosDetalle: PagoDetalle[];
   private cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
   private estadosPago: EstadoPago[] = []
-  private valorAbono: number = 0;
+  private valorAbono = 0;
   private esAbonoPosfechado!: boolean;
   private secuencial!: number
 
@@ -92,7 +92,7 @@ export class ComprobanteEgresoUtil {
     }
 
 
-    for (let group of this.cuentasPorPagar) {
+    for (const group of this.cuentasPorPagar) {
 
       this.dataCuentaPorPagarCuota = group;
 
@@ -100,7 +100,7 @@ export class ComprobanteEgresoUtil {
         this.agregarCuentasPorPagarHistorial();
       }
 
-      for (let dataCuota of group.cuotas) {
+      for (const dataCuota of group.cuotas) {
 
         // dataCuota.abonoPosfechado = 0;
         if (this.valorAbono === 0) return;
@@ -240,12 +240,12 @@ export class ComprobanteEgresoUtil {
     if (dataCuota.cuota === 0 || abono === 0) return;
 
     let valorMovimientoSaldo = 0;
-    let pagosDetalleFiltered = this.pagosDetalle.filter(cd => (
+    const pagosDetalleFiltered = this.pagosDetalle.filter(cd => (
       cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar &&
       cd.idCuotaPorPagar === dataCuota.idCuotaPorPagar
     ))
 
-    let dataUltimoCobroDetalle = pagosDetalleFiltered.pop();
+    const dataUltimoCobroDetalle = pagosDetalleFiltered.pop();
     if (dataUltimoCobroDetalle) {
       valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono, DECIMALS.CINCO) as number
     } else {

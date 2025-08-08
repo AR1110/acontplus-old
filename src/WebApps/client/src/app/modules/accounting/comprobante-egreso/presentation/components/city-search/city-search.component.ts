@@ -27,7 +27,7 @@ const _filterCiudadGroup = (opt: any[], value: string): string[] => {
 export class CitySearchComponent {
   comprobanteEgresoStore = inject(ComprobanteEgresoStore)
 
-  stateCityGroup: string = '';
+  stateCityGroup = '';
 
   ciudadGroupOptions!: any[];
 

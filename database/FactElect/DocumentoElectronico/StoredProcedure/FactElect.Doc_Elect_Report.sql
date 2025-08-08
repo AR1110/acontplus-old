@@ -451,7 +451,7 @@ BEGIN
                               ,lc.claveAcceso
                               ,dbo.AFTGenerarNroDocumento(es.estab+pt.ptoEmi,lc.secuencial) as serieComprobante										
                               ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision	
-                               ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+                              ,Format(fechaAutorizacion,''dd/MM/yyyy  HH:mm'')              as fechaAutorizacion
                               ,lc.identificacionProveedor
                               ,lc.razonSocialProveedor										
                               ,ISNULL((
@@ -460,7 +460,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje   = ''7''
                                       AND li.[Enabled]   = 1
-                              ),0) AS subTotalExento
+                              ),0)                                                          as subTotalExento
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -468,7 +468,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje     = ''6''
                                       AND li.[Enabled]   = 1
-                              ),0) as subTotalNoObjetoIva
+                              ),0)                                                          as subTotalNoObjetoIva
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -476,7 +476,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje     = ''5''
                                       AND li.[Enabled]   = 1
-                              ),0) AS subTotalIvaCinco
+                              ),0)                                                          as subTotalIvaCinco
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -484,7 +484,7 @@ BEGIN
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
                                       AND li.codigoPorcentaje     = ''4''
                                       AND li.[Enabled]   = 1
-                              ),0) AS subTotalIvaQuince
+                              ),0)                                                          as subTotalIvaQuince
 
                               ,ISNULL((
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
@@ -498,7 +498,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId      = lc.idLiquidacionCompra
-                                      AND li.codigo               = ''2'' 
+                                      AND li.codigoPorcentaje   = ''2'' 
                                       AND li.[Percent] > 0
                                       AND li.[Enabled]   = 1
                                ),0) as subTotalIva
@@ -509,7 +509,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2))
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId          = lc.idLiquidacionCompra 
-                                      AND li.codigo                 = ''2''
+                                      AND li.codigoPorcentaje       = ''2''
                                       AND li.[Enabled]   = 1
                                ),0) AS iva
 
@@ -517,7 +517,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId          = lc.idLiquidacionCompra 
-                                      AND li.codigo                   = ''5''
+                                      AND li.codigoPorcentaje       = ''5''
                                       AND li.[Enabled]   = 1
                                ),0) AS iva5
 
@@ -525,7 +525,7 @@ BEGIN
                                     SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2))
                                     FROM Compra.v_LiquidacionImpuesto li 
                                     WHERE li.LiquidacionId          = lc.idLiquidacionCompra
-                                      AND li.codigo                   = ''4''
+                                      AND li.codigoPorcentaje       = ''4''
                                       AND li.[Enabled]   = 1
                                ),0) as iva15
 
@@ -542,7 +542,7 @@ BEGIN
                         INNER JOIN Usuario              us WITH (NOLOCK) ON us.idUsuario	     = lc.idUsuario
                         WHERE lc.idEntidad = @idEntidad '
 
-            IF @codEstab IS NOT NULL
+            IF LEN(@codEstab) > 5
                 BEGIN
                     SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END 
@@ -777,6 +777,138 @@ BEGIN
                               ,@idUsuario      = @idUsuario
 
             
+        END 
+    
+    --> Guia Remision
+    IF @tipo = 6
+        BEGIN
+            SELECT @codEstab       = codEstab
+                  ,@idPuntoEmision = idPuntoEmision
+                  ,@ckFecha        = ckFecha
+                  ,@fechaInicio    = fechaInicio
+                  ,@fechaFin       = fechaFin
+                  ,@codEstado      = codEstado
+                  ,@identificacion = identificacion
+                  ,@idUsuario      = idUsuario
+            FROM OPENJSON(@json) WITH 
+            (
+                codEstab       VARCHAR(100)
+               ,idPuntoEmision INT
+               ,ckFecha        BIT
+               ,fechaInicio    DATETIME2
+               ,fechaFin       DATETIME2
+               ,codEstado      INT
+               ,identificacion VARCHAR(20)
+               ,idUsuario      INT
+            )
+
+            SET @params = '@idEntidad       INT
+                          ,@codEstab        VARCHAR(100)
+                          ,@idPuntoEmision  INT
+                          ,@fechaInicio     DATETIME2
+                          ,@fechaFin        DATETIME2
+                          ,@codEstado       INT
+                          ,@identificacion  VARCHAR(20)
+                          ,@idUsuario       INT'
+
+            SET @sql = 'SELECT et.idEstablecimiento
+                              ,et.nombreComercial
+                              ,de.serieComprobante
+                              ,de.claveAcceso
+                              ,Format(de.fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
+                              ,FORMAT(de.fechaEmision,''dd/MM/yyyy'')             as fechaEmision
+	                          ,cu.IdCard		                                  as identificacion
+	                          ,cu.BusinessName	                                  as cliente
+	                          ,es.descripcion                                     as estado
+	                          ,gr.ptoPartida
+	                          ,gr.ptoLlegada
+	                          ,gr.motivo
+	                          ,tr.nombre	                                      as transportista
+	                          ,ve.placa		                                      as vehiculo
+	                          ,CASE WHEN gr.idFactura > 0        THEN ''FE'' 
+	                                WHEN gr.idNotaEntrega > 0    THEN ''NE''
+			                        WHEN gr.idAprob_Document > 0 THEN ''PF''
+ 	                           END				                                  as tipoDoc
+	                          ,CASE WHEN gr.idFactura > 0        THEN df.serieComprobante 
+	                                WHEN gr.idNotaEntrega > 0    THEN ne.serieComprobante
+			                        WHEN gr.idAprob_Document > 0 THEN ad.serieComprobante
+ 	                           END				                                  as serieDocumento
+                              ,ur.nombreUsuario	                                  as usuario
+                        FROM dbo.GuiaRemision			    gr WITH (NOLOCK)
+                        INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = gr.idDocumentoElectronico
+                        INNER JOIN dbo.Cliente				cl WITH (NOLOCK) ON cl.idCliente              = gr.idCliente
+                        INNER JOIN dbo.Transportista        tr WITH (NOLOCK) ON tr.idTransportista        = gr.idTransportista
+                        INNER JOIN dbo.Vehiculo             ve WITH (NOLOCK) ON ve.idVehiculo			  = gr.idVehiculo
+                         LEFT JOIN dbo.Factura              fa WITH (NOLOCK) ON fa.idFactura		      = gr.idFactura
+                         LEFT JOIN dbo.NotaEntrega          ne WITH (NOLOCK) ON ne.idNotaEntrega		  = gr.idNotaEntrega
+                         LEFT JOIN Ventas.Aprob_Document    ad WITH (NOLOCK) ON ad.idAprob_Document		  = gr.idAprob_Document
+                        INNER JOIN dbo.Usuario			    ur WITH (NOLOCK) ON ur.idUsuario		      = gr.idUsuario
+                        INNER JOIN Customer.Customer		cu WITH (NOLOCK) ON cu.Id					  = cl.CustomerId
+                        INNER JOIN factElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio		  = de.idEstadoServicio
+                        INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision	      = de.idPuntoEmision
+                        INNER JOIN Sri.Establecimiento      et WITH (NOLOCK) ON et.idEstablecimiento      = pe.idEstablecimiento
+                         LEFT JOIN dbo.DocumentoElectronico df WITH (NOLOCK) ON df.idDocumentoElectronico = fa.idDocumentoElectronico
+                        WHERE et.idEntidad = @idEntidad '
+
+            IF LEN(@codEstab) > 5
+                BEGIN
+                    SET @sql = @sql + 'AND et.codEstab = @codEstab '
+                END 
+
+            IF @idPuntoEmision > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND de.idPuntoEmision = @idPuntoEmision '
+                END
+                
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(de.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END 
+
+            IF @codEstado >= 0
+                BEGIN
+                    IF @codEstado IN (4,6)
+                        BEGIN
+                            SET @sql = @sql + 'AND es.codigo = @codEstado '
+                        END 
+                    ELSE 
+                        BEGIN
+                            SET @sql = @sql + 'AND es.codigo != 4'
+                        END 
+                END 
+
+            IF @identificacion IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND cu.IdCard = @identificacion '
+                END 
+
+            IF @idUsuario IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND gr.idUsuario = @idUsuario '
+                END 
+                
+            SET @sql = @sql + 'ORDER BY de.fechaEmision DESC '
+
+            SELECT entidad as razonSocial 
+                  ,rucEmpresa as ruc
+                  ,telefono 
+                  ,nombreUsuario as usuario
+                  ,'Reporte Tributario - Guía de Remisión ' as nombreReporte
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+            FROM v_usuario
+            WHERE idUsuarioRol = @idUsuarioRol
+
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@idEntidad      = @idEntidad
+                              ,@codEstab       = @codEstab
+                              ,@idPuntoEmision = @idPuntoEmision
+                              ,@fechaInicio    = @fechaInicio
+                              ,@fechaFin       = @fechaFin
+                              ,@codEstado      = @codEstado
+                              ,@identificacion = @identificacion
+                              ,@idUsuario      = @idUsuario
+            RETURN
         END 
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'

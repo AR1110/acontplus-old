@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,10 +24,10 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { FormsModule } from '@angular/forms';
 import {formatDateToString} from "@core/utils/date.util";
 import {GuiaRemisionList} from "@billing/domain/models/guia-remision/guia-remision.model";
-import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
+import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
 import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habitual-historial.directive";
 import {  MatMenuModule} from "@angular/material/menu";
-import {ProductKardexModalDirective} from "@inventory/ui/product/directives/product-kardex-modal.directive";
+import {ProductKardexModalDirective} from "@inventory/product/presentation/directives/product-kardex-modal.directive";
 import {DialogService} from "@core/services/dialog.service";
 import {
   AddEditGuiaRemisionComponent
@@ -56,7 +56,7 @@ import {
   templateUrl: './guia-remision.component.html',
   styles: ``,
 })
-export class GuiaRemisionComponent   {
+export class GuiaRemisionComponent implements OnInit   {
   private $getGuiaRemisionFilterDataUseCase = inject(
     GetGuiaRemisionFilterDataUseCase
   );
@@ -163,7 +163,7 @@ export class GuiaRemisionComponent   {
       }
     }
 
-    let params = this.getParams()
+    const params = this.getParams()
     if(!params) return;
     this.$listGuiasRemisionUseCase.execute(params).subscribe(response=>{
       console.log(response);
@@ -214,7 +214,7 @@ export class GuiaRemisionComponent   {
 
 
   public openAddEditModal(){
-    let ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
+    const ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
       size: 'xl',
       data: {
 

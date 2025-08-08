@@ -157,7 +157,7 @@ BEGIN
                       ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')               as secuencial
                       ,x.y.value('(infoNotaDebito/identificacionComprador)[1]','VARCHAR(300)') as identificacionComprador
                       ,x.y.value('(infoNotaDebito/valorTotal)[1]','NUMERIC(18,5)')             as importeTotal
-                      ,'Notas de Crédito'
+                      ,'Notas de Debito'
                 FROM @xmlQuery.nodes('//notaDebito') x(y)
             END 
 

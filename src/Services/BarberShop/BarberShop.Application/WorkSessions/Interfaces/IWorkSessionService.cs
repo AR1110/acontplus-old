@@ -1,7 +1,4 @@
-﻿using BarberShop.Application.Seats.DTOs;
-using BarberShop.Application.WorkSessions.DTOs;
-
-namespace BarberShop.Application.WorkSessions.Interfaces;
+﻿namespace BarberShop.Application.WorkSessions.Interfaces;
 
 public interface IWorkSessionService
 {

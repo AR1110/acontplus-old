@@ -16,7 +16,6 @@ export class ListCompanyCustomerMapper {
 
     const result = new ListCompanyCustomerResponse();
     const [data] = JSON.parse(response.payload as string);
-    console.log(JSON.parse(response.payload as string))
     result.data = data.map((item: any, index:number) => {
       return {
         index: index+1,

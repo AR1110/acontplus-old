@@ -6,7 +6,7 @@ import {
   FormaPago
 } from "@accounting/comprobante-egreso/domain/comprobante-egreso.entity";
 
-type ParamsGuardar = {
+interface ParamsGuardar {
   dataCuentaPorPagar: CuentaPorPagarLista,
     total: number,
     formasPago: FormaPago[],

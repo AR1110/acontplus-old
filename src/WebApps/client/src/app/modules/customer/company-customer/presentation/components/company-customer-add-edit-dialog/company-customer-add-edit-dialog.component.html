@@ -123,15 +123,25 @@
             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
           >
             <div class="col">
-              <app-m3-input-chip [chips]="emails" [labelText]="'Correo'" />
+              <app-mat-input-chip [chips]="emails" [labelText]="'Correo'" />
             </div>
             <div class="col">
-              <app-m3-input-chip
+              <app-mat-input-chip
                 [chips]="telephones"
                 [labelText]="'Teléfono'"
               />
             </div>
           </div>
+
+          @if(isUpdate()){
+            <div class="vstack gap-2 mt-2">
+              <span>Estado</span>
+              <mat-slide-toggle formControlName="estado">
+                {{customerForm.value.estado?'Activo': 'Inactivo'}}
+              </mat-slide-toggle>
+            </div>
+          }
+
         </div>
       </mat-tab>
       <mat-tab label="DATOS ADICIONALES">
@@ -313,7 +323,7 @@
                   </div>
 
                   <div class="col">
-                    <app-m3-input-chip labelText="Placa" [chips]="placas()"/>
+                    <app-mat-input-chip labelText="Placa" [chips]="placas()"/>
                   </div>
 
 

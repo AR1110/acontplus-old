@@ -12,7 +12,7 @@
       <input matInput [(ngModel)]="data.descripcion" appToUpperCase placeholder="Ej: Moto">
     </mat-form-field>
 
-    <app-m3-input-chip [chips]="etiquetas" [labelText]="'Etiquetas'" />
+    <app-mat-input-chip [chips]="etiquetas" [labelText]="'Etiquetas'" />
 
 
     @if(data.idEtiqueta>0 ){

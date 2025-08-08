@@ -1,18 +1,18 @@
 USE Acontplus
-GO 
+GO
 
 CREATE OR ALTER VIEW Config.v_User_Permissions
 AS
-SELECT  
-    userRoleId = up.idUsuarioRol,
-    perm.userCustomPermissionId,
-    menuCode = m.Code,
-    [name] = a.[Name],  
-    perm.[isActive],
-    perm.requiresKey,
-    perm.users
-FROM 
-    Config.UserPermission up
+    SELECT
+        userRoleId = up.idUsuarioRol,
+        perm.userCustomPermissionId,
+        menuCode = m.Code,
+        [name] = a.[Name],
+        perm.[isActive],
+        perm.requiresKey,
+        perm.users
+    FROM
+        Config.UserPermission up
 CROSS APPLY 
     OPENJSON (up.permissionsData)
     WITH (
@@ -21,10 +21,10 @@ CROSS APPLY
         requiresKey BIT,
         users NVARCHAR(MAX) '$.users' AS JSON
     ) AS perm
-INNER JOIN 
-    AcontplusAdmin.Seguridad.UserCustomPermission ucp ON ucp.Id = perm.userCustomPermissionId
-INNER JOIN 
-    AcontplusAdmin.Config.Menu m ON ucp.MenuId = m.Id
-INNER JOIN 
-    AcontplusAdmin.Seguridad.Actions a ON ucp.ActionId = a.Id
-WHERE up.permissionsData IS NOT NULL
+        INNER JOIN
+        AcontplusAdmin.Seguridad.UserCustomPermission ucp ON ucp.Id = perm.userCustomPermissionId
+        INNER JOIN
+        AcontplusAdmin.Config.Menu m ON ucp.MenuId = m.Id
+        INNER JOIN
+        AcontplusAdmin.Seguridad.Actions a ON ucp.ActionId = a.Id
+    WHERE up.permissionsData IS NOT NULL

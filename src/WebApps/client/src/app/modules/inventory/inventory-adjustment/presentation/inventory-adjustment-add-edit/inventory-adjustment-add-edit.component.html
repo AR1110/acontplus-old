@@ -72,6 +72,19 @@
            />
          </div>
       </div>
+
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-2">
+      <app-product-autocomplete-advanced
+        [imageSize]="'medium'"
+        [enableImageZoom]="true"
+        [enableQuickView]="true"
+        [showStockBadge]="true"
+        [showImageNavigation]="true"
+        [autoRotateImages]="false"
+        (itemSelected)="itemSelected($event)"
+      />
     </div>
 
   </div>

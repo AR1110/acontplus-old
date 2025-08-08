@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import {
   FormControl,
@@ -27,7 +27,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
   templateUrl: './room-add-edit-modal.component.html',
   styles: ``,
 })
-export class RoomAddEditModalComponent {
+export class RoomAddEditModalComponent implements OnInit {
   roomForm = new FormGroup({
     id: new FormControl(0),
     floorId: new FormControl(0, [Validators.required]),

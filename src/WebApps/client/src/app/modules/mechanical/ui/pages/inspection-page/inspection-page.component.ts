@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
 import { MECHANICAL_CODE_REPORT } from '@mechanical/domain/enums/mechanical.enum';
@@ -28,7 +28,7 @@ import {DialogService} from "@core/services/dialog.service";
     ],
     templateUrl: './inspection-page.component.html'
 })
-export class InspectionPageComponent {
+export class InspectionPageComponent implements OnInit {
   sharedSvc = inject(SharedService);
   private _inspectionUseCase = inject(InspectionUseCase);
   private _dialogSvc = inject(DialogService)
@@ -68,7 +68,7 @@ export class InspectionPageComponent {
   }
 
   getInspections() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       status: 1,
@@ -101,8 +101,8 @@ export class InspectionPageComponent {
   }
 
   getReport(item: any) {
-    let format = 'pdf';
-    let dataParams = { inspectionId: item.id, tipo: 1 };
+    const format = 'pdf';
+    const dataParams = { inspectionId: item.id, tipo: 1 };
     const params = {
       hasService: false,
       hasIdUsuarioRol: true,

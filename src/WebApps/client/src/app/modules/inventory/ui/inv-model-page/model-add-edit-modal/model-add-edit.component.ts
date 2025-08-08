@@ -1,11 +1,11 @@
-import { Component, inject, Input, signal } from "@angular/core";
+import { Component, inject, Input, signal, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
 import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 import {getValidId, isValidField} from "@core/utils/utils";
 import { BrandAddEditDirective } from "@inventory/ui/directives/brand-add-edit.directive";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
-import {ProductUseCase} from "@inventory/domain/usecases/product.use-case";
+import {ProductUseCase} from "@inventory/product/application/use-cases/product.use-case";
 import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -34,7 +34,7 @@ MatIconModule,
       MatCustomDialogComponent
     ]
 })
-export class ModelAddEditComponent {
+export class ModelAddEditComponent implements OnInit {
 
   readonly dialogRef = inject(MatDialogRef<ModelAddEditComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
@@ -8,7 +8,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
 import { Item } from '@restaurant/domain/models/item.model';
 
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
@@ -20,14 +20,14 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
     ReactiveFormsModule,
     MatSlideToggle,
     ItemSearchComponent,
-    TabulatorSemanticUiComponent,
+    TabulatorComponent,
     ThemeButtonComponent,
     MatCustomDialogComponent,
   ],
   templateUrl: './menu-add-edit-modal.component.html',
   styles: ``,
 })
-export class MenuAddEditModalComponent {
+export class MenuAddEditModalComponent implements OnInit {
   menuForm = new FormGroup({
     id: new FormControl(0),
     title: new FormControl(''),
@@ -285,8 +285,8 @@ export class MenuAddEditModalComponent {
 
   verifyUpdateCell(productsAdded: any[]) {
     if (productsAdded.length > 0) {
-      for (let product of productsAdded) {
-        let fee = JSON.parse(product.fees).find(
+      for (const product of productsAdded) {
+        const fee = JSON.parse(product.fees).find(
           (x: any) => x.idTarifa == product.feeId,
         );
         product.priceIVA = fee.precioConIva;

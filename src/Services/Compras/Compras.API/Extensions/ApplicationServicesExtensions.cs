@@ -1,6 +1,5 @@
 ﻿using System.IO.Compression;
 using Common.FactElect.Services.External;
-using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 

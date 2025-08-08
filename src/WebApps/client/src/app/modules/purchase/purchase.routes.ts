@@ -4,8 +4,14 @@ import { ReceptionReportsComponent } from '@purchase/ui/reception-reports/recept
 import { DocumentReceivedComponent } from '@purchase/ui/documento-received/document-received.component';
 import { FacturaFisicaComponent } from '@purchase/ui/factura-fisica/factura-fisica.component';
 import { RetencionAtsComponent } from '@billing/ui/retencion-ats/retencion-ats.component';
+import { PurchaseHomeComponent } from './ui/purchase-home.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: PurchaseHomeComponent,
+    data: { breadcrumb: 'Compras' },
+  },
   {
     path: 'documento-recibido',
     title: 'Documento Recibido',

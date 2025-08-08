@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal, OnInit,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -13,7 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
-import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +25,7 @@ import { DecimalSelectComponent } from '@modules/config/ui/general-config/decima
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({
@@ -46,13 +46,13 @@ import { CompanyCustomerEntity } from '@company-customer/domain/entities/company
     DecimalSelectComponent,
     BreadcrumbComponent,
     MatDynamicCardComponent,
-    M3InputChipComponent,
+    MatInputChipComponent,
     ThemeButtonComponent,
   ],
   templateUrl: './general-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GeneralConfigComponent {
+export class GeneralConfigComponent implements OnInit {
   private $listUseCase = inject(ListGeneralConfigUseCase);
   private $updateUseCase = inject(UpdateGeneralConfigUseCase);
   CODE_TABS = {

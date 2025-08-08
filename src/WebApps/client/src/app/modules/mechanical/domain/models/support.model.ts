@@ -3,9 +3,9 @@ import { FieldDefinitionDetailSale } from "@shared/models/field-definition-detai
 export class SupportDetail extends FieldDefinitionDetailSale {
   id = 0
   idImpuesto = 0; // se utiliza cuando transforman a NE O FV
-  idTipoIva: number = 0
+  idTipoIva = 0
   codePercentage?: string
-  enabled: boolean = true
+  enabled = true
   deleted?: boolean
   precioSinSubsidio = 0;
 }

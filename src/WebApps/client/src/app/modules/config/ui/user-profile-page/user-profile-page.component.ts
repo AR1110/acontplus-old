@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UserProfileService } from '@modules/config/services/user-profile.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -23,7 +23,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
         ThemeButtonComponent
     ]
 })
-export class UserProfilePageComponent {
+export class UserProfilePageComponent implements OnInit {
     private readonly userProfileService = inject(UserProfileService);
     private tS = inject(ToastrNotificationService);
 
@@ -94,7 +94,7 @@ export class UserProfilePageComponent {
             if (result.isConfirmed) {
                 // clean spaces
 
-                let password = {
+                const password = {
                     contrasenia: this.passwordForm.value.password?.trim(),
                     confirmarContrasenia: this.passwordForm.value.confirmPassword?.trim(),
                 }

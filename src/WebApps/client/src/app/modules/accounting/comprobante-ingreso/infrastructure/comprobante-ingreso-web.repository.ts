@@ -22,7 +22,7 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
   }
 
   getAll<T>(obj:T)  {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -30,7 +30,7 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
       context: getNoLoader()
     }).pipe(
       map(response => {
-        let result = {
+        const result = {
           data: []
         }
 
@@ -44,11 +44,11 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
   }
 
   getDataFilter(){
-    let json = JSON.stringify({ tipo: 4 })
+    const json = JSON.stringify({ tipo: 4 })
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`)
       .pipe(
         map(response => {
-          let result = {
+          const result = {
             establecimientos: [] as GroupedEstab[],
             tiposDoc :[],
             subEntidadesFinanciera:[],
@@ -76,7 +76,7 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
 
 
   create<T>(obj: T){
-    let data = ComprobanteIngresoMapper.toApiCreate(obj as any);
+    const data = ComprobanteIngresoMapper.toApiCreate(obj as any);
     return this._http.post<ApiResponse>(`${this._url}Insert`, {data})
   }
 

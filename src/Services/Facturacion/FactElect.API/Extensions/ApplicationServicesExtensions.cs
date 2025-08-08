@@ -1,10 +1,12 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Common.FactElect.Services.Authentication;
 using Common.FactElect.Services.Conversion;
 using Common.FactElect.Services.External;
 using Common.FactElect.Services.Validation;
+using FactElect.Application;
 using FactElect.Application.Services;
+using FactElect.Application.Services.Sri;
 using FactElect.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
@@ -23,6 +25,10 @@ public static class ApplicationServicesExtensions
         services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
         services.AddMemoryCache();
+
+        services.AddHttpClient();
+        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
+        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
 
         services.AddResponseCompression(options =>
         {
@@ -91,7 +97,6 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-        services.AddSingleton<IAtsXmlService, AtsXmlService>();
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<ICaptchaService, CaptchaService>();

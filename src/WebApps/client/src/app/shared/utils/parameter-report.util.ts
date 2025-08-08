@@ -15,7 +15,7 @@ interface Options {
 class DataParams {
   constructor(
     public id: number,
-    public tipo: number = 1 // Valor predeterminado de 1
+    public tipo = 1 // Valor predeterminado de 1
   ) {}
 }
 

@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
@@ -23,7 +23,7 @@ import {DialogService} from "@core/services/dialog.service";
   templateUrl: './promotion-list.component.html',
   styles: ``,
 })
-export class PromotionListComponent {
+export class PromotionListComponent implements OnInit {
   private restaurantStore = inject(RestaurantStoreService);
 
   private modalSvc = inject(DialogService);

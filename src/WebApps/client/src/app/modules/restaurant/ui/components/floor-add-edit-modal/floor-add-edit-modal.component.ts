@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -8,7 +8,7 @@ import {
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { ApiResponse } from '@core/models/api-response';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -24,7 +24,7 @@ import {MatInputModule} from "@angular/material/input";
   selector: 'app-floor-add-edit-modal',
   imports: [
     ReactiveFormsModule,
-    TabulatorSemanticUiComponent,
+    TabulatorComponent,
     MatSlideToggle,
     ThemeButtonComponent,
     MatCustomDialogComponent,
@@ -34,7 +34,7 @@ import {MatInputModule} from "@angular/material/input";
   templateUrl: './floor-add-edit-modal.component.html',
   styles: ``,
 })
-export class FloorAddEditModalComponent {
+export class FloorAddEditModalComponent implements OnInit {
 
   roomColumns: any[] = [
     { title: 'ID', field: 'id', visible: false },
@@ -72,7 +72,7 @@ export class FloorAddEditModalComponent {
         const rowDataMain = cell.getRow().getData();
 
         //create edit button
-        let editBtn = document.createElement('button');
+        const editBtn = document.createElement('button');
         editBtn.type = 'button';
         editBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">save</i>`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
@@ -83,7 +83,7 @@ export class FloorAddEditModalComponent {
         });
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
@@ -93,7 +93,7 @@ export class FloorAddEditModalComponent {
           this.deleteRoom(rowData);
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
         if (rowDataMain.id > 0 && this.data.id > 0) {
           buttonHolder.appendChild(editBtn);

@@ -1,5 +1,5 @@
 
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {  PageEvent } from '@angular/material/paginator';
 import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
 
@@ -47,7 +47,7 @@ import {REPORT_FORMAT} from "@core/constants/global.constants";
   ],
   templateUrl: './company-customer.component.html',
 })
-export class CompanyCustomerComponent {
+export class CompanyCustomerComponent implements OnInit {
   private $listUseCase = inject(ListCompanyCustomerUseCase);
   private generateReport = inject(GenerateReportUseCase);
   private $updateState = inject(UpdateStateCompanyCustomerUseCase)
