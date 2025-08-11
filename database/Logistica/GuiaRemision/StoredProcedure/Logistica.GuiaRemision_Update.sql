@@ -166,7 +166,7 @@ BEGIN
 				RETURN
             END
 
-        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '06' AND idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
+        IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '06' AND idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6,8))
             BEGIN
                 SELECT '0'code,'El Documento tiene un proceso en el Sri'[message]
                 RETURN 
@@ -175,12 +175,6 @@ BEGIN
         IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE codDoc = '06' AND idDocumentoElectronico != @idDocumentoElectronico AND claveAcceso = @claveAcceso)
             BEGIN
                 SELECT '0'code, 'Esta clave de Acceso ya existe'[message]
-                RETURN 
-            END
-
-        IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND isAutomatic = 1)
-            BEGIN
-                SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
                 RETURN 
             END
 
