@@ -21,9 +21,9 @@
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
 
-    aprobacionDocumentoCtrl.$inject = ['$scope', '$filter', '$injector', 'modalService'];
+    aprobacionDocumentoCtrl.$inject = ['$scope', '$injector', 'modalService'];
 
-    function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc) {
+    function aprobacionDocumentoCtrl($scope, $injector, modalSvc) {
 
         //Injection Services
         commonSvc = $injector.get('commonService');
@@ -37,6 +37,8 @@
         SRI_IDENTIFITION_CODE = $injector.get('SRI_IDENTIFITION_CODE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
         const DECODE_TOKEN = $injector.get("decodeToken");
+        const policyService = $injector.get('PolicyService');
+
 
 
         $scope.dataSource = [];
@@ -47,7 +49,8 @@
             pageIndex: 1,
             pageSize: 25,
             maxSize: 5,
-            totalRecords: 0
+            totalRecords: 0,
+            checkBoxFecha: true
         }
 
         $scope.estadoDocumentos = [];
@@ -154,7 +157,7 @@
 
         function list() {
             try {
-                let checkBoxFecha = true;
+                let checkBoxFecha = $scope.dataSearch.checkBoxFecha;
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
@@ -302,6 +305,11 @@
         $scope.openModalAprobarDoc = async (item) => {
 
             try {
+                if (item.docDestino === DOC_TYPE.FV_SRI) {
+                    await policyService.sendMaxDocuments();
+                }
+
+
                 aprobacionDocSvc.getId(item.id).then(response => {
                     let modalRef = modalSvc.open({
                         controller: 'ModalApproveDocCtrl',
@@ -433,7 +441,7 @@
             }
         }
 
-        $scope.getReportAprobTracking = function (){
+        $scope.getReportAprobTracking = function () {
             try {
 
                 let format = 'excel';
@@ -442,7 +450,7 @@
                     tipo: 3,
                     codEstab: $scope.dataSearch.codEstab,
                     byCliente: $scope.dataSearch.byCliente,
-                    checkBoxFecha : true,
+                    checkBoxFecha: true,
                     byUsuario: $scope.dataSearch.byUsuario,
                     byEstado: ["", 0, null, undefined].includes($scope.dataSearch.byEstado) ? null : $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
@@ -2518,14 +2526,14 @@
                     codDocDestino = DOC_TYPE.FE;
                     codDoc = DOC_TYPE.FV_SRI;
 
-                      await docElectSvc.validateNormativeSri({
-                            accion: 'guardar',
-                            identificacion: $scope.cliente.numeroIdentificacion,
-                            importeTotal: $scope.data.total,
-                            idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
-                            codDoc: '01'
+                    await docElectSvc.validateNormativeSri({
+                        accion: 'guardar',
+                        identificacion: $scope.cliente.numeroIdentificacion,
+                        importeTotal: $scope.data.total,
+                        idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
+                        codDoc: '01'
 
-                        })
+                    })
 
                     serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,

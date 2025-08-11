@@ -15,7 +15,7 @@
     guiaRemisionCtrl.$inject = ['$scope', '$injector', '$filter', 'modalService'];
 
     function guiaRemisionCtrl($scope, $injector, $filter, modalSvc) {
-                const docElectSvc = $injector.get('docElectService');
+        const docElectSvc = $injector.get('docElectService');
 
 
         guiaRemisionSvc = $injector.get('guiaRemisionService');
@@ -23,6 +23,7 @@
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
         const CODE_REPORT = $injector.get('CODE_REPORT');
+        const policyService = $injector.get('PolicyService');
 
         $scope.cliente = {};
 
@@ -41,8 +42,11 @@
             maxSize: 5
         };
 
-        $scope.openModalNew = function () {
+        $scope.openModalNew = async function () {
             try {
+
+                await policyService.sendMaxDocuments();
+
                 let modalRef = modalSvc.openModalCustom({
                     controller: 'ModalGuiaRemisionCtrl',
                     template: URL_TEMPLATE + '_ModalAddUpdate.cshtml',
@@ -252,7 +256,7 @@
 
         $scope.askToDelete = async (item) => {
             try {
-                  const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
                     accion: 'anular',
                     identificacion: item.identificacionDestinatario,
                     fechaEmision: item.fechaEmision,
@@ -904,14 +908,14 @@
         }
         function setDataDocReferenciado(result) {
             let { data, codDoc } = result;
-            if(codDoc===DOC_TYPE.FE){
+            if (codDoc === DOC_TYPE.FE) {
                 $scope.data.idFactura = data.idDocumento;
             }
 
-            if(codDoc===DOC_TYPE.NE){
+            if (codDoc === DOC_TYPE.NE) {
                 $scope.data.idNotaEntrega = data.idDocumento;
             }
-            if(codDoc===DOC_TYPE.APROB_DOC){
+            if (codDoc === DOC_TYPE.APROB_DOC) {
                 $scope.data.idAprob_Document = data.idDocumento;
             }
 

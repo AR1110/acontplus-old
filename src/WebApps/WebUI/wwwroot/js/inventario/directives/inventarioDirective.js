@@ -2,7 +2,7 @@
 
     'use strict';
 
-    app.directive('btnArticleAddUpdate', function (modalService, nombreModalInventario) {
+    app.directive('btnArticleAddUpdate', function (modalService, nombreModalInventario, PolicyService) {
         return {
             restrict: 'A',
             scope: {
@@ -13,6 +13,9 @@
                 element.on('click', async function () {
 
                     const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO;
+
+                    await PolicyService.sendMaxInventoryItems()
+
                     let ctrl = (await import(fileCtrl))[controllers['M']];
                     let template = templates['M'];
                     const modalDialogRef = modalService.openModalCustom({
@@ -71,7 +74,7 @@
 
 
 
-    //Se usa en familia, articulo 
+    //Se usa en familia, articulo
     app.directive('btnAddUpdateFamilia', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
@@ -106,7 +109,7 @@
     })
 
 
-    //Se usa en sub-familia, articulo 
+    //Se usa en sub-familia, articulo
     app.directive('btnAddUpdateSubFamilia', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
@@ -141,7 +144,7 @@
     })
 
 
-    //Se usa en medida, articulo 
+    //Se usa en medida, articulo
     app.directive('btnAddUpdateMedida', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
@@ -163,7 +166,7 @@
                         isRenderRazorPartial: true
                     })
 
-                    modalDialogRef.result.then(result => { 
+                    modalDialogRef.result.then(result => {
                         if (typeof result === "object") {
                             scope.results({
                                 result
@@ -211,7 +214,7 @@
     })
 
 
-    //Se usa en modelo, articulo 
+    //Se usa en modelo, articulo
     app.directive('btnAddUpdateModelo', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
@@ -248,7 +251,7 @@
 
 
     //............................Inventario-------------------------------------------------
-    //permiso para ver kardex en documentos de ventas 
+    //permiso para ver kardex en documentos de ventas
     app.directive('viewKardex', ['$rootScope', 'modalService', 'nombreModalInventario', function ($rootScope, modalSvc, nombreModalInventario) {
         return {
             scope: {

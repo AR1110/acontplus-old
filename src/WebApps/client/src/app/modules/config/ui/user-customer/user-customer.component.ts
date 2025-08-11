@@ -15,6 +15,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs/operators';
+import {SendMaxUsersUseCase} from "@modules/config/application/use-cases/general-config/list-general-config.use-case";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-user-customer',
@@ -33,6 +35,7 @@ export class UserCustomerComponent implements OnInit {
   private $listUserCustomerUseCase = inject(ListUserCustomerUseCase);
   private _tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService);
+  private $sendMaxUsersUseCase  = inject(SendMaxUsersUseCase)
 
   $loading = signal(false);
 
@@ -83,6 +86,11 @@ export class UserCustomerComponent implements OnInit {
 
   ngOnInit() {
     this.getList();
+  }
+
+  async openAdd(){
+    await firstValueFrom(this.$sendMaxUsersUseCase.execute());
+    this.openAddEdit()
   }
 
   openAddEdit(item?: UserCustomerList) {

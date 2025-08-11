@@ -22,6 +22,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
     let DOC_TYPE = $injector.get('DOC_TYPE')
     let fS = $injector.get('formulario')
     let tS = $injector.get('toastService')
+    const policyService = $injector.get('PolicyService');
 
 
     $scope.isDocOriginProforma = false;
@@ -435,6 +436,8 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
             let cuotas = validateCuota();
 
             if (cuotas && cuotas.length === 0) return
+
+            await policyService.sendMaxDocuments();
 
 
             Swal.fire({

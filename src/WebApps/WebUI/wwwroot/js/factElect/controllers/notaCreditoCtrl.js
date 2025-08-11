@@ -27,7 +27,7 @@
     ]
 
     function notaCreditoClienteCtrl($scope, $injector, decodeToken) {
-                const docElectSvc = $injector.get('docElectService');
+        const docElectSvc = $injector.get('docElectService');
 
 
         notaCreditoSvc = $injector.get('notaCreditoService');
@@ -40,6 +40,9 @@
         const CODE_REPORT = $injector.get('CODE_REPORT');
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const $filter = $injector.get('$filter');
+
+        const policyService = $injector.get('PolicyService');
+
         tipoDoc = {
             codigo: DOC_TYPE.NC
         }
@@ -209,6 +212,7 @@
 
 
         $scope.openModalNew = async () => {
+            await policyService.sendMaxDocuments();
             $scope.openModalParam({
                 controller: 'modalNotaCreditoCtrl',
                 template: URL_TEMPLATE + '_ModalNuevo.cshtml',
@@ -1140,8 +1144,8 @@
                         }
 
                         facturaSvc.getForCreditNote(json).then(response => {
-                           $scope.facturas = response.facturas || [];
-                           $scope.dataSearch.totalRecords = $scope.facturas.length>0 ? $scope.facturas[0].totalRecords: 0
+                            $scope.facturas = response.facturas || [];
+                            $scope.dataSearch.totalRecords = $scope.facturas.length > 0 ? $scope.facturas[0].totalRecords : 0
                         }).catch(error => {
                             console.log(error)
                         })

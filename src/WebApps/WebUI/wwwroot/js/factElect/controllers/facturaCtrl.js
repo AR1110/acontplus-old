@@ -10,7 +10,6 @@
     let fS = {};
     let modalSvc = {};
     let tipoDoc = {};
-    const NUM_CONSUMIDOR_FINAL = "9999999999999";
     let nombreModalVenta = {};
 
     app.controller("facturaCtrl", facturaCtrl);
@@ -28,7 +27,8 @@
         nombreModalVenta = $injector.get("nombreModalVenta");
 
         const nombreModalCommon = $injector.get('nombreModalCommon');
-        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
+        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService');
+        const policyService = $injector.get('PolicyService');
 
         let DOC_TYPE = $injector.get("DOC_TYPE");
         const CODE_REPORT = $injector.get("CODE_REPORT");
@@ -310,6 +310,9 @@
 
         $scope.openModalInvoiceNew = async () => {
             try {
+
+                await policyService.sendMaxDocuments();
+
                 modalSvc
                     .openModalCustom({
                         controller: "modalFacturaCtrl",
@@ -372,13 +375,13 @@
             };
         }
 
-        async function openModalRegistrarSolicitudAuth(data){
+        async function openModalRegistrarSolicitudAuth(data) {
             let fileCtrl = nombreModalCommon.SOLICITUD_AUTORIZACION.fileCtrl;
             let ctrl = nombreModalCommon.SOLICITUD_AUTORIZACION.controller;
             let template = nombreModalCommon.SOLICITUD_AUTORIZACION.template;
             let controller = (await import(fileCtrl))[ctrl];
 
-            const {vendedores, config} = mainDataForm;
+            const { vendedores, config } = mainDataForm;
 
             let modalRef = modalSvc.open({
                 controller,
@@ -388,7 +391,7 @@
                     vendedores,
                     esMultipleVendedor: config.multipleVendedor,
                     data,
-                } ,
+                },
             })
 
         }
@@ -549,8 +552,8 @@
                     if (result && typeof result === 'object' && result.esAnulado) {
 
                         if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
-                        //    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
-                        $solicitudAutorizacionSvc.update(paramsPermission)
+                            //    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                            $solicitudAutorizacionSvc.update(paramsPermission)
                         }
                         $scope.getFacturas();
                     }
@@ -2256,7 +2259,7 @@
             }
         }
 
-        $scope.onChangeTarifaGeneral =  function () {
+        $scope.onChangeTarifaGeneral = function () {
             if (!$scope.permisoComprobanteVenta.tarifa) {
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
                 tS.toastr("warning", "No tienes permiso para realizar esta acción");
@@ -2266,7 +2269,7 @@
             let tarifa = $scope.tarifas.find(
                 (item) => item.idTarifa === $scope.data.idTarifa
             );
-              Swal.fire({
+            Swal.fire({
                 html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
                 icon: "warning",
                 showCancelButton: true,
@@ -2274,7 +2277,7 @@
                 confirmButtonText: `Sí, cambiar!`,
                 cancelButtonText: "No, cancelar!",
                 allowOutsideClick: false,
-            }).then(result=>{
+            }).then(result => {
 
 
                 if (result.isConfirmed) {
@@ -2840,8 +2843,8 @@
                 return;
             }
 
-            if($scope.infoAdicionalDocumento.length>0){
-                if($scope.infoAdicionalDocumento.some(item=>!fS.isValidField(item.nombre) || !fS.isValidField(item.valor))){
+            if ($scope.infoAdicionalDocumento.length > 0) {
+                if ($scope.infoAdicionalDocumento.some(item => !fS.isValidField(item.nombre) || !fS.isValidField(item.valor))) {
                     tS.toastr(
                         "warning",
                         "En información adicional del documento algunos campos estan vaciós"
@@ -2964,12 +2967,12 @@
 
                 if (cuotas && cuotas.length === 0) return;
 
-                 const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
                     accion: 'guardar',
-                    identificacion:  $scope.cliente.numeroIdentificacion,
-                   importeTotal: $scope.data.total,
-                   idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
-                   codDoc: '01'
+                    identificacion: $scope.cliente.numeroIdentificacion,
+                    importeTotal: $scope.data.total,
+                    idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
+                    codDoc: '01'
                 })
 
                 if (isRegister()) {
