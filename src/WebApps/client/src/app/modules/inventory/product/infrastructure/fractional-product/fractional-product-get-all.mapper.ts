@@ -5,7 +5,7 @@ import {ApiResponse} from "@core/models/api-response";
 export class FractionalProductGetAllMapper {
 
   static fromJson(responseApi:any){
-    let resultResponse = new ApiResponse()
+    const resultResponse = new ApiResponse()
 
     let articulosFraccionado = []
 

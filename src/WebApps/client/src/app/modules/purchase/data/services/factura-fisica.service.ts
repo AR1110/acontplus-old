@@ -14,7 +14,7 @@ export class FacturaFisicaService {
 
 
   getAll<T>(obj: T) {
-    let params =  {
+    const params =  {
       tipo: 1,
       ...obj
     }

@@ -1,4 +1,4 @@
-import {Component, inject, input, model, output, signal, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, input, model, output, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
@@ -47,7 +47,7 @@ import {
 
   `
 })
-export class ProductBarcodeComponent {
+export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   private _tS = inject(ToastrNotificationService)
   private $productDataFormUseCase = inject(ProductDataFormUseCase);
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
@@ -198,7 +198,7 @@ export class ProductBarcodeComponent {
 
 
 
-    let data = {
+    const data = {
       ...this.data(),
       idArticulo: this.productId()
     }

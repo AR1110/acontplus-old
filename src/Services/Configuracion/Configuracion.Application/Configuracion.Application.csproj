@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Data" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Configuracion.Infrastructure\Configuracion.Infrastructure.csproj" />
+    <ProjectReference Include="..\Configuracion.Domain\Configuracion.Domain.csproj" />
   </ItemGroup>
 
 </Project>

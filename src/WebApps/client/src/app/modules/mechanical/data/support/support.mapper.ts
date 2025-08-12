@@ -15,7 +15,7 @@ export class SupportMapper {
 
     let results = [];
     if (response.code === "1") {
-      let { supports } = JSON.parse(response.payload as string);
+      const { supports } = JSON.parse(response.payload as string);
 
       results = supports.map((item: any, index: number) => {
         return {
@@ -45,7 +45,7 @@ export class SupportMapper {
 
   static fromApiFilter(response: ApiResponse) {
 
-    let data = {
+    const data = {
       supportStatus: [] as any[]
 
     }
@@ -63,7 +63,7 @@ export class SupportMapper {
 
   static fromApiDashboard(response: ApiResponse) {
 
-    let result = {
+    const result = {
       data: {
         quantitySupport: 0,
         quantityVehicleCompany: 0,
@@ -72,9 +72,9 @@ export class SupportMapper {
       barchart: [] as any
     }
     if (response.code === "1") {
-      let mainData = JSON.parse(response.payload as string);
+      const mainData = JSON.parse(response.payload as string);
 
-      let quantity = mainData.quantity[0];
+      const quantity = mainData.quantity[0];
       result.data = {
         quantitySupport: quantity.quantitySupport,
         quantityVehicleCompany: quantity.quantityVehicleCompany,
@@ -89,7 +89,7 @@ export class SupportMapper {
 
   static fromApiGetId(response: ApiResponse) {
 
-    let result = {
+    const result = {
       data: {},
       vehicle: {},
       customer: {
@@ -98,8 +98,8 @@ export class SupportMapper {
     };
     if (response.code==="1") {
       const {support, paramaters, vehicle, customer} = JSON.parse(response.payload as string);
-      let mainData = support[0];
-      let pr =  paramaters[0]
+      const mainData = support[0];
+      const pr =  paramaters[0]
 
       result.data = {
         id: mainData.id,
@@ -167,7 +167,7 @@ export class SupportMapper {
       cliente, config, detalle, formapago, tiempoCredito, impuestos ,vehicle ,inspection
     } = JSON.parse(response.payload as any) ;
 
-    let details = detalle.map((item: any) => {
+    const details = detalle.map((item: any) => {
 
         const { fraccionado, principal, consolidacion, ...restItem } = item;
 
@@ -187,18 +187,18 @@ export class SupportMapper {
 
         const medidas = mergeMeasureUtil(principal, fraccionado);
 
-        let dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
+        const dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
 
-        let precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
-        let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.discount;
-        let subTotalSinDescuento = restItem.price * restItem.quantity
+        const precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
+        const precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.discount;
+        const subTotalSinDescuento = restItem.price * restItem.quantity
 
-        let percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
+        const percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
           restItem.discount
         ) : 0
 
 
-        let obj: SupportDetail = {
+        const obj: SupportDetail = {
           id: restItem.id,
           rowguid: generateUuidv4(),
           bodegaId: restItem.bodegaId,
@@ -235,8 +235,8 @@ export class SupportMapper {
         return obj;
       }
     );
-    let comprobante = tempComprobante[0];
-    let formasPagoSri = formapago;
+    const comprobante = tempComprobante[0];
+    const formasPagoSri = formapago;
 
     return {
       comprobante,
@@ -258,8 +258,8 @@ export class SupportMapper {
 
     let result = {} as any;
     if(response.code==="1"){
-      let {comprobante} = JSON.parse(response.payload as string);
-      let mainData =  comprobante[0] ;
+      const {comprobante} = JSON.parse(response.payload as string);
+      const mainData =  comprobante[0] ;
       result = mainData;
     }
     return result;

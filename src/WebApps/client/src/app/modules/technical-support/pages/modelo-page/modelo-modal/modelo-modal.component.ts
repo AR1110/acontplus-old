@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -23,7 +23,7 @@ import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-c
   templateUrl: './modelo-modal.component.html',
   styles: ``,
 })
-export class ModeloModalComponent {
+export class ModeloModalComponent implements OnInit {
   private modeloService = inject(ModeloService);
   private brandService = inject(BrandService);
   private modalRef = inject(MatDialogRef<ModeloModalComponent>);

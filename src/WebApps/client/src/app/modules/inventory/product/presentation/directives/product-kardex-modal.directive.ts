@@ -3,7 +3,6 @@ import { OpenModalProductService } from '@inventory/product/application/services
 
 @Directive({
   selector: '[appProductKardexModal]',
-  standalone: true
 })
 export class ProductKardexModalDirective {
   private openModalProductSvc = inject(OpenModalProductService)
@@ -11,7 +10,7 @@ export class ProductKardexModalDirective {
   params = input({} as any);
 
   @HostListener('click') onClick() {
-    let params = {
+    const params = {
       id: this.params().idArticulo
     }
     this.openModalProductSvc.openKardex(params)

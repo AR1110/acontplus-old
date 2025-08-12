@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Item } from '@restaurant/domain/models/item.model';
 import { ItemService } from '@restaurant/data/services/item.service';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -29,7 +29,7 @@ import {DialogService} from "@core/services/dialog.service";
   templateUrl: './item-list.component.html',
   styles: ``,
 })
-export class ItemListComponent {
+export class ItemListComponent implements OnInit {
   pagination = signal(new MatPagination());
   #itemService = inject(ItemService);
   #modalService = inject(DialogService);

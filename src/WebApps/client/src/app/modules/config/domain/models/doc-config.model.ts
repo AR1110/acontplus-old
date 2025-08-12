@@ -1,38 +1,37 @@
-import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {GroupedEstab} from "@core/models/estab.model";
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { GroupedEstab } from '@core/models/estab.model';
 
 export interface DocConfig {
-  idPuntoEmision?: number
-  idConfiguracionDocumento: number
-  idTipoDocumento: number
-  estado: boolean,
-  ultimaSecuencia: number
-  descripcion: string,
-  infoAdicional : boolean
+  idPuntoEmision?: number;
+  idConfiguracionDocumento: number;
+  idTipoDocumento: number;
+  estado: boolean;
+  ultimaSecuencia: number;
+  descripcion: string;
+  infoAdicional: boolean;
 }
 
-
 export interface DocConfigList {
-  index: number
-  "idConfiguracionDocumento": number
-  "idTipoDocumento": number
-  "ultimaSecuencia": number
-  nomDoc: string
-  "estado": boolean
-  hasInfoAdicional: boolean
+  index: number;
+  idConfiguracionDocumento: number;
+  idTipoDocumento: number;
+  ultimaSecuencia: number;
+  nomDoc: string;
+  estado: boolean;
+  hasInfoAdicional: boolean;
 }
 
 export class DocConfigListResponse {
-  data: DocConfigList[]=[]
+  data: DocConfigList[] = [];
 }
 
 export interface DocConfigInfoAdicional {
-  unique:string
-  nombre: string
-  valor: string
+  unique: string;
+  nombre: string;
+  valor: string;
 }
 
-export class DocConfigFormDataResponse{
-  establecimientos: GroupedEstab[]=[]
-tiposDoc:any[]=[]
+export class DocConfigFormDataResponse {
+  establecimientos: GroupedEstab[] = [];
+  tiposDoc: any[] = [];
 }

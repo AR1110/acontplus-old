@@ -248,6 +248,21 @@ app.constant(
     JSON.parse(localStorage.getItem("userData")),
 );
 
+app.constant('APP_CONSTANTS', {
+    CODE_APP: 'AW',
+    POLICIES: {
+        MAX_DOCUMENTS: 'MAX_DOCUMENTS',
+        MAX_INVENTORY_ITEMS: 'MAX_INVENTORY_ITEMS',
+        MAX_USERS: 'MAX_USERS',
+        MAX_WAREHOUSES: 'MAX_WAREHOUSES',
+        MAX_ESTABLISHMENTS: 'MAX_ESTABLISHMENTS'
+    },
+    TYPES: {
+        DEFAULT: 1,
+        ADVANCED: 2
+    }
+});
+
 //SERVICIOS
 
 app.factory("decodeToken", function ($localStorage, jwtHelper) {

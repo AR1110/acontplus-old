@@ -3,7 +3,7 @@ import { DECIMALS } from "@core/constants/global.constants";
 import { roundNumber } from "@core/utils/round-number.utils";
 import { CuotaPorPagarLista } from "@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface";
 
-type Props = {
+interface Props {
   dataCuota: CuotaPorPagarLista
   valorAbono: number
   esAbonoPosfechado: boolean

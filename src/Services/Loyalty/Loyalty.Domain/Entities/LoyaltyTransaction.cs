@@ -7,7 +7,7 @@ public class LoyaltyTransaction : CompanyEntity
     public int CompanyCustomerId { get; set; }
     // public virtual CompanyCustomer CompanyCustomer { get; set; }
 
-    [Required] [MaxLength(50)] public required string TransactionNumber { get; set; }
+    [Required][MaxLength(50)] public required string TransactionNumber { get; set; }
 
     public DateTime TransactionDate { get; set; }
 

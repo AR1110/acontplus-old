@@ -4,8 +4,14 @@ import { SaleReportPageComponent } from "@sale/ui/reports/sale-report-page/sale-
 import { NotaEntregaPageComponent } from "@sale/ui/nota-entrega-page/nota-entrega-page.component";
 import { ProformaPageComponent } from "@sale/ui/proforma-page/proforma-page.component";
 import { RentabilidadPageComponent } from "@sale/ui/reports/rentabilidad-page/rentabilidad-page.component";
+import { SaleHomeComponent } from './ui/sale-home.component';
 
 export const routes: Route[] = [
+  {
+    path: '',
+    component: SaleHomeComponent,
+    data: { breadcrumb: 'Ventas' },
+  },
   {
     path: 'proforma',
     component: ProformaPageComponent,

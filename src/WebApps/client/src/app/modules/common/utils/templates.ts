@@ -1,4 +1,4 @@
-export const templates: { [key: string]: string } = {
+export const templates: Record<string, string> = {
   Christmas: `
       <p>Estimado/a cliente,</p>
       <p>En estas fechas tan especiales, queremos hacerle llegar nuestros mejores deseos para usted y sus seres queridos. Que estas fiestas estén llenas de alegría, amor y momentos inolvidables junto a su familia.</p>

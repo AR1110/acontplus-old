@@ -1,4 +1,4 @@
-import {Component, inject, input, signal} from '@angular/core';
+import {Component, inject, input, signal, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -54,7 +54,7 @@ import {
   templateUrl: './add-edit-fractional-product.component.html',
   styles: ``
 })
-export class AddEditFractionalProductComponent {
+export class AddEditFractionalProductComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<AddEditFractionalProductComponent>);
   readonly params = inject<{
     id: number;
@@ -384,10 +384,10 @@ private decimal = {
 
 
     try {
-      for (let val of this.productTarifa) {
+      for (const val of this.productTarifa) {
         val.porcentajeIva = porcentajeIva;
 
-        let precioVenta = pricingCalculateUtil.calculatePriceSale(
+        const precioVenta = pricingCalculateUtil.calculatePriceSale(
           val.precioConIva,
           val.porcentajeIva
         );
@@ -396,7 +396,7 @@ private decimal = {
          this.decimal.nroPrecio
         );
 
-        let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+        const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
           val.precioVenta,
           val.porcentajeIva
         );
@@ -405,7 +405,7 @@ private decimal = {
           this.decimal.nroPrecio
         );
 
-        let porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+        const porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
           precioVenta,
           precioCosto,
         );
@@ -414,7 +414,7 @@ private decimal = {
           DECIMALS.GENERAL
         );
 
-        let utilidad = pricingCalculateUtil.getValueUtility(
+        const utilidad = pricingCalculateUtil.getValueUtility(
           val.precioVenta,
           precioCosto
         );
@@ -436,7 +436,7 @@ private decimal = {
       return
     }
 
-    let {isConfirmed} = await Swal.fire({
+    const {isConfirmed} = await Swal.fire({
       icon: 'warning',
       html: 'Calcula los precios tomando el valor de porcentaje utilidad del pvp de articulo principal',
       showCancelButton: true,
@@ -447,13 +447,13 @@ private decimal = {
 
      if(!isConfirmed) return
 
-    let precioCosto = Number(this.data.precioCostoFraccionado);
+    const precioCosto = Number(this.data.precioCostoFraccionado);
 
 
     this.articuloPrincipalTarifa.forEach((item, index)=>{
-      let precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(precioCosto, item.porcentajeUtilidad)
+      const precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(precioCosto, item.porcentajeUtilidad)
 
-      let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+      const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
         precioVenta,
         item.porcentajeIva
       );
@@ -467,7 +467,7 @@ private decimal = {
         this.decimal.nroPrecio
       );
       this.productTarifa[index].porcentajeUtilidad =  item.porcentajeUtilidad;
-      let utilidad = pricingCalculateUtil.getValueUtility(item.precioVenta, precioCosto)
+      const utilidad = pricingCalculateUtil.getValueUtility(item.precioVenta, precioCosto)
       this.productTarifa[index].utilidad =  roundNumber(utilidad, DECIMALS.GENERAL);
 
 
@@ -524,7 +524,7 @@ private decimal = {
       return;
     }
 
-    let data = {
+    const data = {
       id: this.params.id,
      data: structuredClone(this.data),
       pvps: structuredClone(this.productTarifa),

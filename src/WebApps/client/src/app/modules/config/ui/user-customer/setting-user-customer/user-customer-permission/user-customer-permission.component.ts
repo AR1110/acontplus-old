@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {
   ListUserCustomerPermissionUseCase
 } from "@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case";
@@ -65,7 +65,7 @@ interface ModuleNode {
     }
   `
 })
-export class UserCustomerPermissionComponent {
+export class UserCustomerPermissionComponent implements OnInit {
   private $listUseCase = inject(ListUserCustomerPermissionUseCase)
   private $createUseCase = inject(CreateUserCustomerPermissionUseCase)
   private $updateUseCase = inject(UpdateUserCustomerPermissionUseCase)

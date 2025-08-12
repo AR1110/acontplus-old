@@ -26,4 +26,3 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
-global using Common.Logging;

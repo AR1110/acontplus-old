@@ -4,7 +4,6 @@ import { FacturaFisicaDetalleModalComponent } from '@purchase/ui/factura-fisica/
 
 @Directive({
   selector: '[appFacturaFisicaDetalle]',
-  standalone: true
 })
 export class FacturaFisicaDetalleDirective {
   private modalSvc = inject(DialogService)

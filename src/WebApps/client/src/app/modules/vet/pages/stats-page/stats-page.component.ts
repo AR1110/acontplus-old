@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { StatsService } from '@modules/vet/services/stats.service';
 import { isApiResponse } from '@core/models/api-response';
@@ -11,7 +11,7 @@ import {MatCard, MatCardContent} from "@angular/material/card";
     templateUrl: './stats-page.component.html',
     styles: ``
 })
-export class StatsPageComponent {
+export class StatsPageComponent implements OnInit {
   totalPetTypes = signal([]);
   totalBreeds = signal([]);
   totalGenders = signal([]);

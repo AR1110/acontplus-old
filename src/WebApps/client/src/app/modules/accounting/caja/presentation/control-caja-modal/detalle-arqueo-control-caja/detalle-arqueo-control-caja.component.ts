@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
@@ -16,7 +16,7 @@ import {SharedService} from "@core/services/shared.service";
   ],
   templateUrl: './detalle-arqueo-control-caja.component.html',
 })
-export class DetalleArqueoControlCajaComponent {
+export class DetalleArqueoControlCajaComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<DetalleArqueoControlCajaComponent>)
    params = inject(MAT_DIALOG_DATA)
 

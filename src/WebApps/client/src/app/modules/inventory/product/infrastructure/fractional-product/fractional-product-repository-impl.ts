@@ -22,7 +22,7 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
 
 
   getAll<T >(obj: T) {
-    let params = {
+    const params = {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
     return this._http.get(`${this._url}`, {
@@ -32,7 +32,7 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
   }
 
     getId(id: number)  {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       id,
       tipo: 2
     })
@@ -43,11 +43,11 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
   }
 
    post(obj: FractionalProductDataSave)  {
-    let data = FractionalProductPostMapper.toJson(obj)
+    const data = FractionalProductPostMapper.toJson(obj)
     return  this._http.post<ApiResponse>(`${this._url}`, {data})
   }
    put(obj: FractionalProductDataSave): Observable<ApiResponse> {
-     let data = FractionalProductPostMapper.toJson(obj)
+     const data = FractionalProductPostMapper.toJson(obj)
      return  this._http.put<ApiResponse>(`${this._url}${obj.id}`, {data})
   }
 

@@ -9,7 +9,7 @@ import { NotificacionTributariaService } from '@billing/services/notificacion-tr
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 
 @Component({
   selector: 'app-send-mail-dialog',
@@ -18,7 +18,7 @@ import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-
     ThemeButtonComponent,
     MatCustomDialogComponent,
     ReactiveFormsModule,
-    M3InputChipComponent,
+    MatInputChipComponent,
   ],
   templateUrl: './send-mail-dialog.component.html',
 })

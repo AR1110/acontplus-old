@@ -18,7 +18,7 @@ export class BrandWebRepository implements BrandRepository{
   private _http = inject(HttpClient);
 
   getAll<T>(obj: T): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -26,12 +26,12 @@ export class BrandWebRepository implements BrandRepository{
       context: getNoLoader()
     }).pipe(
       map(response => {
-        let result = {
+        const result = {
           brands: [] as any[]
         }
         if (response.code === "1") {
-          let mainData = JSON.parse(response.payload as string);
-          let brands = mainData.marcas || []
+          const mainData = JSON.parse(response.payload as string);
+          const brands = mainData.marcas || []
           result.brands = brands.map((item: any) => {
             return {
               idMarca: item.idMarca,

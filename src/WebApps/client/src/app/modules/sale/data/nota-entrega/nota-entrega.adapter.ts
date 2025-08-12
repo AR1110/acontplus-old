@@ -4,7 +4,7 @@ import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter"
 import { NotaEntregaComprobanteApi, NotaEntregaDetailApi } from "./nota-entrega-api.model";
 import { NotaEntregaDetail } from "@sale/domain/models/nota-entrega.model";
 import { formatDateToString } from "@core/utils/date.util";
-type MainAdapt = {
+interface MainAdapt {
   comprobante: any
   details: NotaEntregaDetail[],
   cuotas: any[],
@@ -13,11 +13,11 @@ type MainAdapt = {
 
 class NotaEntregaAdapter {
   mainAdapt(input: MainAdapt) {
-    let comprobante = this.comprobanteAdapt(input.comprobante)
+    const comprobante = this.comprobanteAdapt(input.comprobante)
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    let infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
+    const infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
       return{
         nombre : item.name,
         valor : item.value
@@ -66,9 +66,9 @@ class NotaEntregaAdapter {
   }
 
   detailAdapt(input: NotaEntregaDetail[]): NotaEntregaDetailApi[] {
-    let results = input.map((item, index) => {
-      let cantidadTransaccion = item.quantity * (item.conversion || 1)
-      let obj = {
+    const results = input.map((item, index) => {
+      const cantidadTransaccion = item.quantity * (item.conversion || 1)
+      const obj = {
         orderIndex: index + 1,
         idArticulo: item.productId,
         idTarifa: item.feeId,

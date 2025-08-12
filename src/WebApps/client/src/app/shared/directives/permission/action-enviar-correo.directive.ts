@@ -1,11 +1,10 @@
-import { Directive, ElementRef, inject, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, inject, Renderer2, OnInit } from '@angular/core';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionEnviarCorreo]',
-  standalone: true
 })
-export class ActionEnviarCorreoDirective {
+export class ActionEnviarCorreoDirective implements OnInit {
   private el = inject(ElementRef);
 
   private renderer = inject(Renderer2);

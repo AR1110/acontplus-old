@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -33,7 +33,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     templateUrl: './table-add-edit-modal.component.html',
     styles: ``
 })
-export class TableAddEditModalComponent {
+export class TableAddEditModalComponent implements OnInit {
 
   readonly dialogRef = inject(MatDialogRef<TableAddEditModalComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);

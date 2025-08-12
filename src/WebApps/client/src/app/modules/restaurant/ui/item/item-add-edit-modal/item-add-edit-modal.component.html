@@ -53,11 +53,12 @@
     </div>
     <div class="row">
       <div class="col">
-        <app-tabulator-semantic-ui
+        <app-tabulator
           [columnNames]="columns"
           [options]="{ reactiveData: true }"
           [tableData]="recipes()"
-        ></app-tabulator-semantic-ui>
+          [theme]="'semantic-ui'"
+        ></app-tabulator>
       </div>
     </div>
   </form>

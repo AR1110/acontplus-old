@@ -6,64 +6,70 @@ GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
-GO  
+GO
 -- =============================================
 -- Author:		IGNACIO MANCHU
--- Create date: 2023-08-14 
+-- Create date: 2023-08-14
 -- Description:	Get Item
 -- =============================================
 -- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":100,"tipo":1}', ''
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
 -- Restaurant.Item_Get 139, '{"tipo":4, "pageIndex":1,"pageSize":10 }', ''
--- Restaurant.Item_Get 139, '{"tipo":3,"checkSubFamilia":false,"idSubFamilia":0,"pageIndex":1,"pageSize":25,"checkBySearch":true,"code":"COM"}', ''
+-- Restaurant.Item_Get 362, '{"tipo":2,"pageIndex":1,"pageSize":25,"idSubFamilia":null,"textSearch":"MATCHA FRIO MIKUNA"}', ''
 
-CREATE OR ALTER PROCEDURE Restaurant.Item_Get @userRoleId INT
-,@json NVARCHAR(MAX)
-,@tableNames NVARCHAR(MAX) OUTPUT
+CREATE OR ALTER PROCEDURE Restaurant.Item_Get
+    @userRoleId INT
+,
+    @json NVARCHAR(MAX)
+,
+    @tableNames NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;
-	SET LANGUAGE SPANISH;
+    SET NOCOUNT ON;
+    SET LANGUAGE SPANISH;
 
-	DECLARE @pageIndex INT
-	,@pageSize INT	
+    DECLARE @pageIndex INT
+	,@pageSize INT
 	,@idSubFamilia INT
 	,@idFamilia INT
 	,@checkSubFamilia BIT
 	,@sql NVARCHAR(MAX)
 	,@idEntidad INT
 	,@params NVARCHAR(MAX)
-    ,@tipo INT    
+    ,@tipo INT
     ,@textSearch VARCHAR(20)
     ,@dateNow DATETIME = (SELECT dbo.ufnGetDateEcuador())
     ,@day VARCHAR(12)
     ,@hour VARCHAR(5)
 
-    			
-	SELECT @idSubFamilia  = idSubFamilia
-		  ,@idSubFamilia  = idFamilia
-		  ,@pageIndex	  = pageIndex
-		  ,@pageSize	  = pageSize
-          ,@tipo          = tipo            
-          ,@textSearch    = textSearch
-	FROM OPENJSON(@json) 
+
+    SELECT @idSubFamilia  = idSubFamilia
+		  , @idSubFamilia  = idFamilia
+		  , @pageIndex	  = pageIndex
+		  , @pageSize	  = pageSize
+          , @tipo          = tipo
+          , @textSearch    = textSearch
+    FROM OPENJSON(@json)
 	WITH(
          tipo               INT         '$.tipo'
 		,idSubFamilia	    INT         '$.idSubFamilia'
 		,idFamilia	        INT         '$.idSubFamilia'
 		,pageIndex		    INT         '$.pageIndex'
-		,pageSize		    INT         '$.pageSize'       
+		,pageSize		    INT         '$.pageSize'
         ,textSearch         VARCHAR(20) '$.textSearch'
 	)
 
-	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    SELECT TOP 1
+        @idEntidad = idEntidad
+    FROM v_usuario WITH (NOLOCK)
+    WHERE idUsuarioRol = @userRoleId
 
     SET @day    = (SELECT DATENAME(weekday, GETDATE()))
     SET @hour   = (SELECT FORMAT(GETDATE(), 'HH:mm'))
-    
-	SET @params = '@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
 
-	SET @sql = 'SELECT Id			            = ri.Id
+    SET @params = '@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
+
+    SET @sql = 'SELECT Id			            = ri.Id
 				    ,summary			            = ISNULL(ri.Summary, '''')
 				    ,cooking			            = ri.Cooking
 				    ,recipe				            = ri.Recipe
@@ -95,7 +101,7 @@ BEGIN
 										                        ,tarifa = ta.descripcion
 										                        ,porcentajeIva = ti.porcentaje
 								                        FROM ArticuloPvP ap
-								                        INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa								
+								                        INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa
 								                        LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
 								                        WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
 								                        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
@@ -103,101 +109,101 @@ BEGIN
                     ,totalRecords                   = COUNT(*) over()
                     ,itemTypeCode                   = ''ITEM''
                     ,a.idMedida
-                    ,siglaFamilia                   = a.siglaFamilia	
+                    ,siglaFamilia                   = a.siglaFamilia
 		            ,categoria                      = f.descripcion
 			FROM Restaurant.Item ri
-			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId AND a.idEntidad = @idEntidad   
+			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId AND a.idEntidad = @idEntidad
             LEFT JOIN Familia f ON f.siglas = a.siglaFamilia
 			WHERE   a.estado = 1 '
     -- ===== PARTE ADMINISTRATIVA ===== --
     IF @tipo = 1
         BEGIN
-            IF @textSearch IS NOT NULL
+        IF @textSearch IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + ' AND a.descripcion LIKE ''%''+@textSearch+''%'' 
-                                        OR ri.Summary LIKE ''%''+@textSearch+''%'' 
-                                        OR ri.Content LIKE ''%''+@textSearch+''%'' '
-                END
-                
-	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
-		           
-	        SET @tableNames = 'items'
-	        EXEC sp_executesql @sql 
+            SET @sql = @sql + ' AND (a.descripcion LIKE ''%''+@textSearch+''%''
+                                        OR ri.Summary LIKE ''%''+@textSearch+''%''
+                                        OR ri.Content LIKE ''%''+@textSearch+''%'') '
+        END
+
+        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+
+        SET @tableNames = 'items'
+        EXEC sp_executesql @sql
                                 , @params
                                 , @idEntidad
                                 , @idSubFamilia
                                 , @pageIndex
                                 , @pageSize
-                                , @textSearch 
-            RETURN 
-        END
+                                , @textSearch
+        RETURN
+    END
 
     -- ===== PARTE RESTAURANT POS ===== --
     IF @tipo = 2
         BEGIN
-            IF @idSubFamilia > 0
-		        BEGIN			
-			        SET @sql = @sql + ' AND a.idSubFamilia = @idSubFamilia '
-		        END
+        IF @idSubFamilia > 0
+		        BEGIN
+            SET @sql = @sql + ' AND a.idSubFamilia = @idSubFamilia '
+        END
             ELSE
                 BEGIN
-                    SET @sql = @sql + ' AND a.siglaSubFamilia NOT IN(''COM'') '
-                END
+            SET @sql = @sql + ' AND a.siglaSubFamilia NOT IN(''COM'') '
+        END
 
-            IF @textSearch IS NOT NULL
+        IF @textSearch IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + ' AND a.descripcion LIKE ''%''+@textSearch+''%'' 
-                                        OR ri.Summary LIKE ''%''+@textSearch+''%'' 
-                                        OR ri.Content LIKE ''%''+@textSearch+''%'' '
-                END
+            SET @sql = @sql + ' AND (a.descripcion LIKE ''%''+@textSearch+''%''
+                                        OR ri.Summary LIKE ''%''+@textSearch+''%''
+                                        OR ri.Content LIKE ''%''+@textSearch+''%'') '
+        END
 
-            SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 
-            SET @tableNames = 'items'
-	        EXEC sp_executesql @sql 
+        SET @tableNames = 'items'
+        EXEC sp_executesql @sql
                                 , @params
                                 , @idEntidad
                                 , @idSubFamilia
                                 , @pageIndex
                                 , @pageSize
-                                , @textSearch 
+                                , @textSearch
 
-            RETURN 
-        END
+        RETURN
+    END
 
     -- ===== par ===== --
     -----Listado de Menus ----
-    IF @tipo = 3 
+    IF @tipo = 3
          BEGIN
-            SET @tableNames = 'items'
-            PRINT @idEntidad
-            SELECT m.*
-                ,s3ObjectUrl		= a.s3ObjectUrl
-				,stock				= a.stock
-				,codigo				= a.codigo
-                ,summary            = m.Summary
-                ,descripcion		= a.descripcion
-                ,pvp				= (SELECT idArticuloPvP = ap.idArticuloPvP
-										       ,idTarifa = ap.idTarifa
-										       ,precioVenta = ap.precioVenta
-										       ,precioConIva = ap.precioConIva
-										       ,porcentajeUtilidad = ap.porcentajeUtilidad
-										       ,precioPredeterminado = ta.predeterminada
-										       ,tarifa = ta.descripcion
-										       ,porcentajeIva = ti.porcentaje
-								        FROM ArticuloPvP ap
-								        INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa								
-								        LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
-								        WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
-								        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
-               ,totalRecords       = COUNT(*) OVER()
-               ,itemTypeCode = 'MENU'
-            FROM Restaurant.Menu m WITH(NOLOCK)
+        SET @tableNames = 'items'
+        PRINT @idEntidad
+        SELECT m.*
+                , s3ObjectUrl		= a.s3ObjectUrl
+				, stock				= a.stock
+				, codigo				= a.codigo
+                , summary            = m.Summary
+                , descripcion		= a.descripcion
+                , pvp				= (SELECT idArticuloPvP = ap.idArticuloPvP
+										       , idTarifa = ap.idTarifa
+										       , precioVenta = ap.precioVenta
+										       , precioConIva = ap.precioConIva
+										       , porcentajeUtilidad = ap.porcentajeUtilidad
+										       , precioPredeterminado = ta.predeterminada
+										       , tarifa = ta.descripcion
+										       , porcentajeIva = ti.porcentaje
+            FROM ArticuloPvP ap
+                INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa
+                LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
+            WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
+            FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+               , totalRecords       = COUNT(*) OVER()
+               , itemTypeCode = 'MENU'
+        FROM Restaurant.Menu m WITH(NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            WHERE a.idEntidad = @idEntidad AND a.estado = 1 AND a.siglaFamilia = 'COM'
-            AND ISNULL(m.ForPromotion, 0) = 0 
-            ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
-            RETURN 
-         END
+        WHERE a.idEntidad = @idEntidad AND a.estado = 1 AND a.siglaFamilia = 'COM'
+            AND ISNULL(m.ForPromotion, 0) = 0
+        ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+        RETURN
+    END
 END
 GO

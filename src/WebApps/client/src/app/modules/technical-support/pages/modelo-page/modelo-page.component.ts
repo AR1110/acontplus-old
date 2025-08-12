@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
 import { Modelo } from '@modules/technical-support/models/modelo';
@@ -16,7 +16,7 @@ import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-d
   templateUrl: './modelo-page.component.html',
   styles: ``,
 })
-export class ModeloPageComponent {
+export class ModeloPageComponent implements OnInit {
   private modeloService = inject(ModeloService);
   private modalService = inject(DialogService);
   modelos = signal<Modelo[] >([])

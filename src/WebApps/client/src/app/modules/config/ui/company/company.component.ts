@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CompanyAddEditModalComponent } from '@modules/config/ui/company/company-add-edit-modal/company-add-edit-modal.component';
 
@@ -20,7 +20,7 @@ import {DialogService} from "@core/services/dialog.service";
   ],
   templateUrl: './company.component.html',
 })
-export class CompanyComponent {
+export class CompanyComponent implements OnInit {
   private $listUseCase = inject(ListCompanyUseCase)
   dialogSvc = inject(DialogService);
 
@@ -51,7 +51,7 @@ export class CompanyComponent {
   }
 
   openModalEdit(item: any) {
-    let modalRef = this.dialogSvc.open(CompanyAddEditModalComponent, {
+    const modalRef = this.dialogSvc.open(CompanyAddEditModalComponent, {
       data: structuredClone(item) || {}
     });
     modalRef.subscribe((result) => {

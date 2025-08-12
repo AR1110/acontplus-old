@@ -1,0 +1,70 @@
+<app-breadcrumb />
+
+<app-mat-dynamic-card
+  title="Producto Destacado"
+  subtitle="¡El mejor producto del año!"
+  [primaryActionLabel]="'Comprar'"
+  [secondaryActionLabel]="'Ver más'"
+>
+  <ng-container>
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+    >
+      <div class="col"></div>
+      <div class="col">
+        <div class="d-flex flex-row gap-1 justify-content-end">
+          <button
+            mat-icon-button
+            aria-label="Editar"
+            (resultModalHandler)="resultModal($event)"
+            appVehicleAddEdit
+            [disabled]="isLoading()"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoading()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <app-mat-dynamic-table
+      [tableData]="dataSource()"
+      [isLoadingData]="isLoading()"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+      [templateOp]="templateOp"
+      [paginationConfig]="pagination()"
+      [enablePagination]="true"
+      (pageEvent)="handlePageEvent($event)"
+    />
+
+    <ng-template #templateOp let-item="item">
+      <button
+        mat-icon-button
+        aria-label="Editar"
+        (resultModalHandler)="resultModal($event)"
+        [params]="{ id: item.id }"
+        appVehicleAddEdit
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        aria-label="Delete"
+        (click)="askToDelete(item.id)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </ng-template>
+
+    <ng-template #statusTemplate let-item>
+      <mat-slide-toggle
+        (change)="putState(item.id, item.enabled)"
+        [(ngModel)]="item.enabled"
+      ></mat-slide-toggle>
+    </ng-template>
+  </ng-container>
+</app-mat-dynamic-card>

@@ -1,4 +1,4 @@
-﻿//@ts-check
+//@ts-check
 (function () {
     'use strict';
     angular.module('loginApp', ['ngStorage'])
@@ -7,7 +7,7 @@
     loginCtrl.$inject = ['$scope', '$http', '$localStorage'];
 
     function loginCtrl($scope, $http, $localStorage) {
-        let urlBase = window.apiProxyUrl;
+        let urlBase = document.getElementById('urlGateway').value;
         let urlService = `${urlBase}/gateway/seguridad`
         // For get the customer data from response
         $scope.codes = ['', '', '', '', '', ''];

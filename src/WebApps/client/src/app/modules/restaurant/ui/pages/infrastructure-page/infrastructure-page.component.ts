@@ -1,4 +1,4 @@
-import {Component, inject, model, signal} from '@angular/core';
+import {Component, inject, model, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {EstablecimientoSelectHtmlOnly} from "@core/models/estab.model";
@@ -52,7 +52,7 @@ import {TableUseCase} from "@restaurant/application/use-cases/table.use-case";
     templateUrl: './infrastructure-page.component.html',
     styleUrl: './infrastructure-page.component.scss'
 })
-export class InfrastructurePageComponent {
+export class InfrastructurePageComponent implements OnInit {
 
   private $sharedSvc = inject(SharedService);
   private $getFloorsUseCase = inject(GetFloorsByEstabIdUseCase);

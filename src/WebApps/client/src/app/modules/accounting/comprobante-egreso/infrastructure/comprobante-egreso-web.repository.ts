@@ -59,13 +59,13 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
   private http = inject(HttpClient)
 
   getCuotasByCuentaPorPagarId(idCuentaPorPagar: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 4,
       idCuentaPorPagar,
     })
     return this.http.get(`${this._url}?json=${json}`).pipe(
       map(response => {
-        let results = {
+        const results = {
           cuotas: [] as CuotaPorPagarLista[]
         }
         if (response && typeof response === 'object') {
@@ -81,7 +81,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
 
   getFormaPagoData(idProveedor: number) {
 
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3,
       idProveedor,
     })
@@ -111,7 +111,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
 
     return this.http.get<ApiResponse>(`${this._url}?json=${PARAMS}`).pipe(
       map(response => {
-        let result = {
+        const result = {
           establecimientos: [] as GroupedEstab[],
           tiposDoc :[],
           subEntidadesFinanciera:[],
@@ -136,7 +136,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
   }
 
   create(obj:any){
-    let params = ComprobanteEgresoMapper.toApiPost(obj);
+    const params = ComprobanteEgresoMapper.toApiPost(obj);
 
     return this.http.post<ApiResponse>(`${this._url}`, params)
   }

@@ -13,6 +13,8 @@
         controller: ['$scope', '$injector', function ($scope, $injector) {
             const $ctrl = this;
 
+
+
             const fS = $injector.get('formulario')
             const gridOptionsSvc = $injector.get('gridOptionsService');
             const aprobacionDocSvc = $injector.get('aprobacionDocService');
@@ -26,7 +28,7 @@
 
             $scope.title = null;
 
-            let docsSelected = []; 
+            let docsSelected = [];
 
 
             $scope.establecimientos = [];
@@ -74,7 +76,7 @@
                 isDisabledSucursal: true,
                 isDisabledPuntoEmision: true
             }
- 
+
 
             $scope.esEditar = function () {
                 return params.id > 0
@@ -108,15 +110,15 @@
                 const {
                     cliente,
                     detalles,
-                    id, 
-                    mainDataForm, 
+                    id,
+                    mainDataForm,
                     codEstab,
                     idPuntoEmision,
                 } = params;
 
                 let {
                     estabs,
-                    tarifasImpuesto, 
+                    tarifasImpuesto,
                     tarifas,
                     permisoVenta,
                     decimal,
@@ -127,7 +129,7 @@
                 tiposDocDestino = params.tiposDocDestino || [];
                 tiposDocOrigen = params.tiposDocOrigen || [];
 
-                docsSelected = params.docsSelected;  
+                docsSelected = params.docsSelected;
 
 
                 $scope.title = id > 0 ? 'Editar Aprobación Documento' : `Aprobar Documento: ${getDocOrigen(params.idTipoDocOrigen).descripcion}->${getDocDestino(params.idTipoDocDestino).descripcion}`;
@@ -139,7 +141,7 @@
                 $scope.data.codEstab = dataEstab.codEstab;
                 $scope.dataClone.codEstab = $scope.data.codEstab;
 
-                //===========Puntos Emisiones============================================== 
+                //===========Puntos Emisiones==============================================
                 $scope.ptosEmision = dataEstab.puntosEmision;
                 let dataPtoEmi = $scope.ptosEmision.find(item => {
                     if (idPuntoEmision > 0) {
@@ -150,7 +152,7 @@
                 $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
 
-                //============Bodegas======================================================= 
+                //============Bodegas=======================================================
                 $scope.bodegas = dataEstab.bodegas;
                 let dataBodega = $scope.bodegas.find(item => (item.defaultBodega))
                 $scope.idBodega = dataBodega.idBodega;
@@ -184,7 +186,7 @@
                 drawImpuestoTotales()
             }
 
-            //GridOptions Documento Aprobación 
+            //GridOptions Documento Aprobación
             function loadColumns() {
                 let defaultPermission = Object.freeze({
                     tarifa: true,
@@ -412,8 +414,8 @@
 
 
             /**
-             * ==========================DOCUMENTO DESTINO===================================== 
-             * 
+             * ==========================DOCUMENTO DESTINO=====================================
+             *
              */
             /**
              * Agregamos lista de tipos IVA y bodegas en sus respectivas columnas
@@ -534,15 +536,6 @@
                     return
                 }
 
-
-                if ($scope.cliente.tipoIdentificacion === 'CF' && getDocDestino(params.idTipoDocDestino).codigo === DOC_TYPE.FV && $scope.data.total > 50) {
-                    Swal.fire({
-                        icon: 'warning',
-                        html: `<small>El importe total de los documentos seleccionados supera los 50 USD por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b></small>`,
-                        confirmButtonText: 'Aceptar'
-                    })
-                    return
-                }
                 if ($scope.data.total <= 0) {
                     tS.toastr('warning', 'No se puede generar el documento con valor total 0');
                     return

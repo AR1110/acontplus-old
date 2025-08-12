@@ -43,15 +43,15 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
         switch (dt.Rows.Count)
         {
             case > 0 when dt.Columns.Contains("xmlSri"):
-            {
-                var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
-                var response = new FileModel
                 {
-                    Content = Encoding.UTF8.GetBytes(xmlSri),
-                    FileName = dt.Rows[0].Field<string>("filename") + ".xml"
-                };
-                return response;
-            }
+                    var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
+                    var response = new FileModel
+                    {
+                        Content = Encoding.UTF8.GetBytes(xmlSri),
+                        FileName = dt.Rows[0].Field<string>("filename") + ".xml"
+                    };
+                    return response;
+                }
             default:
                 return null;
         }

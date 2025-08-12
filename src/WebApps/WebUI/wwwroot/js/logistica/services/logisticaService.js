@@ -89,6 +89,7 @@
 
                         return guiasRemision.map((item) => {
                             return {
+                                codDoc: item.codDoc,
                                 idDocumento: item.idDocumento,
                                 idGuiaRemision: item.idGuiaRemision,
                                 codEstab: item.codEstab,
@@ -191,7 +192,7 @@
                     idCliente: data.idCliente,
                     idTransportista: data.idTransportista,
                     idVehiculo: data.idVehiculo,
-                    idEmpleado: data.idEmpleado, 
+                    idEmpleado: data.idEmpleado,
                     fechaEmision: fS.formatDateMoment(data.fechaEmision),
                     fechaInicio: fS.formatDateMoment(data.fechaInicio),
                     fechaFin: fS.formatDateMoment(data.fechaFin),

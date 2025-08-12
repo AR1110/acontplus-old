@@ -39,7 +39,6 @@ BEGIN
         @estab VARCHAR(5),
         @ptoEmi VARCHAR(5),
         @claveAcceso NVARCHAR(50),
-        @isAutomatic INT,
         @uniqueId VARCHAR(150),
         @secuencial INT,
         @idEstadoServicio INT,
@@ -55,12 +54,13 @@ BEGIN
         @codDoc VARCHAR(2) = '07'; 
 
 	DECLARE @tblInfoCompRet AS TABLE( 
-        idPuntoEmision INT NOT NULL
+         idPuntoEmision INT NOT NULL
         ,versionComp VARCHAR(10) NOT NULL DEFAULT '2.0.0'
         ,parteRel VARCHAR(2) NOT NULL
         ,idProveedor INT NOT NULL
 		,tipoSujetoRetenido VARCHAR(2) NULL
         ,fechaEmision DATETIME2 NOT NULL
+        ,isAutomatic BIT DEFAULT 0
 	);
 
 	DECLARE @tblDocs AS TABLE(
@@ -81,6 +81,7 @@ BEGIN
 		,totalImpuestoReembolso NUMERIC(18,5)
 		,totalSinImpuestos NUMERIC(18,5) NOT NULL
 		,importeTotal NUMERIC(18,5) NOT NULL
+        
 	);
 
 	DECLARE @tblTaxes AS TABLE(
@@ -221,7 +222,7 @@ BEGIN
 		FROM OPENJSON(@payments) WITH
         (
              uniqueIdDoc UNIQUEIDENTIFIER 
-            ,formaPagoId   INT
+            ,formaPagoId INT
             ,total       NUMERIC(18,5) 
 		)
 
@@ -243,9 +244,7 @@ BEGIN
 
         
         --> Informacion General
-        SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario 
-        FROM App.UsuarioRol WITH (NOLOCK) 
-        WHERE idUsuarioRol = @userRoleId
+        SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         --> Recuperacion de Varialbles
         SELECT TOP 1 @ruc = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
@@ -278,24 +277,23 @@ BEGIN
 	      AND td.codigoSri = @codDoc
 
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
-                                                                dbo.AFTDeleteCero(es.estab)   
+                                                                dbo.AFTDeleteCero(es.estab)Â Â Â 
 			                                                   ,@codDoc
 												               ,CAST(@ambiente as nvarchar)
-												               ,CAST(@tipoEmision as nvarchar)                         
-			                                                   ,dbo.AFTConvertDate(@fechaEmision)                
-			                                                   ,@ruc                                             
-			                                                   ,es.estab + pe.ptoEmi                                                     
+												               ,CAST(@tipoEmision as nvarchar)Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+			                                                   ,dbo.AFTConvertDate(@fechaEmision)Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+			                                                   ,@rucÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+			                                                   ,es.estab + pe.ptoEmiÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              ) 
-                   ,@serieComprobante = estab + '-' +  ptoEmi  + '-' + Helper.F_Auto_Sequential(@secuencial)
-                   ,@isAutomatic      = autoSriAuth
+                   ,@serieComprobante = estab + '-' +  ptoEmiÂ  + '-' + Helper.F_Auto_Sequential(@secuencial)
 		FROM @tblInfoCompRet           tb
         INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision    = tb.idPuntoEmision
         INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 
         IF @secuencial IS NULL
             BEGIN
-                SELECT '0' code, 'Por configure el número de secuencia para este documento' as 'message'
+                SELECT '0' code, 'Por configure el nÃºmero de secuencia para este documento' as 'message'
                 RETURN
             END
 
@@ -305,7 +303,7 @@ BEGIN
                     AND ti.codigoSri = '04'
                     AND LEN(LTRIM(RTRIM(IdCard))) != 13)
 		    BEGIN
-			    SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
+			    SELECT '0' code, 'Revise el numero de identificaciÃ³n del proveedor' as 'message'
 			    RETURN
 		    END
 
@@ -315,7 +313,7 @@ BEGIN
                     AND ti.codigoSri = '05'
                     AND LEN(LTRIM(RTRIM(IdCard))) != 10)
 			BEGIN
-				SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
+				SELECT '0' code, 'Revise el numero de identificaciÃ³n del proveedor' as 'message'
 				RETURN
 			END
 
@@ -327,7 +325,7 @@ BEGIN
 						WHERE ret.idProveedor = @idProveedor
 						  AND ret.anuladaSri = 0)
 		    BEGIN
-			    SELECT '0' code, 'Este documento de sustento ya pertenece a una retención' as 'message'
+			    SELECT '0' code, 'Este documento de sustento ya pertenece a una retenciÃ³n' as 'message'
 			    RETURN
 		    END
                
@@ -347,8 +345,8 @@ BEGIN
 		BEGIN TRAN
 			--> DocumentoElectronico
 			INSERT INTO dbo.DocumentoElectronico
-                   (idTipoDocumento,versionComp,fechaEmision,nroDocumento,idPuntoEmision,claveAcceso,isAutomatic,idUsuario,CustomerId,idEstadoServicio,serieComprobante)
-			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,idPuntoEmision,@claveAcceso,@isAutomatic,@idUsuario,@customerId,@idEstadoServicio,@serieComprobante
+                   (idTipoDocumento,versionComp,fechaEmision,nroDocumento,idPuntoEmision,claveAcceso,idUsuario,CustomerId,idEstadoServicio,serieComprobante,isAutomatic)
+			SELECT @idTipoDocumento,versionComp,fechaEmision,@secuencial,idPuntoEmision,@claveAcceso,@idUsuario,@customerId,@idEstadoServicio,@serieComprobante,isAutomatic
             FROM @tblInfoCompRet
 
             SET @idDocumentoElectronico = SCOPE_IDENTITY()
@@ -403,8 +401,8 @@ BEGIN
 
             --> CONTABILIDAD 
 			INSERT INTO Contabilidad.CuentaPorPagar
-			      (codDoc,fechaEmision, idEstablecimiento, idEntidad, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento)
-		    SELECT @codDoc,fechaEmision,@idEstablecimiento,@idEntidad, @idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts
+			      (codDoc,fechaEmision, idEstablecimiento, idProveedor, idEstadoPago, uniqueId, serieComprobante, importeTotal, idUsuario,idDocumento,idEntidad)
+		    SELECT @codDoc,fechaEmision,@idEstablecimiento, @idProveedor,@idEstadoPago,@claveAcceso,@serieComprobante,@importeTotal,@idUsuario,@idRetencionAts,@idEntidad
             FROM @tblInfoCompRet
 
 			UPDATE tax SET tax.idRetAtsDocSustento = ds.idRetAtsDocSustento

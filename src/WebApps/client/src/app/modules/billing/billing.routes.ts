@@ -4,8 +4,14 @@ import { FactElectReportPageComponent } from '@billing/ui/reports/fact-elect-rep
 import { DocElectComponent } from '@billing/ui/doc-elect/doc-elect.component';
 import { InvoiceComponent } from '@billing/ui/invoice/invoice.component';
 import {GuiaRemisionComponent} from "@billing/ui/guia-remision/guia-remision.component";
+import { BillingHomeComponent } from './ui/billing-home.component';
 
 export const routes: Route[] = [
+  {
+    path: '',
+    component: BillingHomeComponent,
+    data: { breadcrumb: 'Facturación' },
+  },
   {
     path: 'ats',
     title: 'Ats',

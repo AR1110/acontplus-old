@@ -1,9 +1,10 @@
-import { Component, computed, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
 
 @Component({
     selector: 'app-tabla-resumen-totales',
     template: `<div [innerHTML]="htmlContentTotals()"></div>`,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TablaResumenTotalesComponent {
   // Use input to get details and tax rates as signals
@@ -18,7 +19,7 @@ export class TablaResumenTotalesComponent {
     };
 
     // Calculate totals using the utility function
-    let newTotalizadorUtil = new TotalizadorUtil()
+    const newTotalizadorUtil = new TotalizadorUtil()
     newTotalizadorUtil.calcular(obj);
 
     // Update the signal with the new totals HTML

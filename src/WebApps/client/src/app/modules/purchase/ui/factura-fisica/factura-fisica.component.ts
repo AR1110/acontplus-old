@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -53,7 +53,7 @@ import { FacturaFisicaAddEditModalComponent } from './components/factura-fisica-
     templateUrl: './factura-fisica.component.html',
     styles: ``
 })
-export class FacturaFisicaComponent {
+export class FacturaFisicaComponent implements OnInit {
 
   private facturaFisicaSvc = inject(FacturaFisicaService)
   private tS = inject(ToastrNotificationService)
@@ -101,7 +101,7 @@ export class FacturaFisicaComponent {
   })
 
   private getDataParams() {
-    let params = {
+    const params = {
 
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
@@ -163,7 +163,7 @@ export class FacturaFisicaComponent {
         this.estadosDoc = initialData.estadosDoc;
 
         if (this.estabs.length > 0) {
-          let dataEstab = this.estabs.find(estab => (estab.defaultEstab));
+          const dataEstab = this.estabs.find(estab => (estab.defaultEstab));
           this.puntosEmision = dataEstab?.puntosEmision || [];
 
           this.dataSearch.update(e => {
@@ -209,7 +209,7 @@ export class FacturaFisicaComponent {
   }
 
   onEstabChange(){
-    let dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
+    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
@@ -235,7 +235,7 @@ export class FacturaFisicaComponent {
   }
 
   openModalAddEdit(row?: FacturaFisicaLista){
-    let dialogSvc = this.dialogSvc.open(FacturaFisicaAddEditModalComponent, {
+    const dialogSvc = this.dialogSvc.open(FacturaFisicaAddEditModalComponent, {
       size: 'xl'
     })
     dialogSvc.subscribe(result=>{

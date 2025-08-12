@@ -6,7 +6,6 @@ import { DeviceCustomerService } from '@modules/technical-support/services/devic
 
 @Component({
   selector: 'app-device-customer-modal',
-  standalone: true,
   imports: [
 
   ],

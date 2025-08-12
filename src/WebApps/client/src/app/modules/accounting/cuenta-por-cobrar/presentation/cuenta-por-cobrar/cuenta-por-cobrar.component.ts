@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -35,7 +35,7 @@ import { MatButton } from '@angular/material/button';
   templateUrl: './cuenta-por-cobrar.component.html',
   styles: ``,
 })
-export class CuentaPorCobrarComponent {
+export class CuentaPorCobrarComponent implements OnInit {
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
   tS = inject(ToastrNotificationService);
   comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService);
@@ -74,7 +74,7 @@ export class CuentaPorCobrarComponent {
   tiposDoc: any[] = [];
 
   getCodigoTipoDoc() {
-    let dataDoc = this.tiposDoc.find(
+    const dataDoc = this.tiposDoc.find(
       (doc) => doc.idTipoDocumento === this.dataSearch.idTipoDocumento,
     );
     let codigo;
@@ -87,7 +87,7 @@ export class CuentaPorCobrarComponent {
 
   getCuentasPorCobrar() {
     try {
-      let params = {
+      const params = {
         codEstab: this.dataSearch.codEstab,
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
@@ -117,12 +117,12 @@ export class CuentaPorCobrarComponent {
         this.tiposDoc = response.tiposDoc;
 
         if (this.estadosDoc.length > 0) {
-          let dataEstado = this.estadosDoc.find((e) => e.codigo === 'NCBR');
+          const dataEstado = this.estadosDoc.find((e) => e.codigo === 'NCBR');
           this.dataSearch.codEstado = dataEstado.codigo;
         }
 
         if (this.establecimientos.length > 0) {
-          let dataEstab = this.establecimientos.find(
+          const dataEstab = this.establecimientos.find(
             (estab) => estab.defaultEstab,
           );
           this.dataSearch.codEstab = dataEstab?.codEstab ?? null;
@@ -182,7 +182,7 @@ export class CuentaPorCobrarComponent {
   }
 
   openDocPaymentModal() {
-    let selectedDocumentos = this.selection.selected;
+    const selectedDocumentos = this.selection.selected;
 
     if (selectedDocumentos.length === 0) {
       this.tS.show({
@@ -208,7 +208,7 @@ export class CuentaPorCobrarComponent {
     // Utilizar Promise.all para ejecutar las promesas concurrentemente
 
     forkJoin(promises).subscribe((results) => {
-      let mergeWithCuotas = this.mergeCuotas(selectedDocumentos, results);
+      const mergeWithCuotas = this.mergeCuotas(selectedDocumentos, results);
       this.openModalCobroLote(mergeWithCuotas);
     });
   }
@@ -231,7 +231,7 @@ export class CuentaPorCobrarComponent {
 
   openModalCobroLote(selectedDocumentos: any[]) {
     try {
-      let params = {
+      const params = {
         selectedDocumentos,
       };
       this.comprobanteIngresoOpenModalSvc.open(params).then((result) => {

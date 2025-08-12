@@ -2,7 +2,7 @@
 
 export class ResumenContableMapper {
   static fromApiGetAll(response:any){
-    let { anticipos } = response;
+    const { anticipos } = response;
 
     return  anticipos.map((anticipo:any) => {
       return {

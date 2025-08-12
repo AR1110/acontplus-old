@@ -110,12 +110,12 @@ export class EgresoIngresoDialogComponent implements OnInit {
 
 
       if(this.cajas.length>0){
-        let dataCaja = this.cajas[0];
+        const dataCaja = this.cajas[0];
         this.dataForm.get("idCaja")?.setValue(dataCaja.idCaja)
       }
 
       if(this.entidadesFinanciera.length>0){
-        let dataEntidad = this.entidadesFinanciera.find(e=>e.codigo==='EFE');
+        const dataEntidad = this.entidadesFinanciera.find(e=>e.codigo==='EFE');
         if(dataEntidad){
           this.dataForm.get("idEntidadFinanciera")?.setValue(dataEntidad.idEntidadFinanciera)
           this.onChangeEntidadFinanciera()
@@ -144,7 +144,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
       );
 
       if(this.subEntidadesFinanciera.length>0){
-        let dataSubEntidad = this.subEntidadesFinanciera[0];
+        const dataSubEntidad = this.subEntidadesFinanciera[0];
         this.dataForm.get('idSubEntidadFinanciera')?.setValue(dataSubEntidad.idSubEntidadFinanciera);
       }
 

@@ -1,57 +1,70 @@
-import {inject, Injectable} from "@angular/core";
-import {ElectronicSignatureRepository} from "@modules/config/domain/repositories/electronic-signature.repository";
-import {CONFIG_PATHS} from "@modules/config/domain/enums/config.enums";
-import {HttpClient} from "@angular/common/http";
 import {
-  ElectronicSignatureListResponse, ElectronicSignatureParam
-} from "@modules/config/domain/models/electronic-signature.model";
-import {map, Observable} from "rxjs";
-import {PATHS_API} from "@core/constants/global.constants";
-import {ApiResponse} from "@core/models/api-response";
-import {
-  ListElectronicSignatureMapper
-} from "@modules/config/data/electronic-signature/list-electronic-signature.mapper";
+  ElectronicSignatureListResponse,
+  ElectronicSignatureParam,
+} from '@modules/config/domain/models/electronic-signature.model';
+import { ListElectronicSignatureMapper } from '@modules/config/data/electronic-signature/list-electronic-signature.mapper';
+import { ElectronicSignatureRepository } from '@modules/config/domain/repositories/electronic-signature.repository';
+import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { PATHS_API } from '@core/constants/global.constants';
+import { ApiResponse } from '@core/models/api-response';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ElectronicSignatureRepoImpl implements ElectronicSignatureRepository {
-      updateSignature(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
-        const formData = new FormData();
-        if (params.file) {
-          formData.append('file', params.file);
-        }
-        return this._http.post<ApiResponse>(`${this._url}/UpdateSignature/${params.idFirmaElectronica}`, formData);
-      }
-      create(params: ElectronicSignatureParam): Observable<ApiResponse> {
-        const formData = new FormData();
-        if (params.file) {
-          formData.append('file', params.file);
-        }
-        const jsonParam = encodeURIComponent(JSON.stringify(params));
-        return this._http.post<ApiResponse>(`${this._url}/Post?json=${jsonParam}`, formData);
+  updateSignature(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
+    const formData = new FormData();
+    if (params.file) {
+      formData.append('file', params.file);
     }
-    update(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
-      const jsonParam = encodeURIComponent(JSON.stringify(params));
-      return this._http.put<ApiResponse>(`${this._url}/Put?json=${jsonParam}`, "");
+    if (params.contrasenia) {
+      formData.append('contrasenia', params.contrasenia);
     }
-   list(): Observable<ElectronicSignatureListResponse> {
-      const json = JSON.stringify({tipo: 1})
-      return this._http.get<ApiResponse>(`${this._url}/Get?json=${json}`).pipe(
-        map(response=>ListElectronicSignatureMapper.fromJson(response))
-      )
+    return this._http.post<ApiResponse>(
+      `${this._url}/UpdateSignature/${params.idFirmaElectronica}`,
+      formData,
+    );
+  }
+  create(params: ElectronicSignatureParam): Observable<ApiResponse> {
+    const formData = new FormData();
+    if (params.file) {
+      formData.append('file', params.file);
+    }
+    const jsonParam = encodeURIComponent(JSON.stringify(params));
+    return this._http.post<ApiResponse>(`${this._url}/Post?json=${jsonParam}`, formData);
+  }
+  update(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
+    const jsonParam = encodeURIComponent(JSON.stringify(params));
+    return this._http.put<ApiResponse>(`${this._url}/Put?json=${jsonParam}`, '');
+  }
+  list(): Observable<ElectronicSignatureListResponse> {
+    const json = JSON.stringify({ tipo: 1 });
+    return this._http
+      .get<ApiResponse>(`${this._url}/Get?json=${json}`)
+      .pipe(map((response) => ListElectronicSignatureMapper.fromJson(response)));
   }
 
-  downloadSignature(id:number){
+  save(signature: ElectronicSignatureParam): Observable<ApiResponse> {
+    const formData = new FormData();
+    if (signature.file) {
+      formData.append('file', signature.file);
+    }
+    const jsonParam = encodeURIComponent(JSON.stringify(signature));
+    return this._http.post<ApiResponse>(`${this._url}/Post?json=${jsonParam}`, formData);
+  }
+
+  downloadSignature(id: number) {
     const url = `${this._url}/Download/${id}`;
-    console.log(url)
+    console.log(url);
     return this._http.get(url, {
       responseType: 'blob', // importante para recibir el archivo binario
-      observe: 'response'   // para obtener encabezados (como filename)
+      observe: 'response', // para obtener encabezados (como filename)
     });
   }
 
-  private _url =`${PATHS_API.CONFIG}${CONFIG_PATHS.ELECTRONIC_SIGNATURE}`;
-  private _http = inject(HttpClient)
-
+  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.ELECTRONIC_SIGNATURE}`;
+  private _http = inject(HttpClient);
 }

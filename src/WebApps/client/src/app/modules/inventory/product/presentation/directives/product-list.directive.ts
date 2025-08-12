@@ -7,8 +7,7 @@ import {
 
 
 @Directive({
-  selector: '[appProductAddEdit]',
-  standalone: true
+  selector: '[appProductList]',
 })
 export class ProductAddEditDirective {
     resultModalHandler = output<any>();

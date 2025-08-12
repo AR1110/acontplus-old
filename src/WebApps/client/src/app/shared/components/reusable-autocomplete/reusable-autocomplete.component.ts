@@ -8,7 +8,8 @@ import {
   signal,
   inject,
   output,
-  input
+  input,
+  ChangeDetectionStrategy, OnInit, OnDestroy
 } from '@angular/core';
 import {Subject, takeUntil, debounceTime, Observable, of,  distinctUntilChanged } from 'rxjs';
 
@@ -41,9 +42,10 @@ import {catchError, switchMap} from "rxjs/operators";
     MatIconButton
   ],
   templateUrl: './reusable-autocomplete.component.html',
-  styleUrl: './reusable-autocomplete.component.scss'
+  styleUrl: './reusable-autocomplete.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReusableAutocompleteComponent {
+export class ReusableAutocompleteComponent implements OnInit, OnDestroy {
   @Input() dataSource: AutocompleteItem[] = []; // Para búsqueda local
   @Input() config: AutocompleteConfig = DEFAULT_AUTOCOMPLETE_CONFIG;
   @Input() itemTemplate?: TemplateRef<any>;

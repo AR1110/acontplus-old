@@ -17,6 +17,7 @@ import {
   TemplateRef,
   ViewChild,
   ViewContainerRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   MatColumnDef,
@@ -77,6 +78,7 @@ import { DYNAMIC_INPUT } from '@shared/input/dynamic-input';
   ],
   templateUrl: './mat-dynamic-table.component.html',
   styleUrl: `./mat-dynamic-table.component.scss`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatDynamicTableComponent<T>
   implements AfterContentInit, OnInit, OnChanges, OnDestroy

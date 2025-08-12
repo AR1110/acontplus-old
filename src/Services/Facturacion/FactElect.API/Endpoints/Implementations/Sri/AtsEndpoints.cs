@@ -1,10 +1,10 @@
-﻿using Common.FactElect.Services.Documents.Mapping;
+using Common.FactElect.Services.Documents.Mapping;
 using FactElect.API.Endpoints.Interfaces.Sri;
 using FactElect.Domain.Repositories;
 
 namespace FactElect.API.Endpoints.Implementations.Sri;
 
-public class AtsEndpoints(IUserContext userContext, IAtsRepository atsRepository, IAtsXmlService atsXmlService)
+public class AtsEndpoints(IUserContext userContext, IAtsRepository atsRepository, FactElect.Application.Interfaces.IAtsXmlService atsXmlService)
     : IAtsEndpoints
 {
     private const string UserRoleIdClaim = "userRoleId";

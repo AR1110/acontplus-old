@@ -4,7 +4,6 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
   selector: '[appTagsAddEditModal]',
-  standalone: true,
 })
 export class TagsAddEditModalDirective {
   private dialogSvc = inject(DialogService);

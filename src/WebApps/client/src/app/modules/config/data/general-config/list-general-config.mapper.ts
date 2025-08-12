@@ -13,7 +13,7 @@ export class ListGeneralConfigMapper {
   }
 
   static fromJson(response: ApiResponse, code:string): GeneralConfigResponse {
-    let mainDataForm =  new GeneralConfigResponse()
+    const mainDataForm =  new GeneralConfigResponse()
     if (response.code !== '1') {
       return mainDataForm;
     }
@@ -22,7 +22,7 @@ export class ListGeneralConfigMapper {
 
     switch (code) {
       case 'CV':
-        let {
+        const {
           nombreFiscal,
           numeroIdentificacion,
           descripcion,

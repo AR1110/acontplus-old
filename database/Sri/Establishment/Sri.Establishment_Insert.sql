@@ -101,7 +101,7 @@ BEGIN
         --> Validaciones
 		IF NOT EXISTS (SELECT 1 FROM @tbEstablecimiento)
             BEGIN
-				SELECT '0'code,'Error en el informacion del establecimiento' as 'message'
+				SELECT '0'code,'Error al obtener la informacion del establecimiento' as 'message'
 				RETURN 
 			END 
 
@@ -109,8 +109,7 @@ BEGIN
 			BEGIN
 				SELECT '0'code,'El numero de establecimiento ya se encuentra registrado' as 'message'
 				RETURN 
-			END 
-
+			END
         
         SET @uuid = (SELECT TOP 1 uuid FROM v_usuario WHERE idUsuarioRol = @userRoleId);
 
@@ -119,8 +118,8 @@ BEGIN
 		BEGIN TRAN
 
 			INSERT INTO Sri.Establecimiento
-				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile)
-			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,IIF(agenteRetencion = 'null', NULL, agenteRetencion),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile
+				   (codEstab,canton,idActividadEconomica, actividad,agenteRetencion,contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,fechaRegistro,idEntidad,idUsuario, fromMobile, autoSriAuth)
+			SELECT @codEstab,canton,ae.idActividadEconomica,actividad,NULLIF(TRIM(e.AgenteRetencion), ''),contribuyente,estab,contribuyenteEspecial,obligadoContabilidad,nombreComercial,dirEstablecimiento,telefono,correo,contribuyenteRimpe,GETDATE(),@idEntidad,@idUsuario, @fromMobile, 1
             FROM @tbEstablecimiento e
                 INNER JOIN Sri.ActividadEconomica ae On e.actividad = ae.codigo
 
@@ -270,8 +269,8 @@ BEGIN
                             IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
                                                             WHERE Uuid = @uuid AND DemoStepId = @demoStepId)
                                 BEGIN
-                                    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, FromMobile)
-                                    VALUES(@demoStepId, @companyId, @uuid, @fromMobile);
+                                    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
+                                    VALUES(@demoStepId, @companyId, @uuid, @fromMobile, @username);
                                 END
 
                             IF EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.PuntoEmision WITH(NOLOCK) WHERE idEstablecimiento = @id)

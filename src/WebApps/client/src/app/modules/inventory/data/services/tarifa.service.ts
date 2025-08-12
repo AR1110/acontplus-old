@@ -16,7 +16,7 @@ export class TarifaService {
 
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj
     })
@@ -24,12 +24,12 @@ export class TarifaService {
       context: getNoLoader()
     }).pipe(
       map(response => {
-        let result = {
+        const result = {
           tarifas: [] as any[]
         }
         if (response.code === "1") {
-          let mainData = JSON.parse(response.payload as string);
-          let tarifas = mainData.tarifas || []
+          const mainData = JSON.parse(response.payload as string);
+          const tarifas = mainData.tarifas || []
           result.tarifas = tarifas.map((item: any) => {
             return {
               idTarifa: item.idTarifa,

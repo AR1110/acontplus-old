@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {   MatTabsModule } from '@angular/material/tabs';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE, SRI_IDENTIFICATION_CODE} from "@core/constants/global.constants";
 import {forkJoin, Observable} from "rxjs";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
@@ -41,7 +41,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatSlideToggleModule,
     MatCustomDialogComponent,
-    M3InputChipComponent, MatDynamicCardComponent,
+    MatInputChipComponent, MatDynamicCardComponent,
     ToUpperCaseDirective,
     MatCheckbox,
     MatIcon,
@@ -52,7 +52,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CompanyCustomerAddEditDialogComponent {
+export class CompanyCustomerAddEditDialogComponent implements OnInit {
 
   readonly dialogRef = inject(MatDialogRef<CompanyCustomerAddEditDialogComponent>);
       readonly params = inject<{

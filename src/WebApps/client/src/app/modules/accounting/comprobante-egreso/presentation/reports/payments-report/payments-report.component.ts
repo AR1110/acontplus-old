@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit, OnDestroy} from '@angular/core';
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {MatRadioModule} from "@angular/material/radio";
@@ -51,7 +51,7 @@ enum ReportTypeEnum {
   templateUrl: './payments-report.component.html',
   styles: ``
 })
-export class PaymentsReportComponent {
+export class PaymentsReportComponent implements OnInit, OnDestroy {
   private $dataFilterUseCase = inject(DataFilterComprobanteEgresoUseCase);
   private $generateReportUseCase = inject(GenerateReportUseCase);
   private readonly _tokenUseCase = inject(TokenUseCase);

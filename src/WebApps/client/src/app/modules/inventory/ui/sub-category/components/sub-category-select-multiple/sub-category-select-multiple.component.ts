@@ -19,6 +19,6 @@ import { GroupedSubFamilia } from "@inventory/domain/models/sub-category.model";
 export class SubCategorySelectMultipleComponent {
   isMat = input(false)
   @Input() checkedSubCategorias = new FormControl([]);
-  @Input() subCategorias: Array<GroupedSubFamilia> = [];
+  @Input() subCategorias: GroupedSubFamilia[] = [];
 
 }

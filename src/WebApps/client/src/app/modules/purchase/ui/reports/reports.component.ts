@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   REPORT_CODE,
@@ -46,12 +46,12 @@ import {MatSelectModule} from "@angular/material/select";
   templateUrl: './reports.component.html',
   styles: ``,
 })
-export class ReportsComponent {
+export class ReportsComponent implements OnInit {
   http = inject(HttpClient);
-  establecimientos: Array<GroupedEstab> = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-  estadosDoc: Array<{ codigo: string; descripcion: string }> = [];
+  establecimientos: GroupedEstab[] = [];
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
+  tiposDoc: (Pick<TipoDoc, 'descripcion'> & { codDoc: string })[] = [];
+  estadosDoc: { codigo: string; descripcion: string }[] = [];
   subcategories: Subcategory[] = [];
   dataSearch = {
     codEstab: '',
@@ -85,7 +85,7 @@ export class ReportsComponent {
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos.find(
+      const dataEstab = this.establecimientos.find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {

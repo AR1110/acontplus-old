@@ -28,8 +28,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                      .SelectMany(t => t.GetProperties())
                      .Where(p => p.ClrType == typeof(string) // Entity is a string
                                  && p.GetColumnType() == null // No column type is set
-                         // Next line only required if using ASP.Net Identity:
-                         //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
+                                                              // Next line only required if using ASP.Net Identity:
+                                                              //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                      ))
             property.SetIsUnicode(false);
 

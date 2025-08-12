@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -47,7 +47,7 @@ import {InventoryAdjustmentListProductsDto} from "@inventory/inventory-adjustmen
   templateUrl: './inventory-adjustment-search-advanced.component.html',
   styles: ``
 })
-export class InventoryAdjustmentSearchAdvancedComponent {
+export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentSearchAdvancedComponent>);
   private params = inject<{warehouseId:number}>(MAT_DIALOG_DATA);
   private inventoryAdjustmentSvc = inject(InventoryAdjustmentService);

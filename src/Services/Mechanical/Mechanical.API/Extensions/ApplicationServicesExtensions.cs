@@ -1,7 +1,6 @@
 ﻿using System.IO.Compression;
 using Common.Core.Abstractions;
 using Common.Infrastructure.Repository.Implementations;
-using Common.Logging;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
 using Mechanical.API.Services;

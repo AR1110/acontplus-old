@@ -5,7 +5,6 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
   selector: '[appSendMailDialog]',
-  standalone: true,
 })
 export class SendMailDialogDirective {
   notificationAcontPlus = input(false);

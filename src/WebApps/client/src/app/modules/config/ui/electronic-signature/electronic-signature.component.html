@@ -1,24 +1,27 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 <app-mat-dynamic-card>
-  <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
-
+  <div
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+  >
+    <div class="col"></div>
     <div class="col">
-
-    </div>
-    <div class="col  ">
       <div class="d-flex flex-row gap-2 justify-content-end">
-        <button mat-flat-button    (click)="openModalAddUpdate()" >
+        <button
+          mat-flat-button
+          (click)="openModalAddUpdate()"
+        >
           <mat-icon>add</mat-icon>
           Nuevo
         </button>
-        <button mat-icon-button (click)="refresh()">
+        <button
+          mat-icon-button
+          (click)="refresh()"
+        >
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
     </div>
-
   </div>
-
 
   <app-mat-dynamic-table
     [tableData]="dataSource()"
@@ -27,20 +30,34 @@
     [templateOp]="templateOp"
   />
 
-  <ng-template #templateOp let-item="item">
-
-    <button type="button" mat-icon-button (click)="openModalAddUpdate(item)">
+  <ng-template
+    #templateOp
+    let-item="item"
+  >
+    <button
+      type="button"
+      mat-icon-button
+      (click)="openModalAddUpdate(item)"
+    >
       <mat-icon>edit</mat-icon>
     </button>
 
-    <button type="button" mat-icon-button (click)="updateSignature(item)">
-      <app-svg-icon id="icon-file-pencil" ></app-svg-icon>
+    <button
+      type="button"
+      mat-icon-button
+      (click)="updateSignature(item)"
+      matTooltip="Actualizar firma electrónica (archivo y contraseña)"
+    >
+      <app-svg-icon id="icon-file-pencil"></app-svg-icon>
     </button>
 
-    <button type="button" mat-icon-button (click)="downloadSignature(item)" matTooltip="Descargar la Firma Electrónica en archivo">
+    <button
+      type="button"
+      mat-icon-button
+      (click)="downloadSignature(item)"
+      matTooltip="Descargar la Firma Electrónica en archivo"
+    >
       <mat-icon>download</mat-icon>
     </button>
   </ng-template>
-
-
 </app-mat-dynamic-card>

@@ -21,10 +21,10 @@ export class ProductPhotoRepositoryImpl implements ProductPhotoRepository{
   getByProductId(productId: number){
     return this._http.get<ApiResponse>(`${this._url}${productId}`).pipe(
       map((response) => {
-        let result = new ApiResponse<ProductPhotoGetId>()
+        const result = new ApiResponse<ProductPhotoGetId>()
        let productPhotos = [] as any[]
         if(response.code==="1"){
-          let mainData =  response.payload  as any[]
+          const mainData =  response.payload  as any[]
             productPhotos = mainData.map((item:any)=>{
             return {
               productId: item.productId,
@@ -54,7 +54,7 @@ export class ProductPhotoRepositoryImpl implements ProductPhotoRepository{
   put(params: ProductPhotoSaveParam) {
     const formData = new FormData();
     formData.append('file', params.file);
-    let json = JSON.stringify(params.data)
+    const json = JSON.stringify(params.data)
     return this._http.post<ApiResponse>(`${this._url}Put/${params.id}?json=${json}`, formData)
   }
 

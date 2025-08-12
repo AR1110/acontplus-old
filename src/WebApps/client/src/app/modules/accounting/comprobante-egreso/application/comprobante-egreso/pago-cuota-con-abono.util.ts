@@ -3,7 +3,7 @@ import { DECIMALS } from "@core/constants/global.constants";
 import { roundNumber } from "@core/utils/round-number.utils";
 import { CuotaPorPagarLista } from "@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface";
 
-type Props = {
+interface Props {
   dataCuota: CuotaPorPagarLista
   valorAbono: number
   esAbonoPosfechado: boolean
@@ -21,7 +21,7 @@ export const pagoCuotaConAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
       //   dataCuota.abonoPosfechado = this.fS.plus(dataCuota.abonoPosfechado, this.valorAbono, this.DECIMAL_CINCO);
 
     } else {
-      let totalAbonoCuota = plus(dataCuota.abono, valorAbono, DECIMALS.CINCO) as number;
+      const totalAbonoCuota = plus(dataCuota.abono, valorAbono, DECIMALS.CINCO) as number;
       console.log(totalAbonoCuota)
       console.log(dataCuota.saldo)
       if (roundNumber(totalAbonoCuota, DECIMALS.DOS) === roundNumber(dataCuota.saldo, DECIMALS.DOS)) {
@@ -35,7 +35,7 @@ export const pagoCuotaConAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
 
 
     // Resta el valor del abono al saldo total actual de la cuota
-    let saldoTotalActual = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
+    const saldoTotalActual = minus(dataCuota.saldo, valorAbono, DECIMALS.CINCO) as number;
     console.log(saldoTotalActual)
     //se verifica antes  por temas de decimales porque al final queda milesimas
     if (roundNumber(saldoTotalActual, DECIMALS.DOS) === 0) {
@@ -65,7 +65,7 @@ export const pagoCuotaConAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
 
     // Calcula el nuevo valor del abono restando el saldo del valor actual del abono
 
-    let valorAbonoDiferencia = minus(valorAbono, dataCuota.saldo, DECIMALS.CINCO) as number
+    const valorAbonoDiferencia = minus(valorAbono, dataCuota.saldo, DECIMALS.CINCO) as number
 
     setValorAbono(valorAbonoDiferencia)
     dataCuota.saldo = 0;

@@ -2,9 +2,15 @@ import { Route } from '@angular/router';
 import { ItemReportComponent } from '@restaurant/ui/reports/item-report/item-report.component';
 import { InfrastructurePageComponent } from '@restaurant/ui/pages/infrastructure-page/infrastructure-page.component';
 import { ProductsPageComponent } from '@restaurant/ui/pages/products-page/products-page.component';
+import { RestaurantHomeComponent } from './ui/restaurant-home.component';
 import { restaurantConfigDataResolver } from './resolvers/restaurant-config.resolver';
 
 export const routes: Route[] = [
+  {
+    path: '',
+    component: RestaurantHomeComponent,
+    data: { breadcrumb: 'Restaurante' },
+  },
   {
     path: 'products-page',
     title: 'Productos',

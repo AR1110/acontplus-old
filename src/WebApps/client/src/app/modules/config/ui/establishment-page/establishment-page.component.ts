@@ -26,6 +26,10 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {DialogService} from "@core/services/dialog.service";
+import {
+  SendMaxEstablishmentsUseCase
+} from "@modules/config/application/use-cases/general-config/list-general-config.use-case";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-establishment-page',
@@ -70,6 +74,7 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _estabLogService = inject(EstablishmentLogoService);
   private readonly _modalService = inject(DialogService);
   private readonly _tS = inject(ToastrNotificationService);
+  private $sendMaxEstablishmentUseCase = inject(SendMaxEstablishmentsUseCase)
   setPanelOpen(index: number) {
     this.panelOpenState = index;
     // Only load infrastructure when opening a panel (not when closing)
@@ -151,6 +156,11 @@ export class EstablishmentPageComponent implements OnInit {
 
   ngOnInit() {
     this.getEstabs();
+  }
+
+  async openAddEstablishment() {
+    await firstValueFrom(this.$sendMaxEstablishmentUseCase.execute());
+    this.openModalAddEdit()
   }
 
   openModalAddEdit(id?: number) {

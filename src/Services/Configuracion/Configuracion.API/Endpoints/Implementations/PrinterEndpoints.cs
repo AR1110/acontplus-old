@@ -1,8 +1,9 @@
 ﻿using Configuracion.API.Endpoints.Interfaces;
+using Configuracion.Domain.Repositories;
 
 namespace Configuracion.API.Endpoints.Implementations;
 
-public class PrinterEndpoints(IPrinterService printerService, IUserContext userContext) : IPrinterEndpoints
+public class PrinterEndpoints(IPrinterRepository printerService, IUserContext userContext) : IPrinterEndpoints
 {
     private const string UserRoleClaimType = "userRoleId";
 

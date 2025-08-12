@@ -5,7 +5,7 @@ import {
   inject,
   signal,
   TemplateRef,
-  ViewChild,
+  ViewChild, OnInit, AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -64,7 +64,7 @@ import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
   ],
   templateUrl: './support-page.component.html',
 })
-export class SupportPageComponent {
+export class SupportPageComponent implements OnInit, AfterViewInit {
   $store = inject(MechanicalStore)
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 

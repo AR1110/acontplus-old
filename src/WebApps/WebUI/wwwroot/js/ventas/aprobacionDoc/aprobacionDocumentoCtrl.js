@@ -6,7 +6,7 @@
     //Variables Constantes
     const URL_TEMPLATE = '~/Pages/AprobacionDocumento/'
 
-    //Variable servicios 
+    //Variable servicios
     let tS = {};
     let fS = {};
     let commonSvc = {};
@@ -21,11 +21,11 @@
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
 
-    aprobacionDocumentoCtrl.$inject = ['$scope', '$filter', '$injector', 'modalService'];
+    aprobacionDocumentoCtrl.$inject = ['$scope', '$injector', 'modalService'];
 
-    function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc) {
+    function aprobacionDocumentoCtrl($scope, $injector, modalSvc) {
 
-        //Injection Services 
+        //Injection Services
         commonSvc = $injector.get('commonService');
         aprobacionDocSvc = $injector.get('aprobacionDocService');
         notaEntregaSvc = $injector.get('notaEntregaService');
@@ -37,6 +37,8 @@
         SRI_IDENTIFITION_CODE = $injector.get('SRI_IDENTIFITION_CODE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
         const DECODE_TOKEN = $injector.get("decodeToken");
+        const policyService = $injector.get('PolicyService');
+
 
 
         $scope.dataSource = [];
@@ -47,7 +49,8 @@
             pageIndex: 1,
             pageSize: 25,
             maxSize: 5,
-            totalRecords: 0
+            totalRecords: 0,
+            checkBoxFecha: true
         }
 
         $scope.estadoDocumentos = [];
@@ -154,7 +157,7 @@
 
         function list() {
             try {
-                let checkBoxFecha = true;
+                let checkBoxFecha = $scope.dataSearch.checkBoxFecha;
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
@@ -224,7 +227,7 @@
             return !['APR', 'A'].includes(item.codEstado)
         }
 
-        function getStatusClass(codigo) { 
+        function getStatusClass(codigo) {
             if (!codigo) return '';
 
 
@@ -239,8 +242,8 @@
         }
 
         /**
-         * =========Detalle Documento Aprobacion 
-         * @param {*} item 
+         * =========Detalle Documento Aprobacion
+         * @param {*} item
          */
 
         $scope.openModalDetalle = function (item) {
@@ -266,8 +269,8 @@
 
 
         /**
-         * =========Editar Documento Aprobacion 
-         * @param {*} item 
+         * =========Editar Documento Aprobacion
+         * @param {*} item
          */
         $scope.openModalEdit = function (item) {
             try {
@@ -302,6 +305,11 @@
         $scope.openModalAprobarDoc = async (item) => {
 
             try {
+                if (item.docDestino === DOC_TYPE.FV_SRI) {
+                    await policyService.sendMaxDocuments();
+                }
+
+
                 aprobacionDocSvc.getId(item.id).then(response => {
                     let modalRef = modalSvc.open({
                         controller: 'ModalApproveDocCtrl',
@@ -361,7 +369,7 @@
 
         /**
          * Reporte
-         * @param {object} item 
+         * @param {object} item
          */
         $scope.getReport = function (item) {
             try {
@@ -433,7 +441,7 @@
             }
         }
 
-        $scope.getReportAprobTracking = function (){
+        $scope.getReportAprobTracking = function () {
             try {
 
                 let format = 'excel';
@@ -442,7 +450,7 @@
                     tipo: 3,
                     codEstab: $scope.dataSearch.codEstab,
                     byCliente: $scope.dataSearch.byCliente,
-                    checkBoxFecha : true,
+                    checkBoxFecha: true,
                     byUsuario: $scope.dataSearch.byUsuario,
                     byEstado: ["", 0, null, undefined].includes($scope.dataSearch.byEstado) ? null : $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
@@ -476,7 +484,7 @@
 
 
     /**
-     * =========================MODAL-EDITAR-APROBACION DOCUMENTO 
+     * =========================MODAL-EDITAR-APROBACION DOCUMENTO
      */
 
     app.controller('ModalAprobDocEditarCtrl', ModalAprobDocEditarCtrl);
@@ -521,7 +529,7 @@
         }))
 
 
-        //GridOptions Invoice 
+        //GridOptions Invoice
         $scope.gridOptionsDetalle = {
             enableColumnMenus: false,
             enableColumnReordering: true,
@@ -595,7 +603,7 @@
                 let rowItemClone = structuredClone(rowEntity);
                 let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
 
-                // Realiza la fusión de elementos en la lista de artículos clonada. 
+                // Realiza la fusión de elementos en la lista de artículos clonada.
                 let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
 
                 // Si la cantidad no ha cambiado, no realizar más acciones.
@@ -713,7 +721,7 @@
                 } = mainDataForm;
 
                 /**
-                 * Establecimiento - Impuesto Tarifa 
+                 * Establecimiento - Impuesto Tarifa
                 */
                 $scope.establecimientos = estabs;
                 let puntosEmisionMerge = $scope.establecimientos.flatMap((dt) => dt.puntosEmision);
@@ -725,15 +733,15 @@
 
                 //===========Puntos Emisiones==============================================
                 $scope.ptosEmision = dataEstab.puntosEmision;
-                //============Bodegas======================================================= 
+                //============Bodegas=======================================================
                 $scope.bodegas = dataEstab.bodegas;
                 let dataBodega = $scope.bodegas.find(item => (item.defaultBodega))
                 $scope.data.idBodega = dataBodega.idBodega;
 
-                //Decimal 
+                //Decimal
                 $scope.decimal = decimal;
 
-                //Tipo Ivas 
+                //Tipo Ivas
                 $scope.tarifasImpuesto = tarifasImpuesto;
 
                 //Tarifas(PVP1, PVP2)
@@ -741,7 +749,7 @@
                 $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas[0].idTarifa : 0;
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
 
-                //Permisos para detalle y documento  
+                //Permisos para detalle y documento
                 $scope.permisoComprobanteVenta = permisoVenta.comprobante;
                 $scope.permisoDetalleVenta = permisoVenta.detalle;
 
@@ -776,7 +784,7 @@
 
                     <button type="button"  update-article class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.openModalArticulo(row.entity)" title = "Editar Articulo" >
                         <i class="fa fa-edit"></i>
-                    </button > 
+                    </button >
 
                     <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" datos-adicionales="grid.appScope.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
             },
@@ -1048,7 +1056,7 @@
         }
 
 
-        //Indice del detalle documento 
+        //Indice del detalle documento
         $scope.indexRowDetalle = null;
 
         //Recibe datos de buscador articulo cuando seleccionan articulo
@@ -1062,7 +1070,7 @@
                 let index = 0, entity = {}, cantidad = 0;
 
 
-                //verificar si hay un articulo que lleva inventario mas de uno 
+                //verificar si hay un articulo que lleva inventario mas de uno
                 let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
                     item.llevaInventario && item.idArticulo === articulo.idArticulo
                 ))
@@ -1116,13 +1124,13 @@
                 entity.llevaInventario = articulo.llevaInventario;
                 entity.datosAdicionales = articulo.datosAdicionales;
                 entity.productoFraccionable = articulo.productoFraccionable;
-                entity.medidas = medidas; //Lista Medida 
-                entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.medidas = medidas; //Lista Medida
+                entity.idMedida = dataMedida.idMedida; //Medida por defecto
                 entity.precioCosto = dataMedida.precioCosto;
                 entity.productoFraccionado = dataMedida.productoFraccionado;
 
 
-                //Datos Adicionales 
+                //Datos Adicionales
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
                 entity.articuloTarifas = dataMedida.tarifas;
@@ -1143,9 +1151,9 @@
 
 
         /**
-         * 
-         * @param {*} colField nombre de la columnas 
-         * @param {*} rowEntity datos del item 
+         *
+         * @param {*} colField nombre de la columnas
+         * @param {*} rowEntity datos del item
          * @param {*} oldValue valor anterior de la columna
          */
         $scope.setCalculoTotales = function (colField, rowEntity, oldValue) {
@@ -1167,7 +1175,7 @@
 
 
         /**
-         * Calculamos todos los totales y subtotales del comprobantes 
+         * Calculamos todos los totales y subtotales del comprobantes
          */
         $scope.recalculateTotalsSimple = function () {
             drawImpuestoTotales();
@@ -1214,7 +1222,7 @@
                         });
                     }
 
-                    //Recalculamos los totales 
+                    //Recalculamos los totales
                     $scope.setCalculoTotales("cantidad", rowEntity, 0);
                     $scope.$apply();
                 }
@@ -1344,7 +1352,7 @@
                         importeTotal: $scope.data.total,
                         fechaEmision: $scope.data.fechaEmision,
                     }
-                    //Tarifa Aplicada al Documento 
+                    //Tarifa Aplicada al Documento
                     let detalles = $scope.gridOptionsDetalle.data.map(item => ({
                         ...item,
                         fechaEmision: item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision
@@ -1388,9 +1396,11 @@
      * ======================MODAL APROBACION DEL DOCUMENTO DESTINO===============
      */
     app.controller('ModalApproveDocCtrl', ModalApproveDocCtrl);
-    ModalApproveDocCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params']
+    ModalApproveDocCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params', 'docElectService']
 
-    function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
+    function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params, docElectSvc) {
+
+
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo, formasPago, config } = data;
 
@@ -1438,7 +1448,7 @@
             total: 0
         }
 
-        //GridOptions Invoice 
+        //GridOptions Invoice
         $scope.gridOptionsDetalle = {
             enableColumnMenus: false,
             enableColumnReordering: true,
@@ -1604,7 +1614,7 @@
                 } = mainDataForm;
 
                 /**
-                 * Establecimiento - Impuesto Tarifa 
+                 * Establecimiento - Impuesto Tarifa
                  */
                 $scope.establecimientos = estabs;
                 const codEstab = $scope.establecimientos.flatMap((dt) => dt.puntosEmision).find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision).codEstab;
@@ -1615,20 +1625,20 @@
                 $scope.dataClone.codEstab = $scope.data.codEstab;
 
 
-                //===========Puntos Emisiones============================================== 
+                //===========Puntos Emisiones==============================================
                 $scope.ptosEmision = dataEstab.puntosEmision;
                 let dataPtoEmi = $scope.ptosEmision.find(item => (item.defaultPtoEmi))
                 $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                //============Bodegas======================================================= 
+                //============Bodegas=======================================================
                 $scope.bodegas = dataEstab.bodegas;
                 let dataBodega = $scope.bodegas.find(item => (item.defaultBodega))
                 $scope.data.idBodega = dataBodega.idBodega;
 
-                //Decimal 
+                //Decimal
                 $scope.decimal = decimal;
 
-                //Tipo Ivas 
+                //Tipo Ivas
                 $scope.tarifasImpuesto = tarifasImpuesto;
 
                 //Tarifas(PVP1, PVP2)
@@ -1642,17 +1652,17 @@
                     $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
 
-                    //Formas Pago 
+                    //Formas Pago
                     $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                 }
 
-                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
                 if ($scope.formasPago.length > 0) {
                     setDataFormaPagoSri();
                 }
 
-                //Permisos para detalle y documento    
+                //Permisos para detalle y documento
                 $scope.permisoComprobanteVenta = permisoVenta.comprobante;
                 $scope.permisoDetalleVenta = permisoVenta.detalle;
 
@@ -1692,7 +1702,7 @@
 
                     <button type="button"  update-article class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.openModalArticulo(row.entity)" title = "Editar Articulo" >
                         <i class="fa fa-edit"></i>
-                    </button > 
+                    </button >
 
                     <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" datos-adicionales="grid.appScope.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
             },
@@ -1991,13 +2001,13 @@
                     // $scope.tarifasImpuestos = dataEstab.tarifasImpuestos;
                     // $scope.dataTarifaImpuesto = $scope.tarifasImpuestos[0];
 
-                    //Puntos de Emision 
+                    //Puntos de Emision
                     $scope.ptosEmision = dataEstab.puntosEmision;
 
                     let dataPtoEmi = $scope.ptosEmision.find(item => (item.defaultPtoEmi))
                     $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                    //Bodegas 
+                    //Bodegas
                     $scope.bodegas = dataEstab.bodegas;
 
                     let dataBodega = $scope.bodegas.find(item => (item.defaultBodega));
@@ -2070,7 +2080,7 @@
         }
 
 
-        //Indice del detalle documento 
+        //Indice del detalle documento
         $scope.indexRowDetalle = null;
 
         //Recibe datos de buscador articulo cuando seleccionan articulo
@@ -2081,7 +2091,7 @@
 
                 let index = 0, entity = {}, cantidad = 0;
 
-                //verificar si hay un articulo que lleva inventario mas de uno 
+                //verificar si hay un articulo que lleva inventario mas de uno
                 let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
                     item.llevaInventario && item.idArticulo === articulo.idArticulo
                 ))
@@ -2152,13 +2162,13 @@
                 entity.llevaInventario = articulo.llevaInventario;
                 entity.datosAdicionales = articulo.datosAdicionales;
                 entity.productoFraccionable = articulo.productoFraccionable;
-                entity.medidas = medidas; //Lista Medida 
-                entity.idMedida = dataMedida.idMedida; //Medida por defecto   
+                entity.medidas = medidas; //Lista Medida
+                entity.idMedida = dataMedida.idMedida; //Medida por defecto
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
 
 
-                //Datos Adicionales 
+                //Datos Adicionales
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
                 entity.consolidacionesFecha = consolidacionesFecha;
 
@@ -2182,9 +2192,9 @@
 
 
         /**
-         * 
-         * @param {*} colField nombre de la columnas 
-         * @param {*} rowEntity datos del item 
+         *
+         * @param {*} colField nombre de la columnas
+         * @param {*} rowEntity datos del item
          * @param {*} oldValue valor anterior de la columna
          */
         $scope.setCalculoTotales = function (colField, rowEntity, oldValue) {
@@ -2206,7 +2216,7 @@
 
 
         /**
-         * Calculamos todos los totales y subtotales del comprobantes 
+         * Calculamos todos los totales y subtotales del comprobantes
          */
         $scope.recalculateTotalsSimple = function () {
             drawImpuestoTotales();
@@ -2253,7 +2263,7 @@
                     //     });
                     // }
 
-                    //Recalculamos los totales 
+                    //Recalculamos los totales
                     $scope.setCalculoTotales("cantidad", rowEntity, 0);
                     $scope.$apply();
                 }
@@ -2343,7 +2353,7 @@
                 $scope.data.irbpnr = irbpnr
                 $scope.data.propina = propina;
 
-                //Formas pago 
+                //Formas pago
                 $scope.dataFormaPago.total = importeTotal;
             } catch (error) {
                 console.log(error);
@@ -2516,6 +2526,15 @@
                     codDocDestino = DOC_TYPE.FE;
                     codDoc = DOC_TYPE.FV_SRI;
 
+                    await docElectSvc.validateNormativeSri({
+                        accion: 'guardar',
+                        identificacion: $scope.cliente.numeroIdentificacion,
+                        importeTotal: $scope.data.total,
+                        idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
+                        codDoc: '01'
+
+                    })
+
                     serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     });
@@ -2652,7 +2671,7 @@
         async function initiload() {
             try {
                 let {
-                    // estabs, 
+                    // estabs,
                     tarifasImpuesto,
                     // tiemposCredito,
                     // tarifas,
@@ -2709,8 +2728,8 @@
 
 
     /**
-     *  
-     * @param {*} htmlTemplate 
+     *
+     * @param {*} htmlTemplate
      */
 
     function drawElementHTMLTotals(htmlTemplate) {

@@ -1,4 +1,4 @@
-import {Component, computed, inject, model, signal} from '@angular/core';
+import {Component, computed, inject, model, signal, OnInit} from '@angular/core';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -51,7 +51,7 @@ import {isValidField} from "@core/utils/utils";
     }
   `,
 })
-export class CuentaPorPagarCuotaModalComponent {
+export class CuentaPorPagarCuotaModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarCuotaModalComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private useCase = inject(CuentaPorPagarUseCase)
@@ -75,7 +75,7 @@ export class CuentaPorPagarCuotaModalComponent {
 
   nuevoTotal = computed(()=>{
 
-    let valorCalculado = this.dataSource()
+    const valorCalculado = this.dataSource()
       .reduce((prev, curr) => prev + Number(curr.cuota), 0);
     console.log(valorCalculado)
     console.log(this.dataSource())
@@ -83,7 +83,7 @@ export class CuentaPorPagarCuotaModalComponent {
   })
 
   valorDiferencia = computed(()=>{
-    let valorResiduo =  this.data.total - this.nuevoTotal();
+    const valorResiduo =  this.data.total - this.nuevoTotal();
     return roundNumber(valorResiduo, DECIMALS.DOS)
   })
 
@@ -126,13 +126,13 @@ export class CuentaPorPagarCuotaModalComponent {
   }
 
   async onChangeTiempoCredito() {
-    let dataTiempoCredito = this.tiemposCredito().find(
+    const dataTiempoCredito = this.tiemposCredito().find(
       (item) => item.idTiempoCredito === this.dataForm().tiempoCreditoId,
     );
     if (!dataTiempoCredito) return;
     const {numeroCuota} = dataTiempoCredito;
 
-    let {isConfirmed} = await Swal.fire({
+    const {isConfirmed} = await Swal.fire({
       icon: 'warning',
       html: `Está seguro/a de generar <b>${numeroCuota} </b>  ${numeroCuota > 1 ? 'cuotas' : 'cuota'}`,
       showDenyButton: true,
@@ -213,12 +213,12 @@ export class CuentaPorPagarCuotaModalComponent {
   configureEndOfMonthDate() {
     if(!this.isConfigDateValid(this.configDateOptions.SAME_DAY)) return;
 
-    let configDate = structuredClone( this.configDate.value);
+    const configDate = structuredClone( this.configDate.value);
 
     if(!configDate) return
 
 
-    let resultCuotas = this.dataSource().map(item=>{
+    const resultCuotas = this.dataSource().map(item=>{
       // Obtener el último día del mes actual
       const lastDayOfMonth = new Date(configDate.getFullYear(), configDate.getMonth() + 1, 0).getDate();
 
@@ -240,7 +240,7 @@ export class CuentaPorPagarCuotaModalComponent {
 
     if(!this.isConfigDateValid()) return;
 
-    let configDate = structuredClone( this.configDate.value);
+    const configDate = structuredClone( this.configDate.value);
 
     if(!configDate) return
 
@@ -248,7 +248,7 @@ export class CuentaPorPagarCuotaModalComponent {
       const daysInMonth = new Date(configDate.getFullYear(), configDate.getMonth() + 1, 0).getDate();
       const dayOfMonth = configDate.getDate() <= daysInMonth ? configDate.getDate() : daysInMonth;
 
-      let resultCuotas = this.dataSource().map((item, index)=>{
+      const resultCuotas = this.dataSource().map((item, index)=>{
 
         const newDate = new Date(configDate);
         newDate.setMonth(configDate.getMonth() + index++);
@@ -263,10 +263,10 @@ export class CuentaPorPagarCuotaModalComponent {
   calcularValorCuota($event: any, row: CuentaPorPagarCuotaConfig) {
     $event.stopPropagation();
 
-    let rowIndex = this.dataSource().indexOf(row);
+    const rowIndex = this.dataSource().indexOf(row);
 
-    let cuotasIndexMenor = this.dataSource().filter((_, index) => index <= rowIndex);
-    let cuotasIndexMayor = this.dataSource().filter((_, index) => index > rowIndex);
+    const cuotasIndexMenor = this.dataSource().filter((_, index) => index <= rowIndex);
+    const cuotasIndexMayor = this.dataSource().filter((_, index) => index > rowIndex);
 
     console.log(cuotasIndexMenor);
     console.log(cuotasIndexMayor);
@@ -286,10 +286,10 @@ export class CuentaPorPagarCuotaModalComponent {
     }
 
     if (cuotasIndexMayor.length > 0) {
-      let total = this.data.total - totalCuotaIndexMenor; //Total Cuota - total Factura
+      const total = this.data.total - totalCuotaIndexMenor; //Total Cuota - total Factura
 
-      let numeroCuota = cuotasIndexMayor.length;
-      let valorCuota = total / numeroCuota;
+      const numeroCuota = cuotasIndexMayor.length;
+      const valorCuota = total / numeroCuota;
 
       const nroCuotaIndex = Number(row.nroCuota); // Convertir `nroCuota` a número para evitar problemas con el tipo
 
@@ -319,7 +319,7 @@ export class CuentaPorPagarCuotaModalComponent {
         }
 
         // Calcular el total y la cuota
-        let numeroCuota = this.tiemposCredito().find(item => item.idTiempoCredito === this.dataForm().tiempoCreditoId)?.numeroCuota || 0;
+        const numeroCuota = this.tiemposCredito().find(item => item.idTiempoCredito === this.dataForm().tiempoCreditoId)?.numeroCuota || 0;
         let total = this.data.total - parseFloat(valorEntrada);
         total = roundNumber(total, DECIMALS.DOS);
 

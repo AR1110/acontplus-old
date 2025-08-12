@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {ActionAddDirective} from "@shared/directives/permission/action-add.directive";
@@ -14,6 +14,10 @@ import {AddEditWarehouseComponent} from "@inventory/ui/warehouse/add-edit-wareho
 import Swal from "sweetalert2";
 import {DeleteWarehouseUseCase} from "@inventory/domain/usecases/warehouse/delete-warehouse.use-case";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
+import {
+  SendMaxWarehousesUseCase
+} from "@modules/config/application/use-cases/general-config/list-general-config.use-case";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-warehouse',
@@ -29,10 +33,11 @@ import {ToastrNotificationService} from "@core/services/toastr-notification.serv
   templateUrl: './warehouse.component.html',
   styles: ``
 })
-export class WarehouseComponent {
+export class WarehouseComponent implements OnInit {
 
   private $listUseCase = inject(ListWarehouseUseCase);
   private $deleteUseCase = inject(DeleteWarehouseUseCase);
+  private $sendMaxWarehousesUseCase = inject(SendMaxWarehousesUseCase)
 
   private _dialogSvc = inject(DialogService);
   private _tS = inject(ToastrNotificationService)
@@ -53,7 +58,8 @@ export class WarehouseComponent {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
 
 
-  openModalAddUpdate(params?: WarehouseList){
+  async openModalAddUpdate(params?: WarehouseList){
+    await firstValueFrom(this.$sendMaxWarehousesUseCase.execute());
     const ref = this._dialogSvc.open(AddEditWarehouseComponent, {
       data: structuredClone(params) || {}
     })
@@ -70,7 +76,7 @@ export class WarehouseComponent {
 
 
   private getList(){
-    let dataSearch = {
+    const dataSearch = {
       pageIndex: 1,
       pageSize: 25
     }
