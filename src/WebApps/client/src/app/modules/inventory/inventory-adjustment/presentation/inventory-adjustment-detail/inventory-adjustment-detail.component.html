@@ -9,7 +9,7 @@
   <app-mat-dynamic-card>
       <div class="row mb-4">
         <div class="col-sm-6">
-          <h3 class="text-dark mb-1">Nro. Doc #BBB10234</h3>
+<!--          <h3 class="text-dark mb-1">Nro. Doc #BBB10234</h3>-->
           <div><span class="text-muted">Tipo Doc:</span> {{ header.tipoDocNombre }}</div>
           <div><span class="text-muted">Movimiento:</span> {{ header.movimientoNombre }}</div>
           <div><span class="text-muted">Fecha Registro:</span> {{ header.fechaEmision }}</div>
@@ -54,29 +54,35 @@
                 <td [colSpan]="9">Sin datos</td>
               </tr>
             }
+          <tr>
+            <td [colSpan]="5"></td>
+            <td [colSpan]="2">Total</td>
+            <td [colSpan]="1">{{ header.total }}</td>
+            <td [colSpan]="1"></td>
+          </tr>
 
           </tbody>
         </table>
       </div>
-      <div class="row">
-        <div class="col-lg-4 col-sm-5">
-        </div>
-        <div class="col-lg-4 col-sm-5 ml-auto">
-          <table class="table table-clear">
-            <tbody>
+<!--      <div class="row">-->
+<!--        <div class="col-lg-4 col-sm-5">-->
+<!--        </div>-->
+<!--        <div class="col-lg-4 col-sm-5 ml-auto">-->
+<!--          <table class="table table-clear">-->
+<!--            <tbody>-->
 
-            <tr>
-              <td class="left">
-                <strong class="text-dark">Total</strong>
-              </td>
-              <td class="right">
-                <strong class="text-dark">{{ header.total }}</strong>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+<!--            <tr>-->
+<!--              <td class="left">-->
+<!--                <strong class="text-dark">Total</strong>-->
+<!--              </td>-->
+<!--              <td class="right">-->
+<!--                <strong class="text-dark">{{ header.total }}</strong>-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--        </div>-->
+<!--      </div>-->
 
   </app-mat-dynamic-card>
 </ng-template>

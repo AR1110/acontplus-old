@@ -329,7 +329,7 @@ function modalArticuloCtrl(
     ];
 
     initiload();
-    function initiload() {
+    function initiload() { 
         articuloSvc
             .getDataForForm()
             .then((response) => {
@@ -352,7 +352,7 @@ function modalArticuloCtrl(
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.defaultEstab === true
-                    );
+                    ); 
                     $scope.bodegas = dataEstab.bodegas;
                     $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
                     if ($scope.bodegas.length > 0) {
@@ -414,6 +414,7 @@ function modalArticuloCtrl(
                     } else {
                         $scope.data.codigoAuxiliar = params.codigo;
                     }
+                    setPrecioCostoConIva();
                     return;
                 }
 
@@ -446,7 +447,7 @@ function modalArticuloCtrl(
                         // }
                     }
                 }
-            })
+            }) 
     }
     $scope.getArticuloCodigo = () => {
         if ($scope.data.idArticulo > 0 || (params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra)) {
@@ -513,7 +514,7 @@ function modalArticuloCtrl(
     }
 
     function getDataArticulo() {
-        try {
+        try { 
             articuloSvc
                 .findById(params.idArticulo)
                 .then((response) => {
@@ -546,10 +547,12 @@ function modalArticuloCtrl(
 
                     $scope.showEstado = $scope.data.estado;
 
+                    setPrecioCostoConIva();
+
                 })
                 .catch((error) => {
                     console.log(error);
-                })
+                }) 
         } catch (error) {
             console.log(error);
         }
@@ -585,15 +588,15 @@ function modalArticuloCtrl(
     };
 
     $scope.refreshSubFamilia = function () {
-        try {
+        try { 
             articuloSvc.getDataForForm().then(response => {
 
                 $scope.subFamilias = response.subFamilias;
             }).catch(error => {
                 console.log(error)
-            })
+            }) 
         } catch (error) {
-            console.log(error)
+            console.log(error) 
         }
     }
 
@@ -634,12 +637,12 @@ function modalArticuloCtrl(
     }
 
     $scope.refreshMedida = async function () {
-        try {
+        try { 
             articuloSvc.getDataForForm().then(response => {
                 $scope.medidas = response.medidas;
             }).catch(error => {
                 console.log(error)
-            })
+            }) 
         } catch (error) {
             console.log(error);
         }
@@ -662,11 +665,11 @@ function modalArticuloCtrl(
                   <card class="card-header text-center bg-transparent">
                       Código de Barra
                   </card>
-                  <div class="card-body border border-danger" id="cardBusiness">
+                  <div class="card-body border border-danger" id="cardBusiness">                        
                       <h6 class="text-center">${descripcion}</h6>
                       <img id="barcode" alt="">
                   </div>
-                  <div class="card-footer">
+                  <div class="card-footer">                     
                       <button type="button" class="btn btn-success btn-block" id="btnBarcodeExport">
                           <i class="ti-download"></i> Descargar
                       </button>
@@ -709,6 +712,41 @@ function modalArticuloCtrl(
         return precioVenta - precioCosto;
     }
 
+    function getDataTipoIva() {
+        return $scope.tipoIvas.find(
+            (item) => item.idTipoIva === $scope.data.idTipoIva
+        );
+    }
+   
+    function setPrecioCostoConIva(){ 
+        let precioConIva = pricingUtils.calcularPrecioConIva(
+                   $scope.data.precioCosto || 0,
+                   getDataTipoIva().porcentaje
+                );
+
+        $scope.data.precioCostoConIva = fS.roundNumber(
+            precioConIva,
+            $scope.decimal.nroPrecio
+        );
+    }
+
+
+    $scope.calculatePrecioCosto = calculatePrecioCosto;
+    function calculatePrecioCosto(){
+
+        const precioCosto = pricingUtils.calcularPrecioVenta(
+                            $scope.data.precioCostoConIva,
+                            getDataTipoIva().porcentaje
+                        );
+
+         $scope.data.precioCosto = fS.roundNumber(
+            precioCosto,
+            $scope.decimal.nroPrecio
+        );
+
+    }
+
+
     function recalculateTarifaRegister() {
         if (
             [null, undefined, ""].includes($scope.data.precioCosto) ||
@@ -720,15 +758,12 @@ function modalArticuloCtrl(
         if ($scope.data.precioCosto === 0) {
             tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
             return;
-        }
+        } 
 
-        let dataIVA = $scope.tipoIvas.find(
-            (item) => item.idTipoIva === $scope.data.idTipoIva
-        );
         try {
             let index = 0;
             for (let val of $scope.gridOptions.data) {
-                $scope.gridOptions.data[index].porcentajeIva = dataIVA.porcentaje;
+                $scope.gridOptions.data[index].porcentajeIva = getDataTipoIva().porcentaje;
 
                 let precioVenta = pricingUtils.calcularPrecioVenta(
                     val.precioConIva,
@@ -767,6 +802,7 @@ function modalArticuloCtrl(
         } catch (error) {
             toastr.error(error);
         }
+        setPrecioCostoConIva();
     }
 
     function recalculateTarifaUpdateArticle(opcionCalculate) {
@@ -829,6 +865,7 @@ function modalArticuloCtrl(
         } catch (error) {
             toastr.error(error);
         }
+        setPrecioCostoConIva();
     }
 
     //Calcular Tarifa al momento de agregar el articulo
@@ -1019,7 +1056,7 @@ function modalArticuloCtrl(
         };
 
         let dataRepository = {};
-        if (!($scope.data.idArticulo > 0)) {
+        if (!($scope.data.idArticulo > 0)) { 
             articuloSvc
                 .save($scope.image.selectedFile, senData)
                 .then((response) => {
@@ -1029,15 +1066,15 @@ function modalArticuloCtrl(
                     if (response.code == 1) {
                         tS.toastr("success", response.message, response.titleSms);
                         dataRepository = JSON.parse(response.payload)[0];
-                        if (dataRepository) {
+                        if (dataRepository) { 
                             verificarProductoFraccionado(dataRepository);
                         }
                     }
                 })
                 .catch((error) => {
                     console.log(error);
-                })
-        } else if ($scope.data.idArticulo > 0) {
+                }) 
+        } else if ($scope.data.idArticulo > 0) { 
             articuloSvc
                 .update($scope.data.idArticulo, senData)
                 .then((response) => {
@@ -1054,7 +1091,7 @@ function modalArticuloCtrl(
                 })
                 .catch((error) => {
                     console.log(error);
-                })
+                }) 
         }
     };
 
@@ -1072,7 +1109,7 @@ function modalArticuloCtrl(
                     initiload();
                     setTimeout(()=>{
                        $scope.$apply(()=>{
-                        $scope.activeTab = 4;
+                        $scope.activeTab = 4; 
                         $scope.step = 5;
                        })
                     }, 1000)
@@ -1087,7 +1124,7 @@ function modalArticuloCtrl(
 
     $scope.uploadFile = () => {
         if ($scope.data.productPhotoId > 0 && $scope.image.selectedFile != null) {
-
+       
             productPhotoService.update({ id: $scope.data.productPhotoId, data: JSON.stringify({ id: $scope.data.productPhotoId, s3ObjectKey: null, s3ObjectUrl: null }), file: $scope.image.selectedFile, }).then(response => {
                 if (response.code == "0") {
                     tS.toastr("warning", response.message)
@@ -1097,13 +1134,13 @@ function modalArticuloCtrl(
                     document.getElementById('productImage').src = src
                     tS.toastr("success", response.message)
                 }
-
-            }).catch(error => {
+                
+            }).catch(error => { 
                 console.log(error);
             });
         }
         if ($scope.data.idArticulo > 0 && $scope.data.productPhotoId == 0 && $scope.image.selectedFile != null) {
-
+           
             productPhotoService.post({ productId: $scope.data.idArticulo, file: $scope.image.selectedFile, }).then(response => {
                 if (response.code == "0") {
                     tS.toastr("warning", response.message)
@@ -1112,8 +1149,8 @@ function modalArticuloCtrl(
                     let src = URL.createObjectURL($scope.image.selectedFile)
                     document.getElementById('productImage').src = src
                     tS.toastr("success", response.message)
-                }
-            }).catch(error => {
+                } 
+            }).catch(error => { 
                 console.log(error);
             });
         }
@@ -1146,14 +1183,14 @@ function modalArticuloCtrl(
     $scope.articuloCodigoBarras = [];
     //=======================================ARTICULO CODIGO BARRA ============================
     function getCodigoBarraArticulo() {
-
+        
         articuloSvc.findById(params.idArticulo).then((response) => {
             let { articuloCodigoBarras } = response;
             $scope.articuloCodigoBarras = articuloCodigoBarras;
         })
             .catch((err) => {
                 console.log(err);
-            })
+            }) 
     }
 
     $scope.resultModalMedidaCodigoBarra = async function (result) {
@@ -1366,7 +1403,7 @@ function modalArticuloCtrl(
 
 
 /**
- * Articulo Fraccionado
+ * Articulo Fraccionado 
  */
 modalArticuloFraccionadoCtrl.$inject = ['$scope', '$uibModalInstance', '$injector', '$timeout', 'params'];
 function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $timeout, params) {
@@ -1587,11 +1624,11 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         {
             headerCellTemplate: `<div class="d-flex m-1 justify-content-center align-items-center">
             <span>% Utilidad</span>
-
-            <button type="button" ng-click="grid.appScope.recalculatePercentage()"   class="btn btn-secondary btn-xs ml-2">
+            
+            <button type="button" ng-click="grid.appScope.recalculatePercentage()"   class="btn btn-secondary btn-xs ml-2"> 
             <i class="fa fa-redo"></i>
         </button>
-
+            
             </div>`,
             name: "porcentajeUtilidad",
             field: "porcentajeUtilidad",
@@ -1640,7 +1677,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
     initialLoad();
     function initialLoad() {
-        try {
+        try { 
 
             articuloSvc.getDataForForm().then(response => {
                 const { medidas, tarifas, decimal } = response;
@@ -1662,7 +1699,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                     $scope.selectedArticuloChange(params);
                 }
 
-            })
+            }) 
 
         } catch (error) {
             console.error(error);
@@ -1683,8 +1720,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                 ...data,
             };
 
-
-
+          
+            
 
             $scope.gridOptions.data = pvps.map((val) => {
                 let ganancia = val.precioVenta - $scope.data.precioCostoFraccionado;
@@ -1701,11 +1738,11 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                 type: 'warning',
                 message: 'Ingrese precio costo fraccionado'
             })
-            return
+            return 
         }
         let precioCosto = Number($scope.data.precioCostoFraccionado);
 
-
+        
         articuloPrincipalTarifa.forEach((item, index)=>{
             let precioVenta = pricingUtils.calcularPorcentajeUtilidad(
                 precioCosto,
@@ -1727,14 +1764,14 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             $scope.gridOptions.data[index].porcentajeUtilidad =  item.porcentajeUtilidad;
 
 
-
+           
             let ganancia =  $scope.gridOptions.data[index].precioVenta - precioCosto;
                 $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
-
+                 
 
         })
 
-
+         
     }
 
     $scope.searchArticuloFraccionadoFilter = function (textSearch) {
@@ -1749,7 +1786,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.onKeyupSearchArticulo = function () {
-
+       
         // if ([null, undefined, ""].includes($scope.data.selectedArticulo)) {
         //     $scope.data.selectedArticulo = null;
         //     $scope.articulo = {};
@@ -1757,14 +1794,14 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.selectedArticuloChange = function (item) {
-        try {
-            articuloSvc.findById(item.idArticulo).then((response) => {
+        try { 
+            articuloSvc.findById(item.idArticulo).then((response) => { 
                 let { data, articuloTarifas } = response;
-
+             
                 $scope.data = data;
                 $scope.data.selectedArticulo = data.descripcion;
 
-                articuloPrincipalTarifa = structuredClone(articuloTarifas);
+                articuloPrincipalTarifa = structuredClone(articuloTarifas); 
 
                 $scope.gridOptions.data = structuredClone(articuloTarifas).map((item) => {
                     item.precioVenta = 0;
@@ -1776,15 +1813,15 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             })
                 .catch((error) => {
                     console.log(error)
-                })
-        } catch (error) {
+                }) 
+        } catch (error) { 
             console.log(error);
         }
     }
 
-    $scope.onChangeConversion = function(){
+    $scope.onChangeConversion = function(){ 
         if($scope.data.conversion>0){
-            let precioCostoFraccionado = Number($scope.data.conversion) * $scope.data.precioCosto;
+            let precioCostoFraccionado = Number($scope.data.conversion) * $scope.data.precioCosto; 
             $scope.data.precioCostoFraccionado = fS.roundNumber(precioCostoFraccionado, 3)
         }
 
@@ -1857,7 +1894,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.resultModalMedida = async function (result) {
-        try {
+        try { 
             if (typeof result !== "object") return;
             const { medidas } = await articuloSvc.getDataForForm();
             $scope.medidas = medidas;
@@ -1868,9 +1905,9 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     $scope.refreshMedida = async function () {
-        try {
+        try {  
             const { medidas } = await articuloSvc.getDataForForm();
-            $scope.medidas = medidas;
+            $scope.medidas = medidas; 
         } catch (error) {
             console.log(error);
         }
@@ -1914,17 +1951,17 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
             pvps: $scope.gridOptions.data,
         }
 
-        if (!($scope.data.idArticuloFraccionado > 0)) {
+        if (!($scope.data.idArticuloFraccionado > 0)) { 
             articuloFraccionadoSvc.post(data).then(successReponse)
-
+                 
         }
 
-        if ($scope.data.idArticuloFraccionado > 0) {
-            articuloFraccionadoSvc.put($scope.data.idArticuloFraccionado, data).then(successReponse)
+        if ($scope.data.idArticuloFraccionado > 0) { 
+            articuloFraccionadoSvc.put($scope.data.idArticuloFraccionado, data).then(successReponse) 
         }
     }
 
-    function successReponse(response) {
+    function successReponse(response) { 
         if (response.code == "0") {
             tS.toastr('warning', response.message, response.titleSms);
         }
@@ -2024,8 +2061,6 @@ function ModalArticuloGeneralCtrl(
     $scope.refresh = refresh;
     $scope.askToSelect = askToSelect;
 
-    $scope.stocks =[]
-
 
 
 
@@ -2065,7 +2100,6 @@ function ModalArticuloGeneralCtrl(
                 $scope.articulos = articulos;
                 $scope.dataSearch.totalRecords = totalRecords;
                 $scope.tarifas = $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
-                $scope.stocks = $scope.articulos.length>0 ? $scope.articulos[0].stocks : [];
             }).catch((err) => {
                 console.log(err);
             });
@@ -2117,11 +2151,11 @@ function ModalArticuloGeneralCtrl(
 
         if (params && typeof params === 'object' && params.esVenta) {
             askToAdd(item);
-            return
-        }
+            return 
+        } 
 
         const data = {
-            idArticulo: item.idArticulo,
+            idArticulo: item.idArticulo,  
         };
         $uibModalInstance.close(data);
 
@@ -2133,10 +2167,10 @@ function ModalArticuloGeneralCtrl(
     }
 
     /**
-     *
-     * @param {*} item
+     * 
+     * @param {*} item 
      */
-    function askToAdd(item) {
+    function askToAdd(item) { 
         Swal.fire({
             title: '¿Qué deseas hacer?',
             html: `
@@ -2151,30 +2185,30 @@ function ModalArticuloGeneralCtrl(
             cancelButtonText: 'Cancelar',
             preConfirm: () => {
                 const cantidadInput = getElementQty().value;
-
+        
                 // Validar si el valor es un número y mayor que 0
                 if (isNaN(cantidadInput) || cantidadInput <= 0) {
                     Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
                     return false; // Retorna false para no permitir el cierre
                 }
-
+        
                 return cantidadInput; // Retorna el valor si es válido
             },
             preDeny: () => {
                 const cantidadInput = getElementQty().value;
-
+        
                 // Validar si el valor es un número y mayor que 0
                 if (isNaN(cantidadInput) || cantidadInput <= 0) {
                     Swal.showValidationMessage('La cantidad debe ser un número mayor a 0.');
                     return false; // Retorna false para no permitir el cierre
                 }
-
+        
                 return cantidadInput; // Retorna el valor si es válido
             },
             didOpen: () => {
                 // Detectar la tecla Enter
                 const cantidadInputElement = getElementQty();
-                 cantidadInputElement.select()
+                 cantidadInputElement.select() 
                 cantidadInputElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         Swal.clickConfirm(); // Simula el clic en "Añadir y continuar"
@@ -2184,13 +2218,13 @@ function ModalArticuloGeneralCtrl(
         }).then((result) => {
             let cantidadInput = getElementQty().value; // Obtener el valor del input
             cantidadInput = Number(cantidadInput);
-
+        
             if (result.isConfirmed) {
                 params.refProductoVenta.onInventario({
                    idArticulo: item.idArticulo,
                    cantidad: cantidadInput
                 });
-
+        
             } else if (result.isDenied) {
                 params.refProductoVenta.onInventario({
                    idArticulo: item.idArticulo,
@@ -2199,7 +2233,7 @@ function ModalArticuloGeneralCtrl(
                 $uibModalInstance.close();
             }
         });
-
+        
     }
 
     $scope.previewImg = function (item) {
@@ -2223,7 +2257,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
 
     initialLoad();
     function initialLoad() {
-        try {
+        try { 
             //$scope.articleName = item.descripcion
             mS.getData('get', `${URL}Get?json=${JSON.stringify({
                 tipo: 3,
@@ -2238,7 +2272,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
                         $scope.articleName = $scope.historyComprasArticle[0].articulo;
                     }
                 }
-            )
+            ) 
         } catch (error) {
             console.log(error)
         }

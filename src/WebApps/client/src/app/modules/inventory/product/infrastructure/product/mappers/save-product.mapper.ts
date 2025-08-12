@@ -1,17 +1,15 @@
-
-import {ApiResponse} from "@core/models/api-response";
-import {ProductDataEntity, ProductDataPvpEntity, ProductParamsSaveEntity} from "@inventory/product/infrastructure/product/product.entity";
-import {getValidId, isValidField} from "@core/utils/utils";
 import {formatDateToString} from "@core/utils/date.util";
+import {getValidId, isValidField} from "@core/utils/utils";
+import {ApiResponse} from "@core/models/api-response";
 
+export class SaveProductMapper {
+  static toJson(obj:any): any {
 
-export class ProductSaveMapper {
-  static  toJson(obj: any): ProductParamsSaveEntity  {
     const {data, dataUbicacion, dataPvp} = obj;
     let lote;
     let fechaCreacion;
-      let fechaCaducidadLote;
-      let fechaCaducidad;
+    let fechaCaducidadLote;
+    let fechaCaducidad;
     if(data.datosLote){
       lote = data.lote;
       fechaCreacion = formatDateToString(data.fechaCreacion)
@@ -21,7 +19,7 @@ export class ProductSaveMapper {
     if(data.caducidad){
       fechaCaducidad = formatDateToString(data.fechaCaducidad)
     }
-    const jsonArticulo: ProductDataEntity = {
+    const jsonArticulo = {
       idSubFamilia: data.idSubFamilia,
       idMarca: getValidId (data.idMarca) as number,
       idModelo: getValidId(data.idModelo) as number,
@@ -53,9 +51,9 @@ export class ProductSaveMapper {
     }
 
 
-    const jsonPvp: ProductDataPvpEntity = dataPvp.map((item:any, index: number)=>{
+    const jsonPvp = dataPvp.map((item:any, index: number)=>{
 
-      const result: ProductDataPvpEntity = {
+      return {
         index: index + 1,
         idArticuloPvP: item.idArticuloPvP,
         idTarifa: item.idTarifa,
@@ -66,8 +64,6 @@ export class ProductSaveMapper {
 
       }
 
-      return result
-
     })
 
 
@@ -77,8 +73,8 @@ export class ProductSaveMapper {
       jsonArticulo: JSON.stringify(jsonArticulo),
       jsonPvp: JSON.stringify(jsonPvp),
     }
-
   }
+
 
   static fromJson(response:ApiResponse){
 

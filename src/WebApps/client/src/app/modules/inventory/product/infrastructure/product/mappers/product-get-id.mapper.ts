@@ -2,12 +2,13 @@
 import {ApiResponse} from "@core/models/api-response";
 import {formatDate} from "@core/utils/date.util";
 import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
+import {ProductGetIdResult} from "@inventory/product/domain/entities/product.entity";
 
 
 export class ProductGetIdMapper {
 
   static fromJson(responseApi:ApiResponse){
-    const resultResponse = new ApiResponse()
+    const resultResponse = new ProductGetIdResult()
     const {
       products,
       productPvps: productPvpsApi ,
@@ -19,10 +20,7 @@ export class ProductGetIdMapper {
     console.log(responseApi)
 
     const mainDataProduct = products[0];
-    let lote;
-      let fechaCreacion;
-    let fechaCaducidadLote;
-      let fechaCaducidad;
+    let lote, fechaCreacion,fechaCaducidadLote, fechaCaducidad;
       if(mainDataProduct.caducidad){
         fechaCaducidad = formatDate(mainDataProduct.fechaCaducidad);
       }
@@ -115,13 +113,13 @@ export class ProductGetIdMapper {
         nomMedida: item.medida,
       }
     })
-    resultResponse.payload = {
-      data,
-      productPvps,
-      productBarcodes,
-      productLocations
 
-    }
+    resultResponse.data = data;
+    resultResponse.productPvps = productPvps;
+    resultResponse.productBarcodes = productBarcodes;
+    resultResponse.productLocations = productLocations;
+    resultResponse.productMeasures = productMeasures;
+
 
     return resultResponse;
 

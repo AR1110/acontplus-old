@@ -12,7 +12,7 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Opciones: <span class="text-danger">*</span></mat-label>
-          <mat-select [(ngModel)]="dataForm.opcion" (selectionChange)="optionChange()">
+          <mat-select [(ngModel)]="searchAdvancedForm.opcion" (selectionChange)="optionChange()">
             @for (item of catalogs(); track $index) {
             <mat-option [value]="item.code"> {{item.name}}</mat-option>
             }
@@ -20,16 +20,46 @@
         </mat-form-field>
       </div>
       <div class="col">
-        @if (dataForm.opcion===3) {
+
+        @if (searchAdvancedForm.opcion===1) {
+         <app-product-autocomplete-advanced (itemSelected)="productSelected($event)"/>
+        }
+
+
+        @if (searchAdvancedForm.opcion===3) {
           <mat-form-field class="w-100">
             <mat-label>SubFamilias: <span class="text-danger">*</span></mat-label>
-            <mat-select [(ngModel)]="dataForm.subFamiliaId" (selectionChange)="refresh()">
-              @for (item of $inventoryAdjustmentStore.mainFormData().subFamilias; track $index) {
+            <mat-select [(ngModel)]="searchAdvancedForm.subFamiliaId" (selectionChange)="refresh()">
+              @for (item of mainFormData().subFamilias(); track $index) {
                 <mat-option [value]="item.id"> {{item.name}}</mat-option>
               }
             </mat-select>
           </mat-form-field>
         }
+
+        @if (searchAdvancedForm.opcion===4) {
+          <app-supplier-search (supplierSelected)="supplierSelected($event)"/>
+        }
+
+        @if(searchAdvancedForm.opcion===5){
+          <mat-form-field class="w-100">
+            <mat-label>N° de Documento:</mat-label>
+            <input
+              matInput
+              [(ngModel)]="searchAdvancedForm.nroDocumento"
+              pattern="[0-9]{3}-[0-9]{3}-[0-9]*"
+              placeholder="000-000-XXXXXXXXXXX"
+              title="Formato: 000-000-XXXXXXXXXXX"
+              oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')"
+            />
+            <ng-container matSuffix>
+              <button type="button" mat-icon-button (click)="refreshNroDoc()">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </ng-container>
+          </mat-form-field>
+        }
+
       </div>
       <div class="col">
         <mat-form-field class="w-100">
@@ -41,11 +71,16 @@
             <button mat-icon-button (click)="fileInput.click()">
               <mat-icon>attach_file</mat-icon>
             </button>
-            <button mat-icon-button  >
-              <mat-icon>done</mat-icon>
-            </button>
+            @if (productsNotFounded().length>0) {
+              <button mat-icon-button (click)="showProductsNoVinculado()" >
+                <mat-icon>notification_important</mat-icon>
+              </button>
+            }
+
           </ng-container>
-          <mat-hint>Para consolidar los productos con un archivo de tipo Excel, debe tener las siguientes columnas en minúsculas: <em>codigo</em>, <em>cantidad</em></mat-hint>
+          <mat-hint>
+            <span [innerHTML]="infoImportExcel()"></span>
+          </mat-hint>
         </mat-form-field>
       </div>
     </div>
@@ -57,6 +92,7 @@
       [visibleColumns]="columns"
       [enablePagination]="false"
       [showSelectBox]="true"
+      [returnMultiple]="false"
       (rowSelected)="rowSelected($event)"
       (rowAllSelected)="rowAllSelected($event)"
     />

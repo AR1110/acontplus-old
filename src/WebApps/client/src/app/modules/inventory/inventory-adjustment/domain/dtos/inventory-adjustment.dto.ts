@@ -1,7 +1,6 @@
 import {GroupedEstab} from "@core/models/estab.model";
-import {DOC_TYPE} from "@core/constants/global.constants";
 
-export interface InventoryAdjustmentList {
+export interface InventoryAdjustmentListDto {
   index: number;
   "id": number
   "fechaEmision": string
@@ -10,19 +9,19 @@ export interface InventoryAdjustmentList {
   "nroDoc": string
   "estadoNombre": string
   "codDoc": string
-  "usuarioNombre": DOC_TYPE.AC
+  "usuarioNombre": string
   "style": string
   "tipoDocNombre": string
   "totalRecords": number
 }
 
-
-export class InventoryAdjustmentListResponse {
-  data: InventoryAdjustmentList[]=[];
+export class InventoryAdjustmentListResultDto {
+  data: InventoryAdjustmentListDto[]=[];
   totalRecords = 0;
 }
 
-export class InventoryAdjustmentFormDataResponse {
+
+export class InventoryAdjustmentFormDataDto {
   estabs: GroupedEstab[]=[];
   subFamilias:any[]=[];
   decimal: any ={};
@@ -30,11 +29,12 @@ export class InventoryAdjustmentFormDataResponse {
   tiposTransaccion:any[]=[];
 }
 
-export class InventoryAdjustmentDetailResponse {
+export class InventoryAdjustmentDetailDto{
   header:any = {};
   items: any[]=[]
 }
 
-export class InventoryAdjustmentListProductsResponse {
-   data: any[]=[]
+export class InventoryAdjustmentListProductsDto {
+  data: any[]=[]
 }
+

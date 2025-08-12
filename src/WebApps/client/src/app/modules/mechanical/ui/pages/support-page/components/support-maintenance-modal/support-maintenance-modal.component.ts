@@ -5,7 +5,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
-import { ProductSale } from '@inventory/product/domain/entities/product.model';
+import { ProductSale } from '@inventory/product/domain/entities/product.entity';
 import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';
 import {
   getCantidadStock,
