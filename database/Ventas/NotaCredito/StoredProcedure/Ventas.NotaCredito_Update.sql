@@ -235,7 +235,7 @@ BEGIN
                 RETURN 
             END
 
-        IF EXISTS (SELECT 1 FROM Ventas.v_NotaCredito WITH (NOLOCK) WHERE idNotaCredito = @id AND codServicio IN (4,3,6))
+        IF EXISTS (SELECT 1 FROM Ventas.v_NotaCredito WITH (NOLOCK) WHERE idNotaCredito = @id AND codServicio IN (4,3,6,8))
             BEGIN
                 SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
                 RETURN 
