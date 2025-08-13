@@ -28,7 +28,7 @@ BEGIN
     DECLARE @fechaEmision DATETIME2 ,@idEstadoDocumento INT 
 
     --> Transaccion 
-    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50)
+    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50) ,@valor INT = 1
 
     DECLARE @tbComprobante AS TABLE(
          idConsolidacionInventario INT NOT NULL
@@ -115,7 +115,12 @@ BEGIN
         WHERE tr.idTransaccion = @idTransaccion
 
 	    SELECT TOP 1 @idEstadoDocumento = idEstadoDocumento ,@fechaEmision = fechaEmision FROM ConsolidacionInventario WITH (NOLOCK) WHERE idConsolidacionInventario = @id
-	    
+
+        IF @codTran = 'S'
+            BEGIN
+                SET @valor = -1
+            END
+
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
             BEGIN
@@ -168,11 +173,11 @@ BEGIN
                SET fechaEmision = @fechaEmision
             WHERE idTransaccion = @idTransaccion
 
-            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0, AjusteId = NULL ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
+            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
 
             INSERT INTO Inventario.TransaccionDetalle WITH(ROWLOCK)
 				   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
-			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total
+			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion * @valor,precioCosto,precioCostoFraccionado,precioUnitario,total
             FROM @tblDetails
             WHERE estado = 1
 

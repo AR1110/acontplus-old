@@ -151,6 +151,7 @@ BEGIN
             WHERE t1.LicenseTypeId = @LicenseTypeId
               AND t2.Code = @codePolicy
 
+
             --> restrinccion de registro de documento electronicos
             IF @codePolicy = 'MAX_DOCUMENTS'
                 BEGIN
@@ -213,6 +214,9 @@ BEGIN
                 END 
 
             --> Validacion donde comprobamos si es menor a cero sera un premium caso contrario tiene restrincion
+            --SELECT '0' as code, CAST(@countTransaccionCompany as varchar)  as 'message' WHERE @message IS NOT NULL
+            --RETURN
+
             IF CAST(@PolicyValue AS INT) < 0
                 BEGIN
                     SET @message = NULL

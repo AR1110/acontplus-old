@@ -57,20 +57,23 @@ DROP TABLE #TempCI;
 --update Inventario.TransaccionDetalle set cantidadTransaccion = 0 where estado in (0,2)
 
 
-WITH CTE_Salidas AS (
-        SELECT t4.idTransaccionDetalle
-               ,-1 * t4.cantidadTransaccion as cantidadTransaccionNegativa
-        FROM inventario.Transaccion              t1 with (nolock)
-        inner join inventario.tipoDocumento      t2 with (nolock) on t2.idTipoDocumento   = t1.idTipoDocumento
-        inner join inventario.TipoTransaccion    t3 with (nolock) on t3.idTipoTransaccion = t1.idTipoTransaccion
-        inner join inventario.Transacciondetalle t4 with (nolock) on t4.idTransaccion     = t1.idTransaccion
-        where t3.codigo = 'S'
-        and t4.estado = 1
-)
-UPDATE td 
-SET td.cantidadTransaccion = sa.cantidadTransaccionNegativa 
-FROM Inventario.TransaccionDetalle td WITH (NOLOCK)
-INNER JOIN CTE_Salidas             sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
+--WITH CTE_Salidas AS (
+--        SELECT t4.idTransaccionDetalle
+--               ,-1 * t4.cantidadTransaccion as cantidadTransaccionNegativa
+--               ,t2.codigo as codDoc 
+--        FROM inventario.Transaccion              t1 with (nolock)
+--        inner join inventario.tipoDocumento      t2 with (nolock) on t2.idTipoDocumento   = t1.idTipoDocumento
+--        inner join inventario.TipoTransaccion    t3 with (nolock) on t3.idTipoTransaccion = t1.idTipoTransaccion
+--        inner join inventario.Transacciondetalle t4 with (nolock) on t4.idTransaccion     = t1.idTransaccion
+--        where t3.codigo = 'S'
+--        and t4.estado = 1
+--)
+--UPDATE td 
+--SET td.cantidadTransaccion = sa.cantidadTransaccionNegativa 
+--from Inventario.TransaccionDetalle td WITH (NOLOCK)
+--INNER JOIN CTE_Salidas        sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle
+--where codDoc != 'NC' AND td.cantidadTransaccion > 0
+--;
 
 
 WITH CTE_Saldos AS (

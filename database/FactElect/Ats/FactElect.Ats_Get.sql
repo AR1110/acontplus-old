@@ -168,13 +168,15 @@ BEGIN
                   ,CAST(RIGHT(fc.serieComprobante, 9) AS VARCHAR(10)) as secuencial
             FROM Recepcion.DocumentoRecibido          fc WITH (NOLOCK)
             LEFT JOIN FactElect.RetAtsDocSustento     ds WITH (NOLOCK) ON ds.numAutDocSustento = fc.claveAcceso 
-            LEFT JOIN Sri.DocumentoSustentoTributario ss WITH (NOLOCK) ON ss.Id = ds.documentoSustentoTributarioId
-            LEFT JOIN Sri.SustentoTributario          st WITH (NOLOCK) ON st.Id = ss.SustentoTributarioId
+            LEFT JOIN Sri.DocumentoSustentoTributario ss WITH (NOLOCK) ON ss.Id                = ds.documentoSustentoTributarioId
+            LEFT JOIN Sri.SustentoTributario          st WITH (NOLOCK) ON st.Id                = ss.SustentoTributarioId
+            LEFT JOIN FactElect.RetencionAts          rt WITH (NOLOCK) ON rt.idRetencionAts    = ds.idRetencionAts
             WHERE fc.identificacionReceptor = @rucReceptor
               AND fc.fechaEmision BETWEEN @fromDate AND @toDate
               AND fc.codDoc IN ('01','04','05')
               AND fc.xmlCompressed IS NOT NULL
               AND fc.estado = 1
+              AND ISNULL(rt.anuladaSri,0) = 0
         ),
         TipoIdentificacionProveedor AS 
         (

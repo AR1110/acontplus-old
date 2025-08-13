@@ -217,6 +217,15 @@ BEGIN
             FROM @tbTransaccionDetalle td
             WHERE td.estado = 1
 
+            UPDATE td SET td.cantidadTransaccion = td.cantidadTransaccion * -1
+            FROM Inventario.TransaccionDetalle    td
+            INNER JOIN Inventario.Transaccion     tr ON tr.idTransaccion     = td.idTransaccion
+            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+            INNER JOIN Inventario.TipoDocumento   dt ON dt.idTipoDocumento   = tr.idTipoDocumento
+            WHERE dt.codigo = 'TB'
+              AND tt.codigo = 'S'
+              AND tr.idDocumento = @id
+
             EXEC dbo.Transaccion_Handler_Init 'SN', 'TB', @id, DEFAULT
 
 		COMMIT TRAN 
