@@ -25,7 +25,7 @@ import {
 } from "@inventory/data/transferencia-bodega/transferencia-bodega-web.repository";
 import {WarehouseRepository} from "@inventory/domain/repositories/warehouse.repository";
 import {WarehouseRepositoryImpl} from "@inventory/data/warehouse/warehouse-repository.impl";
-import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/inventory-adjustment.repository";
+import {InventoryAdjustmentRepository} from "@inventory/inventory-adjustment/domain/repositories/inventory-adjustment.repository";
 import {
   InventoryAdjustmentRepositoryImpl
 } from "@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl";

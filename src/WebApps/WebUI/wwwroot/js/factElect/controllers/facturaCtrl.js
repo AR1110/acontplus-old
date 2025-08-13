@@ -453,6 +453,9 @@
 
         $scope.openModalInvoiceDuplicate = async (item) => {
             try {
+
+                await policyService.sendMaxDocuments();
+
                 facturaSvc
                     .getId(item.idDocumento)
                     .then((response) => {

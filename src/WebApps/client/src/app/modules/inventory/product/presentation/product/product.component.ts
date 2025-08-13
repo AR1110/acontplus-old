@@ -36,7 +36,7 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
-import { ProductList } from '@inventory/product/domain/entities/product.model';
+import { ProductList } from '@inventory/product/domain/entities/product.entity';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';

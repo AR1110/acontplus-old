@@ -1,7 +1,7 @@
+
 import {
-  InventoryAdjustmentListResponse
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
-import {ApiResponse} from "@core/models/api-response";
+  InventoryAdjustmentListResultDto
+} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 export class InventoryAdjustmentListMapper {
   static toJson(params:any){
@@ -19,8 +19,8 @@ export class InventoryAdjustmentListMapper {
     })
   }
 
-  static fromJson(response:any): InventoryAdjustmentListResponse{
-    const result = new InventoryAdjustmentListResponse();
+  static fromJson(response:any): InventoryAdjustmentListResultDto{
+    const result = new InventoryAdjustmentListResultDto();
     const {consolidaciones=[]} = response;
     result.data = consolidaciones.map((item:any, index: number)=>{
       return {

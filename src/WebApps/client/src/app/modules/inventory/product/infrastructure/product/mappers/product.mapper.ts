@@ -1,7 +1,7 @@
 import {ApiResponse} from "@core/models/api-response";
 import {groupSubCategoryUtil} from "@inventory/domain/utils/group-sub-category.util";
 import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {ProductSearch} from "@inventory/product/domain/entities/product.model";
+import {ProductSearch} from "@inventory/product/domain/entities/product.entity";
 import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
 import {imgDefault} from "@core/utils/utils";
 
@@ -10,7 +10,7 @@ export class ProductMapper {
 
   static fromApiDataFilter(response:ApiResponse){
 
-    const { brands, measures,models, subcategories , taxes } = JSON.parse(response.payload as string);
+    let { brands, measures,models, subcategories , taxes } = JSON.parse(response.payload as string);
     const subCategorias = groupSubCategoryUtil(subcategories)
 
     return {
@@ -33,7 +33,7 @@ export class ProductMapper {
             precio: tarifa.precio
           }
         })
-        const obj = {
+        let obj = {
           position: index +1,
           idArticulo: product.idArticulo,
           codigo: product.codigo,
@@ -64,9 +64,9 @@ export class ProductMapper {
 
   static fromApiGetAll(response:ApiResponse){
 
-    const { products } = JSON.parse(response.payload as string);
+    let { products } = JSON.parse(response.payload as string);
 
-    const data = products || [];
+    let data = products || [];
 
     return data.map((item: any, index: number) => {
       return {
@@ -98,11 +98,11 @@ export class ProductMapper {
 
     const {brands, documentTypes,fees,subcategories,warehouses, taxes=[]} = JSON.parse(response.payload as string);
 
-    const estabs = groupEstabUtil({
+    let estabs = groupEstabUtil({
       bodegas: warehouses,
       isGroupBodega: true
     })
-    const subCategorias = groupSubCategoryUtil(subcategories);
+    let subCategorias = groupSubCategoryUtil(subcategories);
 
     return {
       estabs : estabs,
@@ -137,8 +137,8 @@ export class ProductMapper {
   }
 
 
-  static fromApiCheckStockNotificacion(responseApi: any) {
-    const { stockCheckResponse } = JSON.parse(responseApi.payload);
+  static fromApiCheckStockNotificacion(responseApi: ApiResponse) {
+    const { stockCheckResponse } = JSON.parse(responseApi.payload as string);
     return stockCheckResponse[0];
   }
 }
