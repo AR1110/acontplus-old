@@ -2,14 +2,14 @@ namespace Compras.API.Dtos
 {
   public record CompraNoHabitualDto
   {
-    public DocumentIngresoDto DocumentIngreso { get; set; }
+    public required DocumentIngresoDto DocumentIngreso { get; set; }
 
-    public List<ArticuloInfoAdicionalDto> ArticulosInfoAdicional { get; set; }
+    public required List<ArticuloInfoAdicionalDto> ArticulosInfoAdicional { get; set; }
 
-    public List<TaxDto> Impuestos { get; set; }
+    public required List<TaxDto> Impuestos { get; set; }
 
-    public ArticuloInfoAdicionalDto ArticuloInfoAdicional { get; set; }
+    public required ArticuloInfoAdicionalDto ArticuloInfoAdicional { get; set; }
 
-    public List<CuotaDto> Cuotas { get; set; }
+    public required List<CuotaDto> Cuotas { get; set; }
   }
 }

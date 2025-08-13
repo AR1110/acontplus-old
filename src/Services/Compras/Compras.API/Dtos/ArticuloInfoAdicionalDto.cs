@@ -7,13 +7,10 @@ namespace Compras.API.Dtos
   {
     public int? IdInfoAdicional { get; set; }
 
-    [Required]
-    public int IdArticulo { get; set; }
+    public required int IdArticulo { get; set; }
 
-    [Required]
-    public int IdEtiqueta { get; set; }
+    public required int IdEtiqueta { get; set; }
 
-    [Required]
-    public string JsonAdicional { get; set; }
+    public required string JsonAdicional { get; set; }
   }
 }

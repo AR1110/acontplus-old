@@ -4,81 +4,62 @@ namespace Compras.API.Dtos
 {
   public record ComprobanteDetalleDto
   {
-    [Required]
-    public int OrderIndex { get; set; }
+    public required int OrderIndex { get; set; }
 
-    [Required]
-    public int IdArticulo { get; set; }
+    public required int IdArticulo { get; set; }
 
-    [Required]
-    public int IdBodega { get; set; }
+    public required int IdBodega { get; set; }
 
     public int? IdMedida { get; set; }
 
-    [Required]
-    public int IdTipoIva { get; set; }
+    public required int IdTipoIva { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal Ice { get; set; }
+    public required decimal Ice { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal Cantidad { get; set; }
+    public required decimal Cantidad { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal PrecioUnitario { get; set; }
+    public required decimal PrecioUnitario { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal Descuento { get; set; }
+    public required decimal Descuento { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal PorcentajeDescuento { get; set; }
+    public required decimal PorcentajeDescuento { get; set; }
 
-    [Required]
     [MaxLength(5)]
-    public string CodigoPorcentaje { get; set; }
+    public required string CodigoPorcentaje { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal Tarifa { get; set; }
+    public required decimal Tarifa { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal ValorImpuesto { get; set; }
+    public required decimal ValorImpuesto { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal PrecioTotalSinImpuesto { get; set; }
+    public required decimal PrecioTotalSinImpuesto { get; set; }
 
     [MaxLength(100)]
-    public string Nota { get; set; }
+    public string? Nota { get; set; }
 
-    [Required]
     [MaxLength(255)]
-    public string Descripcion { get; set; }
+    public required string Descripcion { get; set; }
 
-    [Required]
-    public bool LlevaInventario { get; set; }
+    public required bool LlevaInventario { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal CantidadTransaccion { get; set; }
+    public required decimal CantidadTransaccion { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal Conversion { get; set; }
+    public required decimal Conversion { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal PrecioCosto { get; set; }
+    public required decimal PrecioCosto { get; set; }
 
-    [Required]
     [Precision(18, 5)]
-    public decimal PrecioCostoFraccionado { get; set; }
+    public required decimal PrecioCostoFraccionado { get; set; }
 
   }
 }
