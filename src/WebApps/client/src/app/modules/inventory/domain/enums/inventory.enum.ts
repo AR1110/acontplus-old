@@ -38,3 +38,15 @@ export const enum INVENTORY_CODE_REPORT {
   RASR = 'RASR', //Reporte de Articulo Stock Valoración
   RCD='RCD' //Reporte Consolidacion Detalle
 }
+
+export enum InventoryDocumentType {
+  CONSOLIDATION = "CI",
+  INVENTORY_WRITEOFF = "BI",
+  INVENTORY_RECEIPT = "EI"
+}
+
+export enum InventoryTransactionType {
+  INBOUND = "E",
+  OUTBOUND = "S",
+  ADJUSTMENT = "A"
+}

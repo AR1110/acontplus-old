@@ -1,6 +1,7 @@
-import { InventoryAdjustmentListProductsResponse,
-} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
 import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
+import {
+  InventoryAdjustmentListProductsDto
+} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 export class InventoryAdjustmentListProductsMapper {
   static toJson(params:any){
 
@@ -10,8 +11,8 @@ export class InventoryAdjustmentListProductsMapper {
     })
   }
 
-  static fromJson(response:any): InventoryAdjustmentListProductsResponse{
-    const result = new InventoryAdjustmentListProductsResponse();
+  static fromJson(response:any): InventoryAdjustmentListProductsDto{
+    const result = new InventoryAdjustmentListProductsDto();
     if (response !== null && typeof response === 'object') {
       result.data =  (response.articulos|| []).map((item:any) => {
           const { principal, fraccionado, ...restItem } = item;

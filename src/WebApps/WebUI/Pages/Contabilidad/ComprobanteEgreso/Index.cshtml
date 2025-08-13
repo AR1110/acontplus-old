@@ -192,9 +192,9 @@
                                             btn-anular-comprobante-egreso params="item" on-result="refresh()">&times;
                                             Anular</button>
 
-                                        <button class="dropdown-item" type="button" ng-if="accion.reporte"
-                                            btn-comprobante-egreso-report unique="item.idComprobanteEgreso"
-                                            cod-estab="item.codEstab"><i class="fa fa-file-pdf"></i> PDF</button>
+                                        <button class="dropdown-item" type="button" btn-comprobante-egreso-report
+                                            unique="item.idComprobanteEgreso" cod-estab="item.codEstab"><i
+                                                class="fa fa-file-pdf"></i> PDF</button>
 
                                         <button class="dropdown-item" type="button" ng-if="accion.enviarCorreo"
                                             btn-send-to-email params="item" type-send="typeSend"

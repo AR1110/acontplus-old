@@ -4,14 +4,14 @@ import { isDateValid } from "@core/utils/date.util"
 import { ConsolidacionBodega } from "../models/consolidacion-bodega.model"
 import { MedidaProducto } from "../models/measure.model"
 
-interface Row {
+interface Row  {
   productId: number
   bodegaId: number
   medidaId: number
   medidas: MedidaProducto[]
   quantity: number
 }
-interface MergeProductStockProps {
+interface MergeProductStockProps  {
   rows: Row[]
   row: Row
 }
@@ -75,7 +75,5 @@ export const getCantidadStock = function (obj: GetCantidadStockProps): number {
       return 0;
     }
   }
-
-  const resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-  return resultCantStock;
+  return cantidadStock;
 }

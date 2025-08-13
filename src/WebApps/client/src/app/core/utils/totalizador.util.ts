@@ -1,7 +1,7 @@
 import { DECIMALS } from '@core/constants/global.constants';
 import { roundNumber } from './round-number.utils';
 import { pricingCalculateUtil } from './pricing-calculate.util';
-import { plus } from './decimal.util';
+import DecimalUtils, { plus } from './decimal.util';
 
 
 
@@ -108,7 +108,7 @@ public calcular(obj:any) {
 
         if (tarifa.tarifa > 0) {
             const valorImpuesto = pricingCalculateUtil.calculateTaxValue(dataTotalNetoIva.totalNetoIva, tarifa.tarifa);
-            this.totalizadores.sumTotalIva = plus(this.totalizadores.sumTotalIva, valorImpuesto, DECIMALS.DOS);
+            this.totalizadores.sumTotalIva = DecimalUtils.addAsNumber(this.totalizadores.sumTotalIva, valorImpuesto, DECIMALS.DOS);
 
             if (valorImpuesto > 0) {
                 htmlIvaTotal += `

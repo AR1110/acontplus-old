@@ -35,10 +35,8 @@ import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.d
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { ProductDataFormUseCase } from '@inventory/product/application/use-cases/product/product-data-form.use-case';
 import { ProductPostUseCase } from '@inventory/product/application/use-cases/product/product-post.use-case';
 import { ProductPutUseCase } from '@inventory/product/application/use-cases/product/product-put.use-case';
-import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/product/product-get-id.use-case';
 import { forkJoin } from 'rxjs';
 import {
   ProductUbicationComponent
@@ -51,6 +49,10 @@ import {
 import {UploadImageComponent} from "@shared/components/upload-image/upload-image.component";
 import {ProductPhotoPostUseCase} from "@inventory/product/application/use-cases/product-photo/product-photo-post.use-case";
 import {ProductPhotoPutUseCase} from "@inventory/product/application/use-cases/product-photo/product-photo-put.use-case";
+import {
+  ProductDataFormUseCase,
+  ProductGetIdUseCase
+} from "@inventory/product/application/use-cases/product/get-product.use-case";
 interface ProductTarifa {
   tipoIva: string;
   tarifa: string;
@@ -363,8 +365,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
       //editar
       if (this.isUpdate()) {
-        const { data, productPvps } = dataId.payload;
-        console.log(dataId);
+        const { data, productPvps } = dataId;
         this.btnText = 'Actualizar';
         this.title = 'Editar Artículo';
 

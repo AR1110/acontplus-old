@@ -7,10 +7,9 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {
   ProductAutocompleteImageComponent
 } from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-image/product-autocomplete-image.component";
-import {
-  ListProductWithPricesUseCase
-} from "@inventory/product/application/use-cases/product/list-product-with-prices.use-case";
+
 import {CurrencyPipe} from "@angular/common";
+import {ListProductWithPricesUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
 
 @Component({
   selector: 'app-product-autocomplete-advanced',

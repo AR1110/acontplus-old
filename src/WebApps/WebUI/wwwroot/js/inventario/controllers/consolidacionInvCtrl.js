@@ -379,6 +379,7 @@
     function modalConsolidacionAddEditCtrl($injector, $scope, $timeout, $uibModalInstance, uiGridConstants, params) {
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
+        const articuloSvc = $injector.get('articuloService');
 
         $scope.tipoDoc = {
             codigo: 'C'
@@ -404,8 +405,16 @@
             enableCellEdit: false,
         }
 
+        function getDataTipoDoc(){
+            let dataDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento);
+            if (dataDoc) {
+               return dataDoc;
+            }
+            return dataDoc;
+        }
+
         $scope.onChangeTipoDocumento = async () => {
-            let dataDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento)
+            let dataDoc = getDataTipoDoc();
             let dataMovimiento = {};
 
             if (dataDoc.codigo == 'CI') {
@@ -413,7 +422,8 @@
             }
 
             if (dataDoc.codigo == 'BI') {
-                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'S')
+                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'S');
+                resetQuantityZero();
             }
 
             if (dataDoc.codigo == 'EI') {
@@ -445,6 +455,52 @@
                 //Validar campos
                 if (["", null, undefined].includes(rowEntity[colDef.field])) {
                     rowEntity[colDef.field] = oldValue;
+                    return
+                }
+                console.log('afterCellEdit', rowEntity, colDef, newValue, oldValue);
+
+                if(colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue && getDataTipoDoc().codigo === 'BI') {
+                     articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: newValue * rowEntity.conversion,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => { 
+
+                    let { code, message, titleSms } = responseApi;
+
+                    // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+                    if (code === "1") {
+                        
+                         setTotalColumn(rowEntity);
+                        setTotalDetalle();
+                        return;
+                    }
+
+                    // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+
+                    // Según la confirmación, realiza acciones adicionales.
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
+                            rowEntity[colDef.field] = oldValue;
+                             setTotalColumn(rowEntity);
+                        setTotalDetalle();
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                             setTotalColumn(rowEntity);
+                        setTotalDetalle();
+                        }
+                    }
+                }) 
                     return
                 }
 
@@ -946,16 +1002,18 @@
                 cancelButtonText: 'No'
             }).then(result => {
                 if (result.isConfirmed) {
+                    resetQuantityZero();
+                }
+            })
+        }
 
-
+        function resetQuantityZero() {
+            
                     for (let item of $scope.gridOptions.data) {
                         item.cantidad =0;
                         setTotalColumn(item);
                     }
-                    setTotalDetalle();
-                    $scope.$apply()
-                }
-            })
+                    setTotalDetalle(); 
         }
 
         function addRow() {

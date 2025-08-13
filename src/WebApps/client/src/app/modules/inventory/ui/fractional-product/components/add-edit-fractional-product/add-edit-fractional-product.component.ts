@@ -14,10 +14,8 @@ import {TabulatorComponent} from "@core/components/tabulator/tabulator.component
 import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {ProductDataFormUseCase} from "@inventory/product/application/use-cases/product/product-data-form.use-case";
 import {DECIMALS} from "@core/constants/global.constants";
 import {getValidId} from "@core/utils/utils";
-import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/product-get-id.use-case";
 import {
   FractionalProductPostUseCase
 } from "@inventory/product/application/use-cases/fractional-product/fractional-product-post.use-case";
@@ -31,6 +29,10 @@ import {
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatListModule} from "@angular/material/list";
 import Swal from "sweetalert2";
+import {
+  ProductDataFormUseCase,
+  ProductGetIdUseCase
+} from "@inventory/product/application/use-cases/product/get-product.use-case";
 
 @Component({
   selector: 'app-add-edit-fractional-product',
@@ -340,10 +342,9 @@ private decimal = {
 
     try {
       this.$productGetIdUseCase.execute( idArticulo).subscribe((response) => {
-        if(response.payload){
-          this.data = response.payload.data
+          this.data = response.data
 
-          const productoTarifas = structuredClone(response.payload.productPvps)
+          const productoTarifas = structuredClone(response.productPvps)
           this.articuloPrincipalTarifa = structuredClone(productoTarifas)
 
 
@@ -354,7 +355,7 @@ private decimal = {
             item.utilidad = 0;
             return item;
           });
-        }
+
       })
     } catch (error) {
       console.log(error);

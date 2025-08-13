@@ -1,6 +1,8 @@
-import {InventoryAdjustmentFormDataResponse} from "@inventory/inventory-adjustment/domain/inventory-adjustment.entity";
-import {ApiResponse} from "@core/models/api-response";
+
 import {groupEstabUtil} from "@core/utils/group-estab.util";
+import {
+  InventoryAdjustmentFormDataDto
+} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 export class InventoryAdjustmentFormDataMapper {
   static toJson(){
@@ -9,8 +11,8 @@ export class InventoryAdjustmentFormDataMapper {
     })
   }
 
-  static fromJson(response:any): InventoryAdjustmentFormDataResponse{
-    const result = new InventoryAdjustmentFormDataResponse();
+  static fromJson(response:any): InventoryAdjustmentFormDataDto{
+    const result = new InventoryAdjustmentFormDataDto();
     console.log(response);
     const { ptoEmision,bodegas, subFamilia,decimales,tiposTransaccion,tipoDocumento } = response;
 
@@ -18,7 +20,8 @@ export class InventoryAdjustmentFormDataMapper {
       {
         estabs: ptoEmision,
         bodegas: bodegas,
-        isGroupBodega: true
+        isGroupBodega: true,
+        isGroupPuntoEmision: true,
       }
     );
     result.subFamilias = subFamilia.map((item:any)=>{
