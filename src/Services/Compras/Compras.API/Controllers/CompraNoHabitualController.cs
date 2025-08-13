@@ -1,48 +1,59 @@
-﻿namespace Compras.API.Controllers;
+﻿using Compras.API.Dtos;
+
+namespace Compras.API.Controllers;
 
 public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    try
     {
-        try
-        {
-            var response = await _svc.GetAsync(new Dictionary<string, object>
+      var response = await _svc.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
-            if (response == null) return NoContent();
+      if (response == null) return NoContent();
 
-            ;
-            return Ok(new { code = "1", payload = response });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error on get: " + ex.Message);
-        }
+      ;
+      return Ok(new { code = "1", payload = response });
     }
-
-    [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    catch (Exception ex)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.AddAsync(request));
+      return BadRequest("Error on get: " + ex.Message);
     }
+  }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
-    {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.UpdateAsync(id, request));
-    }
+  [HttpPost]
+  public async Task<IActionResult> Insert(CompraNoHabitualDto compraNoHabitualDto)
+  {
+    var parameters = new Dictionary<string, object>
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
+      };
+    return Ok(await _svc.AddAsync(parameters));
+  }
+
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Put(int id, CompraNoHabitualDto compraNoHabitualDto)
+  {
+    var parameters = new Dictionary<string, object>
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
+      };
+    return Ok(await _svc.UpdateAsync(id, parameters));
+  }
 
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
-        return Ok(await _svc.DeleteAsync(parameters));
-    }
+    return Ok(await _svc.DeleteAsync(parameters));
+  }
 }
