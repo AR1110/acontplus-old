@@ -44,7 +44,7 @@ public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApi
         { "id", id },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
       };
-    return Ok(await _svc.UpdateAsync(id, parameters));
+    return Ok(await _svc.UpdateAsync(parameters));
   }
 
 

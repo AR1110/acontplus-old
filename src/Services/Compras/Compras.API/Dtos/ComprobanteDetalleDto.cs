@@ -6,6 +6,8 @@ namespace Compras.API.Dtos
   {
     public required int OrderIndex { get; set; }
 
+    public int? IdDocumentoIngresoDetail { get; set; }
+
     public required int IdArticulo { get; set; }
 
     public required int IdBodega { get; set; }
@@ -61,5 +63,6 @@ namespace Compras.API.Dtos
     [Precision(18, 5)]
     public required decimal PrecioCostoFraccionado { get; set; }
 
+    public bool? Estado { get; set; } = true;
   }
 }

@@ -7,6 +7,6 @@ public interface ICompraNoHabitualService
   Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
 
   //  Task<object> GetByIdAsync(Dictionary<string, object> parameters);
-  Task<ApiResponse> UpdateAsync(int id, Dictionary<string, object> parameters);
+  Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
   Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
 }

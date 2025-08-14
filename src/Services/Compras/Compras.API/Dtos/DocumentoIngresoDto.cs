@@ -12,9 +12,6 @@ namespace Compras.API.Dtos
 
     public int? IdTiempoCredito { get; set; }
 
-    [MaxLength(5, ErrorMessage = "El código no puede exceder los 5 caracteres.")]
-    public string? Codigo { get; set; }
-
     public required DateTime FechaEmision { get; set; }
 
     public required DateTime FechaVencimiento { get; set; }

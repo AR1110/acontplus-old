@@ -24,7 +24,7 @@ public class CompraNoHabitualService(IAdoRepository _repository) : ICompraNoHabi
   //    return DataConverters.DataSetToJSON(ds, true);
   //}
 
-  public async Task<ApiResponse> UpdateAsync(int id, Dictionary<string, object> parameters)
+  public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
   {
     return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Update", parameters);
   }

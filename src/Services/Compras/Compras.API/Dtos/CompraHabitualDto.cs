@@ -12,6 +12,6 @@ namespace Compras.API.Dtos
     public int? IdArticulo { get; set; }
 
     [StringLength(100)]
-    public required string Codigo { get; set; }
+    public required string CodigoArticulo { get; set; }
   }
 }
