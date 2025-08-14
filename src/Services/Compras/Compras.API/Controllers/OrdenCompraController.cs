@@ -2,49 +2,61 @@
 
 public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
-    {
-        var response = await _svc.GetAsync(new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        });
-        return Ok(response);
-    }
+  private const string UserRoleClaimType = "userRoleId";
 
-    [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
-    {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    var response = await _svc.GetAsync(new Dictionary<string, object>
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(json) }
+      }
+    );
+    return Ok(response);
+  }
 
-        var response = await _svc.AddAsync(request);
-        return Ok(response);
-    }
-
-    [HttpGet("GetId/{id}")]
-    public async Task<IActionResult> GetId(int id)
-    {
-        var response = await _svc.GetByIdAsync(new Dictionary<string, object>
+  [HttpGet("GetId/{id}")]
+  public async Task<IActionResult> GetId(int id)
+  {
+    var response = await _svc.GetByIdAsync(new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
         });
-        return Ok(response);
-    }
+    return Ok(response);
+  }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+  [HttpPost]
+  public async Task<IActionResult> Insert(ApiRequest request)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var response = await _svc.UpdateAsync(id, request);
-        return Ok(response);
-    }
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", DataConverters.SerializeDictionary(request.Data) }
+    };
+    var response = await _svc.AddAsync(parameters);
+    return Ok(response);
+  }
 
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Put(int id, ApiRequest request)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "id", id },
+      { "json", DataConverters.SerializeDictionary(request.Data) }
+    };
+    var response = await _svc.UpdateAsync(parameters);
+    return Ok(response);
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        var response = await _svc.DeleteAsync(parameters);
-        return Ok(response);
-    }
+    var response = await _svc.DeleteAsync(parameters);
+    return Ok(response);
+  }
 }
