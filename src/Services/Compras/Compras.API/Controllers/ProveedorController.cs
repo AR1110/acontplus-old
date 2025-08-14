@@ -19,24 +19,24 @@ public class ProveedorController(IProveedorService _proveedorService) : BaseApiC
 
   // UserStories: Migración de ApiRequest a DTOs en Servicios de AcontPlus
   [HttpPost]
-  public async Task<IActionResult> Post(ProveedorDto proveedor)
+  public async Task<IActionResult> Post(ProveedorDto proveedorDto)
   {
     var parameters = new Dictionary<string, object>
       {
         { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedor)) }
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
       };
     return Ok(await _proveedorService.AddAsync(parameters));
   }
 
   [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, ProveedorDto proveedor)
+  public async Task<IActionResult> Put(int id, ProveedorDto proveedorDto)
   {
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedor)) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
     };
     return Ok(await _proveedorService.UpdateAsync(parameters));
   }
