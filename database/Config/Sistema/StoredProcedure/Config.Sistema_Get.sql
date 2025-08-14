@@ -145,11 +145,14 @@ BEGIN
               AND t7.idEntidad = @idEntidad
 
             --> validaciones por licencia donde controlamos los valores 
-            SELECT TOP 1 @message = t2.Description ,@PolicyValue = t1.PolicyValue
+            SELECT TOP 1 @message     = t2.Description
+                        ,@PolicyValue = t1.PolicyValue
             FROM AcontplusAdmin.Config.LicensePolicyConfiguration t1
-            INNER JOIN AcontplusAdmin.Config.PolicyType           t2 ON t2.Id = t1.PolicyTypeId          
+            INNER JOIN AcontplusAdmin.Config.PolicyType           t2 ON t2.Id = t1.PolicyTypeId
+            INNER JOIN AcontplusAdmin.Config.LicenseType          t3 ON t3.Id = t1.LicenseTypeId
             WHERE t1.LicenseTypeId = @LicenseTypeId
-              AND t2.Code = @codePolicy
+              AND t2.Code          = @codePolicy
+              AND t3.Code          = 'D'
 
 
             --> restrinccion de registro de documento electronicos
