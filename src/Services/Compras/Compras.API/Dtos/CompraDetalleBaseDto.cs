@@ -1,13 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Compras.API.Dtos
 {
-  public record ComprobanteDetalleDto
+  public record DetalleBaseDto
   {
-    public required int OrderIndex { get; set; }
-
-    public int? IdDocumentoIngresoDetail { get; set; }
-
     public required int IdArticulo { get; set; }
 
     public required int IdBodega { get; set; }
@@ -26,12 +20,8 @@ namespace Compras.API.Dtos
     public required decimal PrecioUnitario { get; set; }
 
     [Precision(18, 5)]
-    public required decimal Descuento { get; set; }
-
-    [Precision(18, 5)]
     public required decimal PorcentajeDescuento { get; set; }
 
-    [MaxLength(5)]
     public required string CodigoPorcentaje { get; set; }
 
     [Precision(18, 5)]
@@ -43,26 +33,8 @@ namespace Compras.API.Dtos
     [Precision(18, 5)]
     public required decimal PrecioTotalSinImpuesto { get; set; }
 
-    [MaxLength(100)]
     public string? Nota { get; set; }
 
-    [MaxLength(255)]
     public required string Descripcion { get; set; }
-
-    public required bool LlevaInventario { get; set; }
-
-    [Precision(18, 5)]
-    public required decimal CantidadTransaccion { get; set; }
-
-    [Precision(18, 5)]
-    public required decimal Conversion { get; set; }
-
-    [Precision(18, 5)]
-    public required decimal PrecioCosto { get; set; }
-
-    [Precision(18, 5)]
-    public required decimal PrecioCostoFraccionado { get; set; }
-
-    public bool? Estado { get; set; } = true;
   }
 }
