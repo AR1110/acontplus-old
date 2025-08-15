@@ -6,7 +6,6 @@ namespace Compras.API.Dtos
 
     public int? IdDocumentoIngresoDetail { get; set; }
 
-
     public required bool LlevaInventario { get; set; }
 
     [Precision(18, 5)]
@@ -23,5 +22,6 @@ namespace Compras.API.Dtos
 
     // * Para otras clases con mínimas diferencias
     public int? IdLiquidacionCompraDetalle { get; set; }
+    public required int? IdFacturaCompraDetalle { get; set; }
   }
 }
