@@ -4,67 +4,67 @@
 [ApiController]
 public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    try
     {
-        try
-        {
-            var response = await _svc.GetAsync(new Dictionary<string, object>
+      var response = await _svc.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
-            if (response == null) return NoContent();
+      if (response == null) return NoContent();
 
-            ;
-            return Ok(new { code = "1", payload = response });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error on get: " + ex.Message);
-        }
+      ;
+      return Ok(new { code = "1", payload = response });
     }
-
-    [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    catch (Exception ex)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.AddAsync(request));
+      return BadRequest("Error on get: " + ex.Message);
     }
+  }
 
-    [HttpGet("GetId/{id}")]
-    public async Task<IActionResult> GetId(int id)
+  [HttpPost]
+  public async Task<IActionResult> Insert(ApiRequest request)
+  {
+    request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+    return Ok(await _svc.AddAsync(request));
+  }
+
+  [HttpGet("GetId/{id}")]
+  public async Task<IActionResult> GetId(int id)
+  {
+    try
     {
-        try
-        {
-            var response =
-                await _svc.GetByIdAsync(new Dictionary<string, object>
-                {
+      var response =
+          await _svc.GetByIdAsync(new Dictionary<string, object>
+          {
                     { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
-                });
-            if (response == null) return NoContent();
+          });
+      if (response == null) return NoContent();
 
-            ;
-            return Ok(new { code = "1", payload = response });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error on get by id: " + ex.Message);
-        }
+      ;
+      return Ok(new { code = "1", payload = response });
     }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    catch (Exception ex)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.UpdateAsync(id, request));
+      return BadRequest("Error on get by id: " + ex.Message);
     }
+  }
+
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Put(int id, ApiRequest request)
+  {
+    request.UserRoleId = User.GetClaimValue<int>("userRoleId");
+    return Ok(await _svc.UpdateAsync(id, request));
+  }
 
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        return Ok(await _svc.DeleteAsync(parameters));
-    }
+    return Ok(await _svc.DeleteAsync(parameters));
+  }
 }

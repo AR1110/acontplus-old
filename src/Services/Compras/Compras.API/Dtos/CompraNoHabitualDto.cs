@@ -4,7 +4,7 @@ namespace Compras.API.Dtos
   {
     public required DocumentIngresoDto DocumentIngreso { get; set; }
 
-    public required List<ComprobanteDetalleDto> ComprobantesDetalles { get; set; }
+    public required List<DocumentoIngresoDetalleDto> ComprobantesDetalles { get; set; }
 
     public required List<TaxDto> Impuestos { get; set; }
 
