@@ -1,4 +1,6 @@
-﻿namespace Compras.API.Controllers;
+﻿using Compras.API.Dtos;
+
+namespace Compras.API.Controllers;
 
 public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
 {
@@ -27,25 +29,25 @@ public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
   }
 
   [HttpPost]
-  public async Task<IActionResult> Insert(ApiRequest request)
+  public async Task<IActionResult> Insert(OrdenCompraDto ordenCompraDto)
   {
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-      { "json", DataConverters.SerializeDictionary(request.Data) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<OrdenCompraDto>(ordenCompraDto)) }
     };
     var response = await _svc.AddAsync(parameters);
     return Ok(response);
   }
 
   [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, ApiRequest request)
+  public async Task<IActionResult> Put(int id, OrdenCompraDto ordenCompraDto)
   {
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id },
-      { "json", DataConverters.SerializeDictionary(request.Data) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<OrdenCompraDto>(ordenCompraDto)) }
     };
     var response = await _svc.UpdateAsync(parameters);
     return Ok(response);
