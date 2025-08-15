@@ -36,5 +36,13 @@ namespace Compras.API.Dtos
     public string? Nota { get; set; }
 
     public required string Descripcion { get; set; }
+
+    [Precision(18, 5)]
+    public decimal? ValorDescuento { get; set; }
+
+    [Precision(18, 5)]
+    public decimal? Descuento { get; set; }
+
+    public bool? Estado { get; set; } = true;
   }
 }

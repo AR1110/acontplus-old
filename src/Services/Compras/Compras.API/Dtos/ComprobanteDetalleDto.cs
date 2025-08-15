@@ -4,9 +4,5 @@ namespace Compras.API.Dtos
   {
     public required int OrderIndex { get; set; }
     public int? IdOrdenCompraDetalle { get; set; }
-
-    public required decimal ValorDescuento { get; set; }
-
-    public bool? Estado { get; set; } = true;
   }
 }

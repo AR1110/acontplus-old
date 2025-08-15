@@ -1,4 +1,6 @@
-﻿namespace Compras.API.Controllers;
+﻿using Compras.API.Dtos;
+
+namespace Compras.API.Controllers;
 
 public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseApiController
 {
@@ -45,26 +47,26 @@ public class LiquidacionCompraController(ILiquidacionCompraService _svc) : BaseA
   }
 
   [HttpPost]
-  public async Task<IActionResult> Insert(ApiRequest request)
+  public async Task<IActionResult> Insert(LiquidacionCompraDto liquidacionCompraDto)
   {
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<LiquidacionCompraDto>(liquidacionCompraDto)) }
     };
 
     return Ok(await _svc.AddAsync(parameters));
   }
 
   [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, ApiRequest request)
+  public async Task<IActionResult> Put(int id, LiquidacionCompraDto liquidacionCompraDto)
   {
 
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<LiquidacionCompraDto>(liquidacionCompraDto)) }
     };
 
     return Ok(await _svc.UpdateAsync(parameters));

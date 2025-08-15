@@ -6,8 +6,6 @@ namespace Compras.API.Dtos
 
     public int? IdDocumentoIngresoDetail { get; set; }
 
-    [Precision(18, 5)]
-    public required decimal Descuento { get; set; }
 
     public required bool LlevaInventario { get; set; }
 
@@ -23,6 +21,7 @@ namespace Compras.API.Dtos
     [Precision(18, 5)]
     public required decimal PrecioCostoFraccionado { get; set; }
 
-    public bool? Estado { get; set; } = true;
+    // * Para otras clases con mínimas diferencias
+    public int? IdLiquidacionCompraDetalle { get; set; }
   }
 }
