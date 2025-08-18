@@ -32,7 +32,7 @@ BEGIN
         ,idArticulo INT NULL
         ,codigoPrincipal VARCHAR(100) NOT NULL
         ,codigoAuxiliar VARCHAR(100) NULL
-        ,cantidad VARCHAR(100) NOT NULL
+        ,cantidad NUMERIC(18,5) NOT NULL
         ,descripcion VARCHAR(300) NOT NULL
         ,precioUnitario VARCHAR(15) NOT NULL
         ,descuento VARCHAR(15) NULL
@@ -55,7 +55,7 @@ BEGIN
     BEGIN TRY
 
         INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos)
-        SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos
+        SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, CAST(cantidad AS numeric(18,5)), descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos
         FROM OPENJSON(@jsonData) WITH (
             idDetalle INT '$.idDetalle'
             ,idArticulo INT '$.idArticulo'
@@ -131,7 +131,7 @@ BEGIN
                     dd.idMedida, 
                     dd.codigoPrincipal, 
                     dd.codigoAuxiliar,
-                    dd.cantidad, 
+                    dd.cantidad cantidad, 
                     ISNULL(t.descripcion, a.descripcion) descripcion, 
                     dd.precioUnitario,
                     dd.precioTotalSinImpuesto,
@@ -159,7 +159,7 @@ BEGIN
                     ISNULL(t.descripcion, a.descripcion) descripcion, 
                     precioUnitario, 
                     precioTotalSinImpuesto,
-                    CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto,
+                    IIF(cantidad > 0, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), 0) costoNeto,
                     descuento, 
                     CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END detallesAdicionales,
                     impuestos,
@@ -228,7 +228,7 @@ BEGIN
                     t.descripcion, 
                     precioUnitario, 
                     precioTotalSinImpuesto,
-                    CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto,
+                    IIF(cantidad > 0, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) , 0) costoNeto,
                     descuento, 
                     CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END detallesAdicionales,
                     impuestos,
