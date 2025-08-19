@@ -1,54 +1,88 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Serilog;
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-// Add services to the container.
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
+    var environment = builder.Environment.EnvironmentName;
 
-builder.Services.AddIdentityService(builder.Configuration);
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-builder.Services.AddOpenApi();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-app.UseResponseCompression();
+    // Add services to the container.
 
-app.UseMiddleware<ExceptionMiddleware>();
+    builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
-app.UseMiddleware<MobileRequestMiddleware>();
+    builder.Services.AddIdentityService(builder.Configuration);
 
-app.UseHttpsRedirection();
+    builder.Services.AddOpenApi();
 
-app.MapRetencionAtsEndpoints();
+    var app = builder.Build();
 
-app.MapFactElectEndpoints();
+    app.UseSerilogRequestLogging();
 
-app.UseRouting();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseAuthentication();
+    app.UseResponseCompression();
 
-app.UseAuthorization();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.MapControllers().RequireAuthorization();
+    app.UseMiddleware<MobileRequestMiddleware>();
 
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-//var context = services.GetRequiredService<FactElectContext>();
-//var logger = services.GetRequiredService<ILogger<Program>>();
+    app.UseHttpsRedirection();
 
-//try
-//{
-//    await context.Database.MigrateAsync();
-//    await FactElectContextSeed.SeedAsync(context);
-//}
-//catch (Exception ex)
-//{
-//    logger.LogError(ex, "An error occured during migration");
-//}
+    app.MapRetencionAtsEndpoints();
 
-await app.RunAsync();
+    app.MapFactElectEndpoints();
+
+    app.MapSriEndpoints();
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers().RequireAuthorization();
+
+    //using var scope = app.Services.CreateScope();
+    //var services = scope.ServiceProvider;
+    //var context = services.GetRequiredService<FactElectContext>();
+    //var logger = services.GetRequiredService<ILogger<Program>>();
+
+    //try
+    //{
+    //    await context.Database.MigrateAsync();
+    //    await FactElectContextSeed.SeedAsync(context);
+    //}
+    //catch (Exception ex)
+    //{
+    //    logger.LogError(ex, "An error occured during migration");
+    //}
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

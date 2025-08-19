@@ -1,50 +1,53 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import swal from 'sweetalert2';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { ProductionAreaAddEditModalComponent } from '@restaurant/ui/production-area/production-area-add-edit-modal/production-area-add-edit-modal.component';
 
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  NgbAccordionItem,
-  NgbAccordionModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import { ProductionArea } from '@restaurant/domain/models/production-area';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DialogService } from '@core/services/dialog.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
-import {MatCard, MatCardContent} from "@angular/material/card";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ProductionArea } from '@modules/restaurant/domain/models/production-area';
 
 @Component({
-    selector: 'app-production-area-list',
-    imports: [
-
-        FormsModule,
-        MatButton,
-        NgbAccordionModule,
-        NgClass,
-        MatCardContent,
-        MatCard,
-        ThemeButtonComponent,
-    ],
-    templateUrl: './production-area-list.component.html',
-    styles: ``
+  selector: 'app-production-area-list',
+  imports: [
+    FormsModule,
+    MatButton,
+    NgClass,
+    MatIcon,
+    MatTabsModule,
+    ThemeButtonComponent,
+    MatDynamicCardComponent,
+  ],
+  templateUrl: './production-area-list.component.html',
+  styles: ``,
 })
-export class ProductionAreaListComponent {
-  @ViewChild('accordionItem') accordionItem: NgbAccordionItem | undefined;
-
-  establecimientoId: number = 0;
+export class ProductionAreaListComponent implements OnInit {
+  establecimientoId = 0;
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   data = {} as ProductionArea;
   productionAreas: ProductionArea[] = [];
   #productionAreaService = inject(ProductionAreaService);
-  #modalService = inject(ModalService);
+  #modalService = inject(DialogService);
   #sharedService = inject(SharedService);
-  #tS = inject(ToasterService);
+  #tS = inject(ToastrNotificationService);
 
+  selected = signal(0);
+
+  selectedIndexChange($event: number) {
+    this.selected.set($event);
+    if (this.establecimientos.length > 0) {
+      this.loadData(this.establecimientos[$event].idEstablecimiento);
+    }
+  }
   loadData(idEstablecimiento: number) {
     // if (!this.panelOpenState()) {
     //   return;
@@ -87,7 +90,7 @@ export class ProductionAreaListComponent {
       .then((response) => {
         if (response.isConfirmed) {
           this.#productionAreaService.delete(item.id).subscribe((result) => {
-            this.#tS.toastr({
+            this.#tS.show({
               type: result.code == '1' ? 'success' : 'warning',
               message: result.message,
             });
@@ -100,21 +103,17 @@ export class ProductionAreaListComponent {
   }
 
   onModalOpen() {
-    const modalRef = this.#modalService.openModalCustom(
+    const modalRef = this.#modalService.open(
       ProductionAreaAddEditModalComponent,
       {
         size: 'sm',
-        centered: true,
-      },
+        data: Object.assign(this.data, {
+          establecimientoId: this.establecimientoId,
+        }),
+      }
     );
-    const modalData = Object.assign(this.data, {
-      establecimientoId: this.establecimientoId,
-    });
-    modalRef.componentInstance.data = modalData;
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = modalData;
-    }
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe((response) => {
       if (typeof response == 'object') {
         if (response.code == '1') {
           this.loadData(this.establecimientoId);

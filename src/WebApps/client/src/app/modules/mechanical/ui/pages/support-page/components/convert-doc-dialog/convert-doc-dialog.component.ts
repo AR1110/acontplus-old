@@ -1,13 +1,13 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import {Component, inject, signal, ViewChild, AfterViewInit, OnInit} from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormaPagoSri } from '@shared/models/forma-pago-sri';
-import { TiempoCredito } from '@accounting/domain/models/tiempo-credito.interface';
+import { TiempoCredito } from '@accounting/shared/models/tiempo-credito.interface';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { InvoiceService } from '@billing/services/invoice.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
@@ -21,7 +21,7 @@ import {
 } from '@core/utils/date.util';
 import { FORMA_PAGO_SRI_CODE } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
-import { isValidGeneratorQuota } from '@accounting/domain/utils/calculate-quota.util';
+import { isValidGeneratorQuota } from '@accounting/shared/utils/calculate-quota.util';
 import { InvoiceAdapter } from '@billing/data/invoice/mappers/invoice.adapter';
 import { NotaEntregaUseCase } from '@sale/domain/use-cases/nota-entrega.use-case';
 import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
@@ -37,7 +37,7 @@ import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
   templateUrl: './convert-doc-dialog.component.html',
   styles: ``,
 })
-export class ConvertDocDialogComponent {
+export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
   readonly dialogRef = inject(MatDialogRef<ConvertDocDialogComponent>);
   readonly params: {
     comprobante: any;
@@ -55,7 +55,7 @@ export class ConvertDocDialogComponent {
 
   private _notaEntregaUseCase = inject(NotaEntregaUseCase);
   private invoiceSvc = inject(InvoiceService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
   @ViewChild(TabulatorComponent, { static: false })
   tabulatorComponent!: TabulatorComponent;
@@ -89,9 +89,9 @@ export class ConvertDocDialogComponent {
     total: 0,
   };
 
-  details: SupportDetail[] = [];
+  details  = signal<SupportDetail[]>([]);
 
-  infoAdicionalDoc: any[] = [];
+  infoAdicionalDoc = signal<any[]>([]);
 
   columns = [
     {
@@ -137,8 +137,8 @@ export class ConvertDocDialogComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          let index = this.infoAdicionalDoc.indexOf(data);
-          this.infoAdicionalDoc.splice(index, 1);
+          const index = this.infoAdicionalDoc().indexOf(data);
+          this.infoAdicionalDoc().splice(index, 1);
         }
       });
     } catch (error) {
@@ -155,13 +155,13 @@ export class ConvertDocDialogComponent {
 
   successResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -170,9 +170,9 @@ export class ConvertDocDialogComponent {
   };
 
   protected convertToKeyName(data: any) {
-    let adicionales = [];
-    for (let item of data) {
-      for (let arr of Object.entries(item)) {
+    const adicionales = [];
+    for (const item of data) {
+      for (const arr of Object.entries(item)) {
         const [name, value] = arr;
 
         adicionales.push({
@@ -196,10 +196,10 @@ export class ConvertDocDialogComponent {
       ...this.data,
       ...this.params.comprobante,
     };
-    this.details = this.params.details;
+    this.details.set(this.params.details);
     this.companyCustomer = this.params.companyCustomer;
 
-    let dataTiempoCredito = this.params.tiemposCredito[0];
+    const dataTiempoCredito = this.params.tiemposCredito[0];
     if (dataTiempoCredito) {
       this.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
       this.data.fechaVencimiento = addDayToDate(
@@ -210,7 +210,7 @@ export class ConvertDocDialogComponent {
 
     //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
     if (this.params.formasPagoSri.length > 0) {
-      let dataFormaPago = this.params.formasPagoSri.find((item) => {
+      const dataFormaPago = this.params.formasPagoSri.find((item) => {
         if (this.params.config.idFormaPagoSri > 0) {
           return item.idFormaPagoSri === this.params.config.idFormaPagoSri;
         } else {
@@ -228,28 +228,24 @@ export class ConvertDocDialogComponent {
     this.dataFormaPago.total = this.data.total;
 
     // InfoAdicional
-    let vehicle = this.params.vehicle;
-    let inspection = this.params.inspection;
+    const vehicle = this.params.vehicle;
+    const inspection = this.params.inspection;
 
-    let adicionalVehicle = this.convertToKeyName(vehicle);
-    let adicionalInspection = this.convertToKeyName(inspection);
-    this.infoAdicionalDoc = [...adicionalVehicle, ...adicionalInspection];
+    const adicionalVehicle = this.convertToKeyName(vehicle);
+    const adicionalInspection = this.convertToKeyName(inspection);
+    this.infoAdicionalDoc.set([...adicionalVehicle, ...adicionalInspection])
   }
 
   protected generateSubTotals() {
     try {
-      let {
+      const {
         subTotalSinImpuesto,
-        htmlImpuestoTotal,
-        htmlIvaTotal,
-        irbpnr,
-        totalIce,
         importeTotal,
         discount,
         percentageDiscount,
         propina,
       } = this.salesDetailCalculationSvc.getTaxTotals({
-        items: this.details,
+        items: this.details(),
         tarifasImpuesto: this.params.taxPercents,
       });
 
@@ -265,34 +261,34 @@ export class ConvertDocDialogComponent {
 
   isValidForm() {
     if (!(this.data.supportId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'supportId no proporcionado',
       });
     }
     if (!isValidField(this.data.codEstab)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
       });
       return;
     }
     if (!(this.data.idPuntoEmision > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Punto de Emisión',
       });
       return;
     }
     if (!(this.data.idTiempoCredito > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Tiempo Credito',
       });
       return;
     }
     if (!isDateValid(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -300,7 +296,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -308,7 +304,7 @@ export class ConvertDocDialogComponent {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: this.data.fechaEmision,
       setHoursZero: true,
     });
@@ -321,7 +317,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (!isDateValid(this.data.fechaVencimiento)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la Fecha de vencimiento',
       });
@@ -329,28 +325,28 @@ export class ConvertDocDialogComponent {
     }
 
     if (!(this.companyCustomer.idCliente > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'El cliente es requerido',
       });
     }
 
     if (!(this.companyCustomer.idTipoIdentificacion > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: `idTipoIdentificacion no proporcionada: ${this.companyCustomer.idTipoIdentificacion} `,
       });
     }
 
     if (!isValidField(this.companyCustomer.identificacionComprador)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'identificacionComprador es requerido',
       });
       return;
     }
     if (!isValidField(this.companyCustomer.razonSocialComprador)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'razonSocialComprador es requerido',
       });
@@ -358,15 +354,15 @@ export class ConvertDocDialogComponent {
     }
 
     if (!(this.data.idUsuario > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Vendedor',
       });
       return;
     }
 
-    if (this.details.some((row) => row.llevaInventario && row.quantity === 0)) {
-      this.tS.toastr({
+    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
+      this.tS.show({
         type: 'warning',
         message:
           'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -374,8 +370,8 @@ export class ConvertDocDialogComponent {
       return;
     }
 
-    if (this.details.some((row) => !(row.bodegaId > 0))) {
-      this.tS.toastr({
+    if (this.details().some((row) => !(row.bodegaId > 0))) {
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
       });
@@ -383,7 +379,7 @@ export class ConvertDocDialogComponent {
     }
 
     if (this.data.total <= 0) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'No se puede generar el documento con valor total 0!',
       });
@@ -394,10 +390,10 @@ export class ConvertDocDialogComponent {
 
   // validateCuota() {
   //   let objParamsCuota = {
-  //     fechaEmision: $scope.data.fechaEmision,
+  //     fechaEmision: $scope.infrastructure.fechaEmision,
   //     tiemposCredito: $scope.tiemposCredito,
-  //     idTiempoCredito: $scope.data.idTiempoCredito,
-  //     montoTotal: $scope.data.total,
+  //     idTiempoCredito: $scope.infrastructure.idTiempoCredito,
+  //     montoTotal: $scope.infrastructure.total,
   //     cuotas: $scope.cuotas
   //   }
   //   let cuotas = [];
@@ -415,7 +411,7 @@ export class ConvertDocDialogComponent {
   //     montoTotalCuota = dataCuota.montoTotalCuota;
   //   }
 
-  //   if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+  //   if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.infrastructure.total, 2)) {
   //     tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
   //     return [];
   //   }
@@ -426,24 +422,24 @@ export class ConvertDocDialogComponent {
   async saveInvoice() {
     try {
       if (!this.isValidForm()) return;
-      let data = {
+      const data = {
         fechaEmision: this.data.fechaEmision,
         total: this.data.total,
         tiemposCredito: this.params.tiemposCredito,
         idTiempoCredito: this.data.idTiempoCredito,
         cuotas: [],
       };
-      let cuotas = isValidGeneratorQuota(data);
+      const cuotas = isValidGeneratorQuota(data);
 
       if (cuotas.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No se generó las cuotas correctamente',
         });
         return;
       }
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Convertir a Factura',
         text: '¿Estás seguro de convertir a factura?',
         icon: 'warning',
@@ -456,7 +452,7 @@ export class ConvertDocDialogComponent {
 
       if (!isConfirmed) return;
 
-      let details = this.details.map((item) => {
+      const details = this.details().map((item) => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -464,7 +460,7 @@ export class ConvertDocDialogComponent {
         };
       });
 
-      let comprobante = {
+      const comprobante = {
         ...this.data,
         idCliente: this.companyCustomer.idCliente,
         idTipoIdentificacion: this.companyCustomer.idTipoIdentificacion,
@@ -476,7 +472,7 @@ export class ConvertDocDialogComponent {
       const selectedData =
         this.tabulatorComponent.refTabulator.getSelectedData();
 
-      let params = {
+      const params = {
         comprobante,
         details,
         cuotas: cuotas,
@@ -484,7 +480,7 @@ export class ConvertDocDialogComponent {
         infoAdicionalDoc: selectedData,
       };
 
-      let senData = InvoiceAdapter.mainAdapt(params);
+      const senData = InvoiceAdapter.mainAdapt(params);
 
       this.invoiceSvc.post(senData).subscribe(this.successResponse);
     } catch (error) {
@@ -495,24 +491,24 @@ export class ConvertDocDialogComponent {
   async saveNotaEntrega() {
     try {
       if (!this.isValidForm()) return;
-      let dataGenerateQuota = {
+      const dataGenerateQuota = {
         fechaEmision: this.data.fechaEmision,
         total: this.data.total,
         tiemposCredito: this.params.tiemposCredito,
         idTiempoCredito: this.data.idTiempoCredito,
         cuotas: [],
       };
-      let cuotas = isValidGeneratorQuota(dataGenerateQuota);
+      const cuotas = isValidGeneratorQuota(dataGenerateQuota);
 
       if (cuotas.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No se generó las cuotas correctamente',
         });
         return;
       }
 
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Convertir a Nota Entrega',
         text: '¿Estás seguro de convertir a Nota Entrega?',
         icon: 'warning',
@@ -525,7 +521,7 @@ export class ConvertDocDialogComponent {
 
       if (!isConfirmed) return;
 
-      let details = this.details.map((item) => {
+      const details = this.details().map((item) => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -533,7 +529,7 @@ export class ConvertDocDialogComponent {
         };
       });
 
-      let comprobante = {
+      const comprobante = {
         ...this.data,
         idCliente: this.companyCustomer.idCliente,
         idTipoIdentificacion: this.companyCustomer.idTipoIdentificacion,
@@ -545,14 +541,14 @@ export class ConvertDocDialogComponent {
       const selectedData =
         this.tabulatorComponent.refTabulator.getSelectedData();
 
-      let params = {
+      const params = {
         comprobante,
         details,
         cuotas: cuotas,
         infoAdicionalDoc: selectedData,
       };
 
-      let senData = NotaEntregaMapper.toApiSave(params);
+      const senData = NotaEntregaMapper.toApiSave(params);
 
       this._notaEntregaUseCase.post(senData).subscribe(this.successResponse);
     } catch (error) {

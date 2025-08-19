@@ -1,38 +1,66 @@
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import {Component, inject, Input, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import Swal from 'sweetalert2';
 import { isValidField } from '@core/utils/utils';
-import { DocConfigService } from '@modules/config/services/doc-config.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {DocConfigInfoAdicional, DocConfigList} from "@modules/config/domain/models/doc-config.model";
+import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
+import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {
+  GetDocConfigInfoAdicionalUseCase
+} from "@modules/config/application/use-cases/doc-config/get-doc-config-info-adicional.use-case";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {CreateDocConfigUseCase} from "@modules/config/application/use-cases/doc-config/create-doc-config.use-case";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-doc-config-info-adicional',
-    imports: [FormsModule, TabulatorComponent, MatButton, ThemeButtonComponent],
+  imports: [FormsModule,
+    MatFormFieldModule,
+    MatSlideToggleModule,
+    MatInput,
+    ThemeButtonComponent, MatCustomDialogComponent, MatDynamicTableComponent],
   templateUrl: './doc-config-info-adicional.component.html',
   styles: ``,
 })
-export class DocConfigInfoAdicionalComponent {
-  @Input() params = {} as any;
+export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
+  private dialogRef = inject(MatDialogRef<DocConfigInfoAdicionalComponent>);
+  @Input() params = inject<DocConfigList & {idPuntoEmision:number}>(MAT_DIALOG_DATA)
 
-  private tS = inject(ToasterService);
-  private docConfigSvc = inject(DocConfigService);
-  modal = inject(NgbActiveModal);
+  private tS = inject(ToastrNotificationService);
+  private $getInfoAdicional = inject(GetDocConfigInfoAdicionalUseCase);
+  private $createUseCase = inject(CreateDocConfigUseCase)
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
-  infoAdicional: any[] = [];
+  dataSource = signal<DocConfigInfoAdicional[]>([]);
+
+  columnsDefs: ColumnDefinition[] = [
+
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'nombre', label: 'Nombre', type: 'template' },
+    { key: 'valor', label: 'Valor', type: "template" },
+    { key: 'politicaCredito', label: 'Política Crédito', type: "template" },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+
+  @ViewChild('templateName') templateName!: TemplateRef<any>;
+  @ViewChild('templateValue') templateValue!: TemplateRef<any>;
+  @ViewChild('templatePoliticaCredito') templatePoliticaCredito!: TemplateRef<any>;
 
   getInfoAdicional() {
-    this.infoAdicional = [];
-    this.docConfigSvc
-      .getInfoAdicional(this.params.idConfiguracionDocumento)
+    this.dataSource.set([]);
+    this.$getInfoAdicional
+      .execute(this.params.idConfiguracionDocumento)
       .subscribe((response) => {
-        this.infoAdicional = response.infoAdicional || [];
+        this.dataSource.set(response)
       });
   }
 
@@ -40,49 +68,32 @@ export class DocConfigInfoAdicionalComponent {
     this.getInfoAdicional();
   }
 
-  readonly columns = [
-    {
-      title: `<i class="material-icons" style="cursor:pointer;">add_box</i>`, // reemplazo de faPlusSquare
-      headerHozAlign: 'center',
-      headerSort: false,
-      headerClick: () => {
-        this.infoAdicional.push({});
-      },
-      formatter: (cell: any) => {
-        const delBtn = document.createElement('button');
-        delBtn.type = 'button';
-        delBtn.innerHTML = `<i class="material-icons" style="font-size:16px;">delete</i>`; // reemplazo de faTrashAlt
-        delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
-        delBtn.addEventListener('click', () => {
-          const rowData = cell.getRow().getData();
-          console.log(rowData);
-          this.askToDelete(rowData);
-        });
+  ngAfterViewInit(): void {
+    // Asignar el template después de que la vista se haya inicializado
+    this.columnsDefs.forEach((col) => {
+      if (col.type === 'template' && col.key === 'nombre') {
+        col.templateOutlet = this.templateName;
+      }
+      if (col.type === 'template' && col.key === 'valor') {
+        col.templateOutlet = this.templateValue;
+      }
 
-        const buttonHolder = document.createElement('span');
-        buttonHolder.appendChild(delBtn);
+      if (col.type === 'template' && col.key === 'politicaCredito') {
+        col.templateOutlet = this.templatePoliticaCredito;
+      }
 
-        return buttonHolder;
-      },
-    },
-    {
-      title: 'Nombre',
-      field: 'nombre',
-      width: '35px',
-      responsive: 0,
-      headerSort: false,
-      editor: true,
-    },
-    {
-      title: 'Valor',
-      field: 'valor',
-      width: '60px',
-      headerSort: false,
-      editor: true,
-    },
-  ];
 
-  askToDelete(data: any) {
+    });
+  }
+
+  addRow() {
+
+    this.dataSource.update((ds)=>{
+      return [...ds, {unique: generateUuidv4(), nombre: '', valor: '', politicaCredito: false}]
+    });
+  }
+
+  askToDelete(item: DocConfigInfoAdicional) {
     try {
       Swal.fire({
         html: `Esta seguro de eliminar este elemento`,
@@ -94,8 +105,9 @@ export class DocConfigInfoAdicionalComponent {
         cancelButtonText: 'No!',
       }).then((result) => {
         if (result.isConfirmed) {
-          let index = this.infoAdicional.indexOf(data);
-          this.infoAdicional.splice(index, 1);
+          this.dataSource.update((ds)=>{
+            return ds.filter(ds=>ds.unique !== item.unique)
+          });
         }
       });
     } catch (error) {
@@ -106,11 +118,11 @@ export class DocConfigInfoAdicionalComponent {
   save() {
     try {
       if (
-        this.infoAdicional.some(
+        this.dataSource().some(
           (item) => !(isValidField(item.nombre) || isValidField(item.valor)),
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Los campos no pueden estar vacio',
         });
@@ -125,33 +137,33 @@ export class DocConfigInfoAdicionalComponent {
         ultimaSecuencia: this.params.ultimaSecuencia,
         editInfo: true,
         infoAdicional:
-          this.infoAdicional.length == 0
+          this.dataSource().length == 0
             ? null
-            : JSON.stringify(this.infoAdicional),
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            : JSON.stringify(this.dataSource().map(({ unique, ...rest }) => rest)),
       };
 
-      this.docConfigSvc.post(data).subscribe({
-        next: (response) => {
+      this.$createUseCase.execute(data).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
+            Swal.fire({
+              icon: 'warning',
+              text: response.message,
+            })
           }
           if (response.code === '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
-            this.modal.close(response);
+            Swal.fire({
+              icon: 'success',
+              text: response.message,
+              timer: 1000,
+            })
+            this.dialogRef.close(response);
           }
-        },
-        error(err) {
-          console.log(err);
-        },
-      });
+        }  );
     } catch (error) {
       console.log(error);
     }
+  }
+  close() {
+    this.dialogRef.close();
   }
 }

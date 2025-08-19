@@ -18,13 +18,14 @@ public class PetTypeController(IPetTypeService petTypeService) : BaseApiControll
     public async Task<IActionResult> Put(int id, [FromBody] PetType petType)
     {
         if (id != petType.Id) return BadRequest();
-
+        petType.UpdatedByUserId = User.GetUserId();
         return Ok(await petTypeService.UpdateAsync(id, petType));
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] PetType petType)
     {
+        petType.CreatedByUserId = User.GetUserId();
         return Ok(await petTypeService.AddAsync(petType));
     }
 

@@ -3,7 +3,6 @@ import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[appInputNumber]',
-  standalone: true,
 })
 export class InputNumberDirective {
   constructor(private ngModel: NgModel) { }
@@ -11,8 +10,8 @@ export class InputNumberDirective {
   @HostListener('input', ['$event.target.value'])
   onInput(value: string) {
     let clean = value.replace(/[^-0-9\.]/g, '');
-    let negativeCheck = clean.split('-');
-    let decimalCheck = clean.split('.');
+    const negativeCheck = clean.split('-');
+    const decimalCheck = clean.split('.');
 
     if (negativeCheck[1] !== undefined) {
       negativeCheck[1] = negativeCheck[1].slice(0, negativeCheck[1].length);

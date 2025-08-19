@@ -1,56 +1,87 @@
 ﻿using Configuracion.API.Extensions.Endpoints;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+    var environment = builder.Environment.EnvironmentName;
 
-builder.Services.AddApplicationServices(builder.Configuration);
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-builder.Services.AddIdentityService(builder.Configuration);
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-builder.Services.AddOpenApi();
 
-var app = builder.Build();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+    // Add services to the container.
 
-app.UseResponseCompression();
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-app.UseMiddleware<ExceptionMiddleware>();
+    builder.Services.AddIdentityService(builder.Configuration);
 
-app.UseMiddleware<MobileRequestMiddleware>();
+    builder.Services.AddOpenApi();
 
-app.MapPrinterEndpoints();
+    var app = builder.Build();
 
-app.UseRouting();
+    app.UseSerilogRequestLogging();
 
-app.UseHttpsRedirection();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseForwardedHeaders();
+    app.UseResponseCompression();
 
-app.UseAuthentication();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseAuthorization();
+    app.UseMiddleware<MobileRequestMiddleware>();
 
-app.MapControllers().RequireAuthorization();
+    app.MapPrinterEndpoints();
 
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-//var context = services.GetRequiredService<ConfigContext>();
-//var logger = services.GetRequiredService<ILogger<Program>>();
+    app.UseRouting();
 
-//try
-//{
-//    await context.Database.MigrateAsync();
-//    await ConfigContextSeed.SeedAsync(context);
-//}
-//catch (Exception ex)
-//{
-//    logger.LogError(ex, "An error occured during migration");
-//}
+    app.UseHttpsRedirection();
 
-await app.RunAsync();
+    app.UseForwardedHeaders();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers().RequireAuthorization();
+
+    //using var scope = app.Services.CreateScope();
+    //var services = scope.ServiceProvider;
+    //var context = services.GetRequiredService<ConfigContext>();
+    //var logger = services.GetRequiredService<ILogger<Program>>();
+
+    //try
+    //{
+    //    await context.Database.MigrateAsync();
+    //    await ConfigContextSeed.SeedAsync(context);
+    //}
+    //catch (Exception ex)
+    //{
+    //    logger.LogError(ex, "An error occured during migration");
+    //}
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

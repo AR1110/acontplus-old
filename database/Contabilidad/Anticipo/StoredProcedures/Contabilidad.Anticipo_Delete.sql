@@ -13,7 +13,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @idUsuario INT
+    DECLARE @userId INT
 
     --> Movimiento Caja 
     DECLARE @idTipoDocumento INT ,@idComprobanteIngreso INT ,@idControlCaja INT
@@ -33,30 +33,30 @@ BEGIN
         --> Validacion de Informacion
         IF EXISTS (SELECT 1 FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id AND estado = 0)
             BEGIN
-                SELECT Common.ufnSpResponse('0', 'Este Comprobante ya se encuentra anulado',  DEFAULT)	
-                RETURN 
+                SELECT '0' as code, 'Este Comprobante ya se encuentra anulado' as 'message'	
+                 
             END
 
         IF EXISTS (SELECT 1 FROM ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja AND estado = 0)
             BEGIN 
-                SELECT Common.ufnSpResponse('0','El control de caja se encuentra cerrado no puede ser anulado el comproabnte',  DEFAULT)	
-				RETURN
+                SELECT '0' as code,'El control de caja se encuentra cerrado no puede ser anulado el comproabnte' as 'message'	
+				
             END
 
         IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = 'A' AND idDocumento = @id AND codEstado NOT IN ('PE'))
             BEGIN 
-                SELECT Common.ufnSpResponse('0','El anticipo cuenta en un estado contable no puede ser anulado',  DEFAULT)	
-				RETURN
+                SELECT '0' as code,'El anticipo cuenta en un estado contable no puede ser anulado' as 'message'	
+				
             END
 
         BEGIN TRAN 
             UPDATE dbo.Anticipo WITH (ROWLOCK) SET estado = 0 WHERE idAnticipo = @id
 
-            UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso 
+            UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @userId WHERE idComprobanteIngreso = @idComprobanteIngreso 
         
             UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK) SET idEstadoPago = @idEstadoPago WHERE idDocumento = @id AND codDoc = 'A'
         COMMIT TRAN 
-        SELECT Common.ufnSpResponse('1', 'Anulado Correctamente',  DEFAULT)
+        SELECT '1' as code, 'Anulado Correctamente' as 'message'
     END TRY 
 
     BEGIN CATCH 
@@ -64,10 +64,12 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END 
-        SELECT Common.ufnSpResponse('0', 'Info: Error en el procedimiento',  DEFAULT)
-		INSERT INTO ErroresSistema
-		    (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/Anticipo/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+        SELECT '0' as code, 'Info: Error en el procedimiento' as 'message'
+		 INSERT INTO ErroresSistema
+			    (method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,idUsuario, additionalInfo)
+		VALUES ('/Anticipo/Get',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),@userId,  N'{' +
+            N'"userRoleId": ' + CAST(@userRoleId AS NVARCHAR) + N',' +
+            N'"id": ' + CAST(@id AS NVARCHAR) + N'}');
     END CATCH
 
 END

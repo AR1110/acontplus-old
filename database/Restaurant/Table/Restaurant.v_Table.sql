@@ -11,7 +11,9 @@ SELECT  rt.Id
     ,rt.CreatedAt
     ,rt.UpdatedAt
     ,rt.[Enabled]
+    ,rt.IsActive
     ,rt.[Deleted]
+    ,rt.IsDeleted
     ,rt.[UserId]
     ,rt.RoomId
     ,roomDescription = rr.[Description]

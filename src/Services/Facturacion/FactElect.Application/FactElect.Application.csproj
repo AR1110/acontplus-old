@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj" />
+    <PackageReference Include="Acontplus.Common.Data" />
+    <PackageReference Include="Acontplus.Common.FactElect" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FactElect.Domain\FactElect.Domain.csproj" />
   </ItemGroup>
 
 </Project>

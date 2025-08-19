@@ -19,7 +19,8 @@ public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRec
 
     public async Task<byte[]> DownloadAsync(Dictionary<string, object> parameters)
     {
-        var dt = await repository.GetDataTableAsync("Recepcion.Documento_Get_Id", parameters);
+        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters, withTableNames: false);
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
         {
             var xmlDoc = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlDoc"));
@@ -40,16 +41,17 @@ public class DocumentoRecibidoService(IAdoRepository repository) : IDocumentoRec
     public async Task<XmlDocument> GetById(Dictionary<string, object> parameters)
     {
         var xdoc = new XmlDocument();
-        var dt = await repository.GetDataTableAsync("Recepcion.Documento_Get_Id", parameters);
+        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters, withTableNames: false);
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         switch (dt.Rows.Count)
         {
             case > 0 when dt.Columns.Contains("xmlDoc"):
-            {
-                var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                if (xmlDoc != null) xdoc.LoadXml(xmlDoc);
+                {
+                    var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                    if (xmlDoc != null) xdoc.LoadXml(xmlDoc);
 
-                return xdoc;
-            }
+                    return xdoc;
+                }
             default:
                 return new XmlDocument();
         }

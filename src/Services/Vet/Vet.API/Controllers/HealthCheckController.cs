@@ -7,7 +7,7 @@ public class HealthCheckController(IHealthCheckService healthCheckService) : Bas
     {
         if (id != healthCheck.Id) return BadRequest("Id no coincide");
 
-        healthCheck.UserId = User.GetUserId();
+        healthCheck.UpdatedByUserId = User.GetUserId();
 
         return Ok(await healthCheckService.UpdateAsync(id, healthCheck));
     }

@@ -15,12 +15,10 @@ public class DeviceService : IDeviceService
     {
         if (device.Customers.Count > 0)
         {
-            foreach (var product in device.Customers) product.UserId = device.UserId;
-
-            ;
+            foreach (var product in device.Customers) product.CreatedByUserId = device.CreatedByUserId;
         }
 
-        device.Specs.UserId = device.UserId;
+        device.Specs.CreatedByUserId = device.CreatedByUserId;
         _context.Devices.Add(device);
         await _context.SaveChangesAsync();
         device.Id = device.Id;
@@ -32,9 +30,7 @@ public class DeviceService : IDeviceService
         var device = await _context.Devices.FindAsync(id);
         if (device == null) return new ApiResponse { Code = "0", Message = "No existe el equipo" };
 
-        device.Enabled = false;
-        device.Deleted = true;
-        device.UserId = userId;
+        device.MarkAsDeleted(userId);
         _context.Update(device);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
@@ -56,9 +52,9 @@ public class DeviceService : IDeviceService
         var productFounded = await _context.Devices.FindAsync(id);
         productFounded.ModeloId = device.ModeloId;
         productFounded.Color = device.Color;
-        productFounded.Enabled = device.Enabled;
+        productFounded.IsActive = device.IsActive;
         productFounded.Name = device.Name;
-        productFounded.UserId = device.UserId;
+        productFounded.UpdatedByUserId = device.UpdatedByUserId;
         _context.Update(productFounded);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };

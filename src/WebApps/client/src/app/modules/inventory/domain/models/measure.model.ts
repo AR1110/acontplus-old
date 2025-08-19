@@ -1,6 +1,6 @@
 import { TarifaProducto } from "./tarifa.model"
 
-export type Measure = {
+export interface Measure {
     idMedida: number,
     descripcion: string
     estado: boolean,
@@ -19,8 +19,9 @@ export interface MedidaProducto {
   descripcion: string;
   conversion: number;
   defaultMedida: boolean;
+  precioUnitario: number
   precioCosto: number
   precioCostoFraccionado: number
   tipo: "FRACCIONADO" | "PRINCIPAL"
-  tarifas: Array<TarifaProducto>
+  tarifas: TarifaProducto[]
 }

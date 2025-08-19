@@ -1,29 +1,29 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
 import { MatTableModule } from '@angular/material/table';
-import { Pagination } from '@shared/models/pagination.model';
+import { MatPagination } from '@shared/models/pagination.model';
 import { OrderDocumentComponent } from '../order-document/order-document.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { DialogService } from '@core/services/dialog.service';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-order-list',
@@ -31,15 +31,12 @@ import { MatIcon } from '@angular/material/icon';
     DateRangeSelectionComponent,
     FormsModule,
     MatTableModule,
-    NgbPaginationModule,
-    PrimaryStatusPipe,
-    MatCardContent,
-    MatCard,
     MatButton,
     MatMenuTrigger,
     MatIcon,
     MatMenu,
     MatMenuItem,
+    MatDynamicTableComponent,
   ],
   templateUrl: './order-list.component.html',
   styles: `
@@ -70,14 +67,29 @@ export class OrderListComponent implements OnInit {
     'status',
     'orderStatusName',
   ];
-  orders: any = [];
-  pagination = new Pagination();
+  orders = signal<any>([]);
   startDate = '';
   users: any = [];
-  private modalService = inject(ModalService);
+  private modalService = inject(DialogService);
   private orderService = inject(OrderService);
   private sharedService = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
+
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'index', label: '#', type: 'string' },
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
+    { key: 'serie', label: 'Serie Comprobante', type: 'string' },
+    { key: 'razonSocialComprador', label: 'Cliente', type: 'string' },
+    { key: 'discount', label: 'Descuento', type: 'number' },
+    { key: 'total', label: 'Total', type: 'number' },
+    { key: 'userName', label: 'Usuario Asignado', type: 'string' },
+    { key: 'orderStatusName', label: 'Estado Orden', type: 'string' },
+    { key: 'nombreEstado', label: 'Estado', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+
+  pagination = signal(new MatPagination());
 
   async askToCancel(item: any) {
     const result = await swal.fire({
@@ -93,7 +105,7 @@ export class OrderListComponent implements OnInit {
       this.orderService.delete(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -111,26 +123,33 @@ export class OrderListComponent implements OnInit {
   }
 
   get() {
-    let params = {
-      pageIndex: this.pagination.pageIndex,
-      pageSize: this.pagination.pageSize,
+    const params = {
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
       orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode],
       startDate: this.startDate,
     };
-    let clonedParams = Object.assign(params, this.dataSearch);
-    console.log(clonedParams);
-    this.orderService.getAll(clonedParams).subscribe({
-      next: (response) => {
-        this.orders = response.orders;
-        this.users = response.users;
-        if (this.orders.length > 0) {
-          this.pagination.totalRecords = this.orders[0].totalRecords;
+    const clonedParams = Object.assign(params, this.dataSearch);
+    this.orderService.getAll(clonedParams).subscribe((response) => {
+      const orders = (response.orders || []).map(
+        (order: any, index: number) => {
+          return {
+            ...order,
+            index: index + 1,
+            nombreEstado: order.enabled ? 'Activo' : 'Inactivo',
+          };
         }
-      },
-      complete() {},
-      error(error) {
-        console.log(error);
-      },
+      );
+      this.orders.set(orders);
+      this.users = response.users;
+      if (this.orders().length > 0) {
+        this.pagination.update((prev) => {
+          return {
+            ...prev,
+            totalRecords: response.orders[0].totalRecords,
+          };
+        });
+      }
     });
   }
 
@@ -146,12 +165,10 @@ export class OrderListComponent implements OnInit {
     this.sharedService.getReport({ data: parameters, format: 'pdf' });
   }
 
-  ngOnInit(): void {
+  refresh() {
     this.get();
   }
-
-  onChangePageSize() {
-    this.pagination.pageIndex = 1;
+  ngOnInit(): void {
     this.get();
   }
 
@@ -162,12 +179,11 @@ export class OrderListComponent implements OnInit {
   }
 
   onEdit(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
+    const modalRef = this.modalService.open(OrderModalComponent, {
       size: 'xl',
-      centered: true,
+      data: item || {},
     });
-    modalRef.componentInstance.data = item;
-    modalRef.result.then((response) => {
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -175,11 +191,11 @@ export class OrderListComponent implements OnInit {
   }
 
   onModalOpen() {
-    const modalResp = this.modalService.openModalCustom(OrderModalComponent, {
-      centered: true,
+    const modalResp = this.modalService.open(OrderModalComponent, {
       size: 'xl',
+      data: {},
     });
-    modalResp.result.then((response) => {
+    modalResp.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -187,51 +203,55 @@ export class OrderListComponent implements OnInit {
   }
 
   onOpenDocument(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderDocumentComponent, {
+    this.modalService.open(OrderDocumentComponent, {
       size: 'xl',
-      centered: true,
+      data: structuredClone(item),
     });
-    modalRef.componentInstance.data = item;
   }
 
   askToDelivery(item: any) {
-    const modalRef = this.modalService.openModalCustom(
-      OrderDeliveryModalComponent,
-      {
-        centered: true,
-      },
-    );
-    modalRef.componentInstance.data = item;
+    const modalRef = this.modalService.open(OrderDeliveryModalComponent, {
+      data: structuredClone(item) || {},
+    });
 
-    modalRef.result.then((response) => {
+    modalRef.subscribe((response) => {
       if (response.code === '1') {
         this.get();
       }
     });
   }
 
-  onPageChanged() {
-    this.get();
-  }
-
   openModalMaintenance(item: any) {
     if (!(item.assignedUserId > 0)) {
-      return this.tS.toastr({
+      return this.tS.show({
         type: 'warning',
         message:
           'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',
       });
     }
-    const modalRef = this.modalService.openModalCustom(
-      OrderMaintenanceModalComponent,
-      { size: 'xl' },
-    );
-    modalRef.componentInstance.params = { id: item.id };
+    const modalRef = this.modalService.open(OrderMaintenanceModalComponent, {
+      size: 'xl',
+      data: {
+        id: item.id,
+      },
+    });
 
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.get();
       }
     });
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
   }
 }

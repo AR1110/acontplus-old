@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, input, model, output } from '@angular/core';
+import { Component, inject, input, model, output, OnChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,12 +19,11 @@ import {
   switchMap,
   tap, debounceTime,
 } from 'rxjs';
-import { SupplierUseCase } from '@customer/domain/usecases/supplier.use-case';
+import { SupplierUseCase } from '@customer/application/usecases/supplier.use-case';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 
 @Component({
   selector: 'app-supplier-search',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatAutocompleteModule,
@@ -45,7 +44,7 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
     `,
   ],
 })
-export class SupplierSearchComponent {
+export class SupplierSearchComponent implements OnChanges {
   private readonly supplierUseCase = inject(SupplierUseCase);
 
   // Input properties
@@ -191,7 +190,7 @@ export class SupplierSearchComponent {
       //         }
       //         this.dialogSvc.open(CompanyCustomerAddEditModalComponent, {
       //           size: 'lg',
-      //           data: params
+      //           infrastructure: params
       //         })
       //       })
       //     } catch (error) {
@@ -222,7 +221,7 @@ export class SupplierSearchComponent {
       //         }
       //         this.dialogSvc.open(CompanyCustomerAddEditModalComponent, {
       //           size: 'lg',
-      //           data: params
+      //           infrastructure: params
       //         })
       //       })
       //     } catch (error) {

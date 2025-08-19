@@ -17,6 +17,8 @@
 
         $scope.drawMenus = function () {
             let textHtml = "";
+
+            // User profile section (static)
             textHtml += `<li class="user-pro">
                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                     <img src="/assets/images/user/user.png" alt="" class="img-circle">
@@ -29,21 +31,61 @@
                     <li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>
                 </ul>
             </li>`;
-            for (let i = 0; i < $scope.menus.length; i++) {
-                textHtml += "</ul></li>";
-                textHtml += `<li>
-                                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-                                    <i class="${$scope.menus[i].icon}"></i>
-                                    <span class="hide-menu"> ${$scope.menus[i].name}</span>
-                                </a>
-                <ul aria-expanded="false" class="collapse">`;
-                for (let sm = 0; sm < $scope.submenus.length; sm++) {
-                    if ($scope.menus[i].id == $scope.submenus[sm].menuId) {
-                        textHtml += `<li><a href="${$scope.submenus[sm].url}"><i class="${$scope.submenus[sm].icon}"></i> ${$scope.submenus[sm].name}</a></li>`;
-                    }
+
+            // Helper function to get children of a specific menu
+            function getChildren(parentId) {
+                return $scope.menus.filter(menu => menu.parentId === parentId);
+            }
+
+            // Get root level menus (parentId is null, 0, or undefined)
+            const rootMenus = $scope.menus.filter(menu =>
+                menu.parentId === null ||
+                menu.parentId === 0 ||
+                menu.parentId === undefined
+            );
+
+            // Recursive function to build menu items
+            function buildMenuItem(menu) {
+                const children = getChildren(menu.id);
+
+                if (children.length > 0) {
+                    // Menu item with children (has submenu)
+                    let itemHtml = `
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                        <i class="${menu.icon || 'ti-align-left'}"></i>
+                        <span class="hide-menu">${menu.name}</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">`;
+
+                    // Recursively build children
+                    children.forEach(child => {
+                        itemHtml += buildMenuItem(child);
+                    });
+
+                    itemHtml += `
+                    </ul>
+                </li>`;
+
+                    return itemHtml;
+                } else {
+                    // Leaf menu item (no children) - using menu.url directly
+                    return `
+                <li>
+                    <a href="${menu.url || 'javascript:void(0)'}">
+                        <i class="${menu.icon || ''}"></i> 
+                        ${menu.name}
+                    </a>
+                </li>`;
                 }
             }
 
+            // Build HTML for all root menus
+            rootMenus.forEach(menu => {
+                textHtml += buildMenuItem(menu);
+            });
+
+            // Set the HTML to the sidebar
             $("#sidebarnav").html(textHtml);
         };
 
@@ -85,10 +127,7 @@
                 return;
             }
 
-            $scope.submenus = $scope.userData.submenus || [];
-
-            //console.log($scope.menus)
-            //console.log($scope.submenus)
+            console.log($scope.menus);
 
             $scope.permissions = $scope.userData.permissions || [];
             $scope.accions = $scope.userData.actions || [];
@@ -98,7 +137,7 @@
                 return;
             }
 
-            if ($scope.menus.length > 0 || $scope.submenus.length > 0) {
+            if ($scope.menus.length > 0) {
                 $scope.drawMenus();
             }
         }
@@ -120,47 +159,8 @@
                 let lengthPath = pathname.split("/").splice(1).length;
 
                 if ([1, 2, 3, 4].includes(lengthPath)) {
-                    let dataMenu = $scope.submenus.find((item) => item.url === pathname);
+                    let dataMenu = $scope.menus.find((item) => item.url === pathname);
                     if (dataMenu) {
-                        const { newUrl, newUrlExpiration } = dataMenu;
-                        if (newUrl && newUrl.length > 0) {
-                            let timerInterval;
-                            swal.fire({
-                                icon: 'info',
-                                //title: 'Nueva Versión Disponible',
-                                text: 'Existe una nueva versión disponible, ¿desea acceder?',
-                                showCancelButton: true,
-                                confirmButtonText: 'Sí, acceder',
-                                cancelButtonText: 'Cancelar',
-                                timer: 5000,
-                                timerProgressBar: true,
-                                didOpen: () => {
-                                    //const progressBar = swal.getTimerProgressBar();
-                                    //if (progressBar) {
-                                    //    progressBar.style.background = '#4caf50';
-                                    //    progressBar.style.height = '6px';
-                                    //}
-                                    Swal.showLoading()
-                                    timerInterval = setInterval(() => {
-                                        const content = Swal.getHtmlContainer()
-                                        if (content) {
-                                            const b = content.querySelector('b')
-                                            if (b) {
-                                                b.textContent = Swal.getTimerLeft()
-                                            }
-                                        }
-                                    }, 100)
-                                },
-                                willClose: () => {
-                                    clearInterval(timerInterval)
-                                },
-                            }).then(result => {
-                                if (result.isConfirmed) {
-                                    location.href = newUrl;
-                                };
-                            });
-
-                        }
                         const dataAccionesSubMenu = userCustomerPermissionSvc.accionesSubMenu()
                         $rootScope.usuarioPermiso = userCustomerPermissionSvc.userPermissionAdapter();
                         let tempArray = JSON.parse(dataMenu.actions) || []

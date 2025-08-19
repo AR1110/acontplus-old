@@ -1,9 +1,9 @@
-import { Component, inject,   signal } from '@angular/core';
+import { Component, inject,   signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
-import { M3InputChipComponent } from '@shared/components/m3-input-chip/m3-input-chip.component';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {TagUseCase} from "@inventory/domain/usecases/tag.use-case";
@@ -22,13 +22,13 @@ import {SEPARADORES_REGEX, SEPARATOR_KEY_CODE} from "@core/constants/global.cons
       MatButtonModule,
       MatRadioModule,
         ToUpperCaseDirective,
-        M3InputChipComponent,
+        MatInputChipComponent,
       MatCustomDialogComponent
     ],
     templateUrl: './tags-add-edit-modal.component.html',
     styles: ``
 })
-export class TagsAddEditModalComponent {
+export class TagsAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<TagsAddEditModalComponent>);
 
   readonly data = inject<{
@@ -38,7 +38,7 @@ export class TagsAddEditModalComponent {
     etiquetas: string
   }>(MAT_DIALOG_DATA);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _tagUseCase= inject(TagUseCase)
 
   btnText = 'Guardar';
@@ -58,13 +58,13 @@ export class TagsAddEditModalComponent {
     next: (response: ApiResponse) => {
 
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if (response.code === "1") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message
         })
@@ -88,7 +88,7 @@ export class TagsAddEditModalComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción'
         })
@@ -96,7 +96,7 @@ export class TagsAddEditModalComponent {
       }
 
       if (this.etiquetas.length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese al menos una etiqueta'
         })

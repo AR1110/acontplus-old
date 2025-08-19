@@ -744,6 +744,7 @@ BEGIN
             SELECT cx.nroCuota
                   ,FORMAT(cx.fechaVencimiento,'dd/MM/yyyy') as fechaVencimiento
                   ,CAST(cx.cuota as numeric(18,2))          as cuota
+                  ,CAST(cx.diasMora as int)                 as diasMora
                   ,CAST(cx.mora as numeric(18,2))           as mora
                   ,CAST(cx.abono as numeric(18,2))          as abono
                   ,CAST(cx.saldo as numeric(18,2))          as saldo
@@ -772,6 +773,7 @@ BEGIN
             INNER JOIN dbo.ComprobanteIngreso      ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
             WHERE cx.idCuentaPorCobrar = @id
               AND ci.estado = 1
+            ORDER BY cx.nroCuota ASC
 
             RETURN 
         END 
@@ -982,11 +984,13 @@ BEGIN
             SELECT @codEstab           = codEstab
                   ,@dirViviendaCliente = dirViviendaCliente
                   ,@idCiudad           = idCiudad
+                  ,@ckCxcVencida       = ckCxcVencida
             FROM OPENJSON(@json) WITH 
             (
                 codEstab           VARCHAR(25) 
                ,dirViviendaCliente VARCHAR(150) 
                ,idCiudad           INT
+               ,ckCxcVencida       BIT
             )
 
             SET @sql = 'SELECT dt.razonSocial
@@ -1020,6 +1024,7 @@ BEGIN
                             INNER JOIN Customer.Customer      cu WITH (NOLOCK) ON cu.Id			       = cl.CustomerId
                             WHERE es.idEntidad = @idEntidad
                               AND (ep.codigo = ''PE'' OR ep.codigo = ''PP'')
+                              AND cc.codDoc IN (''01'',''NE'')
                          '
 
             SET @params = '@codEstab  VARCHAR(25)
@@ -1031,6 +1036,15 @@ BEGIN
                     SET @sql = @sql + 'AND es.codEstab = @codEstab '
                 END
 
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = @sql + 'AND cc.diasMora > 0 '
+                END 
+
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = @sql + 'AND cc.diasMora > 0 '
+                END 
 
             IF @dirViviendaCliente IS NOT NULL 
                 BEGIN 

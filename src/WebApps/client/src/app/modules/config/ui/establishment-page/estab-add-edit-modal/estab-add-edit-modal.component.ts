@@ -1,61 +1,61 @@
-import { CommonModule } from '@angular/common';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, inject, Input } from '@angular/core';
+
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  MatChipEditedEvent,
-  MatChipInputEvent,
-  MatChipsModule,
-} from '@angular/material/chips';
 
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatRadioModule } from '@angular/material/radio';
 import { isValidEmail, isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import {ApiResponse } from '@core/models/api-response';
 import { forkJoin, Observable } from 'rxjs';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
+import {  MatIconButton} from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {  MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputChipComponent} from "@shared/components/mat-input-chip/mat-input-chip.component";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-estab-add-edit-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatIcon,
-        MatChipsModule,
-        MatRadioModule,
-        ToUpperCaseDirective,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    MatRadioModule,
+    ToUpperCaseDirective,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconButton,
+    MatIcon,
+    MatInputChipComponent
+  ],
   templateUrl: './estab-add-edit-modal.component.html',
   styles: ``,
 })
-export class EstabAddEditModalComponent {
-  @Input() params = {
+export class EstabAddEditModalComponent implements OnInit {
+   params = inject<{
     id: 0,
-  };
+  }>(MAT_DIALOG_DATA);
 
-  modal = inject(NgbActiveModal);
+  modal = inject(MatDialogRef<EstabAddEditModalComponent>);
   private estabSvc = inject(EstablishmentService);
-  private tS = inject(ToasterService);
-  announcer = inject(LiveAnnouncer);
+  private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nuevo Establecimiento';
   btnText = 'Guardar';
 
-  cantones: any[] = [];
-  actividadesEconomica: any[] = [];
-  agentesRetencion: any[] = [];
-  contribuyentes: any[] = [];
-  ambientes: any[] = [];
+  cantones = signal<any[]>([]);
+  actividadesEconomica = signal<any[]>([]);
+  agentesRetencion = signal<any[]>([]);
+  contribuyentes = signal<any[]>([]);
+  ambientes = signal<any[]>([]);
 
   data = {
     canton: null,
@@ -74,29 +74,24 @@ export class EstabAddEditModalComponent {
 
   isDisabledAgenteRetencion = false;
 
-  addOnBlur = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  emails: string[] = [];
-  telephones: string[] = [];
+  emails = signal<string[]>([]);
+  telephones = signal<string[]>([]);
 
-  successResponse = {
-    next: (response: any) => {
-      if (isApiResponse(response)) {
+  successResponse =   (response: ApiResponse) => {
+
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code == '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });
           this.modal.close(response);
         }
-      }
-    },
   };
 
   private getOnLoadData(): Observable<any> {
@@ -133,17 +128,17 @@ export class EstabAddEditModalComponent {
           contribuyentes,
           ambientes,
         } = mainDataForm;
-        this.cantones = cantones;
-        this.actividadesEconomica = actividadesEconomica;
-        this.agentesRetencion = agentesRetencion;
-        this.contribuyentes = contribuyentes;
-        this.ambientes = ambientes;
+        this.cantones.set(cantones);
+        this.actividadesEconomica.set(actividadesEconomica);
+        this.agentesRetencion.set(agentesRetencion);
+        this.contribuyentes.set(contribuyentes);
+        this.ambientes.set(ambientes);
 
         if (this.params.id > 0) {
           this.data = data;
 
-          this.emails = data.emails;
-          this.telephones = data.telephones;
+          this.emails.set(data.emails);
+          this.telephones.set(data.telephones);
         }
       });
     } catch (error) {
@@ -159,7 +154,7 @@ export class EstabAddEditModalComponent {
   }
 
   showInfoTipoContribuyente() {
-    let dataInfo = this.contribuyentes.find(
+    const dataInfo = this.contribuyentes().find(
       (item) => item.codigo === this.data.contribuyente,
     );
     if (!this.data.contribuyente || !dataInfo.contribuyenteRimpe) return;
@@ -172,7 +167,7 @@ export class EstabAddEditModalComponent {
 
   showInfoActividadEconomica() {
     if (!this.data.actividad) return;
-    const groupActEconomica = this.actividadesEconomica.find(
+    const groupActEconomica = this.actividadesEconomica().find(
       (item) => item.codigo === this.data.actividad,
     ).grupo;
     Swal.fire({
@@ -181,86 +176,11 @@ export class EstabAddEditModalComponent {
     });
   }
 
-  addEmail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    // Add our fruit
-    if (value) {
-      this.emails.push(value);
-    }
-
-    // Clear the input value
-    event.chipInput!.clear();
-  }
-
-  removeEmail(value: string): void {
-    const index = this.emails.indexOf(value);
-
-    if (index >= 0) {
-      this.emails.splice(index, 1);
-
-      this.announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editEmail(email: string, event: MatChipEditedEvent) {
-    const value = event.value.trim();
-
-    // Remove email if it no longer has a name
-    if (!value) {
-      this.removeEmail(email);
-      return;
-    }
-
-    // Edit existing email
-    const index = this.emails.indexOf(email);
-    if (index >= 0) {
-      this.emails[index] = value;
-    }
-  }
-
-  addTelephone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    // Add our fruit
-    if (value) {
-      this.telephones.push(value);
-    }
-
-    // Clear the input value
-    event.chipInput!.clear();
-  }
-
-  removeTelephone(value: string): void {
-    const index = this.telephones.indexOf(value);
-
-    if (index >= 0) {
-      this.telephones.splice(index, 1);
-
-      this.announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editTelephone(telefono: string, event: MatChipEditedEvent) {
-    const value = event.value.trim();
-
-    // Remove fruit if it no longer has a name
-    if (!value) {
-      this.removeTelephone(telefono);
-      return;
-    }
-
-    // Edit existing fruit
-    const index = this.telephones.indexOf(telefono);
-    if (index >= 0) {
-      this.telephones[index] = value;
-    }
-  }
 
   async save() {
     try {
       if (!isValidField(this.data.nombreComercial)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese Nombre Comercial',
         });
@@ -268,7 +188,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.estab)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese Nro. de Establecimiento',
         });
@@ -276,7 +196,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (isNaN(parseFloat(this.data.estab))) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Nro. Establecimiento tiene que ser número',
         });
@@ -284,7 +204,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (isValidField(this.data.estab) && this.data.estab?.length !== 3) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El Nro. de Establecimiento tiene que tener tres dígitos',
         });
@@ -292,7 +212,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.contribuyente)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Tipo Contribuyente',
         });
@@ -301,7 +221,7 @@ export class EstabAddEditModalComponent {
 
       if (isValidField(this.data.contribuyenteEspecial)) {
         if (isNaN(parseFloat(this.data.estab))) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Nro. Contribuyente Especial tiene que ser número',
           });
@@ -311,7 +231,7 @@ export class EstabAddEditModalComponent {
           isValidField(this.data.contribuyenteEspecial) &&
           this.data.contribuyenteEspecial?.length !== 3
         ) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'El Nro. de Establecimiento tiene que tener tres dígitos',
           });
@@ -320,7 +240,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.actividad)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione la Actividad',
         });
@@ -328,8 +248,8 @@ export class EstabAddEditModalComponent {
       }
 
       if (this.emails.length > 0) {
-        if (!this.emails.every((item) => isValidEmail(item))) {
-          this.tS.toastr({
+        if (!this.emails().every((item) => isValidEmail(item))) {
+          this.tS.show({
             type: 'warning',
             message: 'Verifique que los correos  esten ingresado correctamente',
           });
@@ -338,7 +258,7 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.canton)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Cantón',
         });
@@ -346,35 +266,35 @@ export class EstabAddEditModalComponent {
       }
 
       if (!isValidField(this.data.dirEstablecimiento)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la Dirección',
         });
         return;
       }
 
-      this.data.contribuyenteRimpe = this.contribuyentes.find(
+      this.data.contribuyenteRimpe = this.contribuyentes().find(
         (item) => item.codigo === this.data.contribuyente,
       ).contribuyenteRimpe;
 
       this.data.telefono =
-        this.telephones.length > 0
-          ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH)
+        this.telephones().length > 0
+          ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
           : null;
       this.data.correo =
-        this.emails.length > 0
-          ? this.emails.join(SEPARATOR_KEY_CODE.SLASH)
+        this.emails().length > 0
+          ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
           : null;
 
       if (!isValidField(this.data.correo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Correo es requerido',
         });
         return;
       }
       if (!isValidField(this.data.telefono)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Teléfono es requerido',
         });
@@ -393,5 +313,8 @@ export class EstabAddEditModalComponent {
     } catch (error) {
       console.trace(error);
     }
+  }
+  close(){
+    this.modal.close();
   }
 }

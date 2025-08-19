@@ -3,25 +3,22 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   inject,
-  Input,
   signal,
   TemplateRef,
-  ViewChild,
+  ViewChild, OnInit, AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {getValidId, isValidField} from '@core/utils/utils';
 
 import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
 } from '@mechanical/domain/enums/mechanical.enum';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -41,9 +38,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { DialogService } from '@core/services/dialog.service';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
 
 @Component({
@@ -54,7 +51,6 @@ import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
 
     MatTableModule,
     MatCheckboxModule,
-    NgbPopoverModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
@@ -68,19 +64,18 @@ import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
   ],
   templateUrl: './support-page.component.html',
 })
-export class SupportPageComponent {
+export class SupportPageComponent implements OnInit, AfterViewInit {
   $store = inject(MechanicalStore)
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
-  modalSvc = inject(ModalService);
   dialogSvc = inject(DialogService);
   supportUseCase = inject(SupportUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 
   visibleColumns: string[] = [];
 
-  dataSource: any = [];
+  dataSource = signal<any[]>([]);
   dataSearch = {
     ckDate: true,
     fromDate: formatDateToString(new Date()),
@@ -128,11 +123,6 @@ export class SupportPageComponent {
     });
   }
 
-  onChangeRequiredDate(value: boolean) {
-    this.dataSearch.ckDate = value;
-    this.getSupports();
-  }
-
   onDateRangeSelection(range: { from: string; to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
@@ -145,7 +135,7 @@ export class SupportPageComponent {
     this.getSupports();
   }
 
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.customerId = data.customerId;
     this.getSupports();
   }
@@ -160,7 +150,7 @@ export class SupportPageComponent {
        * si status es 0 la pagina support-page carga en dasboard
        */
 
-      let params = {
+      const params = {
         ckDate: this.dataSearch.ckDate,
         pageIndex: this.pagination().pageIndex + 1,
         pageSize: this.pagination().pageSize,
@@ -170,15 +160,15 @@ export class SupportPageComponent {
         customerId: this.dataSearch.customerId,
         licensePlate: isValidField(this.dataSearch.licensePlate),
       };
-      this.dataSource = [];
+      this.dataSource.set([]);
       this.isLoadingResults.set(true)
       this.supportUseCase
         .getAll(params)
         .pipe(finalize(() => (this.isLoadingResults.set(false))))
         .subscribe((response) => {
-          this.dataSource = response;
-          if (this.dataSource.length > 0) {
-            this.pagination().totalRecords = this.dataSource[0].totalRecords;
+          this.dataSource.set(response);
+          if (this.dataSource().length > 0) {
+            this.pagination().totalRecords = this.dataSource()[0].totalRecords;
           }
         });
     } catch (error) {
@@ -232,15 +222,6 @@ export class SupportPageComponent {
     });
   }
 
-  pageChanged(): void {
-    this.getSupports();
-  }
-
-  changePageSize(): void {
-    this.pagination().pageIndex = 1;
-    this.getSupports();
-  }
-
   askToDelete(id: number) {
     try {
       Swal.fire({
@@ -256,13 +237,13 @@ export class SupportPageComponent {
         if (result.isConfirmed) {
           this.supportUseCase.remove(id).subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
@@ -277,15 +258,13 @@ export class SupportPageComponent {
   }
 
   openMaintenance(id: number) {
-    let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
+    const modalRef = this.dialogSvc.open(SupportMaintenanceModalComponent, {
       size: 'xl',
-      backdrop: 'static',
-      keyboard: false,
+      data: {
+        id,
+      }
     });
-    modalRef.componentInstance.params = {
-      id,
-    };
-    modalRef.result.then((result) => {
+    modalRef.subscribe(result=> {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -293,14 +272,14 @@ export class SupportPageComponent {
   }
 
   openModalInspection(id: number) {
-    let modalRef = this.modalSvc.open(InspectionModalComponent, {
+    const modalRef = this.dialogSvc.open(InspectionModalComponent, {
       size: 'xl',
+      data: {
+        supportId: id,
+      }
     });
-    modalRef.componentInstance.params = {
-      supportId: id,
-    };
 
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -308,9 +287,8 @@ export class SupportPageComponent {
   }
 
   askToConvertToDoc(id: number) {
-    this.supportUseCase.getConvertToAprobDoc(id).subscribe({
-      next: (response) => {
-        let dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
+    this.supportUseCase.getConvertToAprobDoc(id).subscribe((response) => {
+        const dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
           size: 'lg',
           data: response,
         });
@@ -320,14 +298,13 @@ export class SupportPageComponent {
             this.getSupports();
           }
         });
-      },
     });
   }
 
   // For report
   getReport(item: any) {
-    let format = 'pdf';
-    let dataParams = { supportId: item.id, tipo: 1 };
+    const format = 'pdf';
+    const dataParams = { supportId: item.id, tipo: 1 };
     const params = {
       reportParams: JSON.stringify({
         hasParams: true,
@@ -346,11 +323,11 @@ export class SupportPageComponent {
 
   //Status Support
   putState(id: number) {
-    let supportStatusId = this.$store.supportStatus().find(
+    const supportStatusId = this.$store.supportStatus().find(
       (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
     )?.id;
     if (!(supportStatusId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: `No se encontró el estado ${supportStatusId}`,
       });
@@ -371,13 +348,13 @@ export class SupportPageComponent {
             .putState(id, supportStatusId)
             .subscribe((response) => {
               if (response.code === '0') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
               }
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });

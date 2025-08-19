@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+using Common.Core.Base;
 
 namespace Mechanical.API.Entities;
 
@@ -12,7 +12,7 @@ public class Inspection : BaseEntity
     public DateTime Date { get; set; }
     public int Mileage { get; set; }
 
-    [Required] [MaxLength(150)] public string FuelLevel { get; set; }
+    [Required][MaxLength(150)] public string FuelLevel { get; set; }
 
     [Required] public string Engine { get; set; }
 

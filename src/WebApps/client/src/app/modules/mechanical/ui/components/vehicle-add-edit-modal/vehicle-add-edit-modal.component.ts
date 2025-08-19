@@ -1,14 +1,14 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import {Component, ElementRef, inject, signal, ViewChild, OnInit} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-type.model';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { CompanyCustomerSearchComponent } from '@modules/customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
 
 @Component({
   selector: 'app-vehicle-add-edit-modal',
@@ -36,7 +36,7 @@ import {CompanyCustomer} from "@customer/domain/models/company-customer";
   templateUrl: './vehicle-add-edit-modal.component.html',
   styles: ``,
 })
-export class VehicleAddEditModalComponent {
+export class VehicleAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<VehicleAddEditModalComponent>);
   readonly data = inject<{
     id: number;
@@ -44,15 +44,15 @@ export class VehicleAddEditModalComponent {
   }>(MAT_DIALOG_DATA);
 
   vehicleUseCase = inject(VehicleUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
-  titleModal = 'Nuevo Vehículo';
-  btnText = 'Guardar';
+  titleModal = signal('Nuevo Vehículo');
+  btnText = signal('Guardar');
 
-  countries: any = [];
-  vehicleTypes: VehicleTypeSelectHtmlOnly[] = [];
+  countries  =signal<any[]>([]);
+  vehicleTypes =signal<VehicleTypeSelectHtmlOnly[]>([]);
 
-  loading = false;
+  loading = signal(false);
 
   customer = {
     idType: '',
@@ -80,19 +80,19 @@ export class VehicleAddEditModalComponent {
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   myControlCountry = new FormControl<any>('');
-  optionsCountry: any[] = [];
-  filteredCountryOptions!: any[];
+  optionsCountry = signal<any[]>([]);
+  filteredCountryOptions = signal<any[]>([])
 
   successResponse = {
     next: (response: ApiResponse) => {
       if (response.code === '0') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message,
         });
       }
       if (response.code === '1') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
@@ -100,7 +100,7 @@ export class VehicleAddEditModalComponent {
         if (this.data.id > 0) {
           id = this.data.id;
         } else {
-          let data = JSON.parse(response.payload as string);
+          const data = JSON.parse(response.payload as string);
           if (Array.isArray(data) && data.length > 0) {
             id = data[0].id;
           }
@@ -116,29 +116,29 @@ export class VehicleAddEditModalComponent {
 
   ngOnInit() {
     if (this.data.id > 0) {
-      this.titleModal = 'Editar Vehículo';
-      this.btnText = 'Actualizar';
+      this.titleModal.set('Editar Vehículo');
+      this.btnText.set('Actualizar');
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.vehicleUseCase
       .getDataForm()
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => (this.loading.set(false))))
       .subscribe((response) => {
         const { countries, vehicleTypes } = response;
-        this.countries = countries;
-        this.vehicleTypes = vehicleTypes;
+        this.countries.set(countries);
+        this.vehicleTypes.set(vehicleTypes);
 
-        this.optionsCountry = countries;
-        this.filteredCountryOptions = countries.slice();
+        this.optionsCountry.set(countries);
+        this.filteredCountryOptions.set(countries.slice())
 
         if (this.data.id > 0) {
-          this.titleModal = 'Editar Vehículo';
-          this.btnText = 'Actualizar';
-          this.loading = true;
+          this.titleModal.set('Editar Vehículo');
+          this.btnText.set('Actualizar')
+          this.loading.set( true)
           this.vehicleUseCase
             .getId(this.data.id)
-            .pipe(finalize(() => (this.loading = false)))
+            .pipe(finalize(() => (this.loading.set(false))))
             .subscribe((response) => {
               // hideLoader()
               this.customer = response.customer as any;
@@ -153,7 +153,7 @@ export class VehicleAddEditModalComponent {
       });
   }
 
-  onCustomerSelected(dataForm: CompanyCustomer) {
+  onCustomerSelected(dataForm: CompanyCustomerEntity) {
     this.dataForm.customerId = dataForm.idCliente;
     this.customer.idType = dataForm.codigoSri!;
     this.customer.idCard = dataForm.numeroIdentificacion;
@@ -166,20 +166,21 @@ export class VehicleAddEditModalComponent {
   }
 
   getCountryTitle(countryId: number) {
-    return this.countries.find((item: any) => item.countryId === countryId)
+    return this.countries().find((item: any) => item.countryId === countryId)
       ?.description;
   }
 
   filterCountry(): void {
     const filterValue = this.input.nativeElement.value.toLowerCase();
-    this.filteredCountryOptions = this.optionsCountry.filter((o) =>
+    const filteredCountryOptions = this.optionsCountry().filter((o) =>
       o.description.toLowerCase().includes(filterValue),
     );
+    this.filteredCountryOptions.set(filteredCountryOptions);
   }
 
   isValidForm() {
     if (!(this.dataForm.customerId > 0)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente / Conductor',
       });
@@ -187,7 +188,7 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!this.dataForm.vehicleTypeId) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el tipo de Vehículo',
       });
@@ -195,22 +196,22 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!(this.dataForm.countryId > 0 || this.myControlCountry.value > 0)) {
-      this.tS.toastr({ type: 'warning', message: 'Selecccion el país' });
+      this.tS.show({ type: 'warning', message: 'Selecccion el país' });
       return;
     }
 
     if (!isValidField(this.dataForm.licensePlate)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese la Placa' });
+      this.tS.show({ type: 'warning', message: 'Ingrese la Placa' });
       return;
     }
 
     if (!isValidField(this.dataForm.brand)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese una marca' });
+      this.tS.show({ type: 'warning', message: 'Ingrese una marca' });
       return;
     }
 
     if (!isValidField(this.dataForm.year)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese un año de fabricación',
       });
@@ -218,21 +219,21 @@ export class VehicleAddEditModalComponent {
     }
 
     if (!isValidField(this.dataForm.color)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el color' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el color' });
       return;
     }
 
     if (!isValidField(this.dataForm.engine)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el Motor' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el Motor' });
       return;
     }
 
     if (!isValidField(this.dataForm.chassis)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el Chasis' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el Chasis' });
       return;
     }
     if (!isValidField(this.dataForm.cylindraje)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingrese el cilindraje' });
+      this.tS.show({ type: 'warning', message: 'Ingrese el cilindraje' });
       return;
     }
     return true;
@@ -243,7 +244,7 @@ export class VehicleAddEditModalComponent {
       if (!this.isValidForm()) return;
 
       this.dataForm.countryId = this.myControlCountry.value as any;
-      let dataParams = {
+      const dataParams = {
         customer: this.customer,
         vehicle: this.dataForm,
       };

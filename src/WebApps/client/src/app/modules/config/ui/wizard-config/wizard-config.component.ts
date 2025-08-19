@@ -1,97 +1,201 @@
-import { Component, inject, ViewChild } from '@angular/core';
-import { BACKSLASH, ENTER } from '@angular/cdk/keycodes';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+// Angular Core
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  Component,
+  inject,
+  ViewChild,
+  OnInit,
+  AfterViewInit,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+
+// Angular Material
 import {
   MatStep,
   MatStepLabel,
   MatStepper,
   MatStepperNext,
   MatStepperPrevious,
+  MatStepperModule,
 } from '@angular/material/stepper';
-import { MatButton } from '@angular/material/button';
-import {
-  MatChipEditedEvent,
-  MatChipGrid,
-  MatChipInput,
-  MatChipInputEvent,
-  MatChipRow,
-} from '@angular/material/chips';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
-import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { MatButton, MatIconButton, MatButtonModule } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInput, MatLabel } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
+// Third-party Libraries
+import { catchError } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { of } from 'rxjs';
+
+// Core Components & Services
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
+import { isApiResponse } from '@core/models/api-response';
+
+// Shared Components & Models
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+
+// Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
-import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
-import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
+import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 
-import Swal from 'sweetalert2';
-import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { DocConfigService } from '@modules/config/services/doc-config.service';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
-import { DocConfig } from '@modules/config/domain/models/doc-config.model';
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
-import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';
-
-import { faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { UserData } from '@modules/auth/domain/models/user-data.model';
+// Module Use Cases
+import { SaveElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/save-electronic-signature.use-case';
+import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+
+// Module Models
+import { ActividadEconomica } from '@modules/config/domain/models/wizard-config/actividad-economica.model';
+import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/agente-retencion.model';
+import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
+import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
+import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
+import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
+import { DocConfig } from '@modules/config/domain/models/doc-config.model';
+import { UserData } from '@modules/auth/domain/models/user-data.model';
+
+// Shared Components & Models
+import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
+import { SelectOption } from '@shared/models/select-option';
+
+// Utilities
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
+import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
+
+interface TabulatorCell {
+  getRow(): {
+    getTreeParent(): unknown;
+  };
+}
+
+interface TabulatorValidatorResult {
+  valid: boolean;
+  message: string;
+}
+
+interface DocConfigItem {
+  idPuntoEmision: string;
+  idTipoDocumento: string;
+  ultimaSecuencia: number;
+  descripcion?: string;
+  parentId?: string;
+}
+
+interface EstabWithChildren extends GroupedEstab {
+  _children: DocConfigItem[];
+}
+
+interface FileChangeEvent {
+  target: {
+    files: FileList;
+  };
+}
+
+interface BodegaFormControls {
+  descripcion: FormControl<string | null>;
+  direccion: FormControl<string | null>;
+  telefono: FormControl<string | null>;
+}
+
+interface PtoEmiFormControls {
+  ptoEmi: FormControl<string | null>;
+  ambiente: FormControl<string | null>;
+}
+
+interface EstabFormControls {
+  canton: FormControl<string | null>;
+  estab: FormControl<string | null>;
+  nombreComercial: FormControl<string | null>;
+  dirEstablecimiento: FormControl<string | null>;
+  telefono: FormControl<string | null>;
+  correo: FormControl<string | null>;
+  ptosEmi: FormArray<FormGroup<PtoEmiFormControls>>;
+  hasInventory: FormControl<boolean | null>;
+  bodegas: FormArray<FormGroup<BodegaFormControls>>;
+  // Consolidated tipoContribuyente fields
+  actividad: FormControl<string | null>;
+  agenteRetencion: FormControl<string | null>;
+  contribuyente: FormControl<string | null>;
+  contribuyenteEspecial: FormControl<string | null>;
+  obligadoContabilidad: FormControl<string | null>;
+}
 
 @Component({
   selector: 'app-wizard-config',
-  imports: [
-    MatStepper,
-    MatStep,
-    BreadcrumbComponent,
-    ReactiveFormsModule,
-    MatStepLabel,
-    MatButton,
-    MatStepperNext,
-    MatStepperPrevious,
-    FaIconComponent,
-    MatRadioButton,
-    NgbTooltip,
-    MatChipGrid,
-    MatChipRow,
-    MatChipInput,
-    MatRadioGroup,
-    ToUpperCaseDirective,
-    TabulatorSemanticUiComponent,
-    MatCardContent,
-    MatCard,
-    MatIcon,
-    ThemeButtonComponent,
-  ],
   templateUrl: './wizard-config.component.html',
-  styles: [],
+  styleUrls: ['./wizard-config.component.scss'],
+  standalone: true,
+  imports: [
+    // Angular modules
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+
+    // Material modules
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatInput,
+    MatLabel,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatStepperModule,
+    MatTooltipModule,
+
+    // Components
+    BreadcrumbComponent,
+    TabulatorComponent,
+    MatInputChipComponent,
+    ThemeButtonComponent,
+    NgDynamicSelectComponent,
+  ],
 })
-export class WizardConfigComponent {
+export class WizardConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper!: MatStepper;
-  addOnBlur = true;
-  announcer = inject(LiveAnnouncer);
-  cantones: any[] = [];
-  columnNames = [
+  private readonly _tokenUseCase = inject(TokenUseCase);
+  private readonly _toasterService = inject(ToastrNotificationService);
+  private readonly _estabService = inject(EstablishmentService);
+  private readonly _companyDemoStepService = inject(CompanyDemoStepService);
+  private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
+  private readonly _errorHandler = inject(WizardErrorHandlerService);
+  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
+  private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
+  private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
+
+  private readonly _fb = inject(FormBuilder);
+
+  // Options for obligado contabilidad select
+  readonly obligadoContabilidadOptions = [
+    { value: 'SI', label: 'SI' },
+    { value: 'NO', label: 'NO' },
+  ];
+
+  readonly columnNames = [
     { title: 'idPuntoEmision', field: 'idPuntoEmision', visible: false },
     { title: 'Pto. Emi', field: 'ptoEmi' },
     { title: 'idTipoDocumento', field: 'idTipoDocumento', visible: false },
@@ -104,10 +208,13 @@ export class WizardConfigComponent {
         min: 0,
         step: 1,
       },
-      editable: function (cell: any) {
+      editable: function (cell: TabulatorCell): boolean {
         return cell.getRow().getTreeParent() ? true : false;
       },
-      validator: function (cell: any, value: any) {
+      validator: function (
+        cell: TabulatorCell,
+        value: unknown,
+      ): boolean | TabulatorValidatorResult {
         if (cell.getRow().getTreeParent()) {
           if (value === '' || value === null) {
             return { valid: false, message: 'Este campo es requerido' };
@@ -122,82 +229,116 @@ export class WizardConfigComponent {
       },
     },
   ];
-  faYoutube: IconProp = faYoutube;
+  cantones = signal<Canton[]>([]);
+  actividadesEconomica = signal<ActividadEconomica[]>([]);
+  agentesRetencion = signal<AgenteRetencion[]>([]);
+  contribuyentes = signal<Contribuyente[]>([]);
+  ambientes = signal<AmbienteSri[]>(ambienteSriOptions);
+  establecimientos = signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  docs = signal<DocConfig[]>([]);
+  demoSteps = signal<DemoStep[]>([]);
+  emails = signal<string[]>([]);
+  telephones = signal<string[]>([]);
+  docsConfig = signal<EstabWithChildren[]>([]);
+  isLoadingDocs = signal<boolean>(false);
+  loadError = signal<string | null>(null);
+
+  showPassword = false;
+  showConfirmPassword = false;
+  userSubmitted = false;
+
+  readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
+
+  readonly actividadesEconomicaOptions = computed<SelectOption[]>(() =>
+    this.actividadesEconomica().map((actividad) => ({
+      value: actividad.codigo,
+      viewValue: actividad.descripcion,
+    })),
+  );
+
+  user = {} as UserData;
+
   fileError = false;
   selectedFile: File | null = null;
-  certificateUpdated = false;
-  docsConfig = [];
+  currentEstab = '';
+  userUpdated = false;
+  estabRegistered = false;
   docsUpdated = false;
-  actividadesEconomica: any[] = [];
-  agentesRetencion: any[] = [];
-  contribuyentes: any[] = [];
-  ambientes: AmbienteSri[] = ambienteSriOptions;
+  certificateUpdated = false;
+
   isLinear = false;
-  isDisabledAgenteRetencion = false;
-  emails: string[] = [];
-  telephones: string[] = [];
-  establecimientos: Array<GroupedEstab> = [];
-  currentEstab: string = '';
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  docs: Array<DocConfig> = [];
+
+  private static passwordsMatchValidator(control: AbstractControl) {
+    const group = control as FormGroup;
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+
+    // Only validate if password is provided
+    if (!password && !confirmPassword) {
+      return null;
+    }
+
+    return password === confirmPassword ? null : { passwordsMismatch: true };
+  }
+
   certificateForm = new FormGroup({
     contrasenia: new FormControl('', [Validators.required]),
-    fechaCaducidad: new FormControl('', [Validators.required]),
     fileSign: new FormControl(null, [Validators.required]),
   });
-  userForm = new FormGroup({
-    nroIdentificacion: new FormControl(''),
-    firstName: new FormControl('', [
+
+  estabForm = this._fb.group<EstabFormControls>({
+    canton: this._fb.control(''),
+    estab: this._fb.control('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(3),
+    ]),
+    nombreComercial: this._fb.control('', [
       Validators.required,
       Validators.minLength(2),
-      Validators.maxLength(50),
+      Validators.maxLength(300),
     ]),
-    lastName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(50),
-    ]),
+    dirEstablecimiento: this._fb.control('', [Validators.required, Validators.maxLength(300)]),
+    telefono: this._fb.control(''),
+    correo: this._fb.control(''),
+    ptosEmi: this._fb.array<FormGroup<PtoEmiFormControls>>([]),
+    hasInventory: this._fb.control(false),
+    bodegas: this._fb.array<FormGroup<BodegaFormControls>>([]),
+    // Consolidated tipoContribuyente fields
+    actividad: this._fb.control('', [Validators.required]),
+    agenteRetencion: this._fb.control(''),
+    contribuyente: this._fb.control('', [Validators.required]),
+    contribuyenteEspecial: this._fb.control(''),
+    obligadoContabilidad: this._fb.control('', [Validators.required]),
   });
-  demoSteps: DemoStep[] = [];
-  user = {} as UserData;
-  userUpdated: boolean = false;
-  estabRegistered: boolean = false;
-  readonly separatorKeysCodes = [ENTER, BACKSLASH] as const;
 
-  private _tokenUseCase = inject(TokenUseCase);
-
-  #toasterService = inject(ToasterService);
-  private $updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
-  #estabService = inject(EstablishmentService);
-  #fb = inject(FormBuilder);
-  estabForm = this.#fb.group({
-    canton: '',
-    actividad: ['', Validators.required],
-    agenteRetencion: '',
-    contribuyente: ['', Validators.required],
-    contribuyenteEspecial: [''],
-    estab: [
-      '',
-      [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
-    ],
-    obligadoContabilidad: [
-      '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(2)],
-    ],
-    nombreComercial: [
-      '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(300)],
-    ],
-    dirEstablecimiento: ['', [Validators.required, Validators.maxLength(300)]],
-    telefono: [''],
-    correo: [''],
-    ptosEmi: this.#fb.array([]),
-    hasInventory: [false],
-    bodegas: this.#fb.array([]),
-  });
-  #firmaElectronicaService = inject(FirmaElectronicaService);
-  #docConfigSvc = inject(DocConfigService);
-  #companyDemoStepService = inject(CompanyDemoStepService);
+  userForm = this._fb.group(
+    {
+      idCard: this._fb.control('', [Validators.required, Validators.minLength(10)]),
+      username: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20),
+        Validators.pattern(/^[a-zA-Z0-9_]+$/),
+      ]),
+      firstName: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ]),
+      lastName: this._fb.control('', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+      ]),
+      email: this._fb.control('', [Validators.email]),
+      phoneNumber: this._fb.control('', [Validators.pattern(/^[\d\s\-+()]*$/)]), // Made pattern accept empty string
+      password: this._fb.control('', [Validators.minLength(6)]), // Removed required validator
+      confirmPassword: this._fb.control(''), // Removed required validator
+    },
+    { validators: [WizardConfigComponent.passwordsMatchValidator] },
+  );
 
   get bodegas(): FormArray {
     return this.estabForm.get('bodegas') as FormArray;
@@ -207,44 +348,237 @@ export class WizardConfigComponent {
     return this.estabForm.get('ptosEmi') as FormArray;
   }
 
-  newBodega(): FormGroup {
-    return this.#fb.group({
-      descripcion: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300),
-        ],
-      ],
-      direccion: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(300),
-        ],
-      ],
-      telefono: [''],
+  ngOnInit(): void {
+    this.initializeUserData();
+    this.initializeForms();
+  }
+
+  ngAfterViewInit(): void {
+    // Fetch demo steps after view is initialized to ensure stepper is available
+    this.fetchCompanyDemoSteps();
+  }
+
+  private initializeUserData(): void {
+    const decodedToken = this._tokenUseCase.getUserData();
+    if (decodedToken) {
+      this.user = decodedToken;
+
+      // Patch email and username values to user form
+
+      const trimmedUsername = decodedToken.username.includes('@')
+        ? decodedToken.username.split('@')[0]
+        : decodedToken.username;
+
+      this.userForm.patchValue({
+        email: decodedToken.email,
+        username: trimmedUsername,
+      });
+    }
+  }
+
+  private initializeForms(): void {
+    if (this.ptosEmi.length === 0) {
+      this.addPtoEmi();
+    }
+  }
+
+  fetchCompanyDemoSteps(): void {
+    this._companyDemoStepService
+      .get()
+      .pipe(
+        catchError((error: unknown) => {
+          this._errorHandler.handleApiError(error, {
+            operation: 'fetching demo steps',
+            component: 'WizardConfigComponent',
+          });
+          return of(null);
+        }),
+      )
+      .subscribe((response) => {
+        if (response?.code === '1') {
+          const tempArray = JSON.parse(response.payload as string);
+          this.demoSteps.set(tempArray['companyDemoSteps'] as DemoStep[]);
+          this.updateStepCompletionStatus();
+          this.handleIncompleteSteps();
+        }
+      });
+  }
+
+  fetchDocConfig(): void {
+    this.isLoadingDocs.set(true);
+    this.loadError.set(null);
+
+    this._formDataDocConfig.execute().subscribe({
+      next: (response) => {
+        try {
+          this.establecimientos.set(response.establecimientos);
+
+          if (!response.establecimientos?.length) {
+            throw new Error('No se encontraron establecimientos');
+          }
+
+          this.currentEstab = this.establecimientos()[0]?.nombreComercial || '';
+
+          console.debug('Document configuration loaded successfully', this.establecimientos());
+
+          const combinedData = this.establecimientos().map((pto) => ({
+            ...pto,
+            ptoEmi: pto.puntosEmision?.[0]?.ptoEmi || '',
+            _children: (response.tiposDoc || []).map((doc) => ({
+              ...doc,
+              parentId: pto.puntosEmision?.[0]?.idPuntoEmision || '',
+              ultimaSecuencia: doc.codigoSri ? 0 : 1,
+            })),
+          }));
+
+          this.docsConfig.set(combinedData as EstabWithChildren[]);
+          console.debug('Document configuration loaded successfully', combinedData);
+        } catch (error) {
+          console.error('Error processing document configuration:', error);
+          this.loadError.set('Error al procesar la configuración de documentos');
+          this.docsConfig.set([]);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching document configuration:', error);
+        this.loadError.set('Error al cargar la configuración de documentos');
+        this.docsConfig.set([]);
+      },
+      complete: () => {
+        this.isLoadingDocs.set(false);
+      },
     });
   }
 
+  fetchEstabData(): void {
+    this._estabService.getDataForm().subscribe((response) => {
+      this.cantones.set(response.cantones);
+      this.actividadesEconomica.set(response.actividadesEconomica);
+      this.agentesRetencion.set(response.agentesRetencion);
+      this.contribuyentes.set(response.contribuyentes);
+    });
+  }
+
+  private updateStepCompletionStatus(): void {
+    this.userUpdated = this.getStepCompletionStatus('II');
+    console.debug('Update step completion status', this.userUpdated);
+    this.estabRegistered = this.getStepCompletionStatus('III');
+    this.docsUpdated = this.getStepCompletionStatus('IV');
+    this.certificateUpdated = this.getStepCompletionStatus('V');
+  }
+
+  private getStepCompletionStatus(stepCode: string): boolean {
+    return this.demoSteps().find((step: DemoStep) => step.code === stepCode)?.completed ?? false;
+  }
+
+  private handleIncompleteSteps(): void {
+    const incompleteStep = this.demoSteps().find((step: DemoStep) => !step.completed);
+    if (incompleteStep) {
+      const stepIndex = romanToInt(incompleteStep.code);
+      if (stepIndex !== null && stepIndex > 0) {
+        this.loadStepData(incompleteStep.code);
+        const targetIndex = stepIndex - 1;
+
+        // Check if stepper is available before accessing its properties
+        if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+          console.debug(targetIndex, this.stepper.steps.length);
+          if (targetIndex >= 0 && targetIndex < this.stepper.steps.length) {
+            this.stepper.selectedIndex = targetIndex;
+          }
+        } else {
+          // If stepper is not ready, defer the navigation
+          setTimeout(() => {
+            if (
+              this.stepper &&
+              this.stepper.steps &&
+              targetIndex >= 0 &&
+              targetIndex < this.stepper.steps.length
+            ) {
+              this.stepper.selectedIndex = targetIndex;
+            }
+          }, 0);
+        }
+      }
+    } else {
+      this.isLinear = true;
+      // Check if stepper is available before accessing its properties
+      if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+        const lastStepIndex = this.stepper.steps.length - 1;
+        this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+      } else {
+        // If stepper is not ready, defer the navigation
+        setTimeout(() => {
+          if (this.stepper && this.stepper.steps && this.stepper.steps.length > 0) {
+            const lastStepIndex = this.stepper.steps.length - 1;
+            this.stepper.selectedIndex = Math.max(0, lastStepIndex);
+          }
+        }, 0);
+      }
+    }
+  }
+
+  private loadStepData(stepCode: string): void {
+    if (stepCode === 'III') {
+      this.fetchEstabData();
+    } else if (stepCode === 'IV') {
+      this.fetchDocConfig();
+    }
+  }
+
+  saveUser(): void {
+    this.userSubmitted = true;
+    if (this.userForm.valid) {
+      const formValue = this.userForm.value;
+      const userData = {
+        id: this.user.userId || 0,
+        idCard: formValue.idCard || '',
+        username: formValue.username || '',
+        email: formValue.email || '',
+        fullName: `${formValue.firstName || ''} ${formValue.lastName || ''}`.trim(),
+        firstName: formValue.firstName || '',
+        lastName: formValue.lastName || '',
+        phoneNumber: formValue.phoneNumber || '',
+        password: formValue.password || '',
+        demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'II')?.id,
+      };
+
+      this._updateUserCustomerUseCase
+        .execute(userData)
+        .pipe(
+          catchError((error: unknown) => {
+            this._errorHandler.handleApiError(error, {
+              operation: 'updating user',
+              component: 'WizardConfigComponent',
+            });
+            return of(null);
+          }),
+        )
+        .subscribe((response) => {
+          if (response && isApiResponse(response)) {
+            this._toasterService.show({
+              type: response.code === '1' ? 'success' : 'warning',
+              message:
+                response.code === '1' ? 'Usuario actualizado exitosamente' : response.message,
+            });
+            if (response.code === '1') {
+              this.userUpdated = true;
+              this.fetchCompanyDemoSteps();
+            }
+          }
+        });
+    } else {
+      Object.keys(this.userForm.controls).forEach((key) => {
+        const control = this.userForm.get(key);
+        control?.markAsTouched();
+      });
+    }
+  }
   addBodega(): void {
     this.bodegas.push(this.newBodega());
   }
 
   removeBodega(index: number): void {
     this.bodegas.removeAt(index);
-  }
-
-  newPtoEmi(): FormGroup {
-    return this.#fb.group({
-      ptoEmi: [
-        '',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(3)],
-      ],
-      ambiente: ['', Validators.required],
-    });
   }
 
   addPtoEmi(): void {
@@ -255,134 +589,92 @@ export class WizardConfigComponent {
     this.ptosEmi.removeAt(index);
   }
 
-  ngOnInit(): void {
-    const decodedToken = this._tokenUseCase.getUserData();
-    if (decodedToken) {
-      this.user = decodedToken;
-    }
-    this.fetchCompanyDemoSteps();
-  }
-
-  // createFormGroup(controlsConfig: any): FormGroup {
-  //   return this.#fb.group(controlsConfig);
-  // }
-
-  fetchCompanyDemoSteps(): void {
-    this.#companyDemoStepService.get({}).subscribe((response) => {
-      if (response.code === '1') {
-        const tempArray = JSON.parse(response.payload as string);
-        this.demoSteps = tempArray['companyDemoSteps'] as DemoStep[];
-        this.userUpdated =
-          this.demoSteps.find((step) => step.code === 'IV')?.completed ?? false;
-        this.estabRegistered =
-          this.demoSteps.find((step) => step.code === 'V')?.completed ?? false;
-        this.docsUpdated =
-          this.demoSteps.find((step) => step.code === 'VI')?.completed ?? false;
-        this.certificateUpdated =
-          this.demoSteps.find((step) => step.code === 'VII')?.completed ??
-          false;
-
-        console.log(this.certificateUpdated);
-
-        const incompleteStep = this.demoSteps.find((step) => !step.completed);
-
-        if (incompleteStep) {
-          const stepIndex = incompleteStep
-            ? romanToInt(incompleteStep.code)
-            : null;
-          if (stepIndex !== null) {
-            if (incompleteStep?.code === 'V') {
-              this.fetchEstabData();
-            }
-            if (incompleteStep?.code === 'VI') {
-              this.fetchDocConfig();
-            }
-            this.stepper.selectedIndex = stepIndex - 1; // Adjust for zero-based index
-          }
-        } else {
-          this.isLinear = true;
-          this.stepper.selectedIndex = 4;
-        }
-      }
+  private newBodega(): FormGroup {
+    return this._fb.group({
+      descripcion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
+      direccion: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(300)]],
+      telefono: [''],
     });
   }
 
-  fetchDocConfig() {
-    this.#docConfigSvc.getDataForm().subscribe((response) => {
-      this.establecimientos = response.establecimientos;
-      this.currentEstab = this.establecimientos[0].nombreComercial;
-      const combinedData = this.establecimientos[0].puntosEmision.map(
-        (pto) => ({
-          ...pto,
-          _children: response.tiposDoc.map((doc: any) => ({
-            ...doc,
-            parentId: pto.idPuntoEmision,
-            ultimaSecuencia: 0,
-          })),
-        }),
-      );
-      this.docsConfig = combinedData as [];
+  private newPtoEmi(): FormGroup {
+    return this._fb.group({
+      ptoEmi: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
+      ambiente: ['', Validators.required],
     });
   }
 
-  fetchEstabData(): void {
-    this.#estabService.getDataForm().subscribe((response) => {
-      this.cantones = response.cantones;
-      this.actividadesEconomica = response.actividadesEconomica;
-      this.agentesRetencion = response.agentesRetencion;
-      this.contribuyentes = response.contribuyentes;
-    });
+  trackByBodega(index: number): number {
+    return index;
+  }
+
+  trackByPtoEmi(index: number): number {
+    return index;
   }
 
   saveEstab(): void {
     if (this.bodegas.length > 0 && !this.bodegas.valid) {
       this.bodegas.markAllAsTouched();
-      this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this.#toasterService.toastr({
+      this._toasterService.show({
         type: 'warning',
         message: 'Revise que los datos de las bodegas sean correctos',
       });
+      return;
     }
     if (this.ptosEmi.length === 0) {
-      this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this.#toasterService.toastr({
+      this._toasterService.show({
         type: 'warning',
         message: 'Ingrese al menos un punto de emisión',
       });
+      return;
     }
-
     if (!this.ptosEmi.valid) {
-      this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
       this.ptosEmi.markAllAsTouched();
-      return this.#toasterService.toastr({
+      this._toasterService.show({
         type: 'warning',
         message: 'Revise que los datos de los puntos de emisión sean correctos',
       });
+      return;
     }
-    let telephone =
-      this.telephones.length > 0
-        ? this.telephones.join(SEPARATOR_KEY_CODE.SLASH)
-        : null;
+    if (!this.estabForm.valid) {
+      this.estabForm.markAllAsTouched();
+      this._toasterService.show({
+        type: 'warning',
+        message:
+          'Complete todos los campos requeridos del establecimiento y configuración de contribuyente',
+      });
+      return;
+    }
 
+    const telephone =
+      this.telephones().length > 0 ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH) : null;
     this.estabForm.get('telefono')?.setValue(telephone);
 
-    let correo =
-      this.emails.length > 0
-        ? this.emails.join(SEPARATOR_KEY_CODE.SLASH)
-        : null;
+    const correo = this.emails().length > 0 ? this.emails().join(SEPARATOR_KEY_CODE.SLASH) : null;
     this.estabForm.get('correo')?.setValue(correo);
 
     const dataEstab = {
       ...this.estabForm.value,
       ptosEmi: JSON.stringify(this.estabForm.get('ptosEmi')?.value),
       bodegas: JSON.stringify(this.estabForm.get('bodegas')?.value),
-      demoStepId: this.demoSteps.find((step) => step.code === 'V')?.id,
+      tipoContribuyente: {
+        actividad: this.estabForm.get('actividad')?.value,
+        agenteRetencion: this.estabForm.get('agenteRetencion')?.value,
+        contribuyente: this.estabForm.get('contribuyente')?.value,
+        contribuyenteEspecial: this.estabForm.get('contribuyenteEspecial')?.value,
+        obligadoContabilidad: this.estabForm.get('obligadoContabilidad')?.value,
+      },
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'III')?.id,
     };
-    this.#estabService.post(dataEstab).subscribe((response) => {
+
+    this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
-        this.#toasterService.toastr({
+        this._toasterService.show({
           type: response.code == '1' ? 'success' : 'warning',
-          message: response.message,
+          message:
+            response.code == '1'
+              ? 'Establecimiento y configuración de contribuyente guardados exitosamente'
+              : response.message,
         });
         if (response.code == '1') {
           this.estabRegistered = true;
@@ -392,166 +684,116 @@ export class WizardConfigComponent {
     });
   }
 
-  saveUser(): void {
-    const data = {
-      ...structuredClone(this.userForm.value),
-      email: this.user.email,
-      username: this.user.username,
-      demoStepId: this.demoSteps.find((step) => step.code === 'IV')?.id,
+  saveDocs(): void {
+    const docs = this.docsConfig().flatMap((pto: EstabWithChildren) =>
+      pto._children
+        .filter((doc: DocConfigItem) => doc.ultimaSecuencia > 0)
+        .map(
+          (doc: DocConfigItem) =>
+            ({
+              idConfiguracionDocumento: 0,
+              idPuntoEmision: pto.puntosEmision[0]?.idPuntoEmision || '',
+              idTipoDocumento: Number(doc.idTipoDocumento),
+              estado: true,
+              ultimaSecuencia: doc.ultimaSecuencia,
+              descripcion: doc.descripcion || '',
+              infoAdicional: false,
+            }) as DocConfig,
+        ),
+    );
+
+    if (docs.length === 0) {
+      this._toasterService.show({
+        type: 'warning',
+        message: 'No hay documentos configurados para guardar',
+      });
+      return;
+    }
+
+    const docConfigData = {
+      docs,
+      demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'IV')?.id,
     };
-    const userData = {
-      data,
-      id: this.user.userId,
-    };
-    this.$updateUserCustomerUseCase.execute(userData).subscribe((response) => {
-      if (isApiResponse(response)) {
-        if (response.code === '0' && this.stepper) {
-          this.stepper.previous();
+
+    this._createDocConfigUseCase
+      .execute(docConfigData)
+      .pipe(
+        catchError((error: unknown) => {
+          this._errorHandler.handleApiError(error, {
+            operation: 'saving documents configuration',
+            component: 'WizardConfigComponent',
+          });
+          return of(null);
+        }),
+      )
+      .subscribe((response) => {
+        if (response && isApiResponse(response)) {
+          this._toasterService.show({
+            type: response.code === '1' ? 'success' : 'warning',
+            message:
+              response.code === '1'
+                ? `${docs.length} documentos guardados exitosamente`
+                : response.message,
+          });
+          if (response.code === '1') {
+            this.docsUpdated = true;
+            this.fetchCompanyDemoSteps();
+          }
         }
-        if (response.code === '1') {
-          this.userUpdated = true;
-          this.fetchCompanyDemoSteps();
-          this.fetchEstabData();
-        }
-        this.#toasterService.toastr({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
+      });
+  }
+
+  saveCertificate(): void {
+    if (this.certificateForm.valid && this.selectedFile) {
+      const signatureData: ElectronicSignatureParam = {
+        idFirmaElectronica: 0,
+        contrasenia: this.certificateForm.get('contrasenia')?.value || '',
+        file: this.selectedFile,
+      };
+
+      this._saveElectronicSignatureUseCase
+        .execute(signatureData)
+        .pipe(
+          catchError((error: unknown) => {
+            this._errorHandler.handleApiError(error, {
+              operation: 'saving electronic signature',
+              component: 'WizardConfigComponent',
+            });
+            return of(null);
+          }),
+        )
+        .subscribe((response) => {
+          if (response && isApiResponse(response)) {
+            this._toasterService.show({
+              type: response.code === '1' ? 'success' : 'warning',
+              message:
+                response.code === '1' ? 'Certificado guardado exitosamente' : response.message,
+            });
+            if (response.code === '1') {
+              this.certificateUpdated = true;
+              this.fetchCompanyDemoSteps();
+            }
+          }
         });
-      }
-    });
+    } else {
+      this._toasterService.show({
+        type: 'warning',
+        message: 'Complete todos los campos requeridos y seleccione un archivo de certificado',
+      });
+    }
   }
 
   onChangeTipoContribuyente(): void {
-    this.isDisabledAgenteRetencion =
-      this.estabForm.get('contribuyente')?.value === '03';
-    if (this.isDisabledAgenteRetencion) {
-      this.estabForm.get('agenteRetencion')?.setValue(null);
-    }
-  }
-
-  showInfoTipoContribuyente(): void {
-    const contribuyente = this.estabForm.get('contribuyente')?.value;
-    const dataInfo = this.contribuyentes.find(
-      (item) => item.codigo === contribuyente,
-    );
-    if (contribuyente && dataInfo?.contribuyenteRimpe) {
-      Swal.fire({
-        icon: 'info',
-        html: `<small>${dataInfo.contribuyenteRimpe}</small>`,
-      });
-    }
-  }
-
-  showInfoActividadEconomica(): void {
-    const actividad = this.estabForm.get('actividad')?.value;
-    const groupActEconomica = this.actividadesEconomica.find(
-      (item) => item.codigo === actividad,
-    )?.grupo;
-    if (actividad && groupActEconomica) {
-      Swal.fire({
-        icon: 'info',
-        html: `<small>${groupActEconomica}</small>`,
-      });
-    }
-  }
-
-  addEmail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.emails.push(value);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeEmail(value: string): void {
-    const index = this.emails.indexOf(value);
-    if (index >= 0) {
-      this.emails.splice(index, 1);
-      this.announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editEmail(email: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeEmail(email);
+    const control = this.estabForm.get('agenteRetencion');
+    if (this.estabForm.get('contribuyente')?.value === '03') {
+      control?.disable();
+      control?.setValue(null);
     } else {
-      const index = this.emails.indexOf(email);
-      if (index >= 0) {
-        this.emails[index] = value;
-      }
+      control?.enable();
     }
   }
 
-  addTelephone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      this.telephones.push(value);
-      event.chipInput!.clear();
-    }
-  }
-
-  removeTelephone(value: string): void {
-    const index = this.telephones.indexOf(value);
-    if (index >= 0) {
-      this.telephones.splice(index, 1);
-      this.announcer.announce(`Removed ${value}`);
-    }
-  }
-
-  editTelephone(telephone: string, event: MatChipEditedEvent): void {
-    const value = event.value.trim();
-    if (!value) {
-      this.removeTelephone(telephone);
-    } else {
-      const index = this.telephones.indexOf(telephone);
-      if (index >= 0) {
-        this.telephones[index] = value;
-      }
-    }
-  }
-
-  saveDocs() {
-    const docs = this.docsConfig.flatMap((pto: any) =>
-      pto._children
-        .filter((doc: any) => doc.ultimaSecuencia > 0)
-        .map((doc: any) => ({
-          idPuntoEmision: pto.idPuntoEmision,
-          idTipoDocumento: doc.idTipoDocumento,
-          ultimaSecuencia: doc.ultimaSecuencia,
-        })),
-    );
-
-    if (docs.length == 0) {
-      this.stepper.selectedIndex = this.stepper.selectedIndex - 1;
-      return this.#toasterService.toastr({
-        type: 'warning',
-        message: 'Debe ingresar al menos una secuencial de los documentos',
-      });
-    }
-
-    const dataToSave = {
-      docs: JSON.stringify(docs),
-      demoStepId: this.demoSteps.find((step) => step.code === 'VI')?.id,
-    };
-    this.#docConfigSvc.post(dataToSave).subscribe((response) => {
-      if (isApiResponse(response)) {
-        if (response.code === '0' && this.stepper) {
-          this.stepper.previous();
-        }
-        if (response.code === '1') {
-          this.docsUpdated = true;
-          this.fetchCompanyDemoSteps();
-        }
-        this.#toasterService.toastr({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
-      }
-    });
-  }
-
-  onFileChange(event: any) {
+  onFileChange(event: FileChangeEvent): void {
     const file = event.target.files[0];
     if (file && file.name.endsWith('.p12')) {
       this.selectedFile = file;
@@ -561,34 +803,39 @@ export class WizardConfigComponent {
     }
   }
 
-  saveCertificate() {
-    if (this.certificateForm.valid && this.selectedFile) {
-      const formData = {
-        contrasenia: this.certificateForm.get('contrasenia')?.value,
-        fechaCaducidad: this.certificateForm.get('fechaCaducidad')?.value,
-        demoStepId: this.demoSteps.find((step) => step.code === 'VII')?.id,
-      };
-
-      this.#firmaElectronicaService
-        .post(formData, this.selectedFile)
-        .subscribe((response) => {
-          if (isApiResponse(response)) {
-            if (response.code === '0' && this.stepper) {
-              this.stepper.previous();
-            }
-            if (response.code === '1') {
-              this.fetchCompanyDemoSteps();
-            }
-            this.#toasterService.toastr({
-              type: response.code === '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-          }
-        });
+  showInfoTipoContribuyente(): void {
+    const contribuyente = this.estabForm.get('contribuyente')?.value;
+    const dataInfo = this.contribuyentes().find((item) => item.codigo === contribuyente);
+    if (contribuyente && dataInfo?.contribuyenteRimpe) {
+      Swal.fire({
+        icon: 'info',
+        html: `<small>${dataInfo.contribuyenteRimpe}</small>`,
+      });
     }
   }
 
-  skipAndFinish() {
+  onActividadEconomicaChange(actividadCodigo: string | number | null): void {
+    if (actividadCodigo) {
+      this.estabForm.get('actividad')?.setValue(actividadCodigo.toString());
+    }
+  }
+
+  showInfoActividadEconomica(): void {
+    const actividad = this.estabForm.get('actividad')?.value;
+    const groupActEconomica = this.actividadesEconomica().find((item) => item.codigo === actividad);
+    if (actividad && groupActEconomica?.grupo) {
+      Swal.fire({
+        icon: 'info',
+        html: `<small>${groupActEconomica.grupo}</small>`,
+      });
+    }
+  }
+
+  trackByStep(_: number, step: DemoStep): string {
+    return step.code;
+  }
+
+  skipAndFinish(): void {
     this.stepper.previous();
     Swal.fire({
       title: 'Info',
@@ -597,13 +844,13 @@ export class WizardConfigComponent {
        debe de subir una firma electrónica!`,
     }).then((response) => {
       if (response.isConfirmed) {
-        const id = this.demoSteps.find((step) => step.code === 'VII')?.id;
-        this.#companyDemoStepService.post(Number(id)).subscribe((response) => {
+        const id = this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id;
+        this._companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
             this.stepper.next();
           }
-          this.#toasterService.toastr({
+          this._toasterService.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

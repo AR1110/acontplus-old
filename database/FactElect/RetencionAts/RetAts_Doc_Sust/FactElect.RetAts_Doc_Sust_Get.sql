@@ -62,12 +62,12 @@ BEGIN
 				IF (@isAutomatic = 1)
 					BEGIN
 						INSERT INTO @table (codDoc, xmlComp)
-						SELECT ci.codDoc, CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), CONVERT(XML, DECOMPRESS(ci.xmlCompressed)).query('/autorizacion/comprobante'))))
+						SELECT ci.codDoc, CONVERT(XML, DECOMPRESS(ci.xmlCompressed)).value('(/autorizacion/comprobante)[1]', 'NVARCHAR(MAX)')
 						FROM Recepcion.DocumentoRecibido ci
 						WHERE idDocumento = @documentId
 
 						INSERT INTO @docSustento(totalSinImpuestos)
-						SELECT ISNULL((SELECT xmlComp.query('//comprobante/factura/infoFactura').value('(/infoFactura/totalSinImpuestos)[1]', 'NUMERIC(18,2)') FROM @table),0)
+						SELECT ISNULL((SELECT xmlComp.query('//infoFactura').value('(/infoFactura/totalSinImpuestos)[1]', 'NUMERIC(18,2)') FROM @table),0)
 						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
 						WHERE dr.idDocumento = @documentId
 
@@ -77,13 +77,13 @@ BEGIN
 							,x.y.value('(baseImponible)[1]','NUMERIC(18,2)')
 							,x.y.value('(valor)[1]','NUMERIC(18,2)')
 						FROM @table t
-						CROSS APPLY t.xmlComp.nodes('//comprobante/factura/infoFactura/totalConImpuestos/totalImpuesto') x(y)
+						CROSS APPLY t.xmlComp.nodes('//infoFactura/totalConImpuestos/totalImpuesto') x(y)
 
 						INSERT INTO @tblPagos(formaPago, total)
 						SELECT x.y.value('(formaPago)[1]','VARCHAR(2)')
 							,total = x.y.value('(total)[1]','numeric(18,2)')
 						FROM @table t
-						CROSS APPLY t.xmlComp.nodes('//comprobante/factura/infoFactura/pagos/pago') x(y)
+						CROSS APPLY t.xmlComp.nodes('//infoFactura/pagos/pago') x(y)
 
 						IF NOT EXISTS (SELECT 1 FROM @tblPagos)
 							BEGIN
@@ -117,17 +117,17 @@ BEGIN
 
 				SELECT i.idImpuesto
                 ,impuesto = i.descripcion 
-				,codImpuestoDocSustento = fci.codigo
+				,t.codigo
 				,porcentaje = ti.descripcion
-				,codigoPorcentaje = fci.codigoPorcentaje
-				,baseImponible = fci.baseImponible
+				,codigoPorcentaje = t.codigoPorcentaje
+				,baseImponible = t.baseImponible
                 ,ti.idTarifaImpuesto
 				,ti.porcentaje tarifa
-				,valorImpuesto = fci.valor
-			    FROM @taxes fci
-			    LEFT JOIN Sri.Impuesto i ON fci.codigo = i.codigo
-			    LEFT JOIN Sri.TarifaImpuesto ti ON i.idImpuesto = ti.idImpuesto AND fci.codigoPorcentaje = ti.codigo
-			    WHERE fci.baseImponible > 0
+				,valorImpuesto = t.valor
+			    FROM @taxes t
+			    LEFT JOIN Sri.Impuesto i ON t.codigo = i.codigo
+			    LEFT JOIN Sri.TarifaImpuesto ti ON i.idImpuesto = ti.idImpuesto AND t.codigoPorcentaje = ti.codigo
+			    WHERE t.baseImponible > 0
 
                 SELECT fp.Id formaPagoId
                     ,fp.Codigo

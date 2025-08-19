@@ -20,8 +20,8 @@ public class TokenCleanupAndArchivalService(
 
             // 1. ARCHIVAR REGISTROS ANTIGUOS
             var oldRecords = await db.LoginHistories
-                .Where(x => x.LoginDate < archiveBeforeDate)
-                .OrderBy(x => x.LoginDate)
+                .Where(x => x.CreatedAt < archiveBeforeDate)
+                .OrderBy(x => x.CreatedAt)
                 .Take(_batchSize)
                 .ToListAsync(stoppingToken);
 
@@ -29,11 +29,9 @@ public class TokenCleanupAndArchivalService(
             {
                 var archived = oldRecords.Select(x => new LoginHistoryArchive
                 {
-                    UserId = x.UserId,
-                    Username = x.Username,
+                    CreatedByUserId = x.CreatedByUserId,
                     UserRoleId = x.UserRoleId,
                     UserAgent = x.UserAgent,
-                    LoginDate = x.LoginDate,
                     IpAddress = x.IpAddress,
                     Token = x.Token,
                     TokenExpiration = x.TokenExpiration,
@@ -48,10 +46,10 @@ public class TokenCleanupAndArchivalService(
             // 2. LIMPIAR TOKENS EXPIRADOS (de los últimos 3 meses)
             var tokensToClean = await db.LoginHistories
                 .Where(x =>
-                    x.LoginDate >= archiveBeforeDate &&
+                    x.CreatedAt >= archiveBeforeDate &&
                     !string.IsNullOrEmpty(x.Token) &&
                     (!x.TokenExpiration.HasValue || x.TokenExpiration <= DateTime.UtcNow))
-                .OrderBy(x => x.LoginDate)
+                .OrderBy(x => x.CreatedAt)
                 .Take(_batchSize)
                 .ToListAsync(stoppingToken);
 
@@ -61,7 +59,7 @@ public class TokenCleanupAndArchivalService(
                 {
                     token.IsLoggedIn = null;
                     token.IsLocked = null;
-                    token.Enabled = null;
+                    token.IsActive = false;
                     token.Token = null;
                     token.TokenExpiration = null;
                 }
@@ -71,8 +69,8 @@ public class TokenCleanupAndArchivalService(
 
             // 3. LIMPIAR REGISTROS DE LOGIN FALLIDO (más de 3 meses)
             var expired = await db.LoginFaileds
-                .Where(x => x.ErrorDate < DateTime.UtcNow.AddMonths(-3))
-                .OrderBy(x => x.ErrorDate)
+                .Where(x => x.CreatedAt < DateTime.UtcNow.AddMonths(-3))
+                .OrderBy(x => x.CreatedAt)
                 .Take(_batchSize)
                 .ToListAsync(stoppingToken);
 

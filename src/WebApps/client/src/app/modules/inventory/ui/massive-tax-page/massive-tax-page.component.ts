@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -23,7 +23,7 @@ import { MassiveTaxUseCase } from '@inventory/domain/usecases/massive-tax.use-ca
   ],
   templateUrl: './massive-tax-page.component.html',
 })
-export class MassiveTaxPageComponent {
+export class MassiveTaxPageComponent implements OnInit {
   private readonly _massiveTaxUseCase = inject(MassiveTaxUseCase);
   private _dialogSvc = inject(DialogService);
 

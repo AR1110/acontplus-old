@@ -1,4 +1,4 @@
-import {Component, inject, signal, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
 import {
   ListAsignacionEstabUseCase
 } from "@modules/config/application/use-cases/asignacion-estab/list-asignacion-estab.use-case";
@@ -10,12 +10,11 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
-import {MatMenu, MatMenuItem} from "@angular/material/menu";
 import {FormsModule} from "@angular/forms";
 import {
   UpdateAsignacionEstabUseCase
 } from "@modules/config/application/use-cases/asignacion-estab/update-asignacion-estab.use-case";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import Swal from "sweetalert2";
 import {
   CreateAsignacionEstabUseCase
@@ -38,12 +37,12 @@ import {
   templateUrl: './list-asignacion-estab.component.html',
   styles: ``
 })
-export class ListAsignacionEstabComponent {
+export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
   private $listAsignacionEstabUseCase = inject(ListAsignacionEstabUseCase)
   private $updateAsignacionEstabUseCase = inject(UpdateAsignacionEstabUseCase)
   private $createAsignacionEstabUseCase = inject(CreateAsignacionEstabUseCase)
   private $userCustomerStore = inject(UserCustomerStore);
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   private _dialogSvc = inject(DialogService)
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
@@ -88,13 +87,13 @@ this.getList()
   onChangeDefault(data: AsignacionEstabList) {
     this.$updateAsignacionEstabUseCase.execute(data).subscribe((response) => {
         if (response.code === "0") {
-          this._tS.toastr({
+          this._tS.show({
             type: 'warning',
             message: response.message
           })
         }
         if (response.code === "1") {
-          this._tS.toastr({
+          this._tS.show({
             type: 'success',
             message: response.message
           })
@@ -112,7 +111,7 @@ this.getList()
       buttonsStyling: false
     })
 
-    let {
+    const {
       isConfirmed
     } = await swalWithBootstrapButtons.fire({
       html: `<small>Está seguro de ${data.idEstab_Asig > 0 ? 'quitar' : 'asignar'} este Establecimiento: <b>${data.nombreComercial}</b></small>`,
@@ -127,20 +126,20 @@ this.getList()
 
 
     if (isConfirmed) {
-      let params = {
+      const params = {
         id: data.idEstab_Asig,
         idUsuarioRol: this.$userCustomerStore.userRoleId(),
         codEstab: data.codEstab
       }
       this.$createAsignacionEstabUseCase.execute(params).subscribe((response) => {
           if (response.code === "0") {
-            this._tS.toastr({
+            this._tS.show({
               type: 'warning',
               message: response.message
             })
           }
           if (response.code === "1") {
-            this._tS.toastr({
+            this._tS.show({
               type: 'success',
               message: response.message
             })

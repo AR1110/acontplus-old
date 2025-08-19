@@ -1,7 +1,7 @@
-import {Component, inject, Input, signal} from "@angular/core";
+import {Component, inject, Input, signal, OnInit} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
+import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 import { isValidField } from "@core/utils/utils";
 import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -27,14 +27,14 @@ import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
       MatCustomDialogComponent
     ]
 })
-export class BrandAddEditModalComponent {
+export class BrandAddEditModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<BrandAddEditModalComponent>);
   readonly data = inject<{
     idMarca: number;
     descripcion: null | string
   }>(MAT_DIALOG_DATA);
 
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
   private _brandUseCase= inject(BrandUseCase)
 
   btnText = 'Guardar';
@@ -47,13 +47,13 @@ export class BrandAddEditModalComponent {
     next: (response: ApiResponse) => {
 
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if (response.code === "1") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message
         })
@@ -77,7 +77,7 @@ export class BrandAddEditModalComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción'
         })

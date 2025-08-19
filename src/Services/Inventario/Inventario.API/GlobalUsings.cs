@@ -1,12 +1,13 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Data;
-global using Common.Core.Data;
-global using Common.Core.Entities;
+global using Common.Core.Abstractions;
+global using Common.Core.Base;
 global using Common.Core.Models;
 global using Common.Core.Validation;
-global using Common.Infrastructure.Core.Context;
-global using Common.Infrastructure.Data.Repository.Interfaces;
+global using Common.Data;
+global using Common.Infrastructure.Context;
+global using Common.Logging;
 global using Common.S3Application.Interfaces;
 global using Common.S3Application.Models;
 global using Common.Services.Configuration;

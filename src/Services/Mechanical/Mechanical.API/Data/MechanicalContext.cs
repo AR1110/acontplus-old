@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Core.Context;
+using Common.Infrastructure.Context;
 using Mechanical.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,48 +37,48 @@ public class MechanicalContext : BaseContext
             property.SetIsUnicode(false);
 
         modelBuilder.Entity<VehicleType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<VehicleType>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<VehicleType>().Property(x => x.IsActive).HasDefaultValue(true);
         modelBuilder.Entity<VehicleType>().HasIndex(x => x.Code)
             .HasDatabaseName("UXC_Mechanical_Code")
             .IsUnique();
 
         modelBuilder.Entity<Vehicle>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Vehicle>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<Vehicle>().Property(x => x.IsActive).HasDefaultValue(true);
         modelBuilder.Entity<Vehicle>().HasIndex(x => x.LicensePlate)
             .HasDatabaseName("UXC_Mechanical_LicensePlate")
             .IsUnique();
 
         modelBuilder.Entity<VehicleCompany>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<VehicleCompany>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<VehicleCompany>().Property(x => x.IsActive).HasDefaultValue(true);
 
         modelBuilder.Entity<VehiclePartType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<VehiclePartType>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<VehiclePartType>().Property(x => x.IsActive).HasDefaultValue(true);
         modelBuilder.Entity<VehiclePartType>().HasIndex(x => x.Code)
             .HasDatabaseName("UXC_VehiclePartType_Code")
             .IsUnique();
 
         modelBuilder.Entity<VehiclePart>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<VehiclePart>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<VehiclePart>().Property(x => x.IsActive).HasDefaultValue(true);
         modelBuilder.Entity<VehiclePart>().HasIndex(x => x.Code)
             .HasDatabaseName("UXC_VehiclePart_Code")
             .IsUnique();
 
         modelBuilder.Entity<Support>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Support>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<Support>().Property(x => x.IsActive).HasDefaultValue(true);
 
         modelBuilder.Entity<SupportStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<SupportStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<SupportStatus>().Property(x => x.IsActive).HasDefaultValue(true);
         modelBuilder.Entity<SupportStatus>().HasIndex(x => x.Code)
             .HasDatabaseName("UXC_SupportStatus_Code")
             .IsUnique();
 
         modelBuilder.Entity<SupportDetail>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<SupportDetail>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<SupportDetail>().Property(x => x.IsActive).HasDefaultValue(true);
 
         modelBuilder.Entity<SupportDocument>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<SupportDocument>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<SupportDocument>().Property(x => x.IsActive).HasDefaultValue(true);
 
         modelBuilder.Entity<Inspection>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-        modelBuilder.Entity<Inspection>().Property(x => x.Enabled).HasDefaultValue(true);
+        modelBuilder.Entity<Inspection>().Property(x => x.IsActive).HasDefaultValue(true);
     }
 }

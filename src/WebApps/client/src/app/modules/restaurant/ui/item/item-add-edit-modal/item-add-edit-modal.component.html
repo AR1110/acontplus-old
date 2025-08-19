@@ -1,17 +1,12 @@
-<form (ngSubmit)="onSave()" [formGroup]="itemForm">
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <mat-icon>{{ modalIcon }}</mat-icon>
-      {{ modalTitle }}
-    </h5>
-    <button
-      (click)="onModalClose()"
-      aria-label="Close"
-      class="btn-close"
-      type="button"
-    ></button>
-  </div>
-  <div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="onModalClose()"
+  [title]="modalTitle"
+/>
+
+<ng-template #body>
+  <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
     <div class="row">
       <div class="col">
         <div class="form-group">
@@ -49,36 +44,32 @@
       </div>
     </div>
     <div class="row mb-3">
-      <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
-        <div class="form-group">
-          <label>Ingredientes:</label>
-          <app-ingredient-search
-            (onIngredientSelected)="onIngredientSelected($event)"
-            [textSearch]="ingredientSearch"
-          ></app-ingredient-search>
-        </div>
+      <div class="col-12 12">
+        <app-ingredient-search
+          (selectedOn)="onIngredientSelected($event)"
+          [(textSearch)]="ingredientSearch"
+        />
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <app-tabulator-semantic-ui
+        <app-tabulator
           [columnNames]="columns"
           [options]="{ reactiveData: true }"
-          [tableData]="recipes"
-        ></app-tabulator-semantic-ui>
+          [tableData]="recipes()"
+          [theme]="'semantic-ui'"
+        ></app-tabulator>
       </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button [disabled]="itemForm.invalid" mat-raised-button type="submit">
-      <mat-icon>save</mat-icon>
-      Guardar
-    </button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (handleClick)="onModalClose()"
-    ></app-theme-button>
-  </div>
-</form>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    type="submit"
+    icon="save"
+    variant="success"
+    text="Añadir producto"
+    form="itemForm"
+    [disabled]="itemForm.invalid"
+  />
+</ng-template>

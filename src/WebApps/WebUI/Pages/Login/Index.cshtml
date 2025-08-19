@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model WebUI.Pages.Login.IndexModel
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration 
@@ -160,8 +160,6 @@
     </section>
     <input type="text" name="urlGateway" id="urlGateway" value="@ViewData["UrlGateway"]" hidden />
 
-    @*<partial name="_LoginUsuarioEntidad" />*@
-
     @await Html.PartialAsync("Shared/_LoginUsuarioEntidad.cshtml")
     @await Html.PartialAsync("Shared/_AccessAuthorization.cshtml")
 
@@ -178,10 +176,6 @@
     <script src="~/lib/UAParser.js/ua-parser.min.js" asp-append-version="true"></script>
 
     <script>
-        window.apiProxyUrl = '/ApiProxy?path=';
-
-        console.log(window.apiProxyUrl, 'login');
-
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js', { scope: './' }).then(function (registration) {
                 console.log('Service worker registration succeeded:', registration);

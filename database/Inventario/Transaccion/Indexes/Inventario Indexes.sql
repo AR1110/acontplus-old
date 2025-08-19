@@ -11,5 +11,6 @@ GO
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Inventario_Stock')   
     DROP INDEX IX_Inventario_Stock ON Inventario.Stock; 
 GO
-CREATE NONCLUSTERED INDEX IX_Inventario_Stock ON Inventario.Stock(idArticulo, idBodega, consolidacionId, estado, consolidacion)
+CREATE NONCLUSTERED INDEX IX_Inventario_Stock ON Inventario.Stock(idArticulo, idBodega, consolidacionId)
+INCLUDE(estado, consolidacion, cantidad)
 GO

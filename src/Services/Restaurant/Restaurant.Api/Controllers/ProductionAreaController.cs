@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Api.Entities;
-using Restaurant.Api.Interfaces;
+using Restaurant.Application.Interfaces;
+using Restaurant.Domain.Entities;
 
 namespace Restaurant.Api.Controllers;
 
@@ -23,7 +23,7 @@ public class ProductionAreaController(IProductionAreaService productionAreaServi
     public async Task<IActionResult> Post([FromBody] ProductionArea productionArea)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        productionArea.UserId = User.GetUserId();
+        productionArea.CreatedByUserId = User.GetUserId();
         return Ok(await productionAreaService.AddAsync(productionArea));
     }
 
@@ -31,7 +31,7 @@ public class ProductionAreaController(IProductionAreaService productionAreaServi
     public async Task<IActionResult> Put(int id, [FromBody] ProductionArea productionArea)
     {
         if (id != productionArea.Id) return BadRequest();
-        productionArea.UserId = User.GetUserId();
+        productionArea.UpdatedByUserId = User.GetUserId();
         return Ok(await productionAreaService.UpdateAsync(id, productionArea));
     }
 

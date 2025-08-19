@@ -1,9 +1,9 @@
-import { Component, inject, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, signal, TemplateRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 
 import {VehicleList} from '@mechanical/domain/models/vehicle.model';
@@ -38,10 +38,10 @@ import {ListVehicleUseCase} from "@mechanical/application/use-cases/vehicle/list
   templateUrl: './vehicle-page.component.html',
   styles: ``
 })
-export class VehiclePageComponent {
+export class VehiclePageComponent implements OnInit, AfterViewInit {
   private vehicleUseCase = inject(VehicleUseCase)
   private $listUseCase = inject(ListVehicleUseCase)
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   dataSource = signal<VehicleList[]>([])
 
@@ -74,7 +74,7 @@ export class VehiclePageComponent {
 
   private getVehicles() {
     try {
-      let params = {
+      const params = {
         pageIndex: this.pagination().pageIndex,
         pageSize: this.pagination().pageSize,
       }
@@ -141,13 +141,13 @@ export class VehiclePageComponent {
 
         this.vehicleUseCase.remove(id).subscribe((response) => {
               if (response.code === "0") {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message
                 })
               }
               if (response.code === "1") {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message
                 })
@@ -166,14 +166,14 @@ export class VehiclePageComponent {
     this.vehicleUseCase.putState(id, state).subscribe(  (response) => {
 
         if (response) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: 'Actualizado correctamente'
           })
 
         }
         else {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Error en actualizar el estado'
           })

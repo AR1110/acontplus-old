@@ -8,29 +8,33 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss",
-          "inlineStyle": true,
-          "skipTests": true
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true
-        },
-        "@schematics/angular:resolver": {
-          "skipTests": true
+          "inlineStyle": false,
+          "inlineTemplate": false,
+          "changeDetection": "OnPush",
+          "skipTests": false,
+          "standalone": true,
+          "flat": false
         },
         "@schematics/angular:service": {
-          "skipTests": true
+          "skipTests": false
+        },
+        "@schematics/angular:directive": {
+          "skipTests": false
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": false
+        },
+        "@schematics/angular:guard": {
+          "skipTests": false
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": false
+        },
+        "@schematics/angular:class": {
+          "skipTests": false
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": false
         }
       },
       "root": "",
@@ -38,7 +42,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
             "allowedCommonJsDependencies": [
               "sweetalert2",
@@ -51,7 +55,6 @@
               "browser": ""
             },
             "index": "src/index.html",
-            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -78,7 +81,9 @@
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
               "src/assets/lib/luxon/luxon.js"
             ],
-            "browser": "src/main.ts"
+            "browser": "src/main.ts",
+            "ssr": false,
+            "prerender": false
           },
           "configurations": {
             "production": {
@@ -139,16 +144,16 @@
           "options": {
             "ssl": true,
             "sslCert": "./ssl/server.crt",
-            "sslKey": "./ssl/server.key"
+            "sslKey": "./ssl/server.key",
+            "hmr": true
           },
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "client:build:production"
             },
             "staging": {
-              "buildTarget": "client:build:staging",
-              "proxyConfig": "proxy.conf.json"
+              "buildTarget": "client:build:staging"
             },
             "development": {
               "buildTarget": "client:build:development"
@@ -157,24 +162,9 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "client:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/assets/template/css/style.css",
-              "src/styles.scss"
-            ],
-            "scripts": []
           }
         },
         "lint": {
@@ -188,6 +178,35 @@
   },
   "cli": {
     "analytics": "883d12a0-ec4d-4ac6-a51b-8f728138c4ac",
-    "schematicCollections": ["angular-eslint"]
+    "schematicCollections": ["angular-eslint"],
+    "cache": {
+      "enabled": true
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

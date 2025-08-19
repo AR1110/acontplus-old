@@ -8,8 +8,8 @@
     docElectService.$inject = ["$injector"];
 
     function docElectService($injector) {
-        let URL = `${URL_API}DocumentoElectronico/`;
-        let URL_RETENCION_ATS = "FactElect/RetencionAts/";
+        let url = `${URL_API}DocumentoElectronico/`;
+        let URL_RETENCION_ATS = "RetencionAts/";
         let mS = $injector.get("mainService");
         let FileSaver = $injector.get("FileSaver");
         let fS = $injector.get("formulario");
@@ -19,7 +19,7 @@
             return mS
                 .getData(
                     "get",
-                    URL + "?json=" + JSON.stringify({ tipo: 2 }),
+                    url + "?json=" + JSON.stringify({ tipo: 2 }),
                     null,
                     true
                 )
@@ -57,7 +57,7 @@
                 throw "Requiere propiedad tipo";
             }
             return mS
-                .getData("get", URL + "?json=" + JSON.stringify(params), null, true)
+                .getData("get", url + "?json=" + JSON.stringify(params), null, true)
                 .then((response) => {
                     if (response.code === "0") {
                         throw response;
@@ -83,7 +83,7 @@
                 pageSize,
             });
             return mS
-                .getData("get", `${URL}?json=${json}`, null, true)
+                .getData("get", `${url}?json=${json}`, null, true)
                 .then((response) => {
                     let results = [];
                     if (response.code === "1") {
@@ -120,7 +120,7 @@
             return mS
                 .getData(
                     "get",
-                    `${URL}GetByStatus/?json=${JSON.stringify(params)}`,
+                    `${url}GetByStatus/?json=${JSON.stringify(params)}`,
                     null,
                     true
                 )
@@ -136,12 +136,12 @@
             if (!(id > 0)) {
                 throw "id no valido";
             }
-            return mS.getData("put", `${URL}${id}`, null, true);
+            return mS.getData("put", `${url}${id}`, null, true);
         };
 
         service.downloadXml = function (id) {
             return mS
-                .getFile("get", `${URL}GetXmlSri/${id}`, null, true)
+                .getFile("get", `${url}GetXmlSri/${id}`, null, true)
                 .then((response) => {
                     let fileName = response
                         .headers()
@@ -155,6 +155,70 @@
                     FileSaver.saveAs(serverData, fileName);
                 });
         };
+
+
+        service.validateNormativeSri = function (params) {
+            const {
+                accion,
+                codDoc,
+                identificacion,
+                fechaEmision,
+                idFormaPago,
+                importeTotal
+            } = params;
+
+
+            if (!accion) throw new Error("Acción no definida");
+
+            if (!identificacion) throw new Error("Identificación es requerida.");
+
+            if (accion === 'anular' && !fechaEmision) {
+                throw new Error("Fecha Emisión es requerida para anular.");
+            }
+
+            if (accion === 'guardar') {
+                if (!idFormaPago) throw new Error("idFormaPago es requerida.");
+                if (!importeTotal) throw new Error("importeTotal es requerida.");
+            }
+
+            const json = JSON.stringify({
+                tipo: 3,
+                codDoc,
+                identificacion,
+                fechaEmision,
+                idFormaPago,
+                importeTotal
+            });
+
+
+            return mS
+                .getData("get", `${url}?json=${json}`, null, true)
+                .then((response) => {
+                    if (response.code !== "1") {
+                        throw new Error(response.message || "Error al validar normativa SRI.");
+                    }
+
+
+                        const [parsedList] = JSON.parse(response.payload);
+                        const parsed = parsedList[0] || null;
+
+                        // ⚠️ Si no hay datos devueltos, asumimos que todo está OK
+                        if (!parsed) return { code: "1" };
+
+                        // 🚫 Si el backend devuelve restricción, se muestra alerta
+                        if (parsed.code === "0") {
+                            Swal.fire({
+                                icon: 'warning',
+                                html: parsed.message
+                            });
+                            throw new Error("Operación restringida por normativa SRI.");
+                        }
+
+                        return parsed; // ✅ Devuelve el objeto si todo fue exitoso
+
+                })
+        };
+
 
         //Retencion ATS
         service.retencionAtsCancel = (id) => {
@@ -369,6 +433,7 @@
                                 idDocumentoElectronico: item.idDocumentoElectronico,
                                 codEstab: item.codEstab,
                                 razonSocialComprador: item.nombreFiscal,
+                                identificacionComprador: item.identificacionComprador,
                                 fechaEmision: item.fechaEmision,
                                 fechaVencimiento: item.fechaVencimiento,
                                 total: item.total,
@@ -773,7 +838,7 @@
                         throw response;
                     }
                     if (response.code === "1") {
-                        let [itemsApi] = JSON.parse(response.payload); 
+                        let [itemsApi] = JSON.parse(response.payload);
 
                         let items = itemsApi.map((itemPrincipal, index) => {
                             const { fraccionado, principal, consolidacion, ...restItem } =
@@ -815,8 +880,8 @@
                                 itemPrincipal.precioUnitario,
                                 itemPrincipal.tarifa
                             );
- 
-                            let total = pricingUtils.decPlus(restItem.precioTotalSinImpuesto,  itemPrincipal.valorImpuesto, pricingUtils.precisionMaxima,);
+
+                            let total = pricingUtils.decPlus(restItem.precioTotalSinImpuesto, itemPrincipal.valorImpuesto, pricingUtils.precisionMaxima,);
 
                             let obj = {
                                 n: index + 1,
@@ -914,11 +979,11 @@
         //     return mS.getData("delete", `${url}${id}`, null, true);
         // };
 
-        service.anular = function(id, infoAdicional){
+        service.anular = function (id, infoAdicional) {
             let data = {
                 infoAdicional
             }
-            return mS.getData('put',  `${url}Cancel/${id}`, {data})
+            return mS.getData('put', `${url}Cancel/${id}`, { data })
 
         }
 
@@ -1178,20 +1243,20 @@
                 });
         };
 
-        service.getDataFilter = function(){
+        service.getDataFilter = function () {
             let params = JSON.stringify({
                 tipo: 3
             })
             return mS
-            .getData("get", URL + "?json=" + params , null, true)
-            .then((response) => {
-                if (response.code === "0") {
-                    throw response;
-                }
+                .getData("get", URL + "?json=" + params, null, true)
+                .then((response) => {
+                    if (response.code === "0") {
+                        throw response;
+                    }
 
-                if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload); 
-                    
+                    if (response.code === "1") {
+                        let mainData = JSON.parse(response.payload);
+
                         let tempEstabsAndPtosEmision = mainData[0];
                         let estadosDoc = mainData[1];
 
@@ -1203,9 +1268,9 @@
                         return {
                             estabs,
                             estadosDoc,
-                        }; 
-                }
-            });
+                        };
+                    }
+                });
         }
 
         service.get = (params) => {
@@ -1271,6 +1336,7 @@
                             serieComprobante: item.nroDocumento,
                             codEstado: item.codDoc,
                             codDoc: "04",
+                             identificacionComprador: item.identificacionComprador,
                         }));
                         return notasCredito;
                     }
@@ -1301,7 +1367,7 @@
                     if (response.code === "0") {
                         console.warn(response);
                         tS.toastr({
-                            type:'warning',
+                            type: 'warning',
                             message: response.message
                         })
                         throw null;
@@ -1310,7 +1376,7 @@
                         let mainData = JSON.parse(response.payload);
                         let data = mainData[0][0];
 
-                        if(!data){
+                        if (!data) {
                             tS.toastr({
                                 type: 'warning',
                                 message: "No se ha configurado secuencial doc."
@@ -1342,10 +1408,10 @@
                             mainDataCliente,
                             mainDetalle,
                             mainInfoAdicional,
-                           tarifasImpuesto  
+                            tarifasImpuesto
                         ] = JSON.parse(response.payload);
 
-                        let { fechaEmision,nombreComercial, ...restData } = mainData[0];
+                        let { fechaEmision, nombreComercial, ...restData } = mainData[0];
                         let comprobante = {
                             ...restData,
                             establecimiento: nombreComercial,
@@ -1621,14 +1687,14 @@
                             formasPago,
                             establecimientos,
                             infoAdicional,
-                        ] = tempArray; 
+                        ] = tempArray;
 
 
                         let dataToGroup = {
-                            estabs: establecimientos, //Establecimientos con puntos de emision  
+                            estabs: establecimientos, //Establecimientos con puntos de emision
                         }
                         let estabsGroup = fS.groupingEstab(dataToGroup);
-                
+
 
                         return {
                             tiposIdentificacion,
@@ -1644,7 +1710,7 @@
                             impuestosRet,
                             porcentajesRetIva,
                             codigosRetencion,
-                            formasPago, 
+                            formasPago,
                             estabsGroup,
                             infoAdicional: infoAdicional.map((item) => {
                                 return {

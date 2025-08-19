@@ -11,14 +11,14 @@ GO
 -- Create date: 2024-11-06
 -- Description:	sp for get releases
 -- =============================================
-CREATE OR ALTER PROCEDURE Common.Release_Get @userRoleId INT
+CREATE OR ALTER PROCEDURE Common.Release_Get @UserRoleId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-    DECLARE @userId INT
+    DECLARE @User VARCHAR(100);
 
-    SET @userId = (SELECT TOP 1 idUsuario FROM dbo.v_usuario WHERE idUsuarioRol = @userRoleId)
+    SET @User = (SELECT TOP 1 nombreUsuario FROM dbo.v_usuario WHERE idUsuarioRol = @UserRoleId)
 
      SELECT id
 		,r.title
@@ -27,7 +27,7 @@ BEGIN
         ,r.CompressedContent
 		,CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
      FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-     WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE UserId = @userId)
-		AND r.Deleted IS NULL
+     WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE CreatedBy = @User)
+		AND r.IsDeleted = CAST(0 AS BIT)
 END
 GO

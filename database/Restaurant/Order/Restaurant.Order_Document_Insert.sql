@@ -184,7 +184,7 @@ BEGIN
 					0
 				END, 0) 
 
-                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) 
+                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * -1
                 ,1
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
             INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
@@ -275,7 +275,7 @@ BEGIN
 				ELSE
 					0
 				END,0) 
-               ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity) 
+               ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity) * -1
                ,1
            FROM Restaurant.OrderItem oi WITH (NOLOCK)
                 INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON oi.OrderId = o.ID
@@ -492,8 +492,8 @@ BEGIN
             SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
 
             INSERT INTO NotaEntrega 
-                   (idCliente         ,idPuntoEmision,  nroDocumento,  subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
-            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
+                   (idCliente         ,idPuntoEmision,serieComprobante,  nroDocumento,  subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
+            SELECT @customerCompanyId,@puntoEmisionId,@serieDocument, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 

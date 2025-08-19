@@ -1,0 +1,54 @@
+<app-mat-custom-dialog
+  [title]="modalTitle"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="onModalClose()"
+
+/>
+
+<ng-template #body>
+  <form (ngSubmit)="onSave()" id="roomForm" [formGroup]="roomForm">
+    <div class="vstack gap-2">
+      @if(!(data.id>0)){
+        <mat-form-field class="w-100">
+          <mat-label>Piso</mat-label>
+          <input matInput [value]="data.floorName" readonly>
+        </mat-form-field>
+
+      }
+
+      <mat-form-field class="w-100">
+        <mat-label>Descripción</mat-label>
+        <input matInput
+        (keyup)="setCode()"
+        [maxlength]="50"
+        [minlength]="1" formControlName="description">
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <mat-label>Código</mat-label>
+        <input matInput
+               [maxlength]="3"
+               [minlength]="1"
+               formControlName="code"
+               required>
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <mat-label>Capacidad</mat-label>
+        <input matInput
+               formControlName="capacity">
+      </mat-form-field>
+    </div>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <app-theme-button
+    type="submit"
+    icon="save"
+    variant="success"
+    [text]="btnText"
+    form="roomForm"
+    [disabled]="roomForm.invalid"
+  />
+</ng-template>

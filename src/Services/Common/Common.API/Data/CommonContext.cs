@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Common.API.Entities;
-using Common.Infrastructure.Core.Context;
+using Common.Infrastructure.Context;
 using Common.Notifications.Entities;
 
 namespace Common.API.Data;
@@ -38,10 +38,5 @@ public class CommonContext(DbContextOptions<CommonContext> options) : BaseContex
                                  && p.GetColumnType() == null // No column type is set
                      ))
             property.SetIsUnicode(false);
-
-        SimpleEntityRegistration.RegisterEntities(modelBuilder,
-            typeof(Attachment),
-            typeof(EmailQueue),
-            typeof(WhatsAppMessage));
     }
 }

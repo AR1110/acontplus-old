@@ -18,7 +18,7 @@ import {
 export class UserCustomerPermissionRepositoryImpl implements UserCustomerPermissionRepository {
 
       update<T>(parameters: T){
-    //    const data = CreateUserCustomerPermissionMapper.toJson(parameters)
+    //    const infrastructure = CreateUserCustomerPermissionMapper.toJson(parameters)
         return this._http.put<ApiResponse>(`${this._url}`, { data: parameters })
     }
       create<T>(parameters: T)  {
@@ -27,7 +27,7 @@ export class UserCustomerPermissionRepositoryImpl implements UserCustomerPermiss
     }
 
     list<T>(parameters: T)  {
-        let json = JSON.stringify(
+        const json = JSON.stringify(
           ListUserCustomerPermissionMapper.toJson(parameters)
         )
       return this._http

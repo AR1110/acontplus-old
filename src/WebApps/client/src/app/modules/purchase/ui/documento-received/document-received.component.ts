@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -6,10 +6,10 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Subcategory } from '@accounting/domain/models/subcategory';
+import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
@@ -24,37 +24,37 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 import { DialogService } from '@core/services/dialog.service';
-import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-documento-received',
-    imports: [
-        MatDynamicTableComponent,
-        BreadcrumbComponent,
-        MatCard,
-        MatCardContent,
-        DateRangeSelectionComponent,
-        SupplierSearchComponent,
-        FormsModule,
-        MatTooltip,
-        InputNumberDirective,
-        MatPaginator,
-        MatIcon,
-        MatIconButton,
-        MatMenu,
-        MatMenuItem,
-        MatMenuTrigger,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    MatDynamicTableComponent,
+    BreadcrumbComponent,
+    MatCard,
+    MatCardContent,
+    DateRangeSelectionComponent,
+    SupplierSearchComponent,
+    FormsModule,
+    MatTooltip,
+    InputNumberDirective,
+    MatPaginator,
+    MatIcon,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatButton,
+    ThemeButtonComponent,
+  ],
   templateUrl: './document-received.component.html',
   styles: ``,
 })
-export class DocumentReceivedComponent {
+export class DocumentReceivedComponent implements OnInit {
   documents: DocumentReceived[] = [];
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -91,21 +91,20 @@ export class DocumentReceivedComponent {
   private readonly _sharedService = inject(SharedService);
   private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
 
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   async alertEstabSelected() {
     if (this.establecimientos.length === 0) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
-        positionClass: 'toast-top-center',
       });
     }
-    let dataEstab = this.establecimientos.find(
+    const dataEstab = this.establecimientos.find(
       (estab) => estab.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: 'Estab.: ' + dataEstab.nombreComercial,
         text: 'Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?',
         icon: 'warning',
@@ -124,7 +123,7 @@ export class DocumentReceivedComponent {
     this._documentReceivedUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       this.documentTypes = response.documentTypes;
-      let codEstabFound = this.establecimientos.find(
+      const codEstabFound = this.establecimientos.find(
         (x) => x.predeterminado,
       )?.codEstab;
       if (codEstabFound) {
@@ -201,7 +200,7 @@ export class DocumentReceivedComponent {
           },
         });
       } else {
-        return this._tS.toastr({
+        return this._tS.show({
           type: 'warning',
           message:
             'Debe de registrar subcategorías de compra en el módulo de contabilidad',

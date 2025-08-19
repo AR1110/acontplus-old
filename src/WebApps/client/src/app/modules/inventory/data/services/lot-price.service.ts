@@ -19,7 +19,7 @@ export class LotPriceService {
 
 
   getDataFilter() {
-    let json = JSON.stringify({ tipo: 1 })
+    const json = JSON.stringify({ tipo: 1 })
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
 
@@ -61,7 +61,7 @@ export class LotPriceService {
             }
           })
 
-          // data.familias = familias.map((item: any) => {
+          // infrastructure.familias = familias.map((item: any) => {
           //   return {
           //     idFamilia: item.idFamilia,
           //     descripcion: item.descripcion,
@@ -86,14 +86,14 @@ export class LotPriceService {
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({ ...obj})
+    const json = JSON.stringify({ ...obj})
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
-        let mainData = response.articulos;
+        const mainData = response.articulos;
 
-        let products = mainData.map((item: any, index: number) => {
-          let mainTarifas = JSON.parse(item.tarifas);
-          let tarifas = mainTarifas.map((t: any) => {
+        const products = mainData.map((item: any, index: number) => {
+          const mainTarifas = JSON.parse(item.tarifas);
+          const tarifas = mainTarifas.map((t: any) => {
             return {
               idArticuloFraccionadoPvP: t.idArticuloFraccionadoPvP || 0,//Articulo Fraccionado
               idArticuloFraccionado: t.idArticuloFraccionado || 0, //Articulo Fraccionado

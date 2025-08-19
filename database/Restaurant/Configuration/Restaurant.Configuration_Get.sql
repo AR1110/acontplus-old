@@ -2,7 +2,7 @@ USE AcontPlus
 GO
 --- Author: Ignacio Manchu - Ignacio Manchu
 --- Date: 2023-08-15
---- Description: Listado general de configuraciones para módulo de ventas - Restaurante.
+--- Description: Listado general de configuraciones para mÃ³dulo de ventas - Restaurante.
 --- Restaurant.Configuration_Get 139, '{"codEstab":"ESTAB-000000117","tipo": 2}', ''
  
 CREATE OR ALTER PROCEDURE Restaurant.Configuration_Get
@@ -115,6 +115,7 @@ BEGIN
 	            ,CAST(printerAutomatic AS BIT) as printerAutomatic
 	            ,CAST(payAutomatic AS BIT)     as payAutomatic
 	            ,CAST(multipleVendedor AS BIT) as multipleVendedor
+                ,CAST(detailDuplicate AS BIT) as detailDuplicate
 	        FROM Config.v_Sistema_Ventas gs
             WHERE gs.idEntidad = @idEntidad
 

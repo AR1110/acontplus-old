@@ -1,0 +1,626 @@
+// Setup Dashboard Styles
+.setup-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 0.5rem;
+
+  // When tour is active, optimize layout for precise highlights
+  &.tour-active {
+    .setup-content {
+      .steps-section {
+        margin-bottom: 1rem;
+
+        .steps-grid {
+          gap: 0.5rem;
+
+          .step-card {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .setup-header {
+    margin-bottom: 1rem;
+
+    .header-card {
+      background: linear-gradient(135deg, #d61672 0%, #b91460 100%);
+      color: white;
+      border: none;
+      box-shadow: 0 8px 32px rgba(214, 22, 114, 0.3);
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+
+        .header-info {
+          .setup-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+
+            .title-icon {
+              font-size: 2.5rem;
+              color: #ffd700;
+            }
+          }
+
+          .setup-subtitle {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+          }
+        }
+
+        .header-actions {
+          button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.3);
+              border-color: rgba(255, 255, 255, 0.5);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .setup-progress {
+    padding: 0 0 1rem 0;
+
+    .progress-card {
+      margin-bottom: 1rem;
+
+      // Ensure precise highlighting for tour
+      &.tour-highlight {
+        margin: 0 !important;
+        border: 2px solid #d61672 !important;
+        box-shadow: 0 2px 12px rgba(214, 22, 114, 0.3) !important;
+      }
+
+      .progress-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+
+        .progress-info {
+          flex: 1;
+
+          .progress-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+
+            mat-icon {
+              color: #d61672;
+            }
+          }
+
+          .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+
+            ::ng-deep .mat-mdc-progress-bar-fill::after {
+              background: linear-gradient(90deg, #d61672, #b91460);
+            }
+          }
+
+          .progress-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .progress-text {
+              font-weight: 600;
+              color: #495057;
+            }
+
+            .progress-steps {
+              color: #6c757d;
+              font-size: 0.9rem;
+            }
+          }
+        }
+
+        .completion-status {
+          mat-chip {
+            &.completed {
+              background-color: #d4edda;
+              color: #155724;
+
+              mat-icon {
+                color: #28a745;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .setup-content {
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    // When tour is active, adjust parent containers
+    .steps-section {
+      margin-bottom: 1.5rem;
+
+      // Remove any spacing that affects tour highlights
+      &.tour-highlight {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 1rem;
+
+        .section-title {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+          color: #2c3e50;
+
+          .section-icon {
+            font-size: 2rem;
+
+            &.error {
+              color: #d61672;
+            }
+
+            &.warn {
+              color: #d61672;
+            }
+          }
+        }
+
+        .section-description {
+          color: #6c757d;
+          font-size: 1.1rem;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+      }
+
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1rem;
+
+        .step-card {
+          transition: all 0.3s ease;
+          border-radius: 12px;
+          overflow: hidden;
+
+          // FORCE exact highlighting for tour - override everything
+          &.tour-highlight {
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 3px solid #d61672 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(214, 22, 114, 0.15) !important;
+            background: white !important;
+            transform: none !important;
+
+            // Remove any pseudo-elements
+            &::before,
+            &::after {
+              display: none !important;
+            }
+          }
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
+
+          &.mandatory {
+            border-left: 4px solid #d61672;
+
+            &.completed {
+              border-left-color: #28a745;
+              background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            }
+
+            &.current {
+              border-left-color: #d61672;
+              background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            }
+
+            &.disabled {
+              opacity: 0.6;
+              pointer-events: none;
+            }
+          }
+
+          &.optional {
+            border-left: 4px solid #d61672;
+
+            &.completed {
+              border-left-color: #28a745;
+              background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            }
+          }
+
+          .step-avatar {
+            background: #f8f9fa;
+            border-radius: 50%;
+
+            mat-icon {
+              &.completed {
+                color: #28a745;
+              }
+
+              &.current {
+                color: #d61672;
+                animation: pulse 2s infinite;
+              }
+            }
+
+            &.optional {
+              background: #fff3cd;
+            }
+          }
+
+          .step-name {
+            font-weight: 600;
+            color: #2c3e50;
+          }
+
+          .step-meta {
+            mat-chip-set {
+              mat-chip {
+                &.step-code {
+                  background: #e9ecef;
+                  color: #495057;
+                  font-weight: 600;
+                }
+
+                &.step-time {
+                  background: #f8f9fa;
+                  color: #6c757d;
+                }
+
+                &.optional-badge {
+                  background: #fff3cd;
+                  color: #856404;
+                }
+              }
+            }
+          }
+
+          .step-description {
+            color: #6c757d;
+            line-height: 1.5;
+            margin: 1rem 0;
+          }
+
+          .step-status-indicator {
+            mat-chip {
+              &.completed {
+                background: #d4edda;
+                color: #155724;
+              }
+
+              &.current {
+                background: #cce7ff;
+                color: #004085;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Info Cards Section
+    .info-cards-section {
+      margin-top: 1.5rem;
+
+      .info-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1rem;
+
+        .info-card {
+          transition: all 0.3s ease;
+          border-radius: 12px;
+          overflow: hidden;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
+
+          .info-card-avatar {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.help {
+              background: linear-gradient(135deg, #d61672, #b91460);
+              color: white;
+            }
+
+            &.tips {
+              background: linear-gradient(135deg, #d61672, #b91460);
+              color: white;
+            }
+
+            &.status {
+              background: linear-gradient(135deg, #d61672, #b91460);
+              color: white;
+            }
+
+            mat-icon {
+              font-size: 1.5rem;
+            }
+          }
+
+          .info-card-features {
+            margin-top: 1rem;
+
+            .feature-item {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              color: #6c757d;
+
+              mat-icon {
+                font-size: 1.2rem;
+                color: #28a745;
+              }
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+
+          .status-indicators {
+            margin-top: 1rem;
+
+            .status-item {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              color: #6c757d;
+
+              .status-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+
+                &.online {
+                  background: #28a745;
+                  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+                }
+
+                &.good {
+                  background: #17a2b8;
+                  box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.3);
+                }
+
+                &.secure {
+                  background: #6f42c1;
+                  box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.3);
+                }
+              }
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+
+          &.help-card {
+            border-left: 4px solid #d61672;
+          }
+
+          &.tips-card {
+            border-left: 4px solid #d61672;
+          }
+
+          &.status-card {
+            border-left: 4px solid #d61672;
+          }
+        }
+      }
+    }
+  }
+
+  .setup-actions {
+    padding: 1rem 0;
+
+    .actions-card {
+      .actions-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+
+        .actions-info {
+          .actions-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+
+            mat-icon {
+              color: #d61672;
+            }
+          }
+
+          .actions-description {
+            color: #6c757d;
+            margin: 0;
+          }
+        }
+
+        .action-buttons {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+
+          .finish-button {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .setup-container {
+    .setup-header .header-content {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+
+      .header-info .setup-title {
+        font-size: 1.5rem;
+
+        .title-icon {
+          font-size: 2rem;
+        }
+      }
+    }
+
+    .setup-progress .progress-card .progress-content {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .setup-content .steps-section .steps-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .setup-actions .actions-card .actions-content {
+      flex-direction: column;
+      text-align: center;
+
+      .action-buttons {
+        flex-direction: column;
+        width: 100%;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// Tour highlight effects
+:global(.tour-highlight) {
+  position: relative;
+  z-index: 9999 !important;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 3px solid #007bff;
+    border-radius: 8px;
+    pointer-events: none;
+    animation: tourPulse 2s infinite;
+  }
+}
+
+// Animations
+@keyframes tourPopupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tourPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .tour-overlay .tour-popup {
+    width: 280px;
+    max-width: 85vw;
+    font-size: 0.9rem;
+
+    .tour-content {
+      .tour-title {
+        font-size: 1rem;
+      }
+
+      .tour-description {
+        font-size: 0.85rem;
+      }
+    }
+
+    .tour-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .tour-actions-left,
+      .tour-actions-right {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .tour-actions-right {
+        order: -1;
+      }
+    }
+  }
+}

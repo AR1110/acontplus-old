@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +30,7 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: './user-customer-role-permission.component.html',
   styleUrl: 'user-customer-role-permission.component.scss',
 })
-export class UserCustomerRolePermissionComponent {
+export class UserCustomerRolePermissionComponent implements OnInit {
   private $listUseCase = inject(ListUserCustomerPermissionUseCase);
   private $updateUseCase = inject(UpdateUserCustomerPermissionUseCase);
   private $userCustomerStore = inject(UserCustomerStore);
@@ -38,7 +38,7 @@ export class UserCustomerRolePermissionComponent {
   usersCustomerAdmin: UserCustomerRole[] = [];
   userCustomerAdminSelected = new FormControl([]);
 
-  allCompleteSaleComprobante = false;
+  allCompleteSaleComprobante = signal(false);
   allCompleteSaleDetail = false;
   allCompleteSaleAdditional = false;
   allCompleteProduct = false;
@@ -61,7 +61,7 @@ export class UserCustomerRolePermissionComponent {
   permissionSaleAdditionalKey: string[] = [];
 
   getUserPermissions() {
-    let params = {
+    const params = {
       userRoleId: this.$userCustomerStore.userRoleId(),
     };
     this.$listUseCase.execute(params).subscribe((response: any) => {
@@ -119,12 +119,12 @@ export class UserCustomerRolePermissionComponent {
     const comprobantePermisos =
       this.permissionSaleComprobanteKey.filter(
         (permiso) => this.mainPermissionSale.comprobante[permiso].enabled,
-      ).length > 0 && !this.allCompleteSaleComprobante;
+      ).length > 0 && !this.allCompleteSaleComprobante();
     return comprobantePermisos;
   }
 
   setAllSaleComprobante(completed: boolean) {
-    this.allCompleteSaleComprobante = completed;
+    this.allCompleteSaleComprobante.set(completed)
 
     this.permissionSaleComprobanteKey.forEach((permiso) => {
       this.mainPermissionSale.comprobante[permiso].enabled = completed;
@@ -132,9 +132,9 @@ export class UserCustomerRolePermissionComponent {
   }
 
   updateAllCompleteSaleComprobante() {
-    this.allCompleteSaleComprobante = this.permissionSaleComprobanteKey.every(
+    this.allCompleteSaleComprobante.set(this.permissionSaleComprobanteKey.every(
       (permiso) => this.mainPermissionSale.comprobante[permiso].enabled,
-    );
+    ))
   }
 
   /**
@@ -281,12 +281,12 @@ export class UserCustomerRolePermissionComponent {
       );
       permissionsSale.permission = JSON.stringify(permissionsSale.permission);
 
-      let dataPermissions = [
+      const dataPermissions = [
         permissionsSale,
         permissionsProduct,
         permissionsCashBox,
       ];
-      let data = {
+      const data = {
         dataPermissions,
       };
 

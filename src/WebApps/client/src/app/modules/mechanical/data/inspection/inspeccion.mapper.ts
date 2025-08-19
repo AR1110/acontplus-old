@@ -36,7 +36,7 @@ export class InspeccionMapper {
 
   static getDataForm(response:ApiResponse){
 
-    let result = {
+    const result = {
       support: {} as any,
       data: {},
       vehicleParts: [] as VehiclePart[],
@@ -58,14 +58,14 @@ export class InspeccionMapper {
 
   static getId(response: ApiResponse){
 
-    let result = {
+    const result = {
       data: {} as any,
       vehicleParts: [] as VehiclePart[],
     }
 
     if (response.code==="1") {
       const { inspection } = JSON.parse(response.payload as string);
-      let mainData = inspection[0];
+      const mainData = inspection[0];
 
       result.data = {
         id: mainData.id,
@@ -78,9 +78,9 @@ export class InspeccionMapper {
 
       let vehicleParts: any[] = [];
 
-      // Recorre cada propiedad del objeto data
+      // Recorre cada propiedad del objeto infrastructure
       for (const key in mainData) {
-        let value = mainData[key]
+        const value = mainData[key]
         if (typeof value === 'string' && isValidJSON(value)) {
 
           const parsedArray = JSON.parse(value);

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -7,31 +7,30 @@ import {
 } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Category } from '@modules/technical-support/models/category';
 import { Serie } from '@modules/technical-support/models/serie';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-brand-modal',
-    imports: [ReactiveFormsModule, TabulatorComponent, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule, TabulatorComponent,   ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })
-export class BrandModalComponent {
+export class BrandModalComponent implements OnInit {
   private brandService = inject(BrandService);
   private categoryService = inject(CategoryService);
-  private modalRef = inject(NgbActiveModal);
+  private modalRef = inject(MatDialogRef<BrandModalComponent>);
   private serieService = inject(SerieService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   brandForm = new FormGroup({
     id: new FormControl(0),
     categoryId: new FormControl(0, Validators.required),
@@ -46,7 +45,7 @@ export class BrandModalComponent {
       Validators.maxLength(100),
     ]),
   });
-  categories: Category[] = [];
+  categories =signal<Category[]>([]);
   columnNames = [
     {
       title: 'id',
@@ -76,7 +75,7 @@ export class BrandModalComponent {
     },
     {
       formatter: (cell: any) => {
-        let rowDataMain = cell.getRow().getData();
+        const rowDataMain = cell.getRow().getData();
         // let editBtn = document.createElement('button');
         // editBtn.type = 'button';
         // editBtn.innerHTML = `${icon(faSave).html.join('')}`;
@@ -87,12 +86,12 @@ export class BrandModalComponent {
         // });
 
         //create delete button
-        let delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `<i class="material-icons" style="cursor:pointer;">delete</i>`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
+          const rowData = cell.getRow().getData();
           if (rowData.id > 0) {
             this.onSerieDelete(rowData);
           } else {
@@ -100,7 +99,7 @@ export class BrandModalComponent {
           }
         });
 
-        let buttonHolder = document.createElement('span');
+        const buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
         // if (rowDataMain.id > 0) {
         //   buttonHolder.appendChild(editBtn);
@@ -113,13 +112,7 @@ export class BrandModalComponent {
       width: 150,
     },
   ];
-  data: Brand = {
-    id: 0,
-    code: '',
-    name: '',
-    categoryId: 0,
-    categoryName: '',
-  };
+  data = inject<Brand>(MAT_DIALOG_DATA)
   modalIcon = 'add';
   modalTitle = 'Registrar Marca';
   series: Serie[] = [];
@@ -142,18 +135,12 @@ export class BrandModalComponent {
     this.onGet();
   }
   onGet() {
-    this.categoryService.get({}).subscribe({
-      next: (response) => {
+    this.categoryService.get({}).subscribe(  (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            this.categories = JSON.parse(response.payload as string);
+            this.categories.set(JSON.parse(response.payload as string));
           }
         }
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {},
     });
   }
   onModalClose() {
@@ -163,13 +150,13 @@ export class BrandModalComponent {
     if (this.series.length > 0) {
       this.series.forEach((x) => {
         if (!x.code) {
-          return this.tS.toastr({
+          return this.tS.show({
             type: 'warning',
             message: 'Código de la serie invalido',
           });
         }
         if (!x.name) {
-          return this.tS.toastr({
+          return this.tS.show({
             type: 'warning',
             message: 'Nombre de la serie invalido',
           });
@@ -181,21 +168,9 @@ export class BrandModalComponent {
       series: this.series || [],
     };
     if (this.data.id > 0) {
-      this.brandService.put(this.data.id, dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.brandService.put(this.data.id, dataToSave).subscribe(this.successResponse);
     } else {
-      this.brandService.post(dataToSave).subscribe({
-        next: this.successResponse,
-        error(err) {
-          console.error(err);
-        },
-        complete() {},
-      });
+      this.brandService.post(dataToSave).subscribe(  this.successResponse);
     }
   }
   onSerieAdd() {
@@ -215,10 +190,9 @@ export class BrandModalComponent {
       confirmButtonText: 'Si',
     }).then((response) => {
       if (response.isConfirmed) {
-        this.serieService.delete(item.id).subscribe({
-          next: (response) => {
+        this.serieService.delete(item.id).subscribe(  (response) => {
             if (isApiResponse(response)) {
-              this.tS.toastr({
+              this.tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
               });
@@ -229,18 +203,13 @@ export class BrandModalComponent {
                 );
               }
             }
-          },
-          error(err) {
-            console.log(err);
-          },
-          complete() {},
         });
       }
     });
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message,
       });

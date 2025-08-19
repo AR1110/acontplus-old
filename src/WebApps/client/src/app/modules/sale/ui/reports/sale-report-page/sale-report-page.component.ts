@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -12,7 +12,7 @@ import {
   REPORT_FORMAT, SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import {isValidEmail, isValidField} from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
@@ -22,14 +22,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
-import { CuentaPorCobrarUseCase } from '@accounting/domain/use-cases/cuenta-por-cobrar.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
@@ -56,7 +56,7 @@ const imports = [
   imports,
   templateUrl: './sale-report-page.component.html',
 })
-export class SaleReportPageComponent {
+export class SaleReportPageComponent implements OnInit {
   isSelectedNotaEntrega = false;
   dataSearch = {
     checkBoxCustomer: false,
@@ -88,7 +88,7 @@ export class SaleReportPageComponent {
   format: any;
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService);
   private _tokenUseCase = inject(TokenUseCase);
@@ -129,9 +129,9 @@ export class SaleReportPageComponent {
       );
       this.provinciasAgrupadas.set(provinciasAgrupadas)
 
-      let dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      let dataPuntoEmision = this.puntosEmision().find(
+      const dataPuntoEmision = this.puntosEmision().find(
         (ptoEmi) => ptoEmi.defaultPtoEmi,
       );
 
@@ -162,7 +162,7 @@ export class SaleReportPageComponent {
   }
 
   onChangeEstab() {
-    let dataEstab = this.establecimientos().find(
+    const dataEstab = this.establecimientos().find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
@@ -205,20 +205,20 @@ export class SaleReportPageComponent {
   }
 
   private getDataParams() {
-    let dataEstab = this.establecimientos().find(
+    const dataEstab = this.establecimientos().find(
       (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
-    let dataEstado = this.estadosDoc().find(
+    const dataEstado = this.estadosDoc().find(
       (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
 
-    let identificacion = this.dataSearch.checkBoxCustomer
+    const identificacion = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.identificacion)
       : null;
-    let idUsuario = this.dataSearch.checkBoxUser
+    const idUsuario = this.dataSearch.checkBoxUser
       ? isValidField(this.dataSearch.userId)
       : null;
-    let idCliente = this.dataSearch.checkBoxCustomer
+    const idCliente = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
 
@@ -245,14 +245,14 @@ export class SaleReportPageComponent {
       this.dataSearch.checkBoxCustomer &&
       !isValidField(this.dataSearch.identificacion)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente',
       });
       return;
     }
     if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el Usuario',
       });
@@ -265,7 +265,7 @@ export class SaleReportPageComponent {
     try {
       if (!this.isValidDataSearch()) return;
 
-      let reportParams = JSON.stringify({
+      const reportParams = JSON.stringify({
         hasParams: false,
         codigo: SALE_CODE_REPORT.FG,
         format: this.format,

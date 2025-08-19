@@ -14,9 +14,7 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         var pet = await context.Pets.FindAsync(id);
         if (pet == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
-        pet.UserId = userId;
-        pet.Deleted = true;
-        pet.Enabled = false;
+        pet.MarkAsDeleted(userId);
         context.Update(pet);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -43,12 +41,12 @@ public class PetService(VetContext context, IAdoRepository repository) : IPetSer
         var petFound = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
         if (petFound == null) return new ApiResponse { Code = "0", Message = "No se encontro mascota para editar" };
 
-        petFound.UserId = pet.UserId;
+        petFound.UpdatedByUserId = pet.UpdatedByUserId;
         petFound.Name = pet.Name;
         petFound.BreedId = pet.BreedId;
         petFound.GenderId = pet.GenderId;
         petFound.Color = pet.Color;
-        petFound.Enabled = pet.Enabled;
+        petFound.IsActive = pet.IsActive;
         petFound.Birthdate = pet.Birthdate;
         context.Pets.Update(petFound);
         await context.SaveChangesAsync();

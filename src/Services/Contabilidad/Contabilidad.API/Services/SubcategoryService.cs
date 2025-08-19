@@ -18,9 +18,7 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
         var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
         if (subcategory == null) return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
 
-        subcategory.Enabled = false;
-        subcategory.Deleted = true;
-        subcategory.UserId = userId;
+        subcategory.MarkAsDeleted(userId);
         context.Update(subcategory);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
@@ -42,8 +40,8 @@ public class SubcategoryService(ContabilidadContext context, IAdoRepository repo
         subcategoryFound.CategoryId = subcategory.CategoryId;
         subcategoryFound.Code = subcategory.Code;
         subcategoryFound.Name = subcategory.Name;
-        subcategoryFound.Enabled = subcategory.Enabled;
-        subcategoryFound.UserId = subcategory.UserId;
+        subcategoryFound.IsActive = subcategory.IsActive;
+        subcategoryFound.UpdatedByUserId = subcategory.UpdatedByUserId;
         context.Update(subcategoryFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };

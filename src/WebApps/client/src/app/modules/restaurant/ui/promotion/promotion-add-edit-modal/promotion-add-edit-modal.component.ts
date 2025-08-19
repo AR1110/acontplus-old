@@ -5,47 +5,55 @@ import {
   inject,
   model,
   signal,
-  ViewChild,
+  ViewChild, OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDate, formatDateToString } from '@core/utils/date.util';
 import { imgDefault, isValidField } from '@core/utils/utils';
 
 import { MenuSearchComponent } from '@restaurant/ui/components/menu-search/menu-search.component';
 import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
-import { RestaurantStoreService } from '@restaurant/store/restaurant-store.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { TimeInputFormat24Directive } from '@shared/directives/time-input-format-directive.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatTabsModule} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-promotion-add-edit-modal',
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatIcon,
-        InputDateComponent,
-        ToUpperCaseDirective,
-        TimeInputFormat24Directive,
-        MenuSearchComponent,
-        MatButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIcon,
+    InputDateComponent,
+    ToUpperCaseDirective,
+    TimeInputFormat24Directive,
+    MenuSearchComponent,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatTabsModule
+  ],
   templateUrl: './promotion-add-edit-modal.component.html',
   styleUrl: './promotion-add-edit-modal.component.scss',
   styles: ``,
 })
-export class PromotionAddEditModalComponent {
-  params = {} as any;
-  private modalRef = inject(NgbActiveModal);
+export class PromotionAddEditModalComponent implements OnInit {
+  params = inject(MAT_DIALOG_DATA);
+  private modalRef = inject(MatDialogRef<PromotionAddEditModalComponent>);
   private restaurantStore = inject(RestaurantStoreService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private promotionSvc = inject(PromotionService);
   private promotionMenuSvc = inject(PromotionMenuService);
 
@@ -145,14 +153,14 @@ export class PromotionAddEditModalComponent {
 
   onProductSelected($event: any) {
     if (this.promotionMenus().some((e) => e.menuId === $event.id)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ya existe agregado para la promoción',
       });
       return;
     }
 
-    let newPromotionMenu = {
+    const newPromotionMenu = {
       id: 0,
       promotionId: 0,
       menuId: $event.id,
@@ -174,7 +182,7 @@ export class PromotionAddEditModalComponent {
   save() {
     try {
       if (!isValidField(this.estabId())) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Estab id undefined',
         });
@@ -182,7 +190,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (!isValidField(this.data.description)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripcón',
         });
@@ -190,7 +198,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (!isValidField(this.data.startDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la fecha de inicio',
         });
@@ -198,7 +206,7 @@ export class PromotionAddEditModalComponent {
       }
 
       if (!isValidField(this.data.endDate)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la fecha de fin',
         });
@@ -212,7 +220,7 @@ export class PromotionAddEditModalComponent {
             !(isValidField(e.horaInicio) || !isValidField(e.horaFin)),
         )
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese hora de inicio o fin',
         });
@@ -222,7 +230,7 @@ export class PromotionAddEditModalComponent {
       if (
         this.daysOfWeek().some((e) => e.checked && !e.horaInicio.includes(':'))
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Hora de inicio formato incorrecto',
         });
@@ -232,7 +240,7 @@ export class PromotionAddEditModalComponent {
       if (
         this.daysOfWeek().some((e) => e.checked && !e.horaFin.includes(':'))
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Hora de fin formato incorrecto',
         });
@@ -240,21 +248,21 @@ export class PromotionAddEditModalComponent {
       }
 
       if (this.promotionMenus().length === 0) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Agregué al menos un menú',
         });
         return;
       }
 
-      let newPromotionMenu = this.promotionMenus().map((e) => ({
+      const newPromotionMenu = this.promotionMenus().map((e) => ({
         id: e.id,
         promotionId: e.promotionId,
         menuId: e.menuId,
       }));
 
-      let promotionDays = JSON.stringify(this.daysOfWeek());
-      let newObject = {
+      const promotionDays = JSON.stringify(this.daysOfWeek());
+      const newObject = {
         id: this.data.id,
         estabId: this.estabId(),
         description: this.data.description,
@@ -269,13 +277,13 @@ export class PromotionAddEditModalComponent {
           .put(this.data.id, newObject, this.file)
           .subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
@@ -285,13 +293,13 @@ export class PromotionAddEditModalComponent {
       } else {
         this.promotionSvc.post(newObject, this.file).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.toastr({
+            this.tS.show({
               type: 'success',
               message: response.message,
             });

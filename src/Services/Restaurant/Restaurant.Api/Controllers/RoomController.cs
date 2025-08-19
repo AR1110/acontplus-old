@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Api.Entities;
-using Restaurant.Api.Interfaces;
+using Restaurant.Application.Interfaces;
+using Restaurant.Domain.Entities;
 
 namespace Restaurant.Api.Controllers;
 
@@ -23,7 +23,7 @@ public class RoomController(IRoomService roomService) : BaseApiController
     public async Task<IActionResult> Post([FromBody] Room room)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        room.UserId = User.GetUserId();
+        room.CreatedByUserId = User.GetUserId();
         return Ok(await roomService.AddAsync(room));
     }
 
@@ -31,7 +31,7 @@ public class RoomController(IRoomService roomService) : BaseApiController
     public async Task<IActionResult> Put(int id, [FromBody] Room room)
     {
         if (id != room.Id) return BadRequest();
-        room.UserId = User.GetUserId();
+        room.UpdatedByUserId = User.GetUserId();
         return Ok(await roomService.UpdateAsync(id, room));
     }
 

@@ -14,7 +14,8 @@ public class ArticuloService(IAdoRepository repository) : IArticuloService
 
     public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
     {
-        var dt = await repository.GetDataTableAsync($"{ModuleName}Get_Search", parameters);
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get_Search", parameters, withTableNames: false);
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
 
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "No existen datos." }

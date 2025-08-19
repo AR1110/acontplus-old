@@ -47,12 +47,12 @@ BEGIN
                               ,es.codEstab
                               ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                   as fechaRegistro
                               ,Common.ufnGetSerieDocument(''CE'',es.estab,ce.nroDocumento,0)    as nroDoc
-							  ,UPPER(cu.BusinessName)                                           as nomPersona
+							  ,UPPER(cu.BusinessName)                                           as persona
 							  ,cu.IDCard												        as nroIdentificacion
 							  ,''Ninguna''                                                      as caja
 							  ,CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END      as color
-							  ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as nomEstado
-							  ,us.nombreUsuario                                                 as nomUsuario
+							  ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as estado
+							  ,us.nombreUsuario                                                 as usuario
                               ,COUNT(*) OVER()                                                  as totalRecords
 						FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK) 
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = ce.idEstablecimiento
@@ -174,13 +174,16 @@ BEGIN
             ORDER BY defaultEstab DESC
 
             --- Added by Ignacio Manchu ---
-            SELECT idTipoDocumento
-                , descripcion
-                , codigoSri
-                , codigo AS codDoc
-            FROM dbo.TipoDocumento
-            WITH (NOLOCK) 
-            WHERE codigo IN ('FV','NE')
+			SELECT idTipoDocumento
+                  ,descripcion
+                  ,CASE codigo WHEN 'FE' THEN codigoSri
+                               WHEN 'FF' THEN 'FC'
+                               WHEN 'IV' THEN 'DH'
+                               WHEN 'LC' THEN codigoSri
+                                         ELSE ''
+                  END as customCode
+			FROM Inventario.TipoDocumento WITH (NOLOCK)
+			WHERE codigo IN ('FF','FE','IV','LC')
 
             SELECT idSubEntidadFinanciera
                     , idEntidadFinanciera
@@ -223,7 +226,11 @@ BEGIN
             SELECT cp.idCuentaPorPagar as idComprobante
                   ,(SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigoSri = cp.codDoc) as idTipoDocumento
                   ,cp.serieComprobante                                                                              as nroDocumento
-                  ,IIF(cp.codDoc = '04','Nota Credito','Comprobante Retención')                                     as tipoDocumento
+                  ,CASE cp.codDoc WHEN '07' THEN 'Comprobante de Retención'  
+                                  WHEN '05' THEN 'Nota de Débito'
+                                  WHEN '04' THEN 'Nota de Crédito'
+                   END                                                                                              as tipoDocumento
+                  
                   ,importeTotal                                                                                     as saldo
                   ,CASE cp.codDoc WHEN '04' THEN (SELECT TOP 1 d.numDocSustento FROM factelect.DocRelacionado d WITH (NOLOCK) WHERE d.idDocumentoRecibido = cp.idDocumento )
                                   WHEN '07' THEN (SELECT TOP 1 rs.numAutDocSustento FROM FactElect.RetAtsDocSustento rs WITH (NOLOCK) WHERE rs.idRetencionAts = cp.idDocumento)

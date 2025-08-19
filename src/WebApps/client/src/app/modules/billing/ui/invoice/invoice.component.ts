@@ -1,4 +1,4 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,7 +15,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { InvoiceService } from '@billing/services/invoice.service';
@@ -46,10 +46,10 @@ import { finalize, switchMap, throwError } from 'rxjs';
     templateUrl: './invoice.component.html',
     styles: ``
 })
-export class InvoiceComponent {
+export class InvoiceComponent implements OnInit {
 
   private invoiceSvc = inject(InvoiceService)
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -93,7 +93,7 @@ export class InvoiceComponent {
   })
 
   private getDataParams() {
-    let params = {
+    const params = {
 
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
@@ -155,7 +155,7 @@ export class InvoiceComponent {
         this.estadosDoc = initialData.estadosDoc;
 
         if (this.estabs.length > 0) {
-          let dataEstab = this.estabs.find(estab => (estab.defaultEstab));
+          const dataEstab = this.estabs.find(estab => (estab.defaultEstab));
           this.puntosEmision = dataEstab?.puntosEmision || [];
 
           this.dataSearch.update(e => {
@@ -167,7 +167,7 @@ export class InvoiceComponent {
 
           })
         } else {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'No tienes asignado Establecimiento!'
           })
@@ -201,14 +201,14 @@ export class InvoiceComponent {
   }
 
   onEstabChange(){
-    let dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
+    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
       this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
         this.refresh();
     } else {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'No tiene puntos de emisión asignados'
         })

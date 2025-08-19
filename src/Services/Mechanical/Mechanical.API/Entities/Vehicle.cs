@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+using Common.Core.Base;
 
 namespace Mechanical.API.Entities;
 
@@ -12,20 +12,20 @@ public class Vehicle : BaseEntity
 
     public int CountryId { get; set; }
 
-    [Required] [MaxLength(10)] public string LicensePlate { get; set; }
+    [Required][MaxLength(10)] public string LicensePlate { get; set; }
 
-    [Required] [MaxLength(100)] public string Brand { get; set; }
+    [Required][MaxLength(100)] public string Brand { get; set; }
 
 
     [MaxLength(100)] public string Model { get; set; }
 
     public int Year { get; set; }
 
-    [Required] [MaxLength(100)] public string Color { get; set; }
+    [Required][MaxLength(100)] public string Color { get; set; }
 
-    [Required] [MaxLength(100)] public string Engine { get; set; }
+    [Required][MaxLength(100)] public string Engine { get; set; }
 
-    [Required] [MaxLength(150)] public string Chassis { get; set; }
+    [Required][MaxLength(150)] public string Chassis { get; set; }
 
     [MaxLength(150)] public string Cylindraje { get; set; }
 }

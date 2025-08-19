@@ -26,7 +26,7 @@ public static class RetencionAtsEndpointsExtensions
         retencionAtsGroup.MapDelete("/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.DeleteRetencionAtsAsync(id));
 
-        retencionAtsGroup.MapPost("/cancel/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
+        retencionAtsGroup.MapPut("/cancel/{id}", async (IRetencionAtsEndpoints retencionAtsEndpoints, int id) =>
             await retencionAtsEndpoints.CancelRetencionAtsAsync(id));
 
         var doctSustentoGroup = endpointRouteBuilder.MapGroup("/docsustento")

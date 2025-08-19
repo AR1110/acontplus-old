@@ -91,13 +91,13 @@ BEGIN
             INNER JOIN @tblInfoCompRet r ON p.idProveedor = r.idProveedor
  
         SELECT TOP 1 @claveAcceso = dbo.ufnGeneraClaveAcceso (
-                                                                dbo.AFTDeleteCero(es.estab)   
+                                                                dbo.AFTDeleteCero(es.estab)Â Â Â 
 			                                                   ,'07'
 												               ,CAST(@ambiente as nvarchar)
-												               ,CAST(@tipoEmision as nvarchar)                         
-			                                                   ,dbo.AFTConvertDate(fechaEmision)                
-			                                                   ,@ruc                                             
-			                                                   ,es.estab + pe.ptoEmi                                                     
+												               ,CAST(@tipoEmision as nvarchar)Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+			                                                   ,dbo.AFTConvertDate(fechaEmision)Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+			                                                   ,@rucÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+			                                                   ,es.estab + pe.ptoEmiÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
 			                                                   ,Helper.F_Auto_Sequential(@secuencial)
                                                              )
         ,@fechaEmision = fechaEmision
@@ -145,6 +145,13 @@ BEGIN
 	 
 
         IF EXISTS (SELECT 1 FROM [FactElect].[v_DocElectronico] WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND codEstado IN (4,3,6))
+            BEGIN
+                SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
+                RETURN 
+            END
+
+
+        IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @idDocumentoElectronico AND isAutomatic = 1)
             BEGIN
                 SELECT '0'code, 'El Documento tiene un proceso en el Sri' as 'message'
                 RETURN 

@@ -1,4 +1,6 @@
-﻿namespace TechnicalSupport.API.Services;
+﻿using System.Data;
+
+namespace TechnicalSupport.API.Services;
 
 public class CategoryService : ICategoryService
 {
@@ -25,9 +27,7 @@ public class CategoryService : ICategoryService
             // Handle case where category not found
             return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
 
-        category.Enabled = false;
-        category.Deleted = true;
-        category.UserId = userId;
+        category.MarkAsDeleted(userId);
         _context.Update(category);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminada Exitosamente" };
@@ -37,10 +37,12 @@ public class CategoryService : ICategoryService
     {
         if (!await _context.Categories.AnyAsync()) return new ApiResponse { Code = "0", Message = "No data" };
 
-        var dt = await _adoRepository.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
-        if (DataValidation.DataTableIsNull(dt)) return new ApiResponse { Code = "0", Message = "No data" };
-
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+        var ds = await _adoRepository.GetDataSetAsync("TechnicalSupport.Category_Get", parameters,
+            withTableNames: false);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        return DataValidation.DataTableIsNull(dt)
+            ? new ApiResponse { Code = "0", Message = "No data" }
+            : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
 
@@ -53,9 +55,9 @@ public class CategoryService : ICategoryService
 
         categoryFound.CompanyId = category.CompanyId;
         categoryFound.Code = category.Code;
-        categoryFound.Enabled = category.Enabled;
+        categoryFound.IsActive = category.IsActive;
         categoryFound.Name = category.Name;
-        categoryFound.UserId = category.UserId;
+        categoryFound.UpdatedByUserId = category.UpdatedByUserId;
         _context.Update(categoryFound);
         await _context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizada Exitosamente" };

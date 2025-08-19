@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
@@ -29,7 +29,7 @@ import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
         BrandAddEditDirective,
     ]
 })
-export class BrandPageComponent {
+export class BrandPageComponent implements OnInit {
   private _brandUseCase= inject(BrandUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
@@ -38,11 +38,11 @@ export class BrandPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   getMeasures() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
@@ -99,13 +99,13 @@ export class BrandPageComponent {
         if (result.isConfirmed) {
           this._brandUseCase.updateStatus(data.idMarca).subscribe((response) => {
             if (response.code == '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code == '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

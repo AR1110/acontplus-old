@@ -1,6 +1,4 @@
-﻿using FactElect.Application.DTOs.RetencionAts;
-
-namespace FactElect.API.Endpoints.Implementations.RetencionAts;
+﻿namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class DocSustentoPagoEndpoints(IDocSustentoPagoService docSustentoPagoService, IUserContext userContext)
     : IDocSustentoPagoEndpoints

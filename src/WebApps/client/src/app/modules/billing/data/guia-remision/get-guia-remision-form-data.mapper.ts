@@ -10,7 +10,7 @@ export class GetGuiaRemisionFormDataMapper {
       estabs: ptoEmision
     })
     console.log(response);
-    let informacionesAdicionales  = infoAdicional.map((item:any) => {
+    const informacionesAdicionales  = infoAdicional.map((item:any) => {
       return {
         ...item,
         infoAdicional: item.infoAdicional ? JSON.parse(item.infoAdicional): [],

@@ -1,17 +1,16 @@
-import {UserCustomerRoleResponse} from "@modules/config/domain/models/user-customer/user-customer-role.model";
+import { UserCustomerRoleResponse } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 
 export class ListUserCustomerRoleMapper {
-
-  static toJson<T>(parameters:T){
+  static toJson<T>(parameters: T) {
     return JSON.stringify({
       tipo: 1,
-      ...parameters
-    })
+      ...parameters,
+    });
   }
 
   static fromJson(response: any): UserCustomerRoleResponse {
     const userCustomerRoles = response.userCustomerRoles || [];
-    const data = userCustomerRoles.map((item:any, index: number)=>{
+    const data = userCustomerRoles.map((item: any, index: number) => {
       return {
         idUsuarioRol: item.idUsuarioRol,
         idUsuario: item.idUsuario,
@@ -21,9 +20,9 @@ export class ListUserCustomerRoleMapper {
         rucEmpresa: item.ruc,
         razonSocialEmpresa: item.razonSocial,
         estado: item.estado,
-        roleName: item.roleName
-      }
-    })
+        roleName: item.roleName,
+      };
+    });
     return {
       data,
     };

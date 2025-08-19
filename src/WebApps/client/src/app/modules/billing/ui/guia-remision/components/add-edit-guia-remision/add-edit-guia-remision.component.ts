@@ -22,11 +22,11 @@ import {
 import Swal from 'sweetalert2';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import {
-  CompanyCustomer,
+  CompanyCustomerEntity,
   CompanyCustomerSearch,
-} from '@customer/domain/models/company-customer';
+} from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({
   selector: 'app-add-edit-guia-remision',
@@ -253,7 +253,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
     ]);
   }
 
-  customerSelected($event: CompanyCustomer) {
+  customerSelected($event: CompanyCustomerEntity) {
     console.log($event);
     this.dataForm.patchValue({
       destinatario: {

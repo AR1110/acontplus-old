@@ -1,18 +1,17 @@
 ﻿namespace Contabilidad.API.Controllers;
 
-public class MovimientoCajaController(IMovimientoCajaService movimientoCajaService) : BaseApiController
+public class MovimientoCajaController(IMovimientoCajaRepository movimientoCajaRepository) : BaseApiController
 {
+    private const string UserRoleIdClaim = "userRoleId";
+
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
-        var response = await movimientoCajaService.GetAsync(new Dictionary<string, object>
+        var response = await movimientoCajaRepository.GetAsync(new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) return NoContent();
-
-        ;
-        return Ok(new { code = "1", payload = response });
+        return Ok(response);
     }
 
     [HttpPost]
@@ -20,11 +19,11 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
 
-        var response = await movimientoCajaService.AddAsync(parameters);
+        var response = await movimientoCajaRepository.AddAsync(parameters);
         return Ok(response);
     }
 
@@ -33,8 +32,8 @@ public class MovimientoCajaController(IMovimientoCajaService movimientoCajaServi
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        var response = await movimientoCajaService.DeleteAsync(parameters);
+            { { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) }, { "id", id } };
+        var response = await movimientoCajaRepository.DeleteAsync(parameters);
         return Ok(response);
     }
 }

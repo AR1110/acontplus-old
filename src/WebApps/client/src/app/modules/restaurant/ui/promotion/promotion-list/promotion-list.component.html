@@ -1,91 +1,46 @@
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row justify-content-between">
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="estab">Establecimiento: </label>
-          <select
-            name="estab"
-            id="estab"
-            class="form-select"
-            (change)="onChangeEstab()"
-          >
-            @for (item of estabs(); track $index) {
-              <option [value]="item.idEstablecimiento">
-                {{ item.nombreComercial }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
+<div class="my-2">
+  <div
+    class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+  >
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select [(ngModel)]="estabId" (selectionChange)="onChangeEstab($event)">
+          @for (item of estabs(); track $index) {
+            <mat-option [value]="item.idEstablecimiento"> {{ item.nombreComercial }}</mat-option>
 
-      <div
-        class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 d-flex align-items-center justify-content-end"
-      >
-        <button type="button" mat-raised-button (click)="openModalAddEdit()">
-          <mat-icon>add</mat-icon>
-          Agregar
-        </button>
-      </div>
-    </div>
-
-    <div class="table-responsive">
-      <table class="table table-hover">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">Op.</th>
-            <th scope="col">Imagen</th>
-            <th scope="col">Descripción</th>
-            <th scope="col">Fecha Inicio</th>
-            <th scope="col">Fecha Fin</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of promotions(); track $index) {
-            <tr>
-              <td>
-                {{ $index + 1 }}
-              </td>
-              <td class="text-center">
-                <app-theme-button
-                  icon="edit"
-                  matStyle="icon"
-                  title="Editar"
-                  (handleClick)="openModalAddEdit(item)"
-                >
-                </app-theme-button>
-              </td>
-              <td>
-                <img [src]="item.img" width="70" class="rounded" alt="" />
-              </td>
-              <th scope="row">{{ item.description }}</th>
-              <td>{{ item.startDate }}</td>
-              <td>{{ item.endDate }}</td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="6" class="text-center"></td>
-            </tr>
           }
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="4">
-              <ngb-pagination
-                (pageChange)="refresh()"
-                [(page)]="pagination().pageIndex"
-                [boundaryLinks]="true"
-                [collectionSize]="pagination().totalRecords"
-                [maxSize]="pagination().maxSize"
-                [pageSize]="pagination().pageSize"
-                [rotate]="true"
-              />
-            </td>
-            <td colspan="2"></td>
-          </tr>
-        </tfoot>
-      </table>
+        </mat-select>
+      </mat-form-field>
     </div>
-  </mat-card-content>
-</mat-card>
+    <div class="col"></div>
+    <div class="col"></div>
+    <div class="col">
+      <app-theme-button
+        icon="add"
+        variant="success"
+        text="Añadir promoción"
+        (handleClick)="openModalAddEdit()"
+      />
+    </div>
+  </div>
+
+</div>
+
+<app-mat-dynamic-table
+  [tableData]="dataSource()"
+  [columnDefinitions]="columnsDefs"
+  [visibleColumns]="columns"
+  [templateOp]="templateOp"
+  [paginationConfig]="pagination()"
+  [enablePagination]="false"
+  (pageEvent)="handlePageEvent($event)"
+/>
+<ng-template #templateOp let-item="item">
+  <app-theme-button
+    icon="edit"
+    matStyle="icon"
+    title="Editar"
+    (handleClick)="openModalAddEdit(item)"
+  />
+</ng-template>

@@ -6,7 +6,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {DialogService} from "@core/services/dialog.service";
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 @Component({
@@ -49,7 +49,7 @@ export class AuthComponent {
   private _authUseCase= inject(AuthUseCase)
   private _tokenUseCase = inject(TokenUseCase)
   private router = inject(Router)
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
   private dialogSvc = inject(DialogService)
 
   hide = signal(true);
@@ -98,14 +98,14 @@ export class AuthComponent {
       password: this.form.value.password!
     }).subscribe(response => {
       if (response.code === "0") {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message
         })
         return
       }
 
-      let dataPayload = JSON.parse(response.payload as string)
+      const dataPayload = JSON.parse(response.payload as string)
       console.log(dataPayload)
       const establecimientos = dataPayload.flatMap((userRole: any) => userRole.establecimientos)
 

@@ -3,13 +3,14 @@
 [Table("LoginHistoryArchive", Schema = "Seguridad")]
 public class LoginHistoryArchive : BaseEntity
 {
-    public string Username { get; set; }
     public int UserRoleId { get; set; }
+    [MaxLength(2000)]
     public string UserAgent { get; set; }
-    public DateTime LoginDate { get; set; }
     public bool? IsLoggedIn { get; set; }
     public bool? IsLocked { get; set; }
-    [MaxLength(15)] public string IpAddress { get; set; }
+    [MaxLength(15)]
+    public string IpAddress { get; set; }
+    [MaxLength(4000)]
     public string Token { get; set; }
     public DateTime? TokenExpiration { get; set; }
 }

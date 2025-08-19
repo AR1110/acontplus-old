@@ -19,7 +19,7 @@ public class MedicalHistoryController(IMedicalHistoryService historyService) : B
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] MedicalHistory medicalHistory)
     {
-        medicalHistory.UserId = User.GetUserId();
+        medicalHistory.CreatedByUserId = User.GetUserId();
         return Ok(await historyService.AddAsync(medicalHistory));
     }
 
@@ -28,7 +28,7 @@ public class MedicalHistoryController(IMedicalHistoryService historyService) : B
     {
         if (id != medicalHistory.Id) return BadRequest("Id no coincide!");
 
-        medicalHistory.UserId = User.GetUserId();
+        medicalHistory.UpdatedByUserId = User.GetUserId();
         return Ok(await historyService.UpdateAsync(id, medicalHistory));
     }
 

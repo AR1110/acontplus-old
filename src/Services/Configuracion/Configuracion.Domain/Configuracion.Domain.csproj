@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Core" />
+    <PackageReference Include="Acontplus.Common.Data" />
+    <PackageReference Include="Acontplus.Common.Utilities" />
   </ItemGroup>
 
 </Project>

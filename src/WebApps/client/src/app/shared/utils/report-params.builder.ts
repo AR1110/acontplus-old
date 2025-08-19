@@ -1,11 +1,16 @@
 import { PURCHASE_CODE_REPORT } from "@purchase/domain/enums/purchase.constants";
 import { REPORT_FORMAT } from "@core/constants/global.constants";
-import { ACCOUNTING_CODE_REPORT } from "@accounting/domain/enums/accounting.constants";
+import { ACCOUNTING_CODE_REPORT } from "@accounting/shared/enums/accounting.constants";
+import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
+import {INVENTORY_CODE_REPORT} from "@inventory/domain/enums/inventory.enum";
 
 export interface ReportOptions {
-  id: number;
-  codEstab: string;
+  id?: number;
+  codEstab?: string;
+  estabId?: number;
   tipo?: number;
+  format?:string
+  [key: string]: any;
 }
 
 export interface ReportParameters {
@@ -42,24 +47,51 @@ export class ReportParamsBuilder {
       format: REPORT_FORMAT.PDF,
       hasService: true,
     },
+    [ACCOUNTING_CODE_REPORT.ACEDFP]: {
+      hasParams: false,
+      reportCode: ACCOUNTING_CODE_REPORT.ACEDFP,
+      format: REPORT_FORMAT.PDF,
+      hasService: true,
+    },
+    [ACCOUNTING_CODE_REPORT.ACELC]: {
+      hasParams: false,
+      reportCode: ACCOUNTING_CODE_REPORT.ACELC,
+      format: REPORT_FORMAT.PDF,
+      hasService: true,
+    },
+    [CUSTOMER_CODE_REPORT.RCL]: {
+      hasParams: false,
+      reportCode: CUSTOMER_CODE_REPORT.RCL,
+      format: REPORT_FORMAT.PDF,
+      hasService: false,
+    },
+    [INVENTORY_CODE_REPORT.RCD]: {
+      hasParams: true,
+      reportCode: INVENTORY_CODE_REPORT.RCD,
+      format: REPORT_FORMAT.EXCEL,
+      hasService: false,
+    }
   };
 
   /**
    * Obtiene parámetros para enviar a la BD para generación de reportes
-   * @param codDoc Código del documento/reporte
+   * @param codigo Código del documento/reporte
    * @param options Opciones necesarias (id, codEstab, tipo opcional)
    * @returns Parámetros formateados o undefined si no existe configuración
    */
-  static getReportParameters(codDoc: string, options: ReportOptions): ReportParameters | undefined {
-    const config = this.reportConfigs[codDoc];
+  static getReportParameters(codigo: string, options: ReportOptions): ReportParameters | undefined {
+    const config = this.reportConfigs[codigo];
     if (!config) return undefined;
 
     // Construye los parámetros de datos
     const dataParams = {
       id: options.id,
       tipo: options.tipo ?? 1,
-      codEstab: options.codEstab
+      codEstab: options.codEstab,
+        ...options, // Spread de parámetros adicionales
     };
+
+
 
     // Construye los parámetros del reporte
     const reportParams = {
@@ -68,6 +100,10 @@ export class ReportParamsBuilder {
       format: config.format,
       additionalParams: []
     };
+
+    if(options.format){
+      reportParams.format = options.format;
+    }
 
     return {
       dataParams: JSON.stringify(dataParams),

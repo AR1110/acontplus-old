@@ -30,9 +30,7 @@ BEGIN
 	      ,ad.idUsuario
           ,ISNULL(cl.idTiempoCredito, 0) as idTiempoCredito
 	      ,ad.idPuntoEmision
-	      ,ad.serieComprobante 
-	      ,ad.codDoc
-	      ,ad.docOrigen
+	      ,ad.serieComprobante
 	      ,ad.fechaEmision	 
 	      ,ad.observacion
 	      ,ad.totalSinImpuestos
@@ -41,10 +39,14 @@ BEGIN
 	      ,ad.importeTotal
           ,cu.IDCard                     as identificacionComprador
           ,pe.ptoEmi
+          ,ISNULL(td.codigoSri,'NE')     as codDoc
+          ,og.codigo                     as docOrigen
           ,es.estab
 	FROM Ventas.Aprob_Document     ad WITH (NOLOCK)
 	INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente         = ad.idCliente
     INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision    = ad.idPuntoEmision
+    INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = ad.idTipoDocumento
+    INNER JOIN dbo.TipoDocumento   og WITH (NOLOCK) ON og.idTipoDocumento   = ad.idTipoDocOrigen
     INNER JOIN Customer.Customer   cu WITH (NOLOCK) ON cu.Id                = cl.CustomerId
     INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
 	WHERE ad.idAprob_Document = @id
@@ -151,11 +153,18 @@ BEGIN
       AND dt.estado = 1 
     ORDER BY dt.idAprob_Document_Detailt ASC 
 
-	SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
-			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
-			               ELSE '' END 
-		  ,serieComprobante = serie
-	FROM Ventas.Aprob_Document_Hist 
+	SELECT CASE WHEN ah.idProForma    > 0 THEN 'Proforma' 
+			    WHEN ah.idNotaEntrega > 0 THEN 'Nota Entrega' 
+			                              ELSE '' 
+           END as tipoDoc
+
+		  ,CASE WHEN ah.idProForma    > 0 THEN pr.serieComprobante
+			    WHEN ah.idNotaEntrega > 0 THEN ne.serieComprobante 
+			                              ELSE '' 
+           END as serieComprobante
+	FROM Ventas.Aprob_Document_Hist ah WITH (NOLOCK)
+    LEFT JOIN dbo.Proforma          pr WITH (NOLOCK) ON pr.idProforma    = ah.idProforma
+    LEFT JOIN dbo.NotaEntrega       ne WITH (NOLOCK) ON ne.idNotaEntrega = ah.idNotaEntrega
     WHERE idAprob_Document = @id
 	
 	SELECT 

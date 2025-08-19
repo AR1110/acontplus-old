@@ -1,6 +1,6 @@
 ﻿namespace Contabilidad.API.Services;
 
-public class CuotaPorCobrarService(IAdoRepository adoRepository) :ICuotaPorCobrarService
+public class CuotaPorCobrarService(IAdoRepository adoRepository) : ICuotaPorCobrarService
 {
     private const string ModuleName = "Contabilidad.CuotaPorCobrar_";
 

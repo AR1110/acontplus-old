@@ -21,9 +21,9 @@ export enum GlobalRoutes {
 
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
-  InventarioMeasure = 'inventory/measure',
   MechanicalLayout = 'mechanical/layout',
   MechanicalVehicle = 'mechanical/vehicle-page',
+  MechanicalConfigInspection = 'mechanical/config-inspection-page',
   RestaurantReports = 'restaurant/item-report',
   RestaurantInfrastructure = 'restaurant/infrastructure-page',
   RestaurantProducts = 'restaurant/products-page',
@@ -56,6 +56,7 @@ export enum GlobalRoutes {
   ArticuloFraccionado = 'inventory/fracc-product',
   TransferenciaBodega = 'inventory/transferencia-bodega',
   Bodega='inventory/warehouse',
+  InventarioConsolidacion='inventory/inventory-adjustment',
 
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',

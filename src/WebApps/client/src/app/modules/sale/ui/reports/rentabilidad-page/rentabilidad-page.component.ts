@@ -1,11 +1,11 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -13,13 +13,13 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
 
 import { formatDateToString } from '@core/utils/date.util';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
@@ -46,7 +46,7 @@ import {MatInputModule} from "@angular/material/input";
   ],
   templateUrl: './rentabilidad-page.component.html',
 })
-export class RentabilidadPageComponent {
+export class RentabilidadPageComponent implements OnInit {
   establecimientos = signal<GroupedEstab[]>([]);
   bodegas = signal<GroupedEstabBodega[]>([]);
   tarifas = signal<TarifaSelectHtmlOnly[]>([])
@@ -86,32 +86,32 @@ export class RentabilidadPageComponent {
     isSimpleMode: true,
   };
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _productUseCase = inject(ProductUseCase);
   private _tokenUseCase = inject(TokenUseCase);
 
   ngOnInit() {
     this._productUseCase.getDataReport().subscribe( (response) => {
-        let { estabs, tarifas, tiposDoc, subCategorias } = response;
+        const { estabs, tarifas, tiposDoc, subCategorias } = response;
         this.establecimientos.set(estabs);
         this.tarifas.set(tarifas)
         this.tiposDoc.set(tiposDoc)
         this.subCategorias.set(subCategorias);
 
-        let dataEstab = this.establecimientos().find(
+        const dataEstab = this.establecimientos().find(
           (estab) => estab.defaultEstab,
         );
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
           this.bodegas.set(dataEstab.bodegas);
-          let dataBodega = this.bodegas().find((bodega) => bodega.defaultBodega);
+          const dataBodega = this.bodegas().find((bodega) => bodega.defaultBodega);
           if (dataBodega) {
             this.dataSearch.idBodega = dataBodega.idBodega;
           }
         }
 
         if (this.tarifas.length > 0) {
-          let dataTarifa = this.tarifas().find((t) => t.predeterminada);
+          const dataTarifa = this.tarifas().find((t) => t.predeterminada);
           if (dataTarifa) {
             this.dataSearch.idTarifa = dataTarifa.idTarifa;
           }
@@ -121,12 +121,12 @@ export class RentabilidadPageComponent {
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos().find(
+      const dataEstab = this.establecimientos().find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
-        let dataBodega = this.bodegas().find((b) => b.defaultBodega);
+        const dataBodega = this.bodegas().find((b) => b.defaultBodega);
         if (dataBodega) {
           this.dataSearch.idBodega = dataBodega.idBodega;
         }
@@ -138,7 +138,7 @@ export class RentabilidadPageComponent {
   }
 
   onUserSelected(event: any) {
-    let { data } = event;
+    const { data } = event;
     this.dataSearch.idUsuario = data.idUsuario;
   }
 
@@ -152,7 +152,7 @@ export class RentabilidadPageComponent {
   }
 
   onProductSelected(event: any) {
-    let data = event.data;
+    const data = event.data;
     this.dataSearch.idArticulo = data.idArticulo;
   }
 
@@ -161,10 +161,10 @@ export class RentabilidadPageComponent {
   }
 
   getReport(format: 'pdf' | 'excel') {
-    let checkedSubCategorias = this.checkedSubCategorias.value;
+    const checkedSubCategorias = this.checkedSubCategorias.value;
 
     if (!isValidField(this.dataSearch.fromDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha inicio',
       });
@@ -172,7 +172,7 @@ export class RentabilidadPageComponent {
     }
 
     if (!isValidField(this.dataSearch.toDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha fin',
       });
@@ -181,7 +181,7 @@ export class RentabilidadPageComponent {
 
     if (this.dataSearch.productChecked) {
       if (!isValidField(this.dataSearch.idArticulo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Artículo',
         });
@@ -194,7 +194,7 @@ export class RentabilidadPageComponent {
         !isValidField(this.dataSearch.porcentajeRenta) &&
         !isValidField(this.dataSearch.porcentajeComision)
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message:
             'Ingrese el valor del porcentaje de renta o el valor del porcentaje de comisión.',
@@ -216,7 +216,7 @@ export class RentabilidadPageComponent {
         Array.isArray(checkedSubCategorias) &&
         checkedSubCategorias.length === 0
       ) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione al menos una SubFamilia',
         });
@@ -226,7 +226,7 @@ export class RentabilidadPageComponent {
 
     if (this.dataSearch.userChecked) {
       if (!isValidField(this.dataSearch.idUsuario)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
@@ -234,7 +234,7 @@ export class RentabilidadPageComponent {
       }
     }
 
-    let subCategoriasChecked =
+    const subCategoriasChecked =
       Array.isArray(checkedSubCategorias) && checkedSubCategorias.join(',');
     const dataParms = {
       tipo: this.getDataTipo(),

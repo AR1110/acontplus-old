@@ -22,9 +22,7 @@ public class MedicalHistoryService(IAdoRepository adoRepository, VetContext cont
         var medicalHistory = await context.MedicalHistories.FindAsync(id);
         if (medicalHistory == null) return new ApiResponse { Code = "0", Message = "Registro no encontrado" };
 
-        medicalHistory.Deleted = true;
-        medicalHistory.Enabled = false;
-        medicalHistory.UserId = userId;
+        medicalHistory.MarkAsDeleted(userId);
         context.Update(medicalHistory);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Eliminado Exitosamente" };
@@ -58,7 +56,7 @@ public class MedicalHistoryService(IAdoRepository adoRepository, VetContext cont
         medicalHistoryFound.Age = medicalHistory.Age;
         medicalHistoryFound.Weight = medicalHistory.Weight;
         medicalHistoryFound.EstablecimientoId = medicalHistory.EstablecimientoId;
-        medicalHistoryFound.UserId = medicalHistory.UserId;
+        medicalHistoryFound.UpdatedByUserId = medicalHistory.UpdatedByUserId;
         context.Update(medicalHistoryFound);
         await context.SaveChangesAsync();
         return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente" };

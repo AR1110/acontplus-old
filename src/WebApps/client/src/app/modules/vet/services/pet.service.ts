@@ -38,7 +38,7 @@ export class PetService {
       .pipe(map((response) => response));
   }
 
-  search<T extends { textSearch: string }>(data: T): Observable<Array<Pet>> {
+  search<T extends { textSearch: string }>(data: T): Observable<Pet[]> {
     const query = {
       tipo: 2,
       textSearch: data.textSearch,

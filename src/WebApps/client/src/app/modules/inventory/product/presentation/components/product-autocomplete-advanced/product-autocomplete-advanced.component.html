@@ -1,0 +1,180 @@
+<app-reusable-autocomplete
+  [config]="finalConfig"
+  [searchFunction]="productSearchFunction"
+  [itemTemplate]="productTemplate"
+  (itemSelected)="onProductSelected($event)"
+  (searchChanged)="searchChanged.emit($event)"
+  (pageChanged)="pageChanged.emit($event)"
+  (filterChanged)="filterChanged.emit($event)"
+  (createClicked)="createProductClicked.emit($event)"
+></app-reusable-autocomplete>
+
+<ng-template #productTemplate let-product>
+  <div class="product-item-advanced">
+
+    <div class="product-image">
+      <img [src]="product.imageUrl || '/assets/default-product.png'"
+           [alt]="product.name" >
+
+
+      <div class="stock-badge"
+           [class.in-stock]="product.stock > 0"
+           [class.out-of-stock]="product.stock <= 0"
+           [class.low-stock]="product.stock > 0 && product.stock <= 5">
+        {{ getStockLabel(product.stock) }}
+      </div>
+    </div>
+
+    <!-- Información principal del producto -->
+    <div class="product-main-info">
+      <div class="product-header">
+        <div class="product-name">{{ product.name }}</div>
+        @if (product.brand) {
+        <div class="product-brand"  >{{ product.brand }}</div>
+
+        }
+      </div>
+
+      @if (product.code || product.barcode) {
+      <div class="product-codes" >
+        @if (product.code) {
+        <span class="product-code"  >SKU: {{ product.code }}</span>
+
+        }
+        @if (product.barcode) {
+        <span class="product-barcode"  >CB: {{ product.barcode }}</span>
+
+        }
+      </div>
+
+      }
+
+      @if (product.description) {
+        <div class="product-description"  >
+          {{ product.description }}
+        </div>
+      }
+
+
+      <div class="product-meta">
+        @if (product.category) {
+
+        <span class="category"  >{{ product.category }}</span>
+        }
+        @if (product.subcategory) {
+
+          <span class="subcategory"  >{{ product.subcategory }}</span>
+        }
+        @if (product.unit) {
+        <span class="unit"  >{{ product.unit }}</span>
+
+        }
+        @if (product.weight) {
+        <span class="weight"  >{{ product.weight }}kg</span>
+        }
+        <span class="tracking">Iva {{product.taxName }}</span>
+      </div>
+    </div>
+
+    <!-- Sección de precios -->
+    <div class="product-prices-section">
+      <div class="prices-header">
+        <span class="prices-title">PVP</span>
+        @if (product.prices?.length > 1) {
+        <span class="prices-count"  >
+              ({{ product.prices.length }} precios)
+            </span>
+
+        }
+      </div>
+
+      <div class="prices-container" [class.multiple-prices]="product.prices?.length > 1">
+        <!-- Precio único -->
+        @if (!product.prices?.length && product.price) {
+        <div   class="single-price">
+          <span class="price-value">{{ product.price   }}</span>
+        </div>
+
+        }
+
+        <!-- Múltiples precios -->
+        @if (product.prices?.length) {
+        <div  class="multiple-prices">
+          <!-- Mostrar hasta 3 precios principales -->
+          @for (price of getDisplayPrices(product.prices); track $index){
+          <div
+               class="price-item"
+               [class.default-price]="price.isDefault"
+               [class.promotional-price]="price.type === 'promotional'"
+               [class.volume-price]="price.type === 'volume'">
+
+            <div class="price-main">
+              <span class="price-label">{{ price.label }}</span>
+              <span class="price-value">
+                    {{ price.value | currency:price.currency  }}
+                @if (price.includesTax === false) {
+                <span class="tax-indicator"  >(+IVA)</span>
+                }
+                @if (price.includesTax === true) {
+                    <span class="tax-indicator included"  >(IVA incl.)</span>
+
+                }
+                </span>
+
+            </div>
+
+            <!-- Información adicional del precio -->
+            @if (price.minQuantity || price.validTo) {
+            <div class="price-details"  >
+              @if (price.minQuantity) {
+                  <span class="min-quantity" >
+                    Min: {{ price.minQuantity }} {{ product.unit || 'uds' }}
+                  </span>
+
+              }
+              @if (price.validTo && isPromotional(price)) {
+              <span class="valid-until"  >
+                    Hasta: {{ price.validTo   }}
+                  </span>
+
+              }
+            </div>
+
+            }
+          </div>
+
+          }
+
+          <!-- Indicador de más precios -->
+<!--          @if (product.prices.length > 3) {-->
+<!--          <div   class="more-prices-indicator">-->
+<!--            <span class="more-prices-text">+{{ product.prices.length - 3 }} más</span>-->
+<!--            <button class="view-all-prices-btn" (click)="onViewAllPrices(product, $event)">-->
+<!--              Ver todos-->
+<!--            </button>-->
+<!--          </div>-->
+
+<!--          }-->
+        </div>
+
+        }
+      </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    @if (showQuickActions){
+    <div class="product-actions"  >
+      <button class="quick-action-btn add-to-cart"
+              (click)="onQuickAdd(product, $event)"
+              [disabled]="product.stock === 0">
+        <span class="material-icons">add_shopping_cart</span>
+      </button>
+      <button class="quick-action-btn view-details"
+              (click)="onViewDetails(product, $event)">
+        <span class="material-icons">info</span>
+      </button>
+    </div>
+
+    }
+  </div>
+</ng-template>

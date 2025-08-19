@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -10,9 +10,9 @@ import { TiempoCredito } from '@modules/config/domain/models/tiempo-credito.mode
     templateUrl: './tiempo-credito-page.component.html',
     styles: ``
 })
-export class TiempoCreditoPageComponent {
-  buscar: string = '';
-  tiempoCreditos: TiempoCredito[] = []; // Populate this with your data
+export class TiempoCreditoPageComponent implements OnInit {
+  buscar = '';
+  tiempoCreditos: TiempoCredito[] = []; // Populate this with your infrastructure
   filteredCreditos: TiempoCredito[] = [];
   accion = { editar: true, eliminar: true }; // Your action
 

@@ -3,7 +3,7 @@ export const isValidField = <T>(field: T): T | null => {
   if(typeof field==='string'){
     value = field.trim()
   }
-  const invalidValues: ReadonlyArray<T | null | undefined | "" | 0> = ["", null, undefined, 0];
+  const invalidValues: readonly (T | null | undefined | "" | 0)[] = ["", null, undefined, 0];
 
   return invalidValues.includes(value) ? null : value;
 };
@@ -36,12 +36,11 @@ export function isValidJSON(texto: string) {
 }
 
 
-export const getValidId =  (id?: number) => {
-  if (typeof id === "number" && id > 0) return id  ;  // Retorna id como T
-
+export function getValidId(id?: number): number | null | undefined {
   if (id === undefined) return undefined;
-  return null;
+  return id > 0 ? id : null;
 }
+
 
 
 
@@ -62,7 +61,7 @@ export class ValidatorUtils {
     if (typeof field === 'string') {
       value = field.trim();
     }
-    const invalidValues: ReadonlyArray<T | null | undefined | "" | 0> = ["", null, undefined, 0];
+    const invalidValues: readonly (T | null | undefined | "" | 0)[] = ["", null, undefined, 0];
     return invalidValues.includes(value) ? null : value;
   }
 
@@ -75,7 +74,7 @@ export class ValidatorUtils {
   }
 
   static getPermisosLocal(): any {
-    let dataPermisos = localStorage.getItem("permisos");
+    const dataPermisos = localStorage.getItem("permisos");
     return dataPermisos ? JSON.parse(dataPermisos) : null;
   }
 

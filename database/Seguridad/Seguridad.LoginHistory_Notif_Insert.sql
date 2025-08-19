@@ -67,7 +67,7 @@ BEGIN
                       
             -- Set values for reusable constants
         SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
-        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'H');
+        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'M');
         SET @statusId = (SELECT Id FROM Common.[Status] WHERE Code = 'Q');
 
         IF (@notificationTypeId IS NULL OR @notificationTypeId = 0)
@@ -89,13 +89,13 @@ BEGIN
             END
 
         SELECT @userAgentMain = userAgent
-            ,@loginDate = loginDate
+            ,@loginDate = [Utils].[ConvertToEcuadorTimeZone](createdAt)
             ,@userRoleId = userRoleId
             ,@userId = userId
             ,@fromMobile = fromMobile
         FROM OPENJSON (@json) WITH (
                 userAgent VARCHAR(MAX),
-                loginDate DATETIME2,
+                createdAt DATETIME2,
                 userRoleId INT, 
                 userId INT,
                 fromMobile BIT);
@@ -116,7 +116,7 @@ BEGIN
             BEGIN
                 SET @emailSenderConfigId = (SELECT TOP 1 Id 
                                                FROM Config.EmailSenderConfig 
-                                               WHERE IsGlobal = 1 AND Enabled = 1);
+                                               WHERE IsGlobal = 1 AND IsActive = 1);
             END
             ELSE
             BEGIN
@@ -146,9 +146,9 @@ BEGIN
 
         INSERT INTO @userToSendEmail(body, params, receptor)
 		SELECT  (SELECT @requesting_user requesting_user
-                                                ,@browser browser
-                                                ,@os os
-                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
+                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
                                                 ,@company company
@@ -163,9 +163,9 @@ BEGIN
                 INSERT INTO @userToSendEmail(body, params, receptor)
                 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,approving_user = UPPER(ISNULL(cu.BusinessName, us.nombreUsuario))
-                                                ,@browser browser
-                                                ,@os os
-                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
+                                                ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
                                                 ,@company company
@@ -195,14 +195,14 @@ BEGIN
         WHILE @@FETCH_STATUS = 0
         BEGIN
             -- Insert into Notification table
-            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [UserId], [FromMobile])
+            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [CreatedByUserId], [FromMobile])
             VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @userId, @fromMobile);
 
             SET @notificationId = SCOPE_IDENTITY();
 
             -- Insert into EmailQueue table
             INSERT INTO Common.EmailQueue ([NotificationId], [EmailSenderConfigId], [RecipientEmail], [Subject], [IsHtml],
-            [CompressedBody], [PriorityId], [StatusId], [Template], [UserId], [FromMobile])
+            [CompressedBody], [PriorityId], [StatusId], [Template], [CreatedByUserId], [FromMobile])
             VALUES (@notificationId, @emailSenderConfigId, @receptor, @subject, CAST(0 AS BIT),
             COMPRESS(@body), @priorityId, @statusId, @template, @userId, @fromMobile);
 
@@ -218,8 +218,8 @@ BEGIN
     BEGIN CATCH
          IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
-        INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), 'LoginHistory/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+        INSERT INTO ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
+		VALUES ('LoginHistory/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
     END CATCH
 END
 GO

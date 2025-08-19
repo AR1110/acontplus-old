@@ -1,5 +1,5 @@
 
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -11,11 +11,11 @@ import {
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Subcategory } from '@accounting/domain/models/subcategory';
+import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
@@ -47,7 +47,7 @@ type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })
-export class ReceptionReportsComponent {
+export class ReceptionReportsComponent implements OnInit {
   establecimientos = signal<EstabSelect[]>([])
   documentTypes = signal<TipoDocSelect[]>([])
   subcategories = signal<Subcategory[]>([]);
@@ -82,7 +82,7 @@ export class ReceptionReportsComponent {
   ];
   private docReceivedSvc = inject(DocumentReceivedWebRepository);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
 
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {
@@ -165,20 +165,20 @@ export class ReceptionReportsComponent {
       this.dataSearch.supplierChecked &&
       !isValidField(this.dataSearch.numeroIdentificacion)
     ) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el proveedor!',
       });
       return;
     }
     if (this.dataSearch.userChecked && !isValidField(this.dataSearch.userId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione el usuario!',
       });
       return;
     }
-    let { tipo, codigo } = this.getDataReport();
+    const { tipo, codigo } = this.getDataReport();
     const dataParms = {
       tipo,
       format,

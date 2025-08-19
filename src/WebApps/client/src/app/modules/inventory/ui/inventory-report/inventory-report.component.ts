@@ -1,15 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { FormControl, FormsModule } from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Brand } from '@inventory/domain/models/brand.model';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {REPORT_FORMAT, SEPARADORES_REGEX} from '@core/constants/global.constants';
-import { ToasterService } from '@core/services/toaster.service';
-import {getValidId, isValidEmail, isValidField} from '@core/utils/utils';
+import {
+  REPORT_FORMAT,
+  SEPARADORES_REGEX,
+} from '@core/constants/global.constants';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { getValidId, isValidEmail, isValidField } from '@core/utils/utils';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { SharedService } from '@core/services/shared.service';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
@@ -24,20 +26,19 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import Swal from 'sweetalert2';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { ProductUseCase } from '@inventory/domain/usecases/product.use-case';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
 import { NgTemplateOutlet } from '@angular/common';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CompanyCustomer} from "@customer/domain/models/company-customer";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 const imports = [
-  NgbNavModule,
   FormsModule,
   MatCardModule,
   MatTabsModule,
@@ -48,6 +49,7 @@ const imports = [
   MatSelectModule,
   MatFormFieldModule,
   MatInputModule,
+  ReactiveFormsModule,
   NgTemplateOutlet,
   BreadcrumbComponent,
   SubCategoryGroupComponent,
@@ -67,9 +69,9 @@ const imports = [
   templateUrl: './inventory-report.component.html',
   styles: ``,
 })
-export class InventoryReportComponent {
+export class InventoryReportComponent implements OnInit {
   private pS = inject(UserRoleStateService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
   appNotifiSvc = inject(NotificacionService);
   private readonly _tokenUseCase = inject(TokenUseCase);
@@ -86,7 +88,7 @@ export class InventoryReportComponent {
   marcas: Brand[] = [];
   taxes = signal<any[]>([]);
 
-  correoReceptor = null as string | null | undefined
+  correoReceptor = null as string | null | undefined;
 
   dataSearch = {
     idEstablecimiento: 0,
@@ -142,6 +144,9 @@ export class InventoryReportComponent {
 
   private format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL | null = null;
 
+  tiposDoc = signal<any[]>([])
+  tiposDocSelected = new FormControl([]);
+
   getDatFormReport() {
     this._productUseCase.getDataReport().subscribe((response) => {
       const { estabs, subCategorias, marcas } = response;
@@ -150,7 +155,8 @@ export class InventoryReportComponent {
       this.marcas = marcas;
       this.tarifas = response.tarifas;
       this.taxes.set(response.taxes);
-      let dataEstab = this.estabs.find((e) => e.defaultEstab);
+      this.tiposDoc.set(response.tiposDoc)
+      const dataEstab = this.estabs.find((e) => e.defaultEstab);
 
       if (dataEstab) {
         this.correoReceptor = dataEstab.correo;
@@ -189,11 +195,11 @@ export class InventoryReportComponent {
       this.dataSearch.idBodega = 0;
       this.dataSearch.idEstablecimiento = 0;
       this.bodegas = [];
-      this.correoReceptor = this._tokenUseCase.getUserData()?.email
+      this.correoReceptor = this._tokenUseCase.getUserData()?.email;
       return;
     }
-    let dataEstab = this.estabs.find(
-      (item) => item.idEstablecimiento === this.dataSearch.idEstablecimiento,
+    const dataEstab = this.estabs.find(
+      (item) => item.idEstablecimiento === this.dataSearch.idEstablecimiento
     );
     this.bodegas = dataEstab?.bodegas ?? [];
     if (this.bodegas.length > 0) {
@@ -238,7 +244,7 @@ export class InventoryReportComponent {
   }
 
   onSupplierSelected(data: any) {
-    // this.dataSearch.idProveedor = data.idProveedor;
+    // this.dataSearch.idProveedor = infrastructure.idProveedor;
     this.dataSearch.numeroIdentificacion = data.identificacionComprador;
     this.dataSearch.nameSupplier = data.name;
   }
@@ -257,19 +263,19 @@ export class InventoryReportComponent {
     //this.dataSearch.companyCustomerId = 0;
     this.dataSearch.numeroIdentificacion = null;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 
   private getFilterDate() {
-    let fechaHoy = new Date();
-    let fecha =
+    const fechaHoy = new Date();
+    const fecha =
       fechaHoy.getDate() +
       '-' +
       (fechaHoy.getMonth() + 1) +
       '-' +
       fechaHoy.getFullYear();
-    let hora = fechaHoy.getHours() + ':' + fechaHoy.getMinutes();
+    const hora = fechaHoy.getHours() + ':' + fechaHoy.getMinutes();
     return fecha + ' ' + hora;
   }
 
@@ -278,10 +284,10 @@ export class InventoryReportComponent {
   }
 
   private isValidReport() {
-    let selectedTab = this.getSelectedTab();
+    const selectedTab = this.getSelectedTab();
     if (this.dataSearch.checkboxArticuloFiltro) {
       if (!(this.dataSearch.idArticulo > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Artículo!',
         });
@@ -289,7 +295,7 @@ export class InventoryReportComponent {
       }
       if (this.dataSearch.checkboxUsuarioFiltro) {
         if (!(this.dataSearch.idUsuario > 0)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Seleccione el Usuario!',
           });
@@ -300,7 +306,7 @@ export class InventoryReportComponent {
 
     if (this.dataSearch.chkProveedor) {
       if (!this.dataSearch.numeroIdentificacion) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Proveedor!',
         });
@@ -313,7 +319,7 @@ export class InventoryReportComponent {
       this.dataSearch.checkboxSubFamiliaFiltro
     ) {
       if (!this.dataSearch.idSubFamilia) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione la SubFamilia',
         });
@@ -323,7 +329,7 @@ export class InventoryReportComponent {
 
     if (this.dataSearch.checkboxStockFiltro) {
       if (!this.dataSearch.byStock) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Stock',
         });
@@ -333,7 +339,7 @@ export class InventoryReportComponent {
 
     if (this.dataSearch.checkboxUsuarioFiltro) {
       if (!(this.dataSearch.idUsuario > 0)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
@@ -344,7 +350,7 @@ export class InventoryReportComponent {
     if (selectedTab === 3) {
       if (this.dataSearch.chkUbicacion) {
         if (!this.dataSearch.textUbicacion) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'Ingrese la ubicación ',
           });
@@ -366,7 +372,7 @@ export class InventoryReportComponent {
   }
 
   getReport() {
-    let selectedTab = this.getSelectedTab();
+    const selectedTab = this.getSelectedTab();
 
     if (!this.isValidReport()) return;
 
@@ -377,7 +383,7 @@ export class InventoryReportComponent {
     if (selectedTab === 2) {
       if (this.dataSearch.checkboxObtenerRentabilidad) {
         if (!getValidId(this.dataSearch.idTarifa)) {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: 'La Tarifa es obligatorio',
           });
@@ -400,8 +406,8 @@ export class InventoryReportComponent {
   }
 
   private getCodEstab() {
-    let dataEstab = this.estabs.find(
-      (e) => e.idEstablecimiento === this.dataSearch.idEstablecimiento,
+    const dataEstab = this.estabs.find(
+      (e) => e.idEstablecimiento === this.dataSearch.idEstablecimiento
     );
     if (dataEstab) {
       return dataEstab.codEstab;
@@ -410,7 +416,7 @@ export class InventoryReportComponent {
   }
 
   private getDataParamsConsumoDiario() {
-    let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
+    const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
       ? isValidField(this.dataSearch.idSubFamilia)
       : null;
 
@@ -423,16 +429,16 @@ export class InventoryReportComponent {
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
+    const idUsuario = this.dataSearch.checkboxUsuarioFiltro ? isValidField(this.dataSearch.idUsuario) : null;
+    const idArticulo = this.dataSearch.checkboxArticuloFiltro ? isValidField(this.dataSearch.idArticulo) : null;
+    const tiposDocSelected = Array.isArray(this.tiposDocSelected.value) && this.tiposDocSelected.value.join(',');
+
     return {
       tipo: 4,
       checkBoxFecha: true,
       checkboxPrecioCostoFiltro: this.dataSearch.checkboxPrecioCostoFiltro,
-      idUsuario: this.dataSearch.checkboxUsuarioFiltro
-        ? isValidField(this.dataSearch.idUsuario)
-        : null,
-      idArticulo: this.dataSearch.checkboxArticuloFiltro
-        ? isValidField(this.dataSearch.idArticulo)
-        : null,
+      idUsuario,
+      idArticulo ,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       codEstab: this.getCodEstab(),
@@ -440,6 +446,7 @@ export class InventoryReportComponent {
       idSubFamilia,
       numeroIdentificacion,
       userRoleId: this._tokenUseCase.getUserRoleId(),
+      tiposDocSelected: tiposDocSelected || null,
     };
   }
   // REPORTE DE CONSUMO DIARIO DE ARTICULOS
@@ -465,16 +472,16 @@ export class InventoryReportComponent {
 
   getReportArticuloStock() {
     try {
-      let filtroFecha = this.getFilterDate();
+      const filtroFecha = this.getFilterDate();
 
-      let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
+      const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
         ? isValidField(this.dataSearch.idSubFamilia)
         : null;
-      let numeroIdentificacion = this.dataSearch.chkProveedor
+      const numeroIdentificacion = this.dataSearch.chkProveedor
         ? isValidField(this.dataSearch.numeroIdentificacion)
         : null;
 
-      let dataSearch = {
+      const dataSearch = {
         tipo: 3,
         bySubFamilia: idSubFamilia,
         numeroIdentificacion,
@@ -511,16 +518,16 @@ export class InventoryReportComponent {
 
   private getArticuloStockRentabilidad() {
     try {
-      let filtroFecha = this.getFilterDate();
+      const filtroFecha = this.getFilterDate();
 
-      let idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
+      const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
         ? isValidField(this.dataSearch.idSubFamilia)
         : null;
-      let numeroIdentificacion = this.dataSearch.chkProveedor
+      const numeroIdentificacion = this.dataSearch.chkProveedor
         ? isValidField(this.dataSearch.numeroIdentificacion)
         : null;
 
-      let dataSearch = {
+      const dataSearch = {
         tipo: 6,
         bySubFamilia: idSubFamilia,
         numeroIdentificacion,
@@ -558,11 +565,11 @@ export class InventoryReportComponent {
 
   getReportArticuloPVP() {
     try {
-      let bySubFamilia = this.dataSearch.checkboxSubCategoryFilter
+      const bySubFamilia = this.dataSearch.checkboxSubCategoryFilter
         ? isValidField(this.dataSearch.idSubFamilia)
         : null;
 
-      let dataSearch = {
+      const dataSearch = {
         tipo: 2,
         bySubFamilia,
         stockStatusCode:
@@ -599,15 +606,15 @@ export class InventoryReportComponent {
 
   // REPORTE DE ARTICULOS FRACCIONADOS
   getReportArticuloFraccionado() {
-    let numeroIdentificacion = this.dataSearch.chkProveedor
+    const numeroIdentificacion = this.dataSearch.chkProveedor
       ? isValidField(this.dataSearch.numeroIdentificacion)
       : null;
 
-    let idSubFamilia = this.dataSearch.checkboxSubFamiliaFiltro
+    const idSubFamilia = this.dataSearch.checkboxSubFamiliaFiltro
       ? isValidField(this.dataSearch.idSubFamilia)
       : null;
 
-    let dataSearch = {
+    const dataSearch = {
       tipo: 1,
       checkBoxArticulo: this.dataSearch.checkboxArticuloFiltro,
       idArticulo: this.dataSearch.idArticulo,
@@ -635,8 +642,8 @@ export class InventoryReportComponent {
 
   // REPORTE DE CADUCIDAD DE ARTICULOS
   getReportCaducidad() {
-    let filtroFecha = this.getFilterDate();
-    let dataSearch = {
+    const filtroFecha = this.getFilterDate();
+    const dataSearch = {
       tipo: 5,
       codEstab: this.getCodEstab(),
       chkProveedor: this.dataSearch.chkProveedor,
@@ -675,23 +682,26 @@ export class InventoryReportComponent {
   }
 
   async askToSendMail() {
-
-    const correos = this.correoReceptor?.split(SEPARADORES_REGEX) || []
-    if(!isValidField(this.correoReceptor)){
+    const correos = this.correoReceptor?.split(SEPARADORES_REGEX) || [];
+    if (!isValidField(this.correoReceptor)) {
       Swal.fire({
         icon: 'warning',
-        text: 'El establecimiento o la Entidad no tiene agregado el correo'
-      })
-      return
+        text: 'El establecimiento o la Entidad no tiene agregado el correo',
+      });
+      return;
     }
 
     // Validar formato de cada correo
-    const correosInvalidos = correos.filter(correo => !isValidEmail(correo.trim()));
+    const correosInvalidos = correos.filter(
+      (correo) => !isValidEmail(correo.trim())
+    );
 
     if (correosInvalidos.length > 0) {
       Swal.fire({
         icon: 'warning',
-        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(', ')}`
+        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(
+          ', '
+        )}`,
       });
       return;
     }
@@ -707,9 +717,8 @@ export class InventoryReportComponent {
       cancelButtonText: 'Cancelar',
       showCancelButton: true,
       reverseButtons: true, // Pone Cancelar a la izquierda, más común en UX
-      focusCancel: true
+      focusCancel: true,
     });
-
 
     if (!result.isConfirmed) return;
 
@@ -728,23 +737,22 @@ export class InventoryReportComponent {
         spParams: this.getDataParamsConsumoDiario(),
         //  withTableNames: true,
       },
-      receptor: this.correoReceptor
+      receptor: this.correoReceptor,
     };
 
     this.appNotifiSvc.post(params).subscribe((response) => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',
-          text: response.message
-        })
+          text: response.message,
+        });
       }
       if (response.code === '1') {
         Swal.fire({
           icon: 'success',
-          text: response.message
-        })
+          text: response.message,
+        });
       }
     });
   }
-
 }

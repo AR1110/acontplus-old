@@ -1,5 +1,5 @@
-import {Component, inject, ViewChild} from '@angular/core';
-import {MatTree,  MatTreeModule, MatTreeNestedDataSource} from '@angular/material/tree';
+import {Component, inject, signal, ViewChild, OnInit} from '@angular/core';
+import {MatTree,  MatTreeModule} from '@angular/material/tree';
 import {  MatCheckboxModule} from '@angular/material/checkbox';
 import {MatIcon} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
@@ -12,7 +12,7 @@ import {
   UpdateAccessUserCustomerRoleUseCase
 } from "@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case";
 import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
-import {isApiResponse} from "@core/models/api-response";
+import {ApiResponse} from "@core/models/api-response";
 import Swal from "sweetalert2";
 
 interface TreeNode {
@@ -33,10 +33,10 @@ interface TreeNode {
   templateUrl: './user-customer-access.component.html',
   styleUrls: ['./user-customer-access.component.scss']
 })
-export class UserCustomerAccessComponent {
+export class UserCustomerAccessComponent implements OnInit {
   @ViewChild('tree') tree!: MatTree<TreeNode>;
 
-  dataSource = new MatTreeNestedDataSource<TreeNode>();
+  dataSource = signal<TreeNode[]>([]);
   checklistSelection = new SelectionModel<TreeNode>(true /* multiple */);
   private $listAccessUseCase = inject(ListAccessUserCustomerRoleUseCase)
   private $updateAccessUseCase = inject(UpdateAccessUserCustomerRoleUseCase)
@@ -47,6 +47,7 @@ export class UserCustomerAccessComponent {
   childrenAccessor = (node: TreeNode) => node.children||[];
 
   getAccesses(){
+    this.dataSource.set([])
     this.$listAccessUseCase.execute({
       userRoleId: this.$userCustomerStore.userRoleId()
     }).subscribe(response=>{
@@ -56,9 +57,8 @@ export class UserCustomerAccessComponent {
         children: response.menus
       }]
       this.checklistSelection = new SelectionModel<TreeNode>(true /* multiple */);
-      this.dataSource = new MatTreeNestedDataSource<TreeNode>();
-      this.dataSource.data = makeMenusNode;
-      this.initializeCheckedNodes(this.dataSource.data)
+      this.dataSource.set(makeMenusNode)
+      this.initializeCheckedNodes(this.dataSource())
   //    this.tree.expandAll()
     })
   }
@@ -235,28 +235,27 @@ export class UserCustomerAccessComponent {
       return null;
     };
 
-    return findParent(this.dataSource.data, node);
+    return findParent(this.dataSource(), node);
   }
 
 
 
-  successResponse = (response:any)=>{
-    if (isApiResponse(response)) {
-      if (response.code === "0") {
-        Swal.fire({
-          icon: 'warning',
-          html: response.message
-        })
-      }
-      if (response.code === "1") {
-        Swal.fire({
-          icon: 'success',
-          html: response.message,
-          timer: 1000
-        })
-        this.getAccesses()
-      }
+  successResponse = (response:ApiResponse)=>{
+    if (response.code === "0") {
+      Swal.fire({
+        icon: 'warning',
+        html: response.message
+      })
     }
+    if (response.code === "1") {
+      Swal.fire({
+        icon: 'success',
+        html: response.message,
+        timer: 1000
+      })
+      this.getAccesses()
+    }
+
   }
 
   onSave(){
@@ -264,13 +263,13 @@ export class UserCustomerAccessComponent {
     const menus = this.checklistSelection.selected.filter(cl=>cl.level===3);
     const mergeDuplicateLevel3 = menus.reduce((acc:any, curr:any)=>{
 
-      let existingNode  = acc.find((m:any)=>m.subMenuId===curr.subMenuId);
-      let action = this.actions.find(a=>a.code===curr.code)
+      const existingNode  = acc.find((m:any)=>m.menuId===curr.menuId);
+      const action = this.actions.find(a=>a.code===curr.code)
 
       if(!existingNode ){
 
         acc.push({
-          subMenuId: curr.subMenuId,
+          menuId: curr.menuId,
           actions: [action]
         })
       }else{
@@ -283,8 +282,8 @@ export class UserCustomerAccessComponent {
 
     }, [])
 
-    let mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
-      subMenuId: acc.subMenuId,
+    const mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
+      menuId: acc.menuId,
       actions: JSON.stringify(acc.actions)
     }))
 
@@ -307,7 +306,7 @@ export class UserCustomerAccessComponent {
     }).then(result=>{
 
       if(result.isConfirmed) {
-        let data =   {
+        const data =   {
           accesses: JSON.stringify(mappedLevel3)
         }
 
@@ -327,7 +326,7 @@ export class UserCustomerAccessComponent {
 
 
   async onDelete(){
-    let {isConfirmed} = await  Swal.fire({
+    const {isConfirmed} = await  Swal.fire({
       icon: 'warning',
       html: '¿Está seguro de quitar los accesos personalizados? Esto restablecerá los permisos predeterminados.',
       showCancelButton: true,
@@ -338,7 +337,7 @@ export class UserCustomerAccessComponent {
 
     if(!isConfirmed) return
 
-    let data =   {
+    const data =   {
       accesses: null
     }
     const params = {

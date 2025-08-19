@@ -1,5 +1,5 @@
 export interface ElectronicSignatureList {
-  index: number
+  index: number;
   idFirmaElectronica: number;
   nomEntidad: string;
   contrasenia: string;
@@ -7,15 +7,13 @@ export interface ElectronicSignatureList {
   mimeType: string;
   fechaCaducidad: string;
   firma: string;
-
 }
 
 export class ElectronicSignatureListResponse {
-  data: ElectronicSignatureList[]=[]
+  data: ElectronicSignatureList[] = [];
 }
 
-
-export interface ElectronicSignatureParam extends Pick<ElectronicSignatureList, "idFirmaElectronica"|"contrasenia"> {
-  file?:File
-  fechaCaducidad:string
+export interface ElectronicSignatureParam
+  extends Pick<ElectronicSignatureList, 'idFirmaElectronica' | 'contrasenia'> {
+  file?: File;
 }

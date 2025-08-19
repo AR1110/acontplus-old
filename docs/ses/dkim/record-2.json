@@ -1,0 +1,15 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "cb7zbfcf6bx557he43adcyhpii7hgh5m._domainkey.acontplus.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "cb7zbfcf6bx557he43adcyhpii7hgh5m.dkim.amazonses.com." }
+        ]
+      }
+    }
+  ]
+}

@@ -9,6 +9,9 @@ import {
   ViewChild,
   ViewChildren,
   ViewContainerRef,
+  OnInit,
+  AfterViewInit,
+  OnChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -19,7 +22,6 @@ import {
   MatTableDataSource,
   MatTableModule,
 } from '@angular/material/table';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
@@ -30,13 +32,14 @@ import { Pagination } from '@shared/models/pagination.model';
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    NgbPopoverModule,
     MatSortModule,
   ],
   templateUrl: './menu-search-list.component.html',
   styleUrl: './menu-search-list.component.scss',
 })
-export class MenuSearchListComponent<T> {
+export class MenuSearchListComponent
+  implements OnInit , AfterViewInit, OnChanges
+{
   @Input() tableData: any[] = [];
 
   @Input() highlightRowIndex!: number;
@@ -52,8 +55,8 @@ export class MenuSearchListComponent<T> {
   rows!: QueryList<ViewContainerRef>;
   @ViewChild(MatSort) sort!: MatSort;
 
-  @Output() rowSelected = new EventEmitter<T>();
-  @Output() onClickPaginator = new EventEmitter<T>();
+  @Output() rowSelected = new EventEmitter<any>();
+  @Output() onClickPaginator = new EventEmitter<any>();
 
   dataSource = new MatTableDataSource([]);
 
@@ -87,7 +90,7 @@ export class MenuSearchListComponent<T> {
       this.pagination.totalRecords = 0;
 
       if (this.tableData.length > 0) {
-        let dataResult = this.tableData[0];
+        const dataResult = this.tableData[0];
         this.pagination.totalRecords = dataResult.totalRecords;
       }
       this.makeDynamicTarifa(this.tableData);
@@ -111,7 +114,7 @@ export class MenuSearchListComponent<T> {
     }
   }
 
-  selectRow(row: T): void {
+  selectRow(row: any): void {
     console.log(row);
     this.rowSelected.emit(row); // this.selection.selected
   }

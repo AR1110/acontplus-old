@@ -1,75 +1,76 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, signal, effect, input, ChangeDetectionStrategy } from '@angular/core';
+import { MatDynamicCardComponent } from '../mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
-    selector: 'app-draw-tax-total',
-    imports: [],
-    templateUrl: './draw-tax-total.component.html',
-    styles: ``
+  selector: 'app-draw-tax-total',
+  imports: [MatDynamicCardComponent],
+  templateUrl: './draw-tax-total.component.html',
+  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DrawTaxTotalComponent {
-  @Input() subTotalSinImpuesto = 0;
-  @Input() htmlImpuestoTotal = ''
-  @Input() discount = 0;
-  @Input() totalIce= 0;
-  @Input() irbpnr = 0;
-  @Input() htmlIvaTotal= '';
-  @Input() importeTotal= 0;
+  subTotalSinImpuesto = input(0);
+  htmlImpuestoTotal = input('');
+  discount = input(0);
+  totalIce = input(0);
+  irbpnr = input(0);
+  htmlIvaTotal = input('');
+  importeTotal = input(0);
 
+  htmlString = signal('');
 
-
-
-  ngOnChanges(changes: SimpleChanges) {
-      // Si el valor de htmlString cambió, actualiza el contenido
+  constructor() {
+    effect(() => {
       this.updateContent();
+    });
   }
 
+  // ngOnChanges(changes: SimpleChanges) {
+  //   this.updateContent();
+  // }
+
   updateContent() {
-    // Actualiza el contenido HTML
-    const element = document.getElementById('htmlStringTaxTotals');
-    let htmlString = `<div class="table-responsive">
+    const htmlString = `<div class="table-responsive">
                                         <table class="table table-clear table-sm">
                                             <tbody>
                                                 <tr>
                                                     <td class="left">
                                                         <span class="text-dark">Subtotal sin Impuestos</span>
                                                     </td>
-                                                    <td class="right">$${this.subTotalSinImpuesto}</td>
+                                                    <td class="right">$${this.subTotalSinImpuesto()}</td>
                                                 </tr>
-                                                ${this.htmlImpuestoTotal}
+                                                ${this.htmlImpuestoTotal()}
                                                 <tr>
                                                     <td class="left">
                                                         <span class="text-dark">Total descuento</span>
                                                     </td>
-                                                    <td class="right">$${this.discount}</td>
+                                                    <td class="right">$${this.discount()}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="left">
                                                         <span class="text-dark">Valor ICE</span>
                                                     </td>
-                                                    <td class="right">$${this.totalIce}</td>
+                                                    <td class="right">$${this.totalIce()}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="left">
                                                         <span class="text-dark">Valor irbpnr</span>
                                                     </td>
-                                                    <td class="right">$${this.irbpnr}</td>
+                                                    <td class="right">$${this.irbpnr()}</td>
                                                 </tr>
-                                                ${this.htmlIvaTotal}
+                                                ${this.htmlIvaTotal()}
 
                                                 <tr>
                                                     <td class="left">
                                                         <strong class="font-weight-bold">Valor Total</strong>
                                                     </td>
-                                                    <td class="right font-weight-bold">$${this.importeTotal}</td>
+                                                    <td class="right font-weight-bold">$${this.importeTotal()}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 `;
 
-    if (element) {
-      element.innerHTML = htmlString;
-    }
+    this.htmlString.set(htmlString);
   }
-
 }

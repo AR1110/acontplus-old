@@ -1,8 +1,8 @@
-import {Component, inject,  signal, TemplateRef, ViewChild} from "@angular/core";
+import {Component, inject,  signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {ApiResponse } from "@core/models/api-response";
-import { ToasterService } from "@core/services/toaster.service";
+import { ToastrNotificationService } from "@core/services/toastr-notification.service";
 
 import {
   AsignacionBodegaList,
@@ -54,7 +54,7 @@ import {
   ],
     templateUrl: './asignacion-bodega-punto-emision-dialog.component.html'
 })
-export class AsignacionBodegaPuntoEmisionDialogComponent {
+export class AsignacionBodegaPuntoEmisionDialogComponent implements OnInit, AfterViewInit {
 
   private dialogRef = inject(MatDialogRef<AsignacionBodegaPuntoEmisionDialogComponent>)
   params = inject<AsignacionEstabList>(MAT_DIALOG_DATA)
@@ -68,7 +68,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent {
   private $updateAsignacionBodegaUseCase = inject(UpdateAsignacionBodegaUseCase)
   private $updateAsignacionPuntoEmisionUseCase = inject(UpdateAsignacionPuntoEmisionUseCase)
 
-  private tS = inject(ToasterService)
+  private tS = inject(ToastrNotificationService)
 
   @ViewChild('templatePuntoEmisionDefault') templatePuntoEmisionDefault!: TemplateRef<any>;
   @ViewChild('templateDefaultBodega') templateDefaultBodega!: TemplateRef<any>;
@@ -110,13 +110,13 @@ export class AsignacionBodegaPuntoEmisionDialogComponent {
 
   private successResponse = (response:ApiResponse)=>{
     if (response.code === "0") {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message
       })
     }
     if (response.code === "1") {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message
       })
@@ -161,7 +161,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent {
         buttonsStyling: false
       })
 
-      let {
+      const {
         isConfirmed
       } = await swalWithBootstrapButtons.fire({
         icon: 'warning',
@@ -174,7 +174,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent {
       })
 
       if (isConfirmed) {
-        let params = {
+        const params = {
           ...item,
           codEstab_Asig: this.params.codEstab_Asig
 
@@ -206,7 +206,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent {
         buttonsStyling: false
       })
 
-      let {
+      const {
         isConfirmed
       } = await swalWithBootstrapButtons.fire({
         icon: 'warning',

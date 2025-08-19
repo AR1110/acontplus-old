@@ -4,9 +4,8 @@ import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.direct
 
 @Component({
   selector: 'app-tiempo-credito-add-edit-modal',
-  standalone: true,
   imports: [ReactiveFormsModule, ToUpperCaseDirective],
   templateUrl: './tiempo-credito-add-edit-modal.component.html',
-  styles: ``,
+  styleUrls: ['./tiempo-credito-add-edit-modal.component.scss'],
 })
 export class TiempoCreditoAddEditModalComponent {}

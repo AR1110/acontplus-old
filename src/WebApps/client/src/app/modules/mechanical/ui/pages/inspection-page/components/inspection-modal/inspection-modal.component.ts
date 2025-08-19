@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal, OnInit} from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   ajustarFechaEmisionModificada,
   dateIsAfterCurrentDate,
@@ -53,7 +53,7 @@ type VehiclePartTypeNode = VehiclePartType & {
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InspectionModalComponent {
+export class InspectionModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<InspectionModalComponent>)
   params = inject<{
     supportId: 0,
@@ -61,7 +61,7 @@ export class InspectionModalComponent {
   }>(MAT_DIALOG_DATA)
 
   _inspectionUseCase = inject(InspectionUseCase);
-  tS = inject(ToasterService);
+  tS = inject(ToastrNotificationService);
 
   titleModal = 'Registro Inspección';
   btnText = 'Guardar';
@@ -92,13 +92,13 @@ export class InspectionModalComponent {
 
   successResponse = (response: any) => {
     if (response.code === '0') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.toastr({
+      this.tS.show({
         type: 'success',
         message: response.message,
       });
@@ -144,7 +144,7 @@ export class InspectionModalComponent {
     }
   }
 
-  private buildVehiclePartTypeNodes(vehicleParts: any[], checkStatus: boolean = false): any[] {
+  private buildVehiclePartTypeNodes(vehicleParts: any[], checkStatus = false): any[] {
     return this.vehiclePartTypes.map((item) => {
       const nodes = vehicleParts.filter(
         (vp) => vp.vehiclePartTypeId === item.id
@@ -166,7 +166,7 @@ export class InspectionModalComponent {
   isValidForm() {
 
     if (!isDateValid(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese una fecha válida',
       });
@@ -174,7 +174,7 @@ export class InspectionModalComponent {
     }
 
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message:
           'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
@@ -182,7 +182,7 @@ export class InspectionModalComponent {
       return;
     }
 
-    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+    const ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: this.data.fechaEmision,
       fechaEmisionDocCreado: this.data.fechaEmisionDocCreado,
       setHoursZero: true,
@@ -196,23 +196,23 @@ export class InspectionModalComponent {
     }
 
     if (!isValidField(this.data.mileage)) {
-      this.tS.toastr({ type: 'warning', message: 'Ingreso el kimoletraje' });
+      this.tS.show({ type: 'warning', message: 'Ingreso el kimoletraje' });
       return;
     }
 
     if (!isValidField(this.data.fuelLevel)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingreso el nivel de Combustible',
       });
       return;
     }
 
-    let isSelectedStatus = this.vehiclePartTypeNodes().some((vtn) =>
+    const isSelectedStatus = this.vehiclePartTypeNodes().some((vtn) =>
       vtn.nodes.some((n) => n.status == 1 || n.status == 2 || n.status == 3),
     );
     if (!isSelectedStatus) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Seleccione al menos un tipo de inspección',
       });
@@ -236,45 +236,45 @@ export class InspectionModalComponent {
       if (!this.isValidForm()) return;
 
       //motor
-      let engine = this.vehiclePartTypeNodes()
+      const engine = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.MT)
         ?.nodes.map(this.mapVehiclePart);
 
       //cabina
-      let cabin = this.vehiclePartTypeNodes()
+      const cabin = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.CB)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Transmisión
-      let transmission = this.vehiclePartTypeNodes()
+      const transmission = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.ST)
         ?.nodes.map(this.mapVehiclePart);
 
       // Rodamiento
-      let bearing = this.vehiclePartTypeNodes()
+      const bearing = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.RD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Frenos
-      let brake = this.vehiclePartTypeNodes()
+      const brake = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SF)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Dirección
-      let steering = this.vehiclePartTypeNodes()
+      const steering = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Suspensión
-      let suspension = this.vehiclePartTypeNodes()
+      const suspension = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SS)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de luces
-      let lighting = this.vehiclePartTypeNodes()
+      const lighting = this.vehiclePartTypeNodes()
         .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SL)
         ?.nodes.map(this.mapVehiclePart);
-      let data = {
+      const data = {
         engine: JSON.stringify(engine),
         cabin: JSON.stringify(cabin),
         transmission: JSON.stringify(transmission),

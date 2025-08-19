@@ -1,75 +1,52 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ModalService } from '@core/services/modal.service';
 import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 import { isApiResponse } from '@core/models/api-response';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { ThemePalette } from '@angular/material/core';
 import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatNoDataRow,
-  MatRow,
-  MatRowDef,
-  MatTable,
-  MatTableDataSource,
-} from '@angular/material/table';
-import { Pagination } from '@shared/models/pagination.model';
-import { FormsModule } from '@angular/forms';
-import { isValidField } from '@core/utils/utils';
+  PageEvent,
+} from '@angular/material/paginator';
+
+import { MatPagination } from '@shared/models/pagination.model';
 import { GroupedEstab } from '@core/models/estab.model';
-import { MatInput } from '@angular/material/input';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DialogService } from '@core/services/dialog.service';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+
+import { FormsModule } from '@angular/forms';
+import { MatMenuModule } from '@angular/material/menu';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-medical-history-page',
   imports: [
     BreadcrumbComponent,
+    MatDynamicCardComponent,
     FormsModule,
-    MatTable,
-    MatSort,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCellDef,
-    MatHeaderCellDef,
-    MatCell,
-    MatHeaderRowDef,
-    MatHeaderRow,
-    MatRowDef,
-    MatNoDataRow,
-    MatPaginator,
-    MatRow,
-    MatInput,
-    MatCardContent,
-    MatCard,
-    MatButton,
+    MatMenuModule,
+    MatDynamicTableComponent,
+    ThemeButtonComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatIconButton,
     MatIcon,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
   ],
   templateUrl: './medical-history-page.component.html',
   styles: ``,
 })
-export class MedicalHistoryPageComponent {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  colorToggle: ThemePalette = 'accent';
+export class MedicalHistoryPageComponent implements OnInit {
   visibleColumns: string[] = [
     'op',
     'position',
@@ -80,40 +57,51 @@ export class MedicalHistoryPageComponent {
     'weight',
     'observations',
   ];
-  dataSource = new MatTableDataSource<MedicalHistory>();
+  dataSource =signal<MedicalHistory[]>([]);
   dataSearch = {
     idEstablecimiento: 0,
     textSearch: '',
   };
   data = {} as MedicalHistory;
-  establecimientos: Array<GroupedEstab> = [];
-  medicalHistories: MedicalHistory[] = [];
-  pagination = new Pagination();
-  searching: boolean = false;
+  establecimientos = signal<GroupedEstab[]>([]);
   private readonly medicalHistoryService = inject(MedicalHistoryService);
-  private readonly modalService = inject(ModalService);
+  private readonly modalService = inject(DialogService);
   private readonly sharedService = inject(SharedService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
-  applyFilter(event: Event) {
-    this.searching = true;
-    const filterValue = (event.target as HTMLInputElement).value;
-    if (filterValue && filterValue.length >= 3) {
-      this.search(filterValue);
-    }
-    if (filterValue.length == 0) {
-      this.dataSearch.textSearch = '';
-      this.loadHistories();
-    }
-  }
+  columnsDefs: ColumnDefinition[] = [
+    { key: 'index', label: '#', type: 'string' },
+    { key: 'op', label: 'Op.', type: 'string' },
+    { key: 'customer', label: 'Cliente', type: 'string' },
+    { key: 'petName', label: 'Mascota', type: 'string' },
+    { key: 'date', label: 'Fecha', type: 'string' },
+    { key: 'age', label: 'Edad', type: 'string' },
+    { key: 'weight', label: 'Peso', type: 'string' },
+    { key: 'observations', label: 'Observación', type: 'string' },
+  ];
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+
+  pagination = signal(new MatPagination());
+
+  // applyFilter(event: Event) {
+  //   this.searching = true;
+  //   const filterValue = (event.target as HTMLInputElement).value;
+  //   if (filterValue && filterValue.length >= 3) {
+  //     this.search(filterValue);
+  //   }
+  //   if (filterValue.length == 0) {
+  //     this.dataSearch.textSearch = '';
+  //     this.loadHistories();
+  //   }
+  // }
 
   initialLoad() {
     this.medicalHistoryService.get({ tipo: 1 }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { estabs } = JSON.parse(response.payload as string);
-        this.establecimientos = estabs;
-        const dataEstab = this.establecimientos.find(
-          (estab) => estab.defaultEstab,
+        this.establecimientos.set(estabs);
+        const dataEstab = this.establecimientos().find(
+          (estab) => estab.defaultEstab
         );
         if (dataEstab) {
           this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
@@ -123,49 +111,41 @@ export class MedicalHistoryPageComponent {
     });
   }
 
+  refresh() {
+    this.loadHistories();
+  }
+
   loadHistories() {
-    let params = {
-      pageIndex: this.pagination.pageIndex,
-      pageSize: this.pagination.pageSize,
+    const params = {
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
     };
 
-    let historiesModified: any[] = [];
-    let clonedParams = Object.assign(params, this.dataSearch);
+
+    const clonedParams = Object.assign(params, this.dataSearch);
     this.medicalHistoryService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        const { medicalHistories } = JSON.parse(response.payload as string);
-        this.medicalHistories = medicalHistories;
-        historiesModified =
-          medicalHistories &&
-          medicalHistories.map((pet: any, index: number) => ({
+        const { medicalHistories=[] } = JSON.parse(response.payload as string);
+
+        const historiesModified = medicalHistories.map((pet: any, index: number) => ({
             ...pet,
-            position: index + 1,
+            index: index + 1,
           }));
+        this.dataSource.set(historiesModified);
+         this.pagination.update(r=>({
+           ...r,
+           totalRecords: this.dataSource().length>0 ? (this.dataSource()[0].totalRecords || 0): 0
+         }))
+
       }
-      this.dataSource = new MatTableDataSource(historiesModified);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      setTimeout(() => {
-        this.paginator.pageIndex = this.pagination.pageIndex;
-        this.paginator.length =
-          historiesModified.length > 0 ? historiesModified[0].totalRecords : 0;
-      });
-    });
+    })
   }
 
   ngOnInit(): void {
     this.initialLoad();
   }
 
-  onChangeEstab() {
-    if (isValidField(this.dataSearch.idEstablecimiento)) {
-      let dataEstab = this.establecimientos.find(
-        (estab) =>
-          estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
-      );
-      this.loadHistories();
-    }
-  }
+
 
   onDelete(item: Pet) {
     Swal.fire({
@@ -180,7 +160,7 @@ export class MedicalHistoryPageComponent {
       if (response.isConfirmed) {
         this.medicalHistoryService.delete(item.id).subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.toastr({
+            this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
@@ -199,14 +179,12 @@ export class MedicalHistoryPageComponent {
   }
 
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(
-      MedicalHistoryModalComponent,
-      { size: 'xl', centered: true },
-    );
-    if (this.data.id > 0) {
-      modalRef.componentInstance.data = this.data;
-    }
-    modalRef.result.then((response) => {
+    const modalRef = this.modalService.open(MedicalHistoryModalComponent, {
+      size: 'xl',
+      data: this.data.id > 0 ? this.data : {},
+    });
+
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.loadHistories();
       }
@@ -216,20 +194,14 @@ export class MedicalHistoryPageComponent {
     });
   }
 
-  pageChanged(event: PageEvent) {
-    this.pagination.pageSize = event.pageSize;
-    this.pagination.pageIndex = event.pageIndex == 0 ? 1 : event.pageIndex;
-    this.loadHistories();
-  }
-
   search(textSearch: string) {
     this.dataSearch.textSearch = textSearch;
     this.loadHistories();
   }
 
   onReport(element: MedicalHistory) {
-    const codEstab = this.establecimientos.find(
-      (x) => (x.idEstablecimiento = this.dataSearch.idEstablecimiento),
+    const codEstab = this.establecimientos().find(
+      (x) => (x.idEstablecimiento = this.dataSearch.idEstablecimiento)
     )?.codEstab;
 
     const parameters = {
@@ -246,5 +218,17 @@ export class MedicalHistoryPageComponent {
     this.sharedService.getReport({
       data: parameters,
     });
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pagination.update((pag) => {
+      return {
+        ...pag,
+        totalRecords: e.length,
+        pageSize: e.pageSize,
+        pageIndex: e.pageIndex,
+      };
+    });
+    this.refresh();
   }
 }

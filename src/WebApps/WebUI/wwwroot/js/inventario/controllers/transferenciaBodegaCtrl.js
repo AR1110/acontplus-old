@@ -355,8 +355,8 @@
             $scope.gridApi = gridApi;
             if ($scope.gridApi) {
                 $timeout(() => {
-                    $scope.gridApi.core.handleWindowResize();
-                    $scope.gridApi.grid.getList();
+                    $scope.gridApi.core.handleWindowResize(); 
+                     $scope.gridApi.grid.refresh();
                 }, 5);
             }
 
@@ -434,7 +434,9 @@
                             rowEntity.precioCosto = dataMedida.precioCosto;
                             rowEntity.precioUnitario = dataMedida.precioUnitario;
                             rowEntity.conversion = dataMedida.conversion;
+                            console.log('Cambio de Medida', rowEntity);
                         }
+                        $scope.setTotal(rowEntity);
                         return;
                     }
 

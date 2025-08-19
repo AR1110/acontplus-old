@@ -1,19 +1,25 @@
-import { Routes } from '@angular/router';
-import { DocConfigPageComponent } from '@modules/config/ui/doc-config/doc-config.component';
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
-import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
-import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
-import { CompanyComponent } from '@modules/config/ui/company/company.component';
-import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
-import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
+import { ElectronicSignatureComponent } from '@modules/config/ui/electronic-signature/electronic-signature.component';
 import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
-import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
+import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
+import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
 import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
-import {ExcelImportComponent} from "@modules/config/ui/excel-import/excel-import.component";
-import {ElectronicSignatureComponent} from "@modules/config/ui/electronic-signature/electronic-signature.component";
-import {CreditTimeComponent} from "@modules/config/ui/credit-time/credit-time.component";
+import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
+import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
+import { ExcelImportComponent } from '@modules/config/ui/excel-import/excel-import.component';
+import { DocConfigPageComponent } from '@modules/config/ui/doc-config/doc-config.component';
+import { CreditTimeComponent } from '@modules/config/ui/credit-time/credit-time.component';
+import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
+import { CompanyComponent } from '@modules/config/ui/company/company.component';
+import { ConfigHomeComponent } from './ui/config-home.component';
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: ConfigHomeComponent,
+    data: { breadcrumb: 'Configuración' },
+  },
   {
     path: 'general-config',
     title: 'Config. General',
@@ -104,16 +110,16 @@ export const routes: Routes = [
   },
   {
     path: 'electronic-signature',
-    component:ElectronicSignatureComponent,
+    component: ElectronicSignatureComponent,
     data: {
-      breadcrumb: 'Firma Eletrónica'
-    }
+      breadcrumb: 'Firma Eletrónica',
+    },
   },
   {
     path: 'credit-time',
     component: CreditTimeComponent,
     data: {
-      breadcrumb: 'Tiempo Crédito'
-    }
-  }
+      breadcrumb: 'Tiempo Crédito',
+    },
+  },
 ];

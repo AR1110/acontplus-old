@@ -54,7 +54,7 @@ BEGIN
 		 
 	     -- Set values for reusable constants
         SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
-        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'M');
+        SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'H');
         SET @statusId = (SELECT Id FROM Common.[Status] WHERE Code = 'Q');
 
         SELECT TOP 1 @idEntidad = idEntidad, @userId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId

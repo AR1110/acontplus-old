@@ -1,32 +1,40 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+
+import { Component, inject, OnInit  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {  MatInputModule, } from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import {MatRadioModule} from "@angular/material/radio";
 
 @Component({
   selector: 'app-punto-emision-add-edit-modal',
-    imports: [CommonModule, InputNumberDirective, FormsModule, MatButton, ThemeButtonComponent],
+  imports: [InputNumberDirective, FormsModule, ThemeButtonComponent, MatCustomDialogComponent,
+  MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatRadioModule,
+  ],
   templateUrl: './punto-emision-add-edit-modal.component.html',
   styleUrl: './punto-emision-add-edit-modal.component.scss',
 })
-export class PuntoEmisionAddEditModalComponent {
-  @Input() params = {
+export class PuntoEmisionAddEditModalComponent implements OnInit {
+    params = inject<{
     codEstab: null,
     establishmentName: '',
     idPuntoEmision: 0,
     estado: false,
     ptoEmi: '',
     ambiente: '1',
-  };
-  modal = inject(NgbActiveModal);
-  tS = inject(ToasterService);
+  }>(MAT_DIALOG_DATA);
+  modal = inject(MatDialogRef<PuntoEmisionAddEditModalComponent>);
+  tS = inject(ToastrNotificationService);
   ptoEmisionSvc = inject(PuntoEmisionService);
 
   tiposAmbiente = [
@@ -42,28 +50,23 @@ export class PuntoEmisionAddEditModalComponent {
     ambiente: '1',
     estado: true,
   };
-  successResponse = {
-    next: (response: any) => {
-      if (isApiResponse(response)) {
+  successResponse = (response: any) => {
         if (response.code == '0') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'warning',
             message: response.message,
           });
         }
         if (response.code == '1') {
-          this.tS.toastr({
+          this.tS.show({
             type: 'success',
             message: response.message,
           });
           this.modal.close(response);
         }
-      }
-    },
   };
 
   ngOnInit() {
-    console.log(this.params);
     if (this.params.idPuntoEmision > 0) {
       this.titleModal = 'Editar Punto Emisión';
       this.btnText = 'Actualizar';
@@ -76,7 +79,7 @@ export class PuntoEmisionAddEditModalComponent {
   save() {
     try {
       if (isNaN(parseFloat(this.data.ptoEmi))) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El punto de emisión tiene que ser número',
         });
@@ -84,7 +87,7 @@ export class PuntoEmisionAddEditModalComponent {
       }
 
       if (isValidField(this.data.ptoEmi) && this.data.ptoEmi?.length !== 3) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El punto de emisión es requerido',
         });
@@ -93,13 +96,13 @@ export class PuntoEmisionAddEditModalComponent {
 
       const regex = /^\d{3}$/;
       if (!regex.test(this.data.ptoEmi)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'El punto de emisión tiene que ser de tres dígitos',
         });
         return;
       }
-      let params = {
+      const params = {
         codEstab: this.params.codEstab,
         ptoEmi: this.data.ptoEmi,
         ambiente: this.data.ambiente,
@@ -117,5 +120,8 @@ export class PuntoEmisionAddEditModalComponent {
     } catch (error) {
       console.log(error);
     }
+  }
+  close(){
+    this.modal.close();
   }
 }

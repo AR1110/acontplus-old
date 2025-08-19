@@ -18,7 +18,7 @@ export class TransferenciaBodegaWebRepository
   private _http = inject(HttpClient);
 
   getAll<T>(obj: T): Observable<any> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1,
       ...obj,
     });
@@ -30,7 +30,7 @@ export class TransferenciaBodegaWebRepository
   }
 
   getDataFilter() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2,
     });
     return this._http

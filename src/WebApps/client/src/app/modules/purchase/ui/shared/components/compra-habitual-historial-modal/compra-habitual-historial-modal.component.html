@@ -1,15 +1,10 @@
-<div class="modal-header">
-  <h4 class="modal-title">
-    Historial de Compras Habituales - <strong>{{ articleName }}</strong>
-  </h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="onModalClose()"
-  ></button>
-</div>
-<div class="modal-body">
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [title]="'Historial de Compras Habituales -' + articleName"
+  (close)="onModalClose()"
+/>
+
+<ng-template #body>
   <app-custom-table-container [isLoadingResults]="isLoadingResults">
     <app-mat-dynamic-table
       [templateOp]="templateOp"
@@ -28,13 +23,4 @@
       <mat-icon>remove_shopping_cart</mat-icon>
     </button>
   </ng-template>
-</div>
-<div class="modal-footer">
-  <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="onModalClose()"
-  >
-  </app-theme-button>
-</div>
+</ng-template>

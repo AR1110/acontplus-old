@@ -2,23 +2,23 @@
 import {inject} from "@angular/core"
 import {ResolveFn} from "@angular/router"
 import { RestaurantConfigService } from "@restaurant/data/services/restaurant-config.service"
-import { RestaurantStoreService } from "../store/restaurant-store.service"
+import { RestaurantStoreService } from "@restaurant/application/store/restaurant-store.service"
 
 
 export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
 
-  let posStoreSvc = inject(RestaurantStoreService)
+  const posStoreSvc = inject(RestaurantStoreService)
 
-  let mainData = inject(RestaurantConfigService).getMainData();
+  const mainData = inject(RestaurantConfigService).getMainData();
 
   mainData.subscribe(response => {
-    let dataEstab = response.estabs.find(e => e.defaultEstab);
+    const dataEstab = response.estabs.find(e => e.defaultEstab);
 
     if (dataEstab) {
-      let puntosEmision = dataEstab.puntosEmision;
-      let bodegas = dataEstab.bodegas;
-      let dataPuntoEmision = puntosEmision.find(p => p.defaultPtoEmi)
-      let dataBodega = bodegas.find(p => p.defaultBodega)
+      const puntosEmision = dataEstab.puntosEmision;
+      const bodegas = dataEstab.bodegas;
+      const dataPuntoEmision = puntosEmision.find(p => p.defaultPtoEmi)
+      const dataBodega = bodegas.find(p => p.defaultBodega)
       posStoreSvc.state.update(e => {
         return {
           ...e,

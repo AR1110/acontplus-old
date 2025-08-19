@@ -26,7 +26,7 @@ export class MassiveTaxWebRepository implements MassiveTaxRepository {
       })
       .pipe(
         map((response: any) => {
-          let taxRates: Array<TarifaImpuesto> = [];
+          let taxRates: TarifaImpuesto[] = [];
           let subCategories: SubCategorySelectHtmlOnly[] = [];
           if (response !== null && typeof response === 'object') {
             taxRates = response.taxes.map((item: any) => ({

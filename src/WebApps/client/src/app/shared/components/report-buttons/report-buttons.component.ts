@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 
@@ -14,6 +14,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
   `,
   styles: [``],
   imports: [ThemeButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportButtonsComponent {
   fileType = input.required<REPORT_FORMAT>();

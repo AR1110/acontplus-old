@@ -47,7 +47,7 @@ import {
 import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion-ats/components/retencion-ats-info-adicional-add-edit/retencion-ats-info-adicional-add-edit.component';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDate } from '@core/utils/date.util';
 
 @Component({
@@ -80,7 +80,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   );
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _dialogService = inject(DialogService);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   retencionAtsForm = this._fb.group({
     idRetencionAts: [0],
@@ -150,7 +150,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       idRetAtsDocSustento: [0],
       idDocumento: [0],
       uniqueIdDoc: [generateUuidv4(), [Validators.required]],
-      documentoSustentoTributarioId: [0],
+      documentoSustentoTributarioId: [0, [Validators.required]],
       tipoComprobanteId: [0],
       numDocSustento: [''],
       fechaEmisionDocSustento: [''],
@@ -336,7 +336,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       .get('tipoIdentificacionSujetoRetenido')
       ?.setValue(data.codigoTipoIdentificacion);
 
-    // if (data.codigoTipoIdentificacion === '06' || data.codigoTipoIdentificacion === '08') {
+    // if (infrastructure.codigoTipoIdentificacion === '06' || infrastructure.codigoTipoIdentificacion === '08') {
     //   this.retencionAtsForm.get('tipoSujetoRetenido')?.setValue('EXTERNO');
     // }
   }
@@ -373,7 +373,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this._retencionAtsUseCase
         .update(this._data.idRetencionAts, this.retencionAtsForm.value)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -385,7 +385,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this._retencionAtsUseCase
         .create(this.retencionAtsForm.value)
         .subscribe((response) => {
-          this._tS.toastr({
+          this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

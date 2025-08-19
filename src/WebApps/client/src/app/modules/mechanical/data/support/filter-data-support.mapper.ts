@@ -9,7 +9,7 @@ export class FilterDataSupportMapper {
   }
 
   static fromJson(response:ApiResponse): FilterDataSupportResponse{
-    let data = new FilterDataSupportResponse()
+    const data = new FilterDataSupportResponse()
     if (response.code === "1") {
       const { supportStatus=[] } = JSON.parse(response.payload as string);
       data.supportStatus = supportStatus;

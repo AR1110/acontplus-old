@@ -13,7 +13,7 @@ export class TransactionService {
   #url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.TRANSACTION}`;
   #http = inject(HttpClient)
   getDataFilter() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 3
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
@@ -31,7 +31,7 @@ export class TransactionService {
 
 
   getDataKardex<T>(obj: T) {
-    let json = JSON.stringify({ ...obj, tipo: 2 })
+    const json = JSON.stringify({ ...obj, tipo: 2 })
 
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {

@@ -1,3 +1,42 @@
+<style>
+    .gap-1>*+* {
+        margin-top: 0.25rem;
+    }
+
+    .gap-2>*+* {
+        margin-top: 0.5rem;
+    }
+
+    .me-2 {
+        margin-right: 0.5rem;
+    }
+
+    .fw-semibold {
+        font-weight: 600;
+    }
+
+    .rounded-3 {
+        border-radius: 0.375rem !important;
+    }
+
+    .vstack>*+* {
+        margin-top: 0.25rem;
+    }
+
+    .hstack {
+        display: flex;
+        align-items: center;
+    }
+
+    .d-fex {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+</style>
 <div class="modal-header">
     <h5 class="modal-title"><i class="fa fa-file-pdf"></i> Detalle Aprobación Documento: {{docOrigenDesc}} <i
             class="mdi mdi-arrow-right"></i> {{docDestinoDesc}}</h5>
@@ -7,137 +46,171 @@
 </div>
 
 <div class="modal-body">
-    <div class="row">
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label for="establecimiento">Establecimiento: </label>
-                <input type="text" class="form-control" ng-value="data.establecimiento" disabled>
-            </div>
-        </div>
 
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label>Punto Emisión </label>
-                <input type="text" class="form-control" ng-value="data.ptoEmi" disabled>
-                @* <select class="form-control" ng-model="data.idPuntoEmision"
-                ng-disabled="dataDisabled.isDisabledPuntoEmision" >
-                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
-                </select> *@
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label>Serie Comprobante: </label>
-                <input type="text" name="serieComprobante" class="form-control" ng-model="data.serieComprobante"
-                    disabled>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label>Fecha Emisión: </label>
-                <input type="date" name="fechaEmision" class="form-control" ng-model="data.fechaEmision" disabled>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label for="">Cliente: </label>
-                <input type="text" name="" id="" class="form-control" ng-model="cliente.nombreFiscal" disabled>
-            </div>
-        </div>
-
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label for="" class="">Nro. Identificación:</label>
-                <input type="text" id="" class="form-control" disabled ng-value="cliente.numeroIdentificacion"
-                    placeholder="...">
-            </div>
-        </div>
-
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-                <label for="address" class="">Dirección:</label>
-                <input type="text" id="address" class="form-control" disabled ng-model="cliente.direccion">
-            </div>
-        </div>
-    </div>
-
-
-    <div ui-grid="gridOptionsDetalle" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
-        ui-grid-validate ui-grid-save-state class="grid">
-    </div>
-
-
-    <div class="row mt-2">
-        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
-            <div class="card border border-secondary-1">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
-                            <div class="form-group">
-                                <label>% Descuento</label>
-                                <div class="input-group">
-                                    <input ng-model="data.porcentajeDescuento" disabled class="form-control" />
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-secondary btn-sm" disabled><i
-                                                class="fa fa-calculator fa-xs"></i></button>
-                                    </div>
-                                </div>
-
+    <div class="container-fluid p-3">
+        <div class="d-grid gap-2">
+            <!-- Header Section -->
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-6 mb-2">
+                    <div class="border border-dark rounded-3 p-2">
+                        <div class="d-flex flex-column gap-1">
+                            <div class="vstack">
+                                <small class="fw-semibold">Establecimiento</small>
+                                <small>{{ data.establecimiento }}</small>
+                            </div>
+                            <div class="vstack">
+                                <small class="fw-semibold">Punto Emisión</small>
+                                <small>{{ data.ptoEmi }}</small>
                             </div>
                         </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
-                            <div class="form-group">
-                                <label>Descuento</label>
-                                <div class="input-group">
-                                    <input ng-model="data.totalDescuento" disabled placeholder="0.00"
-                                        class="form-control" />
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-secondary btn-sm" disabled><i
-                                                class="fa fa-calculator fa-xs"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
-                            <div class="form-group">
-                                <label>Transporte</label>
-                                <input type="text" ng-model="data.transporte" disabled class="form-control"
-                                    placeholder="0.00" />
-                            </div>
-                        </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
-                            <div class="form-group">
-                                <label>Rercargo</label>
-                                <input type="text" decimal disabled ng-model="data.recargo" class="form-control"
-                                    placeholder="0.00" />
-                            </div>
-                        </div>
-
-                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                            <div class="form-group">
-                                <label>Observacion</label>
-                                <textarea class="form-control border-select" ng-model="data.observacion" disabled
-                                    placeholder="..."></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-6 mb-2">
+                    <div class="border border-dark rounded-3 p-2">
+                        <div class="d-flex flex-column gap-2">
+                            <h5 class="fw-semibold">{{docDestinoDesc}}</h5>
+                            <div class="hstack">
+                                <small class="fw-semibold me-2">Nro.</small>
+                                <small>{{ data.serieComprobante }}</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-12 ml-auto">
-            <div class="card border p-2">
-                <div id="drawImpuestoTotales"></div>
+
+            <!-- Customer Information Section -->
+            <div class="border border-dark rounded-3 p-2 mb-2">
+                <div class="row">
+                    <div class="col-md-7 col-sm-12 col-12">
+                        <div class="d-flex mb-1">
+                            <small class="fw-semibold me-2">Razón Social/ Nombres:</small>
+                            <small>{{ cliente.nombreFiscal }}</small>
+                        </div>
+                        <div class="d-flex mb-1">
+                            <small class="fw-semibold me-2">Identificación:</small>
+                            <small>{{ cliente.numeroIdentificacion }}</small>
+                        </div>
+                        <div class="d-flex mb-1">
+                            <small class="fw-semibold me-2">Dirección:</small>
+                            <small>{{ cliente.direccion }}</small>
+                        </div>
+                        <div class="d-flex mb-1">
+                            <small class="fw-semibold me-2">Teléfono:</small>
+                            <small>{{ cliente.telefonoComprador }}</small>
+                        </div>
+                        <div class="d-flex">
+                            <small class="fw-semibold me-2">Correo:</small>
+                            <small>{{ cliente.correo }}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-sm-12 col-12">
+                        <div class="d-fex">
+                            <div class="d-flex mb-1">
+                                <small class="fw-semibold me-2">Tiempo Crédito:</small>
+                                <small>{{ headerData.tiempoCreditoNombre }}</small>
+                            </div>
+                            <div class="d-flex mb-1">
+                                <small class="fw-semibold me-2">Fecha Emisión:</small>
+                                <small>{{ data.fechaEmision }}</small>
+                            </div>
+                            <div class="d-flex mb-1">
+                                <small class="fw-semibold me-2">Fecha Vencimiento:</small>
+                                <small>{{ data.fechaEmision }}</small>
+                            </div>
+                            <div class="d-flex">
+                                <small class="fw-semibold me-2">Empleado:</small>
+                                <small>{{ headerData.empleadoNombre }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Table Section -->
+            <div class="border border-dark rounded-3 p-2 mb-2">
+                <div class="table-responsive">
+                    <table class="table table-sm small mb-0">
+                        <thead>
+                            <tr>
+                                <th class="fw-semibold">Nro.</th>
+                                <th class="fw-semibold">Codigo</th>
+                                <th class="fw-semibold">Descripción</th>
+                                <th class="fw-semibold">Medida</th>
+                                <th class="fw-semibold">Iva</th>
+                                <th class="fw-semibold">Tarifa</th>
+                                <th class="fw-semibold text-right">Cant</th>
+                                <th class="fw-semibold text-right">Precio U.</th>
+                                <th class="fw-semibold text-right">Precio con Iva</th>
+                                <th class="fw-semibold text-right">%</th>
+                                <th class="fw-semibold text-right">Descto</th>
+                                <th class="fw-semibold text-right">Subtotal</th>
+                                <th class="fw-semibold text-right">Impuesto</th>
+                                <th class="fw-semibold text-right">Total</th>
+                                <th class="fw-semibold text-right">Nota</th>
+                                <th class="fw-semibold">Bodega</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in dataSource track by $index">
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ item.codigo }}</td>
+                                <td style="width: 250px">{{ item.descripcion }}</td>
+                                <td>{{ item.medida }}</td>
+                                <td>{{ item.tipoIva }}</td>
+                                <td>{{ item.pvp }}</td>
+                                <td class="text-right">{{ item.cantidad }}</td>
+                                <td class="text-right">{{ item.precioUnitario }}</td>
+                                <td class="text-right">{{ item.precioConIva }}</td>
+                                <td class="text-right">{{ item.porcentajeDescuento }}</td>
+                                <td class="text-right">{{ item.valorDescuento }}</td>
+                                <td class="text-right">{{ item.precioTotalSinImpuesto }}</td>
+                                <td class="text-right">{{ item.valorImpuesto }}</td>
+                                <td class="text-right">{{ item.total }}</td>
+                                <td class="text-right">{{ item.nota }}</td>
+                                <td>{{ item.bodega }}</td>
+                            </tr>
+                            <tr ng-if="detalles.length === 0">
+                                <td colspan="15" class="text-center">
+                                    <span ng-if="isLoading">Cargando...</span>
+                                    <span ng-if="!isLoading">Sin registro</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div class="row">
+                <div class="col-md-9 col-sm-12 col-12 mb-2">
+                    <div class="border border-dark rounded-3 p-2">
+                        <div class="d-flex mb-2">
+                            <small class="fw-semibold me-2">Observación:</small>
+                            <small>{{ headerData.observacion }}</small>
+                        </div>
+
+                        <table class="table table-sm small mb-0">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2" class="fw-semibold">Información Adicional</td>
+                                </tr>
+                                <tr ng-repeat="item in datosAdicionalesDoc track by $index">
+                                    <td>{{ item.nombre }}</td>
+                                    <td>{{ item.valor }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-12 col-12">
+                    <div class="border border-dark rounded-3 p-2">
+                        <!-- Summary totals component would be replaced with custom directive or content -->
+                        <div id="drawImpuestoTotales"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
 
 

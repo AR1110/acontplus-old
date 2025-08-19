@@ -1,11 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@modules/customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -20,14 +20,14 @@ import {
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
 import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { FormsModule } from '@angular/forms';
 import {formatDateToString} from "@core/utils/date.util";
 import {GuiaRemisionList} from "@billing/domain/models/guia-remision/guia-remision.model";
-import {AddEditProductDirective} from "@inventory/ui/product/directives/add-edit-product.directive";
+import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
 import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habitual-historial.directive";
 import {  MatMenuModule} from "@angular/material/menu";
-import {ProductKardexModalDirective} from "@inventory/ui/product/directives/product-kardex-modal.directive";
+import {ProductKardexModalDirective} from "@inventory/product/presentation/directives/product-kardex-modal.directive";
 import {DialogService} from "@core/services/dialog.service";
 import {
   AddEditGuiaRemisionComponent
@@ -56,12 +56,12 @@ import {
   templateUrl: './guia-remision.component.html',
   styles: ``,
 })
-export class GuiaRemisionComponent   {
+export class GuiaRemisionComponent implements OnInit   {
   private $getGuiaRemisionFilterDataUseCase = inject(
     GetGuiaRemisionFilterDataUseCase
   );
   private $listGuiasRemisionUseCase = inject(ListGuiasRemisionUseCase);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService)
 
   estabs = signal<GroupedEstab[]>([]);
@@ -105,7 +105,7 @@ export class GuiaRemisionComponent   {
 
   private getParams() {
     if (!isValidField(this.dataSearch.codEstab)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Establecimiento no seleccionado',
       });
@@ -113,7 +113,7 @@ export class GuiaRemisionComponent   {
     }
 
     if (!getValidId(this.dataSearch.puntoEmisionId)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Punto Emisión no seleccionado',
       });
@@ -142,7 +142,7 @@ export class GuiaRemisionComponent   {
 
   private getGuiasRemision() {
     if(this.loading) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Esta cargando los datos...'
       })
@@ -152,7 +152,7 @@ export class GuiaRemisionComponent   {
     if (isValidField(this.dataSearch.nroSecuencial)) {
       if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
        this.dataSearch.filterByDate = true;
-        this.tS.toastr({
+        this.tS.show({
           type: 'error',
           message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
         })
@@ -163,7 +163,7 @@ export class GuiaRemisionComponent   {
       }
     }
 
-    let params = this.getParams()
+    const params = this.getParams()
     if(!params) return;
     this.$listGuiasRemisionUseCase.execute(params).subscribe(response=>{
       console.log(response);
@@ -214,7 +214,7 @@ export class GuiaRemisionComponent   {
 
 
   public openAddEditModal(){
-    let ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
+    const ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
       size: 'xl',
       data: {
 

@@ -17,7 +17,7 @@ export class SubCategoryService {
   private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.SUBCATEGORY}`
 
   getAll<T>(data: T) {
-    let params = JSON.stringify({ ...data, tipo: 1 })
+    const params = JSON.stringify({ ...data, tipo: 1 })
     return this.http.get(`${this.url}?json=${params}`, {
       context: getNoLoader()
     })
@@ -57,14 +57,14 @@ export class SubCategoryService {
 
 
   post<T>(obj: T, file: Blob | string) {
-    let json = JSON.stringify(obj)
+    const json = JSON.stringify(obj)
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<ApiResponse>(`${this.url}?json=${json}`, formData)
   }
 
   put<T>(id: number, obj: T,) {
-    let json = JSON.stringify(obj)
+    const json = JSON.stringify(obj)
     return this.http.put<ApiResponse>(`${this.url}${id}?json=${json}`, null)
   }
 

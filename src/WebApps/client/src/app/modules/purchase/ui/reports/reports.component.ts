@@ -1,11 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   REPORT_CODE,
   DOC_TYPE,
   PATHS_API,
 } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@accounting/domain/enums/accounting.constants';
+import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
@@ -15,11 +15,11 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { Subcategory } from '@accounting/domain/models/subcategory';
+import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -46,12 +46,12 @@ import {MatSelectModule} from "@angular/material/select";
   templateUrl: './reports.component.html',
   styles: ``,
 })
-export class ReportsComponent {
+export class ReportsComponent implements OnInit {
   http = inject(HttpClient);
-  establecimientos: Array<GroupedEstab> = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-  estadosDoc: Array<{ codigo: string; descripcion: string }> = [];
+  establecimientos: GroupedEstab[] = [];
+  puntosEmision: GroupedEstabPuntoEmision[] = [];
+  tiposDoc: (Pick<TipoDoc, 'descripcion'> & { codDoc: string })[] = [];
+  estadosDoc: { codigo: string; descripcion: string }[] = [];
   subcategories: Subcategory[] = [];
   dataSearch = {
     codEstab: '',
@@ -67,7 +67,7 @@ export class ReportsComponent {
   };
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   ngOnInit() {
@@ -85,7 +85,7 @@ export class ReportsComponent {
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
-      let dataEstab = this.establecimientos.find(
+      const dataEstab = this.establecimientos.find(
         (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
@@ -107,7 +107,7 @@ export class ReportsComponent {
 
   getReport(format: 'pdf' | 'excel') {
     if (!isValidField(this.dataSearch.fromDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha inicio',
       });
@@ -115,7 +115,7 @@ export class ReportsComponent {
     }
 
     if (!isValidField(this.dataSearch.toDate)) {
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: 'Ingrese fecha fin',
       });
@@ -124,7 +124,7 @@ export class ReportsComponent {
 
     if (this.dataSearch.supplierChecked) {
       if (!isValidField(this.dataSearch.idProveedor)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Seleccione el proveedor',
         });

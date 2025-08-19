@@ -18,7 +18,7 @@ export class SupportWebRepository extends SupportRepository {
 
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       ...obj,
       tipo: 1
     })
@@ -37,7 +37,7 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   getDataForm() {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 2
     })
     return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
@@ -48,7 +48,7 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   getId(id: number) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       id,
       tipo: 3
     })
@@ -60,7 +60,7 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   getDashboard(){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 6
     })
     return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
@@ -69,7 +69,7 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   getConvertToAprobDoc(id:number){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 5,
       id
     })
@@ -78,7 +78,7 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   getDocView(id:number){
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 7,
       id
     })
@@ -90,7 +90,7 @@ export class SupportWebRepository extends SupportRepository {
 
 
   override generateSequential(idPuntoEmision: number): Observable<string> {
-    let params = {
+    const params = {
       tipo: 9,
       idPuntoEmision
     }
@@ -98,7 +98,7 @@ export class SupportWebRepository extends SupportRepository {
       map(res=>{
         let secuencual = "" as string;
         if(res.code==="1"){
-          let {sequence}=JSON.parse(res.payload as string);
+          const {sequence}=JSON.parse(res.payload as string);
 
           secuencual = sequence[0].serieComprobante;
         }
@@ -108,7 +108,7 @@ export class SupportWebRepository extends SupportRepository {
   }
 
   search<T extends { textSearch: string }>(obj: T) {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 4,
       textSearch: obj.textSearch
     })

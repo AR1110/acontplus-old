@@ -23,7 +23,7 @@ public class AccountController(
 
         if (response.Code != "1" || string.IsNullOrEmpty(response.Payload)) return Ok(response);
 
-        List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+        List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
 
         if (userData.Count != 1) return Ok(response);
 
@@ -50,17 +50,18 @@ public class AccountController(
             return BadRequest("Error al iniciar session");
         }
 
-        var logingHistory = new LoginHistory
+        var loginHistory = new LoginHistory
         {
-            UserId = userData[0].UserId,
-            Username = userData[0].Username,
+            CreatedByUserId = userData[0].UserId,
             UserRoleId = userData[0].UserRoleId,
             UserAgent = authRequest.UserAgent ?? HttpContext.Request.Headers.UserAgent.ToString(),
             Token = token.Token,
             TokenExpiration = token.Expires
         };
 
-        await loginHistoryService.AddAsync(logingHistory);
+        await loginHistoryService.AddAsync(loginHistory);
+        loginHistory.UserAgent = authRequest.UserAgent;
+        await accountService.AddNotificationAsync(loginHistory);
         user.Token = token.Token;
         return Ok(ApiResponse.Success(payload: user, message: "Login Correcto"));
     }
@@ -73,19 +74,19 @@ public class AccountController(
         var token = tokenService.CreateToken(userData);
         if (token == null || string.IsNullOrEmpty(token.Token)) return BadRequest("Error al iniciar session");
 
-        var logingHistory = new LoginHistory
+        var loginHistory = new LoginHistory
         {
-            UserId = userData.UserId,
-            Username = userData.Username,
+            CreatedByUserId = userData.UserId,
             UserRoleId = userData.UserRoleId,
             UserAgent = userData.UserAgent ?? HttpContext.Request.Headers.UserAgent.ToString(),
             Token = token.Token,
             TokenExpiration = token.Expires,
             FromMobile = true
         };
-        await loginHistoryService.AddAsync(logingHistory);
+        await loginHistoryService.AddAsync(loginHistory);
+        loginHistory.UserAgent = userData.UserAgent;
+        await accountService.AddNotificationAsync(loginHistory);
         userData.Token = token.Token;
-        var response = new ApiResponse();
         return Ok(ApiResponse.Success(payload: userData, message: "Login Correcto"));
     }
 }

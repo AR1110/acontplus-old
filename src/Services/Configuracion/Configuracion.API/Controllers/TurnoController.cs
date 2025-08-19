@@ -1,6 +1,8 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Configuracion.Domain.Repositories;
 
-public class TurnoController(ITurnoService turnoSvc) : BaseApiController
+namespace Configuracion.API.Controllers;
+
+public class TurnoController(ITurnoRepository turnoSvc) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

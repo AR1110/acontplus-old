@@ -12,13 +12,13 @@ import {map, Observable} from "rxjs";
 })
 export class CompanyRepositoryImpl implements CompanyRepository {
   list(): Observable<ListCompanyResponse> {
-    let json = JSON.stringify({
+    const json = JSON.stringify({
       tipo: 1
     })
 
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response:any)=>{
-        let {companies=[]} = response;
+        const {companies=[]} = response;
         return {
           data: companies.map((item:any, index:number)=>{
             return {

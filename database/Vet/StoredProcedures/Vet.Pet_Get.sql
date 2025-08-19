@@ -43,9 +43,9 @@ BEGIN
     IF (@tipo = 3)
         BEGIN
             SET @tableNames = 'petTypes,breeds,genders'
-            SELECT * FROM Vet.PetType WITH (NOLOCK) WHERE Deleted IS NULL AND Enabled = 1
-            SELECT * FROM Vet.Breed WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
-            SELECT * FROM Vet.Gender WITH (NOLOCK) WHERE Deleted IS NULL  AND Enabled = 1
+            SELECT * FROM Vet.PetType WITH (NOLOCK) WHERE IsDeleted = CAST(0 AS BIT) AND IsActive = 1
+            SELECT * FROM Vet.Breed WITH (NOLOCK) WHERE IsDeleted = CAST(0 AS BIT)  AND IsActive = 1
+            SELECT * FROM Vet.Gender WITH (NOLOCK) WHERE IsDeleted = CAST(0 AS BIT)  AND IsActive = 1
             RETURN
         END
      
@@ -54,15 +54,15 @@ BEGIN
 
 	SET @sqlQuery = N'SELECT p.Id
 				,p.[Name]
-				,Age = ISNULL((SELECT TOP 1 Age FROM Vet.MedicalHistory mh  WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)
+				,Age = ISNULL((SELECT TOP 1 Age FROM Vet.MedicalHistory mh  WITH(NOLOCK) WHERE mh.PetId = p.Id AND IsActive = 1 ORDER by mh.Id desc), 0)
 				,p.Color
-				,p.[Enabled]
+				,p.[IsActive]
 				,cc.idEntidad CompanyId
 				,b.PetTypeId
 				,p.BreedId
 				,p.GenderId
 				,p.CustomerCompanyId
-				,ISNULL((SELECT TOP 1 mh.[Weight] FROM Vet.MedicalHistory mh WITH(NOLOCK) WHERE mh.PetId = p.Id AND Enabled = 1 ORDER by mh.Id desc), 0)  as ''Weight''
+				,ISNULL((SELECT TOP 1 mh.[Weight] FROM Vet.MedicalHistory mh WITH(NOLOCK) WHERE mh.PetId = p.Id AND IsActive = 1 ORDER by mh.Id desc), 0)  as ''Weight''
 				,g.[Name] gender
 				,pt.[Name] petType
 				,b.[Name] breed
@@ -79,7 +79,7 @@ BEGIN
 				LEFT JOIN Vet.Gender g  WITH(NOLOCK) ON p.genderId = g.Id
 				LEFT JOIN Vet.PetType pt  WITH(NOLOCK) ON b.petTypeId = pt.Id
 			WHERE cc.idEntidad = @companyId
-			AND p.Deleted IS NULL '
+			AND p.IsDeleted = CAST(0 AS BIT) '
 
 
 	IF (@tipo = 2)

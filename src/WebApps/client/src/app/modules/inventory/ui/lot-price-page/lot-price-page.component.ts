@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewChild} from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,7 +10,7 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
 import {
   LotPrice,
@@ -19,18 +19,16 @@ import {
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { LotPriceService } from '@inventory/data/services/lot-price.service';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatRadioModule} from "@angular/material/radio";
-import {MatDivider} from "@angular/material/divider";
-import {MatInputModule} from "@angular/material/input";
+import { MatIconButton } from '@angular/material/button';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDivider } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -49,7 +47,6 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbTooltipModule,
     MatInputModule,
     MatRadioModule,
     BreadcrumbComponent,
@@ -60,15 +57,15 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     ThemeButtonComponent,
     MatIconButton,
     MatDynamicCardComponent,
-    MatDivider
+    MatDivider,
   ],
   templateUrl: './lot-price-page.component.html',
   styles: `.mat-mdc-radio-button ~ .mat-mdc-radio-button {
     margin-left: 16px;
   }
-  `
+  `,
 })
-export class LotPricePageComponent {
+export class LotPricePageComponent implements OnInit {
   private readonly lotPriceSvc = inject(LotPriceService);
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
@@ -135,24 +132,24 @@ export class LotPricePageComponent {
   answerCellColorFormatter() {
     return (cell: any, formatterParams: any, onRendered: any) => {
       if (cell.getValue() != null) {
-        let dataRow = cell.getData();
-        let dataAdded = this.productsModified.find(
+        const dataRow = cell.getData();
+        const dataAdded = this.productsModified.find(
           (d) =>
             dataRow.idTarifa === d.idTarifa &&
-            d.idArticuloPvP === dataRow.idArticuloPvP,
+            d.idArticuloPvP === dataRow.idArticuloPvP
         );
 
         if (dataAdded) {
           cell.getElement().style.backgroundColor = '#fad';
         }
-        //var data = parseInt(cell.getValue());
+        //var infrastructure = parseInt(cell.getValue());
       }
       return cell.getValue();
     };
   }
 
   editCheck = (cell: any) => {
-    let data = cell.getRow().getData();
+    const data = cell.getRow().getData();
     return this.productsModified.some((d) => {
       return this.isProductModified(data, d);
     });
@@ -184,7 +181,7 @@ export class LotPricePageComponent {
                 if (!childRows[j].isSelected()) {
                   if (
                     this.productsModified.some((d) =>
-                      this.isProductModified(data, d),
+                      this.isProductModified(data, d)
                     )
                   ) {
                     childRows[j].toggleSelect();
@@ -277,16 +274,16 @@ export class LotPricePageComponent {
   ];
 
   checkedSubCategorias = new FormControl([]);
-  subCategorias: Array<GroupedSubFamilia> = [];
+  subCategorias: GroupedSubFamilia[] = [];
 
-  productsModified: Array<any> = [];
+  productsModified: any[] = [];
 
-  nestedProducts = signal<LotPrice[]>([])
-  cloneNestedProducts: Array<LotPrice> = [];
-  taxRates: Array<TarifaImpuesto> = [];
+  nestedProducts = signal<LotPrice[]>([]);
+  cloneNestedProducts: LotPrice[] = [];
+  taxRates: TarifaImpuesto[] = [];
 
   tarifasSelected = new FormControl<number[]>([]);
-  tarifas: Array<TarifaSelectHtmlOnly> = [];
+  tarifas: TarifaSelectHtmlOnly[] = [];
   decimal = {
     nroPrecio: 2,
   };
@@ -313,25 +310,25 @@ export class LotPricePageComponent {
   isCalculateManual = false;
 
   protected getDataFilter() {
-    this.lotPriceSvc.getDataFilter().subscribe( (response) => {
-        this.tarifas = response.tarifas;
-        this.taxRates = response.tarifasImpuesto;
-        this.decimal = response.decimal;
-        this.subCategorias = response.subFamilias;
+    this.lotPriceSvc.getDataFilter().subscribe((response) => {
+      this.tarifas = response.tarifas;
+      this.taxRates = response.tarifasImpuesto;
+      this.decimal = response.decimal;
+      this.subCategorias = response.subFamilias;
 
-        let dataTarifa = this.tarifas.find((i) => i.predeterminada);
-        if (dataTarifa) {
-          this.addTarifaDefault(dataTarifa.idTarifa);
-        }
+      const dataTarifa = this.tarifas.find((i) => i.predeterminada);
+      if (dataTarifa) {
+        this.addTarifaDefault(dataTarifa.idTarifa);
+      }
     });
   }
 
   getProducts() {
     try {
-      let subCategoriasChecked =
+      const subCategoriasChecked =
         Array.isArray(this.checkedSubCategorias.value) &&
         this.checkedSubCategorias.value.join(',');
-      let dataSearch = {
+      const dataSearch = {
         tipo: this.mainForm.tipo,
         opcion: this.mainForm.opcion,
         idArticulo:
@@ -355,10 +352,10 @@ export class LotPricePageComponent {
       this.nestedProducts.set([]);
       this.productsModified = [];
 
-      this.lotPriceSvc.getAll(dataSearch).subscribe(  (response) => {
-          let results = structuredClone(response);
+      this.lotPriceSvc.getAll(dataSearch).subscribe((response) => {
+        const results = structuredClone(response);
         this.nestedProducts.set(results);
-          this.cloneNestedProducts = structuredClone(results);
+        this.cloneNestedProducts = structuredClone(results);
       });
     } catch (error) {
       console.log(error);
@@ -378,22 +375,22 @@ export class LotPricePageComponent {
   }
 
   cellEdited(cell: any) {
-    let row = cell.getRow();
-    let column = cell.getColumn().getField();
-    let oldValue = cell.getOldValue();
-    let value = parseFloat(cell.getValue());
+    const row = cell.getRow();
+    const column = cell.getColumn().getField();
+    const oldValue = cell.getOldValue();
+    const value = parseFloat(cell.getValue());
 
-    let parentData = row.getTreeParent().getData();
-    let precioCosto = parentData.precioCosto;
-    let data = cell.getData();
+    const parentData = row.getTreeParent().getData();
+    const precioCosto = parentData.precioCosto;
+    const data = cell.getData();
     let precioVenta = parseFloat(data.precioVenta);
     let precioConIva = parseFloat(data.precioConIva);
     let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
 
-    let dataTarifaImpuesto = this.taxRates.find(
-      (tr) => tr.idTarifaImpuesto === parentData.idTipoIva,
+    const dataTarifaImpuesto = this.taxRates.find(
+      (tr) => tr.idTarifaImpuesto === parentData.idTipoIva
     );
-    let porcentajeImpuesto = dataTarifaImpuesto?.porcentaje || 0;
+    const porcentajeImpuesto = dataTarifaImpuesto?.porcentaje || 0;
 
     if (!dataTarifaImpuesto) {
       cell.setValue(oldValue);
@@ -409,12 +406,12 @@ export class LotPricePageComponent {
       if (value >= precioCosto) {
         precioConIva = pricingCalculateUtil.calculatePriceWithVat(
           value,
-          porcentajeImpuesto,
+          porcentajeImpuesto
         );
         porcentajeUtilidad =
           pricingCalculateUtil.calculateProfitMarginPercentage(
             precioVenta,
-            precioCosto,
+            precioCosto
           );
       } else {
         precioVenta = oldValue;
@@ -422,16 +419,16 @@ export class LotPricePageComponent {
     }
 
     if (column === 'precioConIva') {
-      let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(
+      const precioVentaValidar = pricingCalculateUtil.calculatePriceSale(
         value,
-        porcentajeImpuesto,
+        porcentajeImpuesto
       );
       if (precioVentaValidar >= precioCosto) {
         precioVenta = precioVentaValidar;
         porcentajeUtilidad =
           pricingCalculateUtil.calculateProfitMarginPercentage(
             precioVenta,
-            precioCosto,
+            precioCosto
           );
       } else {
         precioConIva = oldValue;
@@ -440,16 +437,16 @@ export class LotPricePageComponent {
 
     if (column === 'porcentajeUtilidad') {
       if (value <= 100) {
-        let precioVentaValidar =
+        const precioVentaValidar =
           pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
             precioCosto,
-            value,
+            value
           );
         if (precioVentaValidar >= precioCosto) {
           precioVenta = precioVentaValidar;
           precioConIva = pricingCalculateUtil.calculatePriceWithVat(
             precioVenta,
-            porcentajeImpuesto,
+            porcentajeImpuesto
           );
         } else {
           porcentajeUtilidad = oldValue;
@@ -461,7 +458,7 @@ export class LotPricePageComponent {
 
     let utilidad = pricingCalculateUtil.getValueUtility(
       precioVenta,
-      precioCosto,
+      precioCosto
     );
 
     precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
@@ -469,7 +466,7 @@ export class LotPricePageComponent {
     porcentajeUtilidad = roundNumber(porcentajeUtilidad, 5);
     utilidad = roundNumber(utilidad, 5);
 
-    let obj = {
+    const obj = {
       precioVenta,
       precioConIva,
       porcentajeUtilidad,
@@ -480,7 +477,7 @@ export class LotPricePageComponent {
       ...obj,
     });
     let dataProductModified = this.productsModified.find((pm) =>
-      this.isProductModified(data, pm),
+      this.isProductModified(data, pm)
     );
     if (dataProductModified) {
       dataProductModified = {
@@ -491,8 +488,8 @@ export class LotPricePageComponent {
   }
 
   cellClick(cell: any) {
-    let data = cell.getData();
-    let isRowAdded = this.productsModified.some((d) => {
+    const data = cell.getData();
+    const isRowAdded = this.productsModified.some((d) => {
       return this.isProductModified(data, d);
     });
     if (isRowAdded) {
@@ -509,7 +506,7 @@ export class LotPricePageComponent {
 
   //Filters
   onProductSelected(event: any) {
-    let data = event.data;
+    const data = event.data;
     this.mainForm.idArticulo = data.idArticulo;
   }
 
@@ -526,7 +523,7 @@ export class LotPricePageComponent {
   }
 
   isValidFilter() {
-    let checkedSubCategorias = this.checkedSubCategorias.value;
+    const checkedSubCategorias = this.checkedSubCategorias.value;
     if (this.mainForm.opcion === 3) {
       if (
         checkedSubCategorias &&
@@ -536,7 +533,7 @@ export class LotPricePageComponent {
         Swal.fire({
           icon: 'warning',
           text: 'Seleccione al menos una SubFamilia',
-        })
+        });
         return;
       }
 
@@ -548,7 +545,7 @@ export class LotPricePageComponent {
         Swal.fire({
           icon: 'warning',
           text: 'Máximo de SubFamilias permitidos es 3',
-        })
+        });
         return;
       }
     }
@@ -557,7 +554,7 @@ export class LotPricePageComponent {
       Swal.fire({
         icon: 'warning',
         text: 'Seleccione el arículo',
-      })
+      });
       return;
     }
 
@@ -567,8 +564,8 @@ export class LotPricePageComponent {
     ) {
       Swal.fire({
         icon: 'warning',
-        text:'Seleccione el proveedor',
-      })
+        text: 'Seleccione el proveedor',
+      });
       return;
     }
 
@@ -578,8 +575,8 @@ export class LotPricePageComponent {
     ) {
       Swal.fire({
         icon: 'warning',
-        text:'Ingrese el número de documento',
-      })
+        text: 'Ingrese el número de documento',
+      });
       return;
     }
 
@@ -595,13 +592,13 @@ export class LotPricePageComponent {
   calculate() {
     try {
       this.isCalculateManual = false;
-      let tarifasSelected = this.tarifasSelected.value;
+      const tarifasSelected = this.tarifasSelected.value;
 
       if (this.nestedProducts().length === 0) {
         Swal.fire({
           icon: 'warning',
           text: 'No se encontrarón productos',
-        })
+        });
         return;
       }
 
@@ -609,15 +606,15 @@ export class LotPricePageComponent {
         Swal.fire({
           icon: 'warning',
           text: 'Seleccione opcion a calcular',
-        })
+        });
         return;
       }
 
       if (!isValidField(this.optionPvp)) {
         Swal.fire({
           icon: 'warning',
-          text:  'Seleccione una opción de PVP.',
-        })
+          text: 'Seleccione una opción de PVP.',
+        });
         return;
       }
 
@@ -628,7 +625,7 @@ export class LotPricePageComponent {
       ) {
         Swal.fire({
           icon: 'warning',
-          text:  'Seleccione al menos una tarifa',
+          text: 'Seleccione al menos una tarifa',
         });
         return;
       }
@@ -636,7 +633,7 @@ export class LotPricePageComponent {
       if (isNaN(this.mainForm.valueToCalculate)) {
         Swal.fire({
           icon: 'warning',
-          text:  'Ingrese un valor numérico válido en el campo Valor',
+          text: 'Ingrese un valor numérico válido en el campo Valor',
         });
         return;
       }
@@ -667,11 +664,11 @@ export class LotPricePageComponent {
   }
 
   calculateManual() {
-    let tarifasSelected = this.tarifasSelected.value;
+    const tarifasSelected = this.tarifasSelected.value;
     if (this.nestedProducts().length === 0) {
       Swal.fire({
         icon: 'warning',
-        text:'No se encontrarón productos!',
+        text: 'No se encontrarón productos!',
       });
       return;
     }
@@ -708,21 +705,21 @@ export class LotPricePageComponent {
 
   applyValueToProducts() {
     this.productsModified = [];
-    let tarifasSelected = this.tarifasSelected.value || [];
+    const tarifasSelected = this.tarifasSelected.value || [];
 
-    let nestedProducts = structuredClone(this.cloneNestedProducts);
+    const nestedProducts = structuredClone(this.cloneNestedProducts);
 
-    for (let item of nestedProducts) {
-      let dataTarifaImpuesto = this.taxRates.find(
-        (tr) => tr.idTarifaImpuesto === item.idTipoIva,
+    for (const item of nestedProducts) {
+      const dataTarifaImpuesto = this.taxRates.find(
+        (tr) => tr.idTarifaImpuesto === item.idTipoIva
       );
 
       //si no se encontró el impuesto o si la tarifa es vacia continuar con el siguiente items;
       if (!dataTarifaImpuesto || item._children.length === 0) continue;
 
-      let porcentajeImpuesto = dataTarifaImpuesto.porcentaje;
+      const porcentajeImpuesto = dataTarifaImpuesto.porcentaje;
 
-      for (let t of item._children) {
+      for (const t of item._children) {
         let precioVenta = t.precioVenta;
         let precioConIva = t.precioConIva;
         let porcentajeUtilidad = t.porcentajeUtilidad;
@@ -738,30 +735,30 @@ export class LotPricePageComponent {
             // Sart Sumar un valor a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
             if (this.mainForm.optionToCalculate === OptionsCalculateEnum.A) {
               if (this.optionPvp === 'precioVenta') {
-                let precioVentaSumado =
+                const precioVentaSumado =
                   precioVenta + this.mainForm.valueToCalculate;
                 if (precioVentaSumado >= item.precioCosto) {
                   precioVenta = precioVentaSumado;
                   precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     precioVenta,
-                    porcentajeImpuesto,
+                    porcentajeImpuesto
                   );
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 }
               }
 
               if (this.optionPvp === 'precioConIva') {
-                let precioConIvaSumado =
+                const precioConIvaSumado =
                   precioConIva + this.mainForm.valueToCalculate;
-                let precioVentaCalculado =
+                const precioVentaCalculado =
                   pricingCalculateUtil.calculatePriceSale(
                     precioConIvaSumado,
-                    porcentajeImpuesto,
+                    porcentajeImpuesto
                   );
                 if (precioVentaCalculado >= item.precioCosto) {
                   precioConIva = precioConIvaSumado;
@@ -769,7 +766,7 @@ export class LotPricePageComponent {
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 }
@@ -780,35 +777,35 @@ export class LotPricePageComponent {
             //Start Calcular un porcentaje que se aplique a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
             if (this.mainForm.optionToCalculate === OptionsCalculateEnum.B) {
               if (this.optionPvp === 'precioVenta') {
-                let valorImpuesto = pricingCalculateUtil.calculateTaxValue(
+                const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
                   t.precioVenta,
-                  this.mainForm.valueToCalculate,
+                  this.mainForm.valueToCalculate
                 );
-                let precioVentaConImpuestos = t.precioVenta + valorImpuesto;
+                const precioVentaConImpuestos = t.precioVenta + valorImpuesto;
                 if (precioVentaConImpuestos >= item.precioCosto) {
                   precioVenta = precioVentaConImpuestos;
                   precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     precioVenta,
-                    porcentajeImpuesto,
+                    porcentajeImpuesto
                   );
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 }
               }
               if (this.optionPvp === 'precioConIva') {
-                let valorPrecioConIva =
+                const valorPrecioConIva =
                   pricingCalculateUtil.calculatePriceWithVat(
                     t.precioConIva,
-                    this.mainForm.valueToCalculate,
+                    this.mainForm.valueToCalculate
                   );
-                let precioVentaCalculado =
+                const precioVentaCalculado =
                   pricingCalculateUtil.calculatePriceSale(
                     valorPrecioConIva,
-                    porcentajeImpuesto,
+                    porcentajeImpuesto
                   );
                 if (precioVentaCalculado >= item.precioCosto) {
                   precioConIva = valorPrecioConIva;
@@ -816,7 +813,7 @@ export class LotPricePageComponent {
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 }
@@ -833,12 +830,12 @@ export class LotPricePageComponent {
                 precioVenta = this.mainForm.valueToCalculate;
                 precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                   precioVenta,
-                  porcentajeImpuesto,
+                  porcentajeImpuesto
                 );
                 porcentajeUtilidad =
                   pricingCalculateUtil.calculateProfitMarginPercentage(
                     precioVenta,
-                    item.precioCosto,
+                    item.precioCosto
                   );
                 setDataToProductsModified = true;
               }
@@ -847,13 +844,13 @@ export class LotPricePageComponent {
                 precioConIva = this.mainForm.valueToCalculate;
                 precioVenta = pricingCalculateUtil.calculatePriceSale(
                   precioConIva,
-                  porcentajeImpuesto,
+                  porcentajeImpuesto
                 );
                 if (precioVenta >= item.precioCosto) {
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 } else {
@@ -867,37 +864,37 @@ export class LotPricePageComponent {
             //Start Sumar un % de rentabilidad al PVP
             if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
               if (this.optionPvp === 'precioCosto') {
-                let valorImpuesto = pricingCalculateUtil.calculateTaxValue(
+                const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
                   item.precioCosto,
-                  this.mainForm.valueToCalculate,
+                  this.mainForm.valueToCalculate
                 );
-                let precioVentaValidar = item.precioCosto + valorImpuesto;
+                const precioVentaValidar = item.precioCosto + valorImpuesto;
                 // let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
 
                 if (precioVentaValidar >= item.precioCosto) {
                   precioVenta = precioVentaValidar;
                   precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     precioVenta,
-                    porcentajeImpuesto,
+                    porcentajeImpuesto
                   );
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 }
               }
               if (this.optionPvp === 'precioVenta') {
-                let valorImpuesto = pricingCalculateUtil.calculateTaxValue(
+                const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
                   precioVenta,
-                  this.mainForm.valueToCalculate,
+                  this.mainForm.valueToCalculate
                 );
-                let precioConImpuestos = precioVenta + valorImpuesto;
-                let precioVentaValidar =
+                const precioConImpuestos = precioVenta + valorImpuesto;
+                const precioVentaValidar =
                   pricingCalculateUtil.calculatePriceSale(
                     precioConImpuestos,
-                    porcentajeImpuesto,
+                    porcentajeImpuesto
                   );
 
                 if (precioVentaValidar >= item.precioCosto) {
@@ -906,7 +903,7 @@ export class LotPricePageComponent {
                   porcentajeUtilidad =
                     pricingCalculateUtil.calculateProfitMarginPercentage(
                       precioVenta,
-                      item.precioCosto,
+                      item.precioCosto
                     );
                   setDataToProductsModified = true;
                 }
@@ -917,7 +914,7 @@ export class LotPricePageComponent {
 
         utilidad = pricingCalculateUtil.getValueUtility(
           precioVenta,
-          item.precioCosto,
+          item.precioCosto
         );
 
         t.precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
@@ -938,17 +935,16 @@ export class LotPricePageComponent {
         icon: 'success',
         text: `${this.productsModified.length} tarifas modificadas. Antes de guardar, asegúrese de que los precios modificados sean correctos.`,
       });
-
     } else {
       Swal.fire({
         icon: 'info',
-        text:`${this.productsModified.length} Tarifas modificados!`,
+        text: `${this.productsModified.length} Tarifas modificados!`,
       });
     }
   }
 
   setProductsModified<T extends LotPriceTarifa & { idTipoIva: number }>(
-    data: T,
+    data: T
   ) {
     this.productsModified.push(data);
   }
@@ -996,7 +992,7 @@ export class LotPricePageComponent {
       cancelButtonText: 'No!',
     }).then((result) => {
       if (result.isConfirmed) {
-        let results = selectedData.map((item) => {
+        const results = selectedData.map((item) => {
           return {
             idTipoIva: item.idTipoIva,
             idArticuloPvP: item.idArticuloPvP,
@@ -1010,28 +1006,28 @@ export class LotPricePageComponent {
           };
         });
 
-        let data = {
+        const data = {
           tipo: this.mainForm.tipo,
           articles: results,
         };
 
-        this.lotPriceSvc.put(data).subscribe( (response) => {
-              if (response.code === '0') {
-                Swal.fire({
-                  icon: 'warning',
-                  text: response.message,
-                });
-              }
-              if (response.code === '1') {
-                Swal.fire({
-                  icon: 'success',
-                  text: response.message,
-                  timer: 1000,
-                });
-                this.cloneNestedProducts = [];
-                this.nestedProducts.set([]);
-                this.productsModified = [];
-              }
+        this.lotPriceSvc.put(data).subscribe((response) => {
+          if (response.code === '0') {
+            Swal.fire({
+              icon: 'warning',
+              text: response.message,
+            });
+          }
+          if (response.code === '1') {
+            Swal.fire({
+              icon: 'success',
+              text: response.message,
+              timer: 1000,
+            });
+            this.cloneNestedProducts = [];
+            this.nestedProducts.set([]);
+            this.productsModified = [];
+          }
         });
       }
     });

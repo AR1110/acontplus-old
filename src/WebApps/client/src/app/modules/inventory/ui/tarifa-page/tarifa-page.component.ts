@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,10 +7,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { ModalService } from '@core/services/modal.service';
 import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { TarifaEditModalComponent } from '@inventory/ui/tarifa-page/tarifa-edit-modal/tarifa-edit-modal.component';
+import {DialogService} from "@core/services/dialog.service";
 
 @Component({
     selector: 'app-tarifa-page',
@@ -26,7 +26,7 @@ import { TarifaEditModalComponent } from '@inventory/ui/tarifa-page/tarifa-edit-
     templateUrl: './tarifa-page.component.html',
     styles: ``
 })
-export class TarifaPageComponent {
+export class TarifaPageComponent implements OnInit {
   tarifaSvc = inject(TarifaService);
   visibleColumns: string[] = [
     'index',
@@ -42,10 +42,10 @@ export class TarifaPageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
-  private modalSvc = inject(ModalService);
+  private modalSvc = inject(DialogService);
 
   getTarifas() {
-    let params = {};
+    const params = {};
     this.isLoadingResults = true;
     this.tarifaSvc.getAll(params).subscribe({
       next: (response) => {
@@ -65,12 +65,12 @@ export class TarifaPageComponent {
   }
 
   onEdit(data: any) {
-    let modalRef = this.modalSvc.open(TarifaEditModalComponent, {
+    const modalRef = this.modalSvc.open(TarifaEditModalComponent, {
       size: 'sm',
+      data: data || {},
     });
-    modalRef.componentInstance.params = data || {};
 
-    modalRef.result.then((result) => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getTarifas();
       }

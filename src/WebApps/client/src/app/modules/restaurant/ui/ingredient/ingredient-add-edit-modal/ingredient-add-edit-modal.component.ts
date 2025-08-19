@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 
@@ -9,21 +8,33 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { IngredientType } from '@restaurant/domain/models/ingredient-type';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { MatInputModule } from "@angular/material/input";
+import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'app-ingredient-add-edit-modal',
-  imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    ToUpperCaseDirective,
+
+  ],
   templateUrl: './ingredient-add-edit-modal.component.html',
   styles: ``,
 })
-export class IngredientAddEditModalComponent {
-  data = {} as Ingredient;
+export class IngredientAddEditModalComponent implements OnInit {
+  data = inject<Ingredient>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   ingredientForm = new FormGroup({
     id: new FormControl(0),
@@ -37,11 +48,11 @@ export class IngredientAddEditModalComponent {
     content: new FormControl(''),
     enabled: new FormControl(true),
   });
-  modalTitle: string = 'Registrar Ingrediente';
-  ingredientTypes: IngredientType[] = [];
+  modalTitle = 'Registrar Ingrediente';
+  ingredientTypes = signal<IngredientType[]>([])
   #ingredientService = inject(IngredientService);
-  #modalRef = inject(NgbActiveModal);
-  #tS = inject(ToasterService);
+  #modalRef = inject(MatDialogRef<IngredientAddEditModalComponent>);
+  #tS = inject(ToastrNotificationService);
 
   ngOnInit() {
     if (this.data.id > 0) {
@@ -57,7 +68,7 @@ export class IngredientAddEditModalComponent {
 
   onSave() {
     if (this.ingredientForm.invalid) {
-      return this.#tS.toastr({
+      return this.#tS.show({
         type: 'warning',
         message: 'Revise que los datos esten correctos',
       });
@@ -69,7 +80,7 @@ export class IngredientAddEditModalComponent {
       this.#ingredientService
         .put(this.data.id, dataToSave)
         .subscribe((response) => {
-          this.#tS.toastr({
+          this.#tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });

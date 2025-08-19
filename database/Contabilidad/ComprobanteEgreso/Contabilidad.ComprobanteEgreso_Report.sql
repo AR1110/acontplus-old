@@ -1,94 +1,456 @@
 USE [AcontPlus]
 GO
-/****** Object:  StoredProcedure [ReporteEgresos].[ComprobanteEgreso]    Script Date: 26/4/2023 15:41:32 ******/
+
+/****** Object:  StoredProcedure [Contabilidad].[ComprobanteEgreso_Report]    Script Date: 26/4/2023 15:41:32 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- exec ReporteEgresos.ComprobanteEgreso '{"id":1853}'
+-- Author:        Sistema Contable
+-- Create date:   26/04/2023
+-- Description:   Genera reporte de comprobante de egreso
+-- Usage:         EXEC Contabilidad.ComprobanteEgreso_Report '{"tipo":2,"establecimientoId":553,"userId":null,"userRoleId":307,"documentCode":null,"paymentMethodId":null,"bankId":null,"startDate":"2025-06-09 10:56:05","endDate":"2025-06-09 10:56:05","useDateFilter":false,"reportTypeCode":null}',''
 -- =============================================
-CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteEgreso_Report 
-	 @userRoleId INT
-    ,@json VARCHAR(MAX)
-    ,@tableNames VARCHAR(MAX) OUTPUT
+CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteEgreso_Report
+    @json VARCHAR(MAX),
+    @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
-	DECLARE @idComprobanteEgreso INT ,@byEgreso BIT = 0 
+    -- =============================================
+    -- DECLARACIÓN DE VARIABLES
+    -- =============================================
+    DECLARE 
+        @userRoleId INT,
+        @idComprobanteEgreso INT,
+        @byEgreso BIT = 0,
+        @tipo INT,
+        @idEntidad INT,
+        @userId INT,
+        @estabId INT,
+        @codDoc CHAR(5),
+        @paymentMethodId INT,
+        @bankId INT, 
+        @startDate DATETIME2,
+        @endDate   DATETIME2,
+        @useDateFilter BIT,
+        @supplierId INT,
+        @reference VARCHAR(20),
+        @lote VARCHAR(20),
+        @estabName VARCHAR(140)
 
-	SELECT @idComprobanteEgreso = id FROM OPENJSON(@json) WITH(id INT)
+    --> Sql
+    DECLARE @sql NVARCHAR(MAX), @params NVARCHAR(MAX)
 
-	IF EXISTS (SELECT 1 FROM MovimientoCaja WITH (NOLOCK) WHERE idComprobanteEgreso = @idComprobanteEgreso)
-		BEGIN
-			SET @byEgreso = 1
-		END 
 
-    SET @tableNames = 'comprobanteEgresoDs,comprobanteDetalleDs'
 
-	SELECT 'Nro.:'+'CE'+dbo.AFTAutoComplete(ce.nroDocumento) as nroComprobante
-		  ,@byEgreso                                              as byEgreso
-		  ,BusinessName                                           as proveedor
-		  ,IdCard                                                 as nroIdentificacion
-		  ,FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm')           as fechaEmision
-		  ,CAST(ce.total as numeric(18,2))                        as total
-		  ,en.nombreComercial
-		  ,en.ruc               
-		  ,en.telefono          
-		  ,en.direccion   
-          ,ce.observacion
-	FROM dbo.ComprobanteEgreso   ce WITH (NOLOCK) 
-    INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id        = ce.CustomerId
-	INNER JOIN dbo.Entidad       en WITH (NOLOCK) ON en.idEntidad = ce.idEntidad
-	WHERE ce.idComprobanteEgreso = @idComprobanteEgreso
-		
-	IF @byEgreso = 1
-		BEGIN
-            SELECT 'EC'                                                          as tipoDoc
-                  ,'EC' + '-' + es.estab + '-'  + dbo.AFTAutoComplete(mc.nroDoc) as nroDoc
-                  ,FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm')                  as fechaEmision
-                  ,CAST(mc.valor as numeric(18,2))                               as total
-                  ,sf.descripcion                                                as formaCobro
-            FROM dbo.MovimientoCaja             mc WITH (NOLOCK)
-            INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-             LEFT JOIN dbo.ComprobanteEgreso    ce WITH (NOLOCK) ON ce.idComprobanteEgreso    = mc.idComprobanteEgreso
-             LEFT JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = ce.idEstablecimiento
-            WHERE mc.idComprobanteEgreso = @idComprobanteEgreso
+    BEGIN TRY 
+        -- =============================================
+        -- PARSEAR JSON Y EXTRAER PARÁMETROS
+        -- =============================================
+        SELECT
+        @idComprobanteEgreso = id,
+        @tipo = tipo,
+        @userRoleId = userRoleId
+    FROM OPENJSON(@json) WITH(id INT, tipo INT, userRoleId INT);
 
-		END 
-    ELSE 
+
+     -- =============================================
+    -- OBTENER DATOS DEL USUARIO
+    -- =============================================
+    SELECT
+        @idEntidad = idEntidad,
+        @userId = idUsuario
+    FROM v_usuario
+    WHERE idUsuarioRol = @userRoleId;
+    
+
+        -- =============================================
+        -- VALIDAR TIPO DE PROCESO
+        -- =============================================
+        IF @tipo = 1
         BEGIN
-	        SELECT cuenta_pp.idCuentaPorPagar                                       as 'unique'
-		          ,cuenta_pp.codDoc                                                 as tipoDoc
-		          ,cuenta_pp.serieComprobante                                       as nroDoc
-		          ,FORMAT(cuenta_pp.fechaEmision, 'dd/MM/yyyy hh:mm')               as fechaEmision
-		          ,CAST(cuenta_pp.importeTotal AS decimal(18,2))                    as total
-		          ,ISNULL(se.descripcion,ef.descripcion)                            as formaPago
-		          ,IIF(p.posfechado = 1,'SI','NO')                                  as posfechado
-		          ,CASE WHEN ef.codigo = 'CHE' THEN b.descripcion 
-		           END                                                              as entidadFinanciera
-		          ,p.nro                                                            as comprobantePago
-		          ,FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm')                       as fechaPago
-		          ,cuota_pp.nroCuota                                                as cuota
-		          ,CAST(cuota_pp.cuota AS decimal(16, 2))                           as valorCuota
-		          ,CAST(pde.abono as decimal(16, 2))                                as abono
-		          ,CAST(pde.saldo - IIF(p.cobro = 1,pde.abono,0) as decimal(16, 2)) as saldo
-	        FROM dbo.ComprobanteEgreso                    ce WITH (NOLOCK) 				
-	        INNER JOIN dbo.Pago                            p WITH (NOLOCK) ON p.idComprobanteEgreso      = ce.idComprobanteEgreso
-	        INNER JOIN dbo.EntidadFinanciera              ef WITH (NOLOCK) ON ef.idEntidadFinanciera     = p.idEntidadFinanciera
-	         LEFT JOIN dbo.SubEntidadFinanciera           se WITH (NOLOCK) ON se.idSubEntidadFinanciera  = p.idSubEntidadFinanciera
-	         LEFT JOIN dbo.Banco                           b WITH (NOLOCK) ON p.idBanco                  = b.idBanco
-	        INNER JOIN dbo.PagoDetalle                   pde WITH (NOLOCK) ON pde.idPago                 = p.idPago
-	        INNER JOIN Contabilidad.CuotaPorPagar   cuota_pp WITH (NOLOCK) ON cuota_pp.idCuotaPorPagar   = pde.idCuotaPorPagar 
-	        INNER JOIN Contabilidad.CuentaPorPagar cuenta_pp WITH (NOLOCK) ON cuenta_pp.idCuentaPorPagar = cuota_pp.idCuentaPorPagar
-	        WHERE ce.idComprobanteEgreso = @idComprobanteEgreso
-        END 
+        -- Verificar si existe movimiento de caja asociado
+        IF EXISTS (SELECT 1
+        FROM MovimientoCaja WITH (NOLOCK)
+        WHERE idComprobanteEgreso = @idComprobanteEgreso)
+            BEGIN
+            SET @byEgreso = 1;
+        END
+
+        SET @tableNames = 'comprobanteEgresoDs,comprobanteDetalleDs';
+
+        -- =============================================
+        -- CONSULTA PRINCIPAL - DATOS DEL COMPROBANTE
+        -- =============================================
+        SELECT
+            'Nro.:' + 'CE' + dbo.AFTAutoComplete(ce.nroDocumento) AS nroComprobante,
+            @byEgreso AS byEgreso,
+            cu.BusinessName AS proveedor,
+            cu.IdCard AS nroIdentificacion,
+            FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm') AS fechaEmision,
+            CAST(ce.total AS NUMERIC(18,2)) AS total,
+            en.nombreComercial,
+            en.ruc,
+            en.telefono,
+            en.direccion,
+            ce.observacion
+        FROM dbo.ComprobanteEgreso ce WITH (NOLOCK)
+            INNER JOIN Customer.Customer cu WITH (NOLOCK)
+            ON cu.Id = ce.CustomerId
+            INNER JOIN dbo.Entidad en WITH (NOLOCK)
+            ON en.idEntidad = ce.idEntidad
+        WHERE ce.idComprobanteEgreso = @idComprobanteEgreso;
+
+        -- =============================================
+        -- CONSULTA CONDICIONAL - MOVIMIENTOS DE CAJA
+        -- =============================================
+        IF @byEgreso = 1
+            BEGIN
+            SELECT
+                'EC' AS tipoDoc,
+                'EC' + '-' + es.estab + '-' + dbo.AFTAutoComplete(mc.nroDoc) AS nroDoc,
+                FORMAT(ce.fechaRegistro, 'dd/MM/yyyy HH:mm') AS fechaEmision,
+                CAST(mc.valor AS NUMERIC(18,2)) AS total,
+                sf.descripcion AS formaCobro
+            FROM dbo.MovimientoCaja mc WITH (NOLOCK)
+                INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK)
+                ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+                LEFT JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK)
+                ON ce.idComprobanteEgreso = mc.idComprobanteEgreso
+                LEFT JOIN Sri.Establecimiento es WITH (NOLOCK)
+                ON es.idEstablecimiento = ce.idEstablecimiento
+            WHERE mc.idComprobanteEgreso = @idComprobanteEgreso;
+        END
+            ELSE
+            BEGIN
+            -- =============================================
+            -- CONSULTA ALTERNATIVA - CUENTAS POR PAGAR
+            -- =============================================
+            SELECT
+                cuenta_pp.idCuentaPorPagar AS 'unique',
+                cuenta_pp.codDoc AS tipoDoc,
+                cuenta_pp.serieComprobante AS nroDoc,
+                FORMAT(cuenta_pp.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaEmision,
+                CAST(cuenta_pp.importeTotal AS DECIMAL(18,2)) AS total,
+                ISNULL(se.descripcion, ef.descripcion) AS formaPago,
+                IIF(p.posfechado = 1, 'SI', 'NO') AS posfechado,
+                CASE 
+                        WHEN ef.codigo = 'CHE' THEN b.descripcion 
+                        ELSE NULL
+                    END AS entidadFinanciera,
+                p.nro AS comprobantePago,
+                FORMAT(p.fechaEmision, 'dd/MM/yyyy hh:mm') AS fechaPago,
+                cuota_pp.nroCuota AS cuota,
+                CAST(cuota_pp.cuota AS DECIMAL(16, 2)) AS valorCuota,
+                CAST(pde.abono AS DECIMAL(16, 2)) AS abono,
+                CAST(pde.saldo - IIF(p.cobro = 1, pde.abono, 0) AS DECIMAL(16, 2)) AS saldo
+            FROM dbo.ComprobanteEgreso ce WITH (NOLOCK)
+                INNER JOIN dbo.Pago p WITH (NOLOCK)
+                ON p.idComprobanteEgreso = ce.idComprobanteEgreso
+                INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK)
+                ON ef.idEntidadFinanciera = p.idEntidadFinanciera
+                LEFT JOIN dbo.SubEntidadFinanciera se WITH (NOLOCK)
+                ON se.idSubEntidadFinanciera = p.idSubEntidadFinanciera
+                LEFT JOIN dbo.Banco b WITH (NOLOCK)
+                ON p.idBanco = b.idBanco
+                INNER JOIN dbo.PagoDetalle pde WITH (NOLOCK)
+                ON pde.idPago = p.idPago
+                INNER JOIN Contabilidad.CuotaPorPagar cuota_pp WITH (NOLOCK)
+                ON cuota_pp.idCuotaPorPagar = pde.idCuotaPorPagar
+                INNER JOIN Contabilidad.CuentaPorPagar cuenta_pp WITH (NOLOCK)
+                ON cuenta_pp.idCuentaPorPagar = cuota_pp.idCuentaPorPagar
+            WHERE ce.idComprobanteEgreso = @idComprobanteEgreso;
+        END
+
+        RETURN;
+    END
+
+        -- Reporte Listado de comprobantes de egreso
+        IF @tipo = 2
+        BEGIN
+
+        SET @tableNames = 'headerDs,listDs';
+
+        SELECT
+            @estabId = establecimientoId,
+            @userId = userId,
+            @codDoc = codDoc,
+            @paymentMethodId = paymentMethodId,
+            @bankId = bankId,
+            @startDate = startDate,
+            @endDate = endDate,
+            @useDateFilter = useDateFilter,
+            @supplierId = supplierId
+        FROM OPENJSON(@json)
+                WITH(
+                    establecimientoId INT 
+                    ,userId INT 
+                    ,codDoc CHAR(5)
+                    ,paymentMethodId INT 
+                    ,bankId INT 
+                    ,startDate DATETIME2
+                    ,endDate DATETIME2
+                    ,useDateFilter BIT 
+                    ,supplierId INT
+                )
+
+        SET @params = '@idEntidad INT 
+                              ,@paymentMethodId INT
+                              ,@estabId INT
+                              ,@codDoc CHAR(5)
+                              ,@supplierId INT 
+                              ,@startDate DATETIME2
+                              ,@endDate DATETIME2
+                              ,@bankId INT 
+                              ,@reference VARCHAR(30)
+                              ,@lote VARCHAR(30)'
+
+        SET @sql = N'
+                            SELECT  
+                                idProveedor
+                                ,codDoc
+                                ,idComprobanteEgreso
+                                ,idCuentaPorPagar
+                                ,serieComprobanteEgreso
+                                ,razonSocialProveedor
+                                ,fechaRegistroEgreso = FORMAT(fechaRegistroEgreso, ''dd/MM/yyyy HH:mm'')
+                                ,serieDoc
+                                ,fechaPago
+                                ,metodoPago
+                                ,nombreBanco
+                                ,numeroTransaccion
+                                ,aprobacion
+                                ,referencia
+                                ,lote
+                                ,observacion
+                                ,totalEgreso
+                                ,abonoPago
+                                ,totalDoc
+                                ,saldoDoc
+                                ,saldoEgreso
+                                ,abonoDoc
+                                ,usuarioNomEgreso
+                            FROM Contabilidad.V_ComprobanteEgreso
+                            WHERE idEntidad = @idEntidad 
+                '
+
+        SELECT @estabName = nombreComercial
+        FROM Sri.Establecimiento
+        WHERE idEstablecimiento = @estabId
+
+        SET @sql = @sql + ' AND idEstablecimiento = @estabId '
+
+        IF @codDoc IS NOT NULL
+             BEGIN
+            SET @sql = @sql + ' AND codDoc = @codDoc '
+        END
+
+        IF @paymentMethodId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idSubEntidadFinanciera = @paymentMethodId '
+        END
+
+        IF @supplierId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idProveedor = @supplierId '
+        END
+
+        IF @bankId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idBanco = @bankId '
+        END
+
+        IF @useDateFilter = 1
+             BEGIN
+            SET @sql = @sql + ' AND CAST(fechaRegistroEgreso AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+        END
+
+        ---> Header
+        SELECT TOP 1
+            nameBusiness = entidad
+                    , rucBusiness = rucEmpresa
+                    , telBusiness = telefono
+                    , emailBusiness = email
+                    , addressBusiness = direccion       
+                    , userName = nombreUsuario 
+                    , dateRange =  FORMAT(@startDate, 'dd/MM/yyyy')  + '-' +  FORMAT(@endDate, 'dd/MM/yyyy')
+                    , estabName = @estabName
+                    , titleReport='Listado de Pagos'
+        FROM v_usuario WITH(NOLOCK)
+        WHERE idUsuarioRol = @userRoleId
+
+        ---> Details
+        EXEC sp_executesql @sql
+                              ,@params 
+                              ,@idEntidad = @idEntidad
+                              ,@paymentMethodId = @paymentMethodId
+                              ,@estabId = @estabId
+                              ,@codDoc = @codDoc
+                              ,@supplierId = @supplierId 
+                              ,@startDate = @startDate
+                              ,@endDate = @endDate
+                              ,@bankId = @bankId 
+                              ,@reference = @reference
+                              ,@lote = @lote
+
+
+
+        RETURN;
+    END
+
+        -- Reporte Listado de comprobantes de egreso con detalles de pago
+        IF @tipo = 3
+        BEGIN
+        SET @tableNames = 'headerDs,listDs';
+
+        SELECT
+            @estabId = establecimientoId,
+            @userId = userId,
+            @codDoc = codDoc,
+            @paymentMethodId = paymentMethodId,
+            @bankId = bankId,
+            @startDate = startDate,
+            @endDate = endDate,
+            @useDateFilter = useDateFilter,
+            @supplierId = supplierId
+        FROM OPENJSON(@json)
+                WITH(
+                establecimientoId INT
+                    ,userId INT
+                    ,codDoc CHAR(5)
+                    ,paymentMethodId INT
+                    ,bankId INT
+                    ,startDate DATETIME2
+                    ,endDate DATETIME2
+                    ,useDateFilter BIT
+                    ,supplierId INT
+                )
+
+        SET @params = '@idEntidad INT
+                              ,@paymentMethodId INT
+                              ,@estabId INT
+                              ,@codDoc CHAR(5)
+                              ,@supplierId INT
+                              ,@startDate DATETIME2
+                              ,@endDate DATETIME2
+                              ,@bankId INT
+                              ,@reference VARCHAR(30)
+                              ,@lote VARCHAR(30)'
+
+
+        SET @sql = N'
+                        SELECT 
+                            codDoc,
+                            idCuentaPorPagar,
+                            serieDoc,
+                            fechaEmisionDoc=FORMAT(fechaEmisionDoc, ''dd/MM/yyyy hh:mm''),
+                            identificacionProveedor,
+                            razonSocialProveedor,
+                            importeTotal,
+                            abonoTotal,
+                            saldoPendiente,
+                            estadoPago,
+                            idComprobanteEgreso,
+                            serieComprobanteEgreso,
+                            fechaRegistroEgreso = FORMAT(fechaRegistroEgreso, ''dd/MM/yyyy hh:mm''),
+                            idPago,
+                            formaPago,
+                            banco,
+                            numeroTransaccion,
+                            lote,
+                            aprobacion,
+                            referencia,
+                            valorPago,
+                            abonoPago,
+                            nroCuota,
+                            fechaVencimientoCuota,
+                            montoCuota,
+                            abonoCuota,
+                            saldoCuota,
+                            estadoCuota,
+                            diasVencidos
+                        FROM Contabilidad.V_ComprobanteEgresoDetallePago
+                        WHERE idEntidad = @idEntidad 
+                '
+
+
+        SELECT @estabName = nombreComercial
+        FROM Sri.Establecimiento
+        WHERE idEstablecimiento = @estabId
+
+        SET @sql = @sql + ' AND idEstablecimiento = @estabId '
+
+        IF @codDoc IS NOT NULL
+             BEGIN
+            SET @sql = @sql + ' AND codDoc = @codDoc '
+        END
+
+        IF @paymentMethodId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idSubEntidadFinanciera = @paymentMethodId '
+        END
+
+        IF @supplierId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idProveedor = @supplierId '
+        END
+
+        IF @bankId > 0
+             BEGIN
+            SET @sql = @sql + ' AND idBanco = @bankId '
+        END
+
+        IF @useDateFilter = 1
+             BEGIN
+            SET @sql = @sql + ' AND CAST(fechaRegistroEgreso AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+        END
+
+        ---> Header
+        SELECT TOP 1
+            nameBusiness = entidad
+                    , rucBusiness = rucEmpresa
+                    , telBusiness = telefono
+                    , emailBusiness = email
+                    , addressBusiness = direccion       
+                    , userName = nombreUsuario 
+                    , dateRange =  FORMAT(@startDate, 'dd/MM/yyyy')  + '-' +  FORMAT(@endDate, 'dd/MM/yyyy')
+                    , estabName = @estabName
+                    , titleReport='DETALLE DE FORMAS DE PAGO'
+        FROM v_usuario WITH(NOLOCK)
+        WHERE idUsuarioRol = @userRoleId
+
+        ---> Details
+        EXEC sp_executesql @sql
+                              ,@params 
+                              ,@idEntidad = @idEntidad
+                              ,@paymentMethodId = @paymentMethodId
+                              ,@estabId = @estabId
+                              ,@codDoc = @codDoc
+                              ,@supplierId = @supplierId 
+                              ,@startDate = @startDate
+                              ,@endDate = @endDate
+                              ,@bankId = @bankId 
+                              ,@reference = @reference
+                              ,@lote = @lote
+
+
+        RETURN;
+    END
+
+    END TRY
+    BEGIN CATCH
+        -- =============================================
+        -- MANEJO DE ERRORES
+        -- =============================================
+        INSERT INTO ErroresSistema WITH (ROWLOCK)
+        (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+    SELECT NEWID(), '/ComprobanteEgreso/Report', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ISNULL(ERROR_PROCEDURE(),''), ERROR_LINE(), ERROR_MESSAGE(), GETDATE(), @userId
+         THROW;
+    END CATCH
+
 END

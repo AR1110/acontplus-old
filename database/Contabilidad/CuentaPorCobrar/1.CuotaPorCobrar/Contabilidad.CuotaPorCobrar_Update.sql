@@ -42,8 +42,8 @@ BEGIN
     )
 
 	DECLARE @tbCuotas AS TABLE (
-		idCuotaPorCobrar INT UNIQUE NOT NULL
-	   ,nroCuota INT UNIQUE NOT NULL
+		idCuotaPorCobrar INT NOT NULL
+	   ,nroCuota INT NOT NULL
        ,entrada BIT NOT NULL
        ,fechaVencimiento DATETIME NOT NULL
 	   ,interes NUMERIC(18,5) NOT NULL
@@ -74,20 +74,27 @@ BEGIN
         )
 
 		INSERT INTO @tbCuotas 
-              (idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora)
-		SELECT idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora
+              (idCuotaPorCobrar,fechaVencimiento,interes,nroCuota,cuota,mora,diasMora,entrada,estado)
+		SELECT idCuotaPorCobrar,fechaVencimiento,interes,nroCuota,cuota,mora,diasMora,entrada,estado
 		FROM OPENJSON(@cuotas) WITH 
         (
              idCuotaPorCobrar INT 
             ,fechaVencimiento DATETIME 
+            ,nroCuota         INT
             ,cuota            NUMERIC(18,5)
             ,interes          NUMERIC(18,5)
             ,mora             NUMERIC(18,5)
             ,diasMora         INT
+            ,estado           BIT
+            ,entrada          BIT
 		)
 
 	    --> recuperar variables
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
+
+        SELECT TOP 1 @idCuentaPorCobrar = idCuentaPorCobrar FROM @tbCuenta
+
+        SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
 		--> validación de datos
         IF NOT EXISTS(SELECT 1 FROM @tbCuotas)  
@@ -107,6 +114,9 @@ BEGIN
             UPDATE cc SET
                    cc.idTiempoCredito  = tc.idTiempoCredito
                   ,cc.fechaVencimiento = tc.fechaVencimiento
+                  ,cc.UpdatedAt        = NULL
+                  ,cc.diasMora         = 0
+                  ,cc.mora             = 0 
             FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
             INNER JOIN @tbCuenta              tc ON tc.idCuentaPorCobrar = cc.idCuentaPorCobrar
 
@@ -115,8 +125,8 @@ BEGIN
 				cx.fechaVencimiento  = tb.fechaVencimiento
 	           ,cx.cuota             = tb.cuota
 	           ,cx.interes           = tb.interes
-			   ,cx.mora              = tb.mora
-	           ,cx.diasMora          = tb.diasMora
+			   ,cx.mora              = 0
+	           ,cx.diasMora          = 0
                ,cx.estado            = tb.estado
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 			INNER JOIN @tbCuotas             tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar

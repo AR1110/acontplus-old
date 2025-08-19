@@ -7,11 +7,8 @@ import { isApiResponse } from '@core/models/api-response';
 import FileSaver from 'file-saver';
 import { map } from 'rxjs';
 import Swal from 'sweetalert2';
-
-import { ModalService } from './modal.service';
-import { ToasterService } from './toaster.service';
+import { ToastrNotificationService } from './toastr-notification.service';
 import * as XLSX from 'xlsx';
-import { PdfViewerComponent } from '@shared/components/pdf-viewer/pdf-viewer.component';
 
 interface ReportParams<T> {
   data: T;
@@ -26,8 +23,7 @@ interface ReportParams<T> {
 })
 export class SharedService {
   private http = inject(HttpClient);
-  private tS = inject(ToasterService);
-  private modalSvc = inject(ModalService);
+  private tS = inject(ToastrNotificationService);
 
   saveFile(response: any, format?: string, downloadOnly = false) {
     const contentDisposition = response.headers.get('content-disposition');
@@ -102,15 +98,7 @@ export class SharedService {
       });
   }
 
-  private openPdfInModal(blob: Blob) {
-    const blobURL = URL.createObjectURL(blob);
 
-    const modalRef = this.modalSvc.open(PdfViewerComponent, {
-      size: 'xl',
-    });
-
-    modalRef.componentInstance.params = { pdfSrc: blobURL };
-  }
 
   async askToPrint<T extends { parameters: string }>(obj: T) {
     const { parameters } = obj;
@@ -135,12 +123,12 @@ export class SharedService {
           next: (response) => {
             if (isApiResponse(response)) {
               if (response.code === '1') {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'success',
                   message: response.message,
                 });
               } else {
-                this.tS.toastr({
+                this.tS.show({
                   type: 'warning',
                   message: response.message,
                 });
@@ -162,7 +150,7 @@ export class SharedService {
         next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
@@ -178,7 +166,7 @@ export class SharedService {
       });
     } catch (error) {
       console.log(error);
-      this.tS.toastr({
+      this.tS.show({
         type: 'warning',
         message: error as string,
       });
@@ -204,12 +192,12 @@ export class SharedService {
         next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });
             } else {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });

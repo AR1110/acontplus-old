@@ -7,38 +7,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\SeedData\FormasPago.json" />
-    <None Remove="Data\SeedData\PorcentajesRetencionIva.json" />
-    <None Remove="Data\SeedData\SustentosTributarios.json" />
-    <None Remove="Data\SeedData\TipoComprobantes.json" />
-    <None Remove="Data\SeedData\TipoPagos.json" />
-    <None Remove="Data\SeedData\TiposIdentificacionProveedor.json" />
-    <None Remove="Data\SeedData\TiposRegimenFiscalExterior.json" />
+    <None Remove="Persistence\SeedData\FormasPago.json" />
+    <None Remove="Persistence\SeedData\PorcentajesRetencionIva.json" />
+    <None Remove="Persistence\SeedData\SustentosTributarios.json" />
+    <None Remove="Persistence\SeedData\TipoComprobantes.json" />
+    <None Remove="Persistence\SeedData\TipoPagos.json" />
+    <None Remove="Persistence\SeedData\TiposIdentificacionProveedor.json" />
+    <None Remove="Persistence\SeedData\TiposRegimenFiscalExterior.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Data\SeedData\FormasPago.json">
+    <Content Include="Persistence\SeedData\FormasPago.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\ImpuestosRetencion.json">
+    <Content Include="Persistence\SeedData\ImpuestosRetencion.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\PorcentajesRetencionIva.json">
+    <Content Include="Persistence\SeedData\PorcentajesRetencionIva.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\SustentosTributarios.json">
+    <Content Include="Persistence\SeedData\SustentosTributarios.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\TipoComprobantes.json">
+    <Content Include="Persistence\SeedData\TipoComprobantes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\TipoPagos.json">
+    <Content Include="Persistence\SeedData\TipoPagos.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\TiposIdentificacionProveedor.json">
+    <Content Include="Persistence\SeedData\TiposIdentificacionProveedor.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SeedData\TiposRegimenFiscalExterior.json">
+    <Content Include="Persistence\SeedData\TiposRegimenFiscalExterior.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

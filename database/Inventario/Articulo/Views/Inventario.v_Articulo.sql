@@ -2,36 +2,36 @@ USE AcontPlus
 GO
 CREATE OR ALTER VIEW Inventario.v_Articulo WITH SCHEMABINDING AS (
 	SELECT  a.idArticulo
-		,a.code_unique
-		,a.idEntidad
-		,a.codigo	--	 = IIF(ti.porcentaje > 0,'*','') + a.codigo
-		,a.codigoAuxiliar
-		,a.codigoBarra
-        ,a.idTipoArticulo
-		,descripcion = a.descripcion  
-		,iva		 = CAST(CAST(ti.porcentaje as decimal(15,0)) AS varchar)--+'%'
-		,stock       = CAST(a.stock AS decimal(15,2))
-		,stockMinimo  = CAST(a.stockMinimo AS decimal(15,2))
-		,siglaSubfamilia = sf.siglas
-		,subFamilia   = sf.descripcion 
-        ,a.idMarca
-		,marca        = m.descripcion 
-		,medida		  = me.descripcion 
-		,modelo       = mo.descripcion
-		,tipoArticulo = ta.descripcion
-        ,tarifaImpuesto = ti.descripcion
-        ,ti.codigoPorcentaje
-		,a.estado
-		,a.idTipoIva
-		,ti.porcentaje
-		,ti.descripcion tipoIva
-		,a.llevaInventario
-		,a.idFamilia
-		,a.idSubFamilia
-		,a.precioCosto
-		,a.fechaModificacion
-		,a.idMedida
-		,a.caducidad
+		   ,a.code_unique
+		   ,a.idEntidad
+		   ,a.codigo	--	 = IIF(ti.porcentaje > 0,'*','') + a.codigo
+		   ,a.codigoAuxiliar
+		   ,a.codigoBarra
+           ,a.idTipoArticulo
+		   ,descripcion = a.descripcion  
+		   ,iva		 = CAST(CAST(ti.porcentaje as decimal(15,0)) AS varchar)--+'%'
+		   ,stock       = CAST(a.stock AS decimal(15,2))
+		   ,stockMinimo  = CAST(a.stockMinimo AS decimal(15,2))
+		   ,siglaSubfamilia = sf.siglas
+		   ,subFamilia   = sf.descripcion 
+           ,a.idMarca
+		   ,marca        = m.descripcion 
+		   ,medida		  = me.descripcion 
+		   ,modelo       = mo.descripcion
+		   ,tipoArticulo = ta.descripcion
+           ,tarifaImpuesto = ti.descripcion
+           ,ti.codigoPorcentaje
+		   ,a.estado
+		   ,a.idTipoIva
+		   ,ti.porcentaje
+		   ,ti.descripcion tipoIva
+		   ,a.llevaInventario
+		   ,a.idFamilia
+		   ,a.idSubFamilia
+		   ,a.precioCosto
+		   ,a.fechaModificacion
+		   ,a.idMedida
+		   ,a.caducidad
 		,a.fechaCaducidad
 		,a.productoFraccionable fraccionado
 		,precioSinSubsidio = ISNULL(a.precioSinSubsidio, 0)

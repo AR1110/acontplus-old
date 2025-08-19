@@ -12,17 +12,17 @@ import {ImportacionResponse} from "@modules/config/domain/models/importacion.mod
 })
 export class ExcelImportRepositoryImpl implements ExcelImportRepository {
       save(params: any): Observable<ApiResponse> {
-        return this._http.post<ApiResponse>(`${this._url}${params.code}`, params.data)
+        return this._http.post<ApiResponse>(`${this._url}/${params.code}`, params.data)
     }
       validateImportedData(params:any): Observable<ApiResponse> {
-        return this._http.post<ApiResponse>(`${this._url}GetValidation/${params.code}`, params.data)
+        return this._http.post<ApiResponse>(`${this._url}/GetValidation/${params.code}`, params.data)
     }
      getFormData(): Observable<ImportacionResponse> {
        return this._http
          .get<ApiResponse>(`${this._url}?json=${JSON.stringify({})}`)
          .pipe(
            map((response) => {
-             let modules = JSON.parse(response.payload as string);
+             const modules = JSON.parse(response.payload as string);
 
              return {
                modules

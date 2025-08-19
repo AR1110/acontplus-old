@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive';
 import { SubCategoryService } from '@inventory/data/services/sub-category.service';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
     ],
     templateUrl: './sub-category.component.html'
 })
-export class SubCategoryComponent {
+export class SubCategoryComponent implements OnInit {
   pagination = signal(new MatPagination());
   visibleColumns: string[] = [
     'index',
@@ -47,7 +47,7 @@ export class SubCategoryComponent {
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
   private subCategorySvc = inject(SubCategoryService);
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   onResultModal($event: any) {
@@ -55,7 +55,7 @@ export class SubCategoryComponent {
   }
 
   getSubcategories() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
@@ -108,7 +108,7 @@ export class SubCategoryComponent {
 
   async askToUpdateStatus(obj: any) {
     try {
-      let { isConfirmed } = await Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         icon: 'warning',
         html: `<small>Esta seguro/a de eliminar esta subfamilia ahora?</small>`,
         confirmButtonText: 'Si, eliminar',
@@ -122,13 +122,13 @@ export class SubCategoryComponent {
           .updateStatus(obj.idSubFamilia)
           .subscribe((response) => {
             if (response.code === '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

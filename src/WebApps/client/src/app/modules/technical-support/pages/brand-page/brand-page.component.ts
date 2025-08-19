@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
-import { ModalService } from '@core/services/modal.service';
 
 import { Brand } from '@modules/technical-support/models/brand';
 import { BrandService } from '@modules/technical-support/services/brand.service';
@@ -10,17 +9,19 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {DialogService} from "@core/services/dialog.service";
+import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 
 @Component({
   selector: 'app-brand-page',
-    imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon, ThemeButtonComponent],
+  imports: [BreadcrumbComponent, MatCard, MatCardContent, MatButton, MatIcon, ThemeButtonComponent, MatDynamicCardComponent],
   templateUrl: './brand-page.component.html',
   styles: ``,
 })
-export class BrandPageComponent {
+export class BrandPageComponent implements OnInit {
   private brandService = inject(BrandService);
-  private modalService = inject(ModalService);
-  brands: Brand[] = [];
+  private modalService = inject(DialogService);
+  brands = signal<Brand[]>([])
   brandSelected: Brand = {
     id: 0,
     code: '',
@@ -40,7 +41,7 @@ export class BrandPageComponent {
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            this.brands = JSON.parse(response.payload as string);
+            this.brands.set(JSON.parse(response.payload as string))
           }
         }
       },
@@ -51,14 +52,12 @@ export class BrandPageComponent {
     });
   }
   onModalOpen() {
-    const modalRef = this.modalService.openModalCustom(BrandModalComponent, {
+    const modalRef = this.modalService.open(BrandModalComponent, {
       size: 'lg',
-      centered: true,
+       data: this.brandSelected.id > 0 ? structuredClone(this.brandSelected) : {},
     });
-    if (this.brandSelected.id > 0) {
-      modalRef.componentInstance.data = this.brandSelected;
-    }
-    modalRef.result.then((response) => {
+
+    modalRef.subscribe((response) => {
       if (this.brandSelected.id > 0) {
         this.brandSelected = {} as Brand;
       }
@@ -69,6 +68,6 @@ export class BrandPageComponent {
   }
 
   onDelete(item: Brand) {
-    
+
   }
 }

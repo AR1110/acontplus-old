@@ -21,7 +21,7 @@ BEGIN
     SET @companyId = (SELECT idEntidad FROM v_Usuario WHERE idUsuarioRol = @userRoleId)
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-	SELECT * FROM TechnicalSupport.Category WITH (NOLOCK) WHERE CompanyId = @companyId AND Deleted IS NULL
+	SELECT * FROM TechnicalSupport.Category WITH (NOLOCK) WHERE CompanyId = @companyId AND IsDeleted = CAST(0 AS BIT)
 
 END
 GO

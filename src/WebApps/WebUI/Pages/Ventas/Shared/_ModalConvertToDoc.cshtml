@@ -1,7 +1,7 @@
 <div class="modal-header bg-success text-white">
     <h4 class="modal-title" id="modal-basic-title">Convertir a {{titleModal}}</h4>
     <button type="button" class="close" ng-click="closeModal()">
-        &times; 
+        &times;
     </button>
 </div>
 <div class="modal-body">
@@ -11,8 +11,8 @@
         </div>
         <div class="p-1">
             <strong>Cliente:</strong> {{companyCustomer.razonSocialComprador}}
-        </div> 
-    </div>  
+        </div>
+    </div>
     <hr>
     <div class="row">
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
@@ -32,8 +32,8 @@
                 </select>
             </div>
         </div>
-            
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12"> 
+
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
             <!-- <div class="form-group">
                 <label>Tiempo Credito: <span class="text-danger">*</span> </label>
                 <select class="form-control" name="tiempoCredito" id="tiempoCredito" ng-model="comprobante.idTiempoCredito">
@@ -51,19 +51,33 @@
             </div>
             <div class="p-1">
                 <h3>{{comprobante.total}}</h3>
-            </div> 
-        </div>    
-    </div>    
+            </div>
+        </div>
+    </div>
+
+
 
     <div class="row">
+        <div class="col-12" ng-if="isDocOriginNotaEntrega">
+            <div class="form-group">
+                <label for="formadepago">Formas de Pago Sri</label>
+                <select ng-model="dataFormaPago.idFormaPagoSri" id="formadepago" ng-change="onChangeFormaPago()"
+                    class="form-control border-select" name="formadepago">
+                    <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPagoSri">
+                        {{item.descripcion}}
+                    </option>
+                </select>
+            </div>
+        </div>
         <div class="col-12">
             <div class="form-group">
                 <label>Observación: </label>
-                <textarea id="observacion" touppercase name="observacion"  cols="50" ng-model="comprobante.observacion" class="form-control border-select"> 
+                <textarea id="observacion" touppercase name="observacion" cols="50" ng-model="comprobante.observacion"
+                    class="form-control border-select">
                 </textarea>
             </div>
         </div>
-    </div>  
+    </div>
 </div>
 <div class="modal-footer">
     <span ng-if="isDocOriginProforma">
@@ -73,5 +87,5 @@
     <span ng-if="isDocOriginNotaEntrega">
         <button class="btn btn-info " ng-click="saveInvoiceOfNotaEntrega()">Factura</button>
     </span>
-  <button class="btn btn-dark " ng-click="closeModal()">&times; Cerrar</button>
+    <button class="btn btn-dark " ng-click="closeModal()">&times; Cerrar</button>
 </div>

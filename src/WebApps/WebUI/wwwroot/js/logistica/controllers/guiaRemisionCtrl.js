@@ -15,6 +15,8 @@
     guiaRemisionCtrl.$inject = ['$scope', '$injector', '$filter', 'modalService'];
 
     function guiaRemisionCtrl($scope, $injector, $filter, modalSvc) {
+                const docElectSvc = $injector.get('docElectService');
+
 
         guiaRemisionSvc = $injector.get('guiaRemisionService');
         commonSvc = $injector.get('commonService');
@@ -250,6 +252,14 @@
 
         $scope.askToDelete = async (item) => {
             try {
+                  const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                    accion: 'anular',
+                    identificacion: item.identificacionDestinatario,
+                    fechaEmision: item.fechaEmision,
+                    codDoc: item.codDoc
+
+                })
+
                 Swal.fire({
                     title: '¿Esta seguro que desea anular este comprobante?',
                     html: `Recuerde que tiene que acceder a la página del SRI -> <b>Facturación Electrónica</b> -> <b>Producción</b> -> <b>Anulación</b> -> <b>Solicitud de Anulación</b> para poder anular el comprobante y no tenga validez tributaria.`,
@@ -287,7 +297,7 @@
 
 
 
-        //Reporte 
+        //Reporte
         $scope.getReport = (item) => {
             try {
                 let format = 'pdf';
@@ -321,8 +331,8 @@
 
 
     /**
-     * =====================================MODAL GUIA-REMISION================================= 
-     * 
+     * =====================================MODAL GUIA-REMISION=================================
+     *
      */
     app.controller('ModalGuiaRemisionCtrl', ModalGuiaRemisionCtrl);
     ModalGuiaRemisionCtrl.$inject = [
@@ -385,7 +395,7 @@
                 if (ev.which == 13 || ev.keyCode == '13') {
                     setFocusArticulo();
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();   
+                    // ev.stopPropagation();
                 }
             })
 
@@ -486,7 +496,7 @@
                         codigo: DOC_TYPE.APROB_DOC,
                         descripcion: 'Aprobación Ventas'
                     })
-                    //Nuevo 
+                    //Nuevo
                     if (params !== null && typeof params === "object" && params.tipoRegistro === 1) {
                         $scope.tipoRegistro = 1;
                         $scope.titleModal = 'Guardar';
@@ -560,7 +570,7 @@
         }
 
 
-        //===========================Establecimiento==================== 
+        //===========================Establecimiento====================
         $scope.onChangeEstablecimiento = async function () {
             try {
 
@@ -749,7 +759,7 @@
 
                             $scope.cliente = cliente;
                             $scope.tiposDoc = tiposDoc;
-                            $scope.recordsQuantity = [5, 10];
+                            $scope.recordsQuantity = [5, 10, 25];
 
                             $scope.dataSearch = {
                                 pageIndex: 1,
@@ -764,8 +774,8 @@
                             $scope.documentos = [];
 
                             $scope.resultRangeFilter = function (item) {
-                                $scope.dataSearch.fechaInicio = item.startDate,
-                                    $scope.dataSearch.fechaFin = item.endDate
+                                $scope.dataSearch.fechaInicio = item.startDate;
+                                $scope.dataSearch.fechaFin = item.endDate
                                 $scope.getDocs();
                             }
 
@@ -894,7 +904,19 @@
         }
         function setDataDocReferenciado(result) {
             let { data, codDoc } = result;
-            if (codDoc === 'FE') {
+            if(codDoc===DOC_TYPE.FE){
+                $scope.data.idFactura = data.idDocumento;
+            }
+
+            if(codDoc===DOC_TYPE.NE){
+                $scope.data.idNotaEntrega = data.idDocumento;
+            }
+            if(codDoc===DOC_TYPE.APROB_DOC){
+                $scope.data.idAprob_Document = data.idDocumento;
+            }
+
+
+            if (codDoc === DOC_TYPE.FE) {
                 $scope.dataDocumentoReferenciado = {
                     idDocumento: data.idDocumento,
                     serieComprobante: data.serieComprobante,
@@ -903,7 +925,7 @@
                 };
             } else {
                 $scope.infoAdicionalDocumento = $scope.infoAdicionalDocumento.filter(item => item.valor !== data.serieComprobante);
-           
+
                 $scope.infoAdicionalDocumento.push({
                     nombre: `${data.nameDoc}`,
                     valor: data.serieComprobante
@@ -922,7 +944,7 @@
 
         //=====================================END SEARCH DOCS ============================
 
-        //==========================Detalle==========================      
+        //==========================Detalle==========================
 
         function addRow() {
             $scope.gridOptionsDetalle.data.push({
@@ -1040,7 +1062,7 @@
 
 
 
-        //Información Adicional del Documento 
+        //Información Adicional del Documento
         $scope.resultModalInfoAdicional = function (infoAdicionalDocumento) {
             $scope.infoAdicionalDocumento = infoAdicionalDocumento
         }

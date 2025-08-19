@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BarberShop.Infrastructure\BarberShop.Infrastructure.csproj" />
+    <PackageReference Include="Acontplus.Common.Data" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mappers\" />
+    <ProjectReference Include="..\BarberShop.Domain\BarberShop.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Seats\Validators\" />
+    <Folder Include="Services\Interfaces\" />
+    <Folder Include="Services\Services\" />
   </ItemGroup>
 
 </Project>

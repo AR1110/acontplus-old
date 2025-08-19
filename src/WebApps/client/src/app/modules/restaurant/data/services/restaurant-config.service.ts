@@ -23,13 +23,13 @@ export class RestaurantConfigService {
             context: getNoLoader()
         }).pipe(
             map(response => {
-                let result = {
+                const result = {
                     estabs: [] as GroupedEstab[]
                 }
                 if (response.code === "1") {
-                    let { puntosEmision, bodegas } = JSON.parse(response.payload as string)
+                    const { puntosEmision, bodegas } = JSON.parse(response.payload as string)
 
-                    let obj = {
+                    const obj = {
                         estabs: puntosEmision,
                         bodegas: bodegas,
                         isGroupBodega: true,

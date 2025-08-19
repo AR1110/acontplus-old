@@ -1,85 +1,64 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import {Component,   inject, input,  model, output,  signal, OnInit} from '@angular/core';
 import {
-  catchError,
-  distinctUntilChanged,
   Observable,
-  of,
-  OperatorFunction,
   switchMap,
-  tap,
 } from 'rxjs';
-import { NgbHighlight, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
-import { Item } from '@restaurant/domain/models/item.model';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ItemService } from '@restaurant/data/services/item.service';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {finalize} from "rxjs/operators";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
     selector: 'app-item-search',
-    imports: [NgbHighlight, NgbTypeahead, FormsModule],
+  imports: [FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule, MatInputModule, MatAutocompleteModule, AsyncPipe],
     templateUrl: './item-search.component.html',
     styles: ``
 })
-export class ItemSearchComponent {
-  searching = false;
-  searchFailed = false;
-  @Output() onItemSelected = new EventEmitter<{
-    item: Item;
-  }>();
-  @Output() clearSearch = new EventEmitter();
-  @Input() textSearch = '';
-  @Input() id = 0;
-  item = {} as Item;
+export class ItemSearchComponent implements OnInit {
+  clearInput = output()
+  selectedEvent = output<any>()
+   textSearch = model('');
+   id =  input(0)
   #itemService = inject(ItemService);
 
-  onKeyupSearch() {
-    if (!this.textSearch) {
-      this.id = 0;
-      this.clearSearch.emit({});
-    }
-  }
+  isLoading = signal(false);
 
-  onSelect($event: any) {
-    this.item = $event.item as Item;
-    this.id = this.item.id;
-    this.setCustomerData(this.item);
-  }
+  control = new FormControl('');
+  filteredItems!: Observable<any[]>;
 
-  search: OperatorFunction<string, Array<Item>> = (text$: Observable<string>) =>
-    text$.pipe(
-      distinctUntilChanged(),
-      tap(() => {
-        this.searching = true;
-        this.id = 0;
-      }),
-      switchMap((term) => {
-        if (!term || term.length < 2) {
-          return of([]);
+
+  ngOnInit(){
+    this.filteredItems = this.control.valueChanges.pipe(
+
+      switchMap((val) => {
+        if (val && val.length > 2) {
+          return this._filter(val);
+          // return this.products as any[]
         }
-        return this.#itemService.search({ textSearch: term }).pipe(
-          tap(() => (this.searchFailed = false)),
-          catchError((error) => {
-            console.log(error);
-            this.searchFailed = true;
-            return of([]);
-          }),
-        );
-      }),
-      tap(() => (this.searching = false)),
+        this.clearInput.emit();
+        return [];
+      })
     );
-
-  setCustomerData(item: Item) {
-    this.onEmitData(item);
-    setTimeout(() => {
-      this.textSearch = item.descripcion;
-    });
   }
 
-  onEmitData(item: Item) {
-    this.onItemSelected.emit({ item });
+  private _filter(value: string) {
+    return this.#itemService.search({ textSearch: value }).pipe(
+      finalize(()=>this.isLoading.set(false)),
+
+    );
   }
 
-  onEnterKeyPressed(event: Event): void {
-    let ev = event as KeyboardEvent;
-    if (!(ev.key === 'Enter')) return;
+
+  onSelectionChange(data: any) {
+    this.control.patchValue('');
+
+    this.selectedEvent.emit(data);
   }
+
+
 }

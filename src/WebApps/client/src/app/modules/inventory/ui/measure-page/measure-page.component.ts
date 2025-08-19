@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { MeasureRead } from '@inventory/domain/models/measure.model';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -31,7 +31,7 @@ import {MeasureUseCase} from "@inventory/domain/usecases/measure.use-case";
     templateUrl: './measure-page.component.html',
     styles: ``
 })
-export class MeasurePageComponent {
+export class MeasurePageComponent implements OnInit {
   private _measureUseCase= inject(MeasureUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
@@ -40,11 +40,11 @@ export class MeasurePageComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pageEvent!: PageEvent;
-  private tS = inject(ToasterService);
+  private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
 
   getMeasures() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
@@ -101,13 +101,13 @@ export class MeasurePageComponent {
         if (result.isConfirmed) {
           this._measureUseCase.updateStatus(data.idMedida).subscribe((response) => {
             if (response.code == '0') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code == '1') {
-              this.tS.toastr({
+              this.tS.show({
                 type: 'success',
                 message: response.message,
               });

@@ -1,10 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
-@use "@angular/material" as mat;
-@use "sass:map";
-@use "ngx-toastr/toastr";
-@use "styles/components/forms" as forms;
-@use "styles/theme/theme-colors" as acontplus-theme;
-
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use 'ngx-toastr/toastr';
+@use 'styles/components/forms' as forms;
+@use 'styles/theme/theme-colors' as acontplus-theme;
+@use 'app/modules/config/styles/shepherd-tour';
+@use '@ng-select/ng-select/themes/material.theme';
+/* Tabulator Styles */
+@import 'tabulator-tables/dist/css/tabulator.min.css';
+@import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
 /* Brand-Inspired Color Palette */
 
 :root {
@@ -96,4 +100,8 @@ table {
 }
 .mat-mdc-icon-button {
   font-size: inherit !important;
+}
+
+.mat-mdc-radio-button ~ .mat-mdc-radio-button {
+  margin-left: 16px;
 }

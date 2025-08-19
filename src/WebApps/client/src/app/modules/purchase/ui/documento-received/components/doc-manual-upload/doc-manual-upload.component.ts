@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -10,13 +10,13 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { SubCategorySelectHtmlOnly } from '@accounting/domain/models/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 
-import { SubCategoryUseCase } from '@accounting/domain/use-cases/sub-category.use-case';
+import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -40,7 +40,7 @@ import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button
   templateUrl: './doc-manual-upload.component.html',
   styles: ``,
 })
-export class DocManualUploadComponent {
+export class DocManualUploadComponent implements OnInit {
   dialogIcon = signal('list-box"');
   dialogTitle = signal('Importación Manual de Documentos');
 
@@ -61,7 +61,7 @@ export class DocManualUploadComponent {
 
   private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
 
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
 
   get claveAccesoDocs() {
     return this.docUploadForm.get('claveAccesoDocs') as FormArray;
@@ -91,7 +91,7 @@ export class DocManualUploadComponent {
 
     const isValidXml = file.type === 'text/xml' || file.name.endsWith('.xml');
     if (!isValidXml) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'El formato de archivo no es correcto',
       });
@@ -130,7 +130,7 @@ export class DocManualUploadComponent {
     const { codEstab, subcategoryId } = this.docUploadForm.value;
 
     if (!subcategoryId) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'Please select a subcategory',
       });
@@ -147,7 +147,7 @@ export class DocManualUploadComponent {
           .uploadXml({ codEstab, subcategoryId }, formData)
           .pipe(
             tap((response) => {
-              this._tS.toastr({
+              this._tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
               });
@@ -160,7 +160,7 @@ export class DocManualUploadComponent {
             }),
             catchError((error) => {
               console.error('Error uploading file:', error);
-              this._tS.toastr({ type: error, message: 'Error uploading file' });
+              this._tS.show({ type: error, message: 'Error uploading file' });
               return throwError(() => error); // Re-throw error to handle in forkJoin
             }),
           );
@@ -170,7 +170,7 @@ export class DocManualUploadComponent {
     });
 
     if (uploadObservables.length === 0) {
-      return this._tS.toastr({
+      return this._tS.show({
         type: 'warning',
         message: 'No files selected for upload',
       });
@@ -180,14 +180,14 @@ export class DocManualUploadComponent {
 
     forkJoin(uploadObservables).subscribe({
       complete: () => {
-        this._tS.toastr({
+        this._tS.show({
           type: 'success',
           message: 'Archivos subidos exitosamente!',
         });
       },
       error: (error) => {
         console.error('Overall upload error:', error);
-        this._tS.toastr({
+        this._tS.show({
           type: 'error',
           message: 'Error al subir los archivos',
         });

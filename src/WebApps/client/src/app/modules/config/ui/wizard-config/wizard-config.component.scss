@@ -1,0 +1,162 @@
+/* Document Configuration States */
+.document-config-container {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  
+  .text-center {
+    text-align: center;
+    margin: auto;
+    
+    mat-spinner {
+      margin: 0 auto;
+    }
+    
+    p {
+      color: rgba(0, 0, 0, 0.6);
+      margin-top: 1rem;
+    }
+  }
+  
+  .error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #842029;
+    
+    .error-icon {
+      color: #dc3545;
+      font-size: 2.5rem;
+      height: 2.5rem;
+      width: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    button {
+      margin-top: 1rem;
+      
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+  
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.6);
+    
+    .empty-icon {
+      font-size: 3rem;
+      height: 3rem;
+      width: 3rem;
+      margin-bottom: 1rem;
+      color: #6c757d;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      margin: 0.5rem 0 0;
+    }
+  }
+}
+
+/* Ensure Tabulator takes full width */
+app-tabulator {
+  width: 100%;
+  display: block;
+  
+  ::ng-deep {
+    .tabulator {
+      width: 100% !important;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .document-config-container {
+    min-height: 200px;
+    
+    .empty-state, 
+    .error-message {
+      padding: 1rem;
+    }
+  }
+}
+
+/* Existing styles */
+.loading-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progress-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+.step-number {
+  background: #1976d2;
+  width: 24px;
+  height: 24px;
+}
+
+.step-completed {
+  color: #4caf50;
+  font-size: 1.2rem;
+}
+
+.step-disabled {
+  color: #9e9e9e;
+  font-size: 1.2rem;
+}
+
+.welcome-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  color: #1976d2;
+  margin-bottom: 1rem;
+}
+
+.feature mat-icon {
+  color: #1976d2;
+}
+
+.placeholder-content mat-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+::ng-deep .mat-step-header {
+  pointer-events: none;
+}

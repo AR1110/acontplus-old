@@ -4,18 +4,19 @@ import {
   signal,
   TemplateRef,
   ViewChild,
+  OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { GroupedEstab } from '@core/models/estab.model';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 
 import { isValidField } from '@core/utils/utils';
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 import { SolicitudUsuarioUseCase } from '@modules/config/application/use-cases/solicitud-usuario.use-case';
@@ -28,26 +29,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  ListSolicitudAutorizacionUseCase
-} from "@modules/config/application/use-cases/solicitud-autorizacion/list-solicitud-autorizacion.use-case";
-import {
-  FilterSolicitudAutorizacionUseCase
-} from "@modules/config/application/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case";
-import {SolicitudAutorizacionList} from "@modules/config/domain/models/solicitud-autorizacion.model";
-import {DialogService} from "@core/services/dialog.service";
-import {
-  SolicitudAutorizacionDetalleComponent
-} from "@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion-detalle/solicitud-autorizacion-detalle.component";
-import {
-  UpdateSolicitudAutorizacionUseCase
-} from "@modules/config/application/use-cases/solicitud-autorizacion/update-solicitud-autorizacion.use-case";
+import { ListSolicitudAutorizacionUseCase } from '@modules/config/application/use-cases/solicitud-autorizacion/list-solicitud-autorizacion.use-case';
+import { FilterSolicitudAutorizacionUseCase } from '@modules/config/application/use-cases/solicitud-autorizacion/filter-solicitud-autorizacion.use-case';
+import { SolicitudAutorizacionList } from '@modules/config/domain/models/solicitud-autorizacion.model';
+import { DialogService } from '@core/services/dialog.service';
+import { SolicitudAutorizacionDetalleComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion-detalle/solicitud-autorizacion-detalle.component';
+import { UpdateSolicitudAutorizacionUseCase } from '@modules/config/application/use-cases/solicitud-autorizacion/update-solicitud-autorizacion.use-case';
 
 @Component({
   selector: 'app-solicitud-autorizacion',
   imports: [
     FormsModule,
-    NgbTooltipModule,
     MatSelectModule,
     MatFormFieldModule,
     MatTooltipModule,
@@ -60,16 +52,16 @@ import {
   ],
   templateUrl: './solicitud-autorizacion.component.html',
 })
-export class SolicitudAutorizacionComponent {
+export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
   private readonly $solicitudUsuarioUseCase = inject(SolicitudUsuarioUseCase);
   private readonly $filterUseCase = inject(FilterSolicitudAutorizacionUseCase);
   private readonly $listUseCase = inject(ListSolicitudAutorizacionUseCase);
-  private readonly $updateUseCase = inject(UpdateSolicitudAutorizacionUseCase)
-  private _dialogSvc = inject(DialogService)
-  private readonly tS = inject(ToasterService);
+  private readonly $updateUseCase = inject(UpdateSolicitudAutorizacionUseCase);
+  private _dialogSvc = inject(DialogService);
+  private readonly tS = inject(ToastrNotificationService);
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
-  establecimientos: Array<GroupedEstab> = [];
+  establecimientos: GroupedEstab[] = [];
   dataSource: SolicitudAutorizacionList[] = [];
   usersRole: UserCustomerRole[] = [];
 
@@ -116,20 +108,19 @@ export class SolicitudAutorizacionComponent {
   loading = false;
 
   fetchDataFilter() {
-    this.$filterUseCase.execute().subscribe( (response) => {
+    this.$filterUseCase.execute().subscribe((response) => {
+      this.establecimientos = response.estabs;
+      this.usersRole = response.usersRole;
 
-        this.establecimientos = response.estabs;
-        this.usersRole = response.usersRole;
-
-        let dataEstab = this.establecimientos.find((e) => e.defaultEstab);
-        if (dataEstab) {
-          this.dataSearch.codEstab = dataEstab.codEstab;
-          this.fetchAllData();
-        }
+      const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
+      if (dataEstab) {
+        this.dataSearch.codEstab = dataEstab.codEstab;
+        this.fetchAllData();
+      }
     });
   }
   fetchAllData() {
-    let params = {
+    const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       checkBoxFecha: true,
@@ -145,12 +136,12 @@ export class SolicitudAutorizacionComponent {
     this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource = response.data;
 
-      this.pagination.update(e=>{
+      this.pagination.update((e) => {
         return {
           ...e,
-          totalRecords: response.totalRecords
-        }
-      })
+          totalRecords: response.totalRecords,
+        };
+      });
     });
   }
   refresh() {
@@ -187,17 +178,17 @@ export class SolicitudAutorizacionComponent {
       }).then((result) => {
         if (result.isConfirmed) {
           try {
-            let params = {
+            const params = {
               tipo: 1,
               idSolicitudAutorizacion: data.idSolicitudAutorizacion,
               rowguid: data.rowguid,
             };
             this.$updateUseCase.execute(params).subscribe((response) => {
-              let icon = response.code==="1"? 'success' : 'warning';
+              const icon = response.code === '1' ? 'success' : 'warning';
               Swal.fire({
                 icon: icon as any,
-                html: response.message
-              })
+                html: response.message,
+              });
               if (response.code === '1') {
                 this.fetchAllData();
               }
@@ -211,7 +202,6 @@ export class SolicitudAutorizacionComponent {
       console.log(error);
     }
   }
-
 
   rechazar(data: SolicitudAutorizacionList) {
     try {
@@ -226,17 +216,17 @@ export class SolicitudAutorizacionComponent {
       }).then((result) => {
         if (result.isConfirmed) {
           try {
-            let params = {
+            const params = {
               tipo: 3,
               idSolicitudAutorizacion: data.idSolicitudAutorizacion,
               rowguid: data.rowguid,
             };
             this.$updateUseCase.execute(params).subscribe((response) => {
-              let icon = response.code==="1"? 'success' : 'warning';
+              const icon = response.code === '1' ? 'success' : 'warning';
               Swal.fire({
                 icon: icon as any,
-                html: response.message
-              })
+                html: response.message,
+              });
               if (response.code === '1') {
                 this.fetchAllData();
               }
@@ -251,13 +241,12 @@ export class SolicitudAutorizacionComponent {
     }
   }
 
-  openDetalle(data:SolicitudAutorizacionList){
+  openDetalle(data: SolicitudAutorizacionList) {
     this._dialogSvc.open(SolicitudAutorizacionDetalleComponent, {
       size: 'md',
-      data
-    })
+      data,
+    });
   }
-
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {

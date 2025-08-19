@@ -1,78 +1,170 @@
 <app-breadcrumb/>
-<mat-card class="mb-3">
-    <mat-card-content>
-        <div class="row mb-3">
-            <div class="col-md-4 col-12 d-flex align-items-center">
-                <label for="menuId" class="me-2">Módulo:</label>
-                <mat-select
-                        (selectionChange)="onMenuChange($event)"
-                        class="form-control"
-                        id="menuId"
-                >
-                    <mat-option>Seleccione un módulo</mat-option>
-                    @for (item of modules; track $index) {
-                        <mat-option [value]="item.id">{{ item.name }}</mat-option>
-                    }
-                </mat-select>
-            </div>
-            <div class="col-md-6 col-12 d-flex align-items-center">
-                <label for="textSearch" class="me-2">Buscar: </label>
-                <input
-                        (input)="onSearch($event)"
-                        class="form-control me-2"
-                        id="textSearch"
-                        #searchInput
-                />
-                <button
-                        mat-icon-button
-                        type="button"
-                        (click)="onSearchClear(searchInput)"
-                >
-                    <mat-icon>clear</mat-icon>
-                </button>
-            </div>
+<app-mat-dynamic-card>
+  <div
+    class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
+  >
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-select
+          (selectionChange)="onMenuChange($event)"
+          id="menuId"
+        >
+          <mat-option>Seleccione un módulo</mat-option>
+          @for (item of modules(); track $index) {
+            <mat-option [value]="item.id">{{ item.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Buscar</mat-label>
+        <input matInput placeholder="Buscar" [(ngModel)]="data.textSearch">
+        <ng-container matSuffix >
+          <button mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </ng-container>
+      </mat-form-field>
+    </div>
+
+  </div>
+
+
+  <div class="content-wrapper mt-2">
+        <!-- Tree Menu -->
+        <div class="menu-section">
+          <mat-tree [dataSource]="manualTree()" [childrenAccessor]="childrenAccessor" class="tree-menu">
+            <mat-tree-node *matTreeNodeDef="let node" >
+              <button mat-icon-button
+                      [style.visibility]="'hidden'">
+              </button>
+              <button mat-button
+                      class="menu-item"
+                      [class.selected]="selectedNode === node"
+                      (click)="selectNode(node)">
+                <mat-icon>play_circle_outline</mat-icon>
+                <span  style="font-size: 10px; width: fit-content; padding-left: 5px;">{{node.title}}</span>
+              </button>
+            </mat-tree-node>
+
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+              <button mat-icon-button
+                      matTreeNodeToggle
+                      [attr.aria-label]="'Toggle ' + node.name"
+                      class="toggle-button">
+                <mat-icon class="mat-icon-rtl-mirror">
+                  {{ isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                </mat-icon>
+              </button>
+              <button mat-button
+                      class="menu-item category"
+                      (click)="toggleNode(node)">
+                <mat-icon>folder</mat-icon>
+                 {{ node.name }}
+              </button>
+            </mat-tree-node>
+          </mat-tree>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-accordion multi>
-                    @for (item of manuals; track $index) {
-                        <mat-expansion-panel
-                                [expanded]="panelOpenState === $index"
-                                (opened)="setPanelOpen($index)"
-                                (closed)="setPanelOpen(-1)"
-                        >
-                            <mat-expansion-panel-header class="mb-5 mb-md-0">
-                                <mat-panel-title class="pt-5 pt-md-0"
-                                >{{ item.module }}
-                                </mat-panel-title>
-                                <mat-panel-description class="pt-5 pt-md-0">
-                                    <h5>{{ item.title }}</h5>
-                                </mat-panel-description>
-                            </mat-expansion-panel-header>
-                            <div class="table-responsive">
-                                <quill-view
-                                        [content]="item.safeEmbedCode"
-                                        theme="snow"
-                                        [sanitize]="true"
-                                ></quill-view>
-                            </div>
-                        </mat-expansion-panel>
-                    } @empty {
-                        <p>No existen Datos</p>
-                    }
-                </mat-accordion>
-                <mat-paginator
-                    #paginator
-                    (page)="onPageChanged($event)"
-                    [length]="pagination().totalRecords"
-                    [pageIndex]="pagination().pageIndex"
-                    [pageSizeOptions]="pagination().pageSizeOptions"
-                    [pageSize]="pagination().pageSize"
-                    [showFirstLastButtons]="true"
-                    aria-label="Select page"
-                >
-                </mat-paginator>
-            </div>
+
+        <!-- Video Content -->
+        <div class="video-section">
+          @if (selectedNode){
+          <mat-card  >
+            <mat-card-header>
+              <mat-card-title>{{ selectedNode?.title }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <quill-view
+                  [content]="selectedNode.safeEmbedCode"
+                  theme="snow"
+                  [sanitize]="true"
+                ></quill-view>
+            </mat-card-content>
+          </mat-card>
+          }
+
         </div>
-    </mat-card-content>
-</mat-card>
+      </div>
+
+  <section>
+  <mat-paginator
+                        #paginator
+                        (page)="onPageChanged($event)"
+                        [length]="pagination().totalRecords"
+                        [pageIndex]="pagination().pageIndex"
+                        [pageSizeOptions]="pagination().pageSizeOptions"
+                        [pageSize]="pagination().pageSize"
+                        [showFirstLastButtons]="true"
+                        aria-label="Select page"
+                    />
+</section>
+
+
+
+
+<!--        <div class="row mb-3">-->
+<!--            <div class="col-md-4 col-12 d-flex align-items-center">-->
+<!--                <label for="menuId" class="me-2">Módulo:</label>-->
+
+<!--            </div>-->
+<!--            <div class="col-md-6 col-12 d-flex align-items-center">-->
+<!--                <label for="textSearch" class="me-2">Buscar: </label>-->
+<!--                <input-->
+<!--                        (input)="onSearch($event)"-->
+<!--                        class="form-control me-2"-->
+<!--                        id="textSearch"-->
+<!--                        #searchInput-->
+<!--                />-->
+<!--                <button-->
+<!--                        mat-icon-button-->
+<!--                        type="button"-->
+<!--                        (click)="onSearchClear(searchInput)"-->
+<!--                >-->
+<!--                    <mat-icon>clear</mat-icon>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col">-->
+<!--                <mat-accordion multi>-->
+<!--                    @for (item of manuals(); track $index) {-->
+<!--                        <mat-expansion-panel-->
+<!--                                [expanded]="panelOpenState === $index"-->
+<!--                                (opened)="setPanelOpen($index)"-->
+<!--                                (closed)="setPanelOpen(-1)"-->
+<!--                        >-->
+<!--                            <mat-expansion-panel-header class="mb-5 mb-md-0">-->
+<!--                                <mat-panel-title class="pt-5 pt-md-0"-->
+<!--                                >{{ item.module }}-->
+<!--                                </mat-panel-title>-->
+<!--                                <mat-panel-description class="pt-5 pt-md-0">-->
+<!--                                    <h5>{{ item.title }}</h5>-->
+<!--                                </mat-panel-description>-->
+<!--                            </mat-expansion-panel-header>-->
+<!--                            <div class="table-responsive">-->
+<!--                                <quill-view-->
+<!--                                        [content]="item.safeEmbedCode"-->
+<!--                                        theme="snow"-->
+<!--                                        [sanitize]="true"-->
+<!--                                ></quill-view>-->
+<!--                            </div>-->
+<!--                        </mat-expansion-panel>-->
+<!--                    } @empty {-->
+<!--                        <p>No existen Datos</p>-->
+<!--                    }-->
+<!--                </mat-accordion>-->
+<!--                <mat-paginator-->
+<!--                    #paginator-->
+<!--                    (page)="onPageChanged($event)"-->
+<!--                    [length]="pagination().totalRecords"-->
+<!--                    [pageIndex]="pagination().pageIndex"-->
+<!--                    [pageSizeOptions]="pagination().pageSizeOptions"-->
+<!--                    [pageSize]="pagination().pageSize"-->
+<!--                    [showFirstLastButtons]="true"-->
+<!--                    aria-label="Select page"-->
+<!--                >-->
+<!--                </mat-paginator>-->
+<!--            </div>-->
+<!--        </div>-->
+</app-mat-dynamic-card>

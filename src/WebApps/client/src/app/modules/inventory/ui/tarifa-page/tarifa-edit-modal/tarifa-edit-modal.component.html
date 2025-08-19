@@ -1,57 +1,36 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">{{ titleModal() }} Tarifa</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="modal.close()"
-  ></button>
-</div>
-<div class="modal-body">
-  <div class="form-group">
-    <label class="form-control-label" for="descripcion">
-      Descripcion <span class="text-danger">*</span>
-    </label>
-    <input
-      type="text"
-      [(ngModel)]="data.descripcion"
-      appToUpperCase
-      class="form-control"
-      placeholder="Ej: Contado"
-    />
-  </div>
+<app-mat-custom-dialog
 
-  <div class="form-group">
-    <label class="form-control-label" for="descripcion">Codigo: </label>
-    <input
-      type="text"
-      [(ngModel)]="data.codigo"
-      class="form-control"
-      touppercase
-      placeholder="Ej: CON"
-    />
-  </div>
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="titleModal()"
+ (close)="closeModal()"
 
-  <div class="form-group">
-    <div class="icheck-primary">
-      <input
-        type="checkbox"
-        id="someCheckboxId"
-        [(ngModel)]="data.ventaPorMayor"
-      />
-      <label for="someCheckboxId">Venta al por mayor</label>
-    </div>
+/>
+
+<ng-template #body>
+  <div class="d-grid gap-2">
+    <mat-form-field>
+      <mat-label>Descripcion</mat-label>
+      <input matInput [(ngModel)]="data.descripcion"
+             appToUpperCase />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Código</mat-label>
+      <input matInput  [(ngModel)]="data.codigo"
+             appToUpperCase />
+    </mat-form-field>
+
+    <mat-slide-toggle   [(ngModel)]="data.ventaPorMayor">Venta al por mayor</mat-slide-toggle>
   </div>
-</div>
-<div class="modal-footer">
-  <button type="button" mat-raised-button (click)="save()">
-    {{ btnText }}
-  </button>
+</ng-template>
+<ng-template #footer>
   <app-theme-button
-    variant="dark"
-    icon="close"
-    text="Cancelar"
-    (handleClick)="modal.close()"
-    >&times; Cerrar</app-theme-button
-  >
-</div>
+    variant="success"
+    icon="save"
+    [text]="btnText"
+    (handleClick)="save()"
+  />
+</ng-template>
+
+

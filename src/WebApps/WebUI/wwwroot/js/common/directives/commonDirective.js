@@ -2551,7 +2551,7 @@
 
 
     //Reporte Comprobante Egreso 
-    app.directive('btnComprobanteEgresoReport', ['commonService', function (commonSvc) {
+    app.directive('btnComprobanteEgresoReport', ['commonService','decodeToken', function (commonSvc, decodeToken) {
         return {
             restrict: 'A',
             scope: {
@@ -2565,7 +2565,9 @@
 
                     let dataParms = {
                         codEstab: scope.codEstab,
-                        id: scope.unique
+                        id: scope.unique,
+                        tipo: 1,
+                        userRoleId: decodeToken.userRoleId
                     }
                     const parameters = {
                         reportParams: JSON.stringify({
@@ -2575,6 +2577,7 @@
                             format,
                             aditionalParams: []
                         }),
+                        hasService: true,
                         dataParams: JSON.stringify(dataParms)
                     }
 

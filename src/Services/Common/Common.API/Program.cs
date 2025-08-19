@@ -1,47 +1,79 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Serilog;
 
-// Use AppConfiguration for loading settings
-var configuration = AppConfiguration.Load();
-builder.Configuration.AddConfiguration(configuration);
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
 
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddIdentityService(builder.Configuration);
+    var environment = builder.Environment.EnvironmentName;
 
-var app = builder.Build();
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
-app.UseResponseCompression();
+    // Use AppConfiguration for loading settings
+    var configuration = AppConfiguration.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-app.UseMiddleware<ExceptionMiddleware>();
+    // Add services to the container.
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-app.UseMiddleware<MobileRequestMiddleware>();
+    builder.Services.AddIdentityService(builder.Configuration);
 
-app.UseRouting();
+    var app = builder.Build();
 
-app.UseHttpsRedirection();
+    app.UseSerilogRequestLogging();
 
-app.UseAuthentication();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-app.UseAuthorization();
+    app.UseResponseCompression();
 
-// Add endpoints to the web application with minimal API's.
-app.MapCommonEndpoints();
+    app.UseMiddleware<ExceptionMiddleware>();
 
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-//var context = services.GetRequiredService<CommonContext>();
-//var logger = services.GetRequiredService<ILogger<Program>>();
-//try
-//{
-//    await context.Database.MigrateAsync();
-//    await CommonContextSeed.SeedAsync(context);
-//}
-//catch (Exception ex)
-//{
-//    logger.LogError(ex, "An error occured during migration");
-//}
+    app.UseMiddleware<MobileRequestMiddleware>();
 
-await app.RunAsync();
+    app.UseRouting();
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    // Add endpoints to the web application with minimal API's.
+    app.MapCommonEndpoints();
+
+    //using var scope = app.Services.CreateScope();
+    //var services = scope.ServiceProvider;
+    //var context = services.GetRequiredService<CommonContext>();
+    //var logger = services.GetRequiredService<ILogger<Program>>();
+    //try
+    //{
+    //    await context.Database.MigrateAsync();
+    //    await CommonContextSeed.SeedAsync(context);
+    //}
+    //catch (Exception ex)
+    //{
+    //    logger.LogError(ex, "An error occured during migration");
+    //}
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}
+

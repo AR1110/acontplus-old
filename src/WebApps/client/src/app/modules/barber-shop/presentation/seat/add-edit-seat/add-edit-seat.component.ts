@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -26,7 +26,7 @@ import {ApiResponse} from "@core/models/api-response";
   templateUrl: './add-edit-seat.component.html',
   styles: ``
 })
-export class AddEditSeatComponent {
+export class AddEditSeatComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AddEditSeatComponent>);
   readonly params = inject<Partial<SeatList>>(MAT_DIALOG_DATA);
   private $createUseCase = inject(CreateSeatUseCase)

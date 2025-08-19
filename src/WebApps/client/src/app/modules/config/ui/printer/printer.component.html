@@ -1,7 +1,6 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
+<app-mat-dynamic-card>
     <div class="row">
       <div class="col-6">
         <div class="d-flex flex-row gap-1">
@@ -38,7 +37,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of printers; track $index) {
+          @for (item of printers(); track $index) {
             <tr>
               <td class="text-center">
                 <div class="d-flex flex-row gap-2 justify-content-center">
@@ -66,7 +65,7 @@
               <td class="text-center">{{ item.ipAddress }}</td>
               <td>
                 <mat-slide-toggle
-                  [(ngModel)]="item.enabled"
+                  [(ngModel)]="item.isActive"
                   (change)="updateStatus(item)"
                 >
                   {{ item.labelEnabled }}
@@ -81,5 +80,4 @@
         </tbody>
       </table>
     </div>
-  </mat-card-content>
-</mat-card>
+  </app-mat-dynamic-card>

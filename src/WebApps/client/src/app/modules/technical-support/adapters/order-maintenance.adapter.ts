@@ -2,7 +2,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { OrderMaintenance } from './../models/order-maintenance.model';
 
 type OrderMaintenanceTo = OrderMaintenance & { envioSri: boolean, isGroup: boolean }
-type ToProps = {
+interface ToProps {
   order: any
   detalles: OrderMaintenanceTo[],
   customDetails: OrderMaintenanceTo[]
@@ -13,10 +13,10 @@ class OrderMaintenanceAdapter {
     const { order, detalles, customDetails } = obj;
 
 
-    let resultOrder = this.orderTo(order);
-    let resultDetalles = this.detailTo(detalles);
-    let resultCustomDetails = this.detailTo(customDetails);
-    let mergeDetails = [...resultDetalles, ...resultCustomDetails];
+    const resultOrder = this.orderTo(order);
+    const resultDetalles = this.detailTo(detalles);
+    const resultCustomDetails = this.detailTo(customDetails);
+    const mergeDetails = [...resultDetalles, ...resultCustomDetails];
 
 
     return {
@@ -29,7 +29,7 @@ class OrderMaintenanceAdapter {
 
 
   private orderTo(data: any) {
-    let obj = {
+    const obj = {
       id: data.id,
       bodegaId: data.bodegaId,
       fechaEmision: formatDateToString(data.fechaEmision),
@@ -48,7 +48,7 @@ class OrderMaintenanceAdapter {
   }
 
   private detailTo(detalles: OrderMaintenanceTo[]) {
-    let results = detalles.map((item, index) => {
+    const results = detalles.map((item, index) => {
       return {
         rowguid: item.rowguid,
         id: item.id,

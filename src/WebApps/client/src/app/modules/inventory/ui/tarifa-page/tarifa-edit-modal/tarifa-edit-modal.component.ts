@@ -1,34 +1,41 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject,  signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { TarifaService } from '@inventory/data/services/tarifa.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-tarifa-edit-modal',
-    imports: [FormsModule, ToUpperCaseDirective, MatButton, ThemeButtonComponent],
+  imports: [FormsModule, ToUpperCaseDirective,  ThemeButtonComponent, MatCustomDialogComponent,
+  MatFormFieldModule,
+    MatInputModule,
+    MatSlideToggleModule,
+  ],
   templateUrl: './tarifa-edit-modal.component.html',
   styles: ``,
 })
-export class TarifaEditModalComponent {
-  @Input() params = {
+export class TarifaEditModalComponent implements OnInit {
+   params =inject< {
     idTarifa: 0,
     codigo: null,
     descripcion: null,
     estado: true,
     ventaPorMayor: false,
-  };
-  modal = inject(NgbActiveModal);
-  tS = inject(ToasterService);
+  }>(MAT_DIALOG_DATA);
+  modal = inject(MatDialogRef<TarifaEditModalComponent>);
+  tS = inject(ToastrNotificationService);
   tarifaSvc = inject(TarifaService);
 
   btnText = 'Actualizar';
-  titleModal = signal('Editar');
+  titleModal = signal('Editar Tarifa');
 
   data = {
     idTarifa: 0,
@@ -38,27 +45,21 @@ export class TarifaEditModalComponent {
     ventaPorMayor: false,
   };
 
-  marcas = signal<any[]>([]);
 
-  successReponse = {
-    next: (response: ApiResponse) => {
+  successReponse =  (response: ApiResponse) => {
       if (response.code === '0') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: response.message,
         });
       }
       if (response.code === '1') {
-        this.tS.toastr({
+        this.tS.show({
           type: 'success',
           message: response.message,
         });
         this.modal.close(response);
       }
-    },
-    error(error: any) {
-      console.log(error);
-    },
   };
 
   ngOnInit() {
@@ -70,7 +71,7 @@ export class TarifaEditModalComponent {
   save() {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la descripción',
         });
@@ -78,7 +79,7 @@ export class TarifaEditModalComponent {
       }
 
       if (!isValidField(this.data.codigo)) {
-        this.tS.toastr({
+        this.tS.show({
           type: 'warning',
           message: 'Ingrese la código',
         });
@@ -91,5 +92,9 @@ export class TarifaEditModalComponent {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  closeModal() {
+    this.modal.close();
   }
 }

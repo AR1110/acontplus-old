@@ -13,7 +13,9 @@ CREATE OR ALTER PROCEDURE Config.FirmaElectronica_Update_Signature @userRoleId I
 	,@id INT 
 	,@fileName VARCHAR(300)
 	,@firma VARBINARY(MAX)
-	,@contentType VARCHAR(50)  
+	,@contentType VARCHAR(50)
+    ,@contrasenia VARCHAR(300)   
+	,@fechaCaducidad DATETIME
 AS
 BEGIN
 	SET NOCOUNT ON; 
@@ -30,6 +32,8 @@ BEGIN
 				,mimeType       = @contentType
 				,firma          = @firma
                 ,idUsuario      = @userId
+                ,contrasenia    = @contrasenia
+                ,fechaCaducidad = @fechaCaducidad
 			WHERE idFirmaElectronica = @id
 		COMMIT TRAN
         SELECT '1'code,'Actualizada exitosamente' as 'message'

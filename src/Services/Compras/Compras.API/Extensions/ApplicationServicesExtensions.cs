@@ -1,6 +1,5 @@
 ﻿using System.IO.Compression;
 using Common.FactElect.Services.External;
-using Common.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -11,7 +10,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddAdvancedLogging(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
         services.AddResponseCompression(options =>
         {
@@ -48,7 +47,7 @@ public static class ApplicationServicesExtensions
 
         string[] trascientNameSpaces =
         [
-            "Common.Infrastructure.Data.Repository.Implementations"
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan

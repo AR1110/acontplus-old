@@ -1,7 +1,15 @@
 <div>
     <md-table-container style="max-height: 400px;">
-        <table resize master md-table>
+        <table resize master md-table class="text-center">
             <thead md-head md-order="dataSearch.order">
+                <tr md-row class="border">
+                    <th md-column colspan="8"></th>
+                    <th md-column colspan="5" class="border text-center">Tarifas</th>
+                    <th md-column ng-if="stocks.length" colspan="{{stocks.length}}" class="border text-center">
+                        Bodega-Stock</th>
+                    <th md-column colspan="3" class="border"></th>
+
+                </tr>
                 <tr md-row>
                     <th md-column><span>Op.</span></th>
                     <th md-column><span>Img</span></th>
@@ -11,8 +19,11 @@
                     <th md-column md-order-by="medida">Medida</th>
                     <th md-column><span>Iva</span></th>
                     <th md-column md-order-by="stock">Stock</th>
-                    <th md-column ng-repeat="item in tarifas">
+                    <th md-column ng-repeat="item in tarifas" class="border text-center">
                         {{item.tarifa}}
+                    </th>
+                    <th md-column ng-repeat="item in stocks" class="border text-center">
+                        {{item.bodega}}
                     </th>
                     <th md-column>Marca</th>
                     <th md-column>Modelo</th>
@@ -57,7 +68,8 @@
 
 
                     </td>
-                    <td md-cell ng-repeat="pvp in item.tarifas">{{pvp.precioConIva}}</td>
+                    <td md-cell ng-repeat="pvp in item.tarifas" class="border">{{pvp.precioConIva}}</td>
+                    <td md-cell ng-repeat="stock in item.stocks" class="border">{{stock.stock}}</td>
                     <td md-cell>{{item.marca}}</td>
                     <td md-cell>{{item.modelo}}</td>
                     <td md-cell>{{item.observaciones}}</td>

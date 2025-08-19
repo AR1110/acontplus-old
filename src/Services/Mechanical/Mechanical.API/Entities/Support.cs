@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
+using Common.Core.Base;
 
 namespace Mechanical.API.Entities;
 

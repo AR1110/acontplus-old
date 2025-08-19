@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -6,25 +6,24 @@ import {
   Validators,
 } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-category-modal',
-    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
-export class CategoryModalComponent {
+export class CategoryModalComponent implements OnInit {
   private categoryService = inject(CategoryService);
-  private modalRef = inject(NgbActiveModal);
-  private tS = inject(ToasterService);
+  private modalRef = inject(MatDialogRef<CategoryModalComponent>);
+  private tS = inject(ToastrNotificationService);
   categoryForm = new FormGroup({
     id: new FormControl(0),
     code: new FormControl('', [
@@ -38,11 +37,7 @@ export class CategoryModalComponent {
       Validators.maxLength(100),
     ]),
   });
-  data: Category = {
-    id: 0,
-    code: '',
-    name: '',
-  };
+  data = inject<Category>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Categoría';
 
@@ -80,7 +75,7 @@ export class CategoryModalComponent {
   }
   successResponse = (response: object) => {
     if (isApiResponse(response)) {
-      this.tS.toastr({
+      this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
         message: response.message,
       });

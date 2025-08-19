@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import {
@@ -8,10 +8,10 @@ import {
 import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
 import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@customer/ui/company-customer/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
@@ -20,7 +20,10 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { CompanyCustomer } from '@customer/domain/models/company-customer';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { FilterData } from '@billing/domain/models/documento-electronico.model';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -42,10 +45,11 @@ import { CompanyCustomer } from '@customer/domain/models/company-customer';
   templateUrl: './fact-elect-report-page.component.html',
   styles: ``,
 })
-export class FactElectReportPageComponent implements OnInit {
+export class FactElectReportPageComponent implements OnInit, OnDestroy {
   private readonly _docElectSvc = inject(DocumentoElectronicoWebRepository);
-  private readonly _tS = inject(ToasterService);
+  private readonly _tS = inject(ToastrNotificationService);
   private readonly _sharedSvc = inject(SharedService);
+  private destroy$ = new Subject<void>();
 
   dataSearch = {
     checkBoxCustomer: false,
@@ -68,9 +72,13 @@ export class FactElectReportPageComponent implements OnInit {
   estadosDoc: any[] = [];
   tiposDoc = signal<any[]>([]);
   empresas: any[] = [];
-
+  filterData: FilterData | null = null;
   showField = true;
   format: any;
+
+  isLoadingFilters = false;
+  isRefreshingFilters = false;
+  isLoadingMainData = false;
 
   retenciones = [
     { code: 'ALL', descripcion: 'Todos' },
@@ -94,12 +102,16 @@ export class FactElectReportPageComponent implements OnInit {
     },
     [DOC_TYPE_SRI.LC]: {
       tipo: 4,
-      codigo: BILLING_CODE_REPORT.NCRG,
+      codigo: BILLING_CODE_REPORT.LCRG,
     },
     [DOC_TYPE_SRI.R]: {
       tipo: 5,
       codigo: BILLING_CODE_REPORT.FCRRG,
     },
+    [DOC_TYPE_SRI.GR]: {
+      tipo: 6,
+      codigo: BILLING_CODE_REPORT.RGGR,
+    }
   };
 
   onChangeTipoDoc() {
@@ -108,34 +120,39 @@ export class FactElectReportPageComponent implements OnInit {
     );
 
     this.showField = !!(dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F);
-    if(this.showField){
-      this.dataSearch.codeDevolucion='SD'
-    }else{
-      this.dataSearch.codeDevolucion= 'ALL';
+    if (this.showField) {
+      this.dataSearch.codeDevolucion = 'SD';
+    } else {
+      this.dataSearch.codeDevolucion = 'ALL';
     }
   }
 
-  getDataFilter() {
-    this._docElectSvc.getDataFilter().subscribe((response) => {
-      const { estabs, estadosDoc, tiposDoc } = response;
-      this.establecimientos = estabs;
-      if (this.establecimientos.length > 0) {
-        const dataEstab = this.establecimientos.find(
-          (estab) => estab.defaultEstab,
-        );
-        this.puntosEmision = dataEstab?.puntosEmision ?? [];
-      }
-      this.tiposDoc.set(tiposDoc);
-      const dataTipoDoc = this.tiposDoc().find(
-        (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
-      );
-      this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
-      this.estadosDoc = estadosDoc;
-    });
+  loadFilters() {
+    this.isLoadingFilters = true;
+
+    this._docElectSvc
+      .getFilters()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.handleFilterDataReceived(data);
+          this.isLoadingFilters = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar filtros:', error);
+          this.isLoadingFilters = false;
+          // Aquí puedes mostrar un toast o mensaje de error
+        },
+      });
   }
 
   ngOnInit() {
-    this.getDataFilter();
+    this.loadFilters();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onChangeEstab() {
@@ -160,7 +177,7 @@ export class FactElectReportPageComponent implements OnInit {
     this.dataSearch.companyCustomerId = 0;
     this.dataSearch.identificacion = null;
   }
-  onCustomerSelected(data: CompanyCustomer) {
+  onCustomerSelected(data: CompanyCustomerEntity) {
     this.dataSearch.identificacion = data.numeroIdentificacion;
     this.dataSearch.companyCustomerId = data.idCliente;
   }
@@ -188,7 +205,7 @@ export class FactElectReportPageComponent implements OnInit {
         this.dataSearch.checkBoxCustomer &&
         !isValidField(this.dataSearch.identificacion)
       ) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'Seleccione el Cliente',
         });
@@ -198,7 +215,7 @@ export class FactElectReportPageComponent implements OnInit {
         this.dataSearch.checkBoxUser &&
         !isValidField(this.dataSearch.userId)
       ) {
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
         });
@@ -266,5 +283,34 @@ export class FactElectReportPageComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  /**
+   * Maneja los datos recibidos de filtros
+   */
+  private handleFilterDataReceived(data: FilterData): void {
+    this.filterData = data;
+
+    // Extraer arrays para usar en los dropdowns
+    this.establecimientos = data.estabs;
+    this.tiposDoc.set(data.tipoDocumentos);
+
+    if (this.establecimientos.length > 0) {
+      const dataEstab = this.establecimientos.find(
+        (estab) => estab.defaultEstab,
+      );
+      this.puntosEmision = dataEstab?.puntosEmision ?? [];
+    }
+    const dataTipoDoc = this.tiposDoc().find(
+      (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
+    );
+    this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
+    this.estadosDoc = data.estadoDocumentos;
+    console.log('📊 Datos de filtros procesados:', {
+      establecimientos: this.establecimientos.length,
+      tipoDocumentos: this.tiposDoc().length,
+      estadoDocumentos: this.estadosDoc.length,
+      lastUpdated: data.lastUpdated,
+    });
   }
 }

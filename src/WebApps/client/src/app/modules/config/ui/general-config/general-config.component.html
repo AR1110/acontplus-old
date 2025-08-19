@@ -108,6 +108,7 @@
                       >
                     </mat-radio-group>
 
+                    <div class="hstack gap-2">
                     <mat-form-field>
                       <mat-label>Interés</mat-label>
                       <input
@@ -117,6 +118,18 @@
                         placeholder="Ej: 20"
                       />
                     </mat-form-field>
+                      <mat-form-field>
+                        <mat-label>Días Gracia</mat-label>
+                        <input
+                          type="number"
+                          matInput
+                          [(ngModel)]="configVenta.diasGracia"
+                          placeholder="..."
+                        />
+                      </mat-form-field>
+
+                    </div>
+
                   </div>
                 }
               </div>
@@ -134,7 +147,7 @@
               </div>
               <div class="col">
                 @if (configVenta.configCc) {
-                  <app-m3-input-chip [chips]="emails" [labelText]="'Correo'" />
+                  <app-mat-input-chip [chips]="emails" [labelText]="'Correo'" />
                 }
               </div>
             </div>

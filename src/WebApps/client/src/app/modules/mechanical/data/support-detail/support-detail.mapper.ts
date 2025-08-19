@@ -14,7 +14,7 @@ export class SupportDetailMapper {
 
   static fromApiGetId(response:ApiResponse){
 
-    let result = {
+    const result = {
       data: {
         establecimientoId: 0,
         establecimiento: null
@@ -28,10 +28,10 @@ export class SupportDetailMapper {
       vehicle: {}
     }
     if (response.code==="1") {
-      let { bodega, support, tipoIva, decimal, supportDetail=[],
+      const { bodega, support, tipoIva, decimal, supportDetail=[],
         tarifas, vehicleDs
       } = JSON.parse(response.payload as string)
-      let { date, nombreComercial, ...dataSupport } = support[0]
+      const { date, nombreComercial, ...dataSupport } = support[0]
       dataSupport.fechaEmision = formatDate(dataSupport.date)
       dataSupport.establecimiento = nombreComercial;
       result.data = dataSupport;
@@ -66,20 +66,20 @@ export class SupportDetailMapper {
 
           const medidas = mergeMeasureUtil(principal, fraccionado);
 
-          let dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
+          const dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
 
-          let precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
-          let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.discount;
-          let subTotalSinDescuento = restItem.price * restItem.quantity
+          const precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
+          const precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.discount;
+          const subTotalSinDescuento = restItem.price * restItem.quantity
 
-          let percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
+          const percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
             restItem.discount
           ) : 0;
 
 
           // let taxValue = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, restItem.percentage)
 
-          let obj: SupportMaintenanceDetail = {
+          const obj: SupportMaintenanceDetail = {
             id: restItem.id,
             rowguid: generateUuidv4(),
             bodegaId: restItem.bodegaId,

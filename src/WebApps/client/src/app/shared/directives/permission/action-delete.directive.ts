@@ -3,7 +3,6 @@ import { UserRoleStateService } from '@shared/store/user-role-state.service';
 
 @Directive({
   selector: '[appActionDelete]',
-  standalone: true,
 })
 export class ActionDeleteDirective implements OnInit {
   constructor(

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Api.Entities;
-using Restaurant.Api.Interfaces;
+using Restaurant.Application.Interfaces;
+using Restaurant.Domain.Entities;
 
 namespace Restaurant.Api.Controllers;
 
@@ -17,7 +17,7 @@ public class TableController(IAppTableService tableService) : BaseApiController
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        appTable.UserId = User.GetUserId();
+        appTable.CreatedByUserId = User.GetUserId();
 
         return Ok(await tableService.AddAsync(appTable));
     }
@@ -27,7 +27,7 @@ public class TableController(IAppTableService tableService) : BaseApiController
     {
         if (id != appTable.Id) return BadRequest();
 
-        appTable.UserId = User.GetUserId();
+        appTable.UpdatedByUserId = User.GetUserId();
 
         return Ok(await tableService.UpdateAsync(id, appTable));
     }

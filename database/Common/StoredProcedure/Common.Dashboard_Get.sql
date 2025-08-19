@@ -62,8 +62,8 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             WHERE ur.idUsuarioRol = @userRoleId
               AND (s.Paid IS NULL OR s.Paid = 0)
-              AND s.[Enabled] = 1 
-              AND s.Deleted IS NULL
+              AND s.[IsActive] = 1 
+              AND s.IsDeleted = CAST(0 AS BIT)
               AND ur.estado = 1
         );
 
@@ -75,8 +75,8 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
             WHERE ur.idUsuarioRol = @userRoleId 
-              AND s.[Enabled] = 1 
-              AND s.Deleted IS NULL
+              AND s.[IsActive] = 1 
+              AND s.IsDeleted = CAST(0 AS BIT)
               AND ur.estado = 1
               AND st.Code = 'G'
         );
@@ -90,8 +90,8 @@ BEGIN
             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             WHERE ur.idUsuarioRol = @userRoleId
               AND (s.Paid IS NULL OR s.Paid = 0)
-              AND s.[Enabled] = 1
-              AND s.Deleted IS NULL
+              AND s.[IsActive] = 1
+              AND s.IsDeleted = CAST(0 AS BIT)
               AND ur.estado = 1
               AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
         );
@@ -132,7 +132,7 @@ BEGIN
                 GROUP BY td.descripcion
 
         INSERT INTO @ReceivedDocsTbl
-        VALUES('Factura Física',  (SELECT COUNT(*) FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
+        VALUES('Factura FÃ­sica',  (SELECT COUNT(*) FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
          
         INSERT INTO @ReceivedDocsTbl
         SELECT td.descripcion document
@@ -149,7 +149,7 @@ BEGIN
 
         SELECT 
             CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'yyyy-MM-dd')) AS maxPaymentDate,
-            IIF(@expired = 1, 'Su licencia ha expirado, por favor comuníquese con el departamento de ventas', REPLACE(
+            IIF(@expired = 1, 'Su licencia ha expirado, por favor comunÃ­quese con el departamento de ventas', REPLACE(
                 REPLACE(
                     REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST(s.total AS NUMERIC(18, 2)))), 
                     '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'dd/MM/yyyy'))
@@ -167,8 +167,8 @@ BEGIN
                 INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
                 INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId
                                     AND (s.Paid IS NULL OR s.Paid = 0)
-                AND s.[Enabled] = 1
-                AND s.Deleted IS NULL
+                AND s.[IsActive] = 1
+                AND s.IsDeleted = CAST(0 AS BIT)
                 INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
                 INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
                 INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
@@ -197,9 +197,9 @@ BEGIN
        SELECT nombreArchivo,
                 CASE 
                     WHEN DATEDIFF(DAY, GETDATE(), fechaCaducidad) < 0 THEN 
-                        'Su firma electrónica ha caducado, por favor renuevela de inmediato, para poder seguir firmando los documentos electrónicos'
+                        'Su firma electrÃ³nica ha caducado, por favor renuevela de inmediato, para poder seguir firmando los documentos electrÃ³nicos'
                     WHEN DATEDIFF(DAY, GETDATE(), fechaCaducidad) <= 5 THEN 
-                        'Su firma electrónica está a ' + CAST(DATEDIFF(DAY, GETDATE(), fechaCaducidad) AS VARCHAR) + ' día(s) de expirar, por favor renuevela de inmediato'
+                        'Su firma electrÃ³nica estÃ¡ a ' + CAST(DATEDIFF(DAY, GETDATE(), fechaCaducidad) AS VARCHAR) + ' dÃ­a(s) de expirar, por favor renuevela de inmediato'
                 END AS message
             FROM dbo.FirmaElectronica WITH(NOLOCK)
             WHERE idEntidad = @idEntidad

@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
 import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
 import {ActionAddDirective} from "@shared/directives/permission/action-add.directive";
@@ -13,7 +13,7 @@ import {DialogService} from "@core/services/dialog.service";
 import {AddEditWarehouseComponent} from "@inventory/ui/warehouse/add-edit-warehouse/add-edit-warehouse.component";
 import Swal from "sweetalert2";
 import {DeleteWarehouseUseCase} from "@inventory/domain/usecases/warehouse/delete-warehouse.use-case";
-import {ToasterService} from "@core/services/toaster.service";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 
 @Component({
   selector: 'app-warehouse',
@@ -29,13 +29,13 @@ import {ToasterService} from "@core/services/toaster.service";
   templateUrl: './warehouse.component.html',
   styles: ``
 })
-export class WarehouseComponent {
+export class WarehouseComponent implements OnInit {
 
   private $listUseCase = inject(ListWarehouseUseCase);
   private $deleteUseCase = inject(DeleteWarehouseUseCase);
 
   private _dialogSvc = inject(DialogService);
-  private _tS = inject(ToasterService)
+  private _tS = inject(ToastrNotificationService)
   dataSource = signal<WarehouseList[]>([])
 
   columnsDefs: ColumnDefinition[] = [
@@ -70,7 +70,7 @@ export class WarehouseComponent {
 
 
   private getList(){
-    let dataSearch = {
+    const dataSearch = {
       pageIndex: 1,
       pageSize: 25
     }
@@ -101,13 +101,13 @@ export class WarehouseComponent {
 
     this.$deleteUseCase.execute({idBodega: item.idBodega}).subscribe(response=>{
       if(response.code==="0"){
-        this._tS.toastr({
+        this._tS.show({
           type: 'warning',
           message: response.message
         })
       }
       if(response.code==="1"){
-        this._tS.toastr({
+        this._tS.show({
           type: 'success',
           message: response.message
         })

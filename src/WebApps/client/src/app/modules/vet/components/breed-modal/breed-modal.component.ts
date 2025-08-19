@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal, OnInit} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -7,26 +7,26 @@ import {
 } from '@angular/forms';
 import { Breed } from '@modules/vet/models/breed.model';
 import { PetType } from '@modules/vet/models/pet-type.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+
 
 @Component({
   selector: 'app-breed-modal',
-    imports: [ReactiveFormsModule, MatIcon, MatButton, ThemeButtonComponent],
+  imports: [ReactiveFormsModule,   ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './breed-modal.component.html',
   styles: ``,
 })
-export class BreedModalComponent {
-  data = {} as Breed;
+export class BreedModalComponent implements OnInit {
+  data = inject<Breed>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Raza';
-  petTypes: PetType[] = [];
+  petTypes = signal<PetType[]>([]);
   breedForm = new FormGroup({
     id: new FormControl(0),
     petTypeId: new FormControl(0, [Validators.required]),
@@ -40,14 +40,14 @@ export class BreedModalComponent {
     enabled: new FormControl(true),
   });
   private readonly breedService = inject(BreedService);
-  private readonly modalRef = inject(NgbActiveModal);
+  private readonly modalRef = inject(MatDialogRef<BreedModalComponent>);
   private readonly petTypeService = inject(PetTypeService);
-  private readonly tS = inject(ToasterService);
+  private readonly tS = inject(ToastrNotificationService);
 
   loadPetTypes() {
     this.petTypeService.get({}).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
-        this.petTypes = response.payload as PetType[];
+        this.petTypes.set(response.payload as PetType[])
       }
     });
   }
@@ -73,7 +73,7 @@ export class BreedModalComponent {
     if (this.data.id > 0) {
       this.breedService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });
@@ -85,7 +85,7 @@ export class BreedModalComponent {
     } else {
       this.breedService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
-          this.tS.toastr({
+          this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
             message: response.message,
           });

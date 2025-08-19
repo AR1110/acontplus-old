@@ -11,10 +11,11 @@ modalSendWhatsAppCtrl.$inject = [
     'mainService',
     'commonService',
     'params',
-    'decodeToken'
+    'decodeToken',
+    "sharedService"
 ]
 
-function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token) {
+function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, params, _token, _sharedSvc) {
     $scope.client = {}
     $scope.whatsapp = {}
     $scope.connected_devices = []
@@ -31,16 +32,108 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     $scope.session = {}
     $scope.session.is_logged_in = false
 
+    $scope.hasPhoneNumber = true;
+    $scope.phoneNumbers = []
+
     $scope.type = ['01', '03', '04', '05', '06', '07'].includes(data.codDoc) ? 'SRI' : 'GenericFile';
     $scope.codDoc = data.codDoc
     $scope.comprobante = data.comprobante + ': ' + data.serieComprobante
 
     let idInstance = "7103845341"
-    let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c"
+    let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c";
+
+
+    function createDataParamDocSri({ idDocumentoElectronico, codDoc }) {
+        let id = idDocumentoElectronico > 0 ? idDocumentoElectronico : data.idDocumento;
+        return {
+            tipo: 2,
+            id,
+            idDocumentoElectronico,
+            codDoc,
+            esNotificacionTributaria: true,
+        };
+    }
+    function createDataParamDoc(data) {
+        //estandarizar el codDoc para notificaciones generales
+        const codDoc = data.codDoc === '09' ? 'PF' : data.codDoc;
+        return {
+            tipo: 3,
+            id: data.idDocumento,
+            codDoc,
+            esNotificacionGeneral: true,
+        };
+    }
+
+
+    let dataParamGetDataForm = {
+        "01": createDataParamDocSri(data),
+        "NE": createDataParamDoc(data),
+        "09": createDataParamDoc(data),
+    };
+
+    let phoneNumbers = [];
+    let esNotificacionTributaria = false;
+    let esNotificacionGeneral = false;
+
+    let telefonoEstab;
+    let nombreEstab;
+    let customerName;
+    let serieDocumento;
+
+    getDataForm();
+    function getDataForm() {
+
+        let params = dataParamGetDataForm[data.codDoc];
+        if (!params) {
+            console.error(`No se encontraron parámetros para el tipo de documento: ${data.codDoc}`);
+            return;
+        }
+        esNotificacionTributaria = params.esNotificacionTributaria;
+        esNotificacionGeneral = params.esNotificacionGeneral;
+
+        _sharedSvc.getDataFormNotificacion(params).then(response => {
+            telefonoEstab = response.telefonoEstab;
+            nombreEstab = response.nombreEstab;
+
+            // if (response.telefono) {
+
+            //     if (response.telefono.includes(";")) {
+            //         phoneNumbers = response.telefono.split(";")
+            //     } else if (response.telefono.includes("|")) {
+            //         phoneNumbers = response.telefono.split("|")
+            //     } else {
+            //         phoneNumbers = response.telefono.split(" ")
+            //     }
+            // }
+
+            phoneNumbers = response.telefonos.filter((p) => p.length === 10);
+            $scope.phoneNumbers = phoneNumbers.map((p) => {
+                return {
+                    number: p,
+                }
+            });
+
+
+            if ($scope.phoneNumbers.length == 0) {
+                $scope.hasPhoneNumber = false
+            } else {
+                $scope.whatsapp.number = $scope.phoneNumbers[0].number
+            }
+
+            if (esNotificacionTributaria) {
+                $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante electrónico:'
+            } else {
+                $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
+            }
+
+
+        })
+    }
+
+
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
             (response) => {
-                console.log(response)
                 let { stateInstance } = response.data
                 if (stateInstance === "authorized") {
                     $scope.session.is_logged_in = true
@@ -64,44 +157,33 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     }
     $scope.connectGreenApi();
 
-    $scope.hasPhoneNumber = true
-    let phoneNumbers
-    if (data.telefono) {
 
-        if (data.telefono.includes(";")) {
-            phoneNumbers = data.telefono.split(";")
-        } else if (data.telefono.includes("|")) {
-            phoneNumbers = data.telefono.split("|")
-        } else {
-            phoneNumbers = data.telefono.split(" ")
-        }
-    } else {
-        $scope.hasPhoneNumber = false
-    }
+    // if (data.telefono) {
 
-    $scope.phoneNumbers = []
-    if (phoneNumbers) {
-        //Only cellphone numbers
-        for (const p of phoneNumbers) {
-            if (p.length == 10) {
-                $scope.phoneNumbers.push({
-                    number: p,
-                })
-            }
-        }
-    }
+    //     if (data.telefono.includes(";")) {
+    //         phoneNumbers = data.telefono.split(";")
+    //     } else if (data.telefono.includes("|")) {
+    //         phoneNumbers = data.telefono.split("|")
+    //     } else {
+    //         phoneNumbers = data.telefono.split(" ")
+    //     }
+    // } else {
+    //     $scope.hasPhoneNumber = false
+    // }
 
-    if ($scope.phoneNumbers.length == 0) {
-        $scope.hasPhoneNumber = false
-    } else {
-        $scope.whatsapp.number = $scope.phoneNumbers[0].number
-    }
 
-    if ($scope.type == 'SRI') {
-        $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante electrónico:'
-    } else {
-        $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
-    }
+    // if (phoneNumbers) {
+    //     //Only cellphone numbers
+    //     for (const p of phoneNumbers) {
+    //         if (p.length == 10) {
+    //             $scope.phoneNumbers.push({
+    //                 number: p,
+    //             })
+    //         }
+    //     }
+    // }
+
+
 
     $scope.validatePhoneNumber = (phone) => {
         if (!phone) {
@@ -190,7 +272,43 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         })
     }
 
-    let totalMessages = 1
+    let totalMessages = 1;
+
+    function getMessageText() {
+
+        let tipoDocNombre = null;
+        let contactoNombre = null;
+        let serieComprobante = null;
+        if (data.codDoc === '01') {
+            tipoDocNombre = 'Factura';
+        }
+
+        if (data.codDoc === 'NE') {
+            tipoDocNombre = 'Nota Entrega';
+        }
+        if (data.codDoc === '09') {
+            tipoDocNombre = 'Proforma';
+        }
+
+        if(telefonoEstab){
+            contactoNombre = `Contactos: ${telefonoEstab}`
+        }
+
+
+        const mainMessage = `Estimado(a) *${data.razonSocialComprador || data.nombreComercial}*\n Adjunto su ${tipoDocNombre} Nro. ${data.serieComprobante} emitida por *${nombreEstab}*\n ${contactoNombre}`;
+
+        const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n';
+
+        // const promoMessage = 'Este documento fue generado y enviado de forma segura por *Acontplus*.\n\n' +
+        //                     'Optimiza tu facturación con **Acontplus**. Visita nuestro sitio web para conocer más:\n' +
+        //                     '👉 https://acontplus.com.ec';
+
+                            return {
+                                mainMessage,
+                                promoMessage
+                            }
+    }
+
 
     function sendSms(message, firstMessage = null) {
         return new Promise((resolve, reject) => {
@@ -199,7 +317,8 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                 let url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`
                 let payload = {
                     chatId: phoneNumberFormatter($scope.whatsapp.number),
-                    message: message ? message : $scope.whatsapp.message,
+                    //message: message ? message : $scope.whatsapp.message,
+                    message: message ? message:  getMessageText().mainMessage
                 }
 
                 $http.post(url, payload).then(
@@ -248,17 +367,21 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                         resolve(response.data.message)
                         totalMessages++
                         if (lastMessage) {
-                            let messageAdd = ''
-                            if (data.telefonoEstablecimiento) {
-                                messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${data.nombreComercial}* al siguiente número: *${data.telefonoEstablecimiento}*`
-                                sendSms(messageAdd)
-                            }
-                            setTimeout(() => {
-                                sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
-                            }, 2000)
+                            let messageAdd = '';
+
+
+                            // if (telefonoEstab) {
+                            //     messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${nombreEstab}* al siguiente número: *${telefonoEstab}*`;
+                            //     sendSms(messageAdd)
+                            // }
+
+                            // setTimeout(() => {
+                            //     sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
+                            // }, 2000)
 
                             setTimeout(() => {
-                                sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
+                             //   sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
+                             sendSms(getMessageText().promoMessage)
                                 saveHistory()
                             }, 3000)
                         }
@@ -318,7 +441,8 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         let format = 'pdf'
         let dataParms = {
             hasParams: true,
-            id: data.idDocumento,
+            id: data.idDocumento || data.idDocumentoElectronico,
+            idDocumentoElectronico: data.idDocumentoElectronico,
             versionComp: data.versionComp
         }
         let reportParams = {
@@ -401,10 +525,10 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                 return
             }
 
-            if (!$scope.whatsapp.message) {
-                tS.toastr('warning', 'El mensaje no puede estar vacio!')
-                return
-            }
+            // if (!$scope.whatsapp.message) {
+            //     tS.toastr('warning', 'El mensaje no puede estar vacio!')
+            //     return
+            // }
             sendSms(null, true)
         } catch (error) {
             console.log(error)
