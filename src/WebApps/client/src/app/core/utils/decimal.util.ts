@@ -4,14 +4,14 @@ import Decimal from 'decimal.js';
 type DecimalInput = string | number | Decimal;
 type DecimalOutput = number | Decimal;
 
-// Configuraci�n por defecto
+// Configuración por defecto
 const DEFAULT_CONFIG = {
   precision: 6, // Cambio de 2 a 6 para uso empresarial
   rounding: Decimal.ROUND_HALF_UP,
-  returnAsNumber: true
+  returnAsNumber: true,
 } as const;
 
-// Interfaz para opciones de configuraci�n
+// Interfaz para opciones de configuración
 interface DecimalOptions {
   precision?: number;
   rounding?: Decimal.Rounding;
@@ -40,29 +40,27 @@ class DecimalUtils {
   }
 
   /**
-   * Procesa el resultado seg�n las opciones
+   * Procesa el resultado según las opciones
    */
-  private static processResult(
-    decimal: Decimal,
-    options: DecimalOptions = {}
-  ): DecimalOutput {
+  private static processResult(decimal: Decimal, options: DecimalOptions = {}): DecimalOutput {
     const config = { ...this.defaultConfig, ...options };
 
     let result = decimal;
 
-    // Aplicar precisi�n si se especifica
+    // Aplicar precisión si se especifica
     if (config.precision >= 0) {
-      result = config.rounding !== undefined
-        ? result.toDecimalPlaces(config.precision, config.rounding)
-        : result.toDecimalPlaces(config.precision);
+      result =
+        config.rounding !== undefined
+          ? result.toDecimalPlaces(config.precision, config.rounding)
+          : result.toDecimalPlaces(config.precision);
     }
 
-    // Retornar como n�mero o Decimal
+    // Retornar como número o Decimal
     return config.returnAsNumber ? result.toNumber() : result;
   }
 
   /**
-   * Suma dos n�meros decimales
+   * Suma dos números decimales
    */
   static add(num1: DecimalInput, num2: DecimalInput, options?: DecimalOptions): DecimalOutput {
     const decimal1 = this.createDecimal(num1);
@@ -73,7 +71,7 @@ class DecimalUtils {
   }
 
   /**
-   * Resta dos n�meros decimales
+   * Resta dos números decimales
    */
   static subtract(num1: DecimalInput, num2: DecimalInput, options?: DecimalOptions): DecimalOutput {
     const decimal1 = this.createDecimal(num1);
@@ -84,7 +82,7 @@ class DecimalUtils {
   }
 
   /**
-   * Multiplica dos n�meros decimales
+   * Multiplica dos números decimales
    */
   static multiply(num1: DecimalInput, num2: DecimalInput, options?: DecimalOptions): DecimalOutput {
     const decimal1 = this.createDecimal(num1);
@@ -95,7 +93,7 @@ class DecimalUtils {
   }
 
   /**
-   * Divide dos n�meros decimales
+   * Divide dos números decimales
    */
   static divide(num1: DecimalInput, num2: DecimalInput, options?: DecimalOptions): DecimalOutput {
     const decimal1 = this.createDecimal(num1);
@@ -112,7 +110,11 @@ class DecimalUtils {
   /**
    * Calcula el porcentaje
    */
-  static percentage(value: DecimalInput, percent: DecimalInput, options?: DecimalOptions): DecimalOutput {
+  static percentage(
+    value: DecimalInput,
+    percent: DecimalInput,
+    options?: DecimalOptions,
+  ): DecimalOutput {
     const decimal1 = this.createDecimal(value);
     const decimal2 = this.createDecimal(percent);
     const result = decimal1.mul(decimal2).div(100);
@@ -128,7 +130,7 @@ class DecimalUtils {
   }
 
   /**
-   * M�todos que garantizan retorno como n�mero (para compatibilidad)
+   * Métodos que garantizan retorno como número (para compatibilidad)
    */
   static addAsNumber(num1: DecimalInput, num2: DecimalInput, precision?: number): number {
     return this.add(num1, num2, { precision, returnAsNumber: true }) as number;
@@ -147,7 +149,7 @@ class DecimalUtils {
   }
 
   /**
-   * M�todos que garantizan retorno como Decimal (para precisi�n m�xima)
+   * Métodos que garantizan retorno como Decimal (para precisión máxima)
    */
   static addAsDecimal(num1: DecimalInput, num2: DecimalInput, precision?: number): Decimal {
     return this.add(num1, num2, { precision, returnAsNumber: false }) as Decimal;
@@ -164,14 +166,14 @@ class DecimalUtils {
   static divideAsDecimal(num1: DecimalInput, num2: DecimalInput, precision?: number): Decimal {
     return this.divide(num1, num2, { precision, returnAsNumber: false }) as Decimal;
   }
-  static compare(num1: DecimalInput, num2: DecimalInput)  {
+  static compare(num1: DecimalInput, num2: DecimalInput) {
     const decimal1 = this.createDecimal(num1);
     const decimal2 = this.createDecimal(num2);
     return decimal1.comparedTo(decimal2);
   }
 
   /**
-   * Verifica si dos n�meros son iguales
+   * Verifica si dos números son iguales
    */
   static equals(num1: DecimalInput, num2: DecimalInput): boolean {
     return this.compare(num1, num2) === 0;
@@ -187,21 +189,21 @@ class DecimalUtils {
     return this.processResult(result, options);
   }
 
-/**
- *
- * @param {*} num1
- * @param {*} num2
- * @param {*} max
- * @returns
- */
-function plus<T>(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).plus(num2)
-    if (max > 0) {
-        return instanceDecimal.toDecimalPlaces(max).toNumber()
-    }
+  /**
+   * Redondea un número
+   */
+  static round(value: DecimalInput, precision = 0, rounding?: Decimal.Rounding): DecimalOutput {
+    const decimal = this.createDecimal(value);
+    const result =
+      rounding !== undefined
+        ? decimal.toDecimalPlaces(precision, rounding)
+        : decimal.toDecimalPlaces(precision);
+
+    return this.processResult(result, { precision, rounding });
+  }
 
   /**
-   * Suma un array de n�meros
+   * Suma un array de números
    */
   static sum(values: DecimalInput[], options?: DecimalOptions): DecimalOutput {
     const result = values.reduce((acc: Decimal, val) => {
@@ -213,7 +215,7 @@ function plus<T>(num1:number, num2:number, max = 0) {
   }
 
   /**
-   * Promedio de un array de n�meros
+   * Promedio de un array de números
    */
   static average(values: DecimalInput[], options?: DecimalOptions): DecimalOutput {
     if (values.length === 0) {
@@ -223,11 +225,9 @@ function plus<T>(num1:number, num2:number, max = 0) {
     const sum = this.sum(values, { returnAsNumber: false }) as Decimal;
     const result = sum.div(values.length);
 
-function minus<T>(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).minus(num2)
-    if (max > 0) {
-        return instanceDecimal.toDecimalPlaces(max).toNumber() as T
-    }
+    return this.processResult(result, options);
+  }
+}
 
 /**
  * Clase para operaciones en cadena
@@ -244,11 +244,10 @@ class DecimalChain {
     return this;
   }
 
-function mul<T>(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).mul(num2)
-    if (max > 0) {
-        return instanceDecimal.toDecimalPlaces(max).toNumber()
-    }
+  subtract(num: DecimalInput): DecimalChain {
+    this.value = this.value.minus(num);
+    return this;
+  }
 
   multiply(num: DecimalInput): DecimalChain {
     this.value = this.value.mul(num);
@@ -268,20 +267,20 @@ function mul<T>(num1:number, num2:number, max = 0) {
     return this;
   }
 
-function div(num1:number, num2:number, max = 0) {
-    let instanceDecimal = new Decimal(num1).div(num2)
-    if (max > 0) {
-        return instanceDecimal.toDecimalPlaces(max).toNumber()
-    }
-
-  round(precision = 0, rounding?: Decimal.Rounding): DecimalChain {
-    this.value = rounding !== undefined
-      ? this.value.toDecimalPlaces(precision, rounding)
-      : this.value.toDecimalPlaces(precision);
+  abs(): DecimalChain {
+    this.value = this.value.abs();
     return this;
   }
 
-  // M�todos de salida
+  round(precision = 0, rounding?: Decimal.Rounding): DecimalChain {
+    this.value =
+      rounding !== undefined
+        ? this.value.toDecimalPlaces(precision, rounding)
+        : this.value.toDecimalPlaces(precision);
+    return this;
+  }
+
+  // Métodos de salida
   toNumber(): number {
     return this.value.toNumber();
   }
@@ -313,7 +312,9 @@ export const div = (num1: DecimalInput, num2: DecimalInput, precision?: number) 
   DecimalUtils.divide(num1, num2, { precision });
 
 export const instanceDecimal = (num: DecimalInput, precision?: number) =>
-  precision !== undefined ? new Decimal(num).toDecimalPlaces(precision).toNumber() : new Decimal(num);
+  precision !== undefined
+    ? new Decimal(num).toDecimalPlaces(precision).toNumber()
+    : new Decimal(num);
 
 // Exportar la clase principal
 export default DecimalUtils;
@@ -324,10 +325,10 @@ export type { DecimalInput, DecimalOutput, DecimalOptions };
 /*
 EJEMPLOS DE USO:
 
-// Configuraci�n global
+// Configuración global
 DecimalUtils.configure({ precision: 6, returnAsNumber: true });
 
-// Operaciones b�sicas
+// Operaciones básicas
 const suma = DecimalUtils.add(0.1, 0.2); // 0.3
 const resta = DecimalUtils.subtract(1, 0.9, { precision: 1 }); // 0.1
 const multiplicacion = DecimalUtils.multiply(0.1, 3); // 0.3
