@@ -65,7 +65,7 @@
           <app-tabulator
             [columnNames]="productColumns"
             [options]="{ reactiveData: true }"
-            [tableData]="productsAdded"
+            [tableData]="productsAdded()"
             [theme]="'semantic-ui'"
           ></app-tabulator>
         </div>

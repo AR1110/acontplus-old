@@ -27,6 +27,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
 import {MatTabsModule} from "@angular/material/tabs";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-promotion-add-edit-modal',
@@ -43,7 +44,8 @@ import {MatTabsModule} from "@angular/material/tabs";
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatTabsModule
+    MatTabsModule,
+    MatSlideToggleModule
   ],
   templateUrl: './promotion-add-edit-modal.component.html',
   styleUrl: './promotion-add-edit-modal.component.scss',
@@ -75,6 +77,7 @@ export class PromotionAddEditModalComponent implements OnInit {
     description: '',
     startDate: new Date(),
     endDate: new Date(),
+    enabled: true
   };
 
   @ViewChild('imagePreview') imagePreview!: ElementRef;
@@ -113,6 +116,7 @@ export class PromotionAddEditModalComponent implements OnInit {
       this.data.startDate = formatDate(data.startDate);
       this.data.endDate = formatDate(data.endDate);
       this.data.description = data.description;
+      this.data.enabled = data.enabled;
       if (data.img) {
         this.imageUrl = data.img;
       }
@@ -270,6 +274,7 @@ export class PromotionAddEditModalComponent implements OnInit {
         endDate: formatDateToString(this.data.endDate),
         promotionDays,
         promotionMenus: newPromotionMenu,
+        enabled: this.data.enabled
       };
 
       if (this.data.id > 0) {
