@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
@@ -35,10 +35,9 @@ export class MenuAddEditModalComponent implements OnInit {
     summary: new FormControl(''),
   });
   data = inject<Menu>(MAT_DIALOG_DATA);
-  menuTypes: MenuType[] = [];
   modalIcon = 'add';
   modalTitle = 'Registrar Menu';
-  productsAdded: any[] = [];
+  productsAdded = signal<any[]>([])
 
   itemSearch = '';
   placeholder = 'Buscar producto';
@@ -278,8 +277,8 @@ export class MenuAddEditModalComponent implements OnInit {
 
   getItems(id: number) {
     this._menuItemService.getByMenu(id, { tipo: 1 }).subscribe((response) => {
-      this.productsAdded = response.menuItems;
-      this.verifyUpdateCell(this.productsAdded);
+      this.productsAdded.set(response.menuItems);
+      this.verifyUpdateCell(this.productsAdded());
     });
   }
 
@@ -310,7 +309,7 @@ export class MenuAddEditModalComponent implements OnInit {
             }
           });
 
-          this.productsAdded.forEach((e) => {
+          this.productsAdded().forEach((e) => {
             if (this.validation.includes(e.price)) {
               e.price = 0;
             }
@@ -321,13 +320,13 @@ export class MenuAddEditModalComponent implements OnInit {
           });
 
           newMenuItem.fees = JSON.stringify(newFees);
-          this.productsAdded = [...this.productsAdded, newMenuItem];
+          this.productsAdded.update(r=>[...r, newMenuItem]);
         }
       });
   }
 
   removeFromList(itemId: number) {
-    this.productsAdded = this.productsAdded.filter((x) => x.itemId !== itemId);
+    this.productsAdded.update(result=>result.filter((x) => x.itemId !== itemId));
   }
 
   ngOnInit() {
@@ -340,7 +339,6 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   onModalClose() {
-    this.productsAdded = [];
     this._modalRef.close();
   }
 
@@ -348,8 +346,8 @@ export class MenuAddEditModalComponent implements OnInit {
     if (!this.onValidate()) return;
 
     const dataToSave = {
-      ...this.data,
-      menuItems: this.productsAdded,
+      ...this.menuForm.value,
+      menuItems: this.productsAdded(),
     };
 
     this._menuService
@@ -367,7 +365,7 @@ export class MenuAddEditModalComponent implements OnInit {
 
   onValidate(): boolean {
     let isValid = true;
-    if (this.productsAdded.length <= 0) {
+    if (this.productsAdded().length <= 0) {
       this._tS.show({
         type: 'warning',
         message: 'Debe agregar productos para crear el combo',
@@ -378,13 +376,13 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   generateDescription() {
-    this.data.summary = this.productsAdded
+    this.data.summary = this.productsAdded()
       .map((item) => item.quantity + ' ' + item.descripcion)
       .join(', ');
   }
 
   onItemSelected($event: Item) {
-    const itemExists = this.productsAdded.find(
+    const itemExists = this.productsAdded().find(
       (x: any) => x.productId === $event.productId,
     );
     if (itemExists) {
