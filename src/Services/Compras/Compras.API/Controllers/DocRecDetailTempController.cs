@@ -1,37 +1,39 @@
 ﻿namespace Compras.API.Controllers;
 
-public class DocRecDetailTempController(
-    IDocRecDetailTempService detailTempService) : BaseApiController
+public class DocRecDetailTempController(IDocRecDetailTempService detailTempService) : BaseApiController
 {
-    [HttpGet("{idDocumento}")]
-    public async Task<IActionResult> GetId(int idDocumento)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "idDocumento", idDocumento }, { "jsonData", "" }
-        };
-        return Ok(await detailTempService.GetAsync(parameters));
-    }
+  private const string UserRoleClaimType = "userRoleId";
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+  [HttpGet("{idDocumento}")]
+  public async Task<IActionResult> GetId(int idDocumento)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "idRol", User.GetClaimValue<int>("userRoleId") },
-            { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        return Ok(await detailTempService.AddAsync(parameters));
-    }
+      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "idDocumento", idDocumento }, { "jsonData", "" }
+    };
+    return Ok(await detailTempService.GetAsync(parameters));
+  }
 
-    [HttpPut]
-    public async Task<IActionResult> Put([FromBody] ApiRequest data)
+  [HttpPost]
+  public async Task<IActionResult> Post([FromBody] ApiRequest data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "idRol", User.GetClaimValue<int>("userRoleId") },
-            { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        return Ok(await detailTempService.UpdateAsync(parameters));
-    }
+      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+    };
+    return Ok(await detailTempService.AddAsync(parameters));
+  }
+
+  [HttpPut]
+  public async Task<IActionResult> Put([FromBody] ApiRequest data)
+  {
+    var parameters = new Dictionary<string, object>
+    {
+      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+    };
+    return Ok(await detailTempService.UpdateAsync(parameters));
+  }
 }
