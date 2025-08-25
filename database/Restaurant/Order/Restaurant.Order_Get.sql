@@ -233,7 +233,7 @@ BEGIN
                   ,tableName = rm.[description] + ' - ' + ISNULL(ta.[Description], '')
                   ,numberTable = numberTable
                   ,tipoIdentificacionSri= ti.codigoSri
-                 ,customerIdentifiacion = cu.idCard
+                 ,customerIdentifiacion = ISNULL(cu.idCard, '9999999999999')
                   ,ro.*
              FROM Restaurant.[Order]           ro WITH (NOLOCK)
              LEFT JOIN Cliente                cl WITH (NOLOCK) ON cl.idCliente            = ro.CustomerCompanyId

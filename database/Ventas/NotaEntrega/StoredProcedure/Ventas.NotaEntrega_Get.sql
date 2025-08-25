@@ -681,15 +681,21 @@ BEGIN
                 END 
             ELSE 
                 BEGIN
-                    SELECT 'Aprobación'								    as metodoConversion
-                          ,FORMAT(au.fechaRegistro, 'dd/MM/yyyy HH:mm') as fechaRegistro
-	                      ,us.nombreUsuario						        as usuario
-                          ,ne.serieComprobante                          as serieComprobante
-                          ,'NE'                                         as codDoc
-                    FROM Ventas.Aprob_Document_Audit au WITH (NOLOCK) 
-                    INNER JOIN dbo.Usuario		     us WITH (NOLOCK) ON us.idUsuario     = au.idUsuario
-                    INNER JOIN dbo.NotaEntrega       ne WITH (NOLOCK) ON ne.idNotaEntrega = au.idNotaEntrega
-                    WHERE au.idNotaEntrega = @id
+                    SELECT 'Aprobación'								                                                             as metodoConversion
+                          ,FORMAT(CASE WHEN ep.codigo = 'PE' THEN ad.fechaEmision ELSE au.fechaRegistro END, 'dd/MM/yyyy HH:mm') as fechaRegistro
+                          ,CASE WHEN ep.codigo = 'PE' THEN us.nombreUsuario ELSE ua.nombreUsuario END                            as usuario
+                          ,CASE WHEN ep.codigo = 'PE' THEN ad.serieComprobante ELSE de.serieComprobante END                      as serieComprobante
+                          ,CASE WHEN ep.codigo = 'PE' THEN 'PF' ELSE td.codigo END                                               as codDoc
+                    FROM Ventas.Aprob_Document_Hist        ah WITH (NOLOCK)
+                    INNER JOIN Ventas.Aprob_Document       ad WITH (NOLOCK) ON ad.idAprob_Document       = ah.idAprob_Document
+                    INNER JOIN dbo.Usuario		           us WITH (NOLOCK) ON us.idUsuario              = ad.idUsuario
+                    INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago           = ad.idEstadoDocumento
+                    INNER JOIN dbo.TipoDocumento           td WITH (NOLOCK) ON td.idTipoDocumento        = ad.idTipoDocumento
+                     LEFT JOIN Ventas.Aprob_Document_Audit au WITH (NOLOCK) ON au.idAprob_Document       = ad.idAprob_Document
+                     LEFT JOIN dbo.Factura                 fe WITH (NOLOCK) ON fe.idFactura              = au.idFactura
+                     LEFT JOIN dbo.Usuario                 ua WITH (NOLOCK) ON ua.idUsuario              = au.idUsuario
+                     LEFT JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
+                    WHERE ah.idNotaEntrega = @id
                 END
         RETURN
     END

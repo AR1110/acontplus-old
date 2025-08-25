@@ -17,6 +17,7 @@ DECLARE @codTran VARCHAR(2)
        ,@idTipoTransaccion INT 
        ,@idTipoDocumento INT
        ,@idTransaccion INT
+       ,@fechaTransaccion DATETIME
 
 WHILE (1 = 1)
 BEGIN
@@ -66,6 +67,8 @@ BEGIN
                         SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento ANd idTipoTransaccion = @idTipoTransaccion AND idDocumento = @documentoId
                     END
 
+                 SELECT @fechaTransaccion = fechaEmision FROM Inventario.Transaccion WHERE idTransaccion = @idTransaccion   
+
                 --> Ajustes 
                 IF @codTran = 'A'
                     BEGIN
@@ -96,7 +99,9 @@ BEGIN
 
                                     ) t
                         WHERE tt.codigo != 'A'  
-                          AND dt.estado = 1;    
+                          AND dt.estado = 1
+                          AND tr.fechaEmision >= @fechaTransaccion
+                          AND EXISTS (SELECT 1 FROM CTE_AjusteActual ca WHERE ca.idArticulo = dt.idArticulo AND ca.idBodega = dt.idBodega);
 
 
                         --> Ultimo Movimiento de Ajuste para su calculo de stork
@@ -151,6 +156,18 @@ BEGIN
                            AND dt.estado = 1
                            AND t.idAjuste IS NOT NULL; 
                     END;
+
+                -- =============================================
+                -- Recálculo incremental de saldos
+                -- Solo recalcula desde el punto de cambio hacia adelante
+                -- =============================================
+            
+                -- Obtener artículos/bodegas afectados
+                DECLARE @ArtBodTemp TABLE (idArticulo INT, idBodega INT, ajusteId INT)
+                INSERT INTO @ArtBodTemp
+                SELECT DISTINCT dt.idArticulo, dt.idBodega, dt.ajusteId 
+                FROM Inventario.TransaccionDetalle dt 
+                WHERE dt.idTransaccion = @idTransaccion
 
                 --> Actualizar saldos
                 WITH TransaccionBase AS
