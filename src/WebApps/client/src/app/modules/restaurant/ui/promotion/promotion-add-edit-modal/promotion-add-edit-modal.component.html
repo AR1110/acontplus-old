@@ -1,9 +1,8 @@
-
 <app-mat-custom-dialog
-[containerTemplate]="body"
-[actionsTemplate]="footer"
-(close)="close()"
-[title]="titleModal()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="close()"
+  [title]="titleModal()"
 />
 <ng-template #body>
   <div class="row">
@@ -26,8 +25,11 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Descripción</mat-label>
-            <input matInput   appToUpperCase
-                   [(ngModel)]="data.description">
+            <input
+              matInput
+              appToUpperCase
+              [(ngModel)]="data.description"
+            />
           </mat-form-field>
         </div>
       </div>
@@ -46,9 +48,10 @@
       </div>
 
       <div class="mt-2">
-        <mat-slide-toggle [(ngModel)]="data.enabled">{{data.enabled? 'Activo': 'Inactivo}}</mat-slide-toggle>
+        <mat-slide-toggle [(ngModel)]="data.enabled">
+          {{ data.enabled ? 'Activo' : 'Inactivo' }}
+        </mat-slide-toggle>
       </div>
-
     </div>
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-12">
       <div class="container-upload">
@@ -60,12 +63,18 @@
 
           <div class="avatar-actions">
             <!-- Botón de edición -->
-            <label for="imageUpload" class="edit-button">
+            <label
+              for="imageUpload"
+              class="edit-button"
+            >
               <mat-icon>edit</mat-icon>
             </label>
 
             <!-- Botón de eliminación -->
-            <button class="delete-button" (click)="onDelete()">
+            <button
+              class="delete-button"
+              (click)="onDelete()"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -83,28 +92,32 @@
     </div>
   </div>
 
-
   <mat-tab-group>
     <mat-tab label="Días">
       <div class="d-flex">
         <div class="table-responsive w-auto">
           <table class="table">
             <thead>
-            <tr>
-              <th>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="allDays"
-                    [(ngModel)]="allDay"
-                    (change)="onChangeAllDay()"
-                  />
-                  <label class="form-check-label" for="allDays">Todos</label>
-                </div>
-              </th>
-              <th>Hora Inicio - Hora Fin</th>
-            </tr>
+              <tr>
+                <th>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="allDays"
+                      [(ngModel)]="allDay"
+                      (change)="onChangeAllDay()"
+                    />
+                    <label
+                      class="form-check-label"
+                      for="allDays"
+                    >
+                      Todos
+                    </label>
+                  </div>
+                </th>
+                <th>Hora Inicio - Hora Fin</th>
+              </tr>
             </thead>
             <tbody>
               @for (day of daysOfWeek(); track $index) {
@@ -118,9 +131,12 @@
                         [(ngModel)]="day.checked"
                         (change)="onChangeDay()"
                       />
-                      <label class="form-check-label" [for]="day.id">{{
-                          day.descripcion
-                        }}</label>
+                      <label
+                        class="form-check-label"
+                        [for]="day.id"
+                      >
+                        {{ day.descripcion }}
+                      </label>
                     </div>
                   </td>
                   <td>
@@ -141,7 +157,10 @@
                       </div>
                       <span>-</span>
                       <div class="col-4">
-                        <label [for]="day.id + 'End'" class="form-label"></label>
+                        <label
+                          [for]="day.id + 'End'"
+                          class="form-label"
+                        ></label>
                         <input
                           type="text"
                           appTimeInputFormat24
@@ -162,19 +181,19 @@
     </mat-tab>
     <mat-tab label="Productos">
       <div class="form-group">
-        <label for="menuSearch">Buscar Menú </label>
+        <label for="menuSearch">Buscar Menú</label>
         <app-menu-search (optionSelected)="onProductSelected($event)" />
       </div>
 
       <div class="table-responsive">
         <table class="table">
           <thead>
-          <tr>
-            <th>Nro.</th>
-            <th>Op.</th>
-            <th>Img.</th>
-            <th>Menú</th>
-          </tr>
+            <tr>
+              <th>Nro.</th>
+              <th>Op.</th>
+              <th>Img.</th>
+              <th>Menú</th>
+            </tr>
           </thead>
           <tbody>
             @for (item of promotionMenus(); track $index) {
@@ -186,8 +205,7 @@
                     icon="delete"
                     matStyle="icon"
                     (handleClick)="onRemove(item.menuId)"
-                  >
-                  </app-theme-button>
+                  ></app-theme-button>
                 </td>
                 <td>
                   <img
@@ -210,7 +228,6 @@
       </div>
     </mat-tab>
   </mat-tab-group>
-
 </ng-template>
 <ng-template #footer>
   <app-theme-button
@@ -220,4 +237,3 @@
     (handleClick)="save()"
   />
 </ng-template>
-
