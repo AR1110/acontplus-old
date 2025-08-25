@@ -1,4 +1,6 @@
-﻿namespace Compras.API.Controllers;
+﻿using Compras.API.Dtos;
+
+namespace Compras.API.Controllers;
 
 public class DocRecDetailTempController(IDocRecDetailTempService detailTempService) : BaseApiController
 {
@@ -16,23 +18,23 @@ public class DocRecDetailTempController(IDocRecDetailTempService detailTempServi
   }
 
   [HttpPost]
-  public async Task<IActionResult> Post([FromBody] ApiRequest data)
+  public async Task<IActionResult> Post(DocDetailleTemporalDto data)
   {
     var parameters = new Dictionary<string, object>
     {
       { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
-      { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+      { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
     };
     return Ok(await detailTempService.AddAsync(parameters));
   }
 
   [HttpPut]
-  public async Task<IActionResult> Put([FromBody] ApiRequest data)
+  public async Task<IActionResult> Put(DocDetailleTemporalDto data)
   {
     var parameters = new Dictionary<string, object>
     {
       { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
-      { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+      { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
     };
     return Ok(await detailTempService.UpdateAsync(parameters));
   }
