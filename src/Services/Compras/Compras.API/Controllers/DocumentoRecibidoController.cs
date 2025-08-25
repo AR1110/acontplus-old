@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using Compras.API.Dtos;
+﻿using Compras.API.Dtos;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
@@ -200,12 +199,12 @@ public class DocumentoRecibidoController(
   }
 
   [HttpPut("Migrate")]
-  public async Task<IActionResult> Migrate(ApiRequest data)
+  public async Task<IActionResult> Migrate(DocumentoRecibidoMigrateDto data)
   {
     var parameters = new Dictionary<string, object>
     {
         { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
-        { "json", DataConverters.SerializeDictionary(data.Data) }
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoMigrateDto>(data)) }
     };
     return Ok(await docRecibidoSvc.MigrateAsync(parameters));
   }
@@ -235,15 +234,13 @@ public class DocumentoRecibidoController(
   }
 
   [HttpPut("PutSubcategory")]
-  public async Task<IActionResult> PutSubcategory([FromBody] ApiRequest data)
+  public async Task<IActionResult> PutSubcategory([FromBody] DocumentoRecibidoCategoria data)
   {
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoCategoria>(data)) }
     };
-
-    data.UserRoleId = User.GetClaimValue<int>("userRoleId");
     return Ok(await docRecibidoSvc.UpdateSubcategoryAsync(parameters));
   }
 }
