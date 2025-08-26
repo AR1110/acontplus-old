@@ -1,6 +1,8 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Domain.Repositories;
 
-public class ComprobanteIngresoController(IComprobanteIngresoService comprobanteIngresoService) : BaseApiController
+namespace Contabilidad.API.Controllers;
+
+public class ComprobanteIngresoController(IComprobanteIngresoRepository comprobanteIngresoService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

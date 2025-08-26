@@ -1,6 +1,9 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Application.DTOs;
+using Contabilidad.Domain.Repositories;
 
-public class CuentaPorPagarController(ICuentaPorPagarService _svc) : BaseApiController
+namespace Contabilidad.API.Controllers;
+
+public class CuentaPorPagarController(ICuentaPorPagarRepository _svc) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

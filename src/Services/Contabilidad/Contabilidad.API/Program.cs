@@ -1,4 +1,4 @@
-﻿using Contabilidad.API.Extensions.Endpoints;
+using Contabilidad.API.Endpoints.CuotaPorCobrar;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
