@@ -1,3 +1,4 @@
+using Contabilidad.Application.DTOs;
 using Contabilidad.Domain.Repositories;
 
 namespace Contabilidad.API.Controllers;
@@ -19,14 +20,14 @@ public class SubEntidadFinancieraController(ISubEntidadFinancieraRepository subE
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateSubEntidadFinancieraDto data)
     {
         var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
 
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateSubEntidadFinancieraDto>(data)) },
             { "fromMobile", fromMobile }
         };
         var response = await subEntidadFinancieraService.AddAsync(parameters);
@@ -35,13 +36,13 @@ public class SubEntidadFinancieraController(ISubEntidadFinancieraRepository subE
 
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateSubEntidadFinancieraDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateSubEntidadFinancieraDto>(data)) }
         };
         var response = await subEntidadFinancieraService.UpdateAsync(parameters);
         return Ok(response);
