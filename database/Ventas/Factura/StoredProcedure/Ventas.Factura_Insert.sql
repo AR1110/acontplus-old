@@ -221,7 +221,7 @@ BEGIN
             ,uuid                   VARCHAR(300)
 		)
 
-        --Pagos
+        --> Pagos
         INSERT INTO @payment
               (idFormaPagoSri,idTiempoCredito,total)
         SELECT idFormaPagoSri,idTiempoCredito,total
@@ -268,7 +268,7 @@ BEGIN
            ,idInfoAdicional INT
         )
 
-
+        -->
 		INSERT INTO @historyInfoAdicional 
               (idInfoAdicional,uuid)
         SELECT idInfoAdicional,uuid FROM OPENJSON(@infoAdicionalArticulo) WITH
