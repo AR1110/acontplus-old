@@ -1,3 +1,4 @@
+using Contabilidad.Application.DTOs;
 using Contabilidad.Domain.Repositories;
 
 namespace Contabilidad.API.Controllers;
@@ -16,12 +17,12 @@ public class AnticipoController(IAnticipoRepository anticipoRepository) : BaseAp
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
+    public async Task<IActionResult> Post(CreateAnticipoDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "json", DataConverters.SerializeObjectCustom<CreateAnticipoDto>(request) }
         };
 
         var response = await anticipoRepository.AddAsync(parameters);
@@ -30,13 +31,13 @@ public class AnticipoController(IAnticipoRepository anticipoRepository) : BaseAp
 
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, UpdateAnticipoDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "id", id },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "json", DataConverters.SerializeObjectCustom<UpdateAnticipoDto>(request) }
         };
 
         var response = await anticipoRepository.UpdateAsync(parameters);
