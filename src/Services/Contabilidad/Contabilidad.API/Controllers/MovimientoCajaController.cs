@@ -1,3 +1,4 @@
+using Contabilidad.Application.DTOs;
 using Contabilidad.Domain.Repositories;
 
 namespace Contabilidad.API.Controllers;
@@ -17,12 +18,12 @@ public class MovimientoCajaController(IMovimientoCajaRepository movimientoCajaRe
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
+    public async Task<IActionResult> Post(CreateMovimientoCajaDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "json", DataConverters.SerializeObjectCustom<CreateMovimientoCajaDto>(request) }
         };
 
         var response = await movimientoCajaRepository.AddAsync(parameters);

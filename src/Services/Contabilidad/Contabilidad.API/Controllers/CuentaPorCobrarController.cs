@@ -1,3 +1,4 @@
+using Contabilidad.Application.DTOs;
 using Contabilidad.Domain.Repositories;
 
 namespace Contabilidad.API.Controllers;
@@ -20,24 +21,24 @@ public class CuentaPorCobrarController(ICuentaPorCobrarRepository cuentaPorCobra
 
     // Cuotas
     [HttpPut("Update/Cuota")]
-    public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
+    public async Task<IActionResult> Update([FromBody] CuotaPorCobrarUpdateParamsDto parameter)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "json", DataConverters.SerializeObjectCustom<CuotaPorCobrarUpdateParamsDto>(parameter) }
         };
         return Ok(await cuentaPorCobrarService.UpdateCuotaAsync(parameters));
     }
 
     // Credito Garante
     [HttpPost("Insert/Garante")]
-    public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
+    public async Task<IActionResult> Insert([FromBody] CreateCreditoGaranteDto parameter)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "json", DataConverters.SerializeObjectCustom<CreateCreditoGaranteDto>(parameter) }
         };
         return Ok(await cuentaPorCobrarService.AddGaranteAsync(parameters));
     }

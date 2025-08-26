@@ -1,33 +1,41 @@
 namespace Contabilidad.Application.DTOs;
 
-public class CuentaPorCobrarCuotaUpdateDto
-{
-    public int IdCuentaPorCobrar { get; set; }
+public record CuentaPorCobrarCuotaUpdateDto(
+    int IdCuentaPorCobrar,
+    int IdTiempoCredito,
+    string FechaVencimiento
+);
 
-    public int IdTiempoCredito { get; set; }
+public record CuotaPorCobrarUpdateDto(
+    int IdCuotaPorCobrar,
+    string FechaVencimiento,
+    decimal Cuota,
+    decimal Interes,
+    decimal Mora,
+    int DiasMora
+);
 
-    public string FechaVencimiento { get; set; }
-}
+public record CuotaPorCobrarUpdateParamsDto(
+    CuentaPorCobrarCuotaUpdateDto Cuenta,
+    List<CuotaPorCobrarUpdateDto> Cuotas
+);
 
+// New DTOs for CreditoGarante
+public record CreditoGaranteDto(
+    int IdCreditoGarante,
+    int IdCuentaPorCobrar,
+    int IdCliente
+);
 
-public class CuotaPorCobrarUpdateDto
-{
-    public int IdCuotaPorCobrar { get; set; }
+public record CreateCreditoGaranteDto(
+    List<CreditoGaranteDto> Guarantors
+);
 
-    public string FechaVencimiento { get; set; }
+public record UpdateCreditoGaranteDto(
+    List<CreditoGaranteDto> Guarantors
+);
 
-    public decimal Cuota { get; set; }
-
-    public decimal Interes { get; set; }
-
-    public decimal Mora { get; set; }
-
-    public int DiasMora { get; set; }
-}
-
-
-public class CuotaPorCobrarUpdateParamsDto
-{
-    public CuentaPorCobrarCuotaUpdateDto Cuenta { get; set; }
-    public List<CuotaPorCobrarUpdateDto> Cuotas { get; set; }
-}
+public record CreditoGaranteDtos(
+    CreateCreditoGaranteDto Create,
+    UpdateCreditoGaranteDto Update
+);
