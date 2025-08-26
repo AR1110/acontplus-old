@@ -1,41 +1,50 @@
 ﻿namespace Configuracion.API.Controllers.Sri;
 
-public class EstabAsigController(IEstablecimientoAsignacionService establecimientoAsignacionService)
-    : BaseApiController
+public class EstabAsigController(IEstablecimientoAsignacionService establecimientoAsignacionService) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
-    {
-        var parameters = new Dictionary<string, object>
-            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
-        var response = await establecimientoAsignacionService.GetAsync(parameters);
-        return Ok(response);
-    }
+  private const string UserRoleClaimType = "userRoleId";
 
-    [HttpGet("GetDataForm")]
-    public async Task<IActionResult> GetDataForm(string json)
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
-        var response = await establecimientoAsignacionService.GetDataFormAsync(parameters);
-        return Ok(response);
-    }
+        { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "json", json }
+    };
+    var response = await establecimientoAsignacionService.GetAsync(parameters);
+    return Ok(response);
+  }
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest request)
+  [HttpGet("GetDataForm")]
+  public async Task<IActionResult> GetDataForm(string json)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        request.FromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        var response = await establecimientoAsignacionService.AddAsync(request);
-        return Ok(response);
-    }
+      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", json }
+    };
+    return Ok(await establecimientoAsignacionService.GetDataFormAsync(parameters));
+  }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id)
+  [HttpPost]
+  public async Task<IActionResult> Post([FromBody] EstablishmentDto data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<EstablishmentDto>(data)) },
+    };
+    return Ok(await establecimientoAsignacionService.AddAsync(parameters));
+  }
+
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Put(int id)
+  {
+    var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        var response = await establecimientoAsignacionService.UpdateAsync(parameters);
-        return Ok(response);
-    }
+    var response = await establecimientoAsignacionService.UpdateAsync(parameters);
+    return Ok(response);
+  }
 }
