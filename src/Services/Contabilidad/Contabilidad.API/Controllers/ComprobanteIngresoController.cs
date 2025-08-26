@@ -1,3 +1,4 @@
+using Contabilidad.Application.DTOs;
 using Contabilidad.Domain.Repositories;
 
 namespace Contabilidad.API.Controllers;
@@ -15,36 +16,36 @@ public class ComprobanteIngresoController(IComprobanteIngresoRepository comproba
     }
 
     [HttpPost("Insert")]
-    public async Task<IActionResult> Insert([FromBody] ApiRequest request)
+    public async Task<IActionResult> Insert([FromBody] CreateComprobanteIngresoDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateComprobanteIngresoDto>(request)) }
         };
         return Ok(await comprobanteIngresoService.AddAsync(parameters));
     }
 
     [HttpPut("Cancel")]
-    public async Task<IActionResult> Cancel(ApiRequest paremeter)
+    public async Task<IActionResult> Cancel([FromBody] UpdateComprobanteIngresoDto parameter)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", DataConverters.SerializeDictionary(paremeter.Data) }
+            { "json", DataConverters.SerializeObjectCustom<UpdateComprobanteIngresoDto>(parameter) }
         };
         return Ok(await comprobanteIngresoService.CancelAsync(parameters));
     }
 
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateComprobanteIngresoDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "json", DataConverters.SerializeObjectCustom<UpdateComprobanteIngresoDto>(request) }
         };
         return Ok(await comprobanteIngresoService.UpdateAsync(parameters));
     }
