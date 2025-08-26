@@ -1,4 +1,5 @@
-﻿namespace Configuracion.API.Controllers.Sri;
+﻿
+namespace Configuracion.API.Controllers.Sri;
 
 public class EstablishmentController(IEstablishmentService service) : BaseApiController
 {
@@ -20,25 +21,25 @@ public class EstablishmentController(IEstablishmentService service) : BaseApiCon
   }
 
   [HttpPost]
-  public async Task<IActionResult> Post(ApiRequest data)
+  public async Task<IActionResult> Post(EstablishmentDto data)
   {
     var parameters = new Dictionary<string, object>
-        {
-          { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-          { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-          { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<EstablishmentDto>(data)) },
+      { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
     return Ok(await service.AddAsync(parameters));
   }
 
   [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, ApiRequest data)
+  public async Task<IActionResult> Put(int id, EstablishmentDto dto)
   {
     var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<EstablishmentDto>(dto)) }
     };
     return Ok(await service.UpdateAsync(parameters));
   }
