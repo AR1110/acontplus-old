@@ -1,9 +1,5 @@
 namespace Contabilidad.Application.DTOs;
 
-public class CuotaPorCobrarDto
-{
-}
-
 public class CuentaPorCobrarCuotaUpdateDto
 {
     public int IdCuentaPorCobrar { get; set; }
