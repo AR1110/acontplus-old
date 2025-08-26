@@ -1,6 +1,8 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Domain.Repositories;
 
-public class SubcategoryController(ISubcategoryService subcategoryService) : BaseApiController
+namespace Contabilidad.API.Controllers;
+
+public class SubcategoryController(ISubcategoryRepository subcategoryService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string json)

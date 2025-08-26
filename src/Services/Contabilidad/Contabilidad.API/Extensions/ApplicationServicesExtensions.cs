@@ -1,7 +1,7 @@
-﻿using System.IO.Compression;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Contabilidad.API.Extensions;
 
@@ -39,9 +39,9 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Contabilidad.API.Endpoints.Implementations",
-            "Contabilidad.API.Repositories",
-            "Contabilidad.API.Services"
+            "Contabilidad.Infrastructure.Persistence.Repositories",
+            "Common.Infrastructure.Repository.Implementations",
+            "Common.Services.Extensions"
         ];
 
         services.Scan(scan => scan
@@ -51,21 +51,6 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithScopedLifetime()
         );
-
-        string[] transientNameSpaces =
-        [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(transientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
-
         return services;
     }
 }

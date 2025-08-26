@@ -1,4 +1,4 @@
-﻿using Contabilidad.API.Services;
+using Contabilidad.Infrastructure.Persistence.Repositories;
 
 namespace Contabilidad.API.Controllers;
 

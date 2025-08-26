@@ -1,6 +1,8 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Domain.Repositories;
 
-public class CuentaPorCobrarController(ICuentaPorCobrarService cuentaPorCobrarService)
+namespace Contabilidad.API.Controllers;
+
+public class CuentaPorCobrarController(ICuentaPorCobrarRepository cuentaPorCobrarService)
     : BaseApiController
 {
     [HttpGet]

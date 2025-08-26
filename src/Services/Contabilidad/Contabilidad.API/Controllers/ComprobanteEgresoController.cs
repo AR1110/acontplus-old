@@ -1,10 +1,12 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Domain.Repositories;
+
+namespace Contabilidad.API.Controllers;
 
 public class ComprobanteEgresoController : BaseApiController
 {
-    private readonly IComprobanteEgresoService _svc;
+    private readonly IComprobanteEgresoRepository _svc;
 
-    public ComprobanteEgresoController(IComprobanteEgresoService service)
+    public ComprobanteEgresoController(IComprobanteEgresoRepository service)
     {
         _svc = service;
     }

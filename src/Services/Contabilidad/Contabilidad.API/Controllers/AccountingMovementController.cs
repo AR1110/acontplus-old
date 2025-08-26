@@ -1,6 +1,8 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Domain.Repositories;
 
-public class AccountingMovementController(IAccountingMovementService accountingMovementService) : BaseApiController
+namespace Contabilidad.API.Controllers;
+
+public class AccountingMovementController(IAccountingMovementRepository accountingMovementService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string json)

@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+using Contabilidad.Domain.Repositories;
+
+namespace Contabilidad.API.Controllers;
 
 public class AnticipoController(IAnticipoRepository anticipoRepository) : BaseApiController
 {
