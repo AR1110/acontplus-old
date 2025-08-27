@@ -1,6 +1,5 @@
 namespace Configuracion.Application.DTOs;
 
-
 public record CreateDocConfigDto
 {
   public DocItem[]? Docs { get; set; }
