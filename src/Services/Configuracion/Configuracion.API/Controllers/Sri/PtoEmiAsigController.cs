@@ -29,13 +29,12 @@ public class PtoEmiAsigController(IPuntoEmisionAsignacionService puntoEmisionAsi
   }
 
   [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, [FromBody] UpdatePtoEmiAsigDto updatePto)
+  public async Task<IActionResult> Put(int id)
   {
     var parameters = new Dictionary<string, object>
       {
         { "userRoleId", User.GetClaimValue<int>("userRoleId") },
         { "id", id },
-        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdatePtoEmiAsigDto>(updatePto)) }
     };
     var response = await puntoEmisionAsignacionService.UpdateAsync(parameters);
     return Ok(response);
