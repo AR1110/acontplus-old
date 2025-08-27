@@ -1,7 +1,7 @@
-﻿using System.IO.Compression;
 using Common.FactElect.Services.External;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Compras.API.Extensions;
 
@@ -34,7 +34,9 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Compras.API.Services"
+            "Compras.Application.Services",
+            "Compras.Infrastructure.Persistence.Repositories",
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan
@@ -43,19 +45,6 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        );
-
-        string[] trascientNameSpaces =
-        [
-            "Common.Infrastructure.Repository.Implementations"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
         );
 
         services.AddTransient<IWebServiceSri, WebServiceSri>();

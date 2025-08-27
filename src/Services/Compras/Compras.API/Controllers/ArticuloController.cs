@@ -1,6 +1,6 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class ArticuloController(IArticuloService articuloService) : BaseApiController
+public class ArticuloController(IArticuloRepository articuloService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

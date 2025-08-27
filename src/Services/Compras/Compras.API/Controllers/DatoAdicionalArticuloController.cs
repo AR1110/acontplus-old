@@ -1,43 +1,41 @@
-﻿using Compras.API.Dtos;
-
 namespace Compras.API.Controllers;
 
-public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoAdicionalArticuloService) : BaseApiController
+public class DatoAdicionalArticuloController(IDatoAdicionalArticuloRepository datoAdicionalArticuloService) : BaseApiController
 {
 
-  private const string UserRoleClaimType = "userRoleId";
+    private const string UserRoleClaimType = "userRoleId";
 
-  [HttpGet("Get")]
-  public async Task<IActionResult> Get(string json)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpGet("Get")]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
     {
         { "idUsuarioRol", User.GetClaimValue<int>(UserRoleClaimType) },
         { "json", SqlStringParam.Sanitize(json) }
     };
-    return Ok(await datoAdicionalArticuloService.GetAsync(parameters));
-  }
+        return Ok(await datoAdicionalArticuloService.GetAsync(parameters));
+    }
 
-  [HttpPost("Insert/{id}")]
-  public async Task<IActionResult> Insert(int id, InfoAdicionalDto data)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpPost("Insert/{id}")]
+    public async Task<IActionResult> Insert(int id, InfoAdicionalDto data)
+    {
+        var parameters = new Dictionary<string, object>
     {
         { "idUsuarioRol", User.GetClaimValue<int>(UserRoleClaimType) },
         { "idDocumento", id },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<InfoAdicionalDto>(data)) }
     };
-    return Ok(await datoAdicionalArticuloService.AddAsync(parameters));
-  }
+        return Ok(await datoAdicionalArticuloService.AddAsync(parameters));
+    }
 
-  [HttpDelete("Delete/{idInfoAdicional}")]
-  public async Task<IActionResult> Delete(int idInfoAdicional)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpDelete("Delete/{idInfoAdicional}")]
+    public async Task<IActionResult> Delete(int idInfoAdicional)
+    {
+        var parameters = new Dictionary<string, object>
       {
           { "idUsuarioRol", User.GetClaimValue<int>(UserRoleClaimType) },
           { "idInfoAdicional", idInfoAdicional }
       };
-    return Ok(await datoAdicionalArticuloService.DeleteAsync(parameters));
-  }
+        return Ok(await datoAdicionalArticuloService.DeleteAsync(parameters));
+    }
 }

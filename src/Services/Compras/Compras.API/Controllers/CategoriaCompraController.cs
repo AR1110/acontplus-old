@@ -1,6 +1,6 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class CategoriaCompraController(ICategoriaCompraService categoriaCompraService) : BaseApiController
+public class CategoriaCompraController(ICategoriaCompraRepository categoriaCompraService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
