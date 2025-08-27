@@ -1,29 +1,32 @@
-﻿namespace Configuracion.API.Controllers;
+using System.Text.Json;
+using Configuracion.Application.DTOs;
+
+namespace Configuracion.API.Controllers;
 
 public class DocConfigController(IDocConfigService docConfigService) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
-        var response = await docConfigService.GetAsync(parameters);
-        if (response == null) return NoContent();
+    var response = await docConfigService.GetAsync(parameters);
+    if (response == null) return NoContent();
 
-        return Ok(response);
-    }
+    return Ok(response);
+  }
 
-    [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+  [HttpPost]
+  public async Task<IActionResult> Post(CreateDocConfigDto data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
-        return Ok(await docConfigService.AddAsync(parameters));
-    }
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateDocConfigDto>(data)) },
+        { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
+    return Ok(await docConfigService.AddAsync(parameters));
+  }
 }
