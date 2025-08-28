@@ -19,14 +19,8 @@ public class IngredientRepository(IAdoRepository adoRepository, RestaurantContex
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> AddAsync(ApiRequest data)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
-        };
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Insert", parameters);
-    }
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Insert", parameters);
 
     public async Task<ApiResponse> UpdateAsync(int id, Ingredient ingredient)
     {

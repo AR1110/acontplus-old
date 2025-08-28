@@ -14,29 +14,27 @@ public class IngredientController(IIngredientRepository ingredientService) : Bas
         return Ok(await ingredientService.GetAsync(parameters));
     }
 
-    [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        return Ok(await ingredientService.GetByIdAsync(id));
-    }
+    [HttpGet("GetById/{id:int}")]
+    public async Task<IActionResult> GetById(int id) => Ok(await ingredientService.GetByIdAsync(id));
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
         data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await ingredientService.AddAsync(data));
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
+        };
+        return Ok(await ingredientService.AddAsync(parameters));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Put(int id, [FromBody] Ingredient ingredient)
     {
         ingredient.UpdatedByUserId = User.GetUserId();
         return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        return Ok(await ingredientService.DeleteAsync(User.GetUserId(), id));
-    }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id) => Ok(await ingredientService.DeleteAsync(User.GetUserId(), id));
 }

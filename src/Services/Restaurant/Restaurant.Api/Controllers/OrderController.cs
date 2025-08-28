@@ -19,18 +19,28 @@ public class OrderController(IOrderRepository orderService) : BaseApiController
     public async Task<IActionResult> Post([FromBody] ApiRequest data)
     {
         data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await orderService.AddAsync(data));
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", data.UserRoleId },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await orderService.AddAsync(parameters));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
         data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-
-        return Ok(await orderService.PutAsync(id, data));
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", data.UserRoleId },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await orderService.PutAsync(parameters));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         if (id == 0) return BadRequest("Id Incorrecto");

@@ -17,6 +17,12 @@ public class MenuController(IMenuService menuService) : BaseApiController
     public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
         data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await menuService.PutAsync(id, data));
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", data.UserRoleId },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        return Ok(await menuService.PutAsync(parameters));
     }
 }
