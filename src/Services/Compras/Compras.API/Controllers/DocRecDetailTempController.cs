@@ -1,41 +1,39 @@
-﻿using Compras.API.Dtos;
-
 namespace Compras.API.Controllers;
 
-public class DocRecDetailTempController(IDocRecDetailTempService detailTempService) : BaseApiController
+public class DocRecDetailTempController(IDocRecDetailTempRepository detailTempService) : BaseApiController
 {
-  private const string UserRoleClaimType = "userRoleId";
+    private const string UserRoleClaimType = "userRoleId";
 
-  [HttpGet("{idDocumento}")]
-  public async Task<IActionResult> GetId(int idDocumento)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpGet("{idDocumento}")]
+    public async Task<IActionResult> GetId(int idDocumento)
+    {
+        var parameters = new Dictionary<string, object>
     {
       { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
       { "idDocumento", idDocumento }, { "jsonData", "" }
     };
-    return Ok(await detailTempService.GetAsync(parameters));
-  }
+        return Ok(await detailTempService.GetAsync(parameters));
+    }
 
-  [HttpPost]
-  public async Task<IActionResult> Post(DocDetailleTemporalDto data)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpPost]
+    public async Task<IActionResult> Post(DocDetailleTemporalDto data)
+    {
+        var parameters = new Dictionary<string, object>
     {
       { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
       { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
     };
-    return Ok(await detailTempService.AddAsync(parameters));
-  }
+        return Ok(await detailTempService.AddAsync(parameters));
+    }
 
-  [HttpPut]
-  public async Task<IActionResult> Put(DocDetailleTemporalDto data)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpPut]
+    public async Task<IActionResult> Put(DocDetailleTemporalDto data)
+    {
+        var parameters = new Dictionary<string, object>
     {
       { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
       { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
     };
-    return Ok(await detailTempService.UpdateAsync(parameters));
-  }
+        return Ok(await detailTempService.UpdateAsync(parameters));
+    }
 }

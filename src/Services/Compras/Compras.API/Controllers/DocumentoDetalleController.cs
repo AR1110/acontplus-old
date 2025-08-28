@@ -1,6 +1,6 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class DocumentoDetalleController(IDocumentoDetalleService documentoDetalleService) : BaseApiController
+public class DocumentoDetalleController(IDocumentoDetalleRepository documentoDetalleService) : BaseApiController
 {
     [HttpPost("{idDocumento}/{idArticulo}")]
     public async Task<IActionResult> Post(int idDocumento, int idArticulo)

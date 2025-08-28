@@ -1,87 +1,85 @@
-﻿using Compras.API.Dtos;
-
 namespace Compras.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBase
+public class FacturaCompraController(IFacturaCompraRepository _svc) : ControllerBase
 {
-  private const string UserRoleClaimType = "userRoleId";
+    private const string UserRoleClaimType = "userRoleId";
 
-  [HttpGet]
-  public async Task<IActionResult> Get(string json)
-  {
-    try
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
     {
-      var response = await _svc.GetAsync(new Dictionary<string, object>
+        try
+        {
+            var response = await _svc.GetAsync(new Dictionary<string, object>
             {
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
             });
-      if (response == null) return NoContent();
+            if (response == null) return NoContent();
 
-      ;
-      return Ok(new { code = "1", payload = response });
+            ;
+            return Ok(new { code = "1", payload = response });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Error on get: " + ex.Message);
+        }
     }
-    catch (Exception ex)
-    {
-      return BadRequest("Error on get: " + ex.Message);
-    }
-  }
 
-  [HttpGet("GetId/{id}")]
-  public async Task<IActionResult> GetId(int id)
-  {
-    try
+    [HttpGet("GetId/{id}")]
+    public async Task<IActionResult> GetId(int id)
     {
-      var response =
-          await _svc.GetByIdAsync(new Dictionary<string, object>
-          {
+        try
+        {
+            var response =
+                await _svc.GetByIdAsync(new Dictionary<string, object>
+                {
                     { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
-          });
-      if (response == null) return NoContent();
+                });
+            if (response == null) return NoContent();
 
-      ;
-      return Ok(new { code = "1", payload = response });
+            ;
+            return Ok(new { code = "1", payload = response });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Error on get by id: " + ex.Message);
+        }
     }
-    catch (Exception ex)
+
+    [HttpPost]
+    public async Task<IActionResult> Insert(ApiRequest request)
     {
-      return BadRequest("Error on get by id: " + ex.Message);
-    }
-  }
 
-  [HttpPost]
-  public async Task<IActionResult> Insert(ApiRequest request)
-  {
-
-    var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(request.Data)) }
     };
-    return Ok(await _svc.AddAsync(parameters));
-  }
+        return Ok(await _svc.AddAsync(parameters));
+    }
 
 
-  [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, FacturaCompraDto facturaCompraDto)
-  {
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, FacturaCompraDto facturaCompraDto)
+    {
 
-    var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id },
       { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(facturaCompraDto)) }
     };
 
-    return Ok(await _svc.UpdateAsync(parameters));
-  }
+        return Ok(await _svc.UpdateAsync(parameters));
+    }
 
 
-  [HttpDelete("{id}")]
-  public async Task<IActionResult> Delete(int id)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-    return Ok(await _svc.DeleteAsync(parameters));
-  }
+        return Ok(await _svc.DeleteAsync(parameters));
+    }
 }

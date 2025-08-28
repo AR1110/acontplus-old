@@ -1,54 +1,52 @@
-﻿using Compras.API.Dtos;
-
 namespace Compras.API.Controllers;
 
-public class ProveedorController(IProveedorService _proveedorService) : BaseApiController
+public class ProveedorController(IProveedorRepository _proveedorService) : BaseApiController
 {
-  private const string UserRoleClaimType = "userRoleId";
+    private const string UserRoleClaimType = "userRoleId";
 
-  [HttpGet]
-  public async Task<IActionResult> Get(string json)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
-    return Ok(await _proveedorService.GetAsync(parameters));
-  }
+        return Ok(await _proveedorService.GetAsync(parameters));
+    }
 
-  // UserStories: Migración de ApiRequest a DTOs en Servicios de AcontPlus
-  [HttpPost]
-  public async Task<IActionResult> Post(ProveedorDto proveedorDto)
-  {
-    var parameters = new Dictionary<string, object>
+    // UserStories: Migración de ApiRequest a DTOs en Servicios de AcontPlus
+    [HttpPost]
+    public async Task<IActionResult> Post(ProveedorDto proveedorDto)
+    {
+        var parameters = new Dictionary<string, object>
       {
         { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
       };
-    return Ok(await _proveedorService.AddAsync(parameters));
-  }
+        return Ok(await _proveedorService.AddAsync(parameters));
+    }
 
-  [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, ProveedorDto proveedorDto)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, ProveedorDto proveedorDto)
+    {
+        var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id },
       { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
     };
-    return Ok(await _proveedorService.UpdateAsync(parameters));
-  }
+        return Ok(await _proveedorService.UpdateAsync(parameters));
+    }
 
-  [HttpDelete("{id}")]
-  public async Task<IActionResult> Delete(int id)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
       { "id", id }
     };
-    return Ok(await _proveedorService.DeleteAsync(parameters));
-  }
+        return Ok(await _proveedorService.DeleteAsync(parameters));
+    }
 }

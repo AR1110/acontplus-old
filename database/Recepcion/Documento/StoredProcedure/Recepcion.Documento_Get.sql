@@ -187,7 +187,7 @@ BEGIN
             
             SET @tableNames = 'establecimientos,tipoComprobantes,subcategories'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            SELECT idEstablecimiento,codEstab,nombreComercial FROM Config.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY Predeterminado desc
 
             SELECT descripcion,codigoSri as codDoc, codigoSri FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07','05') ORDER BY codigoSri
 
