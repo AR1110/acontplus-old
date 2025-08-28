@@ -1,4 +1,3 @@
-﻿using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;

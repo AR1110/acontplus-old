@@ -1,9 +1,8 @@
-﻿using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;
 
-public class VehicleController(IVehicleService _vehicleService) : BaseApiController
+public class VehicleController(IVehicleRepository _vehicleService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

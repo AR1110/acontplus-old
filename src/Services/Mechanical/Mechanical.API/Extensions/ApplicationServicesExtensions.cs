@@ -1,13 +1,11 @@
-﻿using System.IO.Compression;
 using Common.Core.Abstractions;
 using Common.Infrastructure.Repository.Implementations;
-using Mechanical.API.Data;
-using Mechanical.API.Interfaces;
-using Mechanical.API.Services;
+using Mechanical.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.IO.Compression;
 
 namespace Mechanical.API.Extensions;
 
@@ -41,8 +39,8 @@ public static class ApplicationServicesExtensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IAdoRepository, AdoRepository>();
-        services.AddScoped<IVehicleService, VehicleService>();
-        services.AddScoped<ISupportService, SupportService>();
+        services.AddScoped<IVehicleRepository, VehicleRepository>();
+        services.AddScoped<ISupportRepository, SupportRepository>();
         services.AddScoped<ISupportDetailService, SupportDetailService>();
         services.AddScoped<IInspectionService, InspectionService>();
         return services;
