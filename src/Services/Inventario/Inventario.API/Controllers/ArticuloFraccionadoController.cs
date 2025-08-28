@@ -2,49 +2,56 @@
 
 public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloFraccionadoService) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    try
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-            };
-            var response = await articuloFraccionadoService.GetAsync(parameters);
-            if (response == null) return NoContent();
+      var parameters = new Dictionary<string, object>
+      {
+          { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+          { "json", SqlStringParam.Sanitize(json) }
+      };
+      var response = await articuloFraccionadoService.GetAsync(parameters);
+      if (response == null) return NoContent();
 
-            return Ok(response);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
+      return Ok(response);
     }
-
-
-    [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
+    catch (Exception)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        var response = await articuloFraccionadoService.AddAsync(request);
-        return Ok(response);
+      return BadRequest();
     }
+  }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+  [HttpPost]
+  public async Task<IActionResult> Post(CreateArticuloFraccionadoDto dto)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        var response = await articuloFraccionadoService.UpdateAsync(id, request);
-        return Ok(response);
-    }
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloFraccionadoDto>(dto)) }
+    };
+    return Ok(await articuloFraccionadoService.AddAsync(parameters));
+  }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Put(int id, UpdateArticuloFraccionadoDto dto)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateArticuloFraccionadoDto>(dto)) }
+    };
+    return Ok(await articuloFraccionadoService.UpdateAsync(parameters));
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        var response = await articuloFraccionadoService.DeleteAsync(parameters);
-        return Ok(response);
-    }
+    var response = await articuloFraccionadoService.DeleteAsync(parameters);
+    return Ok(response);
+  }
 }
