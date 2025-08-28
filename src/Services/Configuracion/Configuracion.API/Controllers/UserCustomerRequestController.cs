@@ -1,44 +1,47 @@
 ﻿namespace Configuracion.API.Controllers;
 
+using Configuracion.Application.DTOs;
+using System.Text.Json;
+
 public class UserCustomerRequestController(IUserCustomerRequestService userCustomerRequestService) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        };
-        var response = await userCustomerRequestService.GetAsync(parameters);
-        if (response == null) return NoContent();
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+    };
+    var response = await userCustomerRequestService.GetAsync(parameters);
+    if (response == null) return NoContent();
 
-        return Ok(response);
-    }
+    return Ok(response);
+  }
 
 
-    [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+  [HttpPost]
+  public async Task<IActionResult> Post(CreateUserCustomerRequestDto data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        var response = await userCustomerRequestService.AddAsync(parameters);
-        return Ok(response);
-    }
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateUserCustomerRequestDto>(data)) }
+    };
+    var response = await userCustomerRequestService.AddAsync(parameters);
+    return Ok(response);
+  }
 
-    [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest data)
+  [HttpPut]
+  public async Task<IActionResult> Put(UpdateUserCustomerRequestDto data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        var response = await userCustomerRequestService.UpdateAsync(parameters);
-        if (response == null) return NoContent();
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateUserCustomerRequestDto>(data)) }
+    };
+    var response = await userCustomerRequestService.UpdateAsync(parameters);
+    if (response == null) return NoContent();
 
-        return Ok(response);
-    }
+    return Ok(response);
+  }
 }
