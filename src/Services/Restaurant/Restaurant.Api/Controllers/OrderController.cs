@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.DTOs;
 using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
@@ -16,26 +17,24 @@ public class OrderController(IOrderRepository orderService) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateOrderDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", data.UserRoleId },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateOrderDto>(data)) }
         };
         return Ok(await orderService.AddAsync(parameters));
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", data.UserRoleId },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateOrderDto>(data)) }
         };
         return Ok(await orderService.PutAsync(parameters));
     }
