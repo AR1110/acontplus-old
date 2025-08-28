@@ -18,25 +18,29 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(FacturaDtos.CreateFacturaDto data)
     {
+        var json = DataConverters.SerializeObjectCustom<FacturaDtos.CreateFacturaDto>(data);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest data)
+    public async Task<IActionResult> Put(int id, FacturaDtos.UpdateFacturaDto data)
     {
+        if (data.Id != id) return BadRequest("Invalid id");
+
+        var json = DataConverters.SerializeObjectCustom<FacturaDtos.UpdateFacturaDto>(data);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.UpdateAsync(parameters);
         return Ok(response);
