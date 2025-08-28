@@ -1,9 +1,8 @@
-﻿using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;
 
-public class SupportController(ISupportService _supportService) : BaseApiController
+public class SupportController(ISupportRepository _supportService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

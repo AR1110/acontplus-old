@@ -10,8 +10,6 @@
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Data" />
-    <PackageReference Include="Acontplus.Common.Infrastructure" />
     <PackageReference Include="Acontplus.Common.Logging" />
     <PackageReference Include="Acontplus.Common.Services" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
@@ -29,6 +27,7 @@
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\Migrations\" />
+    <ProjectReference Include="..\Mechanical.Application\Mechanical.Application.csproj" />
+    <ProjectReference Include="..\Mechanical.Infrastructure\Mechanical.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
