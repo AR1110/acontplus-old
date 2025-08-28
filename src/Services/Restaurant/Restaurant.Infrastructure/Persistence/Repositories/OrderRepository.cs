@@ -1,11 +1,9 @@
-﻿using Common.Core.Abstractions;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class OrderService(
+public class OrderRepository(
     IAdoRepository repository,
     RestaurantContext context)
-    : IOrderService
+    : IOrderRepository
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {

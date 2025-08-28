@@ -1,8 +1,6 @@
-﻿using Restaurant.Domain.Entities;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class RoomService(RestaurantContext context) : IRoomService
+public class RoomRepository(RestaurantContext context) : IRoomRepository
 {
     public async Task<ApiResponse> AddAsync(Room room)
     {

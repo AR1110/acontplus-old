@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Entities;
+using Restaurant.Domain.Entities;
 
-namespace Restaurant.Application.Interfaces;
+namespace Restaurant.Domain.Repositories;
 
-public interface IIngredientService
+public interface IIngredientRepository
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     Task<ApiResponse> GetByIdAsync(int id);

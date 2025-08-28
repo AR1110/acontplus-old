@@ -7,12 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Data" />
-  </ItemGroup>
-
-  <!--Legacy quitar a futuro y usar repositories, adaptados DDD Architecture-->
-  <ItemGroup>
-    <ProjectReference Include="..\Restaurant.Infrastructure\Restaurant.Infrastructure.csproj" />
+    <ProjectReference Include="..\Restaurant.Domain\Restaurant.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,6 @@
-﻿using Common.Core.Abstractions;
+using Common.Core.Abstractions;
 
 namespace Restaurant.Application.Services;
-
-public interface IPromotionMenuService
-{
-    public Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters);
-}
 
 public class PromotionMenuService(IAdoRepository repository) : IPromotionMenuService
 {

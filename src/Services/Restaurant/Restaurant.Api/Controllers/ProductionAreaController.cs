@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.Domain.Entities;
+using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 
-public class ProductionAreaController(IProductionAreaService productionAreaService) : BaseApiController
+public class ProductionAreaController(IProductionAreaRepository productionAreaService) : BaseApiController
 {
     [HttpGet]
     [Route("Get")]

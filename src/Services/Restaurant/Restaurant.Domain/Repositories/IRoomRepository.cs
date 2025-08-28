@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Entities;
+using Restaurant.Domain.Entities;
 
-namespace Restaurant.Application.Interfaces;
+namespace Restaurant.Domain.Repositories;
 
-public interface IRoomService
+public interface IRoomRepository
 {
     Task<ApiResponse> AddAsync(Room room);
     Task<ApiResponse> DeleteAsync(int userId, int id);

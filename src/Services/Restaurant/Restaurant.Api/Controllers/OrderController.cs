@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 
-public class OrderController(IOrderService orderService) : BaseApiController
+public class OrderController(IOrderRepository orderService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

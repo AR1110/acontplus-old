@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Entities;
+using Restaurant.Domain.Entities;
 
-namespace Restaurant.Application.Interfaces;
+namespace Restaurant.Domain.Repositories;
 
-public interface IAppTableService
+public interface IAppTableRepository
 {
     Task<ApiResponse> GetByEstabAsync(string codEstab);
     Task<ApiResponse> AddAsync(AppTable appTable);

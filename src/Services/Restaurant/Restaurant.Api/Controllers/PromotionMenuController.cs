@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Restaurant.Api.Controllers;
 

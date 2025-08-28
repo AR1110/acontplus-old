@@ -1,6 +1,6 @@
-﻿namespace Restaurant.Application.Interfaces;
+namespace Restaurant.Domain.Repositories;
 
-public interface IOrderService
+public interface IOrderRepository
 {
     Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     Task<ApiResponse> AddAsync(ApiRequest data);
