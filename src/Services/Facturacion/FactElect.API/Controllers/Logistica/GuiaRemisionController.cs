@@ -29,12 +29,13 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(GuiaRemisionDtos.CreateGuiaRemisionDto data)
     {
+        var json = DataConverters.SerializeObjectCustom<GuiaRemisionDtos.CreateGuiaRemisionDto>(data);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.AddAsync(parameters);
         return Ok(response);
@@ -42,13 +43,16 @@ public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiContr
 
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest data)
+    public async Task<IActionResult> Put(int id, GuiaRemisionDtos.UpdateGuiaRemisionDto data)
     {
+        if (data.Id != id) return BadRequest("Invalid id");
+
+        var json = DataConverters.SerializeObjectCustom<GuiaRemisionDtos.UpdateGuiaRemisionDto>(data);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.UpdateAsync(parameters);
         return Ok(response);
