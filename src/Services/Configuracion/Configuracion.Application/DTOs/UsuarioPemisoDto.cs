@@ -2,5 +2,5 @@
 
 public class UsuarioPemisoDto
 {
-    public string jsonPermission { get; set; }
+  public string? jsonPermission { get; set; }
 }
