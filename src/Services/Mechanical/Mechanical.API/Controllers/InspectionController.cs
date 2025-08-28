@@ -1,3 +1,4 @@
+using Mechanical.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;
@@ -16,24 +17,24 @@ public class InspectionController(IInspectionService _inspectionService) : BaseA
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateInspectionDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateInspectionDto>(data)) }
         };
         return Ok(await _inspectionService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateInspectionDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateInspectionDto>(data)) }
         };
         return Ok(await _inspectionService.UpdateAsync(parameters));
     }
