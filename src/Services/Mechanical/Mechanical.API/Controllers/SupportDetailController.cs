@@ -1,3 +1,4 @@
+using Mechanical.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;
@@ -16,24 +17,24 @@ public class SupportDetailController(ISupportDetailService _supportDetailService
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateSupportDetailDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateSupportDetailDto>(data)) }
         };
         return Ok(await _supportDetailService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateSupportDetailDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateSupportDetailDto>(data)) }
         };
         return Ok(await _supportDetailService.UpdateAsync(parameters));
     }
