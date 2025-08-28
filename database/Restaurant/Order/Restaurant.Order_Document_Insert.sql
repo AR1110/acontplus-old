@@ -176,14 +176,7 @@ BEGIN
                 ,ij.discount
                 ,ij.total               
                 ,oi.MedidaId
-                ,ISNULL(CASE
-					WHEN o.CreatedAt >= (SELECT s.fechaConsolidacion FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idBodega = oi.BodegaId)
-						THEN
-							ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity) * -1
-				ELSE
-					0
-				END, 0) 
-
+                ,ij.Quantity
                 ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * -1
                 ,1
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
@@ -268,13 +261,7 @@ BEGIN
                 ,oi.Discount
                 ,oi.Total
                 ,MedidaId
-                ,ISNULL(CASE
-					WHEN o.CreatedAt >= (SELECT s.fechaConsolidacion FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idBodega = oi.BodegaId)  
-						THEN
-							ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity) * -1
-				ELSE
-					0
-				END,0) 
+                ,oi.Quantity
                ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity) * -1
                ,1
            FROM Restaurant.OrderItem oi WITH (NOLOCK)
