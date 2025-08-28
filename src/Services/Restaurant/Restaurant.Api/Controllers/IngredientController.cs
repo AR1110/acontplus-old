@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.DTOs;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Repositories;
 
@@ -18,20 +19,30 @@ public class IngredientController(IIngredientRepository ingredientService) : Bas
     public async Task<IActionResult> GetById(int id) => Ok(await ingredientService.GetByIdAsync(id));
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateIngredientRequestDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
+        var userRoleId = User.GetClaimValue<int>("userRoleId");
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
+            { "userRoleId", userRoleId },
+            { "json", DataConverters.SerializeObjectCustom<CreateIngredientRequestDto>(data) }
         };
         return Ok(await ingredientService.AddAsync(parameters));
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Put(int id, [FromBody] Ingredient ingredient)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateIngredientDto data)
     {
-        ingredient.UpdatedByUserId = User.GetUserId();
+        var ingredient = new Ingredient
+        {
+            ProductId = data.ProductId,
+            Summary = data.Summary,
+            IngredientTypeId = data.IngredientTypeId,
+            Quantity = data.Quantity,
+            Unit = data.Unit,
+            Content = data.Content,
+            UpdatedByUserId = User.GetUserId()
+        };
         return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
 
