@@ -1,3 +1,4 @@
+using Mechanical.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;
@@ -13,24 +14,24 @@ public class SupportController(ISupportRepository _supportService) : BaseApiCont
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateSupportDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateSupportDto>(data)) }
         };
         return Ok(await _supportService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateSupportDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateSupportDto>(data)) }
         };
         return Ok(await _supportService.UpdateAsync(parameters));
     }
